@@ -70,44 +70,44 @@ const {
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.pdfform.documents.reference") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.pdfform.documents.template") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.pdfform.documents.status") }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="doc in items" :key="doc.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <p class="font-medium text-primary font-mono">{{ doc.reference }}</p>
-                            <p v-if="doc.label" class="text-xs text-muted">{{ doc.label }}</p>
-                        </td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.templateName ?? "—" }}</td>
-                        <td class="px-6 py-3 hidden lg:table-cell">
-                            <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="doc.downloadUrl" color="sky" :title="t('backend.pdfform.documents.view')" v-on:click="viewingDoc = doc"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <a v-if="doc.downloadUrl" :href="doc.downloadUrl" target="_blank" rel="noopener">
-                                    <AppIconButton color="sky" :title="t('backend.pdfform.documents.download')"><Download class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                </a>
-                                <AppIconButton v-if="can('pdfform.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="4"><AppNoData :message="t('backend.pdfform.documents.empty')" /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.pdfform.documents.reference") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.pdfform.documents.template") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.pdfform.documents.status") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="doc in items" :key="doc.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <p class="font-medium text-primary font-mono">{{ doc.reference }}</p>
+                                <p v-if="doc.label" class="text-xs text-muted">{{ doc.label }}</p>
+                            </td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.templateName ?? "—" }}</td>
+                            <td class="px-6 py-3 hidden lg:table-cell">
+                                <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton v-if="doc.downloadUrl" color="sky" :title="t('backend.pdfform.documents.view')" v-on:click="viewingDoc = doc"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <a v-if="doc.downloadUrl" :href="doc.downloadUrl" target="_blank" rel="noopener">
+                                        <AppIconButton color="sky" :title="t('backend.pdfform.documents.download')"><Download class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    </a>
+                                    <AppIconButton v-if="can('pdfform.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="4"><AppNoData :message="t('backend.pdfform.documents.empty')" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <!-- Modale unique : step 1 = picker, step 2 = éditeur -->

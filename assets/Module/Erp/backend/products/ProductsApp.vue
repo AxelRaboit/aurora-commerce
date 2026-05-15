@@ -74,77 +74,77 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.reference') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.erp.products.price') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.erp.products.stock') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.statusLabel') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="product in items" :key="product.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <AppThumbnail :src="product.image?.url" :alt="product.image?.alt ?? product.name">
-                                    <span class="text-muted text-xs">—</span>
-                                </AppThumbnail>
-                                <span class="font-medium text-primary truncate">{{ product.name }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ product.reference }}</td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(product) }}</td>
-                        <td class="px-6 py-3 hidden lg:table-cell">
-                            <span v-if="!product.stockTracked" class="text-xs text-muted">{{ t('backend.erp.products.stockUntracked') }}</span>
-                            <AppBadge v-else-if="product.stockQuantity === 0" color="rose">{{ t('backend.erp.products.stockOut') }}</AppBadge>
-                            <AppBadge v-else-if="product.isLowStock" color="amber">{{ product.stockQuantity }}</AppBadge>
-                            <span v-else class="text-secondary tabular-nums">{{ product.stockQuantity }}</span>
-                        </td>
-                        <td class="px-6 py-3">
-                            <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">{{ t(`backend.erp.products.status.${product.status}`) }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('erp.products.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('erp.products.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.erp.products.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="sm:hidden space-y-3">
-            <div v-for="product in items" :key="product.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="font-medium text-primary truncate">{{ product.name }}</p>
-                        <p class="text-xs font-mono text-muted mt-0.5">{{ product.reference }}</p>
-                    </div>
-                    <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">{{ t(`backend.erp.products.status.${product.status}`) }}</AppBadge>
-                </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <p class="text-sm text-secondary">{{ formatProductPrice(product) }}</p>
-                    <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('erp.products.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('erp.products.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                    </div>
-                </div>
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.reference') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.erp.products.price') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.erp.products.stock') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.statusLabel') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="product in items" :key="product.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <AppThumbnail :src="product.image?.url" :alt="product.image?.alt ?? product.name">
+                                        <span class="text-muted text-xs">—</span>
+                                    </AppThumbnail>
+                                    <span class="font-medium text-primary truncate">{{ product.name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-3 font-mono text-xs text-secondary">{{ product.reference }}</td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(product) }}</td>
+                            <td class="px-6 py-3 hidden lg:table-cell">
+                                <span v-if="!product.stockTracked" class="text-xs text-muted">{{ t('backend.erp.products.stockUntracked') }}</span>
+                                <AppBadge v-else-if="product.stockQuantity === 0" color="rose">{{ t('backend.erp.products.stockOut') }}</AppBadge>
+                                <AppBadge v-else-if="product.isLowStock" color="amber">{{ product.stockQuantity }}</AppBadge>
+                                <span v-else class="text-secondary tabular-nums">{{ product.stockQuantity }}</span>
+                            </td>
+                            <td class="px-6 py-3">
+                                <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">{{ t(`backend.erp.products.status.${product.status}`) }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('erp.products.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('erp.products.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.erp.products.empty') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <p v-if="!items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.erp.products.empty') }}</p>
-        </div>
 
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <div class="sm:hidden space-y-3">
+                <div v-for="product in items" :key="product.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary truncate">{{ product.name }}</p>
+                            <p class="text-xs font-mono text-muted mt-0.5">{{ product.reference }}</p>
+                        </div>
+                        <AppBadge :color="STATUS_TONE[product.status] ?? 'slate'">{{ t(`backend.erp.products.status.${product.status}`) }}</AppBadge>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-line">
+                        <p class="text-sm text-secondary">{{ formatProductPrice(product) }}</p>
+                        <div class="flex items-center gap-0.5">
+                            <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: product.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('erp.products.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(product)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('erp.products.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(product)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        </div>
+                    </div>
+                </div>
+                <p v-if="!items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.erp.products.empty') }}</p>
+            </div>
+
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

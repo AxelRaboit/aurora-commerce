@@ -93,90 +93,90 @@ const { statusFilter, viewingComment, tabs, selectTab, statusBadgeColor } = useC
         </div>
 
         <div class="relative space-y-4">
-        <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
-            <div v-for="comment in comments" :key="comment.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
-                <div class="flex items-start gap-3">
-                    <div class="flex-1 min-w-0">
-                        <p class="font-medium text-primary text-sm">
-                            {{ comment.authorName }}
-                            <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
-                        </p>
-                        <p class="text-xs text-muted mt-0.5">{{ comment.authorEmail }}</p>
-                        <p class="text-xs text-secondary mt-1.5 line-clamp-2">{{ comment.content }}</p>
+            <div class="sm:hidden space-y-2">
+                <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
+                <div v-for="comment in comments" :key="comment.id" class="bg-surface border border-line/60 rounded-xl p-4 space-y-3 shadow-sm">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-primary text-sm">
+                                {{ comment.authorName }}
+                                <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
+                            </p>
+                            <p class="text-xs text-muted mt-0.5">{{ comment.authorEmail }}</p>
+                            <p class="text-xs text-secondary mt-1.5 line-clamp-2">{{ comment.content }}</p>
+                        </div>
+                        <AppBadge :color="statusBadgeColor(comment.status)" class="shrink-0">{{ comment.statusLabel }}</AppBadge>
                     </div>
-                    <AppBadge :color="statusBadgeColor(comment.status)" class="shrink-0">{{ comment.statusLabel }}</AppBadge>
-                </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line/40">
-                    <p class="text-xs text-muted">{{ formatDateShort(comment.createdAt) }}</p>
-                    <div class="flex items-center gap-0.5">
-                        <AppIconButton color="accent" :title="t('backend.comments.view')" v-on:click="viewingComment = comment">
-                            <Eye class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.moderate')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(comment)">
-                            <Check class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.moderate')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(comment)">
-                            <Ban class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="can('editorial.comments.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
-                            <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
+                    <div class="flex items-center justify-between pt-2 border-t border-line/40">
+                        <p class="text-xs text-muted">{{ formatDateShort(comment.createdAt) }}</p>
+                        <div class="flex items-center gap-0.5">
+                            <AppIconButton color="accent" :title="t('backend.comments.view')" v-on:click="viewingComment = comment">
+                                <Eye class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.moderate')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(comment)">
+                                <Check class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.moderate')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(comment)">
+                                <Ban class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton v-if="can('editorial.comments.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
+                                <Trash2 class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
-            <table v-else class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.comments.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.comments.post') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.content') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.comments.date') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.status') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.edit') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="comment in comments" :key="comment.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3 text-primary font-medium whitespace-nowrap">
-                            {{ comment.authorName }}
-                            <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
-                        </td>
-                        <td class="px-6 py-3 text-secondary text-xs hidden md:table-cell">{{ comment.authorEmail }}</td>
-                        <td class="px-6 py-3 text-secondary text-xs hidden lg:table-cell">{{ truncate(comment.postTitle, 40) }}</td>
-                        <td class="px-6 py-3 text-secondary max-w-xs">{{ truncate(comment.content, 100) }}</td>
-                        <td class="px-6 py-3 text-xs text-muted whitespace-nowrap hidden md:table-cell">{{ formatDateShort(comment.createdAt) }}</td>
-                        <td class="px-6 py-3">
-                            <AppBadge :color="statusBadgeColor(comment.status)">{{ comment.statusLabel }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="accent" :title="t('backend.comments.view')" v-on:click="viewingComment = comment">
-                                    <Eye class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.moderate')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(comment)">
-                                    <Check class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.moderate')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(comment)">
-                                    <Ban class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="can('editorial.comments.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
-                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <AppNoData v-if="!loading && !comments.length" :message="t('backend.comments.empty')" />
+                <table v-else class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.comments.email') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.comments.post') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.content') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.comments.date') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.comments.status') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.edit') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="comment in comments" :key="comment.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3 text-primary font-medium whitespace-nowrap">
+                                {{ comment.authorName }}
+                                <span v-if="comment.replyCount > 0" class="ml-1.5 inline-flex items-center gap-0.5 text-xs text-secondary bg-surface-3 rounded px-1 py-0.5">↩ {{ comment.replyCount }}</span>
+                            </td>
+                            <td class="px-6 py-3 text-secondary text-xs hidden md:table-cell">{{ comment.authorEmail }}</td>
+                            <td class="px-6 py-3 text-secondary text-xs hidden lg:table-cell">{{ truncate(comment.postTitle, 40) }}</td>
+                            <td class="px-6 py-3 text-secondary max-w-xs">{{ truncate(comment.content, 100) }}</td>
+                            <td class="px-6 py-3 text-xs text-muted whitespace-nowrap hidden md:table-cell">{{ formatDateShort(comment.createdAt) }}</td>
+                            <td class="px-6 py-3">
+                                <AppBadge :color="statusBadgeColor(comment.status)">{{ comment.statusLabel }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="accent" :title="t('backend.comments.view')" v-on:click="viewingComment = comment">
+                                        <Eye class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton v-if="comment.status !== 'approved' && can('editorial.comments.moderate')" color="emerald" :title="t('backend.comments.approve')" v-on:click="approveComment(comment)">
+                                        <Check class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton v-if="comment.status !== 'spam' && can('editorial.comments.moderate')" color="amber" :title="t('backend.comments.markSpam')" v-on:click="confirmSpam(comment)">
+                                        <Ban class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton v-if="can('editorial.comments.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(comment)">
+                                        <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

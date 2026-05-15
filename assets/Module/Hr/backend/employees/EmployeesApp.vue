@@ -90,68 +90,68 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <!-- Mobile cards -->
-        <div class="sm:hidden space-y-3">
-            <div v-for="employee in items" :key="employee.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="font-medium text-primary">{{ employee.fullName }}</p>
-                        <p v-if="employee.jobTitle || employee.service || employee.agency" class="text-xs text-muted mt-0.5">
-                            {{ [employee.jobTitle, employee.service?.name, employee.agency?.name].filter(Boolean).join(' · ') }}
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-0.5 shrink-0">
-                        <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openView(employee)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <template v-if="can('hr.employees.edit') || can('hr.employees.delete')">
-                            <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(employee)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(employee)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        </template>
+            <!-- Mobile cards -->
+            <div class="sm:hidden space-y-3">
+                <div v-for="employee in items" :key="employee.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary">{{ employee.fullName }}</p>
+                            <p v-if="employee.jobTitle || employee.service || employee.agency" class="text-xs text-muted mt-0.5">
+                                {{ [employee.jobTitle, employee.service?.name, employee.agency?.name].filter(Boolean).join(' · ') }}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-0.5 shrink-0">
+                            <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openView(employee)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <template v-if="can('hr.employees.edit') || can('hr.employees.delete')">
+                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(employee)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(employee)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            </template>
+                        </div>
                     </div>
                 </div>
+                <AppNoData v-if="!items?.length" :message="t('backend.employees.empty')" />
             </div>
-            <AppNoData v-if="!items?.length" :message="t('backend.employees.empty')" />
-        </div>
 
-        <!-- Desktop table -->
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.employees.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.employees.fields.jobTitle') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.employees.fields.service') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.employees.fields.agency') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="employee in items" :key="employee.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <p class="font-medium text-primary">{{ employee.fullName }}</p>
-                            <p v-if="employee.workEmail ?? employee.user?.email" class="text-xs text-muted">{{ employee.workEmail ?? employee.user?.email }}</p>
-                        </td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ employee.jobTitle ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ employee.service?.name ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ employee.agency?.name ?? '—' }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openView(employee)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <template v-if="can('hr.employees.edit') || can('hr.employees.delete')">
-                                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(employee)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                    <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(employee)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                </template>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="5"><AppNoData :message="t('backend.employees.empty')" /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <!-- Desktop table -->
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.employees.name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.employees.fields.jobTitle') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.employees.fields.service') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.employees.fields.agency') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="employee in items" :key="employee.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <p class="font-medium text-primary">{{ employee.fullName }}</p>
+                                <p v-if="employee.workEmail ?? employee.user?.email" class="text-xs text-muted">{{ employee.workEmail ?? employee.user?.email }}</p>
+                            </td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ employee.jobTitle ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ employee.service?.name ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ employee.agency?.name ?? '—' }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openView(employee)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <template v-if="can('hr.employees.edit') || can('hr.employees.delete')">
+                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(employee)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(employee)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    </template>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="5"><AppNoData :message="t('backend.employees.empty')" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <!-- View modal -->

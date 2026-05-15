@@ -150,151 +150,151 @@ const {
         </div>
 
         <div class="relative space-y-4">
-        <!-- Mobile cards -->
-        <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!items?.length" :message="t('backend.ged.documents.empty')" />
-            <div v-for="doc in items" :key="doc.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
-                <div class="flex items-start gap-3 p-4">
-                    <!-- Thumbnail or file icon -->
-                    <div class="shrink-0 mt-0.5">
-                        <AppThumbnail
-                            v-if="doc.fileMime?.startsWith('image/')"
-                            :src="doc.fileUrl"
-                            :alt="doc.fileName"
-                            size="sm"
-                        />
-                        <div v-else-if="doc.fileMime === 'application/pdf'" class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
-                            <FileText class="w-4 h-4 text-rose-400" :stroke-width="1.5" />
+            <!-- Mobile cards -->
+            <div class="sm:hidden space-y-2">
+                <AppNoData v-if="!items?.length" :message="t('backend.ged.documents.empty')" />
+                <div v-for="doc in items" :key="doc.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                    <div class="flex items-start gap-3 p-4">
+                        <!-- Thumbnail or file icon -->
+                        <div class="shrink-0 mt-0.5">
+                            <AppThumbnail
+                                v-if="doc.fileMime?.startsWith('image/')"
+                                :src="doc.fileUrl"
+                                :alt="doc.fileName"
+                                size="sm"
+                            />
+                            <div v-else-if="doc.fileMime === 'application/pdf'" class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
+                                <FileText class="w-4 h-4 text-rose-400" :stroke-width="1.5" />
+                            </div>
+                            <div v-else-if="doc.fileUrl" class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
+                                <Paperclip class="w-4 h-4 text-muted" :stroke-width="1.5" />
+                            </div>
+                            <div v-else class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
+                                <FileText class="w-4 h-4 text-muted" :stroke-width="1.5" />
+                            </div>
                         </div>
-                        <div v-else-if="doc.fileUrl" class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
-                            <Paperclip class="w-4 h-4 text-muted" :stroke-width="1.5" />
-                        </div>
-                        <div v-else class="w-8 h-8 flex items-center justify-center rounded border border-line/60 bg-surface-2">
-                            <FileText class="w-4 h-4 text-muted" :stroke-width="1.5" />
-                        </div>
-                    </div>
-                    <!-- Content -->
-                    <div class="min-w-0 flex-1">
-                        <p class="font-medium text-primary text-sm truncate">{{ doc.title }}</p>
-                        <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-                            <span v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</span>
-                            <span v-if="doc.folderName" class="text-xs text-muted flex items-center gap-0.5">
-                                <Folder class="w-3 h-3" :stroke-width="2" /> {{ doc.folderName }}
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                            <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
-                            <span v-if="doc.categoryName" class="text-xs text-muted">{{ doc.categoryName }}</span>
-                        </div>
-                        <div v-if="doc.tags?.length" class="flex flex-wrap gap-1 mt-1.5">
-                            <span
-                                v-for="tag in doc.tags"
-                                :key="tag.id"
-                                class="inline-flex items-center text-xs px-1.5 py-0.5 rounded-full border border-line/60"
-                                :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
-                            >{{ tag.name }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
-                    <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                    <AppIconButton
-                        v-if="doc.fileUrl"
-                        color="default"
-                        :title="t('shared.common.download')"
-                        :href="doc.fileUrl"
-                        download
-                    >
-                        <Download class="w-4 h-4" :stroke-width="2" />
-                    </AppIconButton>
-                    <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                    <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                </div>
-            </div>
-        </div>
-
-        <!-- Desktop table -->
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.documents.title") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.documents.category") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.status") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.file") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t("backend.ged.documents.preview") }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="doc in items" :key="doc.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <p class="font-medium text-primary">{{ doc.title }}</p>
-                            <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                        <!-- Content -->
+                        <div class="min-w-0 flex-1">
+                            <p class="font-medium text-primary text-sm truncate">{{ doc.title }}</p>
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
                                 <span v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</span>
                                 <span v-if="doc.folderName" class="text-xs text-muted flex items-center gap-0.5">
                                     <Folder class="w-3 h-3" :stroke-width="2" /> {{ doc.folderName }}
                                 </span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                                <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
+                                <span v-if="doc.categoryName" class="text-xs text-muted">{{ doc.categoryName }}</span>
+                            </div>
+                            <div v-if="doc.tags?.length" class="flex flex-wrap gap-1 mt-1.5">
                                 <span
                                     v-for="tag in doc.tags"
                                     :key="tag.id"
-                                    class="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-full border border-line/60"
+                                    class="inline-flex items-center text-xs px-1.5 py-0.5 rounded-full border border-line/60"
                                     :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
-                                >
-                                    {{ tag.name }}
-                                </span>
+                                >{{ tag.name }}</span>
                             </div>
-                        </td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.noCategory") }}</td>
-                        <td class="px-6 py-3 hidden lg:table-cell">
-                            <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3 hidden lg:table-cell">
-                            <span v-if="doc.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ doc.fileName }}</span>
-                            <span v-else class="text-muted text-xs">—</span>
-                        </td>
-                        <td class="px-6 py-3 hidden xl:table-cell">
-                            <template v-if="doc.fileUrl">
-                                <AppThumbnail
-                                    v-if="doc.fileMime?.startsWith('image/')"
-                                    :src="doc.fileUrl"
-                                    :alt="doc.fileName"
-                                    size="landscape"
-                                />
-                                <div v-else-if="doc.fileMime === 'application/pdf'" class="flex items-center gap-1.5 text-xs text-muted">
-                                    <FileText class="w-5 h-5 shrink-0 text-rose-400" :stroke-width="1.5" /> PDF
+                        </div>
+                    </div>
+                    <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
+                        <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton
+                            v-if="doc.fileUrl"
+                            color="default"
+                            :title="t('shared.common.download')"
+                            :href="doc.fileUrl"
+                            download
+                        >
+                            <Download class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop table -->
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.documents.title") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.documents.category") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.status") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.file") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t("backend.ged.documents.preview") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="doc in items" :key="doc.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <p class="font-medium text-primary">{{ doc.title }}</p>
+                                <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                                    <span v-if="doc.reference" class="text-xs text-muted font-mono">{{ doc.reference }}</span>
+                                    <span v-if="doc.folderName" class="text-xs text-muted flex items-center gap-0.5">
+                                        <Folder class="w-3 h-3" :stroke-width="2" /> {{ doc.folderName }}
+                                    </span>
+                                    <span
+                                        v-for="tag in doc.tags"
+                                        :key="tag.id"
+                                        class="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-full border border-line/60"
+                                        :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
+                                    >
+                                        {{ tag.name }}
+                                    </span>
                                 </div>
-                                <div v-else class="flex items-center gap-1.5 text-xs text-muted">
-                                    <FileText class="w-5 h-5 shrink-0" :stroke-width="1.5" /> {{ doc.fileMime ?? '—' }}
+                            </td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.noCategory") }}</td>
+                            <td class="px-6 py-3 hidden lg:table-cell">
+                                <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3 hidden lg:table-cell">
+                                <span v-if="doc.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ doc.fileName }}</span>
+                                <span v-else class="text-muted text-xs">—</span>
+                            </td>
+                            <td class="px-6 py-3 hidden xl:table-cell">
+                                <template v-if="doc.fileUrl">
+                                    <AppThumbnail
+                                        v-if="doc.fileMime?.startsWith('image/')"
+                                        :src="doc.fileUrl"
+                                        :alt="doc.fileName"
+                                        size="landscape"
+                                    />
+                                    <div v-else-if="doc.fileMime === 'application/pdf'" class="flex items-center gap-1.5 text-xs text-muted">
+                                        <FileText class="w-5 h-5 shrink-0 text-rose-400" :stroke-width="1.5" /> PDF
+                                    </div>
+                                    <div v-else class="flex items-center gap-1.5 text-xs text-muted">
+                                        <FileText class="w-5 h-5 shrink-0" :stroke-width="1.5" /> {{ doc.fileMime ?? '—' }}
+                                    </div>
+                                </template>
+                                <span v-else class="text-muted text-xs">—</span>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton
+                                        v-if="doc.fileUrl"
+                                        color="default"
+                                        :title="t('shared.common.download')"
+                                        :href="doc.fileUrl"
+                                        download
+                                    >
+                                        <Download class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 </div>
-                            </template>
-                            <span v-else class="text-muted text-xs">—</span>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="default" :title="t('shared.common.view')" v-on:click="viewDoc(doc)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton
-                                    v-if="doc.fileUrl"
-                                    color="default"
-                                    :title="t('shared.common.download')"
-                                    :href="doc.fileUrl"
-                                    download
-                                >
-                                    <Download class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="6"><AppNoData :message="t('backend.ged.documents.empty')" /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="6"><AppNoData :message="t('backend.ged.documents.empty')" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <!-- Create modal -->

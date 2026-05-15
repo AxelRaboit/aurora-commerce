@@ -64,72 +64,72 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppListToolbar>
         <div class="relative space-y-4">
-        <div class="sm:hidden space-y-3">
-            <div v-for="company in items" :key="company.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="font-medium text-primary">{{ company.name }}</p>
-                        <p v-if="company.industry" class="text-xs text-muted mt-0.5">{{ company.industry }}</p>
+            <div class="sm:hidden space-y-3">
+                <div v-for="company in items" :key="company.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary">{{ company.name }}</p>
+                            <p v-if="company.industry" class="text-xs text-muted mt-0.5">{{ company.industry }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <AppLink v-if="company.website" :href="company.website" target="_blank" class="text-xs text-accent-400 truncate hover:underline">{{ company.website }}</AppLink>
-                    <span v-else class="text-xs text-muted">—</span>
-                    <div class="flex items-center gap-0.5">
-                        <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('crm.companies.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('crm.companies.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    <div class="flex items-center justify-between pt-2 border-t border-line">
+                        <AppLink v-if="company.website" :href="company.website" target="_blank" class="text-xs text-accent-400 truncate hover:underline">{{ company.website }}</AppLink>
+                        <span v-else class="text-xs text-muted">—</span>
+                        <div class="flex items-center gap-0.5">
+                            <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('crm.companies.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('crm.companies.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.companies.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.companies.industry') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.companies.website') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="company in items" :key="company.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <span class="font-medium text-primary">{{ company.name }}</span>
-                        </td>
-                        <td class="px-6 py-3 text-secondary">{{ company.industry ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">
-                            <AppLink
-                                v-if="company.website"
-                                :href="company.website"
-                                target="_blank"
-                                rel="noopener"
-                                class="text-accent-400 hover:underline truncate max-w-xs block"
-                            >
-                                {{ company.website }}
-                            </AppLink>
-                            <span v-else>—</span>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.companies.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.companies.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.companies.name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.companies.industry') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.companies.website') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="company in items" :key="company.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <span class="font-medium text-primary">{{ company.name }}</span>
+                            </td>
+                            <td class="px-6 py-3 text-secondary">{{ company.industry ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">
+                                <AppLink
+                                    v-if="company.website"
+                                    :href="company.website"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="text-accent-400 hover:underline truncate max-w-xs block"
+                                >
+                                    {{ company.website }}
+                                </AppLink>
+                                <span v-else>—</span>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="sky" :href="buildPath(showPath, { id: company.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('crm.companies.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(company)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('crm.companies.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(company)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
 
-                    <tr v-if="!items?.length">
-                        <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.companies.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        <tr v-if="!items?.length">
+                            <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.companies.empty') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

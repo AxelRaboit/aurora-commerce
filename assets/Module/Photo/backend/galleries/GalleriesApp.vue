@@ -80,56 +80,56 @@ const onCoverChange = onGalleryCoverChange;
         </div>
 
         <div class="relative space-y-4">
-        <AppNoData v-if="!items.length">
-            {{ t("photo.galleries.empty") }}
-        </AppNoData>
+            <AppNoData v-if="!items.length">
+                {{ t("photo.galleries.empty") }}
+            </AppNoData>
 
-        <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-            <article
-                v-for="g in items"
-                :key="g.id"
-                class="bg-surface border border-line rounded-lg overflow-hidden hover:border-accent transition-colors"
-                :class="{ 'cursor-pointer': editPath }"
-                v-on:click="editPath && openGallery(g)"
-            >
-                <div class="aspect-4/3 bg-surface-2 relative overflow-hidden">
-                    <img v-if="g.coverMediaUrl" :src="g.coverMediaUrl" :alt="g.title" class="w-full h-full object-cover">
-                    <div v-else class="w-full h-full flex items-center justify-center text-muted">
-                        <ImageIcon class="w-7 h-7" :stroke-width="1.5" />
+            <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                <article
+                    v-for="g in items"
+                    :key="g.id"
+                    class="bg-surface border border-line rounded-lg overflow-hidden hover:border-accent transition-colors"
+                    :class="{ 'cursor-pointer': editPath }"
+                    v-on:click="editPath && openGallery(g)"
+                >
+                    <div class="aspect-4/3 bg-surface-2 relative overflow-hidden">
+                        <img v-if="g.coverMediaUrl" :src="g.coverMediaUrl" :alt="g.title" class="w-full h-full object-cover">
+                        <div v-else class="w-full h-full flex items-center justify-center text-muted">
+                            <ImageIcon class="w-7 h-7" :stroke-width="1.5" />
+                        </div>
+                        <div class="absolute top-1.5 right-1.5 flex gap-1">
+                            <AppBadge v-if="g.hasPassword" variant="warning" size="sm">
+                                <Lock class="w-3 h-3" :stroke-width="2.5" />
+                            </AppBadge>
+                            <AppBadge v-if="g.finalizedAt" color="emerald" size="sm">
+                                <CheckCircle class="w-3 h-3" :stroke-width="2.5" />
+                            </AppBadge>
+                        </div>
                     </div>
-                    <div class="absolute top-1.5 right-1.5 flex gap-1">
-                        <AppBadge v-if="g.hasPassword" variant="warning" size="sm">
-                            <Lock class="w-3 h-3" :stroke-width="2.5" />
-                        </AppBadge>
-                        <AppBadge v-if="g.finalizedAt" color="emerald" size="sm">
-                            <CheckCircle class="w-3 h-3" :stroke-width="2.5" />
-                        </AppBadge>
+                    <div class="p-2.5 space-y-1">
+                        <h3 class="text-sm font-semibold text-primary truncate">{{ g.title }}</h3>
+                        <p class="text-xs text-muted truncate">/{{ g.slug }} · {{ g.itemCount }}</p>
+                        <p v-if="g.client" class="text-xs text-muted flex items-center gap-1">
+                            <User class="w-3 h-3 shrink-0" :stroke-width="2" />
+                            <span class="truncate">{{ g.client.name }}</span>
+                        </p>
+                        <div class="flex items-center gap-0.5 pt-1" v-on:click.stop>
+                            <AppIconButton v-if="editPath" color="sky" :title="t('photo.galleries.openEditor')" :href="buildPath(editPath, { id: g.id })">
+                                <ImageIcon class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton v-if="can('photo.galleries.edit')" :title="t('shared.common.edit')" v-on:click="openEdit(g)">
+                                <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton v-if="can('photo.galleries.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(g)">
+                                <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppIconButton>
+                        </div>
                     </div>
-                </div>
-                <div class="p-2.5 space-y-1">
-                    <h3 class="text-sm font-semibold text-primary truncate">{{ g.title }}</h3>
-                    <p class="text-xs text-muted truncate">/{{ g.slug }} · {{ g.itemCount }}</p>
-                    <p v-if="g.client" class="text-xs text-muted flex items-center gap-1">
-                        <User class="w-3 h-3 shrink-0" :stroke-width="2" />
-                        <span class="truncate">{{ g.client.name }}</span>
-                    </p>
-                    <div class="flex items-center gap-0.5 pt-1" v-on:click.stop>
-                        <AppIconButton v-if="editPath" color="sky" :title="t('photo.galleries.openEditor')" :href="buildPath(editPath, { id: g.id })">
-                            <ImageIcon class="w-3.5 h-3.5" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="can('photo.galleries.edit')" :title="t('shared.common.edit')" v-on:click="openEdit(g)">
-                            <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
-                        </AppIconButton>
-                        <AppIconButton v-if="can('photo.galleries.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(g)">
-                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                        </AppIconButton>
-                    </div>
-                </div>
-            </article>
-        </div>
+                </article>
+            </div>
 
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

@@ -157,36 +157,36 @@ const isSupplier = computed(() => tiers.value.type === 'supplier');
             </div>
 
             <div class="relative space-y-4">
-            <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-                <AppNoData v-if="!items?.length" :message="t('backend.billing.invoices.empty')" />
-                <table v-else class="w-full text-sm">
-                    <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
-                        <tr>
-                            <th class="text-left px-4 py-3 font-semibold">{{ t('backend.billing.invoices.number') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('backend.billing.invoices.issuedAt') }}</th>
-                            <th class="text-right px-4 py-3 font-semibold">{{ t('backend.billing.invoices.totalGross') }}</th>
-                            <th class="text-left px-4 py-3 font-semibold">{{ t('backend.billing.invoices.statusLabel') }}</th>
-                            <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="invoice in items" :key="invoice.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
-                            <td class="px-4 py-3 font-mono text-xs text-primary">{{ invoice.number ?? '—' }}</td>
-                            <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateNumeric(invoice.issuedAt) }}</td>
-                            <td class="px-4 py-3 text-primary text-right tabular-nums">{{ formatCents(invoice.totalGrossCents, invoice.currency) ?? '—' }}</td>
-                            <td class="px-4 py-3"><AppBadge :color="invoice.statusColor">{{ invoice.statusLabel ?? t(`backend.billing.invoices.status.${invoice.status}`) }}</AppBadge></td>
-                            <td class="px-4 py-3 text-right">
-                                <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: invoice.id })">
-                                    <Eye class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+                    <AppNoData v-if="!items?.length" :message="t('backend.billing.invoices.empty')" />
+                    <table v-else class="w-full text-sm">
+                        <thead class="bg-surface-2 text-xs text-secondary uppercase tracking-wide">
+                            <tr>
+                                <th class="text-left px-4 py-3 font-semibold">{{ t('backend.billing.invoices.number') }}</th>
+                                <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">{{ t('backend.billing.invoices.issuedAt') }}</th>
+                                <th class="text-right px-4 py-3 font-semibold">{{ t('backend.billing.invoices.totalGross') }}</th>
+                                <th class="text-left px-4 py-3 font-semibold">{{ t('backend.billing.invoices.statusLabel') }}</th>
+                                <th class="text-right px-4 py-3 font-semibold">{{ t('shared.common.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="invoice in items" :key="invoice.id" class="border-t border-line/60 hover:bg-surface-2/50 transition-colors">
+                                <td class="px-4 py-3 font-mono text-xs text-primary">{{ invoice.number ?? '—' }}</td>
+                                <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ formatDateNumeric(invoice.issuedAt) }}</td>
+                                <td class="px-4 py-3 text-primary text-right tabular-nums">{{ formatCents(invoice.totalGrossCents, invoice.currency) ?? '—' }}</td>
+                                <td class="px-4 py-3"><AppBadge :color="invoice.statusColor">{{ invoice.statusLabel ?? t(`backend.billing.invoices.status.${invoice.status}`) }}</AppBadge></td>
+                                <td class="px-4 py-3 text-right">
+                                    <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(invoiceShowPath, { id: invoice.id })">
+                                        <Eye class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-            <AppLoader :active="loading" />
+                <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+                <AppLoader :active="loading" />
             </div>
         </div>
 

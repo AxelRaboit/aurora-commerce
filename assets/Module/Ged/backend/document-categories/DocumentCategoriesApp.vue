@@ -55,50 +55,50 @@ const {
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <!-- Mobile cards -->
-        <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!items?.length" :message="t('backend.ged.categories.empty')" />
-            <div v-for="cat in items" :key="cat.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
-                <div class="px-4 py-3">
-                    <p class="font-medium text-primary text-sm">{{ cat.name }}</p>
-                    <p class="text-xs text-muted font-mono mt-0.5">{{ cat.slug }}</p>
-                </div>
-                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
-                    <AppIconButton v-if="can('ged.categories.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                    <AppIconButton v-if="can('ged.categories.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+            <!-- Mobile cards -->
+            <div class="sm:hidden space-y-2">
+                <AppNoData v-if="!items?.length" :message="t('backend.ged.categories.empty')" />
+                <div v-for="cat in items" :key="cat.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                    <div class="px-4 py-3">
+                        <p class="font-medium text-primary text-sm">{{ cat.name }}</p>
+                        <p class="text-xs text-muted font-mono mt-0.5">{{ cat.slug }}</p>
+                    </div>
+                    <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
+                        <AppIconButton v-if="can('ged.categories.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton v-if="can('ged.categories.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Desktop table -->
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.categories.name") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.categories.slug") }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="cat in items" :key="cat.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3 font-medium text-primary">{{ cat.name }}</td>
-                        <td class="px-6 py-3 text-muted font-mono text-xs hidden md:table-cell">{{ cat.slug }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="can('ged.categories.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('ged.categories.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="3"><AppNoData :message="t('backend.ged.categories.empty')" /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <!-- Desktop table -->
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.categories.name") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.categories.slug") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="cat in items" :key="cat.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3 font-medium text-primary">{{ cat.name }}</td>
+                            <td class="px-6 py-3 text-muted font-mono text-xs hidden md:table-cell">{{ cat.slug }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton v-if="can('ged.categories.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(cat)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('ged.categories.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(cat)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="3"><AppNoData :message="t('backend.ged.categories.empty')" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

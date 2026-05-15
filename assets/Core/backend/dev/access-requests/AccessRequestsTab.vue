@@ -57,87 +57,87 @@ onMounted(() => {
         </div>
 
         <div class="relative space-y-4">
-        <div class="sm:hidden space-y-3">
-            <p v-if="!accessRequests.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</p>
-            <div v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '-' }}</p>
-                        <p class="text-xs text-secondary truncate">{{ accessRequest.requesterEmail }}</p>
-                    </div>
-                    <AccessRequestStatusBadge
-                        :access-request="accessRequest"
-                        :status-label="accessRequests.statusLabel.value"
-                        class="shrink-0"
-                    />
-                </div>
-                <p v-if="accessRequest.message" class="text-sm text-secondary">{{ accessRequest.message }}</p>
-                <div class="flex items-center justify-between pt-1 border-t border-line">
-                    <p class="text-xs text-muted">{{ formatDateShort(accessRequest.createdAt) }} · expire {{ formatDateShort(accessRequest.expiresAt) }}</p>
-                    <div class="flex items-center gap-1">
-                        <AccessRequestActions
+            <div class="sm:hidden space-y-3">
+                <p v-if="!accessRequests.items.value?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</p>
+                <div v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary truncate">{{ accessRequest.requesterName ?? '-' }}</p>
+                            <p class="text-xs text-secondary truncate">{{ accessRequest.requesterEmail }}</p>
+                        </div>
+                        <AccessRequestStatusBadge
                             :access-request="accessRequest"
-                            v-on:approve="accessRequests.openApproveModal"
-                            v-on:reject="(ar) => (accessRequests.pendingReject.value = ar)"
+                            :status-label="accessRequests.statusLabel.value"
+                            class="shrink-0"
                         />
+                    </div>
+                    <p v-if="accessRequest.message" class="text-sm text-secondary">{{ accessRequest.message }}</p>
+                    <div class="flex items-center justify-between pt-1 border-t border-line">
+                        <p class="text-xs text-muted">{{ formatDateShort(accessRequest.createdAt) }} · expire {{ formatDateShort(accessRequest.expiresAt) }}</p>
+                        <div class="flex items-center gap-1">
+                            <AccessRequestActions
+                                :access-request="accessRequest"
+                                v-on:approve="accessRequests.openApproveModal"
+                                v-on:reject="(ar) => (accessRequests.pendingReject.value = ar)"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.access_requests.requester') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.access_requests.message') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.access_requests.status') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.access_requests.date') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.access_requests.expires') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <p class="font-medium text-primary">{{ accessRequest.requesterName ?? '-' }}</p>
-                            <p class="text-xs text-secondary">{{ accessRequest.requesterEmail }}</p>
-                        </td>
-                        <td class="px-6 py-3 max-w-xs hidden md:table-cell">
-                            <p class="text-sm text-secondary truncate">{{ accessRequest.message ?? '-' }}</p>
-                        </td>
-                        <td class="px-6 py-3">
-                            <AccessRequestStatusBadge
-                                :access-request="accessRequest"
-                                :status-label="accessRequests.statusLabel.value"
-                            />
-                        </td>
-                        <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.createdAt) }}</td>
-                        <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.expiresAt) }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-1">
-                                <AccessRequestActions
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.access_requests.requester') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.access_requests.message') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.access_requests.status') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.access_requests.date') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.access_requests.expires') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="accessRequest in accessRequests.items.value" :key="accessRequest.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <p class="font-medium text-primary">{{ accessRequest.requesterName ?? '-' }}</p>
+                                <p class="text-xs text-secondary">{{ accessRequest.requesterEmail }}</p>
+                            </td>
+                            <td class="px-6 py-3 max-w-xs hidden md:table-cell">
+                                <p class="text-sm text-secondary truncate">{{ accessRequest.message ?? '-' }}</p>
+                            </td>
+                            <td class="px-6 py-3">
+                                <AccessRequestStatusBadge
                                     :access-request="accessRequest"
-                                    v-on:approve="accessRequests.openApproveModal"
-                                    v-on:reject="(ar) => (accessRequests.pendingReject.value = ar)"
+                                    :status-label="accessRequests.statusLabel.value"
                                 />
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!accessRequests.items.value?.length">
-                        <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            </td>
+                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.createdAt) }}</td>
+                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.expiresAt) }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-1">
+                                    <AccessRequestActions
+                                        :access-request="accessRequest"
+                                        v-on:approve="accessRequests.openApproveModal"
+                                        v-on:reject="(ar) => (accessRequests.pendingReject.value = ar)"
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!accessRequests.items.value?.length">
+                            <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.access_requests.empty') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination
-            v-if="accessRequests.totalPages.value > 1"
-            :page="accessRequests.page.value"
-            :total-pages="accessRequests.totalPages.value"
-            v-on:change="accessRequests.goToPage"
-        />
-        <AppLoader :active="accessRequests.loading.value" />
+            <AppPagination
+                v-if="accessRequests.totalPages.value > 1"
+                :page="accessRequests.page.value"
+                :total-pages="accessRequests.totalPages.value"
+                v-on:change="accessRequests.goToPage"
+            />
+            <AppLoader :active="accessRequests.loading.value" />
         </div>
 
         <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingApprove.value = null">

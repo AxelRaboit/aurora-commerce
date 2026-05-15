@@ -128,28 +128,28 @@ const showPreview = ref(false);
             </AppButton>
 
             <div class="relative space-y-3">
-            <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
-                <AppNoData v-if="!loading && !forms.length" :message="t('backend.forms.empty')" />
-                <ul v-else class="divide-y divide-line/60">
-                    <li
-                        v-for="form in forms"
-                        :key="form.id"
-                        class="px-4 py-3.5 cursor-pointer hover:bg-surface-2/50 active:bg-accent-600/5 transition-colors flex items-start gap-3"
-                        :class="selectedForm?.id === form.id ? 'bg-accent-600/10' : ''"
-                        v-on:click="selectForm(form)"
-                    >
-                        <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-muted'" :stroke-width="2" />
-                        <div class="min-w-0 flex-1">
-                            <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
-                            <p class="text-xs text-muted mt-0.5">{{ form.submissionCount }} {{ t("backend.forms.submissions_count") }}</p>
-                        </div>
-                        <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("backend.forms.inactive") }}</AppBadge>
-                    </li>
-                </ul>
-            </div>
+                <div class="bg-surface border border-line/60 rounded-xl overflow-hidden">
+                    <AppNoData v-if="!loading && !forms.length" :message="t('backend.forms.empty')" />
+                    <ul v-else class="divide-y divide-line/60">
+                        <li
+                            v-for="form in forms"
+                            :key="form.id"
+                            class="px-4 py-3.5 cursor-pointer hover:bg-surface-2/50 active:bg-accent-600/5 transition-colors flex items-start gap-3"
+                            :class="selectedForm?.id === form.id ? 'bg-accent-600/10' : ''"
+                            v-on:click="selectForm(form)"
+                        >
+                            <ClipboardList class="w-4 h-4 shrink-0 mt-0.5" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-muted'" :stroke-width="2" />
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-medium truncate" :class="selectedForm?.id === form.id ? 'text-accent-400' : 'text-primary'">{{ formTitle(form) || "—" }}</p>
+                                <p class="text-xs text-muted mt-0.5">{{ form.submissionCount }} {{ t("backend.forms.submissions_count") }}</p>
+                            </div>
+                            <AppBadge v-if="!form.active" color="gray" class="shrink-0">{{ t("backend.forms.inactive") }}</AppBadge>
+                        </li>
+                    </ul>
+                </div>
 
-            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-            <AppLoader :active="loading" />
+                <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+                <AppLoader :active="loading" />
             </div>
         </div>
 

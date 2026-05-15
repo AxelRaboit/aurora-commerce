@@ -77,45 +77,45 @@ const TYPE_BADGE = {
         </div>
 
         <div class="relative space-y-4">
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <AppNoData v-if="!items?.length" :message="t('backend.billing.tiers.empty')" />
-            <table v-else class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.tiers.type.label') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.vatNumber') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.suppliers.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.country') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="tiers in items" :key="tiers.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <AppBadge :color="TYPE_BADGE[tiers.type] ?? 'slate'">{{ t(`backend.billing.tiers.type.${tiers.type}`) }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ tiers.name }}</td>
-                        <td class="px-6 py-3 font-mono text-xs text-secondary">{{ tiers.vatNumber ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell truncate max-w-xs">{{ tiers.email ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary">{{ tiers.countryCode ?? '—' }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: tiers.id })">
-                                    <Eye class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton v-if="can('billing.tiers.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tiers)">
-                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <AppNoData v-if="!items?.length" :message="t('backend.billing.tiers.empty')" />
+                <table v-else class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.tiers.type.label') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.vatNumber') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.suppliers.email') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.country') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="tiers in items" :key="tiers.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <AppBadge :color="TYPE_BADGE[tiers.type] ?? 'slate'">{{ t(`backend.billing.tiers.type.${tiers.type}`) }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3 text-primary font-medium truncate max-w-xs">{{ tiers.name }}</td>
+                            <td class="px-6 py-3 font-mono text-xs text-secondary">{{ tiers.vatNumber ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell truncate max-w-xs">{{ tiers.email ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary">{{ tiers.countryCode ?? '—' }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: tiers.id })">
+                                        <Eye class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton v-if="can('billing.tiers.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tiers)">
+                                        <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

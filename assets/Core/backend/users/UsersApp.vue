@@ -95,123 +95,123 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
         </div>
 
         <div class="relative space-y-4">
-        <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
-            <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
-                <!-- Avatar + nom + email -->
-                <div class="flex items-center gap-3 p-4">
-                    <AppAvatar
-                        variant="solid"
-                        :name="user.name"
-                        :photo-url="user.profilePhotoUrl ?? ''"
-                        :size="40"
-                        class="shrink-0"
-                    />
-                    <div class="min-w-0">
-                        <p class="font-medium text-primary text-sm truncate">{{ user.name }}</p>
-                        <p class="text-xs text-muted truncate mt-0.5">{{ user.email }}</p>
+            <div class="sm:hidden space-y-2">
+                <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
+                <div v-for="user in users" :key="user.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+                    <!-- Avatar + nom + email -->
+                    <div class="flex items-center gap-3 p-4">
+                        <AppAvatar
+                            variant="solid"
+                            :name="user.name"
+                            :photo-url="user.profilePhotoUrl ?? ''"
+                            :size="40"
+                            class="shrink-0"
+                        />
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary text-sm truncate">{{ user.name }}</p>
+                            <p class="text-xs text-muted truncate mt-0.5">{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <!-- Badges -->
+                    <div class="flex flex-wrap gap-1 px-4 pb-3">
+                        <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
+                        <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
+                        <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                        <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
+                        <AppBadge v-if="isCurrent(user)" color="accent">{{ t('backend.users.you') }}</AppBadge>
+                    </div>
+                    <!-- Footer actions -->
+                    <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
+                        <UserRowActions
+                            :user="user"
+                            :is-dev="isDev"
+                            :can-act="canActOn(user)"
+                            :can-edit="canEditUser(user)"
+                            :has-privileges="privilegesByModule.length > 0"
+                            :can-manage-disabled-modules="canManageDisabledModules && modulesForAccess.length > 0"
+                            :impersonate-path="impersonatePath"
+                            :impersonate-front-path="impersonateFrontPath"
+                            v-on:view="openViewWithPrivileges"
+                            v-on:resend="resendInvitation"
+                            v-on:edit="openEdit"
+                            v-on:privileges="openPrivileges"
+                            v-on:modules="openModules"
+                            v-on:toggle-disabled="askToggleDisabled"
+                            v-on:delete="deletingUser = $event"
+                        />
                     </div>
                 </div>
-                <!-- Badges -->
-                <div class="flex flex-wrap gap-1 px-4 pb-3">
-                    <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
-                    <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
-                    <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
-                    <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
-                    <AppBadge v-if="isCurrent(user)" color="accent">{{ t('backend.users.you') }}</AppBadge>
-                </div>
-                <!-- Footer actions -->
-                <div class="flex justify-end px-3 py-2 border-t border-line/40 bg-surface-2/40">
-                    <UserRowActions
-                        :user="user"
-                        :is-dev="isDev"
-                        :can-act="canActOn(user)"
-                        :can-edit="canEditUser(user)"
-                        :has-privileges="privilegesByModule.length > 0"
-                        :can-manage-disabled-modules="canManageDisabledModules && modulesForAccess.length > 0"
-                        :impersonate-path="impersonatePath"
-                        :impersonate-front-path="impersonateFrontPath"
-                        v-on:view="openViewWithPrivileges"
-                        v-on:resend="resendInvitation"
-                        v-on:edit="openEdit"
-                        v-on:privileges="openPrivileges"
-                        v-on:modules="openModules"
-                        v-on:toggle-disabled="askToggleDisabled"
-                        v-on:delete="deletingUser = $event"
-                    />
-                </div>
             </div>
-        </div>
 
-        <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
-            <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
-            <table v-else class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.name') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.email') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.roleLabel') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.typeLabel') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.statusLabel') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
-                        <slot name="extra-headers" />
-                        <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="user in users" :key="user.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-4 py-3 text-primary font-medium">
-                            <div class="flex items-center gap-3">
-                                <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
-                                <span>
-                                    {{ user.name }}
-                                    <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('backend.users.you') }}</AppBadge>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
-                        <td class="px-4 py-3 hidden md:table-cell">
-                            <div class="flex items-center gap-1 flex-wrap">
-                                <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
-                                <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 hidden lg:table-cell">
-                            <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
-                        </td>
-                        <td class="px-4 py-3">
-                            <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
-                        </td>
-                        <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
-                        <slot name="extra-cells" :user="user" />
-                        <td class="px-4 py-3">
-                            <div class="flex justify-end">
-                                <UserRowActions
-                                    :user="user"
-                                    :is-dev="isDev"
-                                    :can-act="canActOn(user)"
-                                    :can-edit="canEditUser(user)"
-                                    :has-privileges="privilegesByModule.length > 0"
-                                    :can-manage-disabled-modules="canManageDisabledModules && modulesForAccess.length > 0"
-                                    :impersonate-path="impersonatePath"
-                                    :impersonate-front-path="impersonateFrontPath"
-                                    v-on:view="openViewWithPrivileges"
-                                    v-on:resend="resendInvitation"
-                                    v-on:edit="openEdit"
-                                    v-on:privileges="openPrivileges"
-                                    v-on:modules="openModules"
-                                    v-on:toggle-disabled="askToggleDisabled"
-                                    v-on:delete="deletingUser = $event"
-                                />
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
+                <AppNoData v-if="!loading && !users.length" :message="t('backend.users.empty')" />
+                <table v-else class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.name') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.email') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.roleLabel') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.typeLabel') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.statusLabel') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
+                            <slot name="extra-headers" />
+                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="user in users" :key="user.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-4 py-3 text-primary font-medium">
+                                <div class="flex items-center gap-3">
+                                    <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
+                                    <span>
+                                        {{ user.name }}
+                                        <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('backend.users.you') }}</AppBadge>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
+                            <td class="px-4 py-3 hidden md:table-cell">
+                                <div class="flex items-center gap-1 flex-wrap">
+                                    <AppBadge v-if="user.isDev" color="rose">Dev</AppBadge>
+                                    <AppBadge v-if="user.roleLabel" color="accent">{{ user.roleLabel }}</AppBadge>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 hidden lg:table-cell">
+                                <AppBadge :color="user.type === 'backend' ? 'accent' : 'gray'">{{ user.typeLabel }}</AppBadge>
+                            </td>
+                            <td class="px-4 py-3">
+                                <AppBadge :color="statusBadgeColor(user.status)">{{ user.statusLabel }}</AppBadge>
+                            </td>
+                            <td class="px-4 py-3 text-xs text-muted hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
+                            <slot name="extra-cells" :user="user" />
+                            <td class="px-4 py-3">
+                                <div class="flex justify-end">
+                                    <UserRowActions
+                                        :user="user"
+                                        :is-dev="isDev"
+                                        :can-act="canActOn(user)"
+                                        :can-edit="canEditUser(user)"
+                                        :has-privileges="privilegesByModule.length > 0"
+                                        :can-manage-disabled-modules="canManageDisabledModules && modulesForAccess.length > 0"
+                                        :impersonate-path="impersonatePath"
+                                        :impersonate-front-path="impersonateFrontPath"
+                                        v-on:view="openViewWithPrivileges"
+                                        v-on:resend="resendInvitation"
+                                        v-on:edit="openEdit"
+                                        v-on:privileges="openPrivileges"
+                                        v-on:modules="openModules"
+                                        v-on:toggle-disabled="askToggleDisabled"
+                                        v-on:delete="deletingUser = $event"
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

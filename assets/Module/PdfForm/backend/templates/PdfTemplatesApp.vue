@@ -65,47 +65,47 @@ const {
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.pdfform.templates.name") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.pdfform.templates.status") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.pdfform.templates.fieldCount") }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.pdfform.templates.file") }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="tpl in items" :key="tpl.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <p class="font-medium text-primary">{{ tpl.name }}</p>
-                            <p v-if="tpl.description" class="text-xs text-muted truncate max-w-xs">{{ tpl.description }}</p>
-                        </td>
-                        <td class="px-6 py-3 hidden md:table-cell">
-                            <AppBadge :color="TEMPLATE_STATUS_BADGE[tpl.status]">{{ tpl.statusLabel }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3 hidden lg:table-cell text-secondary">{{ tpl.fieldCount }}</td>
-                        <td class="px-6 py-3 hidden lg:table-cell">
-                            <span v-if="tpl.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ tpl.fileName }}</span>
-                            <span v-else class="text-muted text-xs">—</span>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="can('pdfform.templates.edit')" color="sky" :title="t('backend.pdfform.templates.detectFields')" v-on:click="openFields(tpl)"><ScanSearch class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('pdfform.templates.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tpl)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('pdfform.templates.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tpl)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="5"><AppNoData :message="t('backend.pdfform.templates.empty')" /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.pdfform.templates.name") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.pdfform.templates.status") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.pdfform.templates.fieldCount") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.pdfform.templates.file") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="tpl in items" :key="tpl.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <p class="font-medium text-primary">{{ tpl.name }}</p>
+                                <p v-if="tpl.description" class="text-xs text-muted truncate max-w-xs">{{ tpl.description }}</p>
+                            </td>
+                            <td class="px-6 py-3 hidden md:table-cell">
+                                <AppBadge :color="TEMPLATE_STATUS_BADGE[tpl.status]">{{ tpl.statusLabel }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3 hidden lg:table-cell text-secondary">{{ tpl.fieldCount }}</td>
+                            <td class="px-6 py-3 hidden lg:table-cell">
+                                <span v-if="tpl.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ tpl.fileName }}</span>
+                                <span v-else class="text-muted text-xs">—</span>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton v-if="can('pdfform.templates.edit')" color="sky" :title="t('backend.pdfform.templates.detectFields')" v-on:click="openFields(tpl)"><ScanSearch class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('pdfform.templates.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tpl)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('pdfform.templates.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tpl)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="5"><AppNoData :message="t('backend.pdfform.templates.empty')" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <!-- Create modal -->

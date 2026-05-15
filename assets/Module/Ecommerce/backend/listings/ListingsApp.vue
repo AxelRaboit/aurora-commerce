@@ -91,101 +91,101 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.title') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.slug') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.ecommerce.listings.categories') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.listings.price') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.visibility') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="listing in items" :key="listing.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-10 h-10 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
-                                    <AppImage v-if="listing.displayImage" :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
-                                    <span v-else class="text-muted text-xs">—</span>
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.title') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.slug') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.ecommerce.listings.categories') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.listings.price') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.listings.visibility') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="listing in items" :key="listing.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-10 h-10 rounded bg-surface-2 overflow-hidden shrink-0 flex items-center justify-center">
+                                        <AppImage v-if="listing.displayImage" :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
+                                        <span v-else class="text-muted text-xs">—</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-medium text-primary truncate">{{ listing.displayTitle }}</div>
+                                        <div class="text-xs font-mono text-muted">{{ listing.product.reference }}</div>
+                                    </div>
                                 </div>
-                                <div class="min-w-0">
-                                    <div class="font-medium text-primary truncate">{{ listing.displayTitle }}</div>
-                                    <div class="text-xs font-mono text-muted">{{ listing.product.reference }}</div>
+                            </td>
+                            <td class="px-6 py-3 font-mono text-xs text-secondary">/{{ listing.slug }}</td>
+                            <td class="px-6 py-3 hidden lg:table-cell">
+                                <div v-if="listing.categories?.length" class="flex flex-wrap gap-1">
+                                    <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
+                                        {{ category.name }}
+                                    </AppBadge>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-3 font-mono text-xs text-secondary">/{{ listing.slug }}</td>
-                        <td class="px-6 py-3 hidden lg:table-cell">
-                            <div v-if="listing.categories?.length" class="flex flex-wrap gap-1">
-                                <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
-                                    {{ category.name }}
+                                <div v-if="listing.tags?.length" class="flex flex-wrap gap-1 mt-1">
+                                    <AppBadge v-for="tag in listing.tags" :key="tag.id" :color="tag.color">
+                                        {{ tag.name }}
+                                    </AppBadge>
+                                </div>
+                            </td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
+                            <td class="px-6 py-3">
+                                <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
+                                    {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
                                 </AppBadge>
-                            </div>
-                            <div v-if="listing.tags?.length" class="flex flex-wrap gap-1 mt-1">
-                                <AppBadge v-for="tag in listing.tags" :key="tag.id" :color="tag.color">
-                                    {{ tag.name }}
-                                </AppBadge>
-                            </div>
-                        </td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(listing.product) }}</td>
-                        <td class="px-6 py-3">
-                            <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
-                                {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
-                            </AppBadge>
-                        </td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: listing.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(listing)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td :colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="sm:hidden space-y-3">
-            <div v-for="listing in items" :key="listing.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="font-medium text-primary truncate">{{ listing.displayTitle }}</p>
-                        <p class="text-xs font-mono text-muted mt-0.5 truncate">/{{ listing.slug }}</p>
-                    </div>
-                    <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
-                        {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
-                    </AppBadge>
-                </div>
-                <div v-if="listing.categories?.length" class="flex flex-wrap gap-1">
-                    <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
-                        {{ category.name }}
-                    </AppBadge>
-                </div>
-                <div v-if="listing.tags?.length" class="flex flex-wrap gap-1">
-                    <AppBadge v-for="tag in listing.tags" :key="tag.id" :color="tag.color">
-                        {{ tag.name }}
-                    </AppBadge>
-                </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
-                    <div class="flex items-center gap-0.5">
-                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: listing.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(listing)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                    </div>
-                </div>
+                            </td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: listing.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(listing)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td :colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <p v-if="!items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</p>
-        </div>
 
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <div class="sm:hidden space-y-3">
+                <div v-for="listing in items" :key="listing.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary truncate">{{ listing.displayTitle }}</p>
+                            <p class="text-xs font-mono text-muted mt-0.5 truncate">/{{ listing.slug }}</p>
+                        </div>
+                        <AppBadge :color="listing.isVisibleOnShop ? 'emerald' : 'slate'">
+                            {{ t(listing.isVisibleOnShop ? 'backend.ecommerce.listings.visible' : 'backend.ecommerce.listings.hidden') }}
+                        </AppBadge>
+                    </div>
+                    <div v-if="listing.categories?.length" class="flex flex-wrap gap-1">
+                        <AppBadge v-for="category in listing.categories" :key="category.id" color="sky">
+                            {{ category.name }}
+                        </AppBadge>
+                    </div>
+                    <div v-if="listing.tags?.length" class="flex flex-wrap gap-1">
+                        <AppBadge v-for="tag in listing.tags" :key="tag.id" :color="tag.color">
+                            {{ tag.name }}
+                        </AppBadge>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-line">
+                        <p class="text-sm text-secondary">{{ formatProductPrice(listing.product) }}</p>
+                        <div class="flex items-center gap-0.5">
+                            <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: listing.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('ecommerce.listings.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(listing)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('ecommerce.listings.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(listing)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        </div>
+                    </div>
+                </div>
+                <p v-if="!items?.length" class="py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.listings.empty') }}</p>
+            </div>
+
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

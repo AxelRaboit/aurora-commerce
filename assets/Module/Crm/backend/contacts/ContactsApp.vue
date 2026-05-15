@@ -77,100 +77,100 @@ const { flatTags } = useContactsTags(props.tagsPath);
         </AppListToolbar>
 
         <div class="relative space-y-4">
-        <div class="sm:hidden space-y-3">
-            <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                <div class="flex items-start gap-3">
-                    <AppAvatar
-                        :first-name="contact.firstName"
-                        :last-name="contact.lastName"
-                        :name="contact.fullName"
-                        :email="contact.email"
-                        size="lg"
-                    />
-                    <div class="flex-1 min-w-0">
-                        <p class="font-medium text-primary">{{ contact.fullName }}</p>
-                        <p v-if="contact.company" class="text-xs text-muted mt-0.5">{{ contact.company }}</p>
-                        <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1.5">
-                            <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
-                            <AppBadge
-                                v-for="tag in (contact.tags ?? [])"
-                                :key="tag.id"
-                                :color="tag.color"
-                            >
-                                {{ tag.label }}
-                            </AppBadge>
+            <div class="sm:hidden space-y-3">
+                <div v-for="contact in items" :key="contact.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start gap-3">
+                        <AppAvatar
+                            :first-name="contact.firstName"
+                            :last-name="contact.lastName"
+                            :name="contact.fullName"
+                            :email="contact.email"
+                            size="lg"
+                        />
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-primary">{{ contact.fullName }}</p>
+                            <p v-if="contact.company" class="text-xs text-muted mt-0.5">{{ contact.company }}</p>
+                            <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1.5">
+                                <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
+                                <AppBadge
+                                    v-for="tag in (contact.tags ?? [])"
+                                    :key="tag.id"
+                                    :color="tag.color"
+                                >
+                                    {{ tag.label }}
+                                </AppBadge>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-line">
+                        <p class="text-xs text-muted truncate">{{ contact.email ?? contact.phone ?? '—' }}</p>
+                        <div class="flex items-center gap-0.5">
+                            <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openShow(contact)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <p class="text-xs text-muted truncate">{{ contact.email ?? contact.phone ?? '—' }}</p>
-                    <div class="flex items-center gap-0.5">
-                        <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openShow(contact)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                        <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                    </div>
-                </div>
             </div>
-        </div>
 
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.contacts.name') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.contacts.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.contacts.company') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.contacts.phone') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="contact in items" :key="contact.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3">
-                            <div class="flex items-center gap-3">
-                                <AppAvatar
-                                    :first-name="contact.firstName"
-                                    :last-name="contact.lastName"
-                                    :name="contact.fullName"
-                                    :email="contact.email"
-                                    size="md"
-                                />
-                                <div class="min-w-0">
-                                    <p class="font-medium text-primary truncate">{{ contact.fullName }}</p>
-                                    <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1">
-                                        <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
-                                        <AppBadge
-                                            v-for="tag in (contact.tags ?? [])"
-                                            :key="tag.id"
-                                            :color="tag.color"
-                                        >
-                                            {{ tag.label }}
-                                        </AppBadge>
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.contacts.name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.contacts.email') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.contacts.company') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.contacts.phone') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="contact in items" :key="contact.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <div class="flex items-center gap-3">
+                                    <AppAvatar
+                                        :first-name="contact.firstName"
+                                        :last-name="contact.lastName"
+                                        :name="contact.fullName"
+                                        :email="contact.email"
+                                        size="md"
+                                    />
+                                    <div class="min-w-0">
+                                        <p class="font-medium text-primary truncate">{{ contact.fullName }}</p>
+                                        <div v-if="contact.source || (contact.tags && contact.tags.length)" class="flex flex-wrap gap-1 mt-1">
+                                            <AppBadge v-if="contact.source" :color="contactSourceColor(contact.source)">{{ t(`backend.crm.contacts.sources.${contact.source}`) }}</AppBadge>
+                                            <AppBadge
+                                                v-for="tag in (contact.tags ?? [])"
+                                                :key="tag.id"
+                                                :color="tag.color"
+                                            >
+                                                {{ tag.label }}
+                                            </AppBadge>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-3 text-secondary">{{ contact.email ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ contact.company ?? '—' }}</td>
-                        <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ contact.phone ?? '—' }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openShow(contact)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="px-6 py-3 text-secondary">{{ contact.email ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ contact.company ?? '—' }}</td>
+                            <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ contact.phone ?? '—' }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="sky" :title="t('shared.common.view')" v-on:click="openShow(contact)"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('crm.contacts.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(contact)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('crm.contacts.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(contact)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
 
-                    <tr v-if="!items?.length">
-                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.contacts.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        <tr v-if="!items?.length">
+                            <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.contacts.empty') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

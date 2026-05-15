@@ -126,69 +126,69 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     </template>
                 </AppListToolbar>
                 <div class="relative space-y-4">
-                <div class="sm:hidden space-y-3">
-                    <div v-for="deal in items" :key="deal.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex-1 min-w-0">
-                                <p class="font-medium text-primary">{{ deal.name }}</p>
-                                <p v-if="deal.contact || deal.company" class="text-xs text-muted mt-0.5">{{ deal.contact?.fullName ?? deal.company?.name }}</p>
+                    <div class="sm:hidden space-y-3">
+                        <div v-for="deal in items" :key="deal.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-primary">{{ deal.name }}</p>
+                                    <p v-if="deal.contact || deal.company" class="text-xs text-muted mt-0.5">{{ deal.contact?.fullName ?? deal.company?.name }}</p>
+                                </div>
+                                <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0', stageBadge(deal.stage)]">
+                                    {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
+                                </span>
                             </div>
-                            <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0', stageBadge(deal.stage)]">
-                                {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-line">
-                            <span class="text-xs text-secondary font-medium">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</span>
-                            <div class="flex items-center gap-0.5">
-                                <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.deals.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                <AppIconButton v-if="can('crm.deals.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <div class="flex items-center justify-between pt-2 border-t border-line">
+                                <span class="text-xs text-secondary font-medium">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</span>
+                                <div class="flex items-center gap-0.5">
+                                    <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('crm.deals.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton v-if="can('crm.deals.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-surface-2/50 border-b border-line/40">
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.name') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.stage') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.deals.contact') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.deals.value') }}</th>
-                                <slot name="extra-headers" />
-                                <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-line/40">
-                            <tr v-for="deal in items" :key="deal.id" class="group hover:bg-surface-2/40 transition-colors">
-                                <td class="px-6 py-3 font-medium text-primary">{{ deal.name }}</td>
-                                <td class="px-6 py-3">
-                                    <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium', stageBadge(deal.stage)]">
-                                        {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ deal.contact?.fullName ?? deal.company?.name ?? '—' }}</td>
-                                <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</td>
-                                <slot name="extra-cells" :deal="deal" />
-                                <td class="px-6 py-3">
-                                    <div class="flex items-center justify-end gap-0.5">
-                                        <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton v-if="can('crm.deals.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton v-if="can('crm.deals.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                    </div>
-                                </td>
-                            </tr>
+                    <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-surface-2/50 border-b border-line/40">
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.name') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.crm.deals.stage') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.crm.deals.contact') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.crm.deals.value') }}</th>
+                                    <slot name="extra-headers" />
+                                    <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-line/40">
+                                <tr v-for="deal in items" :key="deal.id" class="group hover:bg-surface-2/40 transition-colors">
+                                    <td class="px-6 py-3 font-medium text-primary">{{ deal.name }}</td>
+                                    <td class="px-6 py-3">
+                                        <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium', stageBadge(deal.stage)]">
+                                            {{ t(`backend.crm.deals.stages.${deal.stage}`) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ deal.contact?.fullName ?? deal.company?.name ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-secondary hidden lg:table-cell">{{ deal.value ? `${Number(deal.value).toLocaleString()} €` : '—' }}</td>
+                                    <slot name="extra-cells" :deal="deal" />
+                                    <td class="px-6 py-3">
+                                        <div class="flex items-center justify-end gap-0.5">
+                                            <AppIconButton v-if="showPath" color="sky" :href="buildPath(showPath, { id: deal.id })"><Eye class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                            <AppIconButton v-if="can('crm.deals.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(deal)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                            <AppIconButton v-if="can('crm.deals.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(deal)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        </div>
+                                    </td>
+                                </tr>
 
-                            <tr v-if="!items?.length">
-                                <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.deals.empty') }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                <tr v-if="!items?.length">
+                                    <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.crm.deals.empty') }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
-                <AppLoader :active="loading" />
+                    <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+                    <AppLoader :active="loading" />
                 </div>
             </div>
 

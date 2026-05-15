@@ -69,72 +69,72 @@ const formatTotal = (order) => formatOrderTotal(order);
         />
 
         <div class="relative space-y-4">
-        <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!items?.length" :message="t('backend.ecommerce.orders.empty')" />
-            <div v-for="order in items" :key="order.id" class="bg-surface border border-line rounded-xl p-4 space-y-2">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="font-mono text-sm font-semibold text-primary">{{ order.number }}</p>
-                        <p class="text-xs text-secondary truncate">{{ order.name }}</p>
-                        <p class="text-xs text-muted truncate">{{ order.email }}</p>
+            <div class="sm:hidden space-y-2">
+                <AppNoData v-if="!items?.length" :message="t('backend.ecommerce.orders.empty')" />
+                <div v-for="order in items" :key="order.id" class="bg-surface border border-line rounded-xl p-4 space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-mono text-sm font-semibold text-primary">{{ order.number }}</p>
+                            <p class="text-xs text-secondary truncate">{{ order.name }}</p>
+                            <p class="text-xs text-muted truncate">{{ order.email }}</p>
+                        </div>
+                        <AppBadge :color="statusBadge(order.status)" class="shrink-0">{{ t(`backend.ecommerce.orders.status.${order.status}`) }}</AppBadge>
                     </div>
-                    <AppBadge :color="statusBadge(order.status)" class="shrink-0">{{ t(`backend.ecommerce.orders.status.${order.status}`) }}</AppBadge>
-                </div>
-                <div class="flex items-center justify-between pt-2 border-t border-line/40">
-                    <span class="text-xs text-muted">{{ formatDateShort(order.createdAt) }} · {{ order.itemCount }} {{ t('backend.ecommerce.orders.items') }}</span>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-primary">{{ formatTotal(order) }}</span>
-                        <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
-                            <Eye class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
+                    <div class="flex items-center justify-between pt-2 border-t border-line/40">
+                        <span class="text-xs text-muted">{{ formatDateShort(order.createdAt) }} · {{ order.itemCount }} {{ t('backend.ecommerce.orders.items') }}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-primary">{{ formatTotal(order) }}</span>
+                            <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
+                                <Eye class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-surface-2/50 border-b border-line/40">
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.number') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.customer') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.orders.date') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.status_col') }}</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.total') }}</th>
-                        <slot name="extra-headers" />
-                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-line/40">
-                    <tr v-for="order in items" :key="order.id" class="group hover:bg-surface-2/40 transition-colors">
-                        <td class="px-6 py-3 font-mono text-primary">{{ order.number }}</td>
-                        <td class="px-6 py-3">
-                            <p class="text-primary">{{ order.name }}</p>
-                            <p class="text-xs text-muted">{{ order.email }}</p>
-                        </td>
-                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatDateShort(order.createdAt) }}</td>
-                        <td class="px-6 py-3">
-                            <AppBadge :color="statusBadge(order.status)">{{ t(`backend.ecommerce.orders.status.${order.status}`) }}</AppBadge>
-                        </td>
-                        <td class="px-6 py-3 text-right font-semibold text-primary">{{ formatTotal(order) }}</td>
-                        <slot name="extra-cells" :order="order" />
-                        <td class="px-6 py-3">
-                            <div class="flex items-center justify-end gap-0.5">
-                                <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
-                                    <Eye class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="!items?.length">
-                        <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.orders.empty') }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.number') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.customer') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.ecommerce.orders.date') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.status_col') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.ecommerce.orders.total') }}</th>
+                            <slot name="extra-headers" />
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="order in items" :key="order.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3 font-mono text-primary">{{ order.number }}</td>
+                            <td class="px-6 py-3">
+                                <p class="text-primary">{{ order.name }}</p>
+                                <p class="text-xs text-muted">{{ order.email }}</p>
+                            </td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatDateShort(order.createdAt) }}</td>
+                            <td class="px-6 py-3">
+                                <AppBadge :color="statusBadge(order.status)">{{ t(`backend.ecommerce.orders.status.${order.status}`) }}</AppBadge>
+                            </td>
+                            <td class="px-6 py-3 text-right font-semibold text-primary">{{ formatTotal(order) }}</td>
+                            <slot name="extra-cells" :order="order" />
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="sky" :title="t('shared.common.view')" :href="buildPath(showPath, { id: order.id })">
+                                        <Eye class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!items?.length">
+                            <td colspan="6" class="px-6 py-8 text-center text-sm text-muted">{{ t('backend.ecommerce.orders.empty') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
-        <AppLoader :active="loading" />
+            <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+            <AppLoader :active="loading" />
         </div>
     </div>
 </template>
