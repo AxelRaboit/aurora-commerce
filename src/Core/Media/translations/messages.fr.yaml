@@ -109,6 +109,7 @@ backend:
     createFolder: Créer un dossier
     editFolder: Renommer le dossier
     folderName: Nom du dossier
+    folderNamePlaceholder: ex. Photos vacances 2024
     parentFolder: Dossier parent
     deleteFolderConfirm: 'Supprimer le dossier « {name} » ? Son contenu sera déplacé à la racine.'
 shared:

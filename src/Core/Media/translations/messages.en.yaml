@@ -109,6 +109,7 @@ backend:
     createFolder: Create folder
     editFolder: Rename folder
     folderName: Folder name
+    folderNamePlaceholder: e.g. Holiday photos 2024
     parentFolder: Parent folder
     deleteFolderConfirm: 'Delete folder "{name}"? Its content will move to the root.'
 shared:

@@ -6,6 +6,9 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppFilePickerButton from "@/shared/components/action/AppFilePickerButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
+import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
+import AppNavListItem from "@/shared/components/nav/AppNavListItem.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppTextarea from "@/shared/components/form/AppTextarea.vue";
@@ -108,13 +111,15 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </span>
                 </template>
                 <template v-else>
-                    <button type="button" class="flex items-center gap-1.5 hover:text-primary transition-colors shrink-0" v-on:click="navigateTo(null)">
+                    <AppTextLinkButton color="muted" size="sm" class="shrink-0 no-underline hover:no-underline" v-on:click="navigateTo(null)">
                         <Home class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("backend.media.rootFolder") }}
-                    </button>
+                    </AppTextLinkButton>
                     <template v-for="crumb in breadcrumbs" :key="crumb.id">
                         <ChevronRight class="w-3 h-3 shrink-0" :stroke-width="2" />
-                        <button type="button" class="hover:text-primary transition-colors truncate" v-on:click="navigateTo(crumb.id)">{{ crumb.name }}</button>
+                        <AppTextLinkButton color="muted" size="sm" class="truncate no-underline hover:no-underline" v-on:click="navigateTo(crumb.id)">
+                            {{ crumb.name }}
+                        </AppTextLinkButton>
                     </template>
                 </template>
             </nav>
@@ -151,17 +156,17 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         <Star class="w-3 h-3 text-amber-400" :stroke-width="2" fill="currentColor" />
                         {{ t("backend.media.favourites") }}
                     </h3>
-                    <button
+                    <AppNavListItem
                         v-for="fav in favouriteFolders"
                         :key="fav.id"
-                        type="button"
-                        class="w-full text-left px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2 text-sm min-w-0"
-                        :class="currentFolderId === fav.id ? 'bg-accent-600/15 text-accent-400' : 'hover:bg-surface-2 text-primary'"
+                        :active="currentFolderId === fav.id"
                         v-on:click="navigateTo(fav.id)"
                     >
-                        <Folder class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
-                        <span class="truncate flex-1">{{ fav.name }}</span>
-                    </button>
+                        <template #icon>
+                            <Folder class="w-3.5 h-3.5" :stroke-width="2" />
+                        </template>
+                        {{ fav.name }}
+                    </AppNavListItem>
                     <div class="border-t border-line/40 my-1" />
                 </div>
 
@@ -176,34 +181,28 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </AppIconButton>
                 </div>
                 <div class="space-y-0.5">
-                    <button
-                        type="button"
-                        class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
-                        :class="allMediaView
-                            ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
-                            : 'hover:bg-surface-2 text-primary border-transparent'"
+                    <AppNavListItem
+                        :active="allMediaView"
                         v-on:click="navigateToAll()"
                     >
-                        <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
-                        <span class="flex-1 text-sm font-medium">{{ t("backend.media.allMedia") }}</span>
-                    </button>
-                    <button
-                        type="button"
-                        class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
-                        :class="[
-                            !currentFolderId && !allMediaView
-                                ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
-                                : 'hover:bg-surface-2 text-primary border-transparent',
-                            rootDragOver ? 'ring-2 ring-accent-500' : '',
-                        ]"
+                        <template #icon>
+                            <Layers class="w-4 h-4" :stroke-width="2" />
+                        </template>
+                        {{ t("backend.media.allMedia") }}
+                    </AppNavListItem>
+                    <AppNavListItem
+                        :active="!currentFolderId && !allMediaView"
+                        :drag-over="rootDragOver"
                         v-on:click="navigateTo(null)"
                         v-on:dragover="onRootDragOver"
                         v-on:dragleave="onDragLeave"
                         v-on:drop="onFolderDrop($event, null)"
                     >
-                        <Home class="w-4 h-4 shrink-0" :stroke-width="2" />
-                        <span class="flex-1 text-sm font-medium">{{ t("backend.media.rootFolder") }}</span>
-                    </button>
+                        <template #icon>
+                            <Home class="w-4 h-4" :stroke-width="2" />
+                        </template>
+                        {{ t("backend.media.rootFolder") }}
+                    </AppNavListItem>
                     <div
                         v-for="folder in flatFolders"
                         :key="folder.id"
@@ -212,45 +211,45 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                         draggable="true"
                         v-on:dragstart="onFolderDragStart($event, folder)"
                     >
-                        <button
+                        <AppIconButton
                             v-if="folder.childCount > 0"
-                            type="button"
-                            class="p-1 -ml-1 text-muted hover:text-primary rounded shrink-0"
+                            size="sm"
+                            variant="ghost"
+                            class="-ml-1 shrink-0"
                             :title="collapsedFolderIds.has(folder.id) ? t('backend.media.expand') : t('backend.media.collapse')"
                             v-on:click.stop="toggleCollapse(folder.id)"
                         >
                             <ChevronRight v-if="collapsedFolderIds.has(folder.id)" class="w-3 h-3" :stroke-width="2" />
                             <ChevronDown v-else class="w-3 h-3" :stroke-width="2" />
-                        </button>
+                        </AppIconButton>
                         <span v-else class="w-4 shrink-0" />
-                        <button
-                            type="button"
-                            class="flex-1 text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border min-w-0"
-                            :class="[
-                                currentFolderId === folder.id
-                                    ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
-                                    : 'hover:bg-surface-2 text-primary border-transparent',
-                                dragOverFolderId === folder.id ? 'ring-2 ring-accent-500' : '',
-                            ]"
+                        <AppNavListItem
+                            class="flex-1 min-w-0"
+                            :active="currentFolderId === folder.id"
+                            :drag-over="dragOverFolderId === folder.id"
                             v-on:click="navigateTo(folder.id)"
                             v-on:dragover="onFolderDragOver($event, folder.id)"
                             v-on:dragleave="onDragLeave"
                             v-on:drop="onFolderDrop($event, folder.id)"
                         >
-                            <Folder class="w-4 h-4 shrink-0" :stroke-width="2" />
-                            <span class="flex-1 text-sm truncate">{{ folder.name }}</span>
-                            <span v-if="folder.mediaCount > 0" class="text-xs text-muted font-mono shrink-0">{{ folder.mediaCount }}</span>
-                        </button>
+                            <template #icon>
+                                <Folder class="w-4 h-4" :stroke-width="2" />
+                            </template>
+                            {{ folder.name }}
+                            <template v-if="folder.mediaCount > 0" #trailing>
+                                <span class="text-xs text-muted font-mono">{{ folder.mediaCount }}</span>
+                            </template>
+                        </AppNavListItem>
                         <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
-                            <button
-                                type="button"
-                                class="p-1 rounded transition-colors"
+                            <AppIconButton
+                                size="sm"
+                                variant="ghost"
                                 :class="favouriteFolderIds.has(folder.id) ? 'text-amber-400' : 'text-muted hover:text-amber-400'"
                                 :title="favouriteFolderIds.has(folder.id) ? t('backend.media.unfavourite') : t('backend.media.favourite')"
                                 v-on:click.stop="toggleFavourite(folder.id)"
                             >
                                 <Star class="w-3.5 h-3.5" :stroke-width="2" :fill="favouriteFolderIds.has(folder.id) ? 'currentColor' : 'none'" />
-                            </button>
+                            </AppIconButton>
                             <AppIconButton v-if="can('core.media.manage')" color="accent" v-on:click="openEditFolder(folder)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
@@ -309,44 +308,58 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
                 <div class="flex flex-wrap items-center gap-2">
                     <div class="flex gap-1 flex-wrap">
-                        <button
+                        <AppTab
                             v-for="f in TYPE_FILTERS"
                             :key="f.key"
-                            type="button"
-                            class="px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
-                            :class="typeFilter === f.key ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary hover:bg-surface-2'"
+                            size="xs"
+                            :active="typeFilter === f.key"
                             v-on:click="typeFilter = f.key"
                         >
                             {{ t(f.label) }}
-                        </button>
+                        </AppTab>
                     </div>
                     <div class="ml-auto flex items-center gap-1.5">
                         <div class="flex gap-1 border border-line/60 rounded-lg p-0.5">
-                            <button
+                            <AppTab
                                 v-for="s in [{k:'position',l:'#',title:t('backend.media.sortPositionHint')},{k:'name',l:'A-Z',title:t('backend.media.sortName')},{k:'size',l:'KB',title:t('backend.media.sortSize')},{k:'date',l:t('backend.media.sortDate'),title:t('backend.media.sortDate')}]"
                                 :key="s.k"
-                                type="button"
-                                class="px-2 py-0.5 rounded text-xs transition-colors flex items-center gap-1"
-                                :class="sortBy === s.k ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                                size="xs"
+                                :active="sortBy === s.k"
                                 :title="s.title"
                                 v-on:click="setSort(s.k)"
                             >
                                 {{ s.l }}
                                 <SortAsc v-if="sortBy === s.k && sortDir === 'asc'" class="w-3 h-3" :stroke-width="2" />
                                 <SortDesc v-else-if="sortBy === s.k" class="w-3 h-3" :stroke-width="2" />
-                            </button>
+                            </AppTab>
                         </div>
                         <div class="flex border border-line/60 rounded-lg p-0.5">
-                            <button type="button" :class="viewMode === 'grid' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" class="p-1 rounded transition-colors" v-on:click="setViewMode('grid')">
+                            <AppIconButton
+                                size="sm"
+                                variant="ghost"
+                                :class="viewMode === 'grid' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                                v-on:click="setViewMode('grid')"
+                            >
                                 <LayoutGrid class="w-4 h-4" :stroke-width="2" />
-                            </button>
-                            <button type="button" :class="viewMode === 'list' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" class="p-1 rounded transition-colors" v-on:click="setViewMode('list')">
+                            </AppIconButton>
+                            <AppIconButton
+                                size="sm"
+                                variant="ghost"
+                                :class="viewMode === 'list' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                                v-on:click="setViewMode('list')"
+                            >
                                 <List class="w-4 h-4" :stroke-width="2" />
-                            </button>
+                            </AppIconButton>
                         </div>
-                        <button type="button" class="p-1 rounded-lg border border-line/60 transition-colors" :class="isSelecting ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary'" v-on:click="isSelecting = !isSelecting; if (!isSelecting) clearSelection()">
+                        <AppIconButton
+                            size="sm"
+                            variant="ghost"
+                            class="border border-line/60"
+                            :class="isSelecting ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary'"
+                            v-on:click="isSelecting = !isSelecting; if (!isSelecting) clearSelection()"
+                        >
                             <CheckSquare class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppIconButton>
                     </div>
                 </div>
 
@@ -524,9 +537,9 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             <div class="flex items-center justify-between gap-4 mb-1">
                 <h3 class="text-lg font-semibold text-primary truncate">{{ t("backend.media.editMedia") }}</h3>
                 <div class="flex border border-line/60 rounded-lg p-0.5 shrink-0">
-                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'edit' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'edit'">{{ t("backend.media.tabEdit") }}</button>
-                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'history' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="openHistoryTab">{{ t("backend.media.tabHistory") }}</button>
-                    <button type="button" class="px-3 py-1 rounded text-xs transition-colors" :class="editTab === 'usage' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'" v-on:click="editTab = 'usage'; if (!mediaUsage) loadUsage()">{{ t("backend.media.tabUsage") }}</button>
+                    <AppTab size="xs" :active="editTab === 'edit'" v-on:click="editTab = 'edit'">{{ t("backend.media.tabEdit") }}</AppTab>
+                    <AppTab size="xs" :active="editTab === 'history'" v-on:click="openHistoryTab">{{ t("backend.media.tabHistory") }}</AppTab>
+                    <AppTab size="xs" :active="editTab === 'usage'" v-on:click="editTab = 'usage'; if (!mediaUsage) loadUsage()">{{ t("backend.media.tabUsage") }}</AppTab>
                 </div>
             </div>
 
@@ -600,14 +613,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </div>
                     <div v-if="editingMedia?.isImage" class="flex items-center justify-between text-xs text-muted">
                         <span>{{ t("backend.media.focalHint") }}</span>
-                        <button
+                        <AppTextLinkButton
                             v-if="editForm.focalX !== null"
-                            type="button"
-                            class="text-accent-400 hover:underline"
+                            size="xs"
                             v-on:click="resetFocalPoint"
                         >
                             {{ t("backend.media.resetFocal") }}
-                        </button>
+                        </AppTextLinkButton>
                     </div>
                 </div>
 
@@ -683,6 +695,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <AppInput
                     v-model="folderForm.name"
                     :label="t('backend.media.folderName')"
+                    :placeholder="t('backend.media.folderNamePlaceholder')"
                     :error="folderModal.errors.name ?? ''"
                 />
                 <AppMultiselect
