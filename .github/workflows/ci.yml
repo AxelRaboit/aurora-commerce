@@ -1,8 +1,17 @@
 name: CI
 
 on:
+  # Direct pushes only on long-lived branches; feature branches are tested
+  # via their pull_request event so we don't run the same commit twice.
   push:
+    branches: [main, develop]
   pull_request:
+
+# A second push on the same ref cancels the previous in-flight run instead
+# of queueing a duplicate.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   symfony:
