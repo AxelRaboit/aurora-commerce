@@ -166,7 +166,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                    <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.media.folders") }}</h2>
+                    <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide flex-1">{{ t("backend.media.folders") }}</h2>
                     <AppIconButton
                         v-if="can('core.media.manage')"
                         :title="t('backend.media.newFolder')"
