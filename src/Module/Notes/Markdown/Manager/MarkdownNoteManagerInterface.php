@@ -19,12 +19,16 @@ interface MarkdownNoteManagerInterface
     public function move(MarkdownNoteInterface $note, ?MarkdownNoteInterface $parent): void;
 
     /**
-     * Reorder a flat list of note ids within their parent. The position of
-     * each note matches its index in the array (0-based).
+     * Reorder a whole sub-tree of notes in one shot. Each entry carries
+     * the desired `parentId` and `position` for a given note id. Used by
+     * the drag-drop UI which flattens the visible tree client-side.
      *
-     * @param list<int> $orderedIds
+     * Detects cycles atomically on the intended state and throws
+     * \InvalidArgumentException if any are found.
+     *
+     * @param list<array{id: int, parentId: ?int, position: int}> $entries
      */
-    public function reorder(CoreUserInterface $user, array $orderedIds): void;
+    public function reorder(CoreUserInterface $user, array $entries): void;
 
     /**
      * Notes that contain a [[title]] wiki-link pointing to $note.

@@ -199,19 +199,30 @@ final class MarkdownNotesController extends AbstractController
         $user = $this->getUser();
 
         $data = $this->decodeJson($request);
-        $rawIds = $data['ids'] ?? [];
-        if (!is_array($rawIds)) {
-            return $this->jsonInvalidInput(['ids' => 'must_be_array']);
+        $rawEntries = $data['entries'] ?? [];
+        if (!is_array($rawEntries)) {
+            return $this->jsonInvalidInput(['entries' => 'must_be_array']);
         }
 
-        $orderedIds = [];
-        foreach ($rawIds as $id) {
-            if (is_int($id) || (is_string($id) && ctype_digit($id))) {
-                $orderedIds[] = (int) $id;
+        $entries = [];
+        foreach ($rawEntries as $entry) {
+            if (!is_array($entry) || !isset($entry['id'])) {
+                continue;
             }
+            $entries[] = [
+                'id' => (int) $entry['id'],
+                'parentId' => isset($entry['parentId']) && '' !== $entry['parentId'] && null !== $entry['parentId']
+                    ? (int) $entry['parentId']
+                    : null,
+                'position' => (int) ($entry['position'] ?? 0),
+            ];
         }
 
-        $this->manager->reorder($user, $orderedIds);
+        try {
+            $this->manager->reorder($user, $entries);
+        } catch (\InvalidArgumentException) {
+            return $this->jsonFailure('cycle', extra: ['message' => 'Reorder would create a cycle.']);
+        }
 
         return $this->jsonSuccess();
     }

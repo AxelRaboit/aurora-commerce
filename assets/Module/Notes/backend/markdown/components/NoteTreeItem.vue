@@ -8,15 +8,13 @@ const props = defineProps({
     selectedId: { type: Number, default: null },
     depth: { type: Number, default: 0 },
     draggable: { type: Boolean, default: false },
+    groupName: { type: String, default: 'notes-tree' },
 });
 
-const emit = defineEmits(['select', 'create-child', 'reorder-siblings', 'drag-start']);
+const emit = defineEmits(['select', 'create-child', 'drag-start', 'drag-end']);
 
 const expanded = ref(true);
 const hasChildren = computed(() => Array.isArray(props.node.children) && props.node.children.length > 0);
-// Use the parent id as the draggable group so children only move within
-// their own sibling list — cross-parent drag is intentionally disabled.
-const groupName = computed(() => `notes-children-of-${props.node.id}`);
 </script>
 
 <template>
@@ -61,47 +59,50 @@ const groupName = computed(() => `notes-children-of-${props.node.id}`);
             </button>
         </div>
 
-        <template v-if="hasChildren && expanded">
-            <VueDraggable
-                v-if="draggable"
-                v-model="node.children"
-                :group="groupName"
-                handle=".drag-handle"
-                :animation="150"
-                ghost-class="opacity-50"
-                tag="ul"
-                class="mt-0.5"
-                v-on:start="emit('drag-start')"
-                v-on:end="emit('reorder-siblings', node.children)"
-            >
-                <NoteTreeItem
-                    v-for="child in node.children"
-                    :key="child.id"
-                    :node="child"
-                    :selected-id="selectedId"
-                    :depth="depth + 1"
-                    :draggable="draggable"
-                    v-on:select="(id) => emit('select', id)"
-                    v-on:create-child="(id) => emit('create-child', id)"
-                    v-on:reorder-siblings="(s) => emit('reorder-siblings', s)"
-                    v-on:drag-start="emit('drag-start')"
-                />
-            </VueDraggable>
+        <!--
+            Children list: always a VueDraggable when drag is enabled, so users
+            can drop a node *into* an empty parent (the list serves as a drop
+            target). When drag is disabled (filter active) we fall back to a
+            plain <ul>.
+        -->
+        <VueDraggable
+            v-if="draggable && expanded"
+            v-model="node.children"
+            :group="groupName"
+            handle=".drag-handle"
+            :animation="150"
+            ghost-class="opacity-50"
+            tag="ul"
+            class="mt-0.5 min-h-1"
+            v-on:start="emit('drag-start')"
+            v-on:end="emit('drag-end')"
+        >
+            <NoteTreeItem
+                v-for="child in node.children"
+                :key="child.id"
+                :node="child"
+                :selected-id="selectedId"
+                :depth="depth + 1"
+                :draggable="draggable"
+                :group-name="groupName"
+                v-on:select="(id) => emit('select', id)"
+                v-on:create-child="(id) => emit('create-child', id)"
+                v-on:drag-start="emit('drag-start')"
+                v-on:drag-end="emit('drag-end')"
+            />
+        </VueDraggable>
 
-            <ul v-else class="mt-0.5">
-                <NoteTreeItem
-                    v-for="child in node.children"
-                    :key="child.id"
-                    :node="child"
-                    :selected-id="selectedId"
-                    :depth="depth + 1"
-                    :draggable="draggable"
-                    v-on:select="(id) => emit('select', id)"
-                    v-on:create-child="(id) => emit('create-child', id)"
-                    v-on:reorder-siblings="(s) => emit('reorder-siblings', s)"
-                    v-on:drag-start="emit('drag-start')"
-                />
-            </ul>
-        </template>
+        <ul v-else-if="hasChildren && expanded" class="mt-0.5">
+            <NoteTreeItem
+                v-for="child in node.children"
+                :key="child.id"
+                :node="child"
+                :selected-id="selectedId"
+                :depth="depth + 1"
+                :draggable="false"
+                v-on:select="(id) => emit('select', id)"
+                v-on:create-child="(id) => emit('create-child', id)"
+            />
+        </ul>
     </li>
 </template>

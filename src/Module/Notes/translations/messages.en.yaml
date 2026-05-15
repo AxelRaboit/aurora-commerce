@@ -65,3 +65,4 @@ notes:
       save_failed: Could not save the note.
       delete_failed: Could not delete the note.
       reorder_failed: Could not reorder the notes.
+      reorder_cycle: Cannot move a note under one of its own descendants.

@@ -76,24 +76,59 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         $this->entityManager->flush();
     }
 
-    public function reorder(CoreUserInterface $user, array $orderedIds): void
+    public function reorder(CoreUserInterface $user, array $entries): void
     {
-        if ([] === $orderedIds) {
+        if ([] === $entries) {
             return;
         }
 
-        $notes = $this->noteRepository->findBy(['id' => $orderedIds, 'user' => $user]);
+        $ids = array_map(static fn (array $entry): int => (int) $entry['id'], $entries);
+        $notes = $this->noteRepository->findBy(['id' => $ids, 'user' => $user]);
+
         $byId = [];
         foreach ($notes as $note) {
             $byId[$note->getId()] = $note;
         }
 
-        foreach ($orderedIds as $position => $id) {
+        // Build the intended parent map first so we can detect cycles before
+        // mutating any entity (otherwise partial state could mask a cycle).
+        $parentMap = [];
+        foreach ($entries as $entry) {
+            $id = (int) $entry['id'];
+            if (!isset($byId[$id])) {
+                continue;
+            }
+            $parentId = $entry['parentId'] ?? null;
+            $parentMap[$id] = null === $parentId ? null : (int) $parentId;
+        }
+
+        foreach ($parentMap as $id => $initialParentId) {
+            $visited = [$id => true];
+            $current = $initialParentId;
+            while (null !== $current) {
+                if (isset($visited[$current])) {
+                    throw new \InvalidArgumentException(sprintf('Reorder would create a cycle at note %d.', $id));
+                }
+                $visited[$current] = true;
+                $current = $parentMap[$current] ?? null;
+            }
+        }
+
+        // Detach parents first to side-step transient cycles while we're
+        // reshuffling — mirrors the TaxonomyManager pattern.
+        foreach (array_keys($parentMap) as $id) {
+            $byId[$id]->setParent(null);
+        }
+
+        foreach ($entries as $entry) {
+            $id = (int) $entry['id'];
             $note = $byId[$id] ?? null;
             if (null === $note) {
                 continue;
             }
-            $note->setPosition($position);
+            $parentId = $parentMap[$id] ?? null;
+            $note->setParent(null !== $parentId ? ($byId[$parentId] ?? null) : null);
+            $note->setPosition((int) $entry['position']);
         }
 
         $this->entityManager->flush();

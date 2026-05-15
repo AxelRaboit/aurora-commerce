@@ -156,22 +156,49 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
         self::assertSame('cycle', $body['error']);
     }
 
-    public function testReorderAssignsPositionsByListOrder(): void
+    public function testReorderAppliesParentAndPositionFromEntries(): void
     {
         $a = $this->createNote(title: 'A');
         $b = $this->createNote(title: 'B');
         $c = $this->createNote(title: 'C');
 
         [$status, ] = $this->postJson('backend_notes_markdown_reorder', [], [
-            'ids' => [$c['id'], $a['id'], $b['id']],
+            'entries' => [
+                ['id' => $c['id'], 'parentId' => null, 'position' => 0],
+                ['id' => $a['id'], 'parentId' => $c['id'], 'position' => 0],
+                ['id' => $b['id'], 'parentId' => null, 'position' => 1],
+            ],
         ]);
 
         self::assertSame(200, $status);
 
         $repository = static::getContainer()->get(MarkdownNoteRepository::class);
-        self::assertSame(0, $repository->find($c['id'])->getPosition());
-        self::assertSame(1, $repository->find($a['id'])->getPosition());
-        self::assertSame(2, $repository->find($b['id'])->getPosition());
+        $reloadedA = $repository->find($a['id']);
+        $reloadedB = $repository->find($b['id']);
+        $reloadedC = $repository->find($c['id']);
+
+        self::assertSame($reloadedC->getId(), $reloadedA->getParent()?->getId(), 'A should be under C');
+        self::assertNull($reloadedB->getParent());
+        self::assertNull($reloadedC->getParent());
+        self::assertSame(0, $reloadedC->getPosition());
+        self::assertSame(0, $reloadedA->getPosition());
+        self::assertSame(1, $reloadedB->getPosition());
+    }
+
+    public function testReorderRejectsCycle(): void
+    {
+        $a = $this->createNote(title: 'A');
+        $b = $this->createNote(title: 'B');
+
+        [$status, $body] = $this->postJson('backend_notes_markdown_reorder', [], [
+            'entries' => [
+                ['id' => $a['id'], 'parentId' => $b['id'], 'position' => 0],
+                ['id' => $b['id'], 'parentId' => $a['id'], 'position' => 0],
+            ],
+        ]);
+
+        self::assertSame(400, $status);
+        self::assertSame('cycle', $body['error']);
     }
 
     public function testDeleteRemovesTheNote(): void

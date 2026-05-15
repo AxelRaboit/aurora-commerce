@@ -66,3 +66,4 @@ notes:
       save_failed: Impossible d'enregistrer la note.
       delete_failed: Impossible de supprimer la note.
       reorder_failed: Impossible de réordonner les notes.
+      reorder_cycle: Impossible de déplacer une note sous l'une de ses sous-notes.

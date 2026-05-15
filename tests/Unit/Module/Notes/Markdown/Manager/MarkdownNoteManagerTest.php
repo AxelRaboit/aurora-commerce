@@ -161,7 +161,7 @@ final class MarkdownNoteManagerTest extends TestCase
         self::assertSame($parent, $note->getParent());
     }
 
-    public function testReorderAssignsPositionByIndex(): void
+    public function testReorderAssignsParentAndPositionFromEntries(): void
     {
         $user = $this->makeUser();
         $a = $this->makeNoteWithId(10);
@@ -171,11 +171,36 @@ final class MarkdownNoteManagerTest extends TestCase
         $this->repo->method('findBy')->willReturn([$a, $b, $c]);
         $this->em->expects(self::once())->method('flush');
 
-        $this->manager->reorder($user, [30, 10, 20]);
+        // 10 stays root pos 0; 20 becomes child of 10 at pos 0; 30 stays root pos 1
+        $this->manager->reorder($user, [
+            ['id' => 10, 'parentId' => null, 'position' => 0],
+            ['id' => 20, 'parentId' => 10, 'position' => 0],
+            ['id' => 30, 'parentId' => null, 'position' => 1],
+        ]);
 
-        self::assertSame(0, $c->getPosition());
-        self::assertSame(1, $a->getPosition());
-        self::assertSame(2, $b->getPosition());
+        self::assertNull($a->getParent());
+        self::assertSame($a, $b->getParent());
+        self::assertNull($c->getParent());
+        self::assertSame(0, $a->getPosition());
+        self::assertSame(0, $b->getPosition());
+        self::assertSame(1, $c->getPosition());
+    }
+
+    public function testReorderRejectsCycle(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(10);
+        $b = $this->makeNoteWithId(20);
+
+        $this->repo->method('findBy')->willReturn([$a, $b]);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        // 10's parent is 20, 20's parent is 10 → cycle
+        $this->manager->reorder($user, [
+            ['id' => 10, 'parentId' => 20, 'position' => 0],
+            ['id' => 20, 'parentId' => 10, 'position' => 0],
+        ]);
     }
 
     public function testReorderOnEmptyListIsNoop(): void

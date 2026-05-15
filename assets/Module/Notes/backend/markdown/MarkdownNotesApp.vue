@@ -69,7 +69,7 @@ const { tree } = useNoteTree(notes, treeQuery);
 // the visible tree is a filtered subset and reordering it would mix
 // surviving siblings with hidden ones server-side.
 const dragEnabled = computed(() => treeQuery.value.trim() === '');
-const { onStart: onDragStart, persistSiblings: onReorderSiblings } = useNoteDragDrop({ api, refreshList });
+const { onStart: onDragStart, onEnd: onDragEnd } = useNoteDragDrop({ tree, api, refreshList });
 const { mode: viewMode } = useViewMode();
 
 // Editor pane width in split mode — drag the seam between editor and preview.
@@ -112,14 +112,14 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                     <VueDraggable
                         v-if="dragEnabled"
                         v-model="tree"
-                        group="notes-root"
+                        group="notes-tree"
                         handle=".drag-handle"
                         :animation="150"
                         ghost-class="opacity-50"
                         tag="ul"
                         class="space-y-0.5"
                         v-on:start="onDragStart"
-                        v-on:end="onReorderSiblings(tree)"
+                        v-on:end="onDragEnd"
                     >
                         <NoteTreeItem
                             v-for="node in tree"
@@ -127,10 +127,11 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                             :node="node"
                             :selected-id="selectedId"
                             :draggable="dragEnabled"
+                            group-name="notes-tree"
                             v-on:select="selectNote"
                             v-on:create-child="createNote"
-                            v-on:reorder-siblings="onReorderSiblings"
                             v-on:drag-start="onDragStart"
+                            v-on:drag-end="onDragEnd"
                         />
                     </VueDraggable>
 
