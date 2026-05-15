@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Ecommerce\ListingTag\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Locale\Service\TranslationLocaleSyncer;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagInput;
@@ -24,7 +25,7 @@ final class ListingTagManagerTest extends TestCase
     private function makeManager(?EntityManagerInterface $entityManager = null): ListingTagManager
     {
         $localeContext = $this->createMock(LocaleContextInterface::class);
-        $localeContext->method('getActiveLocales')->willReturn(['fr', 'en']);
+        $localeContext->method('getActiveLocales')->willReturn(LocaleEnum::values());
 
         return new ListingTagManager(
             $entityManager ?? $this->createMock(EntityManagerInterface::class),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Locale\Service;
 
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\Service\LocaleContext;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -17,13 +18,13 @@ final class LocaleContextTest extends TestCase
     {
         $repository = $this->createMock(SettingRepository::class);
         $repository->method('getBoolean')->willReturn(false);
-        $repository->method('getOrDefault')->willReturn('fr');
+        $repository->method('getOrDefault')->willReturn(LocaleEnum::French->value);
 
-        $context = new LocaleContext($repository, ['fr', 'en']);
+        $context = new LocaleContext($repository, LocaleEnum::values());
 
         self::assertFalse($context->isSingleLocaleMode());
-        self::assertSame(['fr', 'en'], $context->getActiveLocales());
-        self::assertSame(['fr', 'en'], $context->getAllLocales());
+        self::assertSame(LocaleEnum::values(), $context->getActiveLocales());
+        self::assertSame(LocaleEnum::values(), $context->getAllLocales());
     }
 
     public function testReturnsDefaultLocaleOnlyWhenSingleModeIsOn(): void
@@ -34,14 +35,14 @@ final class LocaleContextTest extends TestCase
             ->willReturn(true);
         $repository->method('getOrDefault')
             ->with(ApplicationParameterEnum::DefaultLocale)
-            ->willReturn('en');
+            ->willReturn(LocaleEnum::English->value);
 
-        $context = new LocaleContext($repository, ['fr', 'en']);
+        $context = new LocaleContext($repository, LocaleEnum::values());
 
         self::assertTrue($context->isSingleLocaleMode());
-        self::assertSame('en', $context->getDefaultLocale());
-        self::assertSame(['en'], $context->getActiveLocales());
-        self::assertSame(['fr', 'en'], $context->getAllLocales(), 'getAllLocales must ignore single-mode toggle');
+        self::assertSame(LocaleEnum::English->value, $context->getDefaultLocale());
+        self::assertSame([LocaleEnum::English->value], $context->getActiveLocales());
+        self::assertSame(LocaleEnum::values(), $context->getAllLocales(), 'getAllLocales must ignore single-mode toggle');
     }
 
     public function testFallsBackToBundleDefaultWhenStoredLocaleIsInvalid(): void
@@ -50,19 +51,19 @@ final class LocaleContextTest extends TestCase
         $repository->method('getBoolean')->willReturn(true);
         $repository->method('getOrDefault')->willReturn('xx');
 
-        $context = new LocaleContext($repository, ['fr', 'en']);
+        $context = new LocaleContext($repository, LocaleEnum::values());
 
-        self::assertSame('fr', $context->getDefaultLocale());
-        self::assertSame(['fr'], $context->getActiveLocales());
+        self::assertSame(LocaleEnum::default()->value, $context->getDefaultLocale());
+        self::assertSame([LocaleEnum::default()->value], $context->getActiveLocales());
     }
 
     public function testMemoizesRepositoryReads(): void
     {
         $repository = $this->createMock(SettingRepository::class);
         $repository->expects(self::once())->method('getBoolean')->willReturn(true);
-        $repository->expects(self::once())->method('getOrDefault')->willReturn('fr');
+        $repository->expects(self::once())->method('getOrDefault')->willReturn(LocaleEnum::French->value);
 
-        $context = new LocaleContext($repository, ['fr', 'en']);
+        $context = new LocaleContext($repository, LocaleEnum::values());
 
         $context->isSingleLocaleMode();
         $context->isSingleLocaleMode();

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Core\Frontend\Service;
 
 use Aurora\Core\Locale\Entity\LocaleInterface;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\Repository\LocaleRepository;
+use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Doctrine\Common\Collections\Order;
@@ -23,16 +25,27 @@ final class Context
     public function __construct(
         private readonly LocaleRepository $localeRepository,
         private readonly SettingRepository $settingRepository,
+        private readonly LocaleContextInterface $localeContext,
     ) {}
 
     /** @return list<LocaleInterface> */
     public function activeLocales(): array
     {
         if (null === $this->cachedLocales) {
-            $this->cachedLocales = $this->localeRepository->findBy(
+            $locales = $this->localeRepository->findBy(
                 ['isActive' => true],
                 ['position' => Order::Ascending->value, 'code' => Order::Ascending->value],
             );
+
+            if ($this->localeContext->isSingleLocaleMode()) {
+                $defaultCode = $this->localeContext->getDefaultLocale();
+                $locales = array_values(array_filter(
+                    $locales,
+                    static fn (LocaleInterface $locale): bool => $locale->getCode() === $defaultCode,
+                ));
+            }
+
+            $this->cachedLocales = $locales;
         }
 
         return $this->cachedLocales;
@@ -56,8 +69,8 @@ final class Context
         }
 
         return $this->cachedDefault?->getCode()
-            ?? $this->settingRepository->get(ApplicationParameterEnum::DefaultLocale->value, 'fr')
-            ?? 'fr';
+            ?? $this->settingRepository->get(ApplicationParameterEnum::DefaultLocale->value, LocaleEnum::default()->value)
+            ?? LocaleEnum::default()->value;
     }
 
     public function isLocaleActive(string $code): bool

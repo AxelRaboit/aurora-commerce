@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Locale\EventSubscriber;
 
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\EventSubscriber\SingleLocaleRedirectSubscriber;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -16,12 +17,15 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 #[AllowMockObjectsWithoutExpectations]
 final class SingleLocaleRedirectSubscriberTest extends TestCase
 {
-    private function makeContext(bool $single, string $default = 'fr', array $all = ['fr', 'en']): LocaleContextInterface
+    /**
+     * @param list<string>|null $all
+     */
+    private function makeContext(bool $single, ?string $default = null, ?array $all = null): LocaleContextInterface
     {
         $context = $this->createMock(LocaleContextInterface::class);
         $context->method('isSingleLocaleMode')->willReturn($single);
-        $context->method('getDefaultLocale')->willReturn($default);
-        $context->method('getAllLocales')->willReturn($all);
+        $context->method('getDefaultLocale')->willReturn($default ?? LocaleEnum::default()->value);
+        $context->method('getAllLocales')->willReturn($all ?? LocaleEnum::values());
 
         return $context;
     }
