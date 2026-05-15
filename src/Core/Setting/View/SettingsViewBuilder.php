@@ -95,6 +95,13 @@ final readonly class SettingsViewBuilder
             return $options;
         }
 
+        if (ApplicationParameterEnum::Timezone === $parameter) {
+            return array_map(
+                static fn (string $tz): array => ['value' => $tz, 'label' => $tz],
+                \DateTimeZone::listIdentifiers(),
+            );
+        }
+
         return null;
     }
 
