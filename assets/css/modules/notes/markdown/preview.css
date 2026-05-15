@@ -1,0 +1,82 @@
+/*
+ * Markdown preview rendering — wiki-links, callouts, interactive task
+ * checkboxes. The rendered HTML lives inside a `.note-preview` host
+ * (see NotePreview.vue). DOMPurify strips unknown attributes, so any
+ * decoration here relies on classes/data-attrs emitted by the marked
+ * extensions in `assets/Module/Notes/backend/markdown/composables/
+ * markedExtensions/`.
+ */
+
+/* ── Wiki-links ──────────────────────────────────────────────────── */
+.note-preview .wiki-link {
+    color: var(--color-accent-600, #0ea5e9);
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.note-preview .wiki-link:hover {
+    background: color-mix(in srgb, var(--color-accent-500, #0ea5e9) 12%, transparent);
+    border-radius: 2px;
+}
+
+/* ── Interactive task list checkboxes ────────────────────────────── */
+.note-preview .task-list-item {
+    list-style: none;
+    margin-left: -1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.note-preview .task-checkbox {
+    cursor: pointer;
+    margin-top: 0.25rem;
+}
+
+/* ── Callouts (Obsidian-style) ───────────────────────────────────── */
+.note-preview .callout {
+    border-left: 4px solid var(--callout-color, #6b7280);
+    background: color-mix(in srgb, var(--callout-color, #6b7280) 8%, transparent);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+}
+
+.note-preview .callout-header {
+    font-weight: 600;
+    color: var(--callout-color, #6b7280);
+    margin-bottom: 0.25rem;
+}
+
+.note-preview .callout-body {
+    color: var(--color-text-primary);
+}
+
+.note-preview .callout-body > *:first-child {
+    margin-top: 0;
+}
+
+.note-preview .callout-body > *:last-child {
+    margin-bottom: 0;
+}
+
+/* Callout type → accent color. Add new types by extending this map. */
+.note-preview .callout-note { --callout-color: #6b7280; }
+.note-preview .callout-info,
+.note-preview .callout-abstract,
+.note-preview .callout-summary { --callout-color: #0ea5e9; }
+.note-preview .callout-tip,
+.note-preview .callout-hint,
+.note-preview .callout-success { --callout-color: #10b981; }
+.note-preview .callout-warning,
+.note-preview .callout-caution { --callout-color: #f59e0b; }
+.note-preview .callout-danger,
+.note-preview .callout-bug,
+.note-preview .callout-failure { --callout-color: #ef4444; }
+.note-preview .callout-question,
+.note-preview .callout-faq,
+.note-preview .callout-todo { --callout-color: #8b5cf6; }
+.note-preview .callout-quote,
+.note-preview .callout-example { --callout-color: #94a3b8; }

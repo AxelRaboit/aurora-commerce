@@ -1,4 +1,7 @@
 <script setup>
+import "@/css/modules/editorial/editor.css";
+import "@/css/modules/editorial/blocks.css";
+
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, onMounted, onBeforeUnmount, inject } from "vue";
 import { useI18n } from "vue-i18n";

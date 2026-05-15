@@ -1,4 +1,6 @@
 <script setup>
+import "@/css/modules/editorial/prose.css";
+
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { X, RotateCcw, History as HistoryIcon } from "lucide-vue-next";

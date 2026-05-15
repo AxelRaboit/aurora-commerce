@@ -1,4 +1,6 @@
 <script setup>
+import "@/css/core/sidemenu.css";
+
 defineOptions({ inheritAttrs: false });
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -16,7 +18,6 @@ import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
 import AppNavButton from "@/shared/components/nav/AppNavButton.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppNotificationsBell from "@core/backend/notifications/AppNotificationsBell.vue";
-import "@/css/components/sidemenu.css";
 import {
     Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User, SlidersHorizontal,
     ChevronsLeft, ChevronsRight, Menu as MenuIcon, X,
