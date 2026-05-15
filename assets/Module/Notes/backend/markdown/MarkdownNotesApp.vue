@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMarkdownNotesApi } from '@notes/backend/markdown/composables/useMarkdownNotesApi.js';
 import { useNotesEditor } from '@notes/backend/markdown/composables/useNotesEditor.js';
 import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
+import { useNoteDragDrop } from '@notes/backend/markdown/composables/useNoteDragDrop.js';
 import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
+import { VueDraggable } from 'vue-draggable-plus';
 import { useResizable } from '@shared/composables/useResizable.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
@@ -49,6 +51,7 @@ const {
     deleteSelected,
     onWikiLinkClick,
     onCheckboxToggle,
+    refreshList,
 } = useNotesEditor({ api, initialNotes: props.notes });
 
 // UI-only state
@@ -56,6 +59,12 @@ const sidePanelOpen = ref(false);
 const treeQuery = ref('');
 
 const { tree } = useNoteTree(notes, treeQuery);
+
+// Drag-drop reorder. Only enabled when no filter is active, otherwise
+// the visible tree is a filtered subset and reordering it would mix
+// surviving siblings with hidden ones server-side.
+const dragEnabled = computed(() => treeQuery.value.trim() === '');
+const { onStart: onDragStart, persistSiblings: onReorderSiblings } = useNoteDragDrop({ api, refreshList });
 const { mode: viewMode } = useViewMode();
 
 // Editor pane width in split mode — drag the seam between editor and preview.
@@ -94,16 +103,44 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
             </div>
 
             <div class="flex-1 overflow-auto p-2">
-                <ul v-if="tree.length > 0" class="space-y-0.5">
-                    <NoteTreeItem
-                        v-for="node in tree"
-                        :key="node.id"
-                        :node="node"
-                        :selected-id="selectedId"
-                        v-on:select="selectNote"
-                        v-on:create-child="createNote"
-                    />
-                </ul>
+                <template v-if="tree.length > 0">
+                    <VueDraggable
+                        v-if="dragEnabled"
+                        v-model="tree"
+                        group="notes-root"
+                        handle=".drag-handle"
+                        :animation="150"
+                        ghost-class="opacity-50"
+                        tag="ul"
+                        class="space-y-0.5"
+                        v-on:start="onDragStart"
+                        v-on:end="onReorderSiblings(tree)"
+                    >
+                        <NoteTreeItem
+                            v-for="node in tree"
+                            :key="node.id"
+                            :node="node"
+                            :selected-id="selectedId"
+                            :draggable="dragEnabled"
+                            v-on:select="selectNote"
+                            v-on:create-child="createNote"
+                            v-on:reorder-siblings="onReorderSiblings"
+                            v-on:drag-start="onDragStart"
+                        />
+                    </VueDraggable>
+
+                    <ul v-else class="space-y-0.5">
+                        <NoteTreeItem
+                            v-for="node in tree"
+                            :key="node.id"
+                            :node="node"
+                            :selected-id="selectedId"
+                            :draggable="false"
+                            v-on:select="selectNote"
+                            v-on:create-child="createNote"
+                        />
+                    </ul>
+                </template>
                 <AppNoData
                     v-else-if="treeQuery.trim() !== ''"
                     :title="t('notes.markdown.search_no_results')"

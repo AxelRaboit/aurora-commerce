@@ -29,6 +29,7 @@ notes:
     search_no_results: No results
     search_no_results_description: 'No note matches "{query}".'
     resize_handle: Drag to resize
+    drag_handle: Drag to reorder
     content_placeholder: "# Write markdown here\n\nLink to other notes with [[Title]]"
     create_root: New note
     create_child: Add a child note
@@ -61,3 +62,4 @@ notes:
       create_failed: Could not create the note.
       save_failed: Could not save the note.
       delete_failed: Could not delete the note.
+      reorder_failed: Could not reorder the notes.

@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { ref, watchEffect } from 'vue';
 
 /**
  * Build a hierarchical tree from a flat list of notes (sorted by position).
@@ -6,22 +6,23 @@ import { computed } from 'vue';
  *
  * Notes whose parent is missing (deleted before flush) bubble up to root.
  *
- * If `queryRef` is given, the tree is filtered to keep only nodes whose
- * title matches the query (case-insensitive substring), plus any ancestor
- * needed to keep the surviving leaves attached to the root. A `matched`
- * flag tells the UI which rows are direct hits vs. just structural carriers.
+ * Exposes a *writable* `tree` ref so VueDraggable can mutate the children
+ * arrays directly. A watcher rebuilds the tree whenever `notesRef` or
+ * `queryRef` change — that way `refreshList()` from the server still
+ * wins over any local DnD mutation.
+ *
+ * If `queryRef` is given and non-empty, the tree is filtered to keep
+ * only nodes whose title matches (case-insensitive substring) plus the
+ * ancestors needed to keep matching leaves attached. Each kept node
+ * carries a `matched` flag for styling.
  */
 export function useNoteTree(notesRef, queryRef = null) {
-    const tree = computed(() => {
+    const tree = ref([]);
+
+    watchEffect(() => {
         const query = (queryRef?.value ?? '').trim().toLowerCase();
         const fullTree = buildTree(notesRef.value);
-
-        if (query === '') {
-            // mark every node as matched so callers can apply the same styling logic
-            return markAllMatched(fullTree);
-        }
-
-        return filterTree(fullTree, query);
+        tree.value = query === '' ? markAllMatched(fullTree) : filterTree(fullTree, query);
     });
 
     function buildTree(flat) {
@@ -54,10 +55,6 @@ export function useNoteTree(notesRef, queryRef = null) {
         return nodes.map((n) => ({ ...n, matched: true, children: markAllMatched(n.children) }));
     }
 
-    /**
-     * Keep a node when it matches itself or has any descendant that does.
-     * Walking depth-first lets us prune cleanly without a second pass.
-     */
     function filterTree(nodes, query) {
         const kept = [];
         for (const node of nodes) {
