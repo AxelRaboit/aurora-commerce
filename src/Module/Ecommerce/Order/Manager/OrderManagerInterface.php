@@ -11,7 +11,7 @@ use Aurora\Module\Ecommerce\Order\Entity\Order;
 
 interface OrderManagerInterface
 {
-    public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale = 'fr'): Order;
+    public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale): Order;
 
     public function markPaid(Order $order): void;
 
@@ -25,5 +25,5 @@ interface OrderManagerInterface
      */
     public function cancel(Order $order): void;
 
-    public function checkout(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer): Order;
+    public function checkout(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale): Order;
 }

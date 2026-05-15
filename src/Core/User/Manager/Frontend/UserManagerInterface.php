@@ -13,7 +13,7 @@ interface UserManagerInterface
 {
     public function register(RegisterInput $input): CoreUserInterface;
 
-    public function sendVerificationEmail(CoreUserInterface $user, string $locale = 'fr'): void;
+    public function sendVerificationEmail(CoreUserInterface $user, string $locale): void;
 
     public function verifyEmail(string $token): ?CoreUserInterface;
 

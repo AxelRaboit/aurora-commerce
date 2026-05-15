@@ -42,7 +42,7 @@ class OrderManager implements OrderManagerInterface
         protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
-    public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale = 'fr'): Order
+    public function createFromCart(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
@@ -249,15 +249,15 @@ class OrderManager implements OrderManagerInterface
      * and oversold stock. The 2nd transaction blocks until the 1st commits, then re-reads the
      * decremented value and fails cleanly with InvalidArgumentException.
      */
-    public function checkout(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer): Order
+    public function checkout(CartInterface $cart, CheckoutInputInterface $input, ?CoreUserInterface $customer, string $locale): Order
     {
         if (0 === $cart->getItems()->count()) {
             throw new InvalidArgumentException('Cart is empty');
         }
 
-        $order = $this->entityManager->wrapInTransaction(function () use ($cart, $input, $customer): Order {
+        $order = $this->entityManager->wrapInTransaction(function () use ($cart, $input, $customer, $locale): Order {
             $this->lockAndValidateStock($cart);
-            $order = $this->createFromCart($cart, $input, $customer);
+            $order = $this->createFromCart($cart, $input, $customer, $locale);
             $this->markPaid($order); // Stub: auto-pay for MVP. Real payment integration later.
 
             return $order;

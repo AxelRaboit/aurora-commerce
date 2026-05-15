@@ -6,6 +6,7 @@ namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Locale\Enum\CountryEnum;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
@@ -153,7 +154,7 @@ final class OrdersControllerTest extends IntegrationTestCase
             country: CountryEnum::default()->value,
         );
 
-        $order = $orderManager->checkout($cart, $input, null);
+        $order = $orderManager->checkout($cart, $input, null, LocaleEnum::default()->value);
         self::assertSame(OrderStatusEnum::Paid, $order->getStatus());
 
         // Force fresh load to attach order to the test entity manager.

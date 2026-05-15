@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Post\Entity\Post;
@@ -97,11 +98,11 @@ final class PostsTrashControllerTest extends IntegrationTestCase
 
         $repository = static::getContainer()->get(PostRepository::class);
 
-        $active = $repository->findPaginated(1);
+        $active = $repository->findPaginated(1, LocaleEnum::default()->value);
         $activeIds = array_map(static fn (Post $post): ?int => $post->getId(), $active['items']);
         self::assertNotContains($trashedId, $activeIds);
 
-        $trash = $repository->findPaginated(1, trashed: true);
+        $trash = $repository->findPaginated(1, LocaleEnum::default()->value, trashed: true);
         $trashIds = array_map(static fn (Post $post): ?int => $post->getId(), $trash['items']);
         self::assertContains($trashedId, $trashIds);
     }

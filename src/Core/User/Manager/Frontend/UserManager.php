@@ -63,7 +63,7 @@ class UserManager implements UserManagerInterface
         return $user;
     }
 
-    public function sendVerificationEmail(CoreUserInterface $user, string $locale = 'fr'): void
+    public function sendVerificationEmail(CoreUserInterface $user, string $locale): void
     {
         $token = $this->emailVerificationManager->generateToken($user);
 
