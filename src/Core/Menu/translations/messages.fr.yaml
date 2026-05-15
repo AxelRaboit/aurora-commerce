@@ -32,6 +32,7 @@ backend:
     protectedHint: Menu essentiel — non supprimable.
     locationLockedHint: L'emplacement est verrouillé pour les menus système.
     errors:
+      cycle: Impossible de déplacer un item sous l'un de ses descendants.
       translation_required_for_custom_url: Au moins un libellé de langue est requis pour une URL personnalisée.
       menu_protected: Ce menu est essentiel et ne peut pas être supprimé.
       location_locked: L'emplacement d'un menu système ne peut pas être modifié.

@@ -32,6 +32,7 @@ backend:
     protectedHint: Essential menu — cannot be deleted.
     locationLockedHint: Location is locked for system menus.
     errors:
+      cycle: Cannot move an item under one of its own descendants.
       translation_required_for_custom_url: At least one language label is required for a custom URL.
       menu_protected: This menu is essential and cannot be deleted.
       location_locked: The location of a system menu cannot be changed.

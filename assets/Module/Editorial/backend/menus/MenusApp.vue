@@ -57,7 +57,7 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
 </script>
 
 <template>
-    <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 min-h-150">
+    <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
         <MenuListPanel
             :menus="menus"
             :selected-id="selectedMenu?.id ?? null"
@@ -73,7 +73,6 @@ const { itemModal, openCreateItem, openEditItem, submitItem } = useMenuItemModal
             v-on:edit-item="openEditItem"
             v-on:delete-item="confirmDeleteItem = $event"
             v-on:reorder-root="reorderItems"
-            v-on:reorder-children="reorderItems"
         />
 
         <AppModal

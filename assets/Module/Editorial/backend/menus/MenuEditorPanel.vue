@@ -2,9 +2,9 @@
 /* eslint-disable vue/no-mutating-props -- selectedMenu is owned by parent and mutated in-place by drag-drop */
 import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Trash2, Pencil, ListTree } from "lucide-vue-next";
 import { useMenuTree } from "@editorial/backend/menus/composables/useMenuTree.js";
+import { useMenuDragDrop } from "@editorial/backend/menus/composables/useMenuDragDrop.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
@@ -24,58 +24,63 @@ const emit = defineEmits([
     "edit-item",
     "delete-item",
     "reorder-root",
-    "reorder-children",
 ]);
 
-const { itemCount, applyChildrenReorder } = useMenuTree(toRef(props, "menu"));
+const menuRef = toRef(props, "menu");
+const { itemCount } = useMenuTree(menuRef);
 
-function onChildReordered({ item, children }) {
-    applyChildrenReorder(item, children);
-    emit("reorder-children");
-}
+const {
+    draggingId, dragOverId, rootDragOver,
+    onItemDragStart, onItemDragEnd, onItemDragOver, onItemDragLeave,
+    onRootDragOver, onRootDragLeave, onDropOnItem, onDropOnRoot,
+} = useMenuDragDrop({
+    menuRef,
+    persist: () => emit("reorder-root"),
+});
 </script>
 
 <template>
-    <main class="bg-surface border border-line rounded-xl">
-        <div v-if="!menu" class="flex items-center justify-center h-full p-12">
-            <div class="text-center">
-                <ListTree class="w-12 h-12 text-muted mx-auto mb-3" :stroke-width="1.5" />
-                <p class="text-secondary">{{ t("backend.menus.selectHint") }}</p>
-            </div>
-        </div>
+    <main class="flex-1 min-w-0 space-y-4">
+        <AppNoData v-if="!menu" :message="t('backend.menus.selectHint')" :icon="ListTree" />
 
-        <div v-else class="p-5 space-y-5">
-            <div class="flex items-start justify-between gap-3 border-b border-line pb-4">
-                <div class="min-w-0">
-                    <h2 class="text-lg font-bold text-primary">{{ menu.name }}</h2>
-                    <p class="text-xs text-muted font-mono mt-0.5">{{ menu.location }}</p>
-                    <p v-if="menu.description" class="text-xs text-secondary mt-1">{{ menu.description }}</p>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <AppBadge v-if="menu.protected" color="amber" :title="t('backend.menus.protectedHint')">
-                        {{ t('backend.menus.protected') }}
-                    </AppBadge>
-                    <AppButton variant="secondary" size="md" v-on:click="$emit('edit-menu', menu)">
-                        <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.edit") }}
-                    </AppButton>
-                    <AppButton
-                        v-if="!menu.protected"
-                        variant="danger"
-                        size="md"
-                        v-on:click="$emit('delete-menu', menu)"
-                    >
-                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.delete") }}
-                    </AppButton>
+        <div v-else class="space-y-4">
+            <!-- Header card — menu meta + edit/delete actions (matches TaxonomiesApp pattern) -->
+            <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
+                <div class="flex items-start justify-between gap-3 flex-wrap">
+                    <div class="min-w-0">
+                        <h3 class="text-lg font-semibold text-primary">{{ menu.name }}</h3>
+                        <p class="text-xs text-muted font-mono mt-0.5">{{ menu.location }}</p>
+                        <div v-if="menu.protected" class="flex items-center gap-2 mt-2">
+                            <AppBadge color="amber">
+                                {{ t('backend.menus.protected') }}
+                            </AppBadge>
+                        </div>
+                        <p v-if="menu.description" class="text-xs text-secondary mt-2">{{ menu.description }}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <AppButton variant="secondary" size="md" v-on:click="$emit('edit-menu', menu)">
+                            <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("shared.common.edit") }}
+                        </AppButton>
+                        <AppButton
+                            v-if="!menu.protected"
+                            variant="danger"
+                            size="md"
+                            v-on:click="$emit('delete-menu', menu)"
+                        >
+                            <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("shared.common.delete") }}
+                        </AppButton>
+                    </div>
                 </div>
             </div>
 
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <p class="text-sm font-semibold text-secondary uppercase tracking-wide">
+            <!-- Items card — list + native DnD + add -->
+            <div class="bg-surface border border-line/60 rounded-xl p-4 space-y-3">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">
                         {{ t("backend.menus.items") }} ({{ itemCount }})
-                    </p>
+                    </h4>
                     <AppButton variant="primary" size="md" v-on:click="$emit('add-item')">
                         <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.add") }}
@@ -84,25 +89,30 @@ function onChildReordered({ item, children }) {
 
                 <AppNoData v-if="!menu.items?.length" :message="t('backend.menus.itemsEmpty')" />
 
-                <VueDraggable
+                <div
                     v-else
-                    v-model="menu.items"
-                    handle=".drag-handle"
-                    :animation="150"
-                    :group="{ name: 'menu-items', pull: true, put: true }"
-                    class="space-y-2"
-                    v-on:end="$emit('reorder-root')"
+                    class="space-y-2 p-1 rounded-md transition-colors"
+                    :class="rootDragOver ? 'bg-accent-50 dark:bg-accent-900/10 ring-1 ring-accent-500/40' : ''"
+                    v-on:dragover="onRootDragOver"
+                    v-on:dragleave="onRootDragLeave"
+                    v-on:drop="onDropOnRoot"
                 >
                     <MenuItemRow
                         v-for="item in menu.items"
                         :key="item.id"
                         :item="item"
                         :target-types="targetTypes"
+                        :dragging-id="draggingId"
+                        :drag-over-id="dragOverId"
                         v-on:edit="$emit('edit-item', $event)"
                         v-on:delete="$emit('delete-item', $event)"
-                        v-on:reorder-children="onChildReordered"
+                        v-on:item-drag-start="onItemDragStart"
+                        v-on:item-drag-end="onItemDragEnd"
+                        v-on:item-drag-over="onItemDragOver"
+                        v-on:item-drag-leave="onItemDragLeave"
+                        v-on:drop-on-item="onDropOnItem"
                     />
-                </VueDraggable>
+                </div>
             </div>
         </div>
     </main>
