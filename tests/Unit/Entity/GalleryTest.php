@@ -79,6 +79,19 @@ final class GalleryTest extends TestCase
         self::assertCount(0, (new Gallery())->getItems());
     }
 
+    public function testReferenceGetterAndSetter(): void
+    {
+        $gallery = new Gallery();
+
+        self::assertNull($gallery->getReference());
+
+        $gallery->setReference('REF-2024-001');
+        self::assertSame('REF-2024-001', $gallery->getReference());
+
+        $gallery->setReference(null);
+        self::assertNull($gallery->getReference());
+    }
+
     public function testDefaultFlags(): void
     {
         $gallery = new Gallery();

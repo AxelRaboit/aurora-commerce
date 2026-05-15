@@ -84,6 +84,19 @@ final class GalleryInviteTest extends TestCase
         self::assertLessThanOrEqual($after->getTimestamp(), $invite->getLastSeenAt()->getTimestamp());
     }
 
+    public function testReferenceGetterAndSetter(): void
+    {
+        $invite = new GalleryInvite();
+
+        self::assertNull($invite->getReference());
+
+        $invite->setReference('REF-001');
+        self::assertSame('REF-001', $invite->getReference());
+
+        $invite->setReference(null);
+        self::assertNull($invite->getReference());
+    }
+
     public function testSettersReturnSelf(): void
     {
         $invite = new GalleryInvite();
@@ -95,5 +108,6 @@ final class GalleryInviteTest extends TestCase
         self::assertSame($invite, $invite->setVisitorToken('vt'));
         self::assertSame($invite, $invite->markSent());
         self::assertSame($invite, $invite->markSeen());
+        self::assertSame($invite, $invite->setReference('r'));
     }
 }

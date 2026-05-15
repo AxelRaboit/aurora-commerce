@@ -23,6 +23,18 @@ final class TaxonomyTermTest extends TestCase
         self::assertSame([$root, $middle], $leaf->getAncestors());
     }
 
+    public function testTranslateCreatesAndCachesTranslation(): void
+    {
+        $term = (new TaxonomyTerm())->setTaxonomy(new Taxonomy());
+
+        $first = $term->translate('fr');
+
+        self::assertSame('fr', $first->getLocale());
+        self::assertSame($term, $first->getTerm());
+        self::assertSame($first, $term->translate('fr'), 'same locale returns cached instance');
+        self::assertNotSame($first, $term->translate('en'), 'different locale creates new instance');
+    }
+
     public function testIsDescendantOfDetectsAncestor(): void
     {
         $taxonomy = new Taxonomy();
