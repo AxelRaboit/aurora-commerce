@@ -48,4 +48,46 @@ final class TaxonomyTermTest extends TestCase
         self::assertFalse($leaf->isDescendantOf($sibling));
         self::assertFalse($root->isDescendantOf($leaf));
     }
+
+    public function testReferenceGetterAndSetter(): void
+    {
+        $term = new TaxonomyTerm();
+
+        self::assertNull($term->getReference());
+
+        $term->setReference('REF-TAX-001');
+        self::assertSame('REF-TAX-001', $term->getReference());
+
+        self::assertSame($term, $term->setReference(null));
+        self::assertNull($term->getReference());
+    }
+
+    public function testCollectionsInitialized(): void
+    {
+        $term = new TaxonomyTerm();
+
+        self::assertCount(0, $term->getChildren());
+        self::assertCount(0, $term->getTranslations());
+        self::assertCount(0, $term->getPosts());
+    }
+
+    public function testPositionGetterAndSetter(): void
+    {
+        $term = (new TaxonomyTerm())->setPosition(5);
+
+        self::assertSame(5, $term->getPosition());
+    }
+
+    public function testTaxonomyGetterAndSetter(): void
+    {
+        $taxonomy = new Taxonomy();
+        $term = (new TaxonomyTerm())->setTaxonomy($taxonomy);
+
+        self::assertSame($taxonomy, $term->getTaxonomy());
+    }
+
+    public function testGetTranslationReturnsNullForMissingLocale(): void
+    {
+        self::assertNull((new TaxonomyTerm())->getTranslation('de'));
+    }
 }

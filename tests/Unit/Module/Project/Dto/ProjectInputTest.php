@@ -77,4 +77,49 @@ final class ProjectInputTest extends TestCase
         $input = (new ProjectInputFactory())->fromArray(['title' => 'X', 'status' => 'active']);
         self::assertSame(ProjectStatusEnum::Active, $input->getStatusEnum());
     }
+
+    public function testStartDateAndEndDateAreTrimmed(): void
+    {
+        $input = (new ProjectInputFactory())->fromArray([
+            'title' => 'X',
+            'startDate' => '  2026-01-01  ',
+            'endDate' => '  2026-12-31  ',
+        ]);
+
+        self::assertSame('2026-01-01', $input->startDate);
+        self::assertSame('2026-12-31', $input->endDate);
+    }
+
+    public function testStartDateAndEndDateAreNullByDefault(): void
+    {
+        $input = (new ProjectInputFactory())->fromArray(['title' => 'X']);
+
+        self::assertNull($input->startDate);
+        self::assertNull($input->endDate);
+    }
+
+    public function testGettersReturnConstructorValues(): void
+    {
+        $input = (new ProjectInputFactory())->fromArray([
+            'title' => 'Refonte',
+            'description' => 'desc',
+            'status' => 'active',
+            'startDate' => '2026-01-01',
+            'endDate' => '2026-12-31',
+            'responsibleUserId' => 1,
+            'crmContactIds' => [10, 20],
+            'crmCompanyId' => 5,
+            'crmDealId' => 9,
+        ]);
+
+        self::assertSame('Refonte', $input->getTitle());
+        self::assertSame('desc', $input->getDescription());
+        self::assertSame('active', $input->getStatus());
+        self::assertSame('2026-01-01', $input->getStartDate());
+        self::assertSame('2026-12-31', $input->getEndDate());
+        self::assertSame(1, $input->getResponsibleUserId());
+        self::assertSame([10, 20], $input->getCrmContactIds());
+        self::assertSame(5, $input->getCrmCompanyId());
+        self::assertSame(9, $input->getCrmDealId());
+    }
 }
