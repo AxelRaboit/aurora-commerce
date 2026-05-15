@@ -12,7 +12,7 @@ backend:
       password_too_short: Le mot de passe doit contenir au moins 8 caractères.
     photo:
       title: Photo de profil
-      subtitle: Cette image apparaît dans la barre latérale et la liste des utilisateurs.
+      subtitle: Cette image apparaît dans le menu latéral et la liste des utilisateurs.
     mood:
       title: Phrase de mood
       subtitle: Une courte phrase qui décrit votre humeur du moment.
@@ -59,9 +59,9 @@ backend:
       title: Préférences
       subtitle: Personnalisez votre expérience.
       tabs:
-        sidebar: Barre latérale
+        sidebar: Menu latéral
     sidebar:
-      title: Préférences de la barre latérale
+      title: Préférences du menu latéral
       subtitle: Cachez les sections ou modules que vous n'utilisez pas pour épurer votre navigation. Les pages restent accessibles par URL directe.
       section_hint: Désactivez le bouton pour cacher toute la section, ou ajustez module par module.
       hide_all: Tout cacher

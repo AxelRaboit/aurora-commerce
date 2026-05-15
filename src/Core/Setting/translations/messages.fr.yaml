@@ -20,7 +20,7 @@ backend:
       sequences: Séquences
       sequences_description: Préfixes des références auto-générées.
       navigation: Navigation
-      navigation_description: Personnalisez les noms des sections de la barre latérale.
+      navigation_description: Personnalisez les noms des sections du menu latéral.
       modules: Modules
       ecommerce: E-commerce
     appearance:
