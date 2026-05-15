@@ -19,6 +19,15 @@ sont importants ; stock avancé est optionnel.
 - [Moyens de paiement](ecommerce/paiement.md) — abstraction PaymentMethod, config backend
 - [Stock avancé](ecommerce/stock.md) — par variante, mouvements, multi-entrepôt
 
+### Notes — nouveau module
+
+Module `src/Module/Notes/` à créer, regroupant deux sous-modules complémentaires
+de prise de notes. Vue d'ensemble et arbitrages communs dans
+[`notes/README.md`](notes/README.md).
+
+- [Sous-module Obsidian-like](notes/obsidian/entity.md) — éditeur markdown + wiki-links + graph (port d'Onyx)
+- [Sous-module Notion-like](notes/notion/overview.md) — éditeur block-based EditorJS
+
 ---
 
 ## Convention
