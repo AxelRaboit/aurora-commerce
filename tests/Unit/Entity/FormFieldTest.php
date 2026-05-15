@@ -90,4 +90,56 @@ final class FormFieldTest extends TestCase
     {
         self::assertNull((new FormField())->getTranslation('de'));
     }
+
+    public function testReferenceGetterAndSetter(): void
+    {
+        $field = (new FormField())->setReference('REF-FIELD-001');
+
+        self::assertSame('REF-FIELD-001', $field->getReference());
+
+        $field->setReference(null);
+        self::assertNull($field->getReference());
+    }
+
+    public function testRequiredGetterAndSetter(): void
+    {
+        $field = (new FormField())->setRequired(true);
+
+        self::assertTrue($field->isRequired());
+    }
+
+    public function testPositionGetterAndSetter(): void
+    {
+        $field = (new FormField())->setPosition(7);
+
+        self::assertSame(7, $field->getPosition());
+    }
+
+    public function testConditionsGetterAndSetter(): void
+    {
+        $conditions = [['fieldId' => 1, 'operator' => 'eq', 'value' => 'a']];
+        $field = (new FormField())->setConditions($conditions);
+
+        self::assertSame($conditions, $field->getConditions());
+
+        $field->setConditions(null);
+        self::assertNull($field->getConditions());
+    }
+
+    public function testConditionsLogicGetterAndSetter(): void
+    {
+        $field = (new FormField())->setConditionsLogic('or');
+
+        self::assertSame('or', $field->getConditionsLogic());
+    }
+
+    public function testStepGetterAndSetter(): void
+    {
+        $field = (new FormField())->setStep(2);
+
+        self::assertSame(2, $field->getStep());
+
+        $field->setStep(null);
+        self::assertNull($field->getStep());
+    }
 }

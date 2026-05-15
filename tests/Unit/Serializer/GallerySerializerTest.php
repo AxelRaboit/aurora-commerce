@@ -447,4 +447,44 @@ final class GallerySerializerTest extends TestCase
         self::assertSame('v@x.com', $payload['visitorEmail']);
         self::assertIsString($payload['createdAt']);
     }
+
+    public function testSerializeCommentsForGallery(): void
+    {
+        $gallery = $this->makeGallery(1);
+        $item = (new GalleryItem())->setGallery($gallery);
+        self::setId($item, 77);
+
+        $first = (new GalleryItemComment())
+            ->setGalleryItem($item)
+            ->setContent('First comment')
+            ->setVisitorToken('tok-1')
+            ->setVisitorName('Alice');
+        self::setId($first, 10);
+
+        $second = (new GalleryItemComment())
+            ->setGalleryItem($item)
+            ->setContent('Second comment')
+            ->setVisitorToken('tok-2')
+            ->setVisitorName('Bob');
+        self::setId($second, 11);
+
+        $commentRepository = $this->createStub(GalleryItemCommentRepository::class);
+        $commentRepository->method('findAllForGallery')->willReturn([$first, $second]);
+
+        $serializer = new GallerySerializer(
+            $this->pickRepository,
+            $commentRepository,
+            $this->finalizationRepository,
+            $this->inviteRepository,
+            $this->galleryRepository,
+        );
+
+        $payload = $serializer->serializeComments($gallery);
+
+        self::assertCount(2, $payload);
+        self::assertSame(10, $payload[0]['id']);
+        self::assertSame('First comment', $payload[0]['content']);
+        self::assertSame(11, $payload[1]['id']);
+        self::assertSame('Second comment', $payload[1]['content']);
+    }
 }
