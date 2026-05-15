@@ -7,6 +7,7 @@ import { useFormsList } from "@editorial/backend/forms/composables/useFormsList.
 import { useFormEditor } from "@editorial/backend/forms/composables/useFormEditor.js";
 import { useFormFields } from "@editorial/backend/forms/composables/useFormFields.js";
 import { useFormSubmissions } from "@editorial/backend/forms/composables/useFormSubmissions.js";
+import { useFormSteps } from "@editorial/backend/forms/composables/useFormSteps.js";
 import {
     ChevronLeft,
     ChevronRight,
@@ -81,29 +82,12 @@ const tabs = computed(() => {
 const { showFieldModal, editingField, editingFieldId, fieldOptionsText, fieldErrors, fieldSaving, fieldActiveLocale, FIELD_TYPES, OPERATORS, fieldHasOptions, fieldTypeLabel, fieldLabel, openAddField, openEditField, submitField, pendingDeleteField, deleteFieldLoading, confirmDeleteField, doDeleteField, onFieldsReordered } =
     useFormFields(props, selectedForm, editingForm, jsonRequest);
 
-// Steps helpers
-function addStep() {
-    const step = Object.fromEntries(props.locales.map((l) => [l, ""]));
-    editingForm.value.steps = [...(editingForm.value.steps ?? []), step];
-}
-function removeStep(index) {
-    editingForm.value.steps = editingForm.value.steps.filter((_, i) => i !== index);
-}
-
-// Conditions helpers
-const otherFields = computed(() =>
-    (editingForm.value.fields ?? []).filter((f) => f.id !== editingFieldId.value),
-);
-function addCondition() {
-    const firstField = otherFields.value[0];
-    editingField.value.conditions = [
-        ...(editingField.value.conditions ?? []),
-        { fieldId: firstField?.id ?? null, operator: "eq", value: "" },
-    ];
-}
-function removeCondition(index) {
-    editingField.value.conditions = editingField.value.conditions.filter((_, i) => i !== index);
-}
+const { addStep, removeStep, otherFields, addCondition, removeCondition } = useFormSteps({
+    editingForm,
+    editingField,
+    editingFieldId,
+    locales: props.locales,
+});
 
 const { submissionFields, viewingSubmission, submissions, submissionsLoading, submissionsPage, submissionsTotalPages, submissionsTotal, fetchSubmissions, goToSubmissionsPage, resetSubmissions, exportCsv, submissionValue, onTabChange: onTabChangeBase } =
     useFormSubmissions(props.submissionsPath, props.exportPath, selectedForm, activeLocale);

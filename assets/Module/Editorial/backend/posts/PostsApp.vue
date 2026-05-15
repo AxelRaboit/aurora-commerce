@@ -1,5 +1,4 @@
 <script setup>
-import { computed, ref } from "vue";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { usePostsTrash } from "@editorial/backend/posts/composables/usePostsTrash.js";
@@ -19,6 +18,8 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { usePostList } from "@editorial/backend/posts/composables/usePostList.js";
 import { usePostDelete } from "@editorial/backend/posts/composables/usePostDelete.js";
+import { usePostFilters } from "@editorial/backend/posts/composables/usePostFilters.js";
+import { usePostTermLabels } from "@editorial/backend/posts/composables/usePostTermLabels.js";
 import { FileText, Eye, Inbox, LayoutList, List, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-vue-next";
 import PostEditor from "@editorial/backend/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/backend/posts/PostPreviewOverlay.vue";
@@ -66,80 +67,18 @@ const parsedTaxonomies = props.taxonomies ?? [];
 const parsedLocales    = props.locales ?? DEFAULT_LOCALES;
 const defaultLocale    = parsedLocales[0] ?? "fr";
 
-// --- Filter state ---
-const selectedPostTypeIds = ref([...(props.postTypeIds ?? [])]);
-const selectedTermIds     = ref([...(props.termIds ?? [])]);
-const selectedStatuses    = ref([...(props.statuses ?? [])]);
-
-const hasActiveFilters = computed(
-    () => selectedPostTypeIds.value.length > 0 || selectedStatuses.value.length > 0 || selectedTermIds.value.length > 0,
-);
-
-function syncFiltersToUrl() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete("postTypeIds");
-    selectedPostTypeIds.value.forEach((id) => url.searchParams.append("postTypeIds", String(id)));
-    url.searchParams.delete("statuses");
-    selectedStatuses.value.forEach((s) => url.searchParams.append("statuses", s));
-    url.searchParams.delete("termIds");
-    selectedTermIds.value.forEach((id) => url.searchParams.append("termIds", String(id)));
-    history.replaceState(history.state, "", url);
-}
-
-function onPostTypeFilterChange(values) {
-    selectedPostTypeIds.value = values ?? [];
-    selectedTermIds.value = [];
-    syncFiltersToUrl();
-    performSearch();
-}
-
-function onStatusFilterChange(values) {
-    selectedStatuses.value = values ?? [];
-    syncFiltersToUrl();
-    performSearch();
-}
-
-function toggleTerm(id) {
-    const index = selectedTermIds.value.indexOf(id);
-    selectedTermIds.value = index === -1
-        ? [...selectedTermIds.value, id]
-        : selectedTermIds.value.filter((t) => t !== id);
-    syncFiltersToUrl();
-    performSearch();
-}
-
-function clearFilters() {
-    selectedPostTypeIds.value = [];
-    selectedStatuses.value    = [];
-    selectedTermIds.value     = [];
-    syncFiltersToUrl();
-    performSearch();
-}
-
-// --- Options for the filter selects ---
-const postTypeOptions = computed(() =>
-    parsedPostTypes.map((pt) => ({ value: pt.id, label: pt.label })),
-);
-
-const statusOptions = computed(() => [
-    { value: "draft",          label: t("backend.posts.statusOptions.draft") },
-    { value: "pending_review", label: t("backend.posts.statusOptions.pending_review") },
-    { value: "scheduled",      label: t("backend.posts.statusOptions.scheduled") },
-    { value: "published",      label: t("backend.posts.statusOptions.published") },
-    { value: "archived",       label: t("backend.posts.statusOptions.archived") },
-]);
-
-// --- Taxonomy terms filtered by selected postTypes ---
-const visibleTaxonomies = computed(() => {
-    if (!selectedPostTypeIds.value.length || !parsedTaxonomies.length) {
-        return parsedTaxonomies;
-    }
-    const taxIds = new Set(
-        parsedPostTypes
-            .filter((pt) => selectedPostTypeIds.value.includes(pt.id))
-            .flatMap((pt) => pt.taxonomyIds ?? []),
-    );
-    return parsedTaxonomies.filter((tax) => taxIds.has(tax.id));
+// --- Filters (state + URL sync) ---
+// `performSearch` is referenced via a closure because it's only defined
+// below by `usePostList`. The closure resolves the binding at call time.
+const {
+    selectedPostTypeIds, selectedTermIds, selectedStatuses,
+    hasActiveFilters, postTypeOptions, statusOptions, visibleTaxonomies,
+    onPostTypeFilterChange, onStatusFilterChange, toggleTerm, clearFilters,
+} = usePostFilters({
+    parsedPostTypes,
+    parsedTaxonomies,
+    initial: { postTypeIds: props.postTypeIds, termIds: props.termIds, statuses: props.statuses },
+    performSearch: () => performSearch(),
 });
 
 // --- List ---
@@ -184,23 +123,7 @@ const { previewPost, previewLoading, frontUrl, openPreview } = usePostsPreview(p
 // --- View mode ---
 const { mode: viewMode, setMode: setViewMode } = usePostViewMode();
 
-const termMap = computed(() => {
-    const map = {};
-    for (const taxonomy of parsedTaxonomies) {
-        for (const term of taxonomy.terms ?? []) {
-            const name =
-                term.translations?.[defaultLocale]?.name ??
-                term.translations?.["fr"]?.name ??
-                term.slug;
-            map[term.id] = name;
-        }
-    }
-    return map;
-});
-
-function postTermLabels(post) {
-    return (post.termIds ?? []).map((id) => termMap.value[id]).filter(Boolean);
-}
+const { termMap, postTermLabels } = usePostTermLabels({ parsedTaxonomies, defaultLocale });
 </script>
 
 <template>

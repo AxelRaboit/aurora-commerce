@@ -1,13 +1,13 @@
 <script setup>
 /* eslint-disable vue/no-mutating-props -- selectedMenu is owned by parent and mutated in-place by drag-drop */
-import { computed } from "vue";
+import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { Plus, Trash2, Pencil, ListTree } from "lucide-vue-next";
+import { useMenuTree } from "@editorial/backend/menus/composables/useMenuTree.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import MenuItemRow from "@editorial/backend/menus/MenuItemRow.vue";
 
 const { t } = useI18n();
@@ -27,15 +27,10 @@ const emit = defineEmits([
     "reorder-children",
 ]);
 
-const itemCount = computed(() => {
-    if (!props.menu?.items) return 0;
-    const count = (items) =>
-        items.reduce((acc, item) => acc + 1 + (item.children?.length ? count(item.children) : 0), 0);
-    return count(props.menu.items);
-});
+const { itemCount, applyChildrenReorder } = useMenuTree(toRef(props, "menu"));
 
 function onChildReordered({ item, children }) {
-    item.children = children;
+    applyChildrenReorder(item, children);
     emit("reorder-children");
 }
 </script>
@@ -60,17 +55,19 @@ function onChildReordered({ item, children }) {
                     <AppBadge v-if="menu.protected" color="amber" :title="t('backend.menus.protectedHint')">
                         {{ t('backend.menus.protected') }}
                     </AppBadge>
-                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="$emit('edit-menu', menu)">
-                        <Pencil class="w-4 h-4" :stroke-width="2" />
-                    </AppIconButton>
-                    <AppIconButton
+                    <AppButton variant="secondary" size="md" v-on:click="$emit('edit-menu', menu)">
+                        <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.edit") }}
+                    </AppButton>
+                    <AppButton
                         v-if="!menu.protected"
-                        color="rose"
-                        :title="t('shared.common.delete')"
+                        variant="danger"
+                        size="md"
                         v-on:click="$emit('delete-menu', menu)"
                     >
-                        <Trash2 class="w-4 h-4" :stroke-width="2" />
-                    </AppIconButton>
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
                 </div>
             </div>
 
@@ -79,9 +76,9 @@ function onChildReordered({ item, children }) {
                     <p class="text-sm font-semibold text-secondary uppercase tracking-wide">
                         {{ t("backend.menus.items") }} ({{ itemCount }})
                     </p>
-                    <AppButton variant="primary" size="sm" v-on:click="$emit('add-item')">
-                        <Plus class="w-4 h-4" :stroke-width="2.5" />
-                        {{ t("backend.menus.addItem") }}
+                    <AppButton variant="primary" size="md" v-on:click="$emit('add-item')">
+                        <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.add") }}
                     </AppButton>
                 </div>
 
