@@ -20,6 +20,7 @@ import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import AppNavListItem from "@/shared/components/nav/AppNavListItem.vue";
 import TermNode from "@editorial/backend/taxonomies/TermNode.vue";
 import { slugifyIfEmpty } from "@/shared/utils/format/slugify.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -151,21 +152,21 @@ const parentOptions = computed(() => {
                 border on the selected entry, hover-only surface tint.
             -->
             <div class="space-y-0.5">
-                <button
+                <AppNavListItem
                     v-for="taxonomy in taxonomies"
                     :key="taxonomy.id"
-                    type="button"
-                    class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
-                    :class="selectedId === taxonomy.id
-                        ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
-                        : 'hover:bg-surface-2 text-primary border-transparent'"
+                    :active="selectedId === taxonomy.id"
                     v-on:click="selectedId = taxonomy.id"
                 >
-                    <FolderTree v-if="taxonomy.hierarchical" class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    <Folder v-else class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    <span class="flex-1 text-sm font-medium truncate">{{ translationLabel(taxonomy, activeLocale) }}</span>
-                    <Lock v-if="taxonomy.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.taxonomies.builtIn')" />
-                </button>
+                    <template #icon>
+                        <FolderTree v-if="taxonomy.hierarchical" class="w-4 h-4" :stroke-width="2" />
+                        <Folder v-else class="w-4 h-4" :stroke-width="2" />
+                    </template>
+                    {{ translationLabel(taxonomy, activeLocale) }}
+                    <template v-if="taxonomy.isBuiltIn" #trailing>
+                        <Lock class="w-3.5 h-3.5 text-muted" :stroke-width="2" :title="t('backend.taxonomies.builtIn')" />
+                    </template>
+                </AppNavListItem>
             </div>
         </aside>
 
