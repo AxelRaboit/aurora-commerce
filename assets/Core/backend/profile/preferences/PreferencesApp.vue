@@ -3,7 +3,7 @@ import { computed, markRaw } from "vue";
 import { useI18n } from "vue-i18n";
 import { PanelLeft } from "lucide-vue-next";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import SidebarTab from "@core/backend/profile/preferences/tabs/SidebarTab.vue";
+import SidemenuTab from "@core/backend/profile/preferences/tabs/SidemenuTab.vue";
 import { useTabState } from "@/shared/composables/useTabState.js";
 
 const { t } = useI18n();
@@ -19,10 +19,10 @@ const props = defineProps({
 
 const TABS = [
     {
-        key: "sidebar",
-        labelKey: "backend.profile.preferences.tabs.sidebar",
+        key: "sidemenu",
+        labelKey: "backend.profile.preferences.tabs.sidemenu",
         icon: PanelLeft,
-        component: markRaw(SidebarTab),
+        component: markRaw(SidemenuTab),
         getProps: () => ({
             navPreferences: props.navPreferences,
             sectionAliases: props.sectionAliases,

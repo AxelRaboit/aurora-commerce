@@ -27,7 +27,7 @@ import { useEventDelete } from "../events/composables/useEventDelete.js";
 import { useEventFilters } from "../events/composables/useEventFilters.js";
 import { useCalendar } from "./composables/useCalendar.js";
 import { usePlanningFormOptions } from "./composables/usePlanningFormOptions.js";
-import { usePeopleSidebar } from "../resources/composables/usePeopleSidebar.js";
+import { usePeopleSidemenu } from "../resources/composables/usePeopleSidemenu.js";
 import { useResourceMode } from "../resources/composables/useResourceMode.js";
 import ResourceGridView from "../resources/ResourceGridView.vue";
 
@@ -82,13 +82,13 @@ const { deletingEvent, confirmDelete: confirmDeleteEvent } = useEventDelete(
     },
 );
 
-// --- People filter (sidebar) ------------------------------------------
-const peopleSidebar = usePeopleSidebar(
+// --- People filter (sidemenu) ------------------------------------------
+const peopleSidemenu = usePeopleSidemenu(
     props.usersSelectablePath,
     props.agenciesSelectablePath,
     plannings,
 );
-const eventMatcher = computed(() => peopleSidebar.buildEventMatcher(plannings));
+const eventMatcher = computed(() => peopleSidemenu.buildEventMatcher(plannings));
 
 // --- Display + calendar -----------------------------------------------
 const baseColor = computed(() => selectedPlanning.value?.color ?? null);
@@ -112,7 +112,7 @@ const { visibilityOptions, statusOptions, timezoneOptions } = usePlanningFormOpt
 const resourceMode = useResourceMode({
     setRange,
     loadEvents,
-    peopleSidebar,
+    peopleSidemenu,
     eventForm,
     canManageEvents,
 });
@@ -152,29 +152,29 @@ onMounted(() => {
                             size="xs"
                             shape-class="rounded-md"
                             align="center"
-                            :active="peopleSidebar.mode.value === 'users'"
-                            v-on:click="peopleSidebar.mode.value = 'users'"
+                            :active="peopleSidemenu.mode.value === 'users'"
+                            v-on:click="peopleSidemenu.mode.value = 'users'"
                         >
                             <Users class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("backend.plannings.sidebar.users") }}
+                            {{ t("backend.plannings.sidemenu.users") }}
                         </AppTab>
                         <AppTab
                             size="xs"
                             shape-class="rounded-md"
                             align="center"
-                            :active="peopleSidebar.mode.value === 'agencies'"
-                            v-on:click="peopleSidebar.mode.value = 'agencies'"
+                            :active="peopleSidemenu.mode.value === 'agencies'"
+                            v-on:click="peopleSidemenu.mode.value = 'agencies'"
                         >
                             <Building2 class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("backend.plannings.sidebar.agencies") }}
+                            {{ t("backend.plannings.sidemenu.agencies") }}
                         </AppTab>
                     </div>
 
                     <AppSearchInput
-                        v-model="peopleSidebar.searchQuery.value"
-                        :placeholder="peopleSidebar.mode.value === 'users'
-                            ? t('backend.plannings.sidebar.searchUsersPlaceholder')
-                            : t('backend.plannings.sidebar.searchAgenciesPlaceholder')"
+                        v-model="peopleSidemenu.searchQuery.value"
+                        :placeholder="peopleSidemenu.mode.value === 'users'
+                            ? t('backend.plannings.sidemenu.searchUsersPlaceholder')
+                            : t('backend.plannings.sidemenu.searchAgenciesPlaceholder')"
                     />
 
                     <div class="flex flex-col gap-1.5">
@@ -182,12 +182,12 @@ onMounted(() => {
                             variant="ghost"
                             size="sm"
                             class="w-full justify-center"
-                            v-on:click="peopleSidebar.allVisibleSelected.value
-                                ? peopleSidebar.clearSelection()
-                                : peopleSidebar.selectAllVisible()"
+                            v-on:click="peopleSidemenu.allVisibleSelected.value
+                                ? peopleSidemenu.clearSelection()
+                                : peopleSidemenu.selectAllVisible()"
                         >
                             <CheckSquare
-                                v-if="!peopleSidebar.allVisibleSelected.value"
+                                v-if="!peopleSidemenu.allVisibleSelected.value"
                                 class="w-3.5 h-3.5"
                                 :stroke-width="2"
                             />
@@ -196,39 +196,39 @@ onMounted(() => {
                                 class="w-3.5 h-3.5"
                                 :stroke-width="2"
                             />
-                            {{ peopleSidebar.allVisibleSelected.value
-                                ? t("backend.plannings.sidebar.deselectAll")
-                                : t("backend.plannings.sidebar.selectAll") }}
+                            {{ peopleSidemenu.allVisibleSelected.value
+                                ? t("backend.plannings.sidemenu.deselectAll")
+                                : t("backend.plannings.sidemenu.selectAll") }}
                         </AppButton>
                         <AppButton
-                            v-if="peopleSidebar.hasFilter.value"
+                            v-if="peopleSidemenu.hasFilter.value"
                             variant="ghost"
                             size="sm"
                             class="w-full justify-center"
-                            v-on:click="peopleSidebar.clearSelection()"
+                            v-on:click="peopleSidemenu.clearSelection()"
                         >
                             <X class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("backend.plannings.sidebar.clear") }}
+                            {{ t("backend.plannings.sidemenu.clear") }}
                         </AppButton>
                     </div>
 
-                    <div v-if="peopleSidebar.mode.value === 'users'" class="space-y-1 max-h-[60vh] overflow-y-auto">
+                    <div v-if="peopleSidemenu.mode.value === 'users'" class="space-y-1 max-h-[60vh] overflow-y-auto">
                         <p
-                            v-if="!peopleSidebar.filteredUsers.value.length"
+                            v-if="!peopleSidemenu.filteredUsers.value.length"
                             class="text-xs text-muted py-3 text-center"
                         >
-                            {{ peopleSidebar.searchQuery.value
-                                ? t("backend.plannings.sidebar.noResults")
-                                : t("backend.plannings.sidebar.noUsers") }}
+                            {{ peopleSidemenu.searchQuery.value
+                                ? t("backend.plannings.sidemenu.noResults")
+                                : t("backend.plannings.sidemenu.noUsers") }}
                         </p>
                         <label
-                            v-for="user in peopleSidebar.filteredUsers.value"
+                            v-for="user in peopleSidemenu.filteredUsers.value"
                             :key="user.id"
                             class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2/60 cursor-pointer text-sm"
                         >
                             <AppCheckbox
-                                :model-value="peopleSidebar.selectedUserIds.value.has(Number(user.id))"
-                                v-on:update:model-value="peopleSidebar.toggleUser(Number(user.id))"
+                                :model-value="peopleSidemenu.selectedUserIds.value.has(Number(user.id))"
+                                v-on:update:model-value="peopleSidemenu.toggleUser(Number(user.id))"
                             />
                             <span class="truncate text-primary">{{ user.name }}</span>
                         </label>
@@ -236,21 +236,21 @@ onMounted(() => {
 
                     <div v-else class="space-y-1 max-h-[60vh] overflow-y-auto">
                         <p
-                            v-if="!peopleSidebar.filteredAgencies.value.length"
+                            v-if="!peopleSidemenu.filteredAgencies.value.length"
                             class="text-xs text-muted py-3 text-center"
                         >
-                            {{ peopleSidebar.searchQuery.value
-                                ? t("backend.plannings.sidebar.noResults")
-                                : t("backend.plannings.sidebar.noAgencies") }}
+                            {{ peopleSidemenu.searchQuery.value
+                                ? t("backend.plannings.sidemenu.noResults")
+                                : t("backend.plannings.sidemenu.noAgencies") }}
                         </p>
                         <label
-                            v-for="agency in peopleSidebar.filteredAgencies.value"
+                            v-for="agency in peopleSidemenu.filteredAgencies.value"
                             :key="agency.value"
                             class="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2/60 cursor-pointer text-sm"
                         >
                             <AppCheckbox
-                                :model-value="peopleSidebar.selectedAgencyIds.value.has(Number(agency.value))"
-                                v-on:update:model-value="peopleSidebar.toggleAgency(Number(agency.value))"
+                                :model-value="peopleSidemenu.selectedAgencyIds.value.has(Number(agency.value))"
+                                v-on:update:model-value="peopleSidemenu.toggleAgency(Number(agency.value))"
                             />
                             <span class="truncate text-primary">{{ agency.label }}</span>
                         </label>
@@ -501,7 +501,7 @@ onMounted(() => {
                     v-model="eventForm.editForm.attendeeIds"
                     :label="t('backend.planning_events.fields.attendees')"
                     :placeholder="t('backend.planning_events.fields.attendeesPlaceholder')"
-                    :options="peopleSidebar.userOptions.value"
+                    :options="peopleSidemenu.userOptions.value"
                     :multiple="true"
                     :allow-empty="true"
                     :disabled="eventForm.editModal.readOnly"

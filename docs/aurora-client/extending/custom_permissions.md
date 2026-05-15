@@ -46,7 +46,7 @@ class ClientCrmPermissionsModule implements ModuleInterface
 
     public function getNavSections(): array
     {
-        return []; // pas de sidebar, uniquement des permissions
+        return []; // pas de sidemenu, uniquement des permissions
     }
 }
 ```

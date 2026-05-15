@@ -41,7 +41,7 @@ test.describe("Media Picker Modal", () => {
         ).toBeHidden({ timeout: 3_000 });
     });
 
-    test("shows folder sidebar with All folders entry", async ({ page }) => {
+    test("shows folder sidemenu with All folders entry", async ({ page }) => {
         await loginAsAdmin(page);
         await openPicker(page);
 

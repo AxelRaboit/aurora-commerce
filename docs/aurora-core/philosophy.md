@@ -118,7 +118,7 @@ Chaque module est une unité autonome qui :
 3. Possède ses propres entités, managers, controllers, templates, assets Vue et traductions
 
 Le `ModuleRegistry` collecte tous les modules taggés et les intègre dans la
-sidebar admin, le système de permissions et le routing. Ajouter un module ne
+sidemenu admin, le système de permissions et le routing. Ajouter un module ne
 nécessite aucune modification du code Aurora — juste le tag.
 
 ### Les permissions

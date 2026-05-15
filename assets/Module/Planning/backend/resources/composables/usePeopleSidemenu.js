@@ -3,7 +3,7 @@ import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
 /**
- * People sidebar — switches between "users" and "agencies" filtering
+ * People sidemenu — switches between "users" and "agencies" filtering
  * mode. In each mode, the user picks which entries to show; events are
  * then filtered against:
  *   - users     → event.attendees ∈ selectedUserIds
@@ -17,7 +17,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  * embedded in the loaded plannings — no extra permission needed, but
  * limited to agencies that already own at least one planning.
  */
-export function usePeopleSidebar(
+export function usePeopleSidemenu(
     usersSelectablePath,
     agenciesSelectablePath,
     planningsRef,
@@ -134,7 +134,7 @@ export function usePeopleSidebar(
     });
 
     // Reusable AppMultiselect-shape options — same source of truth as
-    // the sidebar list, avoids duplicating the /selectable fetch.
+    // the sidemenu list, avoids duplicating the /selectable fetch.
     const userOptions = computed(() =>
         users.value.map((user) => ({
             value: Number(user.id),

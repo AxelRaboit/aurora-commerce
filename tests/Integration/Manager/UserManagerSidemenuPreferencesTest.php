@@ -9,7 +9,7 @@ use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Tests\Integration\Concern\CreatesTestUsers;
 use Aurora\Tests\Integration\IntegrationTestCase;
 
-final class UserManagerSidebarPreferencesTest extends IntegrationTestCase
+final class UserManagerSidemenuPreferencesTest extends IntegrationTestCase
 {
     use CreatesTestUsers;
 
@@ -34,7 +34,7 @@ final class UserManagerSidebarPreferencesTest extends IntegrationTestCase
     {
         $user = $this->createTestUser('filter', role: UserRoleEnum::User);
 
-        $this->userManager->updateSidebarPreferences(
+        $this->userManager->updateSidemenuPreferences(
             $user,
             ['not_a_real_section', 'another_bogus_section'],
             ['not_a_real_route'],
@@ -53,7 +53,7 @@ final class UserManagerSidebarPreferencesTest extends IntegrationTestCase
         $user->setHiddenNavSections(['crm', 'billing']);
         $user->setHiddenNavItems(['backend_crm_contacts']);
 
-        $this->userManager->resetSidebarPreferences($user);
+        $this->userManager->resetSidemenuPreferences($user);
 
         self::assertSame([], $user->getHiddenNavSections());
         self::assertSame([], $user->getHiddenNavItems());

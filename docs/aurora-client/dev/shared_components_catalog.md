@@ -573,7 +573,7 @@ Lien standard. Variantes admin et front. Préférer à `<a>` brut.
 
 ### `AppNavLink`
 
-Lien de sidebar (item de navigation). Gère état actif, hover color, tooltip
+Lien de sidemenu (item de navigation). Gère état actif, hover color, tooltip
 collapsed.
 
 | Prop | Type | Défaut |
@@ -583,7 +583,7 @@ collapsed.
 | `activeColor` | `String` | `"accent"` (`accent` `rose`) |
 | `hoverColor` | `String` | `"primary"` (`primary` `emerald` `amber` `rose` `accent`) |
 | `target` | `String` | `null` |
-| `sidebarActive` | `Boolean` | `false` |
+| `sidemenuActive` | `Boolean` | `false` |
 | `tooltipTitle` | `String` | `""` |
 | `tooltipDescription` | `String` | `""` |
 | `tooltipPlacement` | `String` | `"right"` |
@@ -637,7 +637,7 @@ consommateur.
 | Prop | Type | Défaut | Description |
 |---|---|---|---|
 | `active` | `Boolean` | `false` | |
-| `variant` | `String` | `"pill"` | `pill` (filtres/sidebar) ou `underline` (switcher de panel). |
+| `variant` | `String` | `"pill"` | `pill` (filtres/sidemenu) ou `underline` (switcher de panel). |
 | `color` | `String` | `"accent"` | `accent` ou `rose`. |
 | `size` | `String` | `"md"` | `md` `sm` `xs`. |
 | `align` | `String` | `"left"` | `left` ou `center`. |

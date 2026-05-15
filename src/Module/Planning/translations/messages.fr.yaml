@@ -38,7 +38,7 @@ backend:
     delete: Supprimer le planning
     delete_confirm: 'Supprimer le planning « {name} » ? Tous ses événements seront aussi supprimés. Cette action est irréversible.'
     empty: Aucun planning. Crée le premier pour commencer à organiser tes événements.
-    sidebar:
+    sidemenu:
       users: Utilisateurs
       agencies: Agences
       selectAll: Tout sélectionner
@@ -55,7 +55,7 @@ backend:
     resourceView:
       user: Utilisateur
       userCount: '{n} utilisateur(s)'
-      noUsers: Aucun utilisateur sélectionné. Coche un utilisateur dans la sidebar à gauche.
+      noUsers: Aucun utilisateur sélectionné. Coche un utilisateur dans la sidemenu à gauche.
       unassigned: Sans participant
       previous: Semaine précédente
       next: Semaine suivante

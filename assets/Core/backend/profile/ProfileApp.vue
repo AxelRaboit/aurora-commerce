@@ -38,7 +38,7 @@ const props = defineProps({
     loginPath: { type: String, required: true },
     deleteCsrf: { type: String, default: "" },
     canDeleteAccount: { type: Boolean, default: true },
-    sidebarPreferencesPath: { type: String, default: "" },
+    sidemenuPreferencesPath: { type: String, default: "" },
     accountInfo: { type: Object, default: () => ({}) },
 });
 
@@ -179,8 +179,8 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                 </div>
 
                 <AppCardLink
-                    v-if="sidebarPreferencesPath"
-                    :href="sidebarPreferencesPath"
+                    v-if="sidemenuPreferencesPath"
+                    :href="sidemenuPreferencesPath"
                     :icon="SlidersHorizontal"
                     :title="t('backend.profile.preferences.title')"
                     :description="t('backend.profile.preferences.subtitle')"

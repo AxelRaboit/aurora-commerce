@@ -453,12 +453,12 @@ const { isExpanded, toggle, getRaw } = usePersistedExpanded('aurora-tree-categor
 
 ### `useResizable({ key, defaultValue, min?, max?, axis?, onChange?, getOrigin? })`
 
-Drag-to-resize d'un panel (sidebar, drawer). Persistance localStorage,
+Drag-to-resize d'un panel (sidemenu, drawer). Persistance localStorage,
 cursor lock pendant le drag.
 
 ```js
 const { size, dragging, startResize, reset } = useResizable({
-    key: 'aurora-sidebar-width',
+    key: 'aurora-sidemenu-width',
     defaultValue: 280,
     min: 200, max: 480,
 });

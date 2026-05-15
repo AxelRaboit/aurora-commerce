@@ -78,10 +78,10 @@ final class TrackingFrontend implements FrontendInterface
 Donc la chaîne `/ → /backend → /backend/profile` fonctionne
 automatiquement.
 
-### Sidebar "Voir le site"
+### Sidemenu "Voir le site"
 
 `FrontendExtension` (Twig) expose `has_enabled_fronts()`. Le layout passe
-`hasEnabledFronts` à `AppSidebar.vue`, qui gate le lien "Voir le site"
+`hasEnabledFronts` à `AppSidemenu.vue`, qui gate le lien "Voir le site"
 avec `v-if="hasEnabledFronts"`.
 
 ## Pièges

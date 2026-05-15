@@ -21,7 +21,7 @@ final readonly class UsersViewBuilder
 {
     /**
      * Display priority per module/group id (lower = first). Mirrors the
-     * NavSection priorities used by the sidebar, so the Privileges modal
+     * NavSection priorities used by the sidemenu, so the Privileges modal
      * and Module-Access modal show modules in the same order users see
      * in the left menu. Unknown ids default to {@see self::UNKNOWN_PRIORITY}
      * which places them at the end of the list (typical for client modules).

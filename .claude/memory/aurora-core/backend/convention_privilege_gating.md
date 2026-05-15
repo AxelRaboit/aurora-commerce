@@ -47,10 +47,10 @@ grep -rn "#\[Route" src/Core/ src/Module/ --include="*.php" -A2 \
 Toute route admin (`/backend/...`) doit être suivie d'un `IsGranted`
 explicite.
 
-## 1bis. Sidebar : `requiredPrivilege` sur les `NavItem`
+## 1bis. Sidemenu : `requiredPrivilege` sur les `NavItem`
 
 Aussi obligatoire. Sans ça, **un user sans la perm voit l'entrée dans
-le sidebar**, clique, se prend `Access Denied`. Friction inutile :
+le sidemenu**, clique, se prend `Access Denied`. Friction inutile :
 si la route est gated par `IsGranted('x.y.z')`, son `NavItem` doit
 déclarer `requiredPrivilege: 'x.y.z'`.
 

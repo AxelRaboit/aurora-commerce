@@ -27,12 +27,12 @@ d'UI. Cas typique :
   `core.media.*`, `core.users.*`, `core.agencies.*`, `core.services.*`,
   `core.settings.*`, `core.themes.*`
 - Ces fonctionnalités sont visibles dans la **section "Plateforme"** du
-  sidebar (priority 20), pas dans une section "Cœur"
+  sidemenu (priority 20), pas dans une section "Cœur"
 - Sans `$group`, la modale Privilèges afficherait un groupe "Cœur" avec
   toutes ces permissions, sans correspondance avec ce que voit l'admin
-  dans le sidebar
+  dans le sidemenu
 - Avec `$group: 'platform'`, elles apparaissent sous "Plateforme",
-  cohérent avec le sidebar
+  cohérent avec le sidemenu
 
 ## Comment l'appliquer
 
@@ -54,10 +54,10 @@ d'UI. Cas typique :
 ```php
 // CoreModule.getPermissions()
 return [
-    // Général — section "Général" dans le sidebar
+    // Général — section "Général" dans le sidemenu
     new NavPermission('general.dashboard.view', group: 'general'),
 
-    // Plateforme — section "Plateforme" dans le sidebar
+    // Plateforme — section "Plateforme" dans le sidemenu
     new NavPermission('core.media.view', group: 'platform'),
     new NavPermission('core.media.manage', group: 'platform'),
     new NavPermission('core.users.manage', group: 'platform'),
@@ -68,7 +68,7 @@ return [
     new NavPermission('core.themes.manage', group: 'platform'),
 
     // Pas de groupe explicite → reste sous CoreModule's getId() = 'core'
-    // (transverse, pas une section de sidebar)
+    // (transverse, pas une section de sidemenu)
     new NavPermission('core.search.view'),
 ];
 ```

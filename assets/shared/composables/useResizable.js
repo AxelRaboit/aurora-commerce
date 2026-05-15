@@ -1,7 +1,7 @@
 import { onBeforeUnmount, ref, watch } from "vue";
 
 /**
- * Pointer-driven resize for a panel (sidebar, drawer, etc.).
+ * Pointer-driven resize for a panel (sidemenu, drawer, etc.).
  *
  * The composable owns the pixel size, persists it to localStorage, and exposes
  * a `startResize(event)` mousedown handler to bind on the drag handle. While

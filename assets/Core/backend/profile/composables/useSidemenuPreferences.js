@@ -10,7 +10,7 @@ function collectItemKeys(items, out) {
     }
 }
 
-export function useSidebarPreferences({
+export function useSidemenuPreferences({
     navPreferences,
     sectionAliases,
     initialHiddenSections,
@@ -101,7 +101,7 @@ export function useSidebarPreferences({
         if (data.success) {
             hiddenSections.value = new Set(data.hiddenNavSections ?? []);
             hiddenItems.value = new Set(data.hiddenNavItems ?? []);
-            toast.success(t("backend.profile.sidebar.saved"));
+            toast.success(t("backend.profile.sidemenu.saved"));
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -113,7 +113,7 @@ export function useSidebarPreferences({
         if (data.success) {
             hiddenSections.value = new Set();
             hiddenItems.value = new Set();
-            toast.success(t("backend.profile.sidebar.reset_done"));
+            toast.success(t("backend.profile.sidemenu.reset_done"));
         }
     }
 

@@ -66,14 +66,14 @@ applique ça uniformément.
 ### Variantes structurelles autorisées
 - **Editor full-page** (cas `Post`) : la clé `create` sert de titre de
   l'en-tête de l'éditeur, exactement comme pour un modal.
-- **Liste + sidebar éditeur** (cas `Form` Editorial) : `add` sur le bouton
-  primaire de la sidebar, `create` ou clé spécifique (ex. `newForm`) sur
+- **Liste + sidemenu éditeur** (cas `Form` Editorial) : `add` sur le bouton
+  primaire de la sidemenu, `create` ou clé spécifique (ex. `newForm`) sur
   l'en-tête de l'éditeur quand on est en mode création.
-- **Bouton dans une sidebar étroite avec titre de section au-dessus**
+- **Bouton dans une sidemenu étroite avec titre de section au-dessus**
   (cas `taxonomies`, `post-types`) : la clé `add` peut être raccourcie à
   juste `"Ajouter"` / `"Add"`. Justification : le `<h2>` "Types de
   contenu" / "Taxonomies" juste au-dessus rend le nom d'entité redondant,
-  et l'espace horizontal limité de la sidebar fait wraper la version
+  et l'espace horizontal limité de la sidemenu fait wraper la version
   longue. Cas similaire : un bouton d'action évident dans une carte ou
   un widget dont le contexte rend l'objet implicite ("Ajouter" dans une
   carte « Champs personnalisés », par exemple).

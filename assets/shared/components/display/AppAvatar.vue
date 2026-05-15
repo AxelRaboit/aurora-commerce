@@ -11,7 +11,7 @@ const props = defineProps({
     /** sm | md | lg | xl  OR  a number (pixels) */
     size:      { type: [String, Number], default: "md" },
     /** "soft" = bg-accent-600/20 text-accent-400 (lists, table rows)
-     *  "solid" = bg-accent-600 text-white (identity badge, sidebar) */
+     *  "solid" = bg-accent-600 text-white (identity badge, sidemenu) */
     variant:   { type: String, default: "soft" },
 });
 

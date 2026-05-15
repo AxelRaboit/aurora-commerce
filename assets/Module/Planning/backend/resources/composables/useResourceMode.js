@@ -8,7 +8,7 @@ import { useResourceWeek } from "./useResourceWeek.js";
  *    "resource"
  *  - drives the data range when in resource mode (via setRange +
  *    loadEvents from the planning context)
- *  - filters the visible user rows based on the people sidebar
+ *  - filters the visible user rows based on the people sidemenu
  *    selection
  *  - bridges resource-grid events (slot click → create modal,
  *    event click → edit modal) to the existing event form
@@ -16,7 +16,7 @@ import { useResourceWeek } from "./useResourceWeek.js";
 export function useResourceMode({
     setRange,
     loadEvents,
-    peopleSidebar,
+    peopleSidemenu,
     eventForm,
     canManageEvents,
 }) {
@@ -33,14 +33,14 @@ export function useResourceMode({
     });
 
     const visibleUsers = computed(() => {
-        if (peopleSidebar.mode.value !== "users") {
-            return peopleSidebar.users.value;
+        if (peopleSidemenu.mode.value !== "users") {
+            return peopleSidemenu.users.value;
         }
-        if (peopleSidebar.selectedUserIds.value.size === 0) {
-            return peopleSidebar.users.value;
+        if (peopleSidemenu.selectedUserIds.value.size === 0) {
+            return peopleSidemenu.users.value;
         }
-        return peopleSidebar.users.value.filter((user) =>
-            peopleSidebar.selectedUserIds.value.has(Number(user.id)),
+        return peopleSidemenu.users.value.filter((user) =>
+            peopleSidemenu.selectedUserIds.value.has(Number(user.id)),
         );
     });
 

@@ -111,7 +111,7 @@ App\Module\Crm\CrmModule:
 - Generates Symfony route paths (via UrlGeneratorInterface)
 - Aggregates permissions from all modules
 
-The Twig function `sidebar_nav_sections()` calls the registry and returns the resolved
+The Twig function `sidemenu_nav_sections()` calls the registry and returns the resolved
 nav sections to the admin layout template.
 
 ### 3.3 Role & privilege system
@@ -461,7 +461,7 @@ Each module owns its translations:
 | Project | `src/Module/Project/translations/messages.{locale}.yaml` |
 
 Symfony's translator merges all paths automatically — keys can share top-level prefixes
-(e.g. `admin.nav.*` is partially defined by every module that contributes a sidebar entry).
+(e.g. `admin.nav.*` is partially defined by every module that contributes a sidemenu entry).
 Paths are registered in `config/packages/translation.yaml` (`framework.translator.paths`).
 
 **Two consumers**: Twig/PHP (Symfony's translator) and vue-i18n (Vue components). To avoid
@@ -540,7 +540,7 @@ ecommerce_listings, ecommerce_orders, ecommerce_carts, ecommerce_customers
 
 ## 7. Roadmap
 
-- [x] Module manifest + ModuleRegistry + dynamic admin sidebar
+- [x] Module manifest + ModuleRegistry + dynamic admin sidemenu
 - [x] Module/Editorial — full editorial CMS (posts, taxonomies, comments, forms, SEO, sitemap)
 - [x] Module/Crm — Contact, Company, Deal (CRUD + Kanban)
 - [x] Permission registry (ModulePermissionVoter + per-module `#[IsGranted]`)

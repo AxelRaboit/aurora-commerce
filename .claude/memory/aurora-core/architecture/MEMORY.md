@@ -3,7 +3,7 @@
 - [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : cascade graph, convention clés sans `_enabled`
 - [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`
 - [pattern_user_scoped_module_access.md](pattern_user_scoped_module_access.md) — `ModuleAccessChecker` : global setting + per-user `disabled_modules` JSON + cascade
-- [pattern_user_sidebar_preferences.md](pattern_user_sidebar_preferences.md) — couche user-controlled `hidden_nav_sections` + `hidden_nav_items` ; tokens stables NavSection.id / NavItem.route
+- [pattern_user_sidemenu_preferences.md](pattern_user_sidemenu_preferences.md) — couche user-controlled `hidden_nav_sections` + `hidden_nav_items` ; tokens stables NavSection.id / NavItem.route
 - [pattern_frontend_toggle.md](pattern_frontend_toggle.md) — chaque front a son toggle dédié. `FrontendRouteGateSubscriber` 404 les routes désactivées
 - [pattern_frontend_descriptor.md](pattern_frontend_descriptor.md) — convention `<Module>FrontendDescriptor.php` à la racine du module pour tout `*Frontend` toggle (symétrie Editorial/Ecommerce/Photo/Ged)
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit

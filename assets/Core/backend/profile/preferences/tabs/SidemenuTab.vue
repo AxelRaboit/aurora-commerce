@@ -5,7 +5,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import { useSidebarPreferences } from "@core/backend/profile/composables/useSidebarPreferences.js";
+import { useSidemenuPreferences } from "@core/backend/profile/composables/useSidemenuPreferences.js";
 
 const { t } = useI18n();
 
@@ -18,7 +18,7 @@ const props = defineProps({
     resetPath: { type: String, required: true },
 });
 
-const prefs = useSidebarPreferences({
+const prefs = useSidemenuPreferences({
     navPreferences: props.navPreferences,
     sectionAliases: props.sectionAliases,
     initialHiddenSections: props.hiddenNavSections,
@@ -32,7 +32,7 @@ const prefs = useSidebarPreferences({
     <div>
         <header class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
             <p class="text-sm text-secondary min-w-0">
-                {{ t('backend.profile.sidebar.subtitle') }}
+                {{ t('backend.profile.sidemenu.subtitle') }}
             </p>
             <div class="flex items-center gap-2 sm:shrink-0 flex-wrap">
                 <AppButton
@@ -43,7 +43,7 @@ const prefs = useSidebarPreferences({
                     v-on:click="prefs.reset"
                 >
                     <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('backend.profile.sidebar.reset') }}
+                    {{ t('backend.profile.sidemenu.reset') }}
                 </AppButton>
                 <AppButton
                     variant="primary"
@@ -52,20 +52,20 @@ const prefs = useSidebarPreferences({
                     v-on:click="prefs.save"
                 >
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('backend.profile.sidebar.save') }}
+                    {{ t('backend.profile.sidemenu.save') }}
                 </AppButton>
             </div>
         </header>
 
         <AppSearchInput
             v-model="prefs.search.value"
-            :placeholder="t('backend.profile.sidebar.search_placeholder')"
+            :placeholder="t('backend.profile.sidemenu.search_placeholder')"
             class="mb-4"
         />
 
         <AppNoData
             v-if="!prefs.filteredSections.value.length"
-            :message="prefs.search.value ? t('backend.profile.sidebar.empty_search') : t('backend.profile.sidebar.empty')"
+            :message="prefs.search.value ? t('backend.profile.sidemenu.empty_search') : t('backend.profile.sidemenu.empty')"
         />
 
         <div v-else class="space-y-3">
@@ -80,7 +80,7 @@ const prefs = useSidebarPreferences({
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-primary truncate">{{ section.label }}</p>
                             <p class="text-xs text-muted mt-0.5 hidden sm:block">
-                                {{ t('backend.profile.sidebar.section_hint') }}
+                                {{ t('backend.profile.sidemenu.section_hint') }}
                             </p>
                         </div>
                         <AppToggle
@@ -93,20 +93,20 @@ const prefs = useSidebarPreferences({
                         <AppButton
                             variant="ghost"
                             size="sm"
-                            :title="t('backend.profile.sidebar.hide_all')"
+                            :title="t('backend.profile.sidemenu.hide_all')"
                             v-on:click="prefs.hideAllInSection(section)"
                         >
                             <EyeOff class="w-3.5 h-3.5" :stroke-width="2" />
-                            <span class="hidden sm:inline">{{ t('backend.profile.sidebar.hide_all') }}</span>
+                            <span class="hidden sm:inline">{{ t('backend.profile.sidemenu.hide_all') }}</span>
                         </AppButton>
                         <AppButton
                             variant="ghost"
                             size="sm"
-                            :title="t('backend.profile.sidebar.show_all')"
+                            :title="t('backend.profile.sidemenu.show_all')"
                             v-on:click="prefs.showAllInSection(section)"
                         >
                             <Eye class="w-3.5 h-3.5" :stroke-width="2" />
-                            <span class="hidden sm:inline">{{ t('backend.profile.sidebar.show_all') }}</span>
+                            <span class="hidden sm:inline">{{ t('backend.profile.sidemenu.show_all') }}</span>
                         </AppButton>
                         <AppToggle
                             class="hidden sm:inline-flex"

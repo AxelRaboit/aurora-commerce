@@ -33,23 +33,23 @@ describe("AppNavLink", () => {
         expect(wrapper.find("a").classes()).toContain("text-secondary");
     });
 
-    it("sets data-sidebar-active when sidebarActive is true", () => {
+    it("sets data-sidemenu-active when sidemenuActive is true", () => {
         const wrapper = mount(AppNavLink, {
-            props: { href: "/dashboard", sidebarActive: true },
+            props: { href: "/dashboard", sidemenuActive: true },
             global: { stubs: { AppTooltip: stubAppTooltip } },
         });
-        expect(wrapper.find("a").attributes("data-sidebar-active")).toBe(
+        expect(wrapper.find("a").attributes("data-sidemenu-active")).toBe(
             "true",
         );
     });
 
-    it("omits data-sidebar-active attribute when sidebarActive is false", () => {
+    it("omits data-sidemenu-active attribute when sidemenuActive is false", () => {
         const wrapper = mount(AppNavLink, {
-            props: { href: "/dashboard", sidebarActive: false },
+            props: { href: "/dashboard", sidemenuActive: false },
             global: { stubs: { AppTooltip: stubAppTooltip } },
         });
         expect(
-            wrapper.find("a").attributes("data-sidebar-active"),
+            wrapper.find("a").attributes("data-sidemenu-active"),
         ).toBeUndefined();
     });
 

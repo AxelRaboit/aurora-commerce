@@ -25,7 +25,7 @@ const props = defineProps({
     },
     /** Show delay in ms — prevents flicker when sweeping over multiple items. */
     delay: { type: Number, default: 200 },
-    /** Disable entirely (e.g. when sidebar is expanded and labels are already visible). */
+    /** Disable entirely (e.g. when sidemenu is expanded and labels are already visible). */
     disabled: { type: Boolean, default: false },
 });
 

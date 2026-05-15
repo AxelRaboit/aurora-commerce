@@ -10,7 +10,7 @@ use Twig\Attribute\AsTwigFunction;
 
 /**
  * Twig accessors for the frontend registry. Currently exposes whether
- * at least one front is enabled, so the sidebar can hide the "Voir le
+ * at least one front is enabled, so the sidemenu can hide the "Voir le
  * site" link when every front has been masked from the dev panel.
  */
 final readonly class FrontendExtension

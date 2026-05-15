@@ -59,8 +59,8 @@ backend:
       title: Préférences
       subtitle: Personnalisez votre expérience.
       tabs:
-        sidebar: Menu latéral
-    sidebar:
+        sidemenu: Menu latéral
+    sidemenu:
       title: Préférences du menu latéral
       subtitle: Cachez les sections ou modules que vous n'utilisez pas pour épurer votre navigation. Les pages restent accessibles par URL directe.
       section_hint: Désactivez le bouton pour cacher toute la section, ou ajustez module par module.

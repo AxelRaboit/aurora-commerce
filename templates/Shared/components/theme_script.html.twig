@@ -7,16 +7,16 @@
             document.documentElement.style.colorScheme = 'dark';
             {% endif %}
         }
-        {% if sidebar is defined and sidebar %}
-        const sidebarState = localStorage.getItem('aurora-sidebar');
-        if (sidebarState === 'collapsed') {
-            document.documentElement.classList.add('sidebar-collapsed');
+        {% if sidemenu is defined and sidemenu %}
+        const sidemenuState = localStorage.getItem('aurora-sidemenu');
+        if (sidemenuState === 'collapsed') {
+            document.documentElement.classList.add('sidemenu-collapsed');
         }
-        const storedWidth = localStorage.getItem('aurora-sidebar-width');
+        const storedWidth = localStorage.getItem('aurora-sidemenu-width');
         if (storedWidth) {
             const parsedWidth = parseInt(storedWidth, 10);
             if (Number.isFinite(parsedWidth)) {
-                document.documentElement.style.setProperty('--sidebar-width', parsedWidth + 'px');
+                document.documentElement.style.setProperty('--sidemenu-width', parsedWidth + 'px');
             }
         }
         {% endif %}

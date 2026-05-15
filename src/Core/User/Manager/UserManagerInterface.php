@@ -63,9 +63,9 @@ interface UserManagerInterface
      * @param list<string> $hiddenNavSections NavSection.id values to hide
      * @param list<string> $hiddenNavItems    NavItem.route values to hide
      */
-    public function updateSidebarPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void;
+    public function updateSidemenuPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void;
 
-    public function resetSidebarPreferences(User $user): void;
+    public function resetSidemenuPreferences(User $user): void;
 
     public function delete(User $user): void;
 

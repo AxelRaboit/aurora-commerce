@@ -1,16 +1,16 @@
 import { ref } from "vue";
 
-const SIDEBAR_KEY = "aurora-sidebar";
+const SIDEMENU_KEY = "aurora-sidemenu";
 
-export function useSidebarCollapse() {
+export function useSidemenuCollapse() {
     function collapse() {
-        document.documentElement.classList.add("sidebar-collapsed");
-        localStorage.setItem(SIDEBAR_KEY, "collapsed");
+        document.documentElement.classList.add("sidemenu-collapsed");
+        localStorage.setItem(SIDEMENU_KEY, "collapsed");
     }
 
     function expand() {
-        document.documentElement.classList.remove("sidebar-collapsed");
-        localStorage.setItem(SIDEBAR_KEY, "expanded");
+        document.documentElement.classList.remove("sidemenu-collapsed");
+        localStorage.setItem(SIDEMENU_KEY, "expanded");
     }
 
     const mobileOpen = ref(false);

@@ -184,21 +184,21 @@ final class ProfileController extends AbstractController
         return $this->jsonSuccess(['profilePhotoUrl' => null]);
     }
 
-    #[Route('/sidebar', name: '_sidebar', methods: [HttpMethodEnum::Get->value])]
-    public function sidebar(): Response
+    #[Route('/sidemenu', name: '_sidemenu', methods: [HttpMethodEnum::Get->value])]
+    public function sidemenu(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
 
-        return $this->render('@Core/backend/profile/sidebar.html.twig', [
+        return $this->render('@Core/backend/profile/sidemenu.html.twig', [
             'navPreferences' => $this->moduleRegistry->getNavPreferences(),
             'hiddenNavSections' => $user->getHiddenNavSections(),
             'hiddenNavItems' => $user->getHiddenNavItems(),
         ]);
     }
 
-    #[Route('/sidebar', name: '_sidebar_save', methods: [HttpMethodEnum::Post->value])]
-    public function sidebarSave(Request $request): JsonResponse
+    #[Route('/sidemenu', name: '_sidemenu_save', methods: [HttpMethodEnum::Post->value])]
+    public function sidemenuSave(Request $request): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -214,7 +214,7 @@ final class ProfileController extends AbstractController
             ]);
         }
 
-        $this->userManager->updateSidebarPreferences(
+        $this->userManager->updateSidemenuPreferences(
             $user,
             array_values(array_filter($hiddenSections, is_string(...))),
             array_values(array_filter($hiddenItems, is_string(...))),
@@ -226,12 +226,12 @@ final class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/sidebar/reset', name: '_sidebar_reset', methods: [HttpMethodEnum::Post->value])]
-    public function sidebarReset(): JsonResponse
+    #[Route('/sidemenu/reset', name: '_sidemenu_reset', methods: [HttpMethodEnum::Post->value])]
+    public function sidemenuReset(): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
-        $this->userManager->resetSidebarPreferences($user);
+        $this->userManager->resetSidemenuPreferences($user);
 
         return $this->jsonSuccess();
     }

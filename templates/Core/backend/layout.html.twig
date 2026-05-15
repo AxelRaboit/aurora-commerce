@@ -11,7 +11,7 @@
     {% else %}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     {% endif %}
-    {{ include('@Shared/components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
+    {{ include('@Shared/components/theme_script.html.twig', {colorScheme: true, sidemenu: true}) }}
     {% block stylesheets %}
         {{ vite_entry_link_tags('app') }}
         {{ vite_entry_link_tags('flash') }}
@@ -37,8 +37,8 @@
 
 <div class="min-h-screen bg-bg">
 
-    <div {{ vue_component('core/backend/sidebar/AppSidebar', {
-        navSections: sidebar_nav_sections(),
+    <div {{ vue_component('core/backend/sidemenu/AppSidemenu', {
+        navSections: sidemenu_nav_sections(),
         navSectionAliases: nav_section_aliases(),
         userName: app.user.name,
         userEmail: app.user.email,
@@ -48,7 +48,7 @@
         frontPath: path('frontend_root'),
         hasEnabledFronts: has_enabled_fronts(),
         profilePath: path('backend_profile'),
-        sidebarPreferencesPath: path('backend_profile_sidebar'),
+        sidemenuPreferencesPath: path('backend_profile_sidemenu'),
         logoutPath: path('backend_logout'),
         locale: app.request.locale,
         mailpitUrl: app.environment == 'dev' ? 'http://127.0.0.1:8025' : '',

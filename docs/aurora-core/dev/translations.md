@@ -112,9 +112,9 @@ backend:
     mon_module_description: ...     # description dans la page Modules
   nav:
     sections:
-      mon_module: Mon module        # titre de section dans la sidebar
+      mon_module: Mon module        # titre de section dans la sidemenu
     mon_entite: Mes entités         # label du lien nav
-    mon_entite_description: ...     # tooltip hover de la sidebar
+    mon_entite_description: ...     # tooltip hover de la sidemenu
   permissions:
     names:
       mon_module:
@@ -142,8 +142,8 @@ backend:
 
 | Préfixe | Usage |
 |---------|-------|
-| `backend.nav.*` | Labels et descriptions des items de navigation (sidebar) |
-| `backend.nav.sections.*` | Titres de sections de la sidebar |
+| `backend.nav.*` | Labels et descriptions des items de navigation (sidemenu) |
+| `backend.nav.sections.*` | Titres de sections de la sidemenu |
 | `backend.modules.*` | Labels des modules dans la page `/dev/dashboard/modules` |
 | `backend.permissions.names.*` | Labels des privilèges dans la page Permissions |
 | `backend.audit.actions.*` | Labels des actions dans l'onglet Audit |

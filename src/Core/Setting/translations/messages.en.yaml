@@ -20,7 +20,7 @@ backend:
       sequences: Sequences
       sequences_description: Prefixes for auto-generated references.
       navigation: Navigation
-      navigation_description: Customize sidebar section names.
+      navigation_description: Customize sidemenu section names.
       modules: Modules
       ecommerce: E-commerce
     appearance:

@@ -11,7 +11,7 @@ defineProps({
     /**
      * Visual "selected" state. Currently honored by the `nav` variant —
      * swaps the inactive surface styling for the accent-tinted look used
-     * by sidebar lists (taxonomies / post types).
+     * by sidemenu lists (taxonomies / post types).
      */
     active: { type: Boolean, default: false },
 });
@@ -30,7 +30,7 @@ const variants = {
     link: 'bg-transparent text-muted hover:text-secondary underline p-0 text-sm',
     'link-accent': 'bg-transparent text-accent hover:underline p-0 text-sm',
     icon: 'bg-transparent p-0',
-    // Sidebar list entry: full-width, left-aligned, surface card. Combine with `active` to highlight the selected row.
+    // Sidemenu list entry: full-width, left-aligned, surface card. Combine with `active` to highlight the selected row.
     nav: '!justify-start text-left w-full bg-surface hover:bg-surface-2 text-primary border border-line/60',
     // Frontend — use inside a parent that sets the text color via CSS variable
     'front-ghost': 'bg-transparent hover:opacity-80 transition-opacity',

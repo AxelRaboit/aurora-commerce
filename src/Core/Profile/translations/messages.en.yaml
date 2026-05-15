@@ -12,7 +12,7 @@ backend:
       password_too_short: The password must be at least 8 characters long.
     photo:
       title: Profile photo
-      subtitle: Shown in the sidebar and user list.
+      subtitle: Shown in the sidemenu and user list.
     mood:
       title: Mood
       subtitle: A short line that captures how you're feeling right now.
@@ -59,9 +59,9 @@ backend:
       title: Preferences
       subtitle: Customize your experience.
       tabs:
-        sidebar: Sidebar
-    sidebar:
-      title: Sidebar preferences
+        sidemenu: Sidemenu
+    sidemenu:
+      title: Sidemenu preferences
       subtitle: Hide the sections or modules you don't use to declutter your sidemenu. Pages stay reachable by direct URL.
       section_hint: Turn off the toggle to hide the whole section, or adjust module by module.
       hide_all: Hide all

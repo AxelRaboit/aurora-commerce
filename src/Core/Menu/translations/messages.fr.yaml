@@ -6,7 +6,7 @@ backend:
     editMenu: Modifier le menu
     name: Nom
     location: Emplacement
-    locationPlaceholder: 'header, footer, sidebar…'
+    locationPlaceholder: 'header, footer, sidemenu…'
     description: Description
     items: Items
     addItem: Ajouter un item

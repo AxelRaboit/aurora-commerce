@@ -21,7 +21,7 @@ final readonly class ModuleToggle
     public function __construct(
         /** Stored key in `core_settings` and in `core_users.disabled_modules`. */
         public string $key,
-        /** Translation key for the human label (sidebar, picker). */
+        /** Translation key for the human label (sidemenu, picker). */
         public string $labelKey,
         /** Translation key for the longer description (tooltip, settings page). */
         public string $descriptionKey,

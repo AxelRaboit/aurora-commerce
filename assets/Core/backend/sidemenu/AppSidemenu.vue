@@ -5,9 +5,9 @@ import { useI18n } from "vue-i18n";
 import { useLayoutMount } from "@/shared/composables/useLayoutMount.js";
 import { useTheme } from "@/shared/composables/useTheme.js";
 import { useResizable } from "@/shared/composables/useResizable.js";
-import { useBackendSearch } from "@core/backend/sidebar/composables/useBackendSearch.js";
-import { useSidebarCollapse } from "@core/backend/sidebar/composables/useSidebarCollapse.js";
-import { useSidebarNav } from "@core/backend/sidebar/composables/useSidebarNav.js";
+import { useBackendSearch } from "@core/backend/sidemenu/composables/useBackendSearch.js";
+import { useSidemenuCollapse } from "@core/backend/sidemenu/composables/useSidemenuCollapse.js";
+import { useSidemenuNav } from "@core/backend/sidemenu/composables/useSidemenuNav.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -16,7 +16,7 @@ import AppNavLink from "@/shared/components/nav/AppNavLink.vue";
 import AppNavButton from "@/shared/components/nav/AppNavButton.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppNotificationsBell from "@core/backend/notifications/AppNotificationsBell.vue";
-import "@/css/components/sidebar.css";
+import "@/css/components/sidemenu.css";
 import {
     Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User, SlidersHorizontal,
     ChevronsLeft, ChevronsRight, Menu as MenuIcon, X,
@@ -37,7 +37,7 @@ const props = defineProps({
     frontPath: { type: String, default: "/" },
     hasEnabledFronts: { type: Boolean, default: true },
     profilePath: { type: String, default: "/backend/profile" },
-    sidebarPreferencesPath: { type: String, default: "/backend/profile/sidebar" },
+    sidemenuPreferencesPath: { type: String, default: "/backend/profile/sidemenu" },
     logoutPath: { type: String, default: "/logout" },
     mailpitUrl: { type: String, default: "" },
     siteName: { type: String, default: "Aurora" },
@@ -54,18 +54,18 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
-const { collapse, expand, mobileOpen, openMobile, closeMobile } = useSidebarCollapse();
+const { collapse, expand, mobileOpen, openMobile, closeMobile } = useSidemenuCollapse();
 
-const { dragging: sidebarDragging, startResize: startSidebarResize, reset: resetSidebarWidth } = useResizable({
-    key: "aurora-sidebar-width",
+const { dragging: sidemenuDragging, startResize: startSidemenuResize, reset: resetSidemenuWidth } = useResizable({
+    key: "aurora-sidemenu-width",
     defaultValue: 240,
     min: 200,
     max: 480,
-    onChange: (px) => { document.documentElement.style.setProperty("--sidebar-width", `${px}px`); },
+    onChange: (px) => { document.documentElement.style.setProperty("--sidemenu-width", `${px}px`); },
 });
 
-watch(sidebarDragging, (dragging) => {
-    document.documentElement.classList.toggle("sidebar-resizing", dragging);
+watch(sidemenuDragging, (dragging) => {
+    document.documentElement.classList.toggle("sidemenu-resizing", dragging);
 });
 
 useLayoutMount();
@@ -74,7 +74,7 @@ const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
     isActive, isActiveExact, itemIsActive, itemClasses, iconClasses,
-} = useSidebarNav(props.navSections, props.activeRoute, props.navSectionAliases);
+} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases);
 
 const SECTION_CONFIG = {
     recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },
@@ -100,7 +100,7 @@ function openSearchFromMobile() {
 </script>
 
 <template>
-    <aside id="sidebar" class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden">
+    <aside id="sidemenu" class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden">
         <div class="sh-wrap flex items-center h-16 border-b border-line shrink-0 transition-all duration-200">
             <a :href="dashboardPath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0 flex-1">
                 <img v-if="siteLogoUrl" :src="siteLogoUrl" alt="Logo" class="h-8 w-8 shrink-0 object-cover rounded-xl">
@@ -195,7 +195,7 @@ function openSearchFromMobile() {
             </div>
         </div>
 
-        <nav class="sidebar-nav flex-1 min-h-0 overflow-y-auto scrollbar-thin py-4 space-y-3">
+        <nav class="sidemenu-nav flex-1 min-h-0 overflow-y-auto scrollbar-thin py-4 space-y-3">
             <p v-if="navFilter && !displayedSections.length" class="sh-logo-expanded px-3 text-xs text-muted">
                 {{ t("backend.nav.filterNavEmpty") }}
             </p>
@@ -221,7 +221,7 @@ function openSearchFromMobile() {
                                 >
                                     <a
                                         :href="item.path"
-                                        :data-sidebar-active="itemIsActive(item) ? 'true' : null"
+                                        :data-sidemenu-active="itemIsActive(item) ? 'true' : null"
                                         class="flex items-center flex-1 min-w-0 gap-3 py-[0.625rem] pl-3"
                                     >
                                         <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
@@ -243,7 +243,7 @@ function openSearchFromMobile() {
                                     :href="child.path"
                                     :active="isActive(child.route)"
                                     :active-color="child.activeColor"
-                                    :sidebar-active="isActive(child.route)"
+                                    :sidemenu-active="isActive(child.route)"
                                     :tooltip-title="child.label"
                                     :tooltip-description="child.description"
                                 >
@@ -258,7 +258,7 @@ function openSearchFromMobile() {
                             :href="item.path"
                             :active="itemIsActive(item)"
                             :active-color="item.activeColor"
-                            :sidebar-active="itemIsActive(item)"
+                            :sidemenu-active="itemIsActive(item)"
                             :tooltip-title="item.label"
                             :tooltip-description="item.description"
                         >
@@ -270,7 +270,7 @@ function openSearchFromMobile() {
             </div>
         </nav>
 
-        <div class="sidebar-bottom shrink-0 border-t border-line py-3 space-y-0.5">
+        <div class="sidemenu-bottom shrink-0 border-t border-line py-3 space-y-0.5">
             <button
                 class="sh-expand-btn w-full items-center justify-center py-2.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
                 v-on:click="expand"
@@ -308,8 +308,8 @@ function openSearchFromMobile() {
             </AppNavLink>
 
             <AppNavLink
-                :href="sidebarPreferencesPath"
-                :active="isActive('backend_profile_sidebar')"
+                :href="sidemenuPreferencesPath"
+                :active="isActive('backend_profile_sidemenu')"
                 :tooltip-title="t('backend.profile.preferences.title')"
             >
                 <SlidersHorizontal class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
@@ -336,11 +336,11 @@ function openSearchFromMobile() {
         </div>
 
         <div
-            class="sidebar-resize-handle"
-            :class="{ 'is-dragging': sidebarDragging }"
+            class="sidemenu-resize-handle"
+            :class="{ 'is-dragging': sidemenuDragging }"
             :title="t('backend.nav.resizeHint')"
-            v-on:pointerdown="startSidebarResize"
-            v-on:dblclick="resetSidebarWidth"
+            v-on:pointerdown="startSidemenuResize"
+            v-on:dblclick="resetSidemenuWidth"
         />
     </aside>
 
@@ -478,9 +478,9 @@ function openSearchFromMobile() {
                     {{ t("backend.nav.profile") }}
                 </a>
                 <a
-                    :href="sidebarPreferencesPath"
+                    :href="sidemenuPreferencesPath"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="isActive('backend_profile_sidebar') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="isActive('backend_profile_sidemenu') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
                     <SlidersHorizontal class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("backend.profile.preferences.title") }}

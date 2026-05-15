@@ -93,7 +93,7 @@ App\Module\Tracking\Frontend\TrackingFrontend:
 ```
 
 Aurora collecte tous les services taggés et les intègre automatiquement dans la
-sidebar admin, le système de permissions et le routing frontend.
+sidemenu admin, le système de permissions et le routing frontend.
 
 ---
 

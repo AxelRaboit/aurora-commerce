@@ -274,7 +274,7 @@ class UserManager implements UserManagerInterface
      * @param list<string> $hiddenNavSections
      * @param list<string> $hiddenNavItems
      */
-    public function updateSidebarPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void
+    public function updateSidemenuPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void
     {
         [$validSectionIds, $validItemKeys] = $this->collectKnownNavTokens();
 
@@ -284,7 +284,7 @@ class UserManager implements UserManagerInterface
         $this->entityManager->flush();
     }
 
-    public function resetSidebarPreferences(User $user): void
+    public function resetSidemenuPreferences(User $user): void
     {
         $user->setHiddenNavSections([]);
         $user->setHiddenNavItems([]);

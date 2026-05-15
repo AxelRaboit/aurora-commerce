@@ -108,7 +108,7 @@ function dimensions(item) {
             </header>
 
             <div class="flex flex-1 min-h-0 relative">
-                <!-- Folders sidebar (drawer on mobile) -->
+                <!-- Folders sidemenu (drawer on mobile) -->
                 <aside
                     class="border-r border-line overflow-y-auto scrollbar-thin shrink-0
                            md:static md:w-56 md:translate-x-0 md:bg-surface-2/40
@@ -328,7 +328,7 @@ function dimensions(item) {
                     </div>
                 </div>
 
-                <!-- Details panel: sidebar on desktop, fullscreen overlay on mobile -->
+                <!-- Details panel: sidemenu on desktop, fullscreen overlay on mobile -->
                 <aside
                     v-if="selected"
                     class="border-l border-line overflow-y-auto scrollbar-thin shrink-0

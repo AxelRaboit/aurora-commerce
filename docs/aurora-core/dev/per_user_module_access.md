@@ -24,7 +24,7 @@ applique aussi le **cascade graph** existant (`getCascadeRequires()`).
 
 ```
 ┌─────────────────────────┐
-│ controller / sidebar    │
+│ controller / sidemenu    │
 └──────────┬──────────────┘
            │ XxxContext::isYyyEnabled()
            ▼
@@ -83,7 +83,7 @@ qui interroge le registry comme source de vérité.
 
 - ~37 modules max → 2 KB par user
 - Chargé avec le User en une requête (comme `privileges`)
-- Pas de N+1 sur sidebar / route gate
+- Pas de N+1 sur sidemenu / route gate
 
 Une table dédiée serait nécessaire si on voulait :
 - des reportings « qui a accès à X » sans full table scan

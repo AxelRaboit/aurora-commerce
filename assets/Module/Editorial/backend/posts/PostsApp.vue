@@ -219,7 +219,7 @@ function postTermLabels(post) {
     />
 
     <div v-else class="flex flex-col md:flex-row gap-6">
-        <!-- Desktop sidebar -->
+        <!-- Desktop sidemenu -->
         <nav class="hidden md:flex flex-col w-52 shrink-0 gap-4">
             <div class="flex flex-col gap-0.5">
                 <AppTooltip :title="t('backend.posts.tabs.active')" :description="t('backend.posts.tabs.active_description')" placement="right">

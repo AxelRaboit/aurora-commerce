@@ -1,5 +1,5 @@
 ---
-name: User sidebar preferences (hide sections/items)
+name: User sidemenu preferences (hide sections/items)
 description: Préférence user-controlled pour cacher sections/items de la sidemenu, distinct du toggle module admin/dev
 type: project
 ---
@@ -11,7 +11,7 @@ Une **troisième** couche de visibilité sidemenu, distincte des toggles existan
 |---|---|---|---|
 | Global module toggle | `core_settings` | Dev panel | Tous les users |
 | User module mask | `core_users.disabled_modules` (JSON) | Admin / dev panel | Un user (admin override) |
-| **User sidebar prefs** | `core_users.hidden_nav_sections` + `core_users.hidden_nav_items` (JSON) | L'utilisateur lui-même | Sa propre sidemenu |
+| **User sidemenu prefs** | `core_users.hidden_nav_sections` + `core_users.hidden_nav_items` (JSON) | L'utilisateur lui-même | Sa propre sidemenu |
 
 **Sémantique stricte** : "hidden" = retiré de la sidemenu uniquement. Les
 routes restent accessibles par URL directe. Ce n'est **pas** une couche de
@@ -52,7 +52,7 @@ Sert exclusivement à la page de préférences (pour pouvoir un-hide).
   ajouter/supprimer plutôt que renommer.
 - Pour ajouter une nouvelle entrée nav : pas de changement requis, elle
   apparaît automatiquement et peut être hidden via la page de prefs.
-- Validation à l'écriture : `UserManager::updateSidebarPreferences()`
+- Validation à l'écriture : `UserManager::updateSidemenuPreferences()`
   filtre l'input contre `getNavPreferences()` (intersection). Les tokens
   inconnus / hors privilege sont droppés silencieusement.
 
@@ -62,13 +62,13 @@ Sert exclusivement à la page de préférences (pour pouvoir un-hide).
 - Interface : `CoreUserInterface::getHidden{NavSections,NavItems}()`
 - Migration : `Version20260515091752.php`
 - Filtrage : `Aurora\Core\Module\Service\ModuleRegistry`
-- Manager hooks : `UserManager::updateSidebarPreferences()` + `resetSidebarPreferences()`
-- Audit : `AuditUserManagerDecorator` (event `user.sidebar_preferences_updated`)
-- Endpoints : `GET/POST /backend/profile/sidebar`, `POST /backend/profile/sidebar/reset`
+- Manager hooks : `UserManager::updateSidemenuPreferences()` + `resetSidemenuPreferences()`
+- Audit : `AuditUserManagerDecorator` (event `user.sidemenu_preferences_updated`)
+- Endpoints : `GET/POST /backend/profile/sidemenu`, `POST /backend/profile/sidemenu/reset`
 - Vue : `preferences/PreferencesApp.vue` (shell à onglets) +
-  `preferences/tabs/SidebarTab.vue` (1er onglet) +
-  `composables/useSidebarPreferences.js`
-- Twig : `templates/Core/backend/profile/sidebar.html.twig`
+  `preferences/tabs/SidemenuTab.vue` (1er onglet) +
+  `composables/useSidemenuPreferences.js`
+- Twig : `templates/Core/backend/profile/sidemenu.html.twig`
 
 Voir aussi [[pattern_user_scoped_module_access]] pour la couche admin
 (distincte).

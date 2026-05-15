@@ -9,15 +9,15 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Twig\Attribute\AsTwigFunction;
 
-final readonly class SidebarExtension
+final readonly class SidemenuExtension
 {
     public function __construct(
         private ModuleRegistry $moduleRegistry,
         private SettingRepository $settingRepository,
     ) {}
 
-    #[AsTwigFunction(name: 'sidebar_nav_sections')]
-    public function getSidebarNavSections(): array
+    #[AsTwigFunction(name: 'sidemenu_nav_sections')]
+    public function getSidemenuNavSections(): array
     {
         return $this->moduleRegistry->getNavSections();
     }

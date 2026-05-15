@@ -54,14 +54,14 @@ new NavSection('vault', [
     new NavItem(
         route: 'backend_password_generator',
         labelKey: 'backend.nav.password_generator',
-        icon: 'key-round',                        // clé dans ICON_MAP de useSidebarNav.js
+        icon: 'key-round',                        // clé dans ICON_MAP de useSidemenuNav.js
         requiredPrivilege: 'password_generator.use',
         descriptionKey: 'backend.nav.password_generator_description',
     ),
 ], priority: 20),
 ```
 
-Si une icône manque dans `ICON_MAP` → l'ajouter dans `assets/Core/backend/sidebar/composables/useSidebarNav.js`.
+Si une icône manque dans `ICON_MAP` → l'ajouter dans `assets/Core/backend/sidemenu/composables/useSidemenuNav.js`.
 
 #### 2.3 Controller
 
@@ -181,10 +181,10 @@ const { ... } = usePasswordGenerator();
 
 ## 3. Icônes de navigation
 
-Les icônes nav sont des chaînes résolues via `ICON_MAP` dans `useSidebarNav.js`. Si l'icône manque → fallback sur `FileText`. Ajouter l'import lucide + l'entrée dans `ICON_MAP` au besoin.
+Les icônes nav sont des chaînes résolues via `ICON_MAP` dans `useSidemenuNav.js`. Si l'icône manque → fallback sur `FileText`. Ajouter l'import lucide + l'entrée dans `ICON_MAP` au besoin.
 
 ```js
-// assets/Core/backend/sidebar/composables/useSidebarNav.js
+// assets/Core/backend/sidemenu/composables/useSidemenuNav.js
 import { KeyRound } from 'lucide-vue-next';
 
 const ICON_MAP = {

@@ -71,16 +71,16 @@ const ICON_MAP = {
     vault: Lock,
 };
 
-export function useSidebarNav(navSections, activeRoute, sectionAliases = {}) {
+export function useSidemenuNav(navSections, activeRoute, sectionAliases = {}) {
     const { t } = useI18n();
 
     const {
         isExpanded: isGroupExpanded,
         toggle: toggleGroup,
         getRaw: getGroupRaw,
-    } = usePersistedExpanded("aurora-sidebar-groups");
+    } = usePersistedExpanded("aurora-sidemenu-groups");
     const { isExpanded: isSectionExpandedById, toggle: toggleSectionById } =
-        usePersistedExpanded("aurora-sidebar-sections");
+        usePersistedExpanded("aurora-sidemenu-sections");
 
     function isSectionExpanded(section) {
         return isSectionExpandedById(section.id);
@@ -204,7 +204,7 @@ export function useSidebarNav(navSections, activeRoute, sectionAliases = {}) {
     onMounted(() =>
         nextTick(() => {
             const active = document.querySelector(
-                ".sidebar-nav [data-sidebar-active='true']",
+                ".sidemenu-nav [data-sidemenu-active='true']",
             );
             active?.scrollIntoView({ block: "nearest", behavior: "instant" });
         }),

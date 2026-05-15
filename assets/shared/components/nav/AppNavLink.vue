@@ -10,12 +10,12 @@ const props = defineProps({
     /** Color used for the hover state — defaults to "primary" (neutral). Use "emerald", "amber", "rose", "accent" for branded actions. */
     hoverColor: { type: String, default: "primary" },
     target: { type: String, default: null },
-    sidebarActive: { type: Boolean, default: false },
+    sidemenuActive: { type: Boolean, default: false },
     /** Tooltip title shown on hover (typically the item label, useful when collapsed). */
     tooltipTitle: { type: String, default: "" },
     /** Optional secondary line for the tooltip — short helper sentence. */
     tooltipDescription: { type: String, default: "" },
-    /** Tooltip placement around the trigger. Default `right` matches the left-anchored sidebar. */
+    /** Tooltip placement around the trigger. Default `right` matches the left-anchored sidemenu. */
     tooltipPlacement: {
         type: String,
         default: "right",
@@ -51,7 +51,7 @@ const linkClasses = computed(() => {
             :href="href"
             :target="target"
             :rel="target === '_blank' ? 'noopener' : undefined"
-            :data-sidebar-active="sidebarActive ? 'true' : null"
+            :data-sidemenu-active="sidemenuActive ? 'true' : null"
             class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
             :class="linkClasses"
         >

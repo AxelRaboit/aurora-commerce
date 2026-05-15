@@ -73,7 +73,7 @@ de réservations, un configurateur de produits.
 
 **Le principe** : le module client suit exactement la même architecture que les
 modules Aurora. Il implémente `ModuleInterface`, déclare ses permissions et sa
-navigation, et s'intègre dans la sidebar admin sans aucune modification d'Aurora.
+navigation, et s'intègre dans la sidemenu admin sans aucune modification d'Aurora.
 
 ```
 src/Module/Tracking/

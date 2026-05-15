@@ -87,8 +87,8 @@ là (tests Vitest, SSR shell, frontend sans bootstrap admin).
 - [[convention_twig_locale_extension]] — précédent : `LocaleExtension`
   expose `locale_flag()` / `locale_name()` au layout, même style
   d'attribut `#[AsTwigFunction]`.
-- Précédent : `SidebarExtension::getNavSectionAliases()` lit un
-  `ApplicationParameter` JSON pour le sidebar.
+- Précédent : `SidemenuExtension::getNavSectionAliases()` lit un
+  `ApplicationParameter` JSON pour le sidemenu.
 - Setting concerné : `ApplicationParameterEnum::ColorPickerPresets`
   (group `appearance`, type `json`).
 

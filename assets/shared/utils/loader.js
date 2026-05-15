@@ -21,7 +21,7 @@ const LOADER_ID = "aurora-loader";
 const FADE_OUT_MS = 320;
 const FALLBACK_AFTER_LOAD_MS = 2500;
 
-// One layout component expected (AppSidebar via useLayoutMount).
+// One layout component expected (AppSidemenu via useLayoutMount).
 // Increment when adding other shell components that call useLayoutMount().
 const LAYOUT_COMPONENT_COUNT = 1;
 
