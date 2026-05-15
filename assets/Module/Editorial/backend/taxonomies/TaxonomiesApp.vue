@@ -190,7 +190,7 @@ const parentOptions = computed(() => parentOptionsForTerm(termModal.entity));
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton v-if="can('editorial.taxonomies.edit')" variant="ghost" size="md" v-on:click="openEditTaxonomy(selected)">
+                            <AppButton v-if="can('editorial.taxonomies.edit')" variant="secondary" size="md" v-on:click="openEditTaxonomy(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("shared.common.edit") }}
                             </AppButton>
@@ -225,7 +225,7 @@ const parentOptions = computed(() => parentOptionsForTerm(termModal.entity));
                             </div>
                             <AppButton v-if="can('editorial.taxonomies.edit')" variant="primary" size="md" v-on:click="openCreateTerm()">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                                {{ t("backend.taxonomies.terms.addTerm") }}
+                                {{ t("shared.common.add") }}
                             </AppButton>
                         </div>
                     </div>

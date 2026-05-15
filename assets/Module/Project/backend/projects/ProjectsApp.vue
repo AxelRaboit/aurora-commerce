@@ -269,8 +269,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     class="w-full sm:w-auto"
                     v-on:click="openCreateProject"
                 >
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t('backend.projects.add') }}
+                    <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t('shared.common.add') }}
                 </AppButton>
             </template>
         </AppListToolbar>
@@ -646,7 +646,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showProjectModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" :loading="projectCreateLoading" v-on:click="submitCreateProject">
+                    <AppButton variant="primary" size="md" :loading="projectCreateLoading" v-on:click="submitCreateProject">
                         <Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}
                     </AppButton>
                 </AppModalFooter>
@@ -718,7 +718,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showEditProjectModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" :loading="projectEditLoading" v-on:click="submitEditProject">
+                    <AppButton variant="primary" size="md" :loading="projectEditLoading" v-on:click="submitEditProject">
                         <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
                     </AppButton>
                 </AppModalFooter>
@@ -802,7 +802,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showCreateTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" :loading="createTaskLoading" v-on:click="submitCreateTask">
+                    <AppButton variant="primary" size="md" :loading="createTaskLoading" v-on:click="submitCreateTask">
                         <Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}
                     </AppButton>
                 </AppModalFooter>
@@ -1031,7 +1031,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showEditTask = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" :loading="editTaskLoading" v-on:click="submitEditTask">
+                    <AppButton variant="primary" size="md" :loading="editTaskLoading" v-on:click="submitEditTask">
                         <Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}
                     </AppButton>
                 </AppModalFooter>
@@ -1222,7 +1222,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showCreateColumn = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" :loading="createColumnLoading" v-on:click="submitCreateColumn"><Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="createColumnLoading" v-on:click="submitCreateColumn"><Plus class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.create') }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -1248,7 +1248,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showRenameColumn = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton variant="primary" :loading="renameLoading" v-on:click="submitRenameColumn"><Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}</AppButton>
+                    <AppButton variant="primary" size="md" :loading="renameLoading" v-on:click="submitRenameColumn"><Save class="w-4 h-4" :stroke-width="2" />{{ t('shared.common.save') }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>

@@ -467,8 +467,8 @@ function downloadOne(itemId) {
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showIdentityModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit">{{ t("photo.frontend.identity.submit") }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showIdentityModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md">{{ t("photo.frontend.identity.submit") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -507,11 +507,11 @@ function downloadOne(itemId) {
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showCommentBox = false">
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCommentBox = false">
                         <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("photo.frontend.comments.cancel") }}
                     </AppButton>
-                    <AppButton variant="primary" type="submit" :loading="commentSending">
-                        <Send class="w-4 h-4" :stroke-width="2" />
+                    <AppButton variant="primary" size="md" type="submit" :loading="commentSending">
+                        <Send class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("photo.frontend.comments.submit") }}
                     </AppButton>
                 </AppModalFooter>
@@ -536,7 +536,7 @@ function downloadOne(itemId) {
             </div>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showShareModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showShareModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -563,9 +563,9 @@ function downloadOne(itemId) {
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showFinalizeModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" :loading="finalizing">
-                        <Send class="w-4 h-4" :stroke-width="2" />
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showFinalizeModal = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton variant="primary" size="md" type="submit" :loading="finalizing">
+                        <Send class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("photo.frontend.finalize") }}
                     </AppButton>
                 </AppModalFooter>

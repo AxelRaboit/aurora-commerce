@@ -223,8 +223,8 @@ function close() { emit("close"); }
         </form>
         <template #footer>
             <AppModalFooter>
-                <AppButton variant="ghost" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                <AppButton type="submit" variant="primary" :loading="saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
+                <AppButton variant="ghost" size="md" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                <AppButton type="submit" variant="primary" size="md" :loading="saving"><Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}</AppButton>
             </AppModalFooter>
         </template>
     </AppModal>

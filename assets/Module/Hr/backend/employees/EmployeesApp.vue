@@ -83,8 +83,8 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                     class="w-full sm:w-auto"
                     v-on:click="openCreate"
                 >
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t('backend.employees.add') }}
+                    <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t('shared.common.add') }}
                 </AppButton>
             </template>
         </AppListToolbar>

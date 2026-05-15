@@ -2,6 +2,7 @@
 
 - [convention_testing.md](convention_testing.md) — co-location obligatoire `.test.js` à côté de la source ; patterns composant/composable/util ; stubs courants ; ce qu'on skip
 - [convention_form_components.md](convention_form_components.md) — toujours `App*` (AppButton, AppInput, AppRange, AppPagination…) jamais HTML brut — **admin ET frontend public**
+- [convention_button_variants.md](convention_button_variants.md) — variants + size + icônes des boutons d'action : modal footer `ghost/primary/danger`, page header Edit en `secondary` (pas ghost), `size="md"` explicite, icônes `w-3.5 h-3.5 stroke-width=2`, label visible
 - [convention_vue_directives.md](convention_vue_directives.md) — `v-on:click` (jamais `@click`), `:` shorthand OK pour `v-bind`
 - [convention_js_no_var.md](convention_js_no_var.md) — toujours `const`/`let`, jamais `var` (modules ES, scripts inline Twig, partout)
 - [convention_js_privacy.md](convention_js_privacy.md) — `#field` dans les classes (jamais `_field`), variable module-level non exportée
@@ -10,6 +11,7 @@
 - [convention_no_raw_fetch.md](convention_no_raw_fetch.md) — jamais `await fetch()` brut → `useRequest` (admin) ou `useFrontendRequest` (public)
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, `frontend/components/` + `frontend/composables/`, anti-patterns
 - [convention_assets_subfolder_layout.md](convention_assets_subfolder_layout.md) — compartimentage feature-subfolder dans `assets/Module/<M>/backend/`
+- [convention_css_organization.md](convention_css_organization.md) — `assets/css/{base,shared,core,modules/<Name>/}` ; importer le CSS dans le SFC (code-splitting) sauf si vraiment global → `app.css` ; ordre `<script setup>` : CSS d'abord, ligne vide, JS
 - [composable_hierarchical_tree.md](composable_hierarchical_tree.md) — `@/shared/composables/tree/useHierarchicalTree.js` (`buildTree`, `flattenTreeForReorder`, …) — ne pas dupliquer
 - [composable_url_pagination.md](composable_url_pagination.md) — `useUrlPagination` pour la pagination full-reload (`?page=N`) — pas pour l'AJAX
 - [composable_client_filtered_list.md](composable_client_filtered_list.md) — `useClientFilteredList` pour les listes admin courtes (items + searchInput + filteredItems + reload), pendant client-side de `useListPage`

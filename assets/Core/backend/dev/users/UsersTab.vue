@@ -58,8 +58,8 @@ onMounted(() => {
                 v-on:search="users.performSearch"
             />
             <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="users.openCreate">
-                <Plus class="w-4 h-4" />
-                {{ t('backend.users.add') }}
+                <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                {{ t('shared.common.add') }}
             </AppButton>
         </div>
 

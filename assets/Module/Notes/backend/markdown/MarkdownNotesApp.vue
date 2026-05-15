@@ -208,16 +208,12 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         :loading="saving"
                         v-on:click="saveSelected"
                     >
-                        <Save class="w-4 h-4" :stroke-width="2" />
-                        <span>{{ t('notes.markdown.save') }}</span>
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('notes.markdown.save') }}
                     </AppButton>
-                    <AppButton
-                        variant="danger"
-                        size="md"
-                        v-on:click="requestDelete"
-                    >
-                        <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        <span class="sr-only">{{ t('notes.markdown.delete') }}</span>
+                    <AppButton variant="danger" size="md" v-on:click="requestDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('notes.markdown.delete') }}
                     </AppButton>
                 </header>
 
@@ -296,11 +292,11 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" :disabled="deleting" v-on:click="cancelDelete">
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
-                        <span>{{ t('notes.markdown.cancel') }}</span>
+                        {{ t('notes.markdown.cancel') }}
                     </AppButton>
                     <AppButton variant="danger" size="md" :loading="deleting" v-on:click="confirmDelete">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                        <span>{{ t('notes.markdown.delete') }}</span>
+                        {{ t('notes.markdown.delete') }}
                     </AppButton>
                 </AppModalFooter>
             </template>

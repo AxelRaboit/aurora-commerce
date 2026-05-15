@@ -252,9 +252,9 @@ const onCoverChange = onGalleryCoverChange;
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" :loading="createLoading">
-                        <Save class="w-4 h-4" :stroke-width="2" />
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="createLoading">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.create") }}
                     </AppButton>
                 </AppModalFooter>
@@ -383,9 +383,9 @@ const onCoverChange = onGalleryCoverChange;
             </form>
             <template #footer>
                 <AppModalFooter>
-                    <AppButton variant="ghost" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
-                    <AppButton type="submit" :loading="editLoading">
-                        <Save class="w-4 h-4" :stroke-width="2" />
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="editLoading">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>
                 </AppModalFooter>

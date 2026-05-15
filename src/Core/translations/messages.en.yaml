@@ -18,6 +18,7 @@ shared:
     delete: Delete
     edit: Edit
     create: Create
+    add: Add
     loading: Loading…
     saving: Saving…
     confirm: Confirm

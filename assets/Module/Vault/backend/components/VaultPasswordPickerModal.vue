@@ -88,11 +88,11 @@ function usePassword() {
 
         <template #footer>
             <AppModalFooter>
-                <AppButton variant="ghost" v-on:click="generate">
-                    <RefreshCw class="w-4 h-4" :stroke-width="2" />
+                <AppButton variant="ghost" size="md" v-on:click="generate">
+                    <RefreshCw class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t('password_generator.generate') }}
                 </AppButton>
-                <AppButton variant="primary" :disabled="!password" v-on:click="usePassword">
+                <AppButton variant="primary" size="md" :disabled="!password" v-on:click="usePassword">
                     {{ t('vault.fields.usePassword') }}
                 </AppButton>
             </AppModalFooter>

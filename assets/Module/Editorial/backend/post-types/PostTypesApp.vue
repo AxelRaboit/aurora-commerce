@@ -53,7 +53,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.postTypes.title") }}</h2>
                 <AppButton v-if="can('editorial.post_types.create')" variant="primary" size="md" v-on:click="openCreatePostType">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("backend.postTypes.add") }}
+                    {{ t("shared.common.add") }}
                 </AppButton>
             </div>
             <div class="space-y-1">
@@ -90,7 +90,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton v-if="can('editorial.post_types.edit')" variant="ghost" size="md" v-on:click="openEditPostType(selected)">
+                            <AppButton v-if="can('editorial.post_types.edit')" variant="secondary" size="md" v-on:click="openEditPostType(selected)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                                 {{ t("shared.common.edit") }}
                             </AppButton>
@@ -112,7 +112,7 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                         <h4 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.postTypes.fields.title") }}</h4>
                         <AppButton v-if="can('editorial.post_types.edit')" variant="primary" size="md" v-on:click="openCreateField">
                             <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("backend.postTypes.fields.add") }}
+                            {{ t("shared.common.add") }}
                         </AppButton>
                     </div>
 

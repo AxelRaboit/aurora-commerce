@@ -18,6 +18,7 @@ shared:
     delete: Supprimer
     edit: Modifier
     create: Créer
+    add: Ajouter
     loading: Chargement…
     saving: Enregistrement…
     confirm: Confirmer

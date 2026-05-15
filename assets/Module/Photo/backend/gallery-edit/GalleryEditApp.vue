@@ -103,8 +103,8 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
                     <Unlock class="w-4 h-4" :stroke-width="2" />
                     {{ t("photo.galleries.admin.reopen") }}
                 </AppButton>
-                <AppButton variant="primary" v-on:click="addPhotos">
-                    <Plus class="w-4 h-4" :stroke-width="2" />
+                <AppButton variant="primary" size="md" v-on:click="addPhotos">
+                    <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("photo.galleries.addPhotos") }}
                 </AppButton>
             </div>
@@ -258,9 +258,9 @@ const { expandedFinalizations, finalizationsPage, finalizationsTotalPages, pagin
                         required
                     />
                 </div>
-                <AppButton variant="primary" type="submit" :loading="inviteCreating">
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t("photo.galleries.admin.invites.add") }}
+                <AppButton variant="primary" size="md" type="submit" :loading="inviteCreating">
+                    <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                    {{ t("shared.common.add") }}
                 </AppButton>
             </form>
             <ul v-if="pendingInvites.length" class="space-y-2">
