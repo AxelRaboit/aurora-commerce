@@ -63,4 +63,40 @@ final class ProjectTaskInputTest extends TestCase
         $input = (new ProjectTaskInputFactory())->fromArray(['title' => 'X']);
         self::assertSame(0, $input->position);
     }
+
+    public function testDescriptionAndDueDateAreTrimmedOrNull(): void
+    {
+        $input = (new ProjectTaskInputFactory())->fromArray([
+            'title' => 'X',
+            'description' => '  My description  ',
+            'dueDate' => '2024-12-31',
+        ]);
+
+        self::assertSame('My description', $input->description);
+        self::assertSame('2024-12-31', $input->dueDate);
+    }
+
+    public function testAssigneeIdAndProjectIdAndSprintIdAreCoerced(): void
+    {
+        $input = (new ProjectTaskInputFactory())->fromArray([
+            'title' => 'X',
+            'assigneeId' => '7',
+            'projectId' => '3',
+            'sprintId' => '12',
+        ]);
+
+        self::assertSame(7, $input->assigneeId);
+        self::assertSame(3, $input->projectId);
+        self::assertSame(12, $input->sprintId);
+    }
+
+    public function testNormalizeIdListIgnoresNonArrayInput(): void
+    {
+        $input = (new ProjectTaskInputFactory())->fromArray([
+            'title' => 'X',
+            'labelIds' => 'not-an-array',
+        ]);
+
+        self::assertSame([], $input->labelIds);
+    }
 }
