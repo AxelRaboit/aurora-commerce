@@ -29,6 +29,8 @@ use Aurora\Core\Menu\Entity\MenuItemTranslation;
 use Aurora\Core\Menu\Entity\MenuItemTranslationInterface;
 use Aurora\Core\MountPoint\Entity\MountPoint;
 use Aurora\Core\MountPoint\Entity\MountPointInterface;
+use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
+use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Service\Entity\Service;
@@ -301,6 +303,7 @@ class AuroraBundle extends AbstractBundle
                     VaultFolderInterface::class => VaultFolder::class,
                     VaultUserConfigInterface::class => VaultUserConfig::class,
                     MountPointInterface::class => MountPoint::class,
+                    MarkdownNoteInterface::class => MarkdownNote::class,
                 ],
                 'mappings' => array_merge(
                     [
