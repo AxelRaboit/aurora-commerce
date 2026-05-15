@@ -33,6 +33,10 @@ client.
 - [pattern_add_module_toggle.md](pattern_add_module_toggle.md) — exposer
   un module client (ex: Tracking) dans la modale "Accès aux modules par user"
   via `ModuleToggleProviderInterface::getToggles()`
+- [pattern_locale_aware_extension.md](pattern_locale_aware_extension.md) —
+  respecter `single_locale_mode` quand tu étends une entité multilingue
+  ou que tu en crées une ; substituer `LocaleContext` ; limite sur l'ajout
+  d'une locale au bundle
 
 ## Index — conventions côté client
 
