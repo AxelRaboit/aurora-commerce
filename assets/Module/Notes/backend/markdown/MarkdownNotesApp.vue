@@ -6,7 +6,6 @@ import { useNotesEditor } from '@notes/backend/markdown/composables/useNotesEdit
 import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
 import { useNoteDragDrop } from '@notes/backend/markdown/composables/useNoteDragDrop.js';
 import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
-import { VueDraggable } from 'vue-draggable-plus';
 import { useResizable } from '@shared/composables/useResizable.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
@@ -65,11 +64,23 @@ const treeQuery = ref('');
 
 const { tree } = useNoteTree(notes, treeQuery);
 
-// Drag-drop reorder. Only enabled when no filter is active, otherwise
-// the visible tree is a filtered subset and reordering it would mix
-// surviving siblings with hidden ones server-side.
+// Drag-drop hierarchy editing (drop ON a note → child of that note,
+// drop on the sidebar root → becomes root). Disabled while the filter
+// is active, since the visible tree is a subset of the real one.
 const dragEnabled = computed(() => treeQuery.value.trim() === '');
-const { onStart: onDragStart, onEnd: onDragEnd } = useNoteDragDrop({ tree, api, refreshList });
+const {
+    draggingId,
+    dragOverId,
+    rootDragOver,
+    onDragStart,
+    onDragEnd,
+    onDragOverNote,
+    onDragLeaveNote,
+    onDragOverRoot,
+    onDragLeaveRoot,
+    onDropOnNote,
+    onDropOnRoot,
+} = useNoteDragDrop({ api, refreshList });
 const { mode: viewMode } = useViewMode();
 
 // Editor pane width in split mode — drag the seam between editor and preview.
@@ -107,47 +118,31 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                 />
             </div>
 
-            <div class="flex-1 overflow-auto p-2">
-                <template v-if="tree.length > 0">
-                    <VueDraggable
-                        v-if="dragEnabled"
-                        v-model="tree"
-                        :group="{ name: 'notes-tree', pull: true, put: true }"
-                        handle=".drag-handle"
-                        :animation="150"
-                        ghost-class="opacity-50"
-                        drag-class="drag-active"
-                        tag="div"
-                        class="space-y-0.5 min-h-[2rem]"
-                        v-on:start="onDragStart"
-                        v-on:end="onDragEnd"
-                    >
-                        <NoteTreeItem
-                            v-for="node in tree"
-                            :key="node.id"
-                            :node="node"
-                            :selected-id="selectedId"
-                            :draggable="dragEnabled"
-                            group-name="notes-tree"
-                            v-on:select="selectNote"
-                            v-on:create-child="createNote"
-                            v-on:drag-start="onDragStart"
-                            v-on:drag-end="onDragEnd"
-                        />
-                    </VueDraggable>
-
-                    <div v-else class="space-y-0.5">
-                        <NoteTreeItem
-                            v-for="node in tree"
-                            :key="node.id"
-                            :node="node"
-                            :selected-id="selectedId"
-                            :draggable="false"
-                            v-on:select="selectNote"
-                            v-on:create-child="createNote"
-                        />
-                    </div>
-                </template>
+            <div
+                class="flex-1 overflow-auto p-2 transition-colors"
+                :class="rootDragOver ? 'bg-accent-50 dark:bg-accent-900/10 ring-1 ring-accent-500/40 rounded-md' : ''"
+                v-on:dragover="dragEnabled ? onDragOverRoot($event) : null"
+                v-on:dragleave="dragEnabled ? onDragLeaveRoot($event) : null"
+                v-on:drop="dragEnabled ? onDropOnRoot($event) : null"
+            >
+                <div v-if="tree.length > 0" class="space-y-0.5">
+                    <NoteTreeItem
+                        v-for="node in tree"
+                        :key="node.id"
+                        :node="node"
+                        :selected-id="selectedId"
+                        :draggable="dragEnabled"
+                        :dragging-id="draggingId"
+                        :drag-over-id="dragOverId"
+                        v-on:select="selectNote"
+                        v-on:create-child="createNote"
+                        v-on:drag-start="onDragStart"
+                        v-on:drag-end="onDragEnd"
+                        v-on:drag-over="onDragOverNote"
+                        v-on:drag-leave="onDragLeaveNote"
+                        v-on:drop="onDropOnNote"
+                    />
+                </div>
                 <AppNoData
                     v-else-if="treeQuery.trim() !== ''"
                     :title="t('notes.markdown.search_no_results')"
