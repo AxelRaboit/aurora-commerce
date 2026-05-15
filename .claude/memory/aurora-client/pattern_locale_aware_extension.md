@@ -101,19 +101,44 @@ Tous les consumers d'aurora-core (Managers, ViewBuilders, Serializers,
 `LocaleSubscriber`, `SingleLocaleRedirectSubscriber`) type-hint
 `LocaleContextInterface` → ils reçoivent automatiquement ta version.
 
-## Limitation : ajouter une 3e/4e locale
+## Ajouter une 3e/4e locale → toujours dans aurora-core
 
 `LocaleEnum` (`Aurora\Core\Locale\Enum\LocaleEnum`) est en dur dans
 aurora-core (`French = 'fr'`, `English = 'en'`). Tu ne peux **pas**
-ajouter une nouvelle locale (es, de…) depuis aurora-client — il faut
-modifier l'enum côté core.
+ajouter une nouvelle locale (es, de…) depuis aurora-client.
 
-Si tu as besoin d'une locale supplémentaire pour ton projet :
-1. Ouvre une issue / PR sur aurora-core pour ajouter le cas à `LocaleEnum`
-2. Ajoute les fichiers `messages.<code>.yaml` dans chaque dossier
-   `translations/` des modules concernés
-3. Le reste (routes, switcher, sitemap, etc.) suit automatiquement via
-   `LocaleEnum::values()`.
+**Et c'est volontaire — c'est la bonne approche.** Toujours ajouter une
+locale **dans aurora-core** plutôt que de la bricoler côté client.
+Pourquoi :
+
+- L'enum drive **tout l'écosystème** : routes frontend, switcher public,
+  sitemap, RSS, settings select, `LocaleSubscriber`,
+  `SingleLocaleRedirectSubscriber`, `DumpJsTranslationsCommand`,
+  `AuroraBundle::prependExtension()`. Ajouter `LocaleEnum::Spanish = 'es'`
+  propage automatiquement la langue partout, sans rien d'autre.
+- **Capitalisation cross-projet** : si ton projet a besoin d'espagnol,
+  d'autres clients aurora en auront probablement besoin aussi. Ajouter
+  au core (+ les fichiers `messages.es.yaml` de base) bénéficie à
+  l'écosystème entier et évite que chaque projet recrée sa version.
+- **Tests existants** : le suite couvre déjà l'enum
+  (`LocaleEnum::values()` est utilisé dans les tests). Ajouter un case
+  ne casse rien.
+- Une "locale bricolée côté client" (qui contournerait l'enum) ferait
+  diverger les patterns : tu te retrouverais avec des entités où certains
+  Managers connaissent la 3e locale et d'autres non. C'est exactement ce
+  que `LocaleContext` + `LocaleEnum` empêchent.
+
+**Workflow recommandé pour ajouter une locale** :
+
+1. Ouvre une PR sur aurora-core qui ajoute le case à `LocaleEnum`
+   (`case Spanish = 'es';`) et la clé `shared.locales.es: Español` dans
+   `src/Core/translations/messages.{fr,en}.yaml`.
+2. Pour chaque module qui a des `messages.fr.yaml` / `messages.en.yaml`,
+   ajouter le `messages.es.yaml` (peut être stubé avec les clés
+   `en` au début, à traduire ensuite).
+3. `make i18n` pour regénérer `assets/locales/generated/es.json`.
+4. C'est tout. Routes, switcher, settings, sitemap, `LocaleSubscriber`
+   prennent la nouvelle locale automatiquement.
 
 ## Tests
 

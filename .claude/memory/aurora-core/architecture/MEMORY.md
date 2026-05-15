@@ -11,3 +11,4 @@
 - [decision_marketing_taxonomies_on_listing.md](decision_marketing_taxonomies_on_listing.md) — taxonomies marketing (Category/Tag) sur `Listing` jamais sur `Product` ; URL canonique produit découplée des filtres
 - [pattern_app_config_bootstrap.md](pattern_app_config_bootstrap.md) — exposer un `ApplicationParameter` aux composants Vue via `window.__auroraConfig.<key>` (extension Twig dédiée + fallback hardcodé)
 - [pattern_single_locale_mode.md](pattern_single_locale_mode.md) — toggle `single_locale_mode` réversible : filtre l'UI/écritures via `LocaleContext`, préserve les `XxxTranslation` dormantes
+- [decision_locale_added_in_core.md](decision_locale_added_in_core.md) — toute nouvelle locale (es, de…) s'ajoute dans `LocaleEnum` côté core, jamais côté client (capitalisation + cohérence cross-écosystème)

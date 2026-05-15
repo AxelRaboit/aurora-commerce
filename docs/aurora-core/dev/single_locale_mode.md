@@ -188,6 +188,39 @@ Côté Vue (`SettingsApp.vue`), le renderer choisit automatiquement entre
 >10 options). Tout nouveau paramètre `select` à beaucoup d'options
 hérite automatiquement de la version searchable.
 
+## Ajouter une nouvelle locale (es, de, …)
+
+Toujours **dans aurora-core**, jamais côté client. `LocaleEnum` est la
+source de vérité unique : routes frontend, switcher, sitemap, settings
+select, subscribers et bundle config en dérivent tous. Bricoler une
+locale côté client ferait diverger les patterns (certains Managers la
+connaîtraient, d'autres non) et c'est exactement ce que `LocaleEnum`
+empêche.
+
+**Bonus capitalisation** : si un projet a besoin d'espagnol, d'autres
+clients aurora en auront probablement besoin. Ajouter la locale au core
+(+ stubs de traductions) bénéficie à tout l'écosystème et évite la
+duplication.
+
+Workflow pour ajouter une locale :
+
+1. Nouveau case dans `LocaleEnum` (ex: `case Spanish = 'es';`).
+2. Clé `shared.locales.es: Español` dans
+   `src/Core/translations/messages.{fr,en}.yaml`.
+3. Pour chaque module ayant des `messages.fr.yaml` / `messages.en.yaml`,
+   créer un `messages.es.yaml` (peut démarrer comme copie de l'EN à
+   traduire ensuite).
+4. `make i18n` regénère `assets/locales/generated/es.json`.
+
+C'est tout. Le reste suit automatiquement :
+- nouvelle option dans le select `DefaultLocale` / `EmailLocale` de
+  `/backend/settings` (résolu via `LocaleEnum::cases()`)
+- routes `/{locale}/...` acceptent `es`
+- `LocaleSubscriber` valide la locale
+- `SitemapBuilder` / `RssFeedService` émettent les URLs `es`
+- `DumpJsTranslationsCommand` dumpe `es.json`
+- `AuroraBundle::prependExtension()` déclare la locale à Symfony
+
 ## Routes frontend en single mode
 
 Les `#[Route('/{locale}/...')]` restent déclarées. C'est
