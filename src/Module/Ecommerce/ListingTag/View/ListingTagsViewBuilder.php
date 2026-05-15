@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingTag\View;
 
-use Aurora\Core\Locale\Repository\LocaleRepository;
+use Aurora\Core\Locale\Service\LocaleOptionsProviderInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -14,7 +14,7 @@ final readonly class ListingTagsViewBuilder
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-        private LocaleRepository $localeRepository,
+        private LocaleOptionsProviderInterface $localeOptionsProvider,
     ) {}
 
     /**
@@ -24,14 +24,9 @@ final readonly class ListingTagsViewBuilder
      */
     public function indexView(array $tags): array
     {
-        $locales = array_map(static fn ($locale): array => [
-            'code' => $locale->getCode(),
-            'label' => $locale->getName(),
-        ], $this->localeRepository->findAll());
-
         return [
             'tags' => $tags,
-            'locales' => $locales,
+            'locales' => $this->localeOptionsProvider->getActiveOptions(),
             'listPath' => $this->urlGenerator->generate('backend_ecommerce_listing_tags_list'),
             'createPath' => $this->urlGenerator->generate('backend_ecommerce_listing_tags_create'),
             'updatePath' => $this->urlGenerator->generate('backend_ecommerce_listing_tags_update', ['id' => '__id__']),

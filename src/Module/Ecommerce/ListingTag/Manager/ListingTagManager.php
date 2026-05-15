@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\ListingTag\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Locale\Service\TranslationLocaleSyncerInterface;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagInputInterface;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagTranslationInput;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
@@ -24,6 +25,7 @@ class ListingTagManager implements ListingTagManagerInterface
         protected readonly ListingTagRepository $tagRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly SluggerInterface $slugger,
+        protected readonly TranslationLocaleSyncerInterface $translationSyncer,
     ) {}
 
     public function create(ListingTagInputInterface $input): ListingTagInterface
@@ -70,12 +72,8 @@ class ListingTagManager implements ListingTagManagerInterface
         $tag->setColor($input->getColor());
         $tag->setVisible($input->isVisible());
 
-        $inputLocales = array_keys($input->getTranslations());
-
-        foreach ($tag->getTranslations() as $existingLocale => $existing) {
-            if (!in_array((string) $existingLocale, $inputLocales, true)) {
-                $tag->removeTranslation($existing);
-            }
+        foreach ($this->translationSyncer->stale($tag->getTranslations(), array_keys($input->getTranslations())) as $stale) {
+            $tag->removeTranslation($stale);
         }
 
         foreach ($input->getTranslations() as $locale => $translationInput) {

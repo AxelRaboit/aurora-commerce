@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\ListingCategory\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Locale\Service\TranslationLocaleSyncerInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Module\Ecommerce\ListingCategory\Dto\ListingCategoryInputInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Dto\ListingCategoryTranslationInput;
@@ -29,6 +30,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
         protected readonly AuditLogger $auditLogger,
         protected readonly TranslatorInterface $translator,
         protected readonly SluggerInterface $slugger,
+        protected readonly TranslationLocaleSyncerInterface $translationSyncer,
     ) {}
 
     public function create(ListingCategoryInputInterface $input): ListingCategoryInterface
@@ -186,12 +188,8 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
             null !== $input->getImageId() ? $this->mediaRepository->find($input->getImageId()) : null,
         );
 
-        $inputLocales = array_keys($input->getTranslations());
-
-        foreach ($category->getTranslations() as $existingLocale => $existing) {
-            if (!in_array((string) $existingLocale, $inputLocales, true)) {
-                $category->removeTranslation($existing);
-            }
+        foreach ($this->translationSyncer->stale($category->getTranslations(), array_keys($input->getTranslations())) as $stale) {
+            $category->removeTranslation($stale);
         }
 
         foreach ($input->getTranslations() as $locale => $translationInput) {

@@ -7,6 +7,7 @@ namespace Aurora\Core\Menu\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Menu\Dto\MenuInputFactoryInterface;
 use Aurora\Core\Menu\Dto\MenuItemInputFactoryInterface;
 use Aurora\Core\Menu\Entity\Menu;
@@ -41,6 +42,7 @@ class MenusController extends AbstractController
         private readonly MenusViewBuilder $viewBuilder,
         private readonly MenuInputFactoryInterface $menuInputFactory,
         private readonly MenuItemInputFactoryInterface $menuItemInputFactory,
+        private readonly LocaleContextInterface $localeContext,
     ) {}
 
     // ── Page (Vue SPA) ────────────────────────────────────────────────────────
@@ -48,10 +50,7 @@ class MenusController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        /** @var list<string> $locales */
-        $locales = $this->getParameter('kernel.enabled_locales');
-
-        return $this->render('@Editorial/backend/menus/index.html.twig', $this->viewBuilder->indexView($locales));
+        return $this->render('@Editorial/backend/menus/index.html.twig', $this->viewBuilder->indexView($this->localeContext->getActiveLocales()));
     }
 
     // ── Menus CRUD ────────────────────────────────────────────────────────────
