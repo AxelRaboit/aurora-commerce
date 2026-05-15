@@ -1,8 +1,7 @@
 <script setup>
 import { computed } from "vue";
-import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus } from "lucide-vue-next";
+import { ChevronDown, ChevronRight, Pencil, Trash2, Plus } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import AppButton from "@/shared/components/action/AppButton.vue";
 
 const props = defineProps({
     node: { type: Object, required: true },
@@ -11,6 +10,7 @@ const props = defineProps({
     collapsed: { type: Object, required: true },
     draggingId: { type: Number, default: null },
     dragOverId: { type: Number, default: null },
+    depth: { type: Number, default: 0 },
 });
 
 const emit = defineEmits([
@@ -31,71 +31,73 @@ const name = computed(
         ?? props.node.translations?.fr?.name
         ?? "(—)",
 );
+const slug = computed(() => props.node.translations?.[props.activeLocale]?.slug ?? "");
 
 const isCollapsed = computed(() => props.collapsed.has(props.node.id));
 const children = computed(() => props.node.children ?? []);
 const hasChildren = computed(() => children.value.length > 0);
 const isDragOver = computed(() => props.dragOverId === props.node.id);
 const isBeingDragged = computed(() => props.draggingId === props.node.id);
+
+// 1rem per level — same convention as the media folder sidebar.
+const indentStyle = computed(() => ({ paddingLeft: `${props.depth * 1}rem` }));
 </script>
 
 <template>
-    <div
-        class="border rounded-md bg-surface transition-colors"
-        :class="[
-            isDragOver ? 'border-accent-500 ring-1 ring-accent-500/60 bg-accent-50 dark:bg-accent-900/30' :
-            'border-line',
-            isBeingDragged ? 'opacity-40' : '',
-        ]"
-        :draggable="true"
-        v-on:dragstart.stop="emit('term-drag-start', node, $event)"
-        v-on:dragend="emit('term-drag-end', $event)"
-        v-on:dragover="emit('term-drag-over', node, $event)"
-        v-on:dragleave="emit('term-drag-leave', node, $event)"
-        v-on:drop="emit('drop-on-term', node, $event)"
-    >
-        <div class="flex items-center gap-1 px-2 py-1.5">
-            <AppButton
-                variant="ghost"
-                size="none"
-                class="cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1"
-                :title="'drag'"
-            >
-                <GripVertical class="w-4 h-4" :stroke-width="2" />
-            </AppButton>
-
-            <AppIconButton
+    <div>
+        <div
+            class="group flex items-center gap-1"
+            :style="indentStyle"
+            :draggable="true"
+            v-on:dragstart.stop="emit('term-drag-start', node, $event)"
+            v-on:dragend="emit('term-drag-end', $event)"
+            v-on:dragover="emit('term-drag-over', node, $event)"
+            v-on:dragleave="emit('term-drag-leave', node, $event)"
+            v-on:drop="emit('drop-on-term', node, $event)"
+        >
+            <button
                 v-if="hierarchical && hasChildren"
-                class="p-0.5"
-                v-on:click="emit('toggle-collapse', node.id)"
+                type="button"
+                class="p-1 -ml-1 text-muted hover:text-primary rounded shrink-0"
+                v-on:click.stop="emit('toggle-collapse', node.id)"
             >
-                <ChevronDown v-if="!isCollapsed" class="w-4 h-4" :stroke-width="2" />
-                <ChevronRight v-else class="w-4 h-4" :stroke-width="2" />
-            </AppIconButton>
-            <span v-else-if="hierarchical" class="w-5" />
+                <ChevronRight v-if="isCollapsed" class="w-3 h-3" :stroke-width="2" />
+                <ChevronDown v-else class="w-3 h-3" :stroke-width="2" />
+            </button>
+            <span v-else class="w-4 shrink-0" />
 
-            <span class="flex-1 min-w-0 text-sm font-medium text-primary truncate">{{ name }}</span>
-            <span class="text-xs text-muted font-mono truncate hidden sm:inline">{{ node.translations?.[activeLocale]?.slug ?? "" }}</span>
+            <div
+                class="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg transition-colors border min-w-0 cursor-grab active:cursor-grabbing"
+                :class="[
+                    isDragOver
+                        ? 'bg-accent-600/15 text-accent-400 border-accent-600/30 ring-2 ring-accent-500'
+                        : 'hover:bg-surface-2 text-primary border-transparent',
+                    isBeingDragged ? 'opacity-40' : '',
+                ]"
+            >
+                <span class="flex-1 text-sm truncate">{{ name }}</span>
+                <span v-if="slug" class="text-xs text-muted font-mono shrink-0 hidden sm:inline">{{ slug }}</span>
+            </div>
 
-            <div class="flex items-center gap-0.5">
-                <AppIconButton v-if="hierarchical" color="sky" v-on:click="emit('add-child', node.id)">
+            <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
+                <AppIconButton v-if="hierarchical" color="sky" :title="$t('backend.taxonomies.terms.addChild')" v-on:click.stop="emit('add-child', node.id)">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton color="accent" v-on:click="emit('edit', node)">
+                <AppIconButton color="accent" v-on:click.stop="emit('edit', node)">
                     <Pencil class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton color="rose" v-on:click="emit('delete', node)">
+                <AppIconButton color="rose" v-on:click.stop="emit('delete', node)">
                     <Trash2 class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
             </div>
         </div>
 
         <!--
-            Children container — plain stack, no VueDraggable. Each row is its
-            own drop target via native HTML5 DnD, so this just provides the
-            indented visual layout.
+            Recursive children — same depth incremented by 1 so each level
+            picks up another rem of padding. No nested borders or extra
+            indent containers; the visual hierarchy is conveyed by inset.
         -->
-        <div v-if="hierarchical && !isCollapsed && hasChildren" class="pl-5 pb-1 space-y-1">
+        <div v-if="hierarchical && !isCollapsed && hasChildren" class="space-y-0.5 mt-0.5">
             <TermNode
                 v-for="child in children"
                 :key="child.id"
@@ -105,6 +107,7 @@ const isBeingDragged = computed(() => props.draggingId === props.node.id);
                 :collapsed="collapsed"
                 :dragging-id="draggingId"
                 :drag-over-id="dragOverId"
+                :depth="depth + 1"
                 v-on:toggle-collapse="emit('toggle-collapse', $event)"
                 v-on:edit="emit('edit', $event)"
                 v-on:delete="emit('delete', $event)"

@@ -135,27 +135,37 @@ const parentOptions = computed(() => {
 <template>
     <div class="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-8rem)]">
         <aside class="lg:w-72 shrink-0 space-y-2">
-            <div class="flex items-center justify-between gap-2">
-                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide">{{ t("backend.taxonomies.title") }}</h2>
-                <AppButton v-if="can('editorial.taxonomies.create')" variant="primary" size="md" v-on:click="openCreateTaxonomy">
+            <div class="flex items-center gap-1.5">
+                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide flex-1">{{ t("backend.taxonomies.title") }}</h2>
+                <AppIconButton
+                    v-if="can('editorial.taxonomies.create')"
+                    :title="t('backend.taxonomies.addTaxonomy')"
+                    v-on:click="openCreateTaxonomy"
+                >
                     <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t("backend.taxonomies.addTaxonomy") }}
-                </AppButton>
+                </AppIconButton>
             </div>
-            <div class="space-y-1">
-                <AppButton
+            <!--
+                Same visual language as the media folder sidebar: plain
+                button rows, transparent border by default, accent fill +
+                border on the selected entry, hover-only surface tint.
+            -->
+            <div class="space-y-0.5">
+                <button
                     v-for="taxonomy in taxonomies"
                     :key="taxonomy.id"
-                    variant="nav"
-                    size="nav"
-                    :active="selectedId === taxonomy.id"
+                    type="button"
+                    class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 border"
+                    :class="selectedId === taxonomy.id
+                        ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
+                        : 'hover:bg-surface-2 text-primary border-transparent'"
                     v-on:click="selectedId = taxonomy.id"
                 >
                     <FolderTree v-if="taxonomy.hierarchical" class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <Folder v-else class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    <span class="flex-1 font-medium truncate">{{ translationLabel(taxonomy, activeLocale) }}</span>
+                    <span class="flex-1 text-sm font-medium truncate">{{ translationLabel(taxonomy, activeLocale) }}</span>
                     <Lock v-if="taxonomy.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.taxonomies.builtIn')" />
-                </AppButton>
+                </button>
             </div>
         </aside>
 
