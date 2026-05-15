@@ -69,6 +69,18 @@ applique ça uniformément.
 - **Liste + sidebar éditeur** (cas `Form` Editorial) : `add` sur le bouton
   primaire de la sidebar, `create` ou clé spécifique (ex. `newForm`) sur
   l'en-tête de l'éditeur quand on est en mode création.
+- **Bouton dans une sidebar étroite avec titre de section au-dessus**
+  (cas `taxonomies`, `post-types`) : la clé `add` peut être raccourcie à
+  juste `"Ajouter"` / `"Add"`. Justification : le `<h2>` "Types de
+  contenu" / "Taxonomies" juste au-dessus rend le nom d'entité redondant,
+  et l'espace horizontal limité de la sidebar fait wraper la version
+  longue. Cas similaire : un bouton d'action évident dans une carte ou
+  un widget dont le contexte rend l'objet implicite ("Ajouter" dans une
+  carte « Champs personnalisés », par exemple).
+- **Mais** : en cas de doute, garder la version longue. La forme courte
+  n'est légitime que quand le contexte visuel immédiat (≤ 1 ligne
+  au-dessus, même carte/widget) lève l'ambiguïté. Un bouton "Ajouter"
+  perdu dans une page sans cadre de référence reste mauvais.
 
 ## Pièges
 
