@@ -6,6 +6,7 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
 import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
 import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
 import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
@@ -382,7 +383,15 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                         </template>
 
                         <template v-else-if="parameter.type === ParameterType.Select">
+                            <AppMultiselect
+                                v-if="(parameter.options ?? []).length > 10"
+                                :label="parameter.label"
+                                :options="parameter.options ?? []"
+                                :model-value="fieldValues[parameter.key]"
+                                v-on:update:model-value="fieldValues[parameter.key] = $event"
+                            />
                             <AppSelect
+                                v-else
                                 :label="parameter.label"
                                 :options="parameter.options ?? []"
                                 :model-value="fieldValues[parameter.key]"
