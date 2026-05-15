@@ -14,6 +14,7 @@ use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Entity\ResetPasswordRequestInterface;
 use Aurora\Core\Locale\Entity\Locale;
 use Aurora\Core\Locale\Entity\LocaleInterface;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Entity\MediaFolderInterface;
@@ -367,8 +368,8 @@ class AuroraBundle extends AbstractBundle
         $coreDirs = glob($dir.'/src/Core/*/translations', GLOB_ONLYDIR) ?: [];
 
         $builder->prependExtensionConfig('framework', [
-            'default_locale' => 'fr',
-            'enabled_locales' => ['fr', 'en'],
+            'default_locale' => LocaleEnum::default()->value,
+            'enabled_locales' => LocaleEnum::values(),
             'translator' => [
                 'default_path' => $dir.'/src/Core/translations',
                 'paths' => array_values(array_filter(
@@ -378,7 +379,7 @@ class AuroraBundle extends AbstractBundle
                     ),
                     is_dir(...),
                 )),
-                'fallbacks' => ['fr'],
+                'fallbacks' => [LocaleEnum::default()->value],
             ],
         ]);
     }

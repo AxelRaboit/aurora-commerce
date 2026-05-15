@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Serializer;
 
+use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -19,6 +20,7 @@ class ListingSerializer implements ListingSerializerInterface
     public function __construct(
         protected readonly SettingRepository $settingRepository,
         protected readonly RequestStack $requestStack,
+        protected readonly LocaleContextInterface $localeContext,
     ) {}
 
     public function serialize(ListingInterface $listing): array
@@ -80,7 +82,7 @@ class ListingSerializer implements ListingSerializerInterface
     private function serializeCategories(ListingInterface $listing): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        $locale = $request instanceof Request ? $request->getLocale() : 'en';
+        $locale = $request instanceof Request ? $request->getLocale() : $this->localeContext->getDefaultLocale();
 
         $result = [];
         foreach ($listing->getCategories() as $category) {
@@ -110,7 +112,7 @@ class ListingSerializer implements ListingSerializerInterface
     private function serializeTags(ListingInterface $listing): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        $locale = $request instanceof Request ? $request->getLocale() : 'en';
+        $locale = $request instanceof Request ? $request->getLocale() : $this->localeContext->getDefaultLocale();
 
         $result = [];
         foreach ($listing->getTags() as $tag) {

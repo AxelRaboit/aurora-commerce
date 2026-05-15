@@ -6,6 +6,7 @@ namespace Aurora\Core\Search\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Search\Service\SearchResultSorter;
@@ -38,6 +39,7 @@ class SearchController extends AbstractController
         private readonly ProjectRepository $projectRepository,
         private readonly ProjectTaskRepository $taskRepository,
         private readonly SearchResultSorter $searchResultSorter,
+        private readonly LocaleContextInterface $localeContext,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -48,7 +50,7 @@ class SearchController extends AbstractController
             return $this->jsonSuccess(['posts' => [], 'terms' => [], 'media' => [], 'projects' => [], 'tasks' => []]);
         }
 
-        $defaultLocaleEnum = (string) ($this->getParameter('kernel.default_locale') ?? 'fr');
+        $defaultLocale = $this->localeContext->getDefaultLocale();
 
         // ── Posts (full-text via tsvector) ──────────────────────────────────
         $postIds = $this->postRepository->fullTextPostIds($query, 10);
@@ -57,12 +59,12 @@ class SearchController extends AbstractController
         $postsSerialized = array_map(
             fn (PostInterface $post): array => [
                 'id' => $post->getId(),
-                'title' => $post->getTranslation('fr')?->getTitle() ?? ($post->getTranslations()->first() ?: null)?->getTitle(),
+                'title' => $post->getTranslation($defaultLocale)?->getTitle() ?? ($post->getTranslations()->first() ?: null)?->getTitle(),
                 'status' => $post->getStatus()->value,
                 'postType' => $post->getPostType()->getLabel(),
                 'trashed' => $post->isTrashed(),
                 'snippet' => $this->snippetBuilder->build(
-                    $post->getTranslation('fr')?->getSearchContent()
+                    $post->getTranslation($defaultLocale)?->getSearchContent()
                     ?? ($post->getTranslations()->first() ?: null)?->getSearchContent(),
                     $query,
                 ),
@@ -74,7 +76,7 @@ class SearchController extends AbstractController
         $termsSerialized = array_map(
             fn (TaxonomyTermInterface $term): array => [
                 'id' => $term->getId(),
-                'name' => $term->getTranslation($defaultLocaleEnum)?->getName()
+                'name' => $term->getTranslation($defaultLocale)?->getName()
                     ?? ($term->getTranslations()->first() ?: null)?->getName(),
                 'taxonomy' => $term->getTaxonomy()->getSlug(),
             ],
