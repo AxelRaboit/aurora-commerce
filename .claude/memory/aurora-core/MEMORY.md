@@ -22,3 +22,12 @@ Vue/Twig site public → `vue-frontend/`. S'applique aux deux → `vue-transvers
 - **Écriture** : créer `<type>_<topic>.md` dans le bon dossier + ligne dans le sous-index.
   Format : `## Règle` → `## Pourquoi` → `## Comment l'appliquer`.
 - **Sync** : après tout ajout/modif, lancer `make sync-claude-memory`.
+
+## Conventions partagées (aurora-core + aurora-client)
+
+Les conventions Vue, HTTP, JS, i18n et process qui s'appliquent aussi bien
+à aurora-core qu'à un développeur aurora-client vivent dans
+**[`../aurora-shared/`](../aurora-shared/MEMORY.md)** — pas ici.
+
+Ne pas dupliquer : si une convention mérite d'être distribuée aux clients, la
+créer dans `aurora-shared/` et y pointer depuis ce sous-index si besoin.

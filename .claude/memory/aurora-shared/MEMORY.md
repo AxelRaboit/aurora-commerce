@@ -1,0 +1,71 @@
+# Aurora-shared — index mémoire (distribué via aurora-core + aurora-client)
+
+Ce dossier contient les conventions **transversales** : utiles aussi bien pour un
+développeur aurora-core que pour un développeur aurora-client (nouveau module,
+formulaire Vue, appels HTTP, commits, etc.).
+
+Distribué via composer : les clients lisent ces mémoires depuis
+`vendor/axelraboit/aurora/.claude/memory/aurora-shared/`.
+
+---
+
+## Vue / composants
+
+- [convention_form_components.md](convention_form_components.md) — toujours
+  `App*` (AppButton, AppInput, AppSelect…) — jamais `<button>` / `<input>` bruts ;
+  placeholder obligatoire ; AppDatePicker pour dates
+- [convention_vue_directives.md](convention_vue_directives.md) — toujours
+  `v-on:` (forme longue) pour les events, jamais `@` ; `:` reste OK pour v-bind
+- [convention_mobile_card_layout.md](convention_mobile_card_layout.md) — toute
+  liste CRUD = sm:hidden cards + hidden sm:block table + footer d'actions
+- [pattern_admin_list_toolbar.md](pattern_admin_list_toolbar.md) — toolbar
+  standard (search + boutons) via `<AppListToolbar>` slot-par-défaut + `#actions`
+- [convention_modal_and_confirmation.md](convention_modal_and_confirmation.md) —
+  AppModal API + confirmation de suppression via modale (jamais `confirm()` natif)
+- [convention_vue_form_validation.md](convention_vue_form_validation.md) —
+  `useForm` + `required()` de validators + `:error` sur chaque AppInput validé
+- [convention_app_loader.md](convention_app_loader.md) — toute liste paginée =
+  `<div class="relative space-y-N">` + `<AppLoader :active="loading" />`
+
+## HTTP / fetch
+
+- [convention_no_raw_fetch.md](convention_no_raw_fetch.md) — interdiction de
+  `fetch()` brut ; toujours `useRequest` (admin) ou `useFrontendRequest` (public)
+- [convention_xhr_header.md](convention_xhr_header.md) — `useRequest` envoie
+  `X-Requested-With: XMLHttpRequest` ; les controllers Symfony détectent les XHR
+  via ce header pour retourner JSON
+
+## JS
+
+- [convention_js_no_var.md](convention_js_no_var.md) — toujours `const`/`let`,
+  jamais `var`
+- [convention_js_privacy.md](convention_js_privacy.md) — `#` pour les classes
+  ES2022 ; variables module-level non exportées = déjà privées, pas de `_`
+
+## i18n
+
+- [convention_i18n_key_casing.md](convention_i18n_key_casing.md) — `snake_case`
+  pour les clés construites par le code (enums, ids système), `camelCase` pour
+  les libellés UI nommés à la main
+- [convention_locale_options.md](convention_locale_options.md) — importer
+  `LOCALE_OPTIONS` depuis `@core/utils/locales.js` ; locales supportées : `fr` et `en`
+
+## Process / commits
+
+- [process_make_ft_before_commit.md](process_make_ft_before_commit.md) —
+  lancer `make ft` (= fix + test) avant chaque commit ; aucune échappatoire
+- [pref_no_co_authored.md](pref_no_co_authored.md) — ne jamais ajouter
+  `Co-Authored-By: Claude` dans les commits
+- [pref_commit_language.md](pref_commit_language.md) — messages de commit
+  toujours en anglais
+- [pref_french_dialogue.md](pref_french_dialogue.md) — dialogue conversationnel
+  en français, code et commits en anglais
+
+---
+
+## Règles d'usage
+
+- **Lecture** : ouvrir le fichier source, ne pas se reposer sur le résumé seul.
+- **Écriture** : si une convention émerge qui s'applique aux deux contextes
+  (core + client), la créer ici plutôt que dans aurora-core ou aurora-client.
+- **Sync** : après tout ajout/modif, lancer `make sync-claude-memory`.
