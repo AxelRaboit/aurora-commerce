@@ -187,6 +187,66 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
         self::assertFalse($body['success']);
     }
 
+    public function testRenamingTitleRewritesWikiLinksInOtherNotes(): void
+    {
+        $target = $this->createNote(title: 'Old Title');
+        $referrer = $this->createNote(title: 'Referrer', content: 'See [[Old Title]] for context.');
+
+        [$status, ] = $this->postJson('backend_notes_markdown_update', ['id' => $target['id']], [
+            'title' => 'New Title',
+        ]);
+        self::assertSame(200, $status);
+
+        [, $body] = $this->getJson('backend_notes_markdown_show', ['id' => $referrer['id']]);
+        self::assertSame('See [[New Title]] for context.', $body['note']['content']);
+    }
+
+    public function testBacklinksEndpointReturnsLinkingNotes(): void
+    {
+        $target = $this->createNote(title: 'TargetPage');
+        $linker = $this->createNote(title: 'Linker', content: 'goes to [[targetpage]] here');
+        $this->createNote(title: 'Unrelated', content: 'nothing to see');
+
+        [$status, $body] = $this->getJson('backend_notes_markdown_backlinks', ['id' => $target['id']]);
+
+        self::assertSame(200, $status);
+        self::assertCount(1, $body['backlinks']);
+        self::assertSame($linker['id'], $body['backlinks'][0]['id']);
+    }
+
+    public function testUnlinkedMentionsEndpointExcludesProperLinks(): void
+    {
+        $target = $this->createNote(title: 'Foo');
+        $linker = $this->createNote(title: 'L', content: 'See [[foo]]');
+        $mentioner = $this->createNote(title: 'M', content: 'I love foo but not linked');
+
+        [$status, $body] = $this->getJson('backend_notes_markdown_unlinked_mentions', ['id' => $target['id']]);
+
+        self::assertSame(200, $status);
+        self::assertCount(1, $body['mentions']);
+        self::assertSame($mentioner['id'], $body['mentions'][0]['id']);
+    }
+
+    public function testGraphEndpointReturnsNodesAndEdges(): void
+    {
+        $a = $this->createNote(title: 'Alpha', content: 'links to [[Beta]]');
+        $b = $this->createNote(title: 'Beta', content: 'no outgoing');
+
+        [$status, $body] = $this->getJson('backend_notes_markdown_graph');
+
+        self::assertSame(200, $status);
+        // node count may include other notes created in earlier passing assertions reused via shared fixtures…
+        // …but the edges Alpha→Beta must exist
+        $hasEdge = false;
+        foreach ($body['edges'] as $edge) {
+            if ($edge['source'] === $a['id'] && $edge['target'] === $b['id']) {
+                $hasEdge = true;
+                break;
+            }
+        }
+        self::assertTrue($hasEdge, 'graph must contain Alpha→Beta edge');
+    }
+
     /**
      * @param list<string> $tags
      *

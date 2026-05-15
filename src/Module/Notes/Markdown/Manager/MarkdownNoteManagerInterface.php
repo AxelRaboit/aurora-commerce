@@ -25,4 +25,31 @@ interface MarkdownNoteManagerInterface
      * @param list<int> $orderedIds
      */
     public function reorder(CoreUserInterface $user, array $orderedIds): void;
+
+    /**
+     * Notes that contain a [[title]] wiki-link pointing to $note.
+     * Case-insensitive title match.
+     *
+     * @return list<array{id: int, title: ?string}>
+     */
+    public function backlinks(CoreUserInterface $user, MarkdownNoteInterface $note): array;
+
+    /**
+     * Notes that mention $note's title in their content without using
+     * the [[…]] wiki-link syntax. Case-insensitive substring match.
+     *
+     * @return list<array{id: int, title: ?string}>
+     */
+    public function unlinkedMentions(CoreUserInterface $user, MarkdownNoteInterface $note): array;
+
+    /**
+     * Wiki-link graph for the whole user's notes. Edges are extracted
+     * from [[target]] occurrences resolved against existing titles.
+     *
+     * @return array{
+     *     nodes: list<array{id: int, title: string}>,
+     *     edges: list<array{source: int, target: int}>,
+     * }
+     */
+    public function graph(CoreUserInterface $user): array;
 }

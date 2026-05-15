@@ -186,6 +186,135 @@ final class MarkdownNoteManagerTest extends TestCase
         $this->manager->reorder($this->makeUser(), []);
     }
 
+    public function testUpdateRenamesWikiLinksInOtherNotesWhenTitleChanges(): void
+    {
+        $user = $this->makeUser();
+        $note = $this->makeNoteWithId(1);
+        $note->setUser($user);
+        $note->setTitle('Old Title');
+
+        $other = $this->makeNoteWithId(2);
+        $other->setContent('See [[Old Title]] for details.');
+
+        $this->repo->expects(self::once())->method('findAllWithContentForUser')->with($user)->willReturn([$note, $other]);
+
+        $this->manager->update($note, new MarkdownNoteInput(title: 'New Title'));
+
+        self::assertSame('See [[New Title]] for details.', $other->getContent());
+    }
+
+    public function testUpdateDoesNotRenameWhenOldTitleWasNull(): void
+    {
+        $user = $this->makeUser();
+        $note = $this->makeNoteWithId(1);
+        $note->setUser($user);
+        $note->setTitle(null);
+
+        $this->repo->expects(self::never())->method('findAllWithContentForUser');
+
+        $this->manager->update($note, new MarkdownNoteInput(title: 'Brand new'));
+    }
+
+    public function testBacklinksReturnsNotesContainingTheWikiLink(): void
+    {
+        $user = $this->makeUser();
+        $target = $this->makeNoteWithId(10);
+        $target->setTitle('My Page');
+
+        $linker = $this->makeNoteWithId(11);
+        $linker->setTitle('A');
+        $linker->setContent('Reference [[my page]] here.');
+
+        $unrelated = $this->makeNoteWithId(12);
+        $unrelated->setTitle('B');
+        $unrelated->setContent('no link at all');
+
+        $self = $target;
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$target, $linker, $unrelated]);
+
+        $results = $this->manager->backlinks($user, $target);
+
+        self::assertCount(1, $results);
+        self::assertSame(11, $results[0]['id']);
+        self::assertSame('A', $results[0]['title']);
+    }
+
+    public function testBacklinksReturnsEmptyForUntitledNote(): void
+    {
+        $user = $this->makeUser();
+        $target = $this->makeNoteWithId(10);
+        $target->setTitle(null);
+
+        $this->repo->expects(self::never())->method('findAllWithContentForUser');
+
+        self::assertSame([], $this->manager->backlinks($user, $target));
+    }
+
+    public function testUnlinkedMentionsExcludesLinkedReferences(): void
+    {
+        $user = $this->makeUser();
+        $target = $this->makeNoteWithId(10);
+        $target->setTitle('Foo');
+
+        $linker = $this->makeNoteWithId(11);
+        $linker->setTitle('A');
+        $linker->setContent('See [[foo]] for details.');
+
+        $mentioner = $this->makeNoteWithId(12);
+        $mentioner->setTitle('B');
+        $mentioner->setContent('I love foo but not linked.');
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$target, $linker, $mentioner]);
+
+        $results = $this->manager->unlinkedMentions($user, $target);
+
+        self::assertCount(1, $results);
+        self::assertSame(12, $results[0]['id']);
+    }
+
+    public function testGraphBuildsNodesAndEdgesFromWikiLinks(): void
+    {
+        $user = $this->makeUser();
+
+        $a = $this->makeNoteWithId(1);
+        $a->setTitle('Alpha');
+        $a->setContent('Links to [[Beta]] and [[Gamma#section]].');
+
+        $b = $this->makeNoteWithId(2);
+        $b->setTitle('Beta');
+        $b->setContent('No outgoing links.');
+
+        $c = $this->makeNoteWithId(3);
+        $c->setTitle('Gamma');
+        $c->setContent('Refers back to [[Alpha]] and unknown [[Delta]].');
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+
+        $graph = $this->manager->graph($user);
+
+        self::assertCount(3, $graph['nodes']);
+        $edges = $graph['edges'];
+        self::assertCount(3, $edges, 'Alpha→Beta, Alpha→Gamma, Gamma→Alpha (Delta unresolved, dropped)');
+        self::assertContains(['source' => 1, 'target' => 2], $edges);
+        self::assertContains(['source' => 1, 'target' => 3], $edges);
+        self::assertContains(['source' => 3, 'target' => 1], $edges);
+    }
+
+    public function testGraphIgnoresSelfLinks(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTitle('Self');
+        $a->setContent('I reference [[Self]] for fun.');
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+
+        $graph = $this->manager->graph($user);
+
+        self::assertSame([], $graph['edges']);
+    }
+
     private function makeNoteWithId(int $id): MarkdownNoteInterface
     {
         $note = new MarkdownNote();

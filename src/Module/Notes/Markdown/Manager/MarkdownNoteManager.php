@@ -16,6 +16,9 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 #[AsAlias(MarkdownNoteManagerInterface::class)]
 class MarkdownNoteManager implements MarkdownNoteManagerInterface
 {
+    /** Matches [[anything]] occurrences in markdown content. */
+    protected const string WIKI_LINK_REGEX = '/\[\[([^\]]+)\]\]/';
+
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly MarkdownNoteRepository $noteRepository,
@@ -45,7 +48,15 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
 
     public function update(MarkdownNoteInterface $note, MarkdownNoteInputInterface $input): void
     {
+        $oldTitle = $note->getTitle();
+
         $this->applyInput($note, $input);
+
+        $newTitle = $note->getTitle();
+        if (null !== $oldTitle && null !== $newTitle && '' !== $oldTitle && $oldTitle !== $newTitle) {
+            $this->renameWikiLinks($note->getUser(), $note->getId(), $oldTitle, $newTitle);
+        }
+
         $this->entityManager->flush();
 
         $this->auditUpdated($note);
@@ -86,6 +97,127 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         }
 
         $this->entityManager->flush();
+    }
+
+    public function backlinks(CoreUserInterface $user, MarkdownNoteInterface $note): array
+    {
+        $title = $note->getTitle();
+        if (null === $title || '' === $title) {
+            return [];
+        }
+
+        $needle = '[['.mb_strtolower($title).']]';
+        $results = [];
+
+        foreach ($this->noteRepository->findAllWithContentForUser($user) as $other) {
+            if ($other->getId() === $note->getId()) {
+                continue;
+            }
+            $content = $other->getContent();
+            if (null === $content || '' === $content) {
+                continue;
+            }
+            if (!str_contains(mb_strtolower($content), $needle)) {
+                continue;
+            }
+            $results[] = ['id' => $other->getId(), 'title' => $other->getTitle()];
+        }
+
+        return $results;
+    }
+
+    public function unlinkedMentions(CoreUserInterface $user, MarkdownNoteInterface $note): array
+    {
+        $title = $note->getTitle();
+        if (null === $title || '' === $title) {
+            return [];
+        }
+
+        $titleLower = mb_strtolower($title);
+        $linkedPattern = '[['.$titleLower.']]';
+        $results = [];
+
+        foreach ($this->noteRepository->findAllWithContentForUser($user) as $other) {
+            if ($other->getId() === $note->getId()) {
+                continue;
+            }
+            $content = $other->getContent();
+            if (null === $content || '' === $content) {
+                continue;
+            }
+            $contentLower = mb_strtolower($content);
+            if (!str_contains($contentLower, $titleLower)) {
+                continue;
+            }
+            if (str_contains($contentLower, $linkedPattern)) {
+                continue;
+            }
+            $results[] = ['id' => $other->getId(), 'title' => $other->getTitle()];
+        }
+
+        return $results;
+    }
+
+    public function graph(CoreUserInterface $user): array
+    {
+        $notes = $this->noteRepository->findAllWithContentForUser($user);
+
+        $titleToId = [];
+        $nodes = [];
+        foreach ($notes as $note) {
+            $title = $note->getTitle() ?? '';
+            $nodes[] = ['id' => $note->getId(), 'title' => '' === $title ? 'Untitled' : $title];
+            if ('' !== $title) {
+                $titleToId[mb_strtolower($title)] = $note->getId();
+            }
+        }
+
+        $edges = [];
+        foreach ($notes as $note) {
+            $content = $note->getContent();
+            if (null === $content || '' === $content) {
+                continue;
+            }
+            if (0 === preg_match_all(self::WIKI_LINK_REGEX, $content, $matches)) {
+                continue;
+            }
+            foreach ($matches[1] as $rawTarget) {
+                // strip anchor (#heading) — `[[Title#section]]` still points to "Title"
+                $target = mb_strtolower(explode('#', (string) $rawTarget)[0]);
+                if ('' === $target || !isset($titleToId[$target])) {
+                    continue;
+                }
+                $targetId = $titleToId[$target];
+                if ($targetId === $note->getId()) {
+                    continue;
+                }
+                $edges[] = ['source' => $note->getId(), 'target' => $targetId];
+            }
+        }
+
+        return ['nodes' => $nodes, 'edges' => $edges];
+    }
+
+    /**
+     * When a note's title changes, rewrite [[oldTitle]] → [[newTitle]] in all
+     * the user's other notes. Case-sensitive substring (matches Onyx).
+     * Clients override to customize the wiki-link syntax.
+     */
+    protected function renameWikiLinks(CoreUserInterface $user, ?int $excludeId, string $oldTitle, string $newTitle): void
+    {
+        $oldPattern = '[['.$oldTitle.']]';
+        $newPattern = '[['.$newTitle.']]';
+
+        foreach ($this->noteRepository->findAllWithContentForUser($user) as $other) {
+            if (null !== $excludeId && $other->getId() === $excludeId) {
+                continue;
+            }
+            $content = $other->getContent();
+            if (null === $content || !str_contains($content, $oldPattern)) {
+                continue;
+            }
+            $other->setContent(str_replace($oldPattern, $newPattern, $content));
+        }
     }
 
     /**

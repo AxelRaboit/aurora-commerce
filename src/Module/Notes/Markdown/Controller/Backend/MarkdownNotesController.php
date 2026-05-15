@@ -150,6 +150,43 @@ final class MarkdownNotesController extends AbstractController
         return $this->jsonSuccess(['note' => $this->serializer->serializeListItem($note)]);
     }
 
+    #[Route('/{id}/backlinks', name: '_backlinks', methods: [HttpMethodEnum::Get->value], requirements: ['id' => '\d+'])]
+    public function backlinks(int $id): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $note = $this->repository->findOneByUserAndId($user, $id);
+        if (!$note instanceof MarkdownNoteInterface) {
+            return $this->jsonNotFound();
+        }
+
+        return $this->jsonSuccess(['backlinks' => $this->manager->backlinks($user, $note)]);
+    }
+
+    #[Route('/{id}/unlinked-mentions', name: '_unlinked_mentions', methods: [HttpMethodEnum::Get->value], requirements: ['id' => '\d+'])]
+    public function unlinkedMentions(int $id): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $note = $this->repository->findOneByUserAndId($user, $id);
+        if (!$note instanceof MarkdownNoteInterface) {
+            return $this->jsonNotFound();
+        }
+
+        return $this->jsonSuccess(['mentions' => $this->manager->unlinkedMentions($user, $note)]);
+    }
+
+    #[Route('/graph', name: '_graph', methods: [HttpMethodEnum::Get->value])]
+    public function graph(): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        return $this->jsonSuccess($this->manager->graph($user));
+    }
+
     #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
     public function reorder(Request $request): JsonResponse
     {
