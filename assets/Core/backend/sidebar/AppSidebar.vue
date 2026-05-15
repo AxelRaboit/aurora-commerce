@@ -2,6 +2,7 @@
 defineOptions({ inheritAttrs: false });
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useLayoutMount } from "@/shared/composables/useLayoutMount.js";
 import { useTheme } from "@/shared/composables/useTheme.js";
 import { useResizable } from "@/shared/composables/useResizable.js";
 import { useBackendSearch } from "@core/backend/sidebar/composables/useBackendSearch.js";
@@ -66,6 +67,8 @@ const { dragging: sidebarDragging, startResize: startSidebarResize, reset: reset
 watch(sidebarDragging, (dragging) => {
     document.documentElement.classList.toggle("sidebar-resizing", dragging);
 });
+
+useLayoutMount();
 
 const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,

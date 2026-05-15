@@ -1,16 +1,23 @@
 <script>
     (function () {
-        var s = localStorage.getItem('aurora-theme');
-        if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        const storedTheme = localStorage.getItem('aurora-theme');
+        if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
             {% if colorScheme is defined and colorScheme %}
             document.documentElement.style.colorScheme = 'dark';
             {% endif %}
         }
         {% if sidebar is defined and sidebar %}
-        var c = localStorage.getItem('aurora-sidebar');
-        if (c === 'collapsed') {
+        const sidebarState = localStorage.getItem('aurora-sidebar');
+        if (sidebarState === 'collapsed') {
             document.documentElement.classList.add('sidebar-collapsed');
+        }
+        const storedWidth = localStorage.getItem('aurora-sidebar-width');
+        if (storedWidth) {
+            const parsedWidth = parseInt(storedWidth, 10);
+            if (Number.isFinite(parsedWidth)) {
+                document.documentElement.style.setProperty('--sidebar-width', parsedWidth + 'px');
+            }
         }
         {% endif %}
     })();
