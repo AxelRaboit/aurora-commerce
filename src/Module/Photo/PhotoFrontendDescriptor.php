@@ -2,46 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Ecommerce;
+namespace Aurora\Module\Photo;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 
-final class EcommerceFrontDescriptor implements FrontendInterface
+final class PhotoFrontendDescriptor implements FrontendInterface
 {
     public function getSlug(): string
     {
-        return 'ecommerce';
+        return 'photo';
     }
 
     public function getLabel(): string
     {
-        return 'Ecommerce';
+        return 'Photo';
     }
 
     public function getHomeRoute(): string
     {
-        return 'frontend_shop_index';
+        return 'frontend_gallery';
     }
 
     public function getPriority(): int
     {
-        return 5;
+        return 3;
     }
 
     public function getModuleSettingKey(): string
     {
-        return ModuleParameterEnum::EcommerceFrontend->value;
+        return ModuleParameterEnum::PhotoFrontend->value;
     }
 
     public function getRoutePrefixes(): array
     {
-        return [
-            'frontend_shop_',
-            'frontend_cart',
-            'frontend_checkout',
-            'frontend_order_',
-            'frontend_account_orders',
-        ];
+        return ['frontend_gallery'];
     }
 }

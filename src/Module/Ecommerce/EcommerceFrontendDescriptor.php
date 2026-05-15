@@ -2,40 +2,46 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Ged;
+namespace Aurora\Module\Ecommerce;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 
-final class GedFrontDescriptor implements FrontendInterface
+final class EcommerceFrontendDescriptor implements FrontendInterface
 {
     public function getSlug(): string
     {
-        return 'ged';
+        return 'ecommerce';
     }
 
     public function getLabel(): string
     {
-        return 'Ged';
+        return 'Ecommerce';
     }
 
     public function getHomeRoute(): string
     {
-        return 'frontend_ged_index';
+        return 'frontend_shop_index';
     }
 
     public function getPriority(): int
     {
-        return 2;
+        return 5;
     }
 
     public function getModuleSettingKey(): string
     {
-        return ModuleParameterEnum::GedFrontend->value;
+        return ModuleParameterEnum::EcommerceFrontend->value;
     }
 
     public function getRoutePrefixes(): array
     {
-        return ['frontend_ged_'];
+        return [
+            'frontend_shop_',
+            'frontend_cart',
+            'frontend_checkout',
+            'frontend_order_',
+            'frontend_account_orders',
+        ];
     }
 }

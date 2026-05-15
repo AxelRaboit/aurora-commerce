@@ -5,7 +5,7 @@
 - [pattern_user_scoped_module_access.md](pattern_user_scoped_module_access.md) — `ModuleAccessChecker` : global setting + per-user `disabled_modules` JSON + cascade
 - [pattern_user_sidebar_preferences.md](pattern_user_sidebar_preferences.md) — couche user-controlled `hidden_nav_sections` + `hidden_nav_items` ; tokens stables NavSection.id / NavItem.route
 - [pattern_frontend_toggle.md](pattern_frontend_toggle.md) — chaque front a son toggle dédié. `FrontendRouteGateSubscriber` 404 les routes désactivées
-- [pattern_frontend_descriptor.md](pattern_frontend_descriptor.md) — convention `<Module>FrontDescriptor.php` à la racine du module pour tout `*Frontend` toggle (symétrie Editorial/Ecommerce/Photo/Ged)
+- [pattern_frontend_descriptor.md](pattern_frontend_descriptor.md) — convention `<Module>FrontendDescriptor.php` à la racine du module pour tout `*Frontend` toggle (symétrie Editorial/Ecommerce/Photo/Ged)
 - [decision_4_hard_rules.md](decision_4_hard_rules.md) — les 4 règles dures issues de l'audit
 - [decision_variant_user_style.md](decision_variant_user_style.md) — critères de la variante "Manager à hooks multiples"
 - [decision_repository_no_interface.md](decision_repository_no_interface.md) — pourquoi pas d'interface `<Name>RepositoryInterface`

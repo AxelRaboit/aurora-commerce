@@ -1,6 +1,6 @@
 ---
-name: FrontDescriptor — convention de nommage et placement des descripteurs de front
-description: Tout module avec un toggle *Frontend dans ModuleParameterEnum doit avoir un <Module>FrontDescriptor.php à sa racine
+name: FrontendDescriptor — convention de nommage et placement des descripteurs de front
+description: Tout module avec un toggle *Frontend dans ModuleParameterEnum doit avoir un <Module>FrontendDescriptor.php à sa racine
 type: feedback
 ---
 
@@ -8,7 +8,7 @@ type: feedback
 
 Tout module qui expose une partie publique (i.e. possède un toggle
 `*Frontend` dans `ModuleParameterEnum`) doit avoir un fichier
-`<Module>FrontDescriptor.php` **à la racine du module**
+`<Module>FrontendDescriptor.php` **à la racine du module**
 (`src/Module/<Module>/`, à côté de `<Module>Module.php`), implémentant
 `Aurora\Core\Frontend\Contract\FrontendInterface`.
 
@@ -23,7 +23,7 @@ Le descripteur déclare :
   `FrontendRouteGateSubscriber`
 
 **Menu locations** : `MenuLocationProviderInterface` n'est implémenté QUE
-par `EditorialFrontDescriptor` (il possède les locations globales
+par `EditorialFrontendDescriptor` (il possède les locations globales
 `primary` / `footer` / `account` du site public principal). Les autres
 modules N'IMPLÉMENTENT PAS cette interface.
 
@@ -37,7 +37,7 @@ points d'extension structurels.
    exposaient des routes publiques sans descripteur → le
    `FrontendRouteGateSubscriber` ne pouvait pas 404 leurs routes quand
    leur toggle était off. Désormais le comportement est cohérent partout.
-2. **Suffixe `FrontDescriptor`** clarifie le rôle : ce n'est pas un
+2. **Suffixe `FrontendDescriptor`** clarifie le rôle : ce n'est pas un
    controller, ni un template, ni un dossier "Frontend/" — c'est un
    descripteur. Le mot "Frontend" était ambigu (cf. dossiers
    `Controller/Frontend/`, `Vue/Frontend/`, etc.).
@@ -52,8 +52,8 @@ points d'extension structurels.
 
 1. Ajouter une case `<Module>Frontend` dans `ModuleParameterEnum` (cascade
    parent vers `<Module>Backend` si pertinent).
-2. Créer `src/Module/<Module>/<Module>FrontDescriptor.php` (calquer sur
-   `EditorialFrontDescriptor.php`).
+2. Créer `src/Module/<Module>/<Module>FrontendDescriptor.php` (calquer sur
+   `EditorialFrontendDescriptor.php`).
 3. Pour `getRoutePrefixes()` : lancer
    `php bin/console debug:router | grep frontend_<module>` et lister
    tous les préfixes distincts (attention aux préfixes qui chevauchent

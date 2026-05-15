@@ -2,40 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Photo;
+namespace Aurora\Module\Ged;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 
-final class PhotoFrontDescriptor implements FrontendInterface
+final class GedFrontendDescriptor implements FrontendInterface
 {
     public function getSlug(): string
     {
-        return 'photo';
+        return 'ged';
     }
 
     public function getLabel(): string
     {
-        return 'Photo';
+        return 'Ged';
     }
 
     public function getHomeRoute(): string
     {
-        return 'frontend_gallery';
+        return 'frontend_ged_index';
     }
 
     public function getPriority(): int
     {
-        return 3;
+        return 2;
     }
 
     public function getModuleSettingKey(): string
     {
-        return ModuleParameterEnum::PhotoFrontend->value;
+        return ModuleParameterEnum::GedFrontend->value;
     }
 
     public function getRoutePrefixes(): array
     {
-        return ['frontend_gallery'];
+        return ['frontend_ged_'];
     }
 }

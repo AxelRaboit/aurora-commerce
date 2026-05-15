@@ -11,7 +11,7 @@ use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 /**
  * Registry of menu locations expected by the application/theme.
  * Locations are contributed by registered MenuLocationProviderInterface services
- * (e.g. EditorialFrontDescriptor) and can also be added at runtime via register().
+ * (e.g. EditorialFrontendDescriptor) and can also be added at runtime via register().
  */
 final class MenuLocationRegistry
 {

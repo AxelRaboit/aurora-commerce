@@ -7,7 +7,7 @@ type: feedback
 ## Symptôme
 
 Tu crées un module client (`App\Module\Tracking\TrackingModule` ou un
-`App\Module\Tracking\TrackingFrontDescriptor`). En théorie il devrait être
+`App\Module\Tracking\TrackingFrontendDescriptor`). En théorie il devrait être
 auto-découvert grâce à `_instanceof` côté aurora-core qui tague tout
 `ModuleInterface` et tout `FrontendInterface`. Mais :
 
@@ -63,7 +63,7 @@ candidates :
 - `Aurora\Core\Frontend\Contract\FrontendInterface` → `aurora.front`
 - `Aurora\Core\Media\Contract\MediaUsageProviderInterface` → `aurora.media_usage_provider`
 - `Aurora\Core\Menu\Contract\MenuLocationProviderInterface` → `aurora.menu_location_provider`
-  (réservé en pratique à `EditorialFrontDescriptor` côté aurora-core ; rarement utile côté client)
+  (réservé en pratique à `EditorialFrontendDescriptor` côté aurora-core ; rarement utile côté client)
 - `Aurora\Core\Sequence\SequencePrefixProviderInterface` → `aurora.sequence_prefix`
 
 Source de vérité : `vendor/axelraboit/aurora/config/services.yaml`,
