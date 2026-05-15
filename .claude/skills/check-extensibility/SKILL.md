@@ -1,6 +1,7 @@
 ---
 name: check-extensibility
 description: Audit an Aurora entity against the 5-layer extensibility convention (Sylius-style). Use when the user asks to "check", "audit", "vérifier", or "valider" the extensibility of a named entity, OR after creating/modifying an entity that has a backend CRUD page. Outputs a structured report of conformance gaps against docs/aurora-core/dev/entity_extensibility_convention.md.
+scope: core-only
 ---
 
 # check-extensibility

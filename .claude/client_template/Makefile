@@ -350,7 +350,7 @@ aurora-update: ## Pull latest Aurora changes
 	make sync-makefile
 	@echo "✅ Aurora updated"
 
-sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + docs from aurora-core vendor
+sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + .claude/skills (shared) + docs from aurora-core vendor
 	@if [ -f $(AURORA)/.claude/client_template/CLAUDE.md ]; then \
 		ln -sfn $(AURORA)/.claude/client_template/CLAUDE.md CLAUDE.md; \
 		echo "✅ CLAUDE.md symlinked from vendor"; \
@@ -363,6 +363,16 @@ sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + docs from aurora-core ve
 	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-client .claude/memory/aurora-client
 	@ln -sfn ../../$(AURORA)/.claude/memory/aurora-shared .claude/memory/aurora-shared
 	@echo "✅ .claude/memory/aurora-core + aurora-client + aurora-shared symlinked from vendor"
+	@mkdir -p .claude/skills
+	@for skill_dir in $(AURORA)/.claude/skills/*/; do \
+		skill_dir=$${skill_dir%/}; \
+		skill_name=$$(basename "$$skill_dir"); \
+		if grep -q '^scope: shared' "$$skill_dir/SKILL.md" 2>/dev/null; then \
+			rm -rf ".claude/skills/$$skill_name"; \
+			ln -sfn "../../$$skill_dir" ".claude/skills/$$skill_name"; \
+			echo "✅ .claude/skills/$$skill_name symlinked from vendor (scope: shared)"; \
+		fi \
+	done
 	@mkdir -p docs
 	@rm -rf docs/aurora-core docs/aurora-client
 	@ln -sfn ../$(AURORA)/docs/aurora-core docs/aurora-core

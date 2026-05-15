@@ -1,6 +1,7 @@
 ---
 name: add-entity
 description: Scaffold a new Aurora entity with the full 5-layer extensibility pattern. Use when the user asks to "create", "add", "scaffold", "générer", or "ajouter" a new entity, especially when they mention a backend CRUD page. Generates the PHP backend (Entity triplet + DTO quartet + Manager pair + Serializer pair + Repository + Controller skeleton) following Agency as the canonical template. Stops short of Vue + Doctrine migration (those need human decisions on fields/columns/UI).
+scope: core-only
 ---
 
 # add-entity

@@ -1,6 +1,7 @@
 ---
 name: sync-memory
 description: Run the Aurora memory-hygiene cycle and sync .claude/memory/ → ~/.claude/projects/.../memory/ via `make sync-claude-memory`. Use when the user asks to "sync memory", "synchroniser la mémoire", "save what we learned", finalize a non-trivial task (refacto, new feature, architectural decision), or whenever new/modified memory files exist that haven't been pushed to the global memory yet. Enforces the 6-step hygiene loop documented in CLAUDE.md §"Règle d'hygiène mémoire".
+scope: core-only
 ---
 
 # sync-memory

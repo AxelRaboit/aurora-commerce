@@ -59,6 +59,26 @@ ou un template Twig depuis un projet client.
 
 ---
 
+## 🛠️ Skills Claude Code partagés (symlinks vers vendor via `make aurora-update`)
+
+Les skills marqués `scope: shared` dans
+`vendor/axelraboit/aurora/.claude/skills/` sont symlinkés dans
+`.claude/skills/` de ce projet et donc invocables comme commandes
+(`/extend-aurora-entity`, …). Le symlink est créé/refresh par
+`make sync-claude-md` (lancé automatiquement par `make aurora-update`).
+
+Skills aurora-shared disponibles côté client :
+- `/extend-aurora-entity` — scaffold les 5 couches d'extension d'une
+  entité aurora-core (entité concrète + DTO + Manager + Serializer + Vue
+  wrapper) à partir d'un champ donné. Suit la convention canonique.
+
+Pour ajouter un skill **spécifique** au projet client (pas réutilisable
+ailleurs), créer un dossier dans `.claude/skills/<mon-skill>/SKILL.md` —
+il ne sera pas écrasé par le sync (qui ne touche que les noms symlinkés
+depuis vendor).
+
+---
+
 ## 📖 Documentation développeur (symlinks vers vendor via `make aurora-update`)
 
 Les docs sont des **symlinks** vers `vendor/axelraboit/aurora/docs/`.
