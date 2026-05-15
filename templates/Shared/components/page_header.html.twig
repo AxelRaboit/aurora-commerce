@@ -1,14 +1,19 @@
 <header class="bg-surface border-b border-line h-16 flex items-center lg:sticky lg:top-0 lg:z-20 shrink-0">
     <div class="px-4 sm:px-6 lg:px-8 w-full">
         {% if crumbs is defined and crumbs %}
-            <nav class="flex items-center gap-2 text-sm">
+            <nav class="flex items-center gap-2 text-sm min-w-0">
                 {% for crumb in crumbs %}
-                    {% if not loop.first %}<span class="text-muted select-none">/</span>{% endif %}
-                    {% if crumb.href is defined and crumb.href %}
-                        <a href="{{ crumb.href }}" class="text-secondary hover:text-primary transition-colors">{{ crumb.label }}</a>
-                    {% else %}
-                        <span class="text-primary font-medium">{{ crumb.label }}</span>
+                    {% set isVisible = loop.index >= (crumbs|length - 1) %}
+                    {% if not loop.first %}
+                        <span class="text-muted select-none shrink-0 {% if not isVisible %}hidden sm:inline{% endif %}">/</span>
                     {% endif %}
+                    <span class="{% if not isVisible %}hidden sm:inline{% endif %} min-w-0">
+                        {% if crumb.href is defined and crumb.href %}
+                            <a href="{{ crumb.href }}" class="text-secondary hover:text-primary transition-colors truncate block">{{ crumb.label }}</a>
+                        {% else %}
+                            <span class="text-primary font-medium truncate block">{{ crumb.label }}</span>
+                        {% endif %}
+                    </span>
                 {% endfor %}
             </nav>
         {% else %}
