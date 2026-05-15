@@ -57,8 +57,6 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                     :options="[
                         { value: 'fr', label: t('shared.locales.fr') },
                         { value: 'en', label: t('shared.locales.en') },
-                        { value: 'es', label: t('shared.locales.es') },
-                        { value: 'de', label: t('shared.locales.de') },
                     ]"
                     :disabled="localeLoading"
                     v-on:update:model-value="changeLocale"
