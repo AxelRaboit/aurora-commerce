@@ -29,6 +29,12 @@ notes:
     create_root: Nouvelle note
     create_child: Ajouter une sous-note
     confirm_delete: 'Supprimer définitivement « {title} » ?'
+    confirm_discard_changes: Vous avez des modifications non enregistrées. Les abandonner ?
+    wiki_link_not_found: 'Aucune note ne correspond à « {title} ».'
+    view:
+      edit: Édition seule
+      split: Édition + aperçu
+      preview: Aperçu seul
     empty:
       title: Aucune note
       description: Cliquez sur + pour créer votre première note.

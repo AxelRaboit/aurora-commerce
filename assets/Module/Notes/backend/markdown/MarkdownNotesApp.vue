@@ -4,13 +4,16 @@ import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 import { useMarkdownNotesApi } from '@notes/backend/markdown/composables/useMarkdownNotesApi.js';
 import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
+import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
+import { toggleCheckboxInContent } from '@notes/backend/markdown/composables/markedExtensions/markedCheckboxes.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
+import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppInput from '@shared/components/form/AppInput.vue';
 import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
-import { Plus, Save, Trash2, FileText } from 'lucide-vue-next';
+import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns } from 'lucide-vue-next';
 
 const props = defineProps({
     notes: { type: Array, default: () => [] },
@@ -28,6 +31,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 const api = useMarkdownNotesApi(props);
+const { mode: viewMode } = useViewMode();
 
 const notes = ref([...props.notes]);
 const selectedId = ref(null);
@@ -91,9 +95,7 @@ async function saveSelected() {
             toast.error(t('notes.markdown.errors.save_failed'));
             return;
         }
-        // refresh list (titles drive the tree labels) — also picks up wiki-link rewrites
         await refreshList();
-        // re-load detail in case content changed via wiki-link rename of itself (unlikely but safe)
         await selectNote(payload.note.id);
         toast.success(t('notes.markdown.saved'));
     } finally {
@@ -121,14 +123,37 @@ async function deleteSelected() {
     }
 }
 
-// Auto-select the first note on mount if any exist.
+/**
+ * Wiki-link click in the preview pane. If the target title resolves to a
+ * sibling note, navigate to it (after warning on unsaved changes).
+ */
+async function onWikiLinkClick({ noteTitle, matchedId }) {
+    if (matchedId === null) {
+        toast.info(t('notes.markdown.wiki_link_not_found', { title: noteTitle }));
+        return;
+    }
+    if (matchedId === selectedId.value) return;
+    if (isDirty.value && !window.confirm(t('notes.markdown.confirm_discard_changes'))) {
+        return;
+    }
+    await selectNote(matchedId);
+}
+
+/**
+ * Interactive checkbox toggle in the preview pane. Updates the source
+ * markdown, then auto-saves so the new state is durable.
+ */
+async function onCheckboxToggle(index) {
+    form.value.content = toggleCheckboxInContent(form.value.content, index);
+    await saveSelected();
+}
+
 onMounted(() => {
     if (selectedId.value === null && notes.value.length > 0) {
         selectNote(notes.value[0].id);
     }
 });
 
-// Warn before unload if there are unsaved changes.
 watch(isDirty, (dirty) => {
     if (dirty) {
         window.addEventListener('beforeunload', beforeUnloadHandler);
@@ -187,6 +212,28 @@ function beforeUnloadHandler(event) {
                         :placeholder="t('notes.markdown.title_placeholder')"
                         class="flex-1 text-lg font-medium"
                     />
+
+                    <!-- View mode toggle (edit / split / preview) -->
+                    <div class="inline-flex rounded-md border border-line overflow-hidden">
+                        <button
+                            v-for="opt in [
+                                { value: 'edit', icon: Pencil, label: t('notes.markdown.view.edit') },
+                                { value: 'split', icon: Columns, label: t('notes.markdown.view.split') },
+                                { value: 'preview', icon: Eye, label: t('notes.markdown.view.preview') },
+                            ]"
+                            :key="opt.value"
+                            type="button"
+                            class="px-2.5 py-1.5 text-sm transition-colors"
+                            :class="viewMode === opt.value
+                                ? 'bg-accent-100 dark:bg-accent-900/30 text-primary'
+                                : 'bg-surface text-muted hover:text-secondary'"
+                            :title="opt.label"
+                            v-on:click="viewMode = opt.value"
+                        >
+                            <component :is="opt.icon" class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+
                     <AppButton
                         variant="primary"
                         size="md"
@@ -208,13 +255,31 @@ function beforeUnloadHandler(event) {
                     </AppButton>
                 </header>
 
-                <div class="flex-1 p-4 overflow-auto">
-                    <AppTextarea
-                        v-model="form.content"
-                        :placeholder="t('notes.markdown.content_placeholder')"
-                        class="h-full w-full font-mono text-sm"
-                        :rows="20"
-                    />
+                <div class="flex-1 flex overflow-hidden">
+                    <div
+                        v-if="viewMode !== 'preview'"
+                        class="flex-1 p-4 overflow-auto"
+                        :class="viewMode === 'split' ? 'border-r border-line' : ''"
+                    >
+                        <AppTextarea
+                            v-model="form.content"
+                            :placeholder="t('notes.markdown.content_placeholder')"
+                            class="h-full w-full font-mono text-sm"
+                            :rows="20"
+                        />
+                    </div>
+
+                    <div
+                        v-if="viewMode !== 'edit'"
+                        class="flex-1 p-4 overflow-auto"
+                    >
+                        <NotePreview
+                            :content="form.content"
+                            :note-titles="notes"
+                            v-on:wiki-link-click="onWikiLinkClick"
+                            v-on:checkbox-toggle="onCheckboxToggle"
+                        />
+                    </div>
                 </div>
             </div>
 
