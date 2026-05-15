@@ -71,6 +71,8 @@ backend:
       saved: Préférences enregistrées.
       reset_done: Préférences réinitialisées.
       empty: Aucune section disponible.
+      empty_search: Aucun résultat pour cette recherche.
+      search_placeholder: Rechercher une section ou un module…
     danger:
       title: Zone de danger
       description: La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.

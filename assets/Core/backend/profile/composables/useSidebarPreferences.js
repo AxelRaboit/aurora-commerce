@@ -22,6 +22,7 @@ export function useSidebarPreferences({
 
     const hiddenSections = ref(new Set(initialHiddenSections ?? []));
     const hiddenItems = ref(new Set(initialHiddenItems ?? []));
+    const search = ref("");
 
     const { loading: saving, request: saveRequest } = useRequest();
     const { loading: resetting, request: resetRequest } = useRequest();
@@ -35,6 +36,26 @@ export function useSidebarPreferences({
             items: section.items ?? [],
         })),
     );
+
+    const filteredSections = computed(() => {
+        const query = search.value.trim().toLowerCase();
+        if (!query) return sections.value;
+
+        const results = [];
+        for (const section of sections.value) {
+            const sectionMatches = section.label.toLowerCase().includes(query);
+            const matchingItems = section.items.filter((item) =>
+                t(item.labelKey).toLowerCase().includes(query),
+            );
+            if (sectionMatches || matchingItems.length) {
+                results.push({
+                    ...section,
+                    items: sectionMatches ? section.items : matchingItems,
+                });
+            }
+        }
+        return results;
+    });
 
     function isSectionHidden(id) {
         return hiddenSections.value.has(id);
@@ -102,6 +123,8 @@ export function useSidebarPreferences({
 
     return {
         sections,
+        filteredSections,
+        search,
         hiddenSections,
         hiddenItems,
         hiddenCount,

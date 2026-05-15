@@ -71,6 +71,8 @@ backend:
       saved: Preferences saved.
       reset_done: Preferences reset.
       empty: No sections available.
+      empty_search: No matches for this search.
+      search_placeholder: Search a section or module…
     danger:
       title: Danger zone
       description: Deleting your account is irreversible. All your data will be permanently erased.

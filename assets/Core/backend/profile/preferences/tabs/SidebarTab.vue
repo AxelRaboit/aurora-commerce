@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { Save, RotateCcw, EyeOff, Eye } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useSidebarPreferences } from "@core/backend/profile/composables/useSidebarPreferences.js";
 
@@ -56,14 +57,20 @@ const prefs = useSidebarPreferences({
             </div>
         </header>
 
+        <AppSearchInput
+            v-model="prefs.search.value"
+            :placeholder="t('backend.profile.sidebar.search_placeholder')"
+            class="mb-4"
+        />
+
         <AppNoData
-            v-if="!prefs.sections.value.length"
-            :message="t('backend.profile.sidebar.empty')"
+            v-if="!prefs.filteredSections.value.length"
+            :message="prefs.search.value ? t('backend.profile.sidebar.empty_search') : t('backend.profile.sidebar.empty')"
         />
 
         <div v-else class="space-y-3">
             <div
-                v-for="section in prefs.sections.value"
+                v-for="section in prefs.filteredSections.value"
                 :key="section.id"
                 class="bg-surface border border-line rounded-xl overflow-hidden"
                 :class="{ 'opacity-60': prefs.isSectionHidden(section.id) }"
