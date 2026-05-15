@@ -324,11 +324,16 @@ ft: ## Fix code and run all tests
 	make fix && make test
 
 # === Claude Memory ===
-sync-claude-memory: ## Sync .claude/memory/aurora-core/ into the global Claude memory for this project
+sync-claude-memory: ## Sync .claude/memory/ + docs/aurora-{core,client}/ into the global Claude memory for this project
 	@DEST="$(HOME)/.claude/projects/$$(pwd | sed 's|/|-|g')/memory"; \
 	mkdir -p "$$DEST"; \
-	rsync -a --delete --include="*.md" --include="*/" --exclude="*" .claude/memory/aurora-core/ "$$DEST/"; \
-	echo "✅ $$(find .claude/memory/aurora-core -name '*.md' | wc -l | tr -d ' ') fichiers synchronisés → $$DEST"
+	rsync -a --delete --include="*.md" --include="*/" --exclude="*" .claude/memory/ "$$DEST/"; \
+	mkdir -p "$$DEST/docs"; \
+	rsync -a --delete --include="*.md" --include="*/" --exclude="*" docs/aurora-core/ "$$DEST/docs/aurora-core/"; \
+	rsync -a --delete --include="*.md" --include="*/" --exclude="*" docs/aurora-client/ "$$DEST/docs/aurora-client/"; \
+	MEM=$$(find .claude/memory -name '*.md' | wc -l | tr -d ' '); \
+	DOC=$$(find docs/aurora-core docs/aurora-client -name '*.md' | wc -l | tr -d ' '); \
+	echo "✅ $$MEM fichiers mémoire + $$DOC fichiers docs synchronisés → $$DEST"
 
 # === Setup ===
 setup-env: ## Create .env.local from .env.local.example template
