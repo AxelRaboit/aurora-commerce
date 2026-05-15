@@ -57,18 +57,20 @@ const { fieldModal, fieldForm, openCreateField, openEditField, submitField, dele
                 </AppButton>
             </div>
             <div class="space-y-1">
-                <AppButton
+                <button
                     v-for="postType in postTypes"
                     :key="postType.id"
-                    variant="ghost"
-                    size="none"
-                    :extra-class="'w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2 ' + (selectedId === postType.id ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30' : 'bg-surface hover:bg-surface-2 text-primary border border-line/60')"
+                    type="button"
+                    class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
+                    :class="selectedId === postType.id
+                        ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30'
+                        : 'bg-surface hover:bg-surface-2 text-primary border border-line/60'"
                     v-on:click="selectedId = postType.id"
                 >
                     <Layers class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <span class="flex-1 text-sm font-medium truncate">{{ postType.label }}</span>
                     <Lock v-if="postType.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.postTypes.builtIn')" />
-                </AppButton>
+                </button>
             </div>
         </aside>
 
