@@ -12,6 +12,8 @@ use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;
 use Aurora\Core\Auth\Entity\ResetPasswordRequestInterface;
+use Aurora\Core\Encryption\Doctrine\EncryptedStringType;
+use Aurora\Core\Encryption\Doctrine\EncryptedTextType;
 use Aurora\Core\Locale\Entity\Locale;
 use Aurora\Core\Locale\Entity\LocaleInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
@@ -205,6 +207,12 @@ class AuroraBundle extends AbstractBundle
         $moduleDirs = glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [];
 
         $builder->prependExtensionConfig('doctrine', [
+            'dbal' => [
+                'types' => [
+                    EncryptedTextType::NAME => EncryptedTextType::class,
+                    EncryptedStringType::NAME => EncryptedStringType::class,
+                ],
+            ],
             'orm' => [
                 'validate_xml_mapping' => true,
                 'naming_strategy' => 'doctrine.orm.naming_strategy.underscore',
