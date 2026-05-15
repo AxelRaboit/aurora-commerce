@@ -68,7 +68,7 @@ backend:
       description: Email address of the administrator
     default_locale:
       label: Default locale
-      description: 'Default language code (fr, en, es, de)'
+      description: 'Default language of the site (public display, fallback email locale).'
     single_locale_mode:
       label: Single-locale mode
       description: "If enabled, the application only displays and stores a single language (the one defined by 'Default locale'). Multi-language tabs are hidden and URLs with a different language code are redirected (301). Reversible: content entered in other languages remains in the database."
@@ -164,7 +164,8 @@ backend:
       description: When enabled, each Ecommerce order automatically creates or enriches a CRM contact matching the buyer (with a "client" tag). Disable in pure B2C setups to avoid flooding the CRM.
     email_locale:
       label: Forced email locale
-      description: 'Language code (fr, en, es, de) to force for all outgoing emails. Empty = use the current request locale.'
+      description: 'Language used for all outgoing emails. "Follow default locale" applies the site default locale.'
+    email_locale_auto: Follow default locale
     photo_gallery_prefix:
       label: Gallery reference prefix
       description: Auto-generated photo gallery reference prefix (e.g. GAL).

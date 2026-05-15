@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\View;
 
 use Aurora\Core\Frontend\Service\Registry;
+use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
@@ -42,15 +43,6 @@ final readonly class SettingsViewBuilder
 
             $value = $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue());
 
-            // EmailLocale defaults to the site's DefaultLocale when never explicitly set —
-            // keeps customer emails consistent with the site language out of the box.
-            if (ApplicationParameterEnum::EmailLocale === $parameter && '' === $value) {
-                $value = $this->settingRepository->get(
-                    ApplicationParameterEnum::DefaultLocale->value,
-                    ApplicationParameterEnum::DefaultLocale->getDefaultValue(),
-                );
-            }
-
             $groups[$groupName][] = [
                 'key' => $parameter->getKey(),
                 'label' => $this->translator->trans($parameter->getLabel()),
@@ -82,6 +74,25 @@ final readonly class SettingsViewBuilder
                         || $this->settingRepository->getBoolean($front->getModuleSettingKey(), true),
                 ),
             ));
+        }
+
+        if (\in_array($parameter, [ApplicationParameterEnum::DefaultLocale, ApplicationParameterEnum::EmailLocale], true)) {
+            $options = array_map(
+                fn (LocaleEnum $locale): array => [
+                    'value' => $locale->value,
+                    'label' => $this->translator->trans('backend.locales.'.$locale->value),
+                ],
+                LocaleEnum::cases(),
+            );
+
+            if (ApplicationParameterEnum::EmailLocale === $parameter) {
+                array_unshift($options, [
+                    'value' => '',
+                    'label' => $this->translator->trans('backend.parameters.email_locale_auto'),
+                ]);
+            }
+
+            return $options;
         }
 
         return null;

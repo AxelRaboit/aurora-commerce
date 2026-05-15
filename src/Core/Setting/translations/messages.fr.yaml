@@ -68,7 +68,7 @@ backend:
       description: Adresse email de l'administrateur
     default_locale:
       label: Langue par défaut
-      description: 'Code de la langue par défaut (fr, en, es, de)'
+      description: 'Langue par défaut du site (affichage public, emails par défaut).'
     single_locale_mode:
       label: Mode mono-langue
       description: "Si activé, l'application n'affiche et n'enregistre qu'une seule langue (celle définie par « Langue par défaut »). Les onglets multi-langues sont masqués et les URLs avec un autre code de langue sont redirigées (301). Réversible : les contenus saisis dans les autres langues restent en base."
@@ -164,7 +164,8 @@ backend:
       description: "Quand activé, chaque commande Ecommerce crée ou enrichit automatiquement un contact CRM correspondant à l'acheteur (avec l'étiquette « client »). Désactivez en B2C pur pour éviter d'inonder le CRM."
     email_locale:
       label: Langue forcée pour les emails
-      description: 'Code langue (fr, en, es, de) à forcer pour tous les emails sortants. Vide = utiliser la langue de la requête courante.'
+      description: "Langue à utiliser pour tous les emails sortants. « Suivre la langue par défaut » applique la langue par défaut du site."
+    email_locale_auto: Suivre la langue par défaut
     photo_gallery_prefix:
       label: Préfixe des numéros de galeries
       description: 'Préfixe de la référence galerie photo auto-générée (ex: GAL).'
