@@ -80,7 +80,7 @@ final readonly class SettingsViewBuilder
             $options = array_map(
                 fn (LocaleEnum $locale): array => [
                     'value' => $locale->value,
-                    'label' => $this->translator->trans('backend.locales.'.$locale->value),
+                    'label' => $this->translator->trans('shared.locales.'.$locale->value),
                 ],
                 LocaleEnum::cases(),
             );
