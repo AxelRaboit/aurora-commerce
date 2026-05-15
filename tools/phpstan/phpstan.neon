@@ -1,8 +1,11 @@
 parameters:
     level: 5
+    # Paths are resolved against the project root so the config can be loaded
+    # from vendor/axelraboit/aurora/tools/phpstan/phpstan.neon in client
+    # projects without scanning vendor's own source tree.
     paths:
-        - ../../config/
-        - ../../src/
-    tmpDir: ../../var/cache/phpstan
+        - %currentWorkingDirectory%/config
+        - %currentWorkingDirectory%/src
+    tmpDir: %currentWorkingDirectory%/var/cache/phpstan
     ignoreErrors:
         - identifier: property.unusedType

@@ -2,9 +2,16 @@
 
 declare(strict_types=1);
 
+// Always target the current working directory (the project root) rather
+// than this file's directory. This lets the config be loaded from
+// vendor/axelraboit/aurora/.php-cs-fixer.dist.php in client projects
+// without scanning vendor's own source tree.
+$projectDir = getcwd() ?: __DIR__;
+
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__)
+    ->in($projectDir)
     ->exclude([
+        'vendor',
         '.github',
         'config',
         'assets',

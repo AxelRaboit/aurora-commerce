@@ -289,7 +289,7 @@ lint-php: ## Check PHP code style (dry-run)
 	$(PHP_CS_FIXER) fix --dry-run --config=$(AURORA)/.php-cs-fixer.dist.php
 
 lint-js: ## Check JS code style
-	cd $(AURORA) && $(PNPM) eslint --config eslint.config.cjs
+	$(AURORA)/node_modules/.bin/eslint --config $(AURORA)/eslint.config.cjs .
 
 lint-twig: ## Check Twig code style
 	$(TWIG_CS_FIXER)
@@ -301,7 +301,7 @@ fix-php: ## Fix PHP code style
 	$(PHP_CS_FIXER) fix --config=$(AURORA)/.php-cs-fixer.dist.php
 
 fix-js: ## Fix JS code style
-	cd $(AURORA) && $(PNPM) eslint --config eslint.config.cjs --fix
+	$(AURORA)/node_modules/.bin/eslint --config $(AURORA)/eslint.config.cjs --fix .
 
 fix-twig: ## Fix Twig code style
 	$(TWIG_CS_FIXER) --fix

@@ -5,9 +5,14 @@ declare(strict_types=1);
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
 
+// Paths are resolved against the project root (getcwd()) so the config can be
+// loaded from vendor/axelraboit/aurora/tools/rector/rector.php in client
+// projects without scanning vendor's own source tree.
+$projectDir = getcwd() ?: __DIR__.'/../..';
+
 return RectorConfig::configure()
-    ->withPaths([__DIR__.'/../../src'])
-    ->withSkip([__DIR__.'/../../config'])
+    ->withPaths([$projectDir.'/src'])
+    ->withSkip([$projectDir.'/config'])
     ->withImportNames(removeUnusedImports: true)
     ->withPhpSets(php84: true)
     ->withPreparedSets(
@@ -23,5 +28,5 @@ return RectorConfig::configure()
         doctrine: true,
         symfony: true
     )
-    ->withPHPStanConfigs([__DIR__.'/../../tools/phpstan/phpstan.neon'])
-    ->withCache(__DIR__.'/../../var/cache/rector', FileCacheStorage::class);
+    ->withPHPStanConfigs([__DIR__.'/../phpstan/phpstan.neon'])
+    ->withCache($projectDir.'/var/cache/rector', FileCacheStorage::class);
