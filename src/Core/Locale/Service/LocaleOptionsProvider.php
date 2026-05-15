@@ -7,14 +7,15 @@ namespace Aurora\Core\Locale\Service;
 use Aurora\Core\Locale\Repository\LocaleRepository;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
+use function in_array;
+
 #[AsAlias(id: LocaleOptionsProviderInterface::class)]
 class LocaleOptionsProvider implements LocaleOptionsProviderInterface
 {
     public function __construct(
         protected readonly LocaleRepository $localeRepository,
         protected readonly LocaleContextInterface $localeContext,
-    ) {
-    }
+    ) {}
 
     public function getActiveOptions(): array
     {
@@ -25,7 +26,7 @@ class LocaleOptionsProvider implements LocaleOptionsProviderInterface
                 'code' => $locale->getCode(),
                 'label' => $locale->getName(),
             ], $this->localeRepository->findAll()),
-            static fn (array $locale): bool => \in_array($locale['code'], $activeLocales, true),
+            static fn (array $locale): bool => in_array($locale['code'], $activeLocales, true),
         ));
     }
 }

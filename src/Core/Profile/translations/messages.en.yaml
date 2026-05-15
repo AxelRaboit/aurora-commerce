@@ -43,6 +43,34 @@ backend:
       confirm: Confirm password
       saved: Password updated successfully.
       error_current: The current password is incorrect.
+    account:
+      title: Account information
+      subtitle: Overview of your account on this instance.
+      reference: Reference
+      role: Role
+      type: Type
+      status: Status
+      agency: Agency
+      service: Service
+      manager: Manager
+      created_at: Created
+      unset: —
+    preferences:
+      title: Preferences
+      subtitle: Customize your experience.
+      tabs:
+        sidebar: Sidebar
+    sidebar:
+      title: Sidebar preferences
+      subtitle: Hide the sections or modules you don't use to declutter your sidemenu. Pages stay reachable by direct URL.
+      section_hint: Turn off the toggle to hide the whole section, or adjust module by module.
+      hide_all: Hide all
+      show_all: Show all
+      save: Save
+      reset: Show everything
+      saved: Preferences saved.
+      reset_done: Preferences reset.
+      empty: No sections available.
     danger:
       title: Danger zone
       description: Deleting your account is irreversible. All your data will be permanently erased.

@@ -142,7 +142,7 @@ final class SeoExtensionTest extends TestCase
     ): SeoExtension {
         $settings = $this->createMock(SettingRepository::class);
         $settings->method('getOrDefault')->willReturnCallback(
-            static fn (ApplicationParameterEnum $param): string => $param === ApplicationParameterEnum::SiteName ? $siteName : $param->getDefaultValue(),
+            static fn (ApplicationParameterEnum $param): string => ApplicationParameterEnum::SiteName === $param ? $siteName : $param->getDefaultValue(),
         );
         $settings->method('get')->willReturnCallback(
             static function (string $key, mixed $default = null) use ($siteUrl): mixed {

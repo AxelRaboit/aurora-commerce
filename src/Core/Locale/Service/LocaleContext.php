@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class LocaleContext implements LocaleContextInterface
 {
     private ?bool $singleLocaleMode = null;
+
     private ?string $defaultLocale = null;
 
     /**
@@ -23,8 +24,7 @@ class LocaleContext implements LocaleContextInterface
         protected readonly SettingRepository $settingRepository,
         #[Autowire(param: 'kernel.enabled_locales')]
         protected readonly array $enabledLocales,
-    ) {
-    }
+    ) {}
 
     public function isSingleLocaleMode(): bool
     {
@@ -55,11 +55,11 @@ class LocaleContext implements LocaleContextInterface
             return [$this->getDefaultLocale()];
         }
 
-        return array_values($this->enabledLocales);
+        return $this->enabledLocales;
     }
 
     public function getAllLocales(): array
     {
-        return array_values($this->enabledLocales);
+        return $this->enabledLocales;
     }
 }

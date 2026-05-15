@@ -13,12 +13,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\SecurityEvents;
 
-final class LocaleSubscriber implements EventSubscriberInterface
+final readonly class LocaleSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly LocaleContextInterface $localeContext,
-    ) {
-    }
+        private LocaleContextInterface $localeContext,
+    ) {}
 
     public static function getSubscribedEvents(): array
     {

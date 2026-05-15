@@ -8,6 +8,8 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Repository\UserRepository;
 
+use function in_array;
+
 /**
  * Builds the Twig payload for the admin profile page. Currently exposes the
  * mood-message length cap, kept as a service so future profile widgets can
@@ -27,12 +29,38 @@ final readonly class ProfileViewBuilder
         return [
             'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
             'canDeleteAccount' => !$this->isLastDevOfType($user),
+            'accountInfo' => $this->accountInfo($user),
+        ];
+    }
+
+    /**
+     * @return array<string, string|null>
+     */
+    private function accountInfo(User $user): array
+    {
+        $roles = $user->getRoles();
+        $primaryRole = match (true) {
+            in_array(UserRoleEnum::Dev->value, $roles, true) => 'dev',
+            in_array(UserRoleEnum::Admin->value, $roles, true) => 'admin',
+            in_array(UserRoleEnum::User->value, $roles, true) => 'user',
+            default => null,
+        };
+
+        return [
+            'reference' => $user->getReference(),
+            'role' => $primaryRole,
+            'type' => $user->getType()->value,
+            'status' => $user->getStatus()->value,
+            'agency' => $user->getAgency()?->getName(),
+            'service' => $user->getService()?->getName(),
+            'manager' => $user->getManager()?->getName(),
+            'createdAt' => $user->getCreatedAt()->format(DATE_ATOM),
         ];
     }
 
     private function isLastDevOfType(User $user): bool
     {
-        if (!\in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
+        if (!in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
             return false;
         }
 

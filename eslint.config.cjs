@@ -5,7 +5,7 @@ const prettierPlugin = require('eslint-plugin-prettier');
 /** @type {import('eslint').Linter.FlatConfig[]} */
 module.exports = [
     {
-        ignores: ['node_modules/**', 'vendor/**', 'public/**', 'assets/vendor/**', 'tools/**', 'vite.config.js'],
+        ignores: ['node_modules/**', 'vendor/**', 'public/**', 'assets/vendor/**', 'tools/**', 'var/**', 'vite.config.js'],
     },
 
     // JS files — Prettier formatting

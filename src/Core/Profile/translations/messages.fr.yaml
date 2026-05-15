@@ -43,6 +43,34 @@ backend:
       confirm: Confirmer le mot de passe
       saved: Mot de passe mis à jour avec succès.
       error_current: Le mot de passe actuel est incorrect.
+    account:
+      title: Informations du compte
+      subtitle: Récapitulatif de votre compte sur cette instance.
+      reference: Référence
+      role: Rôle
+      type: Type
+      status: Statut
+      agency: Agence
+      service: Service
+      manager: Manager
+      created_at: Créé le
+      unset: —
+    preferences:
+      title: Préférences
+      subtitle: Personnalisez votre expérience.
+      tabs:
+        sidebar: Barre latérale
+    sidebar:
+      title: Préférences de la barre latérale
+      subtitle: Cachez les sections ou modules que vous n'utilisez pas pour épurer votre navigation. Les pages restent accessibles par URL directe.
+      section_hint: Désactivez le bouton pour cacher toute la section, ou ajustez module par module.
+      hide_all: Tout cacher
+      show_all: Tout afficher
+      save: Enregistrer
+      reset: Tout réafficher
+      saved: Préférences enregistrées.
+      reset_done: Préférences réinitialisées.
+      empty: Aucune section disponible.
     danger:
       title: Zone de danger
       description: La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.

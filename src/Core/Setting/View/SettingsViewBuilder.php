@@ -9,8 +9,11 @@ use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use DateTimeZone;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+
+use function in_array;
 
 /**
  * Builds the Twig payload for the admin settings page. Centralises the
@@ -76,7 +79,7 @@ final readonly class SettingsViewBuilder
             ));
         }
 
-        if (\in_array($parameter, [ApplicationParameterEnum::DefaultLocale, ApplicationParameterEnum::EmailLocale], true)) {
+        if (in_array($parameter, [ApplicationParameterEnum::DefaultLocale, ApplicationParameterEnum::EmailLocale], true)) {
             $options = array_map(
                 fn (LocaleEnum $locale): array => [
                     'value' => $locale->value,
@@ -98,7 +101,7 @@ final readonly class SettingsViewBuilder
         if (ApplicationParameterEnum::Timezone === $parameter) {
             return array_map(
                 static fn (string $tz): array => ['value' => $tz, 'label' => $tz],
-                \DateTimeZone::listIdentifiers(),
+                DateTimeZone::listIdentifiers(),
             );
         }
 

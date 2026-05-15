@@ -185,6 +185,23 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         ]);
     }
 
+    public function updateSidebarPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void
+    {
+        $this->inner->updateSidebarPreferences($user, $hiddenNavSections, $hiddenNavItems);
+
+        $this->auditLogger->log('core', 'user.sidebar_preferences_updated', 'User', $user->getId(), [
+            'hiddenNavSections' => $user->getHiddenNavSections(),
+            'hiddenNavItems' => $user->getHiddenNavItems(),
+        ]);
+    }
+
+    public function resetSidebarPreferences(User $user): void
+    {
+        $this->inner->resetSidebarPreferences($user);
+
+        $this->auditLogger->log('core', 'user.sidebar_preferences_reset', 'User', $user->getId(), []);
+    }
+
     public function canActOn(User $actor, User $target): bool
     {
         return $this->inner->canActOn($actor, $target);

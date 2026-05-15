@@ -40,7 +40,10 @@ export function useRequest() {
             if (signal) fetchOptions.signal = signal;
 
             if (rawBody !== null) {
-                fetchOptions.headers = { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" };
+                fetchOptions.headers = {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                };
                 fetchOptions.body = rawBody;
             } else if (body !== null) {
                 fetchOptions.headers = {
@@ -50,7 +53,10 @@ export function useRequest() {
                 };
                 fetchOptions.body = JSON.stringify(body);
             } else {
-                fetchOptions.headers = { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" };
+                fetchOptions.headers = {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                };
             }
 
             const response = await fetch(url, fetchOptions);

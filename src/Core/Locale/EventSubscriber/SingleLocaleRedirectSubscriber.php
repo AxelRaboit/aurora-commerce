@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+use function in_array;
+
 /**
  * Quand le mode mono-langue est actif, redirige toute URL préfixée par un code
  * locale ≠ default vers son équivalent sur la locale par défaut (301).
@@ -22,14 +24,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * → après, selon la version. Peu importe : on travaille uniquement sur le path
  * brut de la Request, indépendamment du routeur.
  */
-final class SingleLocaleRedirectSubscriber implements EventSubscriberInterface
+final readonly class SingleLocaleRedirectSubscriber implements EventSubscriberInterface
 {
-    private const LOCALE_PREFIX_PATTERN = '#^/([a-z]{2})(/.*|$)#';
+    private const string LOCALE_PREFIX_PATTERN = '#^/([a-z]{2})(/.*|$)#';
 
     public function __construct(
-        private readonly LocaleContextInterface $localeContext,
-    ) {
-    }
+        private LocaleContextInterface $localeContext,
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -64,7 +65,7 @@ final class SingleLocaleRedirectSubscriber implements EventSubscriberInterface
 
         // On ne touche que les codes locale connus du bundle pour éviter de
         // capter par erreur des paths comme `/ab/foo` qui ne sont pas des locales.
-        if (!\in_array($urlLocale, $this->localeContext->getAllLocales(), true)) {
+        if (!in_array($urlLocale, $this->localeContext->getAllLocales(), true)) {
             return;
         }
 

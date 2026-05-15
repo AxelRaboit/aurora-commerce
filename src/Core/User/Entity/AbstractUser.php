@@ -54,6 +54,16 @@ abstract class AbstractUser implements CoreUserInterface
     #[Groups(['user:read'])]
     protected array $disabledModules = [];
 
+    /** @var list<string> NavSection stable ids hidden from this user's sidemenu (user-managed). */
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    #[Groups(['user:read'])]
+    protected array $hiddenNavSections = [];
+
+    /** @var list<string> NavItem stable route names hidden from this user's sidemenu (user-managed). */
+    #[ORM\Column(type: 'json', options: ['default' => '[]'])]
+    #[Groups(['user:read'])]
+    protected array $hiddenNavItems = [];
+
     #[ORM\Column]
     protected string $password;
 
@@ -371,6 +381,30 @@ abstract class AbstractUser implements CoreUserInterface
     public function setDisabledModules(array $disabledModules): static
     {
         $this->disabledModules = array_values(array_unique($disabledModules));
+
+        return $this;
+    }
+
+    public function getHiddenNavSections(): array
+    {
+        return $this->hiddenNavSections;
+    }
+
+    public function setHiddenNavSections(array $hiddenNavSections): static
+    {
+        $this->hiddenNavSections = array_values(array_unique($hiddenNavSections));
+
+        return $this;
+    }
+
+    public function getHiddenNavItems(): array
+    {
+        return $this->hiddenNavItems;
+    }
+
+    public function setHiddenNavItems(array $hiddenNavItems): static
+    {
+        $this->hiddenNavItems = array_values(array_unique($hiddenNavItems));
 
         return $this;
     }

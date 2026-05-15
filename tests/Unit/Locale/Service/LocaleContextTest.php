@@ -6,7 +6,6 @@ namespace Aurora\Tests\Unit\Locale\Service;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\Service\LocaleContext;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;

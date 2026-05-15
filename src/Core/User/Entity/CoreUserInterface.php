@@ -116,6 +116,18 @@ interface CoreUserInterface extends UserInterface, PasswordAuthenticatedUserInte
     /** @param list<string> $disabledModules */
     public function setDisabledModules(array $disabledModules): static;
 
+    /** @return list<string> NavSection ids hidden by this user from their own sidemenu */
+    public function getHiddenNavSections(): array;
+
+    /** @param list<string> $hiddenNavSections */
+    public function setHiddenNavSections(array $hiddenNavSections): static;
+
+    /** @return list<string> NavItem route names hidden by this user from their own sidemenu */
+    public function getHiddenNavItems(): array;
+
+    /** @param list<string> $hiddenNavItems */
+    public function setHiddenNavItems(array $hiddenNavItems): static;
+
     public function getAgency(): ?AgencyInterface;
 
     public function setAgency(?AgencyInterface $agency): static;

@@ -9,6 +9,7 @@ use Aurora\Core\Agency\Repository\AgencyRepository;
 use Aurora\Core\Auth\Manager\EmailVerificationManagerInterface;
 use Aurora\Core\Auth\Manager\InvitationManagerInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Module\Service\ModuleRegistry;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
@@ -47,6 +48,7 @@ class UserManager implements UserManagerInterface
         protected readonly ServiceRepository $serviceRepository,
         protected readonly EventDispatcherInterface $eventDispatcher,
         protected readonly ModuleToggleRegistry $moduleToggleRegistry,
+        protected readonly ModuleRegistry $moduleRegistry,
     ) {}
 
     public function create(string $name, string $email, string $password, bool $isAdmin = true): User
@@ -266,6 +268,61 @@ class UserManager implements UserManagerInterface
         }
 
         return array_keys($clean);
+    }
+
+    /**
+     * @param list<string> $hiddenNavSections
+     * @param list<string> $hiddenNavItems
+     */
+    public function updateSidebarPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void
+    {
+        [$validSectionIds, $validItemKeys] = $this->collectKnownNavTokens();
+
+        $user->setHiddenNavSections(array_values(array_intersect($hiddenNavSections, $validSectionIds)));
+        $user->setHiddenNavItems(array_values(array_intersect($hiddenNavItems, $validItemKeys)));
+
+        $this->entityManager->flush();
+    }
+
+    public function resetSidebarPreferences(User $user): void
+    {
+        $user->setHiddenNavSections([]);
+        $user->setHiddenNavItems([]);
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @return array{0: list<string>, 1: list<string>}
+     */
+    protected function collectKnownNavTokens(): array
+    {
+        $sectionIds = [];
+        $itemKeys = [];
+
+        foreach ($this->moduleRegistry->getNavPreferences() as $section) {
+            $sectionIds[] = $section['id'];
+            $this->walkItemKeys($section['items'], $itemKeys);
+        }
+
+        return [$sectionIds, $itemKeys];
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $items
+     * @param list<string>                     $out
+     */
+    private function walkItemKeys(array $items, array &$out): void
+    {
+        foreach ($items as $item) {
+            if (isset($item['key']) && is_string($item['key'])) {
+                $out[] = $item['key'];
+            }
+
+            if (isset($item['children']) && is_array($item['children'])) {
+                $this->walkItemKeys($item['children'], $out);
+            }
+        }
     }
 
     public function delete(User $user): void

@@ -149,6 +149,10 @@ export function useSidebarNav(navSections, activeRoute, sectionAliases = {}) {
         return activeRoute?.startsWith(route);
     }
 
+    function isActiveExact(route) {
+        return activeRoute === route;
+    }
+
     function itemIsActive(item) {
         return (
             isActive(item.route) ||
@@ -217,6 +221,7 @@ export function useSidebarNav(navSections, activeRoute, sectionAliases = {}) {
         isSectionExpanded,
         toggleSection,
         isActive,
+        isActiveExact,
         itemIsActive,
         itemClasses,
         iconClasses,

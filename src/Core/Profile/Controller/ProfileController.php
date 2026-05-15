@@ -10,6 +10,7 @@ use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Module\Service\ModuleRegistry;
 use Aurora\Core\Profile\View\ProfileViewBuilder;
 use Aurora\Core\User\Dto\MoodInput;
 use Aurora\Core\User\Dto\UpdateProfileInput;
@@ -29,6 +30,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function in_array;
+
 #[Route('/backend/profile', name: 'backend_profile')]
 #[IsGranted(UserRoleEnum::User->value)]
 final class ProfileController extends AbstractController
@@ -43,6 +46,7 @@ final class ProfileController extends AbstractController
         private readonly UserProfilePhotoManagerInterface $userProfilePhotoManager,
         private readonly ProfileViewBuilder $viewBuilder,
         private readonly UserRepository $userRepository,
+        private readonly ModuleRegistry $moduleRegistry,
     ) {}
 
     #[Route('', name: '')]
@@ -126,7 +130,7 @@ final class ProfileController extends AbstractController
      */
     private function isLastDevOfType(User $user): bool
     {
-        if (!\in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
+        if (!in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
             return false;
         }
 
@@ -178,6 +182,58 @@ final class ProfileController extends AbstractController
         $this->userProfilePhotoManager->delete($user);
 
         return $this->jsonSuccess(['profilePhotoUrl' => null]);
+    }
+
+    #[Route('/sidebar', name: '_sidebar', methods: [HttpMethodEnum::Get->value])]
+    public function sidebar(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->render('@Core/backend/profile/sidebar.html.twig', [
+            'navPreferences' => $this->moduleRegistry->getNavPreferences(),
+            'hiddenNavSections' => $user->getHiddenNavSections(),
+            'hiddenNavItems' => $user->getHiddenNavItems(),
+        ]);
+    }
+
+    #[Route('/sidebar', name: '_sidebar_save', methods: [HttpMethodEnum::Post->value])]
+    public function sidebarSave(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = $this->decodeJson($request);
+
+        $hiddenSections = $data['hiddenNavSections'] ?? [];
+        $hiddenItems = $data['hiddenNavItems'] ?? [];
+
+        if (!is_array($hiddenSections) || !is_array($hiddenItems)) {
+            return $this->jsonInvalidInput([
+                'hiddenNavSections' => 'Invalid format',
+                'hiddenNavItems' => 'Invalid format',
+            ]);
+        }
+
+        $this->userManager->updateSidebarPreferences(
+            $user,
+            array_values(array_filter($hiddenSections, is_string(...))),
+            array_values(array_filter($hiddenItems, is_string(...))),
+        );
+
+        return $this->jsonSuccess([
+            'hiddenNavSections' => $user->getHiddenNavSections(),
+            'hiddenNavItems' => $user->getHiddenNavItems(),
+        ]);
+    }
+
+    #[Route('/sidebar/reset', name: '_sidebar_reset', methods: [HttpMethodEnum::Post->value])]
+    public function sidebarReset(): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $this->userManager->resetSidebarPreferences($user);
+
+        return $this->jsonSuccess();
     }
 
     #[Route('/locale', name: '_locale', methods: [HttpMethodEnum::Post->value])]

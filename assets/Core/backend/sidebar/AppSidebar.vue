@@ -17,7 +17,7 @@ import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import AppNotificationsBell from "@core/backend/notifications/AppNotificationsBell.vue";
 import "@/css/components/sidebar.css";
 import {
-    Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User,
+    Globe, ShieldCheck, LogOut, Mail, Moon, Sun, User, SlidersHorizontal,
     ChevronsLeft, ChevronsRight, Menu as MenuIcon, X,
     Search, Loader2, ChevronDown, Filter,
     Clock, Layers, FileText, Tags as TagsIcon, Image, FolderKanban, CheckSquare,
@@ -36,6 +36,7 @@ const props = defineProps({
     frontPath: { type: String, default: "/" },
     hasEnabledFronts: { type: Boolean, default: true },
     profilePath: { type: String, default: "/backend/profile" },
+    sidebarPreferencesPath: { type: String, default: "/backend/profile/sidebar" },
     logoutPath: { type: String, default: "/logout" },
     mailpitUrl: { type: String, default: "" },
     siteName: { type: String, default: "Aurora" },
@@ -69,7 +70,7 @@ watch(sidebarDragging, (dragging) => {
 const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
-    isActive, itemIsActive, itemClasses, iconClasses,
+    isActive, isActiveExact, itemIsActive, itemClasses, iconClasses,
 } = useSidebarNav(props.navSections, props.activeRoute, props.navSectionAliases);
 
 const SECTION_CONFIG = {
@@ -296,11 +297,20 @@ function openSearchFromMobile() {
 
             <AppNavLink
                 :href="profilePath"
-                :active="isActive('profile')"
+                :active="isActiveExact('backend_profile')"
                 :tooltip-title="t('backend.nav.profile')"
             >
                 <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <span class="si-label truncate">{{ t("backend.nav.profile") }}</span>
+            </AppNavLink>
+
+            <AppNavLink
+                :href="sidebarPreferencesPath"
+                :active="isActive('backend_profile_sidebar')"
+                :tooltip-title="t('backend.profile.preferences.title')"
+            >
+                <SlidersHorizontal class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
+                <span class="si-label truncate">{{ t("backend.profile.preferences.title") }}</span>
             </AppNavLink>
 
             <form :action="logoutPath" method="POST">
@@ -459,10 +469,18 @@ function openSearchFromMobile() {
                 <a
                     :href="profilePath"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="isActive('profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="isActiveExact('backend_profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
                     <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("backend.nav.profile") }}
+                </a>
+                <a
+                    :href="sidebarPreferencesPath"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    :class="isActive('backend_profile_sidebar') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                >
+                    <SlidersHorizontal class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
+                    {{ t("backend.profile.preferences.title") }}
                 </a>
                 <form :action="logoutPath" method="POST">
                     <input type="hidden" name="_token" :value="logoutCsrf">

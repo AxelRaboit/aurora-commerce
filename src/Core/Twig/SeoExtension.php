@@ -9,9 +9,9 @@ use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 /**
  * Builds the SEO/Open Graph/Twitter Cards payload consumed by the public `head.html.twig` partial.
@@ -28,36 +28,29 @@ use Twig\TwigFunction;
  *
  * See docs/aurora-core/dev/convention_seo_head.md for the full contract.
  */
-final class SeoExtension extends AbstractExtension
+final readonly class SeoExtension
 {
-    private const REQUEST_ATTRIBUTE = '_aurora_seo';
+    private const string REQUEST_ATTRIBUTE = '_aurora_seo';
 
     public function __construct(
-        private readonly Context $context,
-        private readonly SettingRepository $settingRepository,
-        private readonly MediaRepository $mediaRepository,
-        private readonly RequestStack $requestStack,
+        private Context $context,
+        private SettingRepository $settingRepository,
+        private MediaRepository $mediaRepository,
+        private RequestStack $requestStack,
     ) {}
-
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('seo', $this->build(...)),
-            new TwigFunction('seo_current', $this->current(...)),
-        ];
-    }
 
     /**
      * @param array<string, mixed> $data
      *
      * @return array{title: string, description: string, image: string, canonical: string, type: string, twitterCard: string, twitterHandle: ?string, noindex: bool, extraMeta: string, jsonLd: array<string, mixed>|null}
      */
+    #[AsTwigFunction(name: 'seo')]
     public function build(array $data = []): array
     {
         $resolved = $this->resolve($data);
 
         $request = $this->requestStack->getCurrentRequest();
-        if (null !== $request) {
+        if ($request instanceof Request) {
             $request->attributes->set(self::REQUEST_ATTRIBUTE, $resolved);
         }
 
@@ -67,13 +60,14 @@ final class SeoExtension extends AbstractExtension
     /**
      * @return array{title: string, description: string, image: string, canonical: string, type: string, twitterCard: string, twitterHandle: ?string, noindex: bool, extraMeta: string, jsonLd: array<string, mixed>|null}
      */
+    #[AsTwigFunction(name: 'seo_current')]
     public function current(): array
     {
         $request = $this->requestStack->getCurrentRequest();
         $stored = $request?->attributes->get(self::REQUEST_ATTRIBUTE);
 
         if (is_array($stored)) {
-            /** @var array{title: string, description: string, image: string, canonical: string, type: string, twitterCard: string, twitterHandle: ?string, noindex: bool, extraMeta: string, jsonLd: array<string, mixed>|null} $stored */
+            /* @var array{title: string, description: string, image: string, canonical: string, type: string, twitterCard: string, twitterHandle: ?string, noindex: bool, extraMeta: string, jsonLd: array<string, mixed>|null} $stored */
             return $stored;
         }
 
@@ -109,7 +103,7 @@ final class SeoExtension extends AbstractExtension
 
     private function resolveTitle(mixed $title, string $siteName): string
     {
-        $title = is_string($title) ? trim($title) : '';
+        $title = is_string($title) ? mb_trim($title) : '';
 
         if ('' === $title || $title === $siteName) {
             return $siteName;
@@ -125,7 +119,7 @@ final class SeoExtension extends AbstractExtension
 
     private function resolveDescription(mixed $description): string
     {
-        $description = is_string($description) ? trim($description) : '';
+        $description = is_string($description) ? mb_trim($description) : '';
 
         if ('' !== $description) {
             return $description;
@@ -152,18 +146,18 @@ final class SeoExtension extends AbstractExtension
 
     private function resolveCanonical(mixed $canonical, string $siteUrl): string
     {
-        $url = is_string($canonical) ? trim($canonical) : '';
+        $url = is_string($canonical) ? mb_trim($canonical) : '';
 
         if ('' !== $url) {
             return $this->absolutize($url, $siteUrl);
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        if (null === $request) {
-            return rtrim($siteUrl, '/');
+        if (!$request instanceof Request) {
+            return mb_rtrim($siteUrl, '/');
         }
 
-        return rtrim($siteUrl, '/') . $request->getPathInfo();
+        return mb_rtrim($siteUrl, '/').$request->getPathInfo();
     }
 
     /**
@@ -179,7 +173,7 @@ final class SeoExtension extends AbstractExtension
             return $image['publicUrl'];
         }
 
-        return is_string($image) ? trim($image) : '';
+        return is_string($image) ? mb_trim($image) : '';
     }
 
     private function resolveDefaultOgImageUrl(): string
@@ -211,9 +205,9 @@ final class SeoExtension extends AbstractExtension
         }
 
         if (!str_starts_with($url, '/')) {
-            $url = '/' . $url;
+            $url = '/'.$url;
         }
 
-        return rtrim($siteUrl, '/') . $url;
+        return mb_rtrim($siteUrl, '/').$url;
     }
 }
