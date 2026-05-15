@@ -1,12 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { toast } from 'vue-sonner';
 import { useMarkdownNotesApi } from '@notes/backend/markdown/composables/useMarkdownNotesApi.js';
+import { useNotesEditor } from '@notes/backend/markdown/composables/useNotesEditor.js';
 import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
 import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
 import { useResizable } from '@shared/composables/useResizable.js';
-import { toggleCheckboxInContent } from '@notes/backend/markdown/composables/markedExtensions/markedCheckboxes.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
 import NoteSidePanel from '@notes/backend/markdown/components/NoteSidePanel.vue';
@@ -34,6 +33,29 @@ const props = defineProps({
 
 const { t } = useI18n();
 const api = useMarkdownNotesApi(props);
+
+// Domain state + actions
+const {
+    notes,
+    selectedId,
+    selectedNote,
+    form,
+    isDirty,
+    saving,
+    deleting,
+    selectNote,
+    createNote,
+    saveSelected,
+    deleteSelected,
+    onWikiLinkClick,
+    onCheckboxToggle,
+} = useNotesEditor({ api, initialNotes: props.notes });
+
+// UI-only state
+const sidePanelOpen = ref(false);
+const treeQuery = ref('');
+
+const { tree } = useNoteTree(notes, treeQuery);
 const { mode: viewMode } = useViewMode();
 
 // Editor pane width in split mode — drag the seam between editor and preview.
@@ -46,141 +68,6 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
     axis: 'x',
     getOrigin: () => editorPaneRef.value,
 });
-
-const notes = ref([...props.notes]);
-const selectedId = ref(null);
-const form = ref({ title: '', content: '', tags: [] });
-const saving = ref(false);
-const deleting = ref(false);
-const sidePanelOpen = ref(false);
-const treeQuery = ref('');
-
-const { tree } = useNoteTree(notes, treeQuery);
-
-const selectedNote = computed(() => notes.value.find((n) => n.id === selectedId.value) || null);
-const isDirty = computed(() => {
-    if (!selectedNote.value) return false;
-    return (
-        (selectedNote.value.title || '') !== form.value.title ||
-        (selectedNote.value.content || '') !== form.value.content
-    );
-});
-
-async function refreshList() {
-    const { ok, payload } = await api.list();
-    if (ok) {
-        notes.value = payload.notes;
-    }
-}
-
-async function selectNote(id) {
-    selectedId.value = id;
-    const { ok, payload } = await api.show(id);
-    if (!ok) {
-        toast.error(t('notes.markdown.errors.load_failed'));
-        return;
-    }
-    form.value = {
-        title: payload.note.title ?? '',
-        content: payload.note.content ?? '',
-        tags: payload.note.tags ?? [],
-    };
-}
-
-async function createNote(parentId = null) {
-    const { ok, payload } = await api.create({ parentId, title: '', content: '' });
-    if (!ok) {
-        toast.error(t('notes.markdown.errors.create_failed'));
-        return;
-    }
-    await refreshList();
-    await selectNote(payload.note.id);
-}
-
-async function saveSelected() {
-    if (!selectedNote.value) return;
-    saving.value = true;
-    try {
-        const { ok, payload } = await api.update(selectedNote.value.id, {
-            parentId: selectedNote.value.parentId,
-            title: form.value.title,
-            content: form.value.content,
-            tags: form.value.tags,
-        });
-        if (!ok) {
-            toast.error(t('notes.markdown.errors.save_failed'));
-            return;
-        }
-        await refreshList();
-        await selectNote(payload.note.id);
-        toast.success(t('notes.markdown.saved'));
-    } finally {
-        saving.value = false;
-    }
-}
-
-async function deleteSelected() {
-    if (!selectedNote.value) return;
-    if (!window.confirm(t('notes.markdown.confirm_delete', { title: selectedNote.value.title || t('notes.markdown.untitled') }))) {
-        return;
-    }
-    deleting.value = true;
-    try {
-        const { ok } = await api.remove(selectedNote.value.id);
-        if (!ok) {
-            toast.error(t('notes.markdown.errors.delete_failed'));
-            return;
-        }
-        selectedId.value = null;
-        form.value = { title: '', content: '', tags: [] };
-        await refreshList();
-    } finally {
-        deleting.value = false;
-    }
-}
-
-/**
- * Wiki-link click in the preview pane. If the target title resolves to a
- * sibling note, navigate to it (after warning on unsaved changes).
- */
-async function onWikiLinkClick({ noteTitle, matchedId }) {
-    if (matchedId === null) {
-        toast.info(t('notes.markdown.wiki_link_not_found', { title: noteTitle }));
-        return;
-    }
-    if (matchedId === selectedId.value) return;
-    if (isDirty.value && !window.confirm(t('notes.markdown.confirm_discard_changes'))) {
-        return;
-    }
-    await selectNote(matchedId);
-}
-
-/**
- * Interactive checkbox toggle in the preview pane. Updates the source
- * markdown, then auto-saves so the new state is durable.
- */
-async function onCheckboxToggle(index) {
-    form.value.content = toggleCheckboxInContent(form.value.content, index);
-    await saveSelected();
-}
-
-onMounted(() => {
-    if (selectedId.value === null && notes.value.length > 0) {
-        selectNote(notes.value[0].id);
-    }
-});
-
-watch(isDirty, (dirty) => {
-    if (dirty) {
-        window.addEventListener('beforeunload', beforeUnloadHandler);
-    } else {
-        window.removeEventListener('beforeunload', beforeUnloadHandler);
-    }
-});
-function beforeUnloadHandler(event) {
-    event.preventDefault();
-    event.returnValue = '';
-}
 </script>
 
 <template>
