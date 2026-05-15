@@ -138,6 +138,56 @@ respecter le mode mono-langue :
    `LocaleContext` mocké renvoyant `LocaleEnum::values()` pour garder le
    comportement multi-langue dans les tests.
 
+## Pas de `'fr'`/`'en'` hardcodé hors `LocaleEnum`
+
+Toute référence à un code locale en dur dans le code applicatif est un
+bug latent (casse le single-locale mode et empêche d'ajouter une langue
+au bundle). Règles :
+
+- **Production code** : utiliser `LocaleContext::getDefaultLocale()` ou
+  `LocaleEnum::default()->value`. Exemples canoniques :
+  `PostSerializer`, `TaxonomyTermSerializer`, `SearchController`,
+  `SitemapBuilder`, `ListingSerializer`, `Context`.
+- **Bundle config (`AuroraBundle.php`)** : dérive `default_locale` /
+  `enabled_locales` / `fallbacks` de `LocaleEnum::default()` /
+  `LocaleEnum::values()`.
+- **Default params PHP `string $locale = 'fr'`** : remplacer par un
+  paramètre **requis** quand le caller a déjà la locale en scope
+  (`PostRepository::findPaginated`, `BlocksRenderer::render`,
+  `OrderManager::createFromCart`/`checkout`, `UserManager::sendVerificationEmail`).
+  PHP n'accepte pas `LocaleEnum::default()->value` comme default-param
+  (expression non-constante), donc soit on force le caller, soit on
+  passe `?string $locale = null` et on résout via `LocaleContext` dans
+  le corps.
+
+**Exceptions légitimes** (à laisser tel quel) :
+- `LocaleEnum.php` lui-même (table de référence).
+- `Twig/LocaleExtension.php` (mappings `'fr' => 'Français'`,
+  `'fr' => 'fr'` flag, etc. — c'est la table de correspondance).
+- DataFixtures (seed bilingue, sans intérêt à enum-ifier).
+- Propriétés `protected string $locale = 'fr'` sur les entités
+  (`AbstractOrder`) et DTO `readonly` (`UserInput`) — pas de DI possible.
+- Méthodes statiques d'enums (`CountryEnum::label/options`).
+
+## Selects de locale dans `/backend/settings`
+
+Les paramètres `DefaultLocale`, `EmailLocale` et `Timezone` sont rendus
+en **select** (type `select` dans `ApplicationParameterEnum::getType()`)
+avec options résolues dans `SettingsViewBuilder::resolveSelectOptions()` :
+
+- `DefaultLocale` / `EmailLocale` : options dérivées de
+  `LocaleEnum::cases()`, labels via `shared.locales.<code>` (déjà traduit
+  dans `src/Core/translations/messages.{fr,en}.yaml`). `EmailLocale`
+  gagne une option leading « Suivre la langue par défaut » (valeur `''`)
+  pour le mode auto-fallback.
+- `Timezone` : options issues de `DateTimeZone::listIdentifiers()`
+  (~420 entrées).
+
+Côté Vue (`SettingsApp.vue`), le renderer choisit automatiquement entre
+`AppSelect` (HTML natif, ≤10 options) et `AppMultiselect` (searchable,
+>10 options). Tout nouveau paramètre `select` à beaucoup d'options
+hérite automatiquement de la version searchable.
+
 ## Routes frontend en single mode
 
 Les `#[Route('/{locale}/...')]` restent déclarées. C'est
