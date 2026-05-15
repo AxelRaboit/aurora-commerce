@@ -24,10 +24,11 @@ final readonly class MarkdownNoteHierarchyService
     public function wouldCreateCycle(MarkdownNoteInterface $note, MarkdownNoteInterface $newParent): bool
     {
         $current = $newParent;
-        while (null !== $current) {
+        while ($current instanceof MarkdownNoteInterface) {
             if ($current->getId() === $note->getId()) {
                 return true;
             }
+
             $current = $current->getParent();
         }
 

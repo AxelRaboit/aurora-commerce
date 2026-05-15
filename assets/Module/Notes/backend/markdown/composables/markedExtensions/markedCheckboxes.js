@@ -20,11 +20,13 @@ export function createCheckboxRenderer() {
                 return `<li>${text}</li>\n`;
             }
             const index = checkboxCounter++;
-            const checkedAttr = checked ? 'checked' : '';
-            return `<li class="task-list-item">`
-                + `<input type="checkbox" class="task-checkbox" data-checkbox-index="${index}" ${checkedAttr} />`
-                + `<span>${text}</span>`
-                + `</li>\n`;
+            const checkedAttr = checked ? "checked" : "";
+            return (
+                `<li class="task-list-item">` +
+                `<input type="checkbox" class="task-checkbox" data-checkbox-index="${index}" ${checkedAttr} />` +
+                `<span>${text}</span>` +
+                `</li>\n`
+            );
         },
     };
 }
@@ -36,8 +38,11 @@ export function createCheckboxRenderer() {
  */
 export function toggleCheckboxInContent(content, checkboxIndex) {
     let counter = 0;
-    return content.replace(/^(\s*[-*+]\s+)\[([ xX])\]/gm, (match, prefix, state) => {
-        if (counter++ !== checkboxIndex) return match;
-        return state.trim() === '' ? `${prefix}[x]` : `${prefix}[ ]`;
-    });
+    return content.replace(
+        /^(\s*[-*+]\s+)\[([ xX])\]/gm,
+        (match, prefix, state) => {
+            if (counter++ !== checkboxIndex) return match;
+            return state.trim() === "" ? `${prefix}[x]` : `${prefix}[ ]`;
+        },
+    );
 }

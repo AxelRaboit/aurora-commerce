@@ -1,4 +1,4 @@
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed } from "vue";
 
 /**
  * State + fetch lifecycle for the Markdown notes side panel (backlinks /
@@ -11,24 +11,32 @@ import { ref, watch, computed } from 'vue';
  * @param {(id: number) => Promise<{ok: boolean, payload: any}>} options.fetchBacklinks
  * @param {(id: number) => Promise<{ok: boolean, payload: any}>} options.fetchUnlinkedMentions
  */
-export function useNoteSidePanel({ noteIdRef, fetchBacklinks, fetchUnlinkedMentions }) {
-    const tab = ref('backlinks');
+export function useNoteSidePanel({
+    noteIdRef,
+    fetchBacklinks,
+    fetchUnlinkedMentions,
+}) {
+    const tab = ref("backlinks");
     const backlinks = ref([]);
     const mentions = ref([]);
     const loading = ref(false);
 
-    const items = computed(() => (tab.value === 'backlinks' ? backlinks.value : mentions.value));
+    const items = computed(() =>
+        tab.value === "backlinks" ? backlinks.value : mentions.value,
+    );
 
     async function refresh() {
         if (noteIdRef.value === null) return;
         loading.value = true;
         try {
-            if (tab.value === 'backlinks') {
+            if (tab.value === "backlinks") {
                 const { ok, payload } = await fetchBacklinks(noteIdRef.value);
-                backlinks.value = ok ? payload.backlinks ?? [] : [];
+                backlinks.value = ok ? (payload.backlinks ?? []) : [];
             } else {
-                const { ok, payload } = await fetchUnlinkedMentions(noteIdRef.value);
-                mentions.value = ok ? payload.mentions ?? [] : [];
+                const { ok, payload } = await fetchUnlinkedMentions(
+                    noteIdRef.value,
+                );
+                mentions.value = ok ? (payload.mentions ?? []) : [];
             }
         } finally {
             loading.value = false;

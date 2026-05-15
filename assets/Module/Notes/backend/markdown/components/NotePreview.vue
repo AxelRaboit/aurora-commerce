@@ -38,5 +38,5 @@ function onClick(event) {
         class="note-preview prose prose-sm dark:prose-invert max-w-none"
         v-on:click="onClick"
         v-html="html"
-    ></div>
+    />
 </template>

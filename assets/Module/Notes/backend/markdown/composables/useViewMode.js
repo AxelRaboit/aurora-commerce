@@ -1,7 +1,7 @@
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
-const STORAGE_KEY = 'aurora.notes.markdown.viewMode';
-const ALLOWED = ['edit', 'split', 'preview'];
+const STORAGE_KEY = "aurora.notes.markdown.viewMode";
+const ALLOWED = ["edit", "split", "preview"];
 
 /**
  * Reactive view-mode state ('edit' | 'split' | 'preview') persisted in
@@ -23,9 +23,9 @@ export function useViewMode() {
     function readStored() {
         try {
             const stored = window.localStorage.getItem(STORAGE_KEY);
-            return ALLOWED.includes(stored) ? stored : 'split';
+            return ALLOWED.includes(stored) ? stored : "split";
         } catch {
-            return 'split';
+            return "split";
         }
     }
 

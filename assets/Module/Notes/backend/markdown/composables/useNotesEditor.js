@@ -1,7 +1,7 @@
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { toast } from 'vue-sonner';
-import { toggleCheckboxInContent } from './markedExtensions/markedCheckboxes.js';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { toggleCheckboxInContent } from "./markedExtensions/markedCheckboxes.js";
 
 /**
  * State + actions for the Markdown notes editor.
@@ -18,7 +18,7 @@ export function useNotesEditor({ api, initialNotes }) {
 
     const notes = ref([...initialNotes]);
     const selectedId = ref(null);
-    const form = ref({ title: '', content: '', tags: [] });
+    const form = ref({ title: "", content: "", tags: [] });
     const saving = ref(false);
     const deleting = ref(false);
     const pendingDelete = ref(null);
@@ -30,8 +30,8 @@ export function useNotesEditor({ api, initialNotes }) {
     const isDirty = computed(() => {
         if (!selectedNote.value) return false;
         return (
-            (selectedNote.value.title || '') !== form.value.title ||
-            (selectedNote.value.content || '') !== form.value.content
+            (selectedNote.value.title || "") !== form.value.title ||
+            (selectedNote.value.content || "") !== form.value.content
         );
     });
 
@@ -46,20 +46,24 @@ export function useNotesEditor({ api, initialNotes }) {
         selectedId.value = id;
         const { ok, payload } = await api.show(id);
         if (!ok) {
-            toast.error(t('notes.markdown.errors.load_failed'));
+            toast.error(t("notes.markdown.errors.load_failed"));
             return;
         }
         form.value = {
-            title: payload.note.title ?? '',
-            content: payload.note.content ?? '',
+            title: payload.note.title ?? "",
+            content: payload.note.content ?? "",
             tags: payload.note.tags ?? [],
         };
     }
 
     async function createNote(parentId = null) {
-        const { ok, payload } = await api.create({ parentId, title: '', content: '' });
+        const { ok, payload } = await api.create({
+            parentId,
+            title: "",
+            content: "",
+        });
         if (!ok) {
-            toast.error(t('notes.markdown.errors.create_failed'));
+            toast.error(t("notes.markdown.errors.create_failed"));
             return;
         }
         await refreshList();
@@ -77,12 +81,12 @@ export function useNotesEditor({ api, initialNotes }) {
                 tags: form.value.tags,
             });
             if (!ok) {
-                toast.error(t('notes.markdown.errors.save_failed'));
+                toast.error(t("notes.markdown.errors.save_failed"));
                 return;
             }
             await refreshList();
             await selectNote(payload.note.id);
-            toast.success(t('notes.markdown.saved'));
+            toast.success(t("notes.markdown.saved"));
         } finally {
             saving.value = false;
         }
@@ -109,12 +113,12 @@ export function useNotesEditor({ api, initialNotes }) {
         try {
             const { ok } = await api.remove(targetId);
             if (!ok) {
-                toast.error(t('notes.markdown.errors.delete_failed'));
+                toast.error(t("notes.markdown.errors.delete_failed"));
                 return;
             }
             if (selectedId.value === targetId) {
                 selectedId.value = null;
-                form.value = { title: '', content: '', tags: [] };
+                form.value = { title: "", content: "", tags: [] };
             }
             pendingDelete.value = null;
             await refreshList();
@@ -129,11 +133,16 @@ export function useNotesEditor({ api, initialNotes }) {
      */
     async function onWikiLinkClick({ noteTitle, matchedId }) {
         if (matchedId === null) {
-            toast.info(t('notes.markdown.wiki_link_not_found', { title: noteTitle }));
+            toast.info(
+                t("notes.markdown.wiki_link_not_found", { title: noteTitle }),
+            );
             return;
         }
         if (matchedId === selectedId.value) return;
-        if (isDirty.value && !window.confirm(t('notes.markdown.confirm_discard_changes'))) {
+        if (
+            isDirty.value &&
+            !window.confirm(t("notes.markdown.confirm_discard_changes"))
+        ) {
             return;
         }
         await selectNote(matchedId);
@@ -157,19 +166,19 @@ export function useNotesEditor({ api, initialNotes }) {
 
     function beforeUnloadHandler(event) {
         event.preventDefault();
-        event.returnValue = '';
+        event.returnValue = "";
     }
 
     watch(isDirty, (dirty) => {
         if (dirty) {
-            window.addEventListener('beforeunload', beforeUnloadHandler);
+            window.addEventListener("beforeunload", beforeUnloadHandler);
         } else {
-            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            window.removeEventListener("beforeunload", beforeUnloadHandler);
         }
     });
 
     onBeforeUnmount(() => {
-        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        window.removeEventListener("beforeunload", beforeUnloadHandler);
     });
 
     return {

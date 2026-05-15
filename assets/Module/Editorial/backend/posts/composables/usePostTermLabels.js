@@ -20,9 +20,9 @@ export function usePostTermLabels({ parsedTaxonomies, defaultLocale }) {
         for (const taxonomy of parsedTaxonomies) {
             for (const term of taxonomy.terms ?? []) {
                 const name =
-                    term.translations?.[defaultLocale]?.name
-                    ?? term.translations?.["fr"]?.name
-                    ?? term.slug;
+                    term.translations?.[defaultLocale]?.name ??
+                    term.translations?.["fr"]?.name ??
+                    term.slug;
                 map[term.id] = name;
             }
         }
@@ -30,7 +30,9 @@ export function usePostTermLabels({ parsedTaxonomies, defaultLocale }) {
     });
 
     function postTermLabels(post) {
-        return (post.termIds ?? []).map((id) => termMap.value[id]).filter(Boolean);
+        return (post.termIds ?? [])
+            .map((id) => termMap.value[id])
+            .filter(Boolean);
     }
 
     return { termMap, postTermLabels };

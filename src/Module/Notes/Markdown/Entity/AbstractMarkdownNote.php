@@ -132,7 +132,7 @@ abstract class AbstractMarkdownNote implements MarkdownNoteInterface
 
     public function setTags(array $tags): static
     {
-        $this->tags = array_values($tags);
+        $this->tags = $tags;
 
         return $this;
     }

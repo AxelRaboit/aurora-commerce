@@ -240,7 +240,7 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         :class="splitDragging ? 'bg-accent-500/60' : ''"
                         :title="t('notes.markdown.resize_handle')"
                         v-on:pointerdown="startSplitResize"
-                    ></div>
+                    />
 
                     <div
                         v-if="viewMode !== 'edit'"

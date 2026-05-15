@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * The actual injection happens in the constructor — being instantiated by
  * the event dispatcher is enough.
  */
-final class EncryptedTypeBootstrapper implements EventSubscriberInterface
+final readonly class EncryptedTypeBootstrapper implements EventSubscriberInterface
 {
     public function __construct(EncryptionServiceInterface $encryptionService)
     {
@@ -39,7 +39,5 @@ final class EncryptedTypeBootstrapper implements EventSubscriberInterface
         ];
     }
 
-    public function noop(): void
-    {
-    }
+    public function noop(): void {}
 }

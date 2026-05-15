@@ -9,6 +9,7 @@ use Aurora\Core\Encryption\Service\EncryptionService;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use RuntimeException;
 
 final class EncryptedTextTypeTest extends TestCase
@@ -53,7 +54,7 @@ final class EncryptedTextTypeTest extends TestCase
     public function testThrowsWhenServiceNotInjected(): void
     {
         // Reset the static service via reflection to simulate boot-order issue.
-        $reflection = new \ReflectionClass(EncryptedTextType::class);
+        $reflection = new ReflectionClass(EncryptedTextType::class);
         $property = $reflection->getProperty('encryptionService');
         $property->setValue(null, null);
 

@@ -103,7 +103,10 @@ export function useMenuDragDrop({ menuRef, persist }) {
         if (nodeId === newParentId) return false;
         const node = findNode(menuRef.value.items, nodeId);
         if (!node) return false;
-        if (newParentId !== null && collectDescendantIds(node).has(newParentId)) {
+        if (
+            newParentId !== null &&
+            collectDescendantIds(node).has(newParentId)
+        ) {
             toast.error(t("backend.menus.errors.cycle"));
             return false;
         }

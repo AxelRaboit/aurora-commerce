@@ -15,6 +15,7 @@ use Aurora\Module\Notes\Markdown\Manager\MarkdownNoteManager;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -194,7 +195,7 @@ final class MarkdownNoteManagerTest extends TestCase
 
         $this->repo->method('findBy')->willReturn([$a, $b]);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         // 10's parent is 20, 20's parent is 10 → cycle
         $this->manager->reorder($user, [

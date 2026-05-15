@@ -2561,8 +2561,8 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             // Lifecycle callbacks don't fire for direct persist + manual flush
             // in the same operation reliably across all Doctrine versions when
             // touching MappedSuperclass + trait properties — set explicitly.
-            (new ReflectionProperty(AbstractMarkdownNote::class, 'createdAt'))->setValue($note, $now);
-            (new ReflectionProperty(AbstractMarkdownNote::class, 'updatedAt'))->setValue($note, $now);
+            new ReflectionProperty(AbstractMarkdownNote::class, 'createdAt')->setValue($note, $now);
+            new ReflectionProperty(AbstractMarkdownNote::class, 'updatedAt')->setValue($note, $now);
 
             $em->persist($note);
             $byTitle[$def['title']] = $note;

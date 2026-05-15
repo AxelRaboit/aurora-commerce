@@ -51,10 +51,12 @@ class MarkdownNoteInputFactory implements MarkdownNoteInputFactoryInterface
             if (!is_string($tag)) {
                 continue;
             }
-            $trimmed = trim($tag);
+
+            $trimmed = mb_trim($tag);
             if ('' === $trimmed) {
                 continue;
             }
+
             $tags[] = $trimmed;
         }
 

@@ -18,7 +18,9 @@ export function useMenuTree(menuRef) {
     function countDescendants(items) {
         return items.reduce(
             (acc, item) =>
-                acc + 1 + (item.children?.length ? countDescendants(item.children) : 0),
+                acc +
+                1 +
+                (item.children?.length ? countDescendants(item.children) : 0),
             0,
         );
     }

@@ -7,6 +7,7 @@ namespace Aurora\Core\Encryption\Doctrine;
 use Aurora\Core\Encryption\Service\EncryptionServiceInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\TextType;
+use Override;
 use RuntimeException;
 
 /**
@@ -35,22 +36,24 @@ final class EncryptedTextType extends TextType
         return self::NAME;
     }
 
+    #[Override]
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if (null === $value) {
             return null;
         }
 
-        return self::service()->encrypt((string) $value);
+        return $this->service()->encrypt((string) $value);
     }
 
+    #[Override]
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if (null === $value) {
             return null;
         }
 
-        return self::service()->decrypt((string) $value);
+        return $this->service()->decrypt((string) $value);
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
@@ -58,9 +61,9 @@ final class EncryptedTextType extends TextType
         return true;
     }
 
-    private static function service(): EncryptionServiceInterface
+    private function service(): EncryptionServiceInterface
     {
-        if (null === self::$encryptionService) {
+        if (!self::$encryptionService instanceof EncryptionServiceInterface) {
             throw new RuntimeException('EncryptedTextType used before EncryptionService was injected (boot order issue).');
         }
 

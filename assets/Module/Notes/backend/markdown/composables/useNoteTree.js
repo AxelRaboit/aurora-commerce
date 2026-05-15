@@ -1,5 +1,5 @@
-import { ref, watchEffect } from 'vue';
-import { buildTree as buildHierarchicalTree } from '@/shared/composables/tree/useHierarchicalTree.js';
+import { ref, watchEffect } from "vue";
+import { buildTree as buildHierarchicalTree } from "@/shared/composables/tree/useHierarchicalTree.js";
 
 /**
  * Build a hierarchical tree from a flat list of notes (sorted by position).
@@ -23,23 +23,27 @@ export function useNoteTree(notesRef, queryRef = null) {
     const tree = ref([]);
 
     watchEffect(() => {
-        const query = (queryRef?.value ?? '').trim().toLowerCase();
+        const query = (queryRef?.value ?? "").trim().toLowerCase();
         // The shared helper expects parentId on each item — already provided
         // by MarkdownNoteRepository.findFlatListForUser.
         const fullTree = buildHierarchicalTree(notesRef.value).map(decorate);
-        tree.value = query === '' ? fullTree : filterTree(fullTree, query);
+        tree.value = query === "" ? fullTree : filterTree(fullTree, query);
     });
 
     /** Annotate every node with `matched: true` for consistent template logic. */
     function decorate(node) {
-        return { ...node, matched: true, children: (node.children ?? []).map(decorate) };
+        return {
+            ...node,
+            matched: true,
+            children: (node.children ?? []).map(decorate),
+        };
     }
 
     function filterTree(nodes, query) {
         const kept = [];
         for (const node of nodes) {
             const children = filterTree(node.children, query);
-            const selfMatch = (node.title ?? '').toLowerCase().includes(query);
+            const selfMatch = (node.title ?? "").toLowerCase().includes(query);
             if (selfMatch || children.length > 0) {
                 kept.push({ ...node, matched: selfMatch, children });
             }

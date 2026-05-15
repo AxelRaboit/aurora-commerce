@@ -1,5 +1,5 @@
 <script setup>
-/* eslint-disable vue/no-mutating-props -- selectedMenu is owned by parent and mutated in-place by drag-drop */
+ 
 import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Trash2, Pencil, ListTree } from "lucide-vue-next";

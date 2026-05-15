@@ -11,6 +11,7 @@ use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(MarkdownNoteManagerInterface::class)]
@@ -82,7 +83,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             return;
         }
 
-        $ids = array_map(static fn (array $entry): int => (int) $entry['id'], $entries);
+        $ids = array_map(static fn (array $entry): int => $entry['id'], $entries);
         $notes = $this->noteRepository->findBy(['id' => $ids, 'user' => $user]);
 
         $byId = [];
@@ -98,6 +99,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             if (!isset($byId[$id])) {
                 continue;
             }
+
             $parentId = $entry['parentId'] ?? null;
             $parentMap[$id] = null === $parentId ? null : (int) $parentId;
         }
@@ -107,8 +109,9 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             $current = $initialParentId;
             while (null !== $current) {
                 if (isset($visited[$current])) {
-                    throw new \InvalidArgumentException(sprintf('Reorder would create a cycle at note %d.', $id));
+                    throw new InvalidArgumentException(sprintf('Reorder would create a cycle at note %d.', $id));
                 }
+
                 $visited[$current] = true;
                 $current = $parentMap[$current] ?? null;
             }
@@ -126,6 +129,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             if (null === $note) {
                 continue;
             }
+
             $parentId = $parentMap[$id] ?? null;
             $note->setParent(null !== $parentId ? ($byId[$parentId] ?? null) : null);
             $note->setPosition((int) $entry['position']);
@@ -148,13 +152,20 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             if ($other->getId() === $note->getId()) {
                 continue;
             }
+
             $content = $other->getContent();
-            if (null === $content || '' === $content) {
+            if (null === $content) {
                 continue;
             }
+
+            if ('' === $content) {
+                continue;
+            }
+
             if (!str_contains(mb_strtolower($content), $needle)) {
                 continue;
             }
+
             $results[] = ['id' => $other->getId(), 'title' => $other->getTitle()];
         }
 
@@ -176,17 +187,25 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             if ($other->getId() === $note->getId()) {
                 continue;
             }
+
             $content = $other->getContent();
-            if (null === $content || '' === $content) {
+            if (null === $content) {
                 continue;
             }
+
+            if ('' === $content) {
+                continue;
+            }
+
             $contentLower = mb_strtolower($content);
             if (!str_contains($contentLower, $titleLower)) {
                 continue;
             }
+
             if (str_contains($contentLower, $linkedPattern)) {
                 continue;
             }
+
             $results[] = ['id' => $other->getId(), 'title' => $other->getTitle()];
         }
 
@@ -210,22 +229,34 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         $edges = [];
         foreach ($notes as $note) {
             $content = $note->getContent();
-            if (null === $content || '' === $content) {
+            if (null === $content) {
                 continue;
             }
+
+            if ('' === $content) {
+                continue;
+            }
+
             if (0 === preg_match_all(self::WIKI_LINK_REGEX, $content, $matches)) {
                 continue;
             }
+
             foreach ($matches[1] as $rawTarget) {
                 // strip anchor (#heading) — `[[Title#section]]` still points to "Title"
-                $target = mb_strtolower(explode('#', (string) $rawTarget)[0]);
-                if ('' === $target || !isset($titleToId[$target])) {
+                $target = mb_strtolower(explode('#', $rawTarget)[0]);
+                if ('' === $target) {
                     continue;
                 }
+
+                if (!isset($titleToId[$target])) {
+                    continue;
+                }
+
                 $targetId = $titleToId[$target];
                 if ($targetId === $note->getId()) {
                     continue;
                 }
+
                 $edges[] = ['source' => $note->getId(), 'target' => $targetId];
             }
         }
@@ -247,10 +278,16 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             if (null !== $excludeId && $other->getId() === $excludeId) {
                 continue;
             }
+
             $content = $other->getContent();
-            if (null === $content || !str_contains($content, $oldPattern)) {
+            if (null === $content) {
                 continue;
             }
+
+            if (!str_contains((string) $content, $oldPattern)) {
+                continue;
+            }
+
             $other->setContent(str_replace($oldPattern, $newPattern, $content));
         }
     }
@@ -304,7 +341,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
     /**
      * Hook: build the audit payload. Clients override to splat-merge their
      * own custom fields, e.g.
-     *   return [...parent::auditPayload($note), 'custom' => $note->getCustom()];
+     *   return [...parent::auditPayload($note), 'custom' => $note->getCustom()];.
      *
      * @return array<string, mixed>
      */

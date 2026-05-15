@@ -137,7 +137,10 @@ export function useTaxonomyTree(
         if (nodeId === newParentId) return false;
         const node = findNodeInTree(tree.value, nodeId);
         if (!node) return false;
-        if (newParentId !== null && collectDescendantIds(node).has(newParentId)) {
+        if (
+            newParentId !== null &&
+            collectDescendantIds(node).has(newParentId)
+        ) {
             return false; // can't drop under own descendant
         }
         removeNodeFromTree(tree.value, nodeId);
@@ -178,7 +181,8 @@ export function useTaxonomyTree(
             return true;
         }
         for (const node of nodes) {
-            if (node.children && removeNodeFromTree(node.children, id)) return true;
+            if (node.children && removeNodeFromTree(node.children, id))
+                return true;
         }
         return false;
     }
@@ -233,7 +237,9 @@ export function useTaxonomyTree(
         const forbidden = term
             ? collectDescendantIds(findNodeInTree(tree.value, term.id) ?? term)
             : new Set();
-        return flatTermsForParentSelect.value.filter((opt) => !forbidden.has(opt.id));
+        return flatTermsForParentSelect.value.filter(
+            (opt) => !forbidden.has(opt.id),
+        );
     }
 
     return {

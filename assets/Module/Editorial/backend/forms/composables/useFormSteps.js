@@ -20,18 +20,27 @@ import { computed } from "vue";
  * @param {import('vue').Ref<number>} options.editingFieldId - id of the field above (for self-exclusion)
  * @param {string[]} options.locales
  */
-export function useFormSteps({ editingForm, editingField, editingFieldId, locales }) {
+export function useFormSteps({
+    editingForm,
+    editingField,
+    editingFieldId,
+    locales,
+}) {
     function addStep() {
         const step = Object.fromEntries(locales.map((l) => [l, ""]));
         editingForm.value.steps = [...(editingForm.value.steps ?? []), step];
     }
 
     function removeStep(index) {
-        editingForm.value.steps = editingForm.value.steps.filter((_, i) => i !== index);
+        editingForm.value.steps = editingForm.value.steps.filter(
+            (_, i) => i !== index,
+        );
     }
 
     const otherFields = computed(() =>
-        (editingForm.value.fields ?? []).filter((f) => f.id !== editingFieldId.value),
+        (editingForm.value.fields ?? []).filter(
+            (f) => f.id !== editingFieldId.value,
+        ),
     );
 
     function addCondition() {
@@ -43,7 +52,9 @@ export function useFormSteps({ editingForm, editingField, editingFieldId, locale
     }
 
     function removeCondition(index) {
-        editingField.value.conditions = editingField.value.conditions.filter((_, i) => i !== index);
+        editingField.value.conditions = editingField.value.conditions.filter(
+            (_, i) => i !== index,
+        );
     }
 
     return { addStep, removeStep, otherFields, addCondition, removeCondition };

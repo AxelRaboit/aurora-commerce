@@ -1,8 +1,14 @@
-import { Marked } from 'marked';
-import DOMPurify from 'dompurify';
-import { createWikiLinkExtension, applyWikiLinksToHtml } from './markedExtensions/markedWikiLinks.js';
-import { createCalloutExtension } from './markedExtensions/markedCallouts.js';
-import { createCheckboxRenderer, resetCheckboxCounter } from './markedExtensions/markedCheckboxes.js';
+import { Marked } from "marked";
+import DOMPurify from "dompurify";
+import {
+    createWikiLinkExtension,
+    applyWikiLinksToHtml,
+} from "./markedExtensions/markedWikiLinks.js";
+import { createCalloutExtension } from "./markedExtensions/markedCallouts.js";
+import {
+    createCheckboxRenderer,
+    resetCheckboxCounter,
+} from "./markedExtensions/markedCheckboxes.js";
 
 /**
  * Builds a per-instance Marked parser with Aurora's note-specific
@@ -19,16 +25,23 @@ export function useMarkdownRenderer() {
         gfm: true,
         breaks: false,
     });
-    marked.use({ extensions: [createWikiLinkExtension(), createCalloutExtension()] });
+    marked.use({
+        extensions: [createWikiLinkExtension(), createCalloutExtension()],
+    });
     marked.use({ renderer: createCheckboxRenderer() });
 
     function render(markdown) {
-        if (!markdown) return '';
+        if (!markdown) return "";
         resetCheckboxCounter();
         const rawHtml = marked.parse(markdown);
         const withWikiLinks = applyWikiLinksToHtml(rawHtml);
         return DOMPurify.sanitize(withWikiLinks, {
-            ADD_ATTR: ['data-note-title', 'data-heading', 'data-checkbox-index', 'data-icon'],
+            ADD_ATTR: [
+                "data-note-title",
+                "data-heading",
+                "data-checkbox-index",
+                "data-icon",
+            ],
         });
     }
 
@@ -38,8 +51,10 @@ export function useMarkdownRenderer() {
      * target doesn't match any existing note.
      */
     function resolveWikiLink(targetTitle, noteTitles) {
-        const needle = String(targetTitle ?? '').toLowerCase();
-        const match = noteTitles.find((n) => (n.title ?? '').toLowerCase() === needle);
+        const needle = String(targetTitle ?? "").toLowerCase();
+        const match = noteTitles.find(
+            (n) => (n.title ?? "").toLowerCase() === needle,
+        );
         return match?.id ?? null;
     }
 

@@ -16,6 +16,7 @@ use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
 use Aurora\Module\Notes\Markdown\Serializer\MarkdownNoteSerializerInterface;
 use Aurora\Module\Notes\Markdown\Service\MarkdownNoteHierarchyService;
 use Aurora\Module\Notes\Markdown\View\MarkdownNotesViewBuilder;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -206,12 +207,17 @@ final class MarkdownNotesController extends AbstractController
 
         $entries = [];
         foreach ($rawEntries as $entry) {
-            if (!is_array($entry) || !isset($entry['id'])) {
+            if (!is_array($entry)) {
                 continue;
             }
+
+            if (!isset($entry['id'])) {
+                continue;
+            }
+
             $entries[] = [
                 'id' => (int) $entry['id'],
-                'parentId' => isset($entry['parentId']) && '' !== $entry['parentId'] && null !== $entry['parentId']
+                'parentId' => isset($entry['parentId']) && '' !== $entry['parentId']
                     ? (int) $entry['parentId']
                     : null,
                 'position' => (int) ($entry['position'] ?? 0),
@@ -220,7 +226,7 @@ final class MarkdownNotesController extends AbstractController
 
         try {
             $this->manager->reorder($user, $entries);
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             return $this->jsonFailure('cycle', extra: ['message' => 'Reorder would create a cycle.']);
         }
 

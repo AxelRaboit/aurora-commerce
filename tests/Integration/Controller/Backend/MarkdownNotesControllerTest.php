@@ -67,7 +67,7 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
         $response = $this->client->getResponse();
         $content = (string) $response->getContent();
 
-        self::assertSame(200, $response->getStatusCode(), 'response body: '.substr($content, 0, 800));
+        self::assertSame(200, $response->getStatusCode(), 'response body: '.mb_substr($content, 0, 800));
         self::assertStringContainsString('notes/backend/markdown/MarkdownNotesApp', $content);
     }
 
@@ -162,7 +162,7 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
         $b = $this->createNote(title: 'B');
         $c = $this->createNote(title: 'C');
 
-        [$status, ] = $this->postJson('backend_notes_markdown_reorder', [], [
+        [$status] = $this->postJson('backend_notes_markdown_reorder', [], [
             'entries' => [
                 ['id' => $c['id'], 'parentId' => null, 'position' => 0],
                 ['id' => $a['id'], 'parentId' => $c['id'], 'position' => 0],
@@ -229,7 +229,7 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
         $target = $this->createNote(title: 'Old Title');
         $referrer = $this->createNote(title: 'Referrer', content: 'See [[Old Title]] for context.');
 
-        [$status, ] = $this->postJson('backend_notes_markdown_update', ['id' => $target['id']], [
+        [$status] = $this->postJson('backend_notes_markdown_update', ['id' => $target['id']], [
             'title' => 'New Title',
         ]);
         self::assertSame(200, $status);

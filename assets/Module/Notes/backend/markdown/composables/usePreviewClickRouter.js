@@ -46,12 +46,18 @@ export function usePreviewClickRouter({ resolveWikiLink, noteTitlesGetter }) {
             };
         }
 
-        if (target.tagName === "INPUT" && target.classList.contains("task-checkbox")) {
+        if (
+            target.tagName === "INPUT" &&
+            target.classList.contains("task-checkbox")
+        ) {
             // Prevent the browser's natural toggle — we round-trip through
             // the source markdown so the checked state stays authoritative
             // server-side.
             event.preventDefault();
-            const index = Number.parseInt(target.dataset.checkboxIndex ?? "-1", 10);
+            const index = Number.parseInt(
+                target.dataset.checkboxIndex ?? "-1",
+                10,
+            );
             if (!Number.isInteger(index) || index < 0) return null;
             return { kind: "checkbox", payload: { index } };
         }

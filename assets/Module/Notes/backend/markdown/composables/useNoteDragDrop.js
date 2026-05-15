@@ -1,8 +1,8 @@
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { toast } from 'vue-sonner';
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
 
-const DATA_TYPE = 'application/x-aurora-note';
+const DATA_TYPE = "application/x-aurora-note";
 
 /**
  * Native HTML5 drag-drop for the note tree.
@@ -28,13 +28,13 @@ export function useNoteDragDrop({ api, refreshList }) {
     const { t } = useI18n();
 
     const draggingId = ref(null);
-    const dragOverId = ref(null);     // note id currently being hovered as drop target
-    const rootDragOver = ref(false);  // root sidebar background is being hovered
+    const dragOverId = ref(null); // note id currently being hovered as drop target
+    const rootDragOver = ref(false); // root sidebar background is being hovered
 
     function onDragStart(note, event) {
         if (!event.dataTransfer) return;
         draggingId.value = note.id;
-        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.effectAllowed = "move";
         event.dataTransfer.setData(DATA_TYPE, String(note.id));
     }
 
@@ -50,7 +50,7 @@ export function useNoteDragDrop({ api, refreshList }) {
         if (note.id === draggingId.value) return;
         event.preventDefault();
         event.stopPropagation();
-        event.dataTransfer.dropEffect = 'move';
+        event.dataTransfer.dropEffect = "move";
         dragOverId.value = note.id;
         rootDragOver.value = false;
     }
@@ -66,7 +66,7 @@ export function useNoteDragDrop({ api, refreshList }) {
     function onDragOverRoot(event) {
         if (!event.dataTransfer?.types.includes(DATA_TYPE)) return;
         event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
+        event.dataTransfer.dropEffect = "move";
         rootDragOver.value = true;
         dragOverId.value = null;
     }
@@ -87,9 +87,10 @@ export function useNoteDragDrop({ api, refreshList }) {
 
         const { ok, payload } = await api.move(draggedId, targetNote.id);
         if (!ok) {
-            const msg = payload?.error === 'cycle'
-                ? t('notes.markdown.errors.reorder_cycle')
-                : t('notes.markdown.errors.reorder_failed');
+            const msg =
+                payload?.error === "cycle"
+                    ? t("notes.markdown.errors.reorder_cycle")
+                    : t("notes.markdown.errors.reorder_failed");
             toast.error(msg);
         }
         await refreshList();
@@ -104,7 +105,7 @@ export function useNoteDragDrop({ api, refreshList }) {
 
         const { ok } = await api.move(draggedId, null);
         if (!ok) {
-            toast.error(t('notes.markdown.errors.reorder_failed'));
+            toast.error(t("notes.markdown.errors.reorder_failed"));
         }
         await refreshList();
     }

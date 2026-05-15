@@ -18,7 +18,8 @@ export function useTermFormHelpers() {
     function normalizeAllLocaleSlugs(termForm, locales) {
         for (const locale of locales) {
             const entry = termForm.translations?.[locale];
-            if (entry?.name) entry.slug = slugifyIfEmpty(entry.slug, entry.name);
+            if (entry?.name)
+                entry.slug = slugifyIfEmpty(entry.slug, entry.name);
         }
     }
 
