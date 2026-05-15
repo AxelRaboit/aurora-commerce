@@ -67,6 +67,19 @@ final class GalleryFinalizationTest extends TestCase
         self::assertNull($finalization->getVisitorEmail());
     }
 
+    public function testReferenceGetterAndSetter(): void
+    {
+        $finalization = new GalleryFinalization();
+
+        self::assertNull($finalization->getReference());
+
+        $finalization->setReference('REF-FIN-001');
+        self::assertSame('REF-FIN-001', $finalization->getReference());
+
+        $finalization->setReference(null);
+        self::assertNull($finalization->getReference());
+    }
+
     public function testSettersReturnSelf(): void
     {
         $finalization = new GalleryFinalization();
@@ -75,5 +88,6 @@ final class GalleryFinalizationTest extends TestCase
         self::assertSame($finalization, $finalization->setVisitorToken('t'));
         self::assertSame($finalization, $finalization->setVisitorName('n'));
         self::assertSame($finalization, $finalization->setVisitorEmail('e@x.com'));
+        self::assertSame($finalization, $finalization->setReference('r'));
     }
 }
