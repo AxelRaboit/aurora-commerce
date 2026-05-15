@@ -140,21 +140,19 @@ const parentOptions = computed(() => {
                 </AppButton>
             </div>
             <div class="space-y-1">
-                <button
+                <AppButton
                     v-for="taxonomy in taxonomies"
                     :key="taxonomy.id"
-                    type="button"
-                    class="w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
-                    :class="selectedId === taxonomy.id
-                        ? 'bg-accent-600/15 text-accent-400 border border-accent-600/30'
-                        : 'bg-surface hover:bg-surface-2 text-primary border border-line/60'"
+                    variant="nav"
+                    size="nav"
+                    :active="selectedId === taxonomy.id"
                     v-on:click="selectedId = taxonomy.id"
                 >
                     <FolderTree v-if="taxonomy.hierarchical" class="w-4 h-4 shrink-0" :stroke-width="2" />
                     <Folder v-else class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    <span class="flex-1 text-sm font-medium truncate">{{ translationLabel(taxonomy, activeLocale) }}</span>
+                    <span class="flex-1 font-medium truncate">{{ translationLabel(taxonomy, activeLocale) }}</span>
                     <Lock v-if="taxonomy.isBuiltIn" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('backend.taxonomies.builtIn')" />
-                </button>
+                </AppButton>
             </div>
         </aside>
 
