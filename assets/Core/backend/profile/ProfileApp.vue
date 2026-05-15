@@ -34,6 +34,7 @@ const props = defineProps({
     deletePath: { type: String, required: true },
     loginPath: { type: String, required: true },
     deleteCsrf: { type: String, default: "" },
+    canDeleteAccount: { type: Boolean, default: true },
 });
 
 const { selectedLocale, localeLoading, changeLocale } = useProfileLocale(props.localePath, props.locale);
@@ -196,10 +197,18 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                 <h2 class="text-lg font-semibold text-rose-400">{{ t('backend.profile.danger.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('backend.profile.danger.description') }}</p>
             </header>
-            <AppButton variant="danger" size="md" :disabled="deleteLoading" v-on:click="deleteAccount">
+            <AppButton
+                variant="danger"
+                size="md"
+                :disabled="deleteLoading || !canDeleteAccount"
+                v-on:click="deleteAccount"
+            >
                 <Trash2 class="w-4 h-4" :stroke-width="2" />
                 {{ t('backend.profile.danger.submit') }}
             </AppButton>
+            <p v-if="!canDeleteAccount" class="mt-3 text-xs text-muted">
+                {{ t('backend.profile.danger.dev_protected') }}
+            </p>
         </div>
     </div>
 </template>

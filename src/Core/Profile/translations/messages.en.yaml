@@ -6,6 +6,7 @@ backend:
       email_taken: This email address is already in use.
       invalid_csrf: Invalid security token.
       invalid_locale: Unsupported language.
+      last_dev_protected: You are the last developer of this instance. Promote another user to the Dev role before deleting your account.
       name_required: Name is required.
       password_mismatch: Passwords do not match.
       password_too_short: The password must be at least 8 characters long.
@@ -47,6 +48,7 @@ backend:
       description: Deleting your account is irreversible. All your data will be permanently erased.
       submit: Delete my account
       confirm: Are you sure you want to delete your account? This action cannot be undone.
+      dev_protected: You are the last developer of this instance. Promote another user to the Dev role to be able to delete this account.
   impersonation:
     banner: 'You are impersonating {name}'
     leave: Leave

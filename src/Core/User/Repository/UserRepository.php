@@ -71,6 +71,20 @@ class UserRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Number of users with the given role + type. Used by the profile page
+     * to refuse self-deletion when the user would be the last dev/admin.
+     */
+    public function countByRoleAndType(string $role, UserTypeEnum $type): int
+    {
+        $sql = 'SELECT COUNT(*) FROM core_users WHERE type = :type AND roles::text LIKE :role';
+
+        return (int) $this->getEntityManager()->getConnection()->fetchOne($sql, [
+            'type' => $type->value,
+            'role' => '%"'.$role.'"%',
+        ]);
+    }
+
+    /**
      * @return list<int>
      */
     private function findIdsWithRole(string $role): array

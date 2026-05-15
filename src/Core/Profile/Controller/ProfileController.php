@@ -17,6 +17,7 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\Manager\UserProfilePhotoManagerInterface;
+use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,12 +42,16 @@ final class ProfileController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly UserProfilePhotoManagerInterface $userProfilePhotoManager,
         private readonly ProfileViewBuilder $viewBuilder,
+        private readonly UserRepository $userRepository,
     ) {}
 
     #[Route('', name: '')]
     public function index(): Response
     {
-        return $this->render('@Core/backend/profile/index.html.twig', $this->viewBuilder->indexView());
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->render('@Core/backend/profile/index.html.twig', $this->viewBuilder->indexView($user));
     }
 
     #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -102,11 +107,30 @@ final class ProfileController extends AbstractController
             return $this->jsonFailure($this->translator->trans('backend.profile.errors.invalid_csrf'), HttpStatusEnum::Forbidden->value);
         }
 
+        if ($this->isLastDevOfType($user)) {
+            return $this->jsonFailure($this->translator->trans('backend.profile.errors.last_dev_protected'), HttpStatusEnum::Forbidden->value);
+        }
+
         $tokenStorage->setToken(null);
         $request->getSession()->invalidate();
         $this->userManager->delete($user);
 
         return $this->jsonSuccess();
+    }
+
+    /**
+     * Protects the seed/last developer account: an instance must always retain
+     * at least one ROLE_DEV user of the same scope (Backend or Frontend).
+     * Without this guard, deleting the only dev would lock the app out of any
+     * dev-only operation (impersonation, advanced settings, etc.).
+     */
+    private function isLastDevOfType(User $user): bool
+    {
+        if (!\in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
+            return false;
+        }
+
+        return 1 === $this->userRepository->countByRoleAndType(UserRoleEnum::Dev->value, $user->getType());
     }
 
     #[Route('/mood', name: '_mood', methods: [HttpMethodEnum::Post->value])]
