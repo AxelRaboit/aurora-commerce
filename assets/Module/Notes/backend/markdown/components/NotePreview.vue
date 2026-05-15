@@ -9,7 +9,7 @@ const props = defineProps({
 
 const emit = defineEmits(['wiki-link-click', 'checkbox-toggle']);
 
-const { render } = useMarkdownRenderer();
+const { render, resolveWikiLink } = useMarkdownRenderer();
 const html = computed(() => render(props.content));
 
 function onClick(event) {
@@ -21,10 +21,11 @@ function onClick(event) {
         event.preventDefault();
         const noteTitle = target.dataset.noteTitle ?? '';
         const heading = target.dataset.heading ?? '';
-        const match = props.noteTitles.find(
-            (n) => (n.title ?? '').toLowerCase() === noteTitle.toLowerCase(),
-        );
-        emit('wiki-link-click', { noteTitle, heading, matchedId: match?.id ?? null });
+        emit('wiki-link-click', {
+            noteTitle,
+            heading,
+            matchedId: resolveWikiLink(noteTitle, props.noteTitles),
+        });
         return;
     }
 

@@ -18,6 +18,7 @@ import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
+import AppTab from '@shared/components/nav/AppTab.vue';
 import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose, X } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -82,6 +83,12 @@ const {
     onDropOnRoot,
 } = useNoteDragDrop({ api, refreshList });
 const { mode: viewMode } = useViewMode();
+
+const viewModeOptions = [
+    { value: 'edit', icon: Pencil, label: t('notes.markdown.view.edit') },
+    { value: 'split', icon: Columns, label: t('notes.markdown.view.split') },
+    { value: 'preview', icon: Eye, label: t('notes.markdown.view.preview') },
+];
 
 // Editor pane width in split mode — drag the seam between editor and preview.
 const editorPaneRef = ref(null);
@@ -178,25 +185,20 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         <PanelRightOpen v-else class="w-4 h-4" :stroke-width="2" />
                     </AppIconButton>
 
-                    <!-- View mode toggle (edit / split / preview) -->
+                    <!-- View mode toggle (edit / split / preview) — segmented AppTab control -->
                     <div class="inline-flex rounded-md border border-line overflow-hidden">
-                        <button
-                            v-for="opt in [
-                                { value: 'edit', icon: Pencil, label: t('notes.markdown.view.edit') },
-                                { value: 'split', icon: Columns, label: t('notes.markdown.view.split') },
-                                { value: 'preview', icon: Eye, label: t('notes.markdown.view.preview') },
-                            ]"
+                        <AppTab
+                            v-for="opt in viewModeOptions"
                             :key="opt.value"
-                            type="button"
-                            class="px-2.5 py-1.5 text-sm transition-colors"
-                            :class="viewMode === opt.value
-                                ? 'bg-accent-100 dark:bg-accent-900/30 text-primary'
-                                : 'bg-surface text-muted hover:text-secondary'"
+                            size="sm"
+                            align="center"
+                            shape-class="rounded-none"
+                            :active="viewMode === opt.value"
                             :title="opt.label"
                             v-on:click="viewMode = opt.value"
                         >
                             <component :is="opt.icon" class="w-4 h-4" :stroke-width="2" />
-                        </button>
+                        </AppTab>
                     </div>
 
                     <AppButton

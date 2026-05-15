@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { ChevronRight, ChevronDown, GripVertical, Plus } from 'lucide-vue-next';
+import { ChevronRight, ChevronDown, Folder, FileText, Plus } from 'lucide-vue-next';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 
 const props = defineProps({
@@ -9,6 +9,7 @@ const props = defineProps({
     draggable: { type: Boolean, default: false },
     draggingId: { type: Number, default: null },
     dragOverId: { type: Number, default: null },
+    depth: { type: Number, default: 0 },
 });
 
 const emit = defineEmits([
@@ -28,18 +29,26 @@ const hasChildren = computed(() => children.value.length > 0);
 const isSelected = computed(() => props.selectedId === props.node.id);
 const isDragOver = computed(() => props.dragOverId === props.node.id);
 const isBeingDragged = computed(() => props.draggingId === props.node.id);
+
+// Indent applied to the card itself so its right edge stays flush with
+// the sidebar (same convention as TermNode / media folder rows).
+const indentStyle = computed(() => ({ marginLeft: `${props.depth * 1}rem` }));
 </script>
 
 <template>
     <div>
         <div
-            class="group flex items-center gap-0.5 px-1.5 py-1 rounded-md cursor-pointer text-sm border border-transparent transition-colors"
+            class="group flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors min-w-0 text-sm"
             :class="[
-                isDragOver ? 'bg-accent-100 dark:bg-accent-900/40 border-accent-500 text-primary ring-1 ring-accent-500/60' :
-                isSelected ? 'bg-accent-100 dark:bg-accent-900/30 text-primary border-accent-500/30' :
-                'hover:bg-surface-2 text-secondary',
+                isDragOver
+                    ? 'bg-accent-600/15 text-accent-400 border-accent-600/30 ring-2 ring-accent-500'
+                    : isSelected
+                        ? 'bg-accent-600/15 text-accent-400 border-accent-600/30'
+                        : 'hover:bg-surface-2 text-primary border-transparent',
                 isBeingDragged ? 'opacity-40' : '',
+                draggable ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
             ]"
+            :style="indentStyle"
             :draggable="draggable"
             v-on:click="emit('select', node.id)"
             v-on:dragstart="emit('drag-start', node, $event)"
@@ -48,27 +57,27 @@ const isBeingDragged = computed(() => props.draggingId === props.node.id);
             v-on:dragleave="emit('drag-leave', node, $event)"
             v-on:drop="emit('drop', node, $event)"
         >
-            <span
-                v-if="draggable"
-                class="shrink-0 text-muted cursor-grab active:cursor-grabbing p-0.5"
-                :title="$t('notes.markdown.drag_handle')"
-            >
-                <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
-            </span>
-
             <AppIconButton
                 v-if="hasChildren"
                 size="sm"
                 variant="ghost"
-                class="p-0.5"
+                class="-ml-1 shrink-0"
+                :title="expanded ? $t('shared.common.collapse') : $t('shared.common.expand')"
                 v-on:click.stop="expanded = !expanded"
             >
-                <ChevronDown v-if="expanded" class="w-3.5 h-3.5" :stroke-width="2" />
-                <ChevronRight v-else class="w-3.5 h-3.5" :stroke-width="2" />
+                <ChevronDown v-if="expanded" class="w-3 h-3" :stroke-width="2" />
+                <ChevronRight v-else class="w-3 h-3" :stroke-width="2" />
             </AppIconButton>
-            <span v-else class="w-5 shrink-0" />
+            <span v-else class="w-4 shrink-0" />
 
-            <span class="truncate flex-1">
+            <component
+                :is="hasChildren ? Folder : FileText"
+                class="w-4 h-4 shrink-0"
+                :class="isSelected || isDragOver ? 'text-accent-400' : 'text-muted'"
+                :stroke-width="2"
+            />
+
+            <span class="flex-1 truncate min-w-0">
                 {{ node.title || $t('notes.markdown.untitled') }}
             </span>
 
@@ -83,7 +92,7 @@ const isBeingDragged = computed(() => props.draggingId === props.node.id);
             </AppIconButton>
         </div>
 
-        <div v-if="hasChildren && expanded" class="ml-3 pl-3 border-l border-line/40 space-y-0.5">
+        <div v-if="hasChildren && expanded" class="space-y-0.5 mt-0.5">
             <NoteTreeItem
                 v-for="child in children"
                 :key="child.id"
@@ -92,6 +101,7 @@ const isBeingDragged = computed(() => props.draggingId === props.node.id);
                 :draggable="draggable"
                 :dragging-id="draggingId"
                 :drag-over-id="dragOverId"
+                :depth="depth + 1"
                 v-on:select="(id) => emit('select', id)"
                 v-on:create-child="(id) => emit('create-child', id)"
                 v-on:drag-start="(n, e) => emit('drag-start', n, e)"

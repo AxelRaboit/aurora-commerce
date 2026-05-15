@@ -32,5 +32,16 @@ export function useMarkdownRenderer() {
         });
     }
 
-    return { render };
+    /**
+     * Resolve a wiki-link target title (case-insensitive) to a note id by
+     * scanning a list of `{id, title}` candidates. Returns null when the
+     * target doesn't match any existing note.
+     */
+    function resolveWikiLink(targetTitle, noteTitles) {
+        const needle = String(targetTitle ?? '').toLowerCase();
+        const match = noteTitles.find((n) => (n.title ?? '').toLowerCase() === needle);
+        return match?.id ?? null;
+    }
+
+    return { render, resolveWikiLink };
 }
