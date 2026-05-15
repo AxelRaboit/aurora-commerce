@@ -1,6 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
-import { VueDraggable } from "vue-draggable-plus";
+import { computed } from "vue";
 import { ChevronDown, ChevronRight, GripVertical, Pencil, Trash2, Plus } from "lucide-vue-next";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -9,40 +8,58 @@ const props = defineProps({
     node: { type: Object, required: true },
     hierarchical: { type: Boolean, default: false },
     activeLocale: { type: String, required: true },
-    groupName: { type: String, required: true },
     collapsed: { type: Object, required: true },
+    draggingId: { type: Number, default: null },
+    dragOverId: { type: Number, default: null },
 });
 
-const emit = defineEmits(["edit", "delete", "add-child", "toggle-collapse", "end"]);
+const emit = defineEmits([
+    "edit",
+    "delete",
+    "add-child",
+    "toggle-collapse",
+    "term-drag-start",
+    "term-drag-end",
+    "term-drag-over",
+    "term-drag-leave",
+    "drop-on-term",
+]);
 
-const name = computed(() => props.node.translations?.[props.activeLocale]?.name
-    ?? props.node.translations?.fr?.name
-    ?? "(—)");
+const name = computed(
+    () =>
+        props.node.translations?.[props.activeLocale]?.name
+        ?? props.node.translations?.fr?.name
+        ?? "(—)",
+);
 
 const isCollapsed = computed(() => props.collapsed.has(props.node.id));
-const localChildren = ref([...(props.node.children ?? [])]);
-watch(() => props.node.children, (children) => { localChildren.value = [...(children ?? [])]; });
-const hasChildren = computed(() => localChildren.value.length > 0);
-
+const children = computed(() => props.node.children ?? []);
+const hasChildren = computed(() => children.value.length > 0);
+const isDragOver = computed(() => props.dragOverId === props.node.id);
+const isBeingDragged = computed(() => props.draggingId === props.node.id);
 </script>
 
 <template>
-    <div class="border border-line rounded-md bg-surface">
+    <div
+        class="border rounded-md bg-surface transition-colors"
+        :class="[
+            isDragOver ? 'border-accent-500 ring-1 ring-accent-500/60 bg-accent-50 dark:bg-accent-900/30' :
+            'border-line',
+            isBeingDragged ? 'opacity-40' : '',
+        ]"
+        :draggable="true"
+        v-on:dragstart.stop="emit('term-drag-start', node, $event)"
+        v-on:dragend="emit('term-drag-end', $event)"
+        v-on:dragover="emit('term-drag-over', node, $event)"
+        v-on:dragleave="emit('term-drag-leave', node, $event)"
+        v-on:drop="emit('drop-on-term', node, $event)"
+    >
         <div class="flex items-center gap-1 px-2 py-1.5">
             <AppButton
-                v-if="hierarchical"
                 variant="ghost"
                 size="none"
-                class="drag-handle cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1"
+                class="cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1"
                 :title="'drag'"
-            >
-                <GripVertical class="w-4 h-4" :stroke-width="2" />
-            </AppButton>
-            <AppButton
-                v-else
-                variant="ghost"
-                size="none"
-                class="drag-handle cursor-grab active:cursor-grabbing text-muted hover:text-primary p-1"
             >
                 <GripVertical class="w-4 h-4" :stroke-width="2" />
             </AppButton>
@@ -73,30 +90,31 @@ const hasChildren = computed(() => localChildren.value.length > 0);
             </div>
         </div>
 
-        <VueDraggable
-            v-if="hierarchical && !isCollapsed"
-            v-model="localChildren"
-            :group="{ name: groupName, pull: true, put: true }"
-            handle=".drag-handle"
-            :animation="150"
-            ghost-class="opacity-50"
-            class="pl-5 pb-1 space-y-1 min-h-1"
-            v-on:end="emit('end')"
-        >
-            <template v-for="child in localChildren" :key="child.id">
-                <TermNode
-                    :node="child"
-                    :hierarchical="hierarchical"
-                    :active-locale="activeLocale"
-                    :group-name="groupName"
-                    :collapsed="collapsed"
-                    v-on:toggle-collapse="emit('toggle-collapse', $event)"
-                    v-on:edit="emit('edit', $event)"
-                    v-on:delete="emit('delete', $event)"
-                    v-on:add-child="emit('add-child', $event)"
-                    v-on:end="emit('end')"
-                />
-            </template>
-        </VueDraggable>
+        <!--
+            Children container — plain stack, no VueDraggable. Each row is its
+            own drop target via native HTML5 DnD, so this just provides the
+            indented visual layout.
+        -->
+        <div v-if="hierarchical && !isCollapsed && hasChildren" class="pl-5 pb-1 space-y-1">
+            <TermNode
+                v-for="child in children"
+                :key="child.id"
+                :node="child"
+                :hierarchical="hierarchical"
+                :active-locale="activeLocale"
+                :collapsed="collapsed"
+                :dragging-id="draggingId"
+                :drag-over-id="dragOverId"
+                v-on:toggle-collapse="emit('toggle-collapse', $event)"
+                v-on:edit="emit('edit', $event)"
+                v-on:delete="emit('delete', $event)"
+                v-on:add-child="emit('add-child', $event)"
+                v-on:term-drag-start="(n, e) => emit('term-drag-start', n, e)"
+                v-on:term-drag-end="(e) => emit('term-drag-end', e)"
+                v-on:term-drag-over="(n, e) => emit('term-drag-over', n, e)"
+                v-on:term-drag-leave="(n, e) => emit('term-drag-leave', n, e)"
+                v-on:drop-on-term="(n, e) => emit('drop-on-term', n, e)"
+            />
+        </div>
     </div>
 </template>

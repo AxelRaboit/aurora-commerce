@@ -3,7 +3,6 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useFormModal } from "@/shared/composables/form/useFormModal.js";
-import { VueDraggable } from "vue-draggable-plus";
 import { useTaxonomySelect } from "@editorial/backend/taxonomies/composables/useTaxonomySelect.js";
 import { useTaxonomyTree } from "@editorial/backend/taxonomies/composables/useTaxonomyTree.js";
 import { useTaxonomyDelete } from "@editorial/backend/taxonomies/composables/useTaxonomyDelete.js";
@@ -46,8 +45,12 @@ const { taxonomies, selectedId, activeLocale, selected, replaceTaxonomy, transla
 
 const flatTerms = computed(() => selected.value?.terms ?? []);
 
-const { tree, dragging, collapsed, toggleCollapsed, onDragEnd, flatTermsForParentSelect, collectDescendantIds, findNodeInTree } =
-    useTaxonomyTree(selected, flatTerms, props.termReorderPath, props.locales, activeLocale, replaceTaxonomy, termName);
+const {
+    tree, collapsed, toggleCollapsed, flatTermsForParentSelect, collectDescendantIds, findNodeInTree,
+    draggingId, dragOverId, rootDragOver,
+    onTermDragStart, onTermDragEnd, onTermDragOver, onTermDragLeave,
+    onRootDragOver, onRootDragLeave, onDropOnTerm, onDropOnRoot,
+} = useTaxonomyTree(selected, flatTerms, props.termReorderPath, props.locales, activeLocale, replaceTaxonomy, termName);
 
 const { deletingTaxonomy, confirmDeleteTaxonomy } = useTaxonomyDelete(props.deletePath, taxonomies, selectedId);
 const { deletingTerm, confirmDeleteTerm } = useTermDelete(props.termDeletePath, selected, replaceTaxonomy);
@@ -222,32 +225,34 @@ const parentOptions = computed(() => {
 
                     <AppNoData v-if="!tree.length" :message="t('backend.taxonomies.terms.empty')" />
 
-                    <VueDraggable
+                    <div
                         v-else
-                        v-model="tree"
-                        :group="{ name: `taxonomy-${selected.id}`, pull: true, put: true }"
-                        handle=".drag-handle"
-                        :animation="150"
-                        ghost-class="opacity-50"
-                        class="space-y-1"
-                        v-on:start="dragging = true"
-                        v-on:end="onDragEnd"
+                        class="space-y-1 p-1 rounded-md transition-colors"
+                        :class="rootDragOver ? 'bg-accent-50 dark:bg-accent-900/10 ring-1 ring-accent-500/40' : ''"
+                        v-on:dragover="onRootDragOver"
+                        v-on:dragleave="onRootDragLeave"
+                        v-on:drop="onDropOnRoot"
                     >
-                        <template v-for="node in tree" :key="node.id">
-                            <TermNode
-                                :node="node"
-                                :hierarchical="selected.hierarchical"
-                                :active-locale="activeLocale"
-                                :group-name="`taxonomy-${selected.id}`"
-                                :collapsed="collapsed"
-                                v-on:toggle-collapse="toggleCollapsed($event)"
-                                v-on:edit="openEditTerm($event)"
-                                v-on:delete="deletingTerm = $event"
-                                v-on:add-child="openCreateTerm($event)"
-                                v-on:end="onDragEnd"
-                            />
-                        </template>
-                    </VueDraggable>
+                        <TermNode
+                            v-for="node in tree"
+                            :key="node.id"
+                            :node="node"
+                            :hierarchical="selected.hierarchical"
+                            :active-locale="activeLocale"
+                            :collapsed="collapsed"
+                            :dragging-id="draggingId"
+                            :drag-over-id="dragOverId"
+                            v-on:toggle-collapse="toggleCollapsed($event)"
+                            v-on:edit="openEditTerm($event)"
+                            v-on:delete="deletingTerm = $event"
+                            v-on:add-child="openCreateTerm($event)"
+                            v-on:term-drag-start="onTermDragStart"
+                            v-on:term-drag-end="onTermDragEnd"
+                            v-on:term-drag-over="onTermDragOver"
+                            v-on:term-drag-leave="onTermDragLeave"
+                            v-on:drop-on-term="onDropOnTerm"
+                        />
+                    </div>
                 </div>
             </div>
         </main>
