@@ -24,6 +24,8 @@ client.
   finders custom (limite assumée : pas d'interface aurora-core)
 - [pattern_override_twig.md](pattern_override_twig.md) — namespace prepend
   automatique du bundle
+- [pattern_extend_seo.md](pattern_extend_seo.md) — configurer le SEO d'une
+  page publique via `{% block seo_define %}{% do seo({...}) %}{% endblock %}`
 
 ## Index — patterns avancés
 

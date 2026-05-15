@@ -93,24 +93,26 @@ Tous les templates sous `Frontend/themes/default/` sont overridables :
 
 | Chemin | Rôle |
 |---|---|
-| `layout.html.twig` | Layout principal (nav, footer, `<head>`) |
-| `partials/head.html.twig` | Meta SEO, og:, scripts |
-| `auth/login.html.twig` | Page login |
-| `auth/register.html.twig` | Page inscription |
-| `auth/account.html.twig` | Compte utilisateur |
-| `editorial/home.html.twig` | Accueil éditorial |
-| `editorial/post.html.twig` | Article/page |
-| `editorial/archive.html.twig` | Archive (liste par type) |
-| `editorial/term.html.twig` | Terme de taxonomie |
-| `editorial/_post_card.html.twig` | Carte article (partial) |
-| `editorial/form.html.twig` | Formulaire public |
-| `ecommerce/shop_index.html.twig` | Boutique (liste) |
-| `ecommerce/shop_product.html.twig` | Fiche produit |
-| `ecommerce/cart.html.twig` | Panier |
-| `ecommerce/checkout.html.twig` | Commande |
+| `layout.html.twig` | Layout principal (nav, footer, `<head>`, **block `seo_define`**) |
+| `partials/head.html.twig` | Meta SEO, OG, Twitter Cards, scripts — lit `seo_current()` |
+| `auth/layout.html.twig` | Sub-layout auth (header simplifié) |
+| `auth/{login,register,register_confirm,forgot_password,reset_password,verify_email,account}.html.twig` | Pages auth |
+| `editorial/home/index.html.twig` | Accueil éditorial |
+| `editorial/post/index.html.twig` | Article/page |
+| `editorial/archive/index.html.twig` | Archive (liste par type) |
+| `editorial/term/index.html.twig` | Terme de taxonomie |
+| `editorial/form/index.html.twig` | Formulaire public |
+| `ecommerce/shop/{index,product,category,tag}.html.twig` | Boutique |
+| `ecommerce/{cart,checkout}.html.twig` | Panier / Commande |
+| `ecommerce/order/show.html.twig` | Récap commande |
+| `ecommerce/account/orders.html.twig` | Compte — commandes |
 | `photo/gallery/layout.html.twig` | Layout galerie photo |
-| `photo/gallery/index.html.twig` | Vue galerie photo |
+| `photo/gallery/{index,unlock}.html.twig` | Vue galerie photo |
 | `ged/documents/index.html.twig` | Bibliothèque GED |
+
+**SEO** : voir [`convention_seo_head.md`](convention_seo_head.md) — chaque passerelle
+override `{% block seo_define %}{% do seo({...}) %}{% endblock %}` ; ne **pas** utiliser
+`{% block title %}` / `{% block og_image %}` etc. (code mort silencieux, cf. la doc).
 
 ---
 
@@ -135,21 +137,21 @@ Si le thème custom override `_post_card`, c'est sa version qui sera incluse.
 
 ## Exemple minimal : bannière custom sur la home
 
-`templates/Frontend/themes/demo/editorial/home.html.twig` :
+`templates/Frontend/themes/demo/editorial/home/index.html.twig` :
 
 ```twig
 {% extends 'Frontend/themes/default/layout.html.twig' %}
 
-{% block title %}{{ context.siteName }}{% endblock %}
+{% block seo_define %}{% do seo({title: 'Accueil — démo'}) %}{% endblock %}
 
 {% block body %}
     <div class="mb-6 p-4 bg-amber-500/20 border border-amber-500/40 rounded-lg text-sm">
         Bienvenue sur le thème Demo !
     </div>
 
-    {# Copier le reste du contenu depuis default/editorial/home.html.twig #}
+    {# Copier le reste du contenu depuis default/editorial/home/index.html.twig #}
 {% endblock %}
 ```
 
-Seul `editorial/home.html.twig` est overridé — tous les autres templates
+Seul `editorial/home/index.html.twig` est overridé — tous les autres templates
 (archive, post, shop, auth…) continuent d'utiliser `default`.
