@@ -17,11 +17,11 @@ const emit = defineEmits(['select', 'create-child', 'drag-start', 'drag-end', 'u
 const expanded = ref(true);
 
 /**
- * Computed children with get/set — same pattern as ListingCategoryNode.
- * Reading returns the live array (shared reference with the parent tree,
- * so VueDraggable's in-place splice/push mutations propagate to
- * tree.value automatically). The setter is a safety net for the rare
- * case where vue-draggable-plus replaces the array entirely.
+ * Computed children with get/set — matches the ListingCategoryNode
+ * pattern. The getter returns the live array (shared reference with
+ * tree.value), so VueDraggable's in-place mutations propagate up. The
+ * setter is a safety net for the rare case where the lib replaces the
+ * array wholesale.
  */
 const children = computed({
     get: () => props.node.children ?? [],
@@ -32,7 +32,7 @@ const isSelected = computed(() => props.selectedId === props.node.id);
 </script>
 
 <template>
-    <div class="space-y-0.5">
+    <div>
         <div
             class="group flex items-center gap-0.5 px-1.5 py-1 rounded-md cursor-pointer text-sm border border-transparent"
             :class="[
@@ -77,11 +77,12 @@ const isSelected = computed(() => props.selectedId === props.node.id);
         </div>
 
         <!--
-            Children container — always rendered as a VueDraggable when drag
-            is on, so empty parents are still valid drop targets. The pl-5
-            indent + persistent left border give a visible drop zone even
-            when no children exist; the zone grows on drag-over to make
-            'drop as child of this note' obvious.
+            Children container — kept compact at rest (no extra vertical
+            space between siblings) and grown only on .drag-active body
+            class, which we toggle while a drag is in flight. emptyInsertThreshold
+            extends Sortable's drop-target detection beyond the visible
+            bounds so the user doesn't have to aim precisely at a 1px
+            empty container.
         -->
         <VueDraggable
             v-if="draggable && expanded"
@@ -90,10 +91,10 @@ const isSelected = computed(() => props.selectedId === props.node.id);
             handle=".drag-handle"
             :animation="150"
             ghost-class="opacity-50"
-            drag-class="drag-active"
+            :empty-insert-threshold="24"
             tag="div"
-            class="ml-3 pl-3 border-l border-line/40 space-y-0.5 transition-[min-height,border-color] py-0.5"
-            :class="hasChildren ? 'min-h-[1.5rem]' : 'min-h-[2rem] hover:border-accent-500/60 hover:bg-accent-50/30 dark:hover:bg-accent-900/10'"
+            class="notes-children ml-3 pl-3 border-l border-line/40 space-y-0.5 transition-[min-height,border-color,background-color]"
+            :class="hasChildren ? '' : 'notes-children-empty'"
             v-on:start="emit('drag-start')"
             v-on:end="emit('drag-end')"
         >
@@ -126,3 +127,30 @@ const isSelected = computed(() => props.selectedId === props.node.id);
         </div>
     </div>
 </template>
+
+<!--
+    Non-scoped: body.notes-dragging is set on the document, the children
+    container lives inside the component. Scoping the rules would mismatch
+    the global body class.
+-->
+<style>
+/* At rest, empty children container takes no vertical space — tree stays compact. */
+.notes-children-empty {
+    min-height: 2px;
+    border-left-color: transparent !important;
+}
+
+/* During an active drag, every empty children container grows so users
+   can clearly aim 'drop as a child here'. The hover state highlights
+   the specific drop target in accent. */
+body.notes-dragging .notes-children-empty {
+    min-height: 1.75rem;
+    border-left-color: var(--color-line, #e5e7eb) !important;
+    background-color: rgba(127, 127, 127, 0.04);
+}
+
+body.notes-dragging .notes-children-empty:hover {
+    border-left-color: var(--color-accent-500, #0ea5e9) !important;
+    background-color: rgba(14, 165, 233, 0.08);
+}
+</style>

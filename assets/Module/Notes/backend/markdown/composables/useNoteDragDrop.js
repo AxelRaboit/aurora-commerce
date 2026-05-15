@@ -3,6 +3,8 @@ import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 import { flattenTreeForReorder } from '@/shared/composables/tree/useHierarchicalTree.js';
 
+const BODY_DRAGGING_CLASS = 'notes-dragging';
+
 /**
  * Drag-drop hierarchy editing for the note tree.
  *
@@ -12,6 +14,10 @@ import { flattenTreeForReorder } from '@/shared/composables/tree/useHierarchical
  * the whole structure in one shot. The backend `reorder` endpoint
  * applies all parent + position changes atomically and detects cycles
  * up-front.
+ *
+ * Also toggles a `body.notes-dragging` class so empty children
+ * containers can expand into easy-to-hit drop zones via CSS only,
+ * without per-component reactive plumbing.
  */
 export function useNoteDragDrop({ tree, api, refreshList }) {
     const { t } = useI18n();
@@ -19,6 +25,12 @@ export function useNoteDragDrop({ tree, api, refreshList }) {
 
     function onStart() {
         dragging.value = true;
+        document.body.classList.add(BODY_DRAGGING_CLASS);
+    }
+
+    function teardown() {
+        dragging.value = false;
+        document.body.classList.remove(BODY_DRAGGING_CLASS);
     }
 
     /**
@@ -27,7 +39,7 @@ export function useNoteDragDrop({ tree, api, refreshList }) {
      */
     async function onEnd() {
         await nextTick();
-        dragging.value = false;
+        teardown();
 
         const entries = flattenTreeForReorder(tree.value);
         if (entries.length === 0) return;
