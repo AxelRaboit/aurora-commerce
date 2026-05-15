@@ -79,7 +79,7 @@ class AuthController extends AbstractController
         $registrationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::FrontRegistrationEnabled->value);
 
         if (!$registrationEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
-            return $this->render($this->themeResolver->resolve('auth/register'), $this->viewBuilder->registerView(
+            return $this->render($this->themeResolver->resolve('auth/register/index'), $this->viewBuilder->registerView(
                 $locale,
                 $registrationEnabled,
                 [],
@@ -102,7 +102,7 @@ class AuthController extends AbstractController
             return $this->redirectToRoute('frontend_register_confirm', ['locale' => $locale]);
         }
 
-        return $this->render($this->themeResolver->resolve('auth/register'), $this->viewBuilder->registerView(
+        return $this->render($this->themeResolver->resolve('auth/register/index'), $this->viewBuilder->registerView(
             $locale,
             true,
             $errors,
@@ -122,7 +122,7 @@ class AuthController extends AbstractController
         $pendingEmail = $request->getSession()->get('_front_pending_email');
         $resent = $request->query->getBoolean('resent');
 
-        return $this->render($this->themeResolver->resolve('auth/register_confirm'), $this->viewBuilder->registerConfirmView(
+        return $this->render($this->themeResolver->resolve('auth/register/confirm'), $this->viewBuilder->registerConfirmView(
             $locale,
             is_string($pendingEmail) ? $pendingEmail : null,
             $resent,
@@ -173,7 +173,7 @@ class AuthController extends AbstractController
             $sent = true;
         }
 
-        return $this->render($this->themeResolver->resolve('auth/forgot_password'), $this->viewBuilder->forgotPasswordView($locale, $sent));
+        return $this->render($this->themeResolver->resolve('auth/password/forgot'), $this->viewBuilder->forgotPasswordView($locale, $sent));
     }
 
     #[Route('/{locale}/reset-password/{selector}/{token}', name: 'frontend_reset_password', requirements: ['locale' => '[a-z]{2}'], priority: 8)]
@@ -189,7 +189,7 @@ class AuthController extends AbstractController
         $resetRequest = $this->frontUserManager->validateResetToken($selector, $token);
 
         if (!$resetRequest instanceof ResetPasswordRequest) {
-            return $this->render($this->themeResolver->resolve('auth/reset_password'), $this->viewBuilder->resetPasswordView(
+            return $this->render($this->themeResolver->resolve('auth/password/reset'), $this->viewBuilder->resetPasswordView(
                 $locale,
                 $selector,
                 $token,
@@ -217,7 +217,7 @@ class AuthController extends AbstractController
             }
         }
 
-        return $this->render($this->themeResolver->resolve('auth/reset_password'), $this->viewBuilder->resetPasswordView(
+        return $this->render($this->themeResolver->resolve('auth/password/reset'), $this->viewBuilder->resetPasswordView(
             $locale,
             $selector,
             $token,
