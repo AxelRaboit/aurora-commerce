@@ -15,6 +15,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case SiteUrl = 'site_url';
     case AdminEmail = 'backend_email';
     case DefaultLocale = 'default_locale';
+    case SingleLocaleMode = 'single_locale_mode';
     case PostsPerPage = 'posts_per_page';
     case MaxUploadSizeMb = 'max_upload_size_mb';
     case AllowedUploadExtensions = 'allowed_upload_extensions';
@@ -99,6 +100,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SiteUrl => 'backend.parameters.site_url.label',
             self::AdminEmail => 'backend.parameters.admin_email.label',
             self::DefaultLocale => 'backend.parameters.default_locale.label',
+            self::SingleLocaleMode => 'backend.parameters.single_locale_mode.label',
             self::PostsPerPage => 'backend.parameters.posts_per_page.label',
             self::MaxUploadSizeMb => 'backend.parameters.max_upload_size_mb.label',
             self::AllowedUploadExtensions => 'backend.parameters.allowed_upload_extensions.label',
@@ -168,6 +170,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SiteUrl => 'backend.parameters.site_url.description',
             self::AdminEmail => 'backend.parameters.admin_email.description',
             self::DefaultLocale => 'backend.parameters.default_locale.description',
+            self::SingleLocaleMode => 'backend.parameters.single_locale_mode.description',
             self::PostsPerPage => 'backend.parameters.posts_per_page.description',
             self::MaxUploadSizeMb => 'backend.parameters.max_upload_size_mb.description',
             self::AllowedUploadExtensions => 'backend.parameters.allowed_upload_extensions.description',
@@ -237,6 +240,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SiteUrl => 'http://localhost',
             self::AdminEmail => 'admin@aurora.app',
             self::DefaultLocale => 'fr',
+            self::SingleLocaleMode => '0',
             self::PostsPerPage => '10',
             self::MaxUploadSizeMb => '20',
             self::AllowedUploadExtensions => 'jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,zip',
@@ -304,7 +308,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront => 'select',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::CrmSyncOrders => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::CrmSyncOrders, self::SingleLocaleMode => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId => 'media',
             self::ColorPickerPresets => 'json',
@@ -324,7 +328,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     {
         return match ($this) {
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
-            self::DefaultLocale, self::Timezone, self::DateFormat => 'localization',
+            self::DefaultLocale, self::SingleLocaleMode, self::Timezone, self::DateFormat => 'localization',
             self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId, self::DefaultFront => 'reading',
             self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',

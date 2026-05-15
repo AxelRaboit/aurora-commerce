@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Locale\EventSubscriber;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -14,6 +15,11 @@ use Symfony\Component\Security\Http\SecurityEvents;
 
 final class LocaleSubscriber implements EventSubscriberInterface
 {
+    public function __construct(
+        private readonly LocaleContextInterface $localeContext,
+    ) {
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -24,6 +30,10 @@ final class LocaleSubscriber implements EventSubscriberInterface
 
     public function onInteractiveLogin(InteractiveLoginEvent $event): void
     {
+        if ($this->localeContext->isSingleLocaleMode()) {
+            return;
+        }
+
         $user = $event->getAuthenticationToken()->getUser();
 
         if ($user instanceof User) {
@@ -38,6 +48,13 @@ final class LocaleSubscriber implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
+
+        if ($this->localeContext->isSingleLocaleMode()) {
+            $request->setLocale($this->localeContext->getDefaultLocale());
+
+            return;
+        }
+
         $locale = $request->getSession()->get('_locale', LocaleEnum::default()->value);
 
         if (!LocaleEnum::isSupported($locale)) {

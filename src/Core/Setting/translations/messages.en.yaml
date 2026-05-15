@@ -69,6 +69,9 @@ backend:
     default_locale:
       label: Default locale
       description: 'Default language code (fr, en, es, de)'
+    single_locale_mode:
+      label: Single-locale mode
+      description: "If enabled, the application only displays and stores a single language (the one defined by 'Default locale'). Multi-language tabs are hidden and URLs with a different language code are redirected (301). Reversible: content entered in other languages remains in the database."
     posts_per_page:
       label: Posts per page
       description: Number of posts displayed per page on public lists

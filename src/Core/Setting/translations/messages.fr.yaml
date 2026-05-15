@@ -69,6 +69,9 @@ backend:
     default_locale:
       label: Langue par défaut
       description: 'Code de la langue par défaut (fr, en, es, de)'
+    single_locale_mode:
+      label: Mode mono-langue
+      description: "Si activé, l'application n'affiche et n'enregistre qu'une seule langue (celle définie par « Langue par défaut »). Les onglets multi-langues sont masqués et les URLs avec un autre code de langue sont redirigées (301). Réversible : les contenus saisis dans les autres langues restent en base."
     posts_per_page:
       label: Articles par page
       description: Nombre d'articles affichés par page sur les listes publiques
