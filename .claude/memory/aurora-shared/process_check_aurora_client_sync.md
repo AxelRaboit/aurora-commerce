@@ -66,25 +66,20 @@ Tester d'abord dans aurora-client :
 
 ```bash
 cd /home/axel/Documents/dev/personal/aurora-client
-composer update axelraboit/aurora  # ou symlink local si dev
 
-# ⚠️ OBLIGATOIRE après tout composer update — composer ne réinstalle PAS
-# les sub-deps composer ni les node_modules d'aurora-core. Le Makefile
-# client référence vendor/axelraboit/aurora/node_modules/.bin/eslint etc.,
-# donc fix-js / lint-js / vitest plantent sans cette étape :
-composer install --working-dir=vendor/axelraboit/aurora --no-scripts
-pnpm --dir=vendor/axelraboit/aurora install
-# (alternative one-shot lourde mais propre : `make install-dev`)
+# ⚠️ TOUJOURS `make aurora-update`, jamais bare `composer update`.
+# Le target encapsule : composer update + composer install des sub-deps
+# (aurora + tools) + pnpm install (vendor + racine) + cache:clear +
+# migrate + privileges:sync + sync-jsconfig/security/claude-md.
+make aurora-update
 
-php bin/console cache:clear
-php bin/phpunit
-npm run build
+make ft
 # Lancer le projet et vérifier que les flows utilisateur principaux marchent
 ```
 
-### Piège : `composer update` côté client ≠ resync complet
+### Piège : `composer update` brut côté client = vendor cassé
 
-Symptôme typique après un simple `composer update axelraboit/aurora` :
+Symptôme typique après un simple `composer update axelraboit/aurora` (sans `make aurora-update`) :
 
 ```
 $ make ft
@@ -92,10 +87,20 @@ vendor/axelraboit/aurora/node_modules/.bin/eslint: No such file or directory
 make[2]: *** [Makefile:238: fix-js] Error 127
 ```
 
-Cause : composer ne réinstalle pas le `node_modules/` qui vivait dans le
-vendor pré-update. Le fix est ALWAYS la même séquence `composer install
---working-dir=…` + `pnpm --dir=…`. Penser à `make install-dev` après
-chaque composer update pour ne pas y revenir.
+Cause : composer ne réinstalle pas les `vendor/` ni `node_modules/`
+imbriqués dans le vendor d'aurora. Le Makefile client référence ces
+binaires (`$(AURORA)/node_modules/.bin/eslint`, `$(AURORA)/tools/...`)
+donc tout casse.
+
+**Fix de récupération sans tout réinstaller :**
+
+```bash
+composer install --working-dir=vendor/axelraboit/aurora --no-scripts
+pnpm --dir=vendor/axelraboit/aurora install
+```
+
+Mais **le bon réflexe est `make aurora-update`** dès le départ — ça
+inclut composer + pnpm + migrate + syncs config en une commande.
 
 ### 5. Reporter dans le commit aurora-core
 
