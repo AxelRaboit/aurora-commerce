@@ -67,11 +67,35 @@ Tester d'abord dans aurora-client :
 ```bash
 cd /home/axel/Documents/dev/personal/aurora-client
 composer update axelraboit/aurora  # ou symlink local si dev
+
+# ⚠️ OBLIGATOIRE après tout composer update — composer ne réinstalle PAS
+# les sub-deps composer ni les node_modules d'aurora-core. Le Makefile
+# client référence vendor/axelraboit/aurora/node_modules/.bin/eslint etc.,
+# donc fix-js / lint-js / vitest plantent sans cette étape :
+composer install --working-dir=vendor/axelraboit/aurora --no-scripts
+pnpm --dir=vendor/axelraboit/aurora install
+# (alternative one-shot lourde mais propre : `make install-dev`)
+
 php bin/console cache:clear
 php bin/phpunit
 npm run build
 # Lancer le projet et vérifier que les flows utilisateur principaux marchent
 ```
+
+### Piège : `composer update` côté client ≠ resync complet
+
+Symptôme typique après un simple `composer update axelraboit/aurora` :
+
+```
+$ make ft
+vendor/axelraboit/aurora/node_modules/.bin/eslint: No such file or directory
+make[2]: *** [Makefile:238: fix-js] Error 127
+```
+
+Cause : composer ne réinstalle pas le `node_modules/` qui vivait dans le
+vendor pré-update. Le fix est ALWAYS la même séquence `composer install
+--working-dir=…` + `pnpm --dir=…`. Penser à `make install-dev` après
+chaque composer update pour ne pas y revenir.
 
 ### 5. Reporter dans le commit aurora-core
 
