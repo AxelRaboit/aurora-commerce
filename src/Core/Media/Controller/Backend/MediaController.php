@@ -10,10 +10,8 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Media\Dto\MediaFolderInputFactoryInterface;
 use Aurora\Core\Media\Dto\MediaInputFactoryInterface;
 use Aurora\Core\Media\Entity\Media;
-use Aurora\Core\Media\Entity\MediaFolder;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
 use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Media\Repository\MediaFolderRepository;
@@ -50,7 +48,6 @@ class MediaController extends AbstractController
         private readonly MediaUsageService $mediaUsageService,
         private readonly MediaViewBuilder $viewBuilder,
         private readonly MediaInputFactoryInterface $mediaInputFactory,
-        private readonly MediaFolderInputFactoryInterface $folderInputFactory,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -238,51 +235,5 @@ class MediaController extends AbstractController
         );
 
         return $this->jsonSuccess(['media' => $this->mediaSerializer->serialize($media)]);
-    }
-
-    #[Route('/folders', name: '_folder_create', methods: [HttpMethodEnum::Post->value])]
-    public function createFolder(Request $request): JsonResponse
-    {
-        $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
-
-        $errors = $this->payloadValidator->errors($input);
-        if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors);
-        }
-
-        try {
-            $folder = $this->mediaManager->createFolder($input);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()]);
-        }
-
-        return $this->jsonSuccess(['folder' => $this->folderSerializer->serialize($folder)]);
-    }
-
-    #[Route('/folders/{id}/edit', name: '_folder_edit', methods: [HttpMethodEnum::Post->value])]
-    public function editFolder(MediaFolder $folder, Request $request): JsonResponse
-    {
-        $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
-
-        $errors = $this->payloadValidator->errors($input);
-        if ([] !== $errors) {
-            return $this->jsonInvalidInput($errors);
-        }
-
-        try {
-            $this->mediaManager->updateFolder($folder, $input);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput(['parentId' => $invalidArgumentException->getMessage()]);
-        }
-
-        return $this->jsonSuccess(['folder' => $this->folderSerializer->serialize($folder)]);
-    }
-
-    #[Route('/folders/{id}/delete', name: '_folder_delete', methods: [HttpMethodEnum::Post->value])]
-    public function deleteFolder(MediaFolder $folder): JsonResponse
-    {
-        $this->mediaManager->deleteFolder($folder);
-
-        return $this->jsonSuccess();
     }
 }

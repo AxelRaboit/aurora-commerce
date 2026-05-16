@@ -8,9 +8,6 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
-use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
-use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
-use Aurora\Module\Billing\Invoice\Manager\InvoiceLineManagerInterface;
 use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Serializer\InvoiceSerializer;
 use Aurora\Module\Billing\Invoice\Service\InvoiceXlsxExporter;
@@ -36,7 +33,6 @@ final class InvoicesController extends AbstractController
         private readonly InvoicesViewBuilder $viewBuilder,
         private readonly InvoiceSerializer $invoiceSerializer,
         private readonly InvoiceManagerInterface $invoiceManager,
-        private readonly InvoiceLineManagerInterface $lineManager,
         private readonly InvoiceXlsxExporter $xlsxExporter,
     ) {}
 
@@ -116,60 +112,6 @@ final class InvoicesController extends AbstractController
         return $this->jsonSuccess();
     }
 
-    #[Route('/{id}/lines/create', name: '_lines_create', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('billing.invoices.edit')]
-    public function createLine(Invoice $invoice): JsonResponse
-    {
-        try {
-            $this->lineManager->add($invoice);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
-    }
-
-    #[Route('/{id}/lines/{lineId}/update', name: '_lines_update', requirements: ['id' => '\d+|__id__', 'lineId' => '\d+|__lineId__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('billing.invoices.edit')]
-    public function updateLine(Invoice $invoice, int $lineId, Request $request): JsonResponse
-    {
-        $line = $this->resolveLine($invoice, $lineId);
-        if (!$line instanceof InvoiceLine) {
-            return $this->jsonNotFound();
-        }
-
-        $payload = json_decode($request->getContent(), true);
-        if (!is_array($payload) || !isset($payload['field'])) {
-            return $this->jsonInvalidInput(['field' => 'backend.billing.invoices.update.fieldRequired']);
-        }
-
-        try {
-            $this->lineManager->updateField($line, (string) $payload['field'], $payload['value'] ?? null);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonInvalidInput([(string) $payload['field'] => $invalidArgumentException->getMessage()]);
-        }
-
-        return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
-    }
-
-    #[Route('/{id}/lines/{lineId}/delete', name: '_lines_delete', requirements: ['id' => '\d+|__id__', 'lineId' => '\d+|__lineId__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('billing.invoices.edit')]
-    public function deleteLine(Invoice $invoice, int $lineId): JsonResponse
-    {
-        $line = $this->resolveLine($invoice, $lineId);
-        if (!$line instanceof InvoiceLine) {
-            return $this->jsonNotFound();
-        }
-
-        try {
-            $this->lineManager->delete($line);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        return $this->jsonSuccess(['invoice' => $this->invoiceSerializer->serializeDetail($invoice)]);
-    }
-
     #[Route('/{id}/credit-note', name: '_credit_note', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('billing.invoices.edit')]
     public function createCreditNote(Invoice $invoice, Request $request): JsonResponse
@@ -187,20 +129,5 @@ final class InvoicesController extends AbstractController
             'invoice' => $this->invoiceSerializer->serializeDetail($invoice),
             'creditNote' => $this->invoiceSerializer->serializeDetail($creditNote),
         ]);
-    }
-
-    /**
-     * Find a line that belongs to the given invoice. Refusing cross-invoice
-     * line ids prevents IDOR via crafted URLs.
-     */
-    private function resolveLine(Invoice $invoice, int $lineId): ?InvoiceLineInterface
-    {
-        foreach ($invoice->getLines() as $line) {
-            if ($line->getId() === $lineId) {
-                return $line;
-            }
-        }
-
-        return null;
     }
 }

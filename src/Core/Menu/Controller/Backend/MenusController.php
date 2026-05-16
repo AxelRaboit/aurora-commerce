@@ -9,13 +9,10 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Menu\Dto\MenuInputFactoryInterface;
-use Aurora\Core\Menu\Dto\MenuItemInputFactoryInterface;
 use Aurora\Core\Menu\Entity\Menu;
-use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Manager\MenuManagerInterface;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Menu\Serializer\MenuSerializerInterface;
-use Aurora\Core\Menu\Service\MenuPickerService;
 use Aurora\Core\Menu\View\MenusViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
@@ -37,11 +34,9 @@ class MenusController extends AbstractController
         private readonly MenuManagerInterface $menuManager,
         private readonly MenuRepository $menuRepository,
         private readonly MenuSerializerInterface $menuSerializer,
-        private readonly MenuPickerService $menuPickerService,
         private readonly PayloadValidator $payloadValidator,
         private readonly MenusViewBuilder $viewBuilder,
         private readonly MenuInputFactoryInterface $menuInputFactory,
-        private readonly MenuItemInputFactoryInterface $menuItemInputFactory,
         private readonly LocaleContextInterface $localeContext,
     ) {}
 
@@ -111,103 +106,5 @@ class MenusController extends AbstractController
         }
 
         return $this->jsonSuccess();
-    }
-
-    // ── Items CRUD ────────────────────────────────────────────────────────────
-
-    #[Route('/{id}/items/create', name: '_items_create', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('editorial.menus.edit')]
-    public function createItem(Menu $menu, Request $request): JsonResponse
-    {
-        $input = $this->menuItemInputFactory->fromArray($this->decodeJson($request));
-        if (null !== $error = $this->payloadValidator->firstError($input)) {
-            return $this->jsonFailure($error);
-        }
-
-        try {
-            $this->menuManager->createItem($menu, $input);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        return $this->jsonSuccess(['menu' => $this->menuSerializer->serializeFull($menu)]);
-    }
-
-    #[Route('/items/{id}/update', name: '_items_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('editorial.menus.edit')]
-    public function updateItem(MenuItem $item, Request $request): JsonResponse
-    {
-        $input = $this->menuItemInputFactory->fromArray($this->decodeJson($request));
-        if (null !== $error = $this->payloadValidator->firstError($input)) {
-            return $this->jsonFailure($error);
-        }
-
-        try {
-            $this->menuManager->updateItem($item, $input);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        return $this->jsonSuccess(['menu' => $this->menuSerializer->serializeFull($item->getMenu())]);
-    }
-
-    #[Route('/items/{id}/delete', name: '_items_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('editorial.menus.edit')]
-    public function deleteItem(MenuItem $item): JsonResponse
-    {
-        $menu = $item->getMenu();
-        $this->menuManager->deleteItem($item);
-
-        return $this->jsonSuccess(['menu' => $this->menuSerializer->serializeFull($menu)]);
-    }
-
-    #[Route('/{id}/items/reorder', name: '_items_reorder', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('editorial.menus.edit')]
-    public function reorderItems(Menu $menu, Request $request): JsonResponse
-    {
-        $data = $this->decodeJson($request);
-        $payload = is_array($data['items'] ?? null) ? $data['items'] : [];
-
-        try {
-            $this->menuManager->reorderItems($menu, $payload);
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        return $this->jsonSuccess(['menu' => $this->menuSerializer->serializeFull($menu)]);
-    }
-
-    // ── Pickers (autocomplete) ────────────────────────────────────────────────
-
-    #[Route('/picker/posts', name: '_picker_posts', methods: [HttpMethodEnum::Get->value])]
-    public function pickerPosts(Request $request): JsonResponse
-    {
-        return $this->jsonSuccess(['items' => $this->menuPickerService->posts(
-            mb_trim((string) $request->query->get('q', '')),
-            $request->query->getInt('postTypeId') ?: null,
-        )]);
-    }
-
-    #[Route('/picker/terms', name: '_picker_terms', methods: [HttpMethodEnum::Get->value])]
-    public function pickerTerms(Request $request): JsonResponse
-    {
-        return $this->jsonSuccess(['items' => $this->menuPickerService->terms(
-            mb_trim((string) $request->query->get('q', '')),
-            $request->query->getInt('taxonomyId') ?: null,
-        )]);
-    }
-
-    #[Route('/picker/post-types', name: '_picker_post_types', methods: [HttpMethodEnum::Get->value])]
-    public function pickerPostTypes(Request $request): JsonResponse
-    {
-        return $this->jsonSuccess(['items' => $this->menuPickerService->postTypes(
-            $request->query->getBoolean('withArchive'),
-        )]);
-    }
-
-    #[Route('/picker/taxonomies', name: '_picker_taxonomies', methods: [HttpMethodEnum::Get->value])]
-    public function pickerTaxonomies(): JsonResponse
-    {
-        return $this->jsonSuccess(['items' => $this->menuPickerService->taxonomies()]);
     }
 }

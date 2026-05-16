@@ -89,7 +89,7 @@ class UsersController extends AbstractController
         return $this->jsonSuccess(['items' => $items]);
     }
 
-    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
+    #[Route('/{id}', name: '_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
     public function show(User $user): JsonResponse
     {
         return $this->jsonSuccess(['user' => $this->userSerializer->serializeWithSubordinates($user)]);
@@ -228,56 +228,5 @@ class UsersController extends AbstractController
         $this->userManager->delete($user);
 
         return $this->jsonSuccess();
-    }
-
-    #[Route('/{id}/privileges', name: '_privileges', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('ROLE_DEV')]
-    public function updatePrivileges(User $user, Request $request): JsonResponse
-    {
-        $currentUser = $this->getUser();
-        if (!$currentUser instanceof User || !$this->userManager->canActOn($currentUser, $user)) {
-            return $this->jsonForbidden();
-        }
-
-        // Dev users are not privilege-restricted, no need to manage their list
-        if (in_array(UserRoleEnum::Dev->value, $user->getRoles(), true)) {
-            return $this->jsonFailure('backend.users.privileges.no_dev_target');
-        }
-
-        $privileges = $this->decodeJson($request)['privileges'] ?? [];
-        if (!is_array($privileges)) {
-            return $this->jsonInvalidInput(['privileges' => 'Invalid format']);
-        }
-
-        $this->userManager->updatePrivileges($user, array_values(array_filter($privileges, is_string(...))));
-
-        return $this->jsonSuccess(['user' => $this->userSerializer->serializeWithSubordinates($user)]);
-    }
-
-    #[Route('/{id}/disabled-modules', name: '_disabled_modules', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.users.modules.manage')]
-    public function updateDisabledModules(User $user, Request $request): JsonResponse
-    {
-        $currentUser = $this->getUser();
-        if (!$currentUser instanceof User) {
-            return $this->jsonForbidden();
-        }
-
-        $disabledModules = $this->decodeJson($request)['disabledModules'] ?? [];
-        if (!is_array($disabledModules)) {
-            return $this->jsonInvalidInput(['disabledModules' => 'Invalid format']);
-        }
-
-        try {
-            $this->userManager->updateDisabledModules(
-                $user,
-                array_values(array_filter($disabledModules, is_string(...))),
-                $currentUser,
-            );
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return $this->jsonFailure($invalidArgumentException->getMessage());
-        }
-
-        return $this->jsonSuccess(['user' => $this->userSerializer->serializeWithSubordinates($user)]);
     }
 }
