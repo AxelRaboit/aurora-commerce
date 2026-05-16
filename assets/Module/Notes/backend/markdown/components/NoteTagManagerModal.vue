@@ -6,9 +6,9 @@ import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
-import AppInput from '@shared/components/form/AppInput.vue';
-import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
-import AppCheckbox from '@shared/components/form/AppCheckbox.vue';
+import AppInput from '@shared/components/form/input/AppInput.vue';
+import AppSearchInput from '@shared/components/form/input/AppSearchInput.vue';
+import AppCheckbox from '@shared/components/form/toggle/AppCheckbox.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import { useNoteTagManager } from '@notes/backend/markdown/composables/useNoteTagManager.js';
 

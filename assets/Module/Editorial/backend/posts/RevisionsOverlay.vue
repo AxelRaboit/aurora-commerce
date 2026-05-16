@@ -10,7 +10,7 @@ import { statusBadgeColor } from "@/shared/utils/format/statusStyles.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";

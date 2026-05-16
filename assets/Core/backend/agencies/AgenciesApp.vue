@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { Plus, Save, Pencil, Trash2, X, Building } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";

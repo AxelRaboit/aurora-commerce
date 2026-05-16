@@ -10,7 +10,6 @@ import AppNoData from '@shared/components/feedback/AppNoData.vue';
 
 const props = defineProps({
     noteId: { type: Number, default: null },
-    /** (id) => Promise<{ok, payload}> */
     fetchBacklinks: { type: Function, required: true },
     fetchUnlinkedMentions: { type: Function, required: true },
 });
@@ -26,7 +25,9 @@ const { tab, items, loading } = useNoteSidePanel({
 </script>
 
 <template>
-    <aside class="w-72 shrink-0 border-l border-line flex flex-col bg-surface-2/30">
+    <aside
+        class="flex flex-col bg-surface fixed inset-0 z-40 md:relative md:inset-auto md:w-72 md:shrink-0 md:border-l md:border-line md:bg-surface-2/30"
+    >
         <header class="p-3 border-b border-line flex items-center justify-between gap-2">
             <h3 class="text-sm font-semibold text-primary">{{ t('notes.markdown.links.title') }}</h3>
             <AppIconButton

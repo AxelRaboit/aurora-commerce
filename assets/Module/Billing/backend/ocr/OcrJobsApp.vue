@@ -9,7 +9,7 @@ import { useOcrJobs } from "@billing/backend/ocr/composables/useOcrJobs.js";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";

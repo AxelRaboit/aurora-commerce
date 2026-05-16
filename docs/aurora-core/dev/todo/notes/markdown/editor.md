@@ -126,38 +126,42 @@ Commits `46c6e59d` (scaffold UI) + `48131a9a` (live preview) + `f03548a8` (side 
       les popovers slash/wiki.
 - [x] Tests vitest : 14 cas (chaque raccourci + Cmd vs Ctrl).
 
-### Responsive mobile ⏳ À faire
+### Responsive mobile ✅ (fait, 2026-05-16)
 
-L'éditeur est aujourd'hui conçu desktop : layout flex 3 colonnes
-(sidebar 288px + édition splittable + preview), popovers slash/wiki
-positionnés via mirror-div sans clamp viewport, modale graphe à
-`max-w-6xl × 80vh`. Sur écran étroit (< ~768px) tout déborde ou
-s'écrase.
-
-Chantiers à prévoir :
-- [ ] **Sidebar** → drawer escamotable derrière un bouton burger
-      (overlay translucide quand ouverte). Ferme sur sélection d'une
-      note pour libérer la vue éditeur.
-- [ ] **Layout éditeur** : forcer `viewMode='edit'` ou `'preview'`
-      sur mobile (le split 50/50 n'a pas de sens en portrait), avec
-      un toggle pour basculer.
-- [ ] **Popovers slash + wiki** : clamp horizontal pour qu'ils ne
-      sortent pas du viewport (recalculer `left` après le mirror-div
-      avec `Math.min(left, window.innerWidth - menuWidth - 8)`).
-      Idéalement aussi un bottom-clamp pour pousser le menu au-dessus
-      du curseur quand il déborderait en bas.
-- [ ] **Modale graphe** : passer en plein écran sur mobile
-      (`max-w-full max-h-screen` au lieu de `max-w-6xl × 80vh`).
-      Le canvas custom respecte déjà DPR, juste à adapter la taille.
-- [ ] **Tags input + filtre** : actuellement deux rangées dans la
-      sidebar — empilage vertical OK, vérifier que les pills tags
-      wrappent correctement.
-- [ ] **Side panel backlinks/mentions** : sur mobile l'ouvrir en
-      plein écran plutôt qu'en panneau collé à droite.
-
-Aucun travail backend nécessaire — c'est purement Tailwind/CSS +
-quelques refactors dans `MarkdownNotesApp.vue` autour des
-breakpoints `md:` / `lg:`.
+- [x] **`useMediaQuery`** ajouté à `assets/shared/composables/` — wrapper
+      réactif sur `window.matchMedia`. `useMarkdownNotesPage` l'utilise
+      via `(max-width: 767px)` pour dériver un `isMobile` reactive.
+- [x] **Sidebar** → drawer escamotable. Sur `< md`, `<aside>` passe en
+      `absolute inset-y-0 left-0` avec `transition-transform`, et un
+      backdrop translucide (`bg-black/40`) recouvre la zone éditeur.
+      Bouton burger (icône `Menu`) ajouté dans le header de l'éditeur
+      (visible `md:hidden`). Bouton X dans la sidebar pour fermer.
+      `selectNote`/`createNote` referment automatiquement le drawer
+      sur mobile.
+- [x] **viewMode** : `viewModeOptions` devient `computed` et filtre
+      `'split'` quand `isMobile`. Un watcher rétrograde `'split'` vers
+      `'edit'` si l'utilisateur arrive sur mobile avec cette préférence
+      en localStorage.
+- [x] **Popovers slash + wiki** : extraction du mirror-div trick dans
+      `positionFloatingMenu.js` (helper partagé entre `useSlashCommands`
+      et `useWikiLinkAutocomplete`). Clamp horizontal — si la position
+      écran dépasse `window.innerWidth - menuWidth - 8`, on pousse à
+      gauche jusqu'à ce que ça rentre. Clamp vertical — si le menu
+      déborderait en bas, on bascule au-dessus du curseur.
+- [x] **AppModal** : prop `mobileFullscreen` qui swap le panel en
+      `max-w-full max-h-screen rounded-none` sur `< md`, et garde le
+      `max-w-Xxl` original sur `md+`. Deux maps Tailwind explicites
+      (base + `md:`) pour que le scanner JIT voie tous les littéraux.
+- [x] **NoteGraph** : passe `mobile-fullscreen` à AppModal et adapte la
+      hauteur du canvas (`h-[calc(100vh-4rem)] md:h-[80vh]`).
+- [x] **NoteSidePanel** : `<aside>` repositionné en `fixed inset-0` +
+      `md:relative md:inset-auto md:w-72` — overlay plein écran sur
+      mobile, colonne classique sur desktop.
+- [x] **Tags input + filtre** : déjà `flex-wrap` côté pills, et
+      `AppTagsInput` empile naturellement — pas de changement requis.
+- [x] **Header éditeur** : `flex flex-wrap` pour que le toolbar
+      titre + side-panel + view-mode + autosave-status wrappe
+      proprement sur écran étroit.
 
 ### À considérer plus tard (Onyx avait, on a pas encore)
 

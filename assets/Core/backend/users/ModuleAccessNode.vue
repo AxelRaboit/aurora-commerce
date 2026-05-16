@@ -1,5 +1,5 @@
 <script setup>
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 
 const props = defineProps({
     node: { type: Object, required: true },

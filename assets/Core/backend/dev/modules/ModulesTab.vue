@@ -1,12 +1,12 @@
 <script setup>
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppToggle from "@/shared/components/form/toggle/AppToggle.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { Lock, ChevronDown } from "lucide-vue-next";

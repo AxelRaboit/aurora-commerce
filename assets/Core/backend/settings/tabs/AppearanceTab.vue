@@ -1,8 +1,8 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
-import AppColorField from "@/shared/components/form/AppColorField.vue";
+import AppColorSwatch from "@/shared/components/form/picker/AppColorSwatch.vue";
+import AppColorField from "@/shared/components/form/picker/AppColorField.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import { Save, Plus, X, RotateCcw } from "lucide-vue-next";
 import { useColorPickerPresets } from "@core/backend/settings/composables/useColorPickerPresets.js";

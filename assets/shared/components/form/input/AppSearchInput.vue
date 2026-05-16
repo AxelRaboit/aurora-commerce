@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { Search, X } from "lucide-vue-next";
-import AppInput from "@/shared/components/form/AppInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
 
 const props = defineProps({

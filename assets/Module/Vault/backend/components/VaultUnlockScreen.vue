@@ -3,9 +3,9 @@ import { useI18n } from 'vue-i18n';
 import { useVaultUnlock } from '@vault/backend/composables/useVaultUnlock.js';
 import { useVaultSessionDuration } from '@vault/backend/composables/useVaultSessionDuration.js';
 import AppButton from '@shared/components/action/AppButton.vue';
-import AppInput from '@shared/components/form/AppInput.vue';
-import AppToggle from '@shared/components/form/AppToggle.vue';
-import AppSelect from '@shared/components/form/AppSelect.vue';
+import AppInput from '@shared/components/form/input/AppInput.vue';
+import AppToggle from '@shared/components/form/toggle/AppToggle.vue';
+import AppSelect from '@shared/components/form/select/AppSelect.vue';
 import { Lock } from 'lucide-vue-next';
 
 defineProps({

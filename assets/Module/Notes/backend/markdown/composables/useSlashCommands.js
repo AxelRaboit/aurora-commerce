@@ -1,4 +1,5 @@
 import { ref, computed } from "vue";
+import { positionFloatingMenu } from "@notes/backend/markdown/composables/positionFloatingMenu.js";
 
 /**
  * Slash-command palette state for the markdown textarea.
@@ -198,49 +199,8 @@ export function useSlashCommands({ t }) {
         positionDropdown(textarea, slashIdx);
     }
 
-    /**
-     * Mirror-div trick to find the on-screen pixel coordinates of the
-     * `/` character inside the textarea. Builds an off-screen div with
-     * the same font / padding / width, fills it with the text up to the
-     * marker, and reads the rect of a `|` placed where the caret is.
-     */
     function positionDropdown(textarea, startIndex) {
-        const text = textarea.value.substring(0, startIndex);
-        const mirror = document.createElement("div");
-        const style = window.getComputedStyle(textarea);
-
-        mirror.style.position = "absolute";
-        mirror.style.visibility = "hidden";
-        mirror.style.whiteSpace = "pre-wrap";
-        mirror.style.overflowWrap = "break-word";
-        mirror.style.width = style.width;
-        mirror.style.font = style.font;
-        mirror.style.letterSpacing = style.letterSpacing;
-        mirror.style.padding = style.padding;
-        mirror.style.lineHeight = style.lineHeight;
-        mirror.style.boxSizing = style.boxSizing;
-        mirror.style.border = style.border;
-
-        mirror.textContent = text;
-        const marker = document.createElement("span");
-        marker.textContent = "|";
-        mirror.appendChild(marker);
-
-        document.body.appendChild(mirror);
-
-        const textareaRect = textarea.getBoundingClientRect();
-        const markerRect = marker.getBoundingClientRect();
-        const mirrorRect = mirror.getBoundingClientRect();
-
-        // Position relative to the textarea (the palette is positioned
-        // absolute inside the editor wrapper that contains the textarea).
-        slashPosition.value = {
-            top: markerRect.top - mirrorRect.top - textarea.scrollTop + 24,
-            left: markerRect.left - mirrorRect.left,
-        };
-
-        document.body.removeChild(mirror);
-        void textareaRect;
+        slashPosition.value = positionFloatingMenu(textarea, startIndex);
     }
 
     /**

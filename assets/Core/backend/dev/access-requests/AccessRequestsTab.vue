@@ -6,7 +6,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { Trash2, X, Check } from "lucide-vue-next";
 import { useAccessRequests } from "./composables/useAccessRequests.js";

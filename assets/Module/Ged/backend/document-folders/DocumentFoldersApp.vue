@@ -5,10 +5,10 @@ import { useDocumentFoldersForm } from "./composables/useDocumentFoldersForm.js"
 import { useDocumentFolderTree } from "./composables/useDocumentFolderTree.js";
 import { useDocumentFolderDragDrop } from "./composables/useDocumentFolderDragDrop.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";

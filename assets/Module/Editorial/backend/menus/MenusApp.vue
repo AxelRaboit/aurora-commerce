@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import MenuListPanel from "@editorial/backend/menus/MenuListPanel.vue";

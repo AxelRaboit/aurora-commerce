@@ -11,10 +11,10 @@ import { Plus, Pencil, Trash2, FolderTree, Folder, ChevronDown, ChevronRight, Gr
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";

@@ -8,10 +8,10 @@ import { usePostTypeFields } from "@editorial/backend/post-types/composables/use
 import { Plus, Pencil, Trash2, Layers, Lock, GripVertical, Save, X, ClipboardList } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSelect from "@/shared/components/form/select/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";

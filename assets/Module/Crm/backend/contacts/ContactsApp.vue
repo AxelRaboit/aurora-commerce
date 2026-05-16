@@ -10,11 +10,11 @@ import { useContactsTags } from "@crm/backend/contacts/composables/useContactsTa
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";

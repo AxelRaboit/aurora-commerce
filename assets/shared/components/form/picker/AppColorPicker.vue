@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
-import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
+import AppColorSwatch from "@/shared/components/form/picker/AppColorSwatch.vue";
 import { X } from "lucide-vue-next";
 
 const DEFAULT_PRESETS = [

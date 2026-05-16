@@ -9,10 +9,10 @@ import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButto
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import AppNavListItem from "@/shared/components/nav/AppNavListItem.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";

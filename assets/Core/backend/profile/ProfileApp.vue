@@ -2,11 +2,11 @@
 import { useI18n } from "vue-i18n";
 import { Upload, Trash2, Save, SlidersHorizontal } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppFileInput from "@/shared/components/form/AppFileInput.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
-import AppPasswordStrength from "@/shared/components/form/AppPasswordStrength.vue";
+import AppFileInput from "@/shared/components/form/file/AppFileInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppSelect from "@/shared/components/form/select/AppSelect.vue";
+import AppPasswordStrength from "@/shared/components/form/input/AppPasswordStrength.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppCardLink from "@/shared/components/nav/AppCardLink.vue";

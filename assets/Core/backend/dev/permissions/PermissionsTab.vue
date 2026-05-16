@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { Inbox } from "lucide-vue-next";
 import { usePermissions } from "./composables/usePermissions.js";

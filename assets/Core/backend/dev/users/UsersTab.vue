@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
+import AppSelect from "@/shared/components/form/select/AppSelect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";

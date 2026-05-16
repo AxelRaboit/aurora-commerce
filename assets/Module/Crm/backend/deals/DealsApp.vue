@@ -8,14 +8,14 @@ import { useDealsKanban } from "@crm/backend/deals/composables/useDealsKanban.js
 import { useDealsForm } from "@crm/backend/deals/composables/useDealsForm.js";
 import { useDealsDelete } from "@crm/backend/deals/composables/useDealsDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
-import AppDatePicker from "@/shared/components/form/AppDatePicker.vue";
+import AppSelect from "@/shared/components/form/select/AppSelect.vue";
+import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";

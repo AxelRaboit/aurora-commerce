@@ -54,6 +54,7 @@ onBeforeUnmount(close);
     <AppModal
         :show="show"
         max-width="6xl"
+        mobile-fullscreen
         :title="t('notes.markdown.graph.title')"
         :icon="Network"
         no-padding
@@ -61,8 +62,7 @@ onBeforeUnmount(close);
         v-on:close="emit('close')"
     >
         <div
-            class="relative w-full bg-surface overflow-hidden"
-            style="height: 80vh"
+            class="relative w-full bg-surface overflow-hidden h-[calc(100vh-4rem)] md:h-[80vh]"
         >
             <canvas
                 ref="canvasRef"

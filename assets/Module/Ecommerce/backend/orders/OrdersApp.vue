@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useOrderStatusFilter, ORDER_STATUS_BADGE, formatOrderTotal } from "./composables/useOrderStatusFilter.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";

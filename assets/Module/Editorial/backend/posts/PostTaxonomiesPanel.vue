@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { ChevronDown, ChevronRight } from "lucide-vue-next";
 import { buildTermTree, flattenTreeWithDepth } from "@editorial/shared/termTree.js";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 
 const { t } = useI18n();
 

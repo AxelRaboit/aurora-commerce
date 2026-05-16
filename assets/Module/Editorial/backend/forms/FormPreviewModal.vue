@@ -6,10 +6,10 @@ import { ChevronLeft, ChevronRight, Eye, X } from "lucide-vue-next";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppSelect from "@/shared/components/form/AppSelect.vue";
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppSelect from "@/shared/components/form/select/AppSelect.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
 
 const { t } = useI18n();

@@ -15,6 +15,13 @@ const props = defineProps({
     icon: { type: [Object, Function], default: null },
     noPadding: { type: Boolean, default: false },
     scrollable: { type: Boolean, default: true },
+    /**
+     * On viewports below the Tailwind `md` breakpoint (768px), expand
+     * the panel to the full viewport so wide content (canvases, tables,
+     * long forms) remains usable on phones. Defaults to false to keep
+     * existing modals visually unchanged.
+     */
+    mobileFullscreen: { type: Boolean, default: false },
 });
 
 const { t } = useI18n();
@@ -56,7 +63,9 @@ onUnmounted(() => {
     document.body.style.overflow = "";
 });
 
-const maxWidthClass = computed(() => ({
+// Two parallel maps so Tailwind's class scanner sees every literal
+// at build time (no runtime string concat — JIT would miss them).
+const MAX_WIDTH = {
     sm: "max-w-sm",
     md: "max-w-md",
     lg: "max-w-lg",
@@ -68,13 +77,44 @@ const maxWidthClass = computed(() => ({
     "6xl": "max-w-6xl",
     "7xl": "max-w-7xl",
     full: "max-w-full",
-}[props.maxWidth] ?? "max-w-md"));
+};
+const MD_MAX_WIDTH = {
+    sm: "md:max-w-sm",
+    md: "md:max-w-md",
+    lg: "md:max-w-lg",
+    xl: "md:max-w-xl",
+    "2xl": "md:max-w-2xl",
+    "3xl": "md:max-w-3xl",
+    "4xl": "md:max-w-4xl",
+    "5xl": "md:max-w-5xl",
+    "6xl": "md:max-w-6xl",
+    "7xl": "md:max-w-7xl",
+    full: "md:max-w-full",
+};
+const maxWidthClass = computed(() => MAX_WIDTH[props.maxWidth] ?? "max-w-md");
+const mdMaxWidthClass = computed(() => MD_MAX_WIDTH[props.maxWidth] ?? "md:max-w-md");
 
 const panelClass = computed(() => [
-    maxWidthClass.value,
+    // On mobile-fullscreen, drop the responsive max-width below md so
+    // the panel fills the viewport. Above md the requested cap kicks
+    // back in as a normal Tailwind utility.
+    props.mobileFullscreen
+        ? `max-w-full ${mdMaxWidthClass.value}`
+        : maxWidthClass.value,
+    props.mobileFullscreen ? "rounded-none md:rounded-xl" : "",
     props.noPadding ? "overflow-hidden" : "",
-    props.scrollable ? "max-h-[90vh]" : "",
+    props.scrollable
+        ? props.mobileFullscreen
+            ? "max-h-screen md:max-h-[90vh]"
+            : "max-h-[90vh]"
+        : "",
 ]);
+
+const wrapperClass = computed(() =>
+    props.mobileFullscreen
+        ? "fixed inset-0 z-50 flex items-stretch md:items-center justify-center md:px-4"
+        : "fixed inset-0 z-50 flex items-center justify-center px-4",
+);
 
 const contentClass = computed(() => [
     props.noPadding ? "" : "px-6 space-y-4",
@@ -84,7 +124,7 @@ const contentClass = computed(() => [
 
 <template>
     <Teleport to="body">
-        <div v-if="showSlot" class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div v-if="showSlot" :class="wrapperClass">
             <Transition
                 enter-active-class="ease-out duration-200"
                 enter-from-class="opacity-0"

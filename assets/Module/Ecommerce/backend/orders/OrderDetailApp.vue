@@ -8,8 +8,8 @@ import { useOrderRefund } from "@/Module/Ecommerce/backend/orders/composables/us
 import { OrderStatus } from "@/Module/Ecommerce/shared/enums/orderStatus.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { Ban, Clock, Undo2, X, Check, ShoppingCart } from "lucide-vue-next";

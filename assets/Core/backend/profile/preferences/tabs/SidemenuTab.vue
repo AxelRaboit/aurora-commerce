@@ -2,8 +2,8 @@
 import { useI18n } from "vue-i18n";
 import { Save, RotateCcw, EyeOff, Eye } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppToggle from "@/shared/components/form/AppToggle.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppToggle from "@/shared/components/form/toggle/AppToggle.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useSidemenuPreferences } from "@core/backend/profile/composables/useSidemenuPreferences.js";
 

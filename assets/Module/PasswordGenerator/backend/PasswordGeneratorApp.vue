@@ -3,8 +3,8 @@ import { useI18n } from 'vue-i18n';
 import { calculatePasswordStrength } from '@shared/utils/validation/passwordStrength.js';
 import { usePasswordGenerator } from '@password-generator/backend/composables/usePasswordGenerator.js';
 import AppButton from '@shared/components/action/AppButton.vue';
-import AppRange from '@/shared/components/form/AppRange.vue';
-import AppToggle from '@shared/components/form/AppToggle.vue';
+import AppRange from '@/shared/components/form/toggle/AppRange.vue';
+import AppToggle from '@shared/components/form/toggle/AppToggle.vue';
 import { Copy, Check, RefreshCw, KeyRound } from 'lucide-vue-next';
 import { computed } from 'vue';
 

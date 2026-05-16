@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useAudit } from "./composables/useAudit.js";
 

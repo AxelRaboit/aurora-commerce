@@ -16,13 +16,13 @@ import { useListingCategoriesForm } from "@ecommerce/backend/listing_categories/
 import ListingCategoryNode from "@ecommerce/backend/listing_categories/ListingCategoryNode.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppToggle from "@/shared/components/form/AppToggle.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppToggle from "@/shared/components/form/toggle/AppToggle.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import AppImagePickerField from "@/shared/components/form/AppImagePickerField.vue";
+import AppImagePickerField from "@/shared/components/form/file/AppImagePickerField.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { Trash2, Plus, Save, X, FolderTree } from "lucide-vue-next";

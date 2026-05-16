@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useDocumentSearch } from "./composables/useDocumentSearch.js";
 import DocumentItem from "./components/DocumentItem.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 
 const { t } = useI18n();

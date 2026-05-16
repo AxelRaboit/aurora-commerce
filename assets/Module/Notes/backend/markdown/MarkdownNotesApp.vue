@@ -9,14 +9,14 @@ import NoteEditor from '@notes/backend/markdown/components/NoteEditor.vue';
 import NoteGraph from '@notes/backend/markdown/components/NoteGraph.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
-import AppInput from '@shared/components/form/AppInput.vue';
-import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
-import AppTagsInput from '@shared/components/form/AppTagsInput.vue';
+import AppInput from '@shared/components/form/input/AppInput.vue';
+import AppSearchInput from '@shared/components/form/input/AppSearchInput.vue';
+import AppTagsInput from '@shared/components/form/select/AppTagsInput.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppTab from '@shared/components/nav/AppTab.vue';
-import { Plus, Trash2, FileText, PanelRightOpen, PanelRightClose, X, Settings2, Network } from 'lucide-vue-next';
+import { Plus, Trash2, FileText, PanelRightOpen, PanelRightClose, X, Settings2, Network, Menu } from 'lucide-vue-next';
 
 const props = defineProps({
     notes: { type: Array, default: () => [] },
@@ -40,6 +40,8 @@ const props = defineProps({
 const { t } = useI18n();
 
 const {
+    isMobile,
+    sidebarOpen,
     api,
     tagsApi,
     notes,
@@ -91,9 +93,22 @@ const {
 </script>
 
 <template>
-    <div class="flex h-[calc(100vh-8rem)] bg-surface rounded-xl border border-line overflow-hidden">
-        <!-- Sidebar tree -->
-        <aside class="w-72 shrink-0 border-r border-line flex flex-col bg-surface-2/30">
+    <div class="relative flex h-[calc(100vh-8rem)] bg-surface rounded-xl border border-line overflow-hidden">
+        <!-- Mobile backdrop — only renders while the drawer is open. -->
+        <div
+            v-if="isMobile && sidebarOpen"
+            class="absolute inset-0 z-30 bg-black/40 md:hidden"
+            v-on:click="sidebarOpen = false"
+        />
+
+        <!-- Sidebar tree — static column on md+, slide-in drawer below md.
+             Mobile uses an opaque `bg-surface` so the drawer hides the
+             editor behind it; desktop falls back to the tinted
+             `bg-surface-2/30` that pairs with the static column. -->
+        <aside
+            class="w-72 shrink-0 border-r border-line flex flex-col bg-surface md:bg-surface-2/30 z-40 transition-transform duration-200 md:relative md:translate-x-0 md:shadow-none absolute inset-y-0 left-0 shadow-xl"
+            :class="!isMobile || sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        >
             <div class="p-3 border-b border-line flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-primary">{{ t('notes.markdown.title') }}</h2>
                 <div class="flex items-center gap-1">
@@ -112,6 +127,15 @@ const {
                         v-on:click="() => createNote(null)"
                     >
                         <Plus class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton
+                        class="md:hidden"
+                        :title="t('shared.common.close')"
+                        size="sm"
+                        variant="ghost"
+                        v-on:click="sidebarOpen = false"
+                    >
+                        <X class="w-4 h-4" :stroke-width="2" />
                     </AppIconButton>
                 </div>
             </div>
@@ -211,11 +235,21 @@ const {
         <section class="flex-1 flex flex-col min-w-0">
             <div v-if="selectedNote" class="flex-1 flex flex-col">
                 <header class="p-4 border-b border-line flex flex-col gap-2">
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-2 md:gap-3">
+                        <AppIconButton
+                            class="md:hidden"
+                            :title="t('notes.markdown.title')"
+                            size="md"
+                            variant="ghost"
+                            v-on:click="sidebarOpen = true"
+                        >
+                            <Menu class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+
                         <AppInput
                             v-model="form.title"
                             :placeholder="t('notes.markdown.title_placeholder')"
-                            class="flex-1 text-lg font-medium"
+                            class="flex-1 min-w-0 text-lg font-medium"
                         />
 
                         <AppIconButton
@@ -312,12 +346,25 @@ const {
                 </div>
             </div>
 
-            <div v-else class="flex-1 flex items-center justify-center text-muted text-sm">
-                <AppNoData
-                    :title="t('notes.markdown.no_selection.title')"
-                    :description="t('notes.markdown.no_selection.description')"
-                    :icon="FileText"
-                />
+            <div v-else class="flex-1 flex flex-col">
+                <header class="p-3 border-b border-line flex items-center gap-2 md:hidden">
+                    <AppIconButton
+                        :title="t('notes.markdown.title')"
+                        size="md"
+                        variant="ghost"
+                        v-on:click="sidebarOpen = true"
+                    >
+                        <Menu class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <h2 class="text-sm font-semibold text-primary">{{ t('notes.markdown.title') }}</h2>
+                </header>
+                <div class="flex-1 flex items-center justify-center text-muted text-sm">
+                    <AppNoData
+                        :title="t('notes.markdown.no_selection.title')"
+                        :description="t('notes.markdown.no_selection.description')"
+                        :icon="FileText"
+                    />
+                </div>
             </div>
         </section>
 

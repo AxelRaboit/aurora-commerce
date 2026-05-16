@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Upload } from "lucide-vue-next";
-import AppFileInput from "@/shared/components/form/AppFileInput.vue";
+import AppFileInput from "@/shared/components/form/file/AppFileInput.vue";
 
 const { t } = useI18n();
 

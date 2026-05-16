@@ -26,14 +26,14 @@ import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppListItemButton from '@shared/components/action/AppListItemButton.vue';
 
 import AppTextLinkButton from '@shared/components/action/AppTextLinkButton.vue';
-import AppInput from '@shared/components/form/AppInput.vue';
-import AppToggle from '@shared/components/form/AppToggle.vue';
-import AppMultiselect from '@shared/components/form/AppMultiselect.vue';
-import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
+import AppInput from '@shared/components/form/input/AppInput.vue';
+import AppToggle from '@shared/components/form/toggle/AppToggle.vue';
+import AppMultiselect from '@shared/components/form/select/AppMultiselect.vue';
+import AppSearchInput from '@shared/components/form/input/AppSearchInput.vue';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
-import AppColorField from '@shared/components/form/AppColorField.vue';
+import AppColorField from '@shared/components/form/picker/AppColorField.vue';
 import {
     Plus, Lock, Star, Pencil, Trash2, X, Save, Home, Layers, Folder, FolderOpen, ShieldCheck,
     ChevronRight, ChevronDown, Eye,

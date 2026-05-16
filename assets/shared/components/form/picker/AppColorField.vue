@@ -1,6 +1,6 @@
 <script setup>
 import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
-import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
+import AppColorSwatch from "@/shared/components/form/picker/AppColorSwatch.vue";
 
 defineProps({
     modelValue: { type: String, default: "" },

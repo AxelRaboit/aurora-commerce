@@ -2,8 +2,8 @@
 import { useI18n } from "vue-i18n";
 import { Send, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
 
 const { t } = useI18n();
 

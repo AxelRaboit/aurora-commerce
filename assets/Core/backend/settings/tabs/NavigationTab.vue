@@ -1,7 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
-import AppInput from "@/shared/components/form/AppInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
 import { Save, X, RotateCcw, ChevronDown, ChevronRight } from "lucide-vue-next";
 import { useNavAliases } from "@core/backend/settings/composables/useNavAliases.js";
 

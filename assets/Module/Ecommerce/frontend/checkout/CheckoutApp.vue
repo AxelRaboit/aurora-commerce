@@ -1,9 +1,9 @@
 <script setup>
 import { reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppMultiselect from "@/shared/components/form/AppMultiselect.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import { useStripeCard } from "@ecommerce/frontend/checkout/composables/useStripeCard.js";
 import { useCheckoutSubmit } from "@ecommerce/frontend/checkout/composables/useCheckoutSubmit.js";

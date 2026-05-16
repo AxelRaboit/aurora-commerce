@@ -6,7 +6,7 @@ import { calculatePasswordStrength } from '@shared/utils/validation/passwordStre
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
-import AppToggle from '@shared/components/form/AppToggle.vue';
+import AppToggle from '@shared/components/form/toggle/AppToggle.vue';
 import { RefreshCw, Lock } from 'lucide-vue-next';
 
 defineProps({ show: { type: Boolean, required: true } });

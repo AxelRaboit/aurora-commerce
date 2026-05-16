@@ -3,7 +3,7 @@ import { ref, toRef, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNoteEditorTextarea } from "@notes/backend/markdown/composables/useNoteEditorTextarea.js";
 import AppFloatingMenu from "@shared/components/overlay/AppFloatingMenu.vue";
-import AppSearchInput from "@shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@shared/components/form/input/AppSearchInput.vue";
 import { FileText } from "lucide-vue-next";
 
 const props = defineProps({

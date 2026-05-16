@@ -1,6 +1,7 @@
 import { ref, computed, watch } from "vue";
 import { Pencil, Eye, Columns } from "lucide-vue-next";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
+import { useMediaQuery } from "@/shared/composables/useMediaQuery.js";
 import { useMarkdownNotesApi } from "@notes/backend/markdown/composables/useMarkdownNotesApi.js";
 import { useNotesEditor } from "@notes/backend/markdown/composables/useNotesEditor.js";
 import { useNoteTree } from "@notes/backend/markdown/composables/useNoteTree.js";
@@ -39,8 +40,8 @@ export function useMarkdownNotesPage(props, t) {
         deleting,
         saveStatus,
         lastSavedAt,
-        selectNote,
-        createNote,
+        selectNote: selectNoteRaw,
+        createNote: createNoteRaw,
         pendingDelete,
         requestDelete,
         cancelDelete,
@@ -56,6 +57,19 @@ export function useMarkdownNotesPage(props, t) {
     const graphOpen = ref(false);
     const tagManagerOpen = ref(false);
     const treeQuery = ref("");
+
+    // ── Mobile / responsive state ──────────────────────────────────
+    // Tailwind's md breakpoint is 768px. Below that, the editor turns
+    // into a single-column layout: sidebar slides in as a drawer, the
+    // split view-mode is disabled, and the side-panel renders as a
+    // fullscreen overlay (see MarkdownNotesApp.vue).
+    const { matches: isMobile } = useMediaQuery("(max-width: 767px)");
+    const sidebarOpen = ref(!isMobile.value);
+    watch(isMobile, (mobile) => {
+        // On desktop the sidebar is always visible; resetting to true
+        // here ensures resizing the window back up reveals it again.
+        sidebarOpen.value = !mobile;
+    });
 
     // ── Tags + tree ────────────────────────────────────────────────
     const {
@@ -125,19 +139,44 @@ export function useMarkdownNotesPage(props, t) {
 
     // ── View mode (edit / split / preview) ─────────────────────────
     const { mode: viewMode } = useViewMode();
-    const viewModeOptions = [
-        { value: "edit", icon: Pencil, label: t("notes.markdown.view.edit") },
-        {
-            value: "split",
-            icon: Columns,
-            label: t("notes.markdown.view.split"),
+    const viewModeOptions = computed(() => {
+        const all = [
+            { value: "edit", icon: Pencil, label: t("notes.markdown.view.edit") },
+            {
+                value: "split",
+                icon: Columns,
+                label: t("notes.markdown.view.split"),
+            },
+            {
+                value: "preview",
+                icon: Eye,
+                label: t("notes.markdown.view.preview"),
+            },
+        ];
+        // No split mode on mobile — a side-by-side editor + preview
+        // wouldn't fit a phone-width viewport.
+        return isMobile.value ? all.filter((opt) => opt.value !== "split") : all;
+    });
+    // If the persisted preference is "split" but we just resized into
+    // mobile (or loaded directly on a phone), fall back to edit.
+    watch(
+        isMobile,
+        (mobile) => {
+            if (mobile && viewMode.value === "split") viewMode.value = "edit";
         },
-        {
-            value: "preview",
-            icon: Eye,
-            label: t("notes.markdown.view.preview"),
-        },
-    ];
+        { immediate: true },
+    );
+
+    // ── Mobile-aware wrappers around selectNote / createNote so the
+    //    sidebar drawer dismisses itself once the user picks something.
+    async function selectNote(id) {
+        await selectNoteRaw(id);
+        if (isMobile.value) sidebarOpen.value = false;
+    }
+    async function createNote(parentId) {
+        await createNoteRaw(parentId);
+        if (isMobile.value) sidebarOpen.value = false;
+    }
 
     // ── Auto-save status display ───────────────────────────────────
     const { relative: lastSavedRelative } = useRelativeTime(lastSavedAt);
@@ -169,6 +208,10 @@ export function useMarkdownNotesPage(props, t) {
     }
 
     return {
+        // responsive
+        isMobile,
+        sidebarOpen,
+
         // backend
         api,
         tagsApi,

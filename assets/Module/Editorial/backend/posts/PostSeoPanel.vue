@@ -3,9 +3,9 @@
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { ImagePlus, X, Upload, Sparkles } from "lucide-vue-next";
-import AppInput from "@/shared/components/form/AppInput.vue";
-import AppTextarea from "@/shared/components/form/AppTextarea.vue";
-import AppCheckbox from "@/shared/components/form/AppCheckbox.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppFilePickerButton from "@/shared/components/action/AppFilePickerButton.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";

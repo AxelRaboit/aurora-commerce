@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { usePostSearch } from "./composables/usePostSearch.js";
 import PostCard from "./PostCard.vue";
-import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 
