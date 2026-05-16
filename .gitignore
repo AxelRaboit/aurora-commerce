@@ -50,3 +50,6 @@ yarn.lock
 
 # Generated translation catalogues (run `pnpm i18n` to rebuild)
 /assets/locales/generated/
+
+# Claude Code runtime locks
+.claude/scheduled_tasks.lock
