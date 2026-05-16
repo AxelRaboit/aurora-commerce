@@ -12,7 +12,10 @@ import { onBeforeUnmount, ref } from "vue";
 export function useMediaQuery(query) {
     const matches = ref(false);
 
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    if (
+        typeof window === "undefined" ||
+        typeof window.matchMedia !== "function"
+    ) {
         return { matches };
     }
 

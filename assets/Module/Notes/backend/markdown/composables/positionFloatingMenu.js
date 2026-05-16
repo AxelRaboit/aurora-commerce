@@ -26,12 +26,7 @@
  * @returns {{ top: number, left: number }}
  */
 export function positionFloatingMenu(textarea, startIndex, opts = {}) {
-    const {
-        menuWidth = 224,
-        menuHeight = 256,
-        gap = 24,
-        margin = 8,
-    } = opts;
+    const { menuWidth = 224, menuHeight = 256, gap = 24, margin = 8 } = opts;
 
     const text = textarea.value.substring(0, startIndex);
     const mirror = document.createElement("div");

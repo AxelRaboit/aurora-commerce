@@ -141,7 +141,11 @@ export function useMarkdownNotesPage(props, t) {
     const { mode: viewMode } = useViewMode();
     const viewModeOptions = computed(() => {
         const all = [
-            { value: "edit", icon: Pencil, label: t("notes.markdown.view.edit") },
+            {
+                value: "edit",
+                icon: Pencil,
+                label: t("notes.markdown.view.edit"),
+            },
             {
                 value: "split",
                 icon: Columns,
@@ -155,7 +159,9 @@ export function useMarkdownNotesPage(props, t) {
         ];
         // No split mode on mobile — a side-by-side editor + preview
         // wouldn't fit a phone-width viewport.
-        return isMobile.value ? all.filter((opt) => opt.value !== "split") : all;
+        return isMobile.value
+            ? all.filter((opt) => opt.value !== "split")
+            : all;
     });
     // If the persisted preference is "split" but we just resized into
     // mobile (or loaded directly on a phone), fall back to edit.
