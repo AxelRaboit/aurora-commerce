@@ -51,33 +51,45 @@ const emit = defineEmits(["select", "highlight"]);
 
 <template>
     <div
+        data-floating-menu
         class="absolute z-30 max-h-64 overflow-auto rounded-md border border-line bg-surface shadow-lg flex flex-col"
         :class="minWidthClass"
         :style="{ top: `${position.top}px`, left: `${position.left}px` }"
-        v-on:mousedown.prevent
     >
         <!-- Optional sticky header (e.g. search bar reflecting an inline
-             filter, section title, etc.). Sits above the scrolling list. -->
+             filter, section title, etc.). Sits above the scrolling list.
+             The `data-floating-menu` attribute on the wrapper lets the
+             trigger (textarea, etc.) detect that a blur target landed
+             inside this menu and skip its auto-close. -->
         <div v-if="$slots.header" class="shrink-0 border-b border-line">
             <slot name="header" />
         </div>
 
         <div class="overflow-auto py-1">
-            <button
-                v-for="(item, index) in items"
-                :key="item.id"
-                type="button"
-                class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
-                :class="
-                    index === activeIndex
-                        ? 'bg-accent-500/15 text-primary'
-                        : 'text-secondary hover:bg-surface-2'
-                "
-                v-on:mousedown.prevent="emit('select', item)"
-                v-on:mouseenter="emit('highlight', index)"
-            >
-                <slot :item="item" :index="index" :active="index === activeIndex" />
-            </button>
+            <template v-if="items.length > 0">
+                <button
+                    v-for="(item, index) in items"
+                    :key="item.id"
+                    type="button"
+                    class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
+                    :class="
+                        index === activeIndex
+                            ? 'bg-accent-500/15 text-primary'
+                            : 'text-secondary hover:bg-surface-2'
+                    "
+                    v-on:mousedown.prevent="emit('select', item)"
+                    v-on:mouseenter="emit('highlight', index)"
+                >
+                    <slot :item="item" :index="index" :active="index === activeIndex" />
+                </button>
+            </template>
+            <!-- Empty state — rendered when `items` is empty. The slot
+                 lets each consumer phrase the no-results message in its
+                 own domain language. Falls back to a generic line if
+                 the slot isn't provided. -->
+            <div v-else class="px-3 py-2 text-xs text-muted italic text-center">
+                <slot name="empty">No results</slot>
+            </div>
         </div>
     </div>
 </template>

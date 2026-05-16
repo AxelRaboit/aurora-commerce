@@ -90,4 +90,34 @@ describe("AppFloatingMenu", () => {
         // No header div with border-b class should exist
         expect(wrapper.find(".border-b").exists()).toBe(false);
     });
+
+    it("renders the empty slot when items is empty", () => {
+        const wrapper = mount(AppFloatingMenu, {
+            props: {
+                items: [],
+                position: { top: 0, left: 0 },
+                activeIndex: 0,
+            },
+            slots: {
+                empty: "No matches found",
+                default: `<template #default="{ item }">{{ item.label }}</template>`,
+            },
+        });
+        expect(wrapper.findAll("button")).toHaveLength(0);
+        expect(wrapper.text()).toContain("No matches found");
+    });
+
+    it("falls back to a generic empty message when slot is omitted", () => {
+        const wrapper = mount(AppFloatingMenu, {
+            props: {
+                items: [],
+                position: { top: 0, left: 0 },
+                activeIndex: 0,
+            },
+            slots: {
+                default: `<template #default="{ item }">{{ item.label }}</template>`,
+            },
+        });
+        expect(wrapper.text()).toBe("No results");
+    });
 });

@@ -99,8 +99,52 @@ export function useNoteEditorTextarea({
         // Defer so a mousedown on a menu item still fires before the
         // menu unmounts (click → mousedown ⇒ blur on textarea ⇒
         // immediate close would race the click).
+        //
+        // Skip the close when focus moved into an open floating menu
+        // (typically the user clicked the wiki-search input). Otherwise
+        // the popover would dismiss itself the instant the user tries
+        // to interact with its own controls.
         setTimeout(() => {
+            const next = document.activeElement;
+            if (
+                next &&
+                typeof next.closest === "function" &&
+                next.closest("[data-floating-menu]")
+            ) {
+                return;
+            }
             slash.closeSlash();
+            wiki.closeSuggestions();
+        }, 150);
+    }
+
+    /**
+     * Keydown handler attached to the wiki-search input so the user
+     * can navigate / pick from the popover while it's focused. We
+     * route through the wiki composable just like the textarea does,
+     * minus the slash branch (slash never opens via the search input).
+     */
+    function onSearchKeydown(event) {
+        if (!wiki.showSuggestions.value) return;
+        const picked = wiki.onKeydown(event);
+        if (picked) selectSuggestion(picked);
+    }
+
+    /**
+     * Close the popover when the search input loses focus to anything
+     * outside the menu (e.g. user clicks back on the textarea or tabs
+     * away). The same deferred / inside-menu check the textarea uses.
+     */
+    function onSearchBlur() {
+        setTimeout(() => {
+            const next = document.activeElement;
+            if (
+                next &&
+                typeof next.closest === "function" &&
+                next.closest("[data-floating-menu]")
+            ) {
+                return;
+            }
             wiki.closeSuggestions();
         }, 150);
     }
@@ -124,7 +168,9 @@ export function useNoteEditorTextarea({
         filteredSuggestions: wiki.filteredSuggestions,
         selectSuggestion,
         highlightSuggestion: wiki.highlightSuggestion,
-        // shared
+        onSearchKeydown,
+        onSearchBlur,
+        // shared (textarea)
         onInput,
         onKeydown,
         onBlur,

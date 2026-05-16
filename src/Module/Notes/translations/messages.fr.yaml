@@ -44,6 +44,7 @@ notes:
     confirm_discard_changes: Vous avez des modifications non enregistrées. Les abandonner ?
     wiki_link_not_found: 'Aucune note ne correspond à « {title} ».'
     wiki_search_placeholder: Tapez pour filtrer les notes…
+    wiki_no_results: 'Aucune note ne correspond à « {query} ».'
     view:
       edit: Édition seule
       split: Édition + aperçu
@@ -64,6 +65,7 @@ notes:
       italic: Italique
       strikethrough: Barré
       table: Tableau
+      no_results: Aucune commande
     tags:
       add_placeholder: Ajouter un tag…
       filter_label: Filtrer par tag

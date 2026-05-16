@@ -43,6 +43,7 @@ notes:
     confirm_discard_changes: You have unsaved changes. Discard them?
     wiki_link_not_found: 'No note matches "{title}".'
     wiki_search_placeholder: Type to filter notes…
+    wiki_no_results: 'No note matches "{query}".'
     view:
       edit: Edit only
       split: Edit + preview
@@ -63,6 +64,7 @@ notes:
       italic: Italic
       strikethrough: Strikethrough
       table: Table
+      no_results: No commands
     tags:
       add_placeholder: Add a tag…
       filter_label: Filter by tag

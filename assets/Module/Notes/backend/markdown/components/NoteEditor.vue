@@ -1,9 +1,10 @@
 <script setup>
-import { toRef } from "vue";
+import { ref, toRef, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNoteEditorTextarea } from "@notes/backend/markdown/composables/useNoteEditorTextarea.js";
 import AppFloatingMenu from "@shared/components/overlay/AppFloatingMenu.vue";
-import { FileText, Search } from "lucide-vue-next";
+import AppSearchInput from "@shared/components/form/AppSearchInput.vue";
+import { FileText } from "lucide-vue-next";
 
 const props = defineProps({
     modelValue: { type: String, default: "" },
@@ -35,6 +36,8 @@ const {
     filteredSuggestions,
     selectSuggestion,
     highlightSuggestion,
+    onSearchKeydown,
+    onSearchBlur,
     onInput,
     onKeydown,
     onBlur,
@@ -43,6 +46,15 @@ const {
     t,
     flatNotes: toRef(props, "flatNotes"),
     untitledLabel: t("notes.markdown.untitled"),
+});
+
+// Refocus the search input when the wiki popover opens so the user
+// can keep typing without having to click the bar manually.
+const searchInputRef = ref(null);
+watch(showSuggestions, async (open) => {
+    if (!open) return;
+    await nextTick();
+    searchInputRef.value?.focus();
 });
 </script>
 
@@ -61,7 +73,7 @@ const {
 
         <!-- Slash command palette ('/' at line start) -->
         <AppFloatingMenu
-            v-if="showSlash && filteredCommands.length > 0"
+            v-if="showSlash"
             :items="filteredCommands"
             :position="slashPosition"
             :active-index="slashIndex"
@@ -74,6 +86,9 @@ const {
                 </span>
                 <span class="flex-1">{{ item.label }}</span>
             </template>
+            <template #empty>
+                {{ t('notes.markdown.slash.no_results') }}
+            </template>
         </AppFloatingMenu>
 
         <!-- Wiki-link autocomplete ('[[' anywhere on a line) — header
@@ -81,7 +96,7 @@ const {
              searching for". Keystrokes still go into the textarea (the
              actual source of truth) so this stays a passive display. -->
         <AppFloatingMenu
-            v-if="showSuggestions && filteredSuggestions.length > 0"
+            v-if="showSuggestions"
             :items="filteredSuggestions"
             :position="suggestionPosition"
             :active-index="suggestionIndex"
@@ -89,14 +104,22 @@ const {
             v-on:highlight="highlightSuggestion"
         >
             <template #header>
-                <div class="flex items-center gap-2 px-3 py-2 text-sm text-secondary">
-                    <Search class="w-3.5 h-3.5 shrink-0 text-muted" :stroke-width="2" />
-                    <span v-if="suggestionQuery" class="flex-1 truncate font-mono text-xs">
-                        {{ suggestionQuery }}
-                    </span>
-                    <span v-else class="flex-1 text-muted text-xs italic">
-                        {{ t('notes.markdown.wiki_search_placeholder') }}
-                    </span>
+                <!-- Real, focusable search field. `AppSearchInput` is our
+                     shared search-bar component (built on `AppInput` with
+                     a magnifier prefix and a clearable X). We disable
+                     debouncing because filtering must feel instant, and
+                     listen on `focusout` rather than `blur` because blur
+                     events don't bubble through the wrapping <div>. -->
+                <div class="p-2">
+                    <AppSearchInput
+                        ref="searchInputRef"
+                        v-model="suggestionQuery"
+                        :placeholder="t('notes.markdown.wiki_search_placeholder')"
+                        :debounce="0"
+                        :clearable="false"
+                        v-on:keydown="onSearchKeydown"
+                        v-on:focusout="onSearchBlur"
+                    />
                 </div>
             </template>
             <template #default="{ item }">
@@ -104,6 +127,9 @@ const {
                 <span class="flex-1 truncate">
                     {{ item.title || t('notes.markdown.untitled') }}
                 </span>
+            </template>
+            <template #empty>
+                {{ t('notes.markdown.wiki_no_results', { query: suggestionQuery }) }}
             </template>
         </AppFloatingMenu>
     </div>
