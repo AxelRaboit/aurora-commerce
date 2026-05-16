@@ -6,7 +6,7 @@ Aurora utilise **une seule source de vérité** : les fichiers YAML. Le JSON
 frontEnd est un artefact de build régénéré à partir des YAML.
 
 ```
-YAML sources  ──make i18n──►  assets/locales/generated/{fr,en}.json  ──build──►  Vue i18n
+YAML sources  ──make translation──►  assets/locales/generated/{fr,en}.json  ──build──►  Vue i18n
      │
      └──  Symfony Translator (Twig, PHP, console)
 ```
@@ -81,14 +81,14 @@ vim src/Core/Media/translations/messages.fr.yaml
 vim src/Core/Media/translations/messages.en.yaml
 
 # 3. Régénérer le JSON frontend
-make i18n
+make translation
 
 # 4. Vérifier (optionnel)
 php bin/console debug:translation fr --domain=messages | grep ma.cle
 ```
 
 **Ne jamais** toucher `assets/locales/generated/*.json` directement — tout
-changement sera écrasé par le prochain `make i18n`.
+changement sera écrasé par le prochain `make translation`.
 
 ---
 

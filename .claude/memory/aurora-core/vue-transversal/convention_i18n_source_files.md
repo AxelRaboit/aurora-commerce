@@ -7,7 +7,7 @@ type: project
 ## Règle
 
 **Source unique de vérité : les fichiers YAML.** Le JSON frontend est un artefact
-de build régénéré par `make i18n`. Ne jamais toucher `assets/locales/generated/*.json`.
+de build régénéré par `make translation`. Ne jamais toucher `assets/locales/generated/*.json`.
 
 ## Structure des fichiers
 
@@ -41,7 +41,7 @@ src/Core/translations/              → shared.common, shared.locales, shared.pa
 
 ```bash
 # Modifier FR + EN dans le bon fichier YAML, puis :
-make i18n   # régénère assets/locales/generated/{fr,en}.json
+make translation   # régénère assets/locales/generated/{fr,en}.json
 ```
 
 ## Where does a key go?

@@ -199,9 +199,9 @@ via `DependentFixtureInterface`. Sinon erreur de FK au load.
 
 ### d) i18n manquant en test Vitest
 
-`make test-frontend` appelle `make i18n` en pré-step pour régénérer
+`make test-frontend` appelle `make translation` en pré-step pour régénérer
 `assets/locales/generated/{fr,en}.json`. Si vous lancez `pnpm test`
-directement, **régénérez d'abord** (`make i18n`) sinon Vitest peut planter
+directement, **régénérez d'abord** (`make translation`) sinon Vitest peut planter
 sur des clés Vue-i18n manquantes.
 
 ### e) Tests qui passent localement, échouent en CI

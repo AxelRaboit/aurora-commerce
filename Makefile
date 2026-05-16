@@ -48,7 +48,7 @@ install-dev: ## Install for local development
 	make migrate
 	make sync-params
 	make sync-menus
-	make i18n
+	make translation
 	make dev
 
 install-prod: ## Install for production
@@ -56,7 +56,7 @@ install-prod: ## Install for production
 	$(PNPM) --dir=$(AURORA) install --frozen-lockfile
 	make setup-dirs
 	make migrate-f
-	make i18n
+	make translation
 	make build
 	make cc-prod
 
@@ -250,8 +250,9 @@ sync-privileges: ## Purge obsolete privileges from users after module changes
 sync-sequences: ## Resync all PostgreSQL sequences to MAX(id)+1 (run after fixture loads or data imports)
 	$(CONSOLE) aurora:sequences:resync
 
-i18n: ## Dump Symfony YAML translations to assets/locales/generated/*.json (consumed by vue-i18n)
+translation: ## Dump Symfony YAML translations to assets/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
+	$(CONSOLE) cache:clear
 
 schema-validate: ## Validate the Doctrine schema
 	$(CONSOLE) doctrine:schema:validate -vvv
@@ -268,7 +269,7 @@ test-backend-unit: ## Run backend unit tests
 test-backend-integration: db-test ## Run backend integration tests
 	$(PHP_BIN) $(AURORA)/bin/phpunit --testdox --testsuite=Integration
 
-test-frontend: i18n ## Run frontend unit tests (Vitest)
+test-frontend: translation ## Run frontend unit tests (Vitest)
 	$(PNPM) --dir=$(AURORA) run test
 
 test-e2e: ## Run end-to-end tests (Playwright)
@@ -310,7 +311,7 @@ fix-rector: ## Apply Rector suggestions
 	$(RECTOR) process -c $(RECTOR_CONFIG)
 
 fix: ## Run all fixers + stan
-	make i18n
+	make translation
 	make fix-js
 	make fix-twig
 	make fix-rector

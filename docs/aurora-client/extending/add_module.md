@@ -437,7 +437,7 @@ App\Core\Command\DumpJsTranslationsCommand:
 Puis :
 
 ```bash
-make i18n
+make translation
 ```
 
 ---
@@ -449,5 +449,5 @@ make i18n
 - [ ] `make sf CMD="aurora:menus:sync"` — menus synchronisés
 - [ ] Migration générée + appliquée
 - [ ] Namespace Twig déclaré dans `twig.yaml`
-- [ ] Traductions enregistrées dans `services.yaml` + `make i18n` joué
+- [ ] Traductions enregistrées dans `services.yaml` + `make translation` joué
 - [ ] `make ft` vert

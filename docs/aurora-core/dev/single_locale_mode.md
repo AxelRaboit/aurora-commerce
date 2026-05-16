@@ -210,7 +210,7 @@ Workflow pour ajouter une locale :
 3. Pour chaque module ayant des `messages.fr.yaml` / `messages.en.yaml`,
    créer un `messages.es.yaml` (peut démarrer comme copie de l'EN à
    traduire ensuite).
-4. `make i18n` regénère `assets/locales/generated/es.json`.
+4. `make translation` regénère `assets/locales/generated/es.json`.
 
 C'est tout. Le reste suit automatiquement :
 - nouvelle option dans le select `DefaultLocale` / `EmailLocale` de

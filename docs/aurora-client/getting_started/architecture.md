@@ -148,5 +148,5 @@ App\Core\Command\DumpJsTranslationsCommand:
 Après avoir modifié un YAML de traduction :
 
 ```bash
-make i18n   # régénère assets/locales/generated/*.json
+make translation   # régénère assets/locales/generated/*.json + clear cache
 ```

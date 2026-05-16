@@ -222,8 +222,9 @@ sync-params: ## Synchronise application parameters (creates missing, deletes obs
 sync-menus: ## Create missing menus for registered locations (primary, footer, …)
 	$(CONSOLE) aurora:menus:sync
 
-i18n: ## Dump Symfony YAML translations to assets/locales/generated/*.json (consumed by vue-i18n)
+translation: ## Dump Symfony YAML translations to assets/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
+	$(CONSOLE) cache:clear
 
 schema-validate: ## Validate the Doctrine schema
 	$(CONSOLE) doctrine:schema:validate -vvv
@@ -240,7 +241,7 @@ test-backend-unit: ## Run backend unit tests
 test-backend-integration: db-test ## Run backend integration tests
 	$(PHP_BIN) $(AURORA)/bin/phpunit --testdox --testsuite=Integration
 
-test-frontend: i18n ## Run frontend unit tests (Vitest)
+test-frontend: translation ## Run frontend unit tests (Vitest)
 	$(if $(wildcard vitest.config.js),$(PNPM) run test,$(PNPM) --dir=$(AURORA) run test)
 
 test-e2e: ## Run end-to-end tests (Playwright)

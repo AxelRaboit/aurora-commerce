@@ -56,12 +56,12 @@ make sync-params    # synchronise ApplicationParameter (séquences, params)
 
 ```bash
 make build          # build prod des assets
-make i18n           # régénère les JSONs vue-i18n depuis les YAMLs Symfony
+make translation           # régénère les JSONs vue-i18n depuis les YAMLs Symfony
 ```
 
 Après modification d'un fichier `translations/messages.{fr,en}.yaml` :
 ```bash
-make i18n && make dev   # ou make build si en prod
+make translation && make dev   # ou make build si en prod
 ```
 
 ### Debug
@@ -80,7 +80,7 @@ make about                                              # résumé de l'app (PHP
 
 1. **Modifier le code** (entité, manager, vue…)
 2. **Si schéma DB changé** : `make migration && make migrate`
-3. **Si traductions ajoutées** : `make i18n`
+3. **Si traductions ajoutées** : `make translation`
 4. **Vérifier** : `make ft`
 5. **Commit** : message en anglais, préfixe standardisé (`feat:`, `fix:`, `refactor:`, `docs:`)
 

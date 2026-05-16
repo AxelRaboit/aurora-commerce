@@ -136,7 +136,7 @@ Pourquoi :
 2. Pour chaque module qui a des `messages.fr.yaml` / `messages.en.yaml`,
    ajouter le `messages.es.yaml` (peut être stubé avec les clés
    `en` au début, à traduire ensuite).
-3. `make i18n` pour regénérer `assets/locales/generated/es.json`.
+3. `make translation` pour regénérer `assets/locales/generated/es.json`.
 4. C'est tout. Routes, switcher, settings, sitemap, `LocaleSubscriber`
    prennent la nouvelle locale automatiquement.
 
