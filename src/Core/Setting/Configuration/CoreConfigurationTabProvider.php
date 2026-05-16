@@ -49,9 +49,13 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
 
     /**
      * Groups whose body is drawn by a custom Vue component, so the tab must
-     * render even if its `$fields` happens to be empty.
+     * render even if its `$fields` happens to be empty. Each entry is also
+     * mapped to its `componentName` (see Vue-side `tabRegistry.js`).
      */
-    private const array ALWAYS_VISIBLE_GROUPS = ['navigation', 'appearance'];
+    private const array CUSTOM_COMPONENT_GROUPS = [
+        'navigation' => 'navigation',
+        'appearance' => 'appearance',
+    ];
 
     public function __construct(
         private SettingRepository $settingRepository,
@@ -85,7 +89,8 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
         $tabs = [];
         foreach (self::GROUP_PRIORITY as $group => $priority) {
             $fields = $fieldsByGroup[$group] ?? [];
-            if ([] === $fields && !in_array($group, self::ALWAYS_VISIBLE_GROUPS, true)) {
+            $componentName = self::CUSTOM_COMPONENT_GROUPS[$group] ?? null;
+            if ([] === $fields && null === $componentName) {
                 continue;
             }
 
@@ -93,7 +98,8 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
                 id: $group,
                 priority: $priority,
                 fields: $fields,
-                alwaysVisible: in_array($group, self::ALWAYS_VISIBLE_GROUPS, true),
+                alwaysVisible: null !== $componentName,
+                componentName: $componentName,
             );
         }
 

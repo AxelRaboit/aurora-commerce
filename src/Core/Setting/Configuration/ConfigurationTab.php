@@ -27,5 +27,16 @@ class ConfigurationTab
          * appearance palette) that draws its own content.
          */
         public readonly bool $alwaysVisible = false,
+        /**
+         * Optional name resolved against the Vue-side tab registry
+         * (`assets/Core/backend/settings/tabRegistry.js`). When set, the
+         * Settings page renders the matching component instead of the
+         * generic field renderer; clients can plug their own components
+         * via `registerSettingsTabComponent(name, component)`.
+         *
+         * Note: the registry name lives on the JS side; the backend only
+         * carries the string so the Vue layer can look it up.
+         */
+        public readonly ?string $componentName = null,
     ) {}
 }

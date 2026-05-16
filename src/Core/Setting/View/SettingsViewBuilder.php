@@ -61,6 +61,7 @@ final readonly class SettingsViewBuilder
                 'id' => $tab->id,
                 'priority' => $tab->priority,
                 'alwaysVisible' => $tab->alwaysVisible,
+                'componentName' => $tab->componentName,
             ];
         }
 

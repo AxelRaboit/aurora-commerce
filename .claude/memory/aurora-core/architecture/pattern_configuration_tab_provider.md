@@ -71,9 +71,10 @@ Modules sans prefix dédié (project, planning, hr, vault) : pas de
 migration nécessaire, ils n'utilisent que `SequencePrefixEnum` directement
 sans setting personnalisable.
 
-Phase C (à venir) : registre Vue côté assets pour permettre aux clients de
-fournir leurs propres composants custom (équivalent du
-`alwaysVisible` côté Vue).
+Phase C (livrée) : registre Vue côté assets. Voir
+[[pattern-settings-tab-vue-registry]] pour le détail de l'API
+`registerSettingsTabComponent()` et la convention de props pour les
+composants custom-rendered.
 
 ## Comment l'appliquer
 

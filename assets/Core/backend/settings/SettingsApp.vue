@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -12,16 +13,13 @@ import AppSearchInput from "@/shared/components/form/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
-import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
-import AppColorField from "@/shared/components/form/AppColorField.vue";
-import { Search, FileText, Lock, Save, Plus, X, RotateCcw, ChevronDown, ChevronRight } from "lucide-vue-next";
+import { Search, FileText, Lock, Save } from "lucide-vue-next";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
 import { useSettingsPostPicker } from "@core/backend/settings/composables/useSettingsPostPicker.js";
 import { useSettingsSequenceFilter } from "@core/backend/settings/composables/useSettingsSequenceFilter.js";
 import { useSettingsTabs } from "@core/backend/settings/composables/useSettingsTabs.js";
-import { useNavAliases } from "@core/backend/settings/composables/useNavAliases.js";
-import { useColorPickerPresets } from "@core/backend/settings/composables/useColorPickerPresets.js";
+import { getSettingsTabComponent } from "@core/backend/settings/tabRegistry.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
@@ -36,15 +34,29 @@ const { t } = useI18n();
 
 const { availableGroups, activeTab, selectTab, tabLabel, tabDescription } = useSettingsTabs(props.groups, props.tabs);
 
+// Resolve `componentName` → Vue component for each visible tab. Tabs whose
+// componentName is null/unknown fall back to the generic field renderer.
+const customComponentByGroup = computed(() => {
+    const map = {};
+    for (const tab of props.tabs) {
+        if (!availableGroups.includes(tab.id)) continue;
+        const component = getSettingsTabComponent(tab.componentName);
+        if (component) {
+            map[tab.id] = component;
+        }
+    }
+    return map;
+});
+
+const genericGroups = computed(() =>
+    availableGroups.filter((groupName) => !(groupName in customComponentByGroup.value)),
+);
+
 const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
-    useSettingsForm(props.groups, availableGroups, props.updatePath);
-
-const navAliases = useNavAliases({ groups: props.groups, updatePath: props.updatePath });
-
-const colorPresets = useColorPickerPresets({ groups: props.groups, updatePath: props.updatePath });
+    useSettingsForm(props.groups, genericGroups.value, props.updatePath);
 
 const { postPickerLabels, postPickerSearch, postPickerResults, postPickerOpen, resolvePostLabel, searchPosts, selectPost, clearPost, onPostPickerBlur, onPostPickerFocus } =
-    useSettingsPostPicker(props.groups, availableGroups, fieldValues, props.postSearchPath);
+    useSettingsPostPicker(props.groups, genericGroups.value, fieldValues, props.postSearchPath);
 
 const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, goToSequencePage } =
     useSettingsSequenceFilter(props.groups);
@@ -88,180 +100,21 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
         </div>
 
         <div class="flex-1 min-w-0">
-            <!-- Navigation aliases tab — custom UI, not a generic setting renderer -->
-            <div v-show="activeTab === 'navigation'" class="space-y-6">
-                <p class="text-sm text-secondary">{{ t('backend.settings.tabs.navigation_description') }}</p>
+            <!-- Tabs whose body is owned by a registered Vue component -->
+            <component
+                v-for="(component, groupName) in customComponentByGroup"
+                :key="groupName"
+                :is="component"
+                v-show="activeTab === groupName"
+                :groups="groups"
+                :update-path="updatePath"
+                :nav-sections="navSections"
+                :post-search-path="postSearchPath"
+            />
 
-                <!-- Sections aliases -->
-                <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <div>
-                        <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.navAliases.sectionsTitle') }}</h3>
-                        <p class="text-xs text-muted mt-1">{{ t('backend.settings.navAliases.sectionsHelp') }}</p>
-                    </div>
-                    <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
-                    <div v-else class="space-y-3">
-                        <div v-for="section in navSections" :key="section.id" class="flex items-center gap-4">
-                            <span class="text-sm text-secondary w-36 shrink-0">{{ t(`backend.nav.sections.${section.id}`) }}</span>
-                            <AppInput
-                                v-model="navAliases.sectionAliases[section.id]"
-                                :placeholder="t(`backend.nav.sections.${section.id}`)"
-                                class="flex-1"
-                            />
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-line flex justify-end">
-                        <AppButton variant="primary" size="md" :loading="navAliases.sectionsSaving.value" v-on:click="navAliases.saveSections">
-                            <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('backend.settings.navAliases.saveSections') }}
-                        </AppButton>
-                    </div>
-                </div>
-
-                <!-- Items aliases -->
-                <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.navAliases.itemsTitle') }}</h3>
-                            <p class="text-xs text-muted mt-1">{{ t('backend.settings.navAliases.itemsHelp') }}</p>
-                        </div>
-                        <AppButton variant="ghost" size="sm" v-on:click="navAliases.resetAllItems">
-                            <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('backend.settings.navAliases.resetAll') }}
-                        </AppButton>
-                    </div>
-
-                    <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
-                    <div v-else class="space-y-2">
-                        <div
-                            v-for="section in navSections"
-                            :key="section.id"
-                            class="border border-line rounded-lg overflow-hidden"
-                        >
-                            <button
-                                type="button"
-                                class="w-full flex items-center justify-between gap-3 px-3 py-2 bg-surface-2 hover:bg-surface-3 transition-colors text-left"
-                                v-on:click="navAliases.toggleSection(section.id)"
-                            >
-                                <span class="flex items-center gap-2 text-sm font-medium text-primary">
-                                    <component
-                                        :is="navAliases.isSectionExpanded(section.id) ? ChevronDown : ChevronRight"
-                                        class="w-3.5 h-3.5 text-muted"
-                                        :stroke-width="2"
-                                    />
-                                    {{ navAliases.sectionLabel(section) }}
-                                </span>
-                                <span class="text-xs text-muted">{{ section.items?.length ?? 0 }}</span>
-                            </button>
-                            <div v-show="navAliases.isSectionExpanded(section.id)" class="p-3 space-y-2">
-                                <div v-if="!section.items?.length" class="text-xs text-muted italic">
-                                    {{ t('backend.settings.navAliases.itemsEmpty') }}
-                                </div>
-                                <div
-                                    v-for="item in section.items"
-                                    :key="item.route"
-                                    class="flex items-center gap-2"
-                                >
-                                    <span class="text-xs text-secondary w-40 shrink-0 truncate" :title="navAliases.itemDefaultLabel(item)">
-                                        {{ navAliases.itemDefaultLabel(item) }}
-                                    </span>
-                                    <AppInput
-                                        v-model="navAliases.itemAliases[item.route]"
-                                        :placeholder="navAliases.itemDefaultLabel(item)"
-                                        class="flex-1"
-                                    />
-                                    <AppButton
-                                        variant="ghost"
-                                        size="sm"
-                                        :disabled="!navAliases.itemAliases[item.route]"
-                                        :title="t('backend.settings.navAliases.resetItem')"
-                                        v-on:click="navAliases.resetItem(item.route)"
-                                    >
-                                        <X class="w-3.5 h-3.5" :stroke-width="2" />
-                                    </AppButton>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-2 border-t border-line flex justify-end">
-                        <AppButton variant="primary" size="md" :loading="navAliases.itemsSaving.value" v-on:click="navAliases.saveItems">
-                            <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('backend.settings.navAliases.saveItems') }}
-                        </AppButton>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Appearance tab — custom UI (palette editor) -->
-            <div v-show="activeTab === 'appearance'" class="bg-surface border border-line rounded-xl p-6 space-y-6">
-                <div>
-                    <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.appearance.color_presets.title') }}</h3>
-                    <p class="text-xs text-muted mt-1">{{ t('backend.settings.appearance.color_presets.help') }}</p>
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                    <div
-                        v-for="color in colorPresets.presets.value"
-                        :key="color"
-                        class="relative group"
-                    >
-                        <AppColorSwatch :model-value="color" size="md" :disabled="true" />
-                        <button
-                            type="button"
-                            class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-surface border border-line text-muted hover:text-danger hover:border-danger flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-sm"
-                            :title="t('backend.settings.appearance.color_presets.remove')"
-                            v-on:click="colorPresets.remove(color)"
-                        >
-                            <X class="w-3 h-3" :stroke-width="2.5" />
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <div v-if="colorPresets.showAddForm.value" class="border border-line rounded-lg p-4 bg-surface-2 space-y-3">
-                        <AppColorField
-                            v-model="colorPresets.newColor.value"
-                            :label="t('backend.settings.appearance.color_presets.add')"
-                            :show-hex="true"
-                            size="md"
-                        />
-                        <div class="flex gap-2 justify-end">
-                            <AppTextLinkButton color="muted" size="sm" v-on:click="colorPresets.cancelAdd">
-                                {{ t('shared.common.cancel') }}
-                            </AppTextLinkButton>
-                            <AppButton variant="primary" size="sm" v-on:click="colorPresets.add">
-                                {{ t('backend.settings.appearance.color_presets.confirm_add') }}
-                            </AppButton>
-                        </div>
-                    </div>
-                    <div v-else class="flex flex-wrap gap-2">
-                        <AppButton variant="secondary" size="sm" v-on:click="colorPresets.openAddForm">
-                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('backend.settings.appearance.color_presets.add') }}
-                        </AppButton>
-                        <AppButton variant="ghost" size="sm" v-on:click="colorPresets.reset">
-                            <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t('backend.settings.appearance.color_presets.reset') }}
-                        </AppButton>
-                    </div>
-                </div>
-
-                <div class="pt-2 border-t border-line flex justify-end">
-                    <AppButton
-                        variant="primary"
-                        size="md"
-                        :loading="colorPresets.saving.value"
-                        :disabled="!colorPresets.canSave.value"
-                        v-on:click="colorPresets.save"
-                    >
-                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t('backend.settings.save') }}
-                    </AppButton>
-                </div>
-            </div>
-
+            <!-- Generic field renderer for parameter-driven tabs -->
             <div
-                v-for="groupName in availableGroups.filter(g => g !== 'navigation' && g !== 'appearance')"
+                v-for="groupName in genericGroups"
                 v-show="activeTab === groupName"
                 :key="groupName"
             >

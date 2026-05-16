@@ -64,7 +64,7 @@ final class SettingDefinitionRegistryTest extends TestCase
         );
 
         $registry = new SettingDefinitionRegistry([
-            $this->provider([new ConfigurationTab(id: 'sequences', priority: 90, fields: [$coreField])]),
+            $this->provider([new ConfigurationTab(id: 'sequences', priority: 90, fields: [$coreField], componentName: 'sequences')]),
             $this->provider([new ConfigurationTab(id: 'sequences', priority: 50, fields: [$editorialField], alwaysVisible: true)]),
         ]);
 
@@ -75,6 +75,7 @@ final class SettingDefinitionRegistryTest extends TestCase
         self::assertSame(50, $tabs[0]->priority, 'merged tab takes the lowest contributed priority');
         self::assertSame([$coreField, $editorialField], $tabs[0]->fields, 'fields concat in provider iteration order');
         self::assertTrue($tabs[0]->alwaysVisible, 'alwaysVisible is OR-ed across contributions');
+        self::assertSame('sequences', $tabs[0]->componentName, 'componentName from first contributor wins over null');
     }
 
     public function test_caches_resolved_tabs_so_providers_run_once_per_request(): void
