@@ -57,7 +57,7 @@ l'existence du module (action plateforme).
 - VO + Interface : `src/Core/Module/ModuleToggle.php`, `ModuleToggleProviderInterface.php`
 - Helper enum → toggle : `ModuleParameterEnum::toToggle()`
 - Entité : `AbstractUser::$disabledModules` (JSON)
-- Privilege : `platform.users.modules.manage` (déclaré dans `PlatformModule`)
+- Privilege : `platform.users.module_access.manage` (déclaré dans `PlatformModule`)
 - Controller endpoint : `POST /backend/users/{id}/disabled-modules`
 - UI : `UsersApp.vue` + `useUsersDisabledModules.js` composable
 - Doc complète : `docs/aurora-core/dev/per_user_module_access.md`

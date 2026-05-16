@@ -36,7 +36,7 @@ password_generator.use
 general.dashboard.view              ← GeneralModule
 general.search.view                 ← GeneralModule
 platform.users.manage               ← PlatformModule
-platform.users.modules.manage       ← PlatformModule
+platform.users.module_access.manage       ← PlatformModule
 platform.agencies.manage            ← PlatformModule
 platform.services.manage            ← PlatformModule
 media.view / .create / .edit / .delete   ← MediaModule

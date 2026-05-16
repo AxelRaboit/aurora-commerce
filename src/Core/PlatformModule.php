@@ -33,7 +33,7 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     {
         return [
             new NavPermission('platform.users.manage'),
-            new NavPermission('platform.users.modules.manage'),
+            new NavPermission('platform.users.module_access.manage'),
             new NavPermission('platform.agencies.manage'),
             new NavPermission('platform.services.manage'),
         ];

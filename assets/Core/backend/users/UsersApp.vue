@@ -472,7 +472,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
             </template>
         </AppModal>
 
-        <!-- Per-user module access modal — gated by platform.users.modules.manage -->
+        <!-- Per-user module access modal — gated by platform.users.module_access.manage -->
         <AppModal :show="modulesModal.open" max-width="2xl" :closeable="false" v-on:close="modulesModal.open = false">
             <div v-if="modulesModal.user" class="space-y-4">
                 <div class="flex items-center gap-3">

@@ -61,7 +61,7 @@ final class UserPermissionsController extends AbstractController
     }
 
     #[Route('/{id}/disabled-modules', name: '_disabled_modules', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('platform.users.modules.manage')]
+    #[IsGranted('platform.users.module_access.manage')]
     public function disabledModules(User $user, Request $request): JsonResponse
     {
         $currentUser = $this->getUser();

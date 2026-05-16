@@ -15,7 +15,7 @@ backend:
       platform:
         users:
           manage: Manage users
-          modules:
+          module_access:
             manage: Manage user module access
         agencies:
           manage: Manage agencies
