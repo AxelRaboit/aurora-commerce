@@ -1,6 +1,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
+import { useAutoSave } from "@/shared/composables/useAutoSave.js";
 import { toggleCheckboxInContent } from "./markedExtensions/markedCheckboxes.js";
 
 /**
@@ -8,6 +9,10 @@ import { toggleCheckboxInContent } from "./markedExtensions/markedCheckboxes.js"
  *
  * Owns the flat note list, the selected id, the dirty-tracked form, and all
  * server-roundtripping actions. Keeps the SFC focused on presentation.
+ *
+ * Auto-save : every form change schedules a debounced save (
+ * AUTO_SAVE_DEBOUNCE_MS). Switching notes / deleting / unmounting flush
+ * any pending save first to avoid losing keystrokes.
  *
  * @param {object} options
  * @param {object} options.api          - useMarkdownNotesApi() instance
@@ -19,6 +24,10 @@ export function useNotesEditor({ api, initialNotes }) {
     const notes = ref([...initialNotes]);
     const selectedId = ref(null);
     const form = ref({ title: "", content: "", tags: [] });
+    // Snapshot of the last known server state for the selected note —
+    // includes content (which the flat `notes` list omits). The isDirty
+    // comparison runs against this, not against the flat list entry.
+    const loadedSnapshot = ref(null);
     const saving = ref(false);
     const deleting = ref(false);
     const pendingDelete = ref(null);
@@ -28,11 +37,16 @@ export function useNotesEditor({ api, initialNotes }) {
     );
 
     const isDirty = computed(() => {
-        if (!selectedNote.value) return false;
-        return (
-            (selectedNote.value.title || "") !== form.value.title ||
-            (selectedNote.value.content || "") !== form.value.content
-        );
+        if (!loadedSnapshot.value) return false;
+        if (loadedSnapshot.value.title !== form.value.title) return true;
+        if (loadedSnapshot.value.content !== form.value.content) return true;
+        const a = loadedSnapshot.value.tags;
+        const b = form.value.tags ?? [];
+        if (a.length !== b.length) return true;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) return true;
+        }
+        return false;
     });
 
     async function refreshList() {
@@ -43,17 +57,24 @@ export function useNotesEditor({ api, initialNotes }) {
     }
 
     async function selectNote(id) {
+        // Persist any pending edits on the previous note before navigating.
+        await flushPendingSave();
+
         selectedId.value = id;
         const { ok, payload } = await api.show(id);
         if (!ok) {
             toast.error(t("notes.markdown.errors.load_failed"));
             return;
         }
-        form.value = {
+
+        const snapshot = {
             title: payload.note.title ?? "",
             content: payload.note.content ?? "",
-            tags: payload.note.tags ?? [],
+            tags: [...(payload.note.tags ?? [])],
         };
+        loadedSnapshot.value = snapshot;
+        form.value = { ...snapshot, tags: [...snapshot.tags] };
+        cancelAutoSave();
     }
 
     async function createNote(parentId = null) {
@@ -70,36 +91,84 @@ export function useNotesEditor({ api, initialNotes }) {
         await selectNote(payload.note.id);
     }
 
-    async function saveSelected() {
-        if (!selectedNote.value) return;
+    /**
+     * Persist the currently selected note. Drives the actual HTTP call
+     * from auto-save. Returns the success boolean so `useAutoSave` can
+     * decide between the `saved` and `error` status.
+     */
+    async function performSave() {
+        if (!selectedNote.value) return true;
+
         saving.value = true;
+        const noteId = selectedNote.value.id;
+        const parentId = selectedNote.value.parentId;
+        const snapshot = {
+            title: form.value.title,
+            content: form.value.content,
+            tags: [...form.value.tags],
+        };
+
         try {
-            const { ok, payload } = await api.update(selectedNote.value.id, {
-                parentId: selectedNote.value.parentId,
-                title: form.value.title,
-                content: form.value.content,
-                tags: form.value.tags,
+            const { ok } = await api.update(noteId, {
+                parentId,
+                ...snapshot,
             });
-            if (!ok) {
-                toast.error(t("notes.markdown.errors.save_failed"));
-                return;
+            if (!ok) return false;
+
+            // Update the snapshot so isDirty drops to false — without
+            // overwriting `form` (the user may have typed more chars
+            // while the request was in flight; those stay dirty and the
+            // next debounce will flush them).
+            loadedSnapshot.value = snapshot;
+
+            // Keep the flat list (sidebar tree) in sync with the new
+            // title / tags. We touch the entry in place rather than
+            // refetching the whole list to avoid losing scroll / state.
+            const index = notes.value.findIndex((n) => n.id === noteId);
+            if (index !== -1) {
+                notes.value[index] = {
+                    ...notes.value[index],
+                    title: snapshot.title,
+                    tags: snapshot.tags,
+                };
             }
-            await refreshList();
-            await selectNote(payload.note.id);
-            toast.success(t("notes.markdown.saved"));
+            return true;
         } finally {
             saving.value = false;
         }
     }
 
+    const {
+        saveStatus,
+        lastSavedAt,
+        schedule: scheduleAutoSave,
+        flush: flushPendingSave,
+        cancel: cancelAutoSave,
+    } = useAutoSave({
+        isDirty: () => isDirty.value,
+        save: performSave,
+        onError: () => toast.error(t("notes.markdown.errors.save_failed")),
+    });
+
     /**
-     * Open the delete confirmation modal for the currently selected note.
-     * The actual server call lives in `confirmDelete()` so the UI can
-     * surface a styled modal instead of the native window.confirm.
+     * Manual-save entry point kept for keyboard-shortcut wiring and the
+     * interactive checkbox toggle in preview mode. Defers to
+     * `flushPendingSave()` which short-circuits when clean.
      */
-    function requestDelete() {
-        if (!selectedNote.value) return;
-        pendingDelete.value = selectedNote.value;
+    async function saveSelected() {
+        await flushPendingSave();
+    }
+
+    /**
+     * Open the delete confirmation modal for a note. Defaults to the
+     * currently selected one; pass a node from the tree to delete any
+     * other. The actual server call lives in `confirmDelete()` so the UI
+     * can surface a styled modal instead of the native window.confirm.
+     */
+    function requestDelete(note = null) {
+        const target = note ?? selectedNote.value;
+        if (!target) return;
+        pendingDelete.value = target;
     }
 
     function cancelDelete() {
@@ -111,6 +180,12 @@ export function useNotesEditor({ api, initialNotes }) {
         const targetId = pendingDelete.value.id;
         deleting.value = true;
         try {
+            // Cancel any pending auto-save for the note we're about to
+            // delete, otherwise it would 404 mid-flight.
+            if (selectedId.value === targetId) {
+                cancelAutoSave();
+            }
+
             const { ok } = await api.remove(targetId);
             if (!ok) {
                 toast.error(t("notes.markdown.errors.delete_failed"));
@@ -118,6 +193,7 @@ export function useNotesEditor({ api, initialNotes }) {
             }
             if (selectedId.value === targetId) {
                 selectedId.value = null;
+                loadedSnapshot.value = null;
                 form.value = { title: "", content: "", tags: [] };
             }
             pendingDelete.value = null;
@@ -129,7 +205,8 @@ export function useNotesEditor({ api, initialNotes }) {
 
     /**
      * Wiki-link click in the preview pane. If the target title resolves to
-     * an existing note, navigate to it — after warning on unsaved changes.
+     * an existing note, navigate to it. selectNote() flushes any pending
+     * save first, so unsaved keystrokes are persisted automatically.
      */
     async function onWikiLinkClick({ noteTitle, matchedId }) {
         if (matchedId === null) {
@@ -139,12 +216,6 @@ export function useNotesEditor({ api, initialNotes }) {
             return;
         }
         if (matchedId === selectedId.value) return;
-        if (
-            isDirty.value &&
-            !window.confirm(t("notes.markdown.confirm_discard_changes"))
-        ) {
-            return;
-        }
         await selectNote(matchedId);
     }
 
@@ -169,8 +240,27 @@ export function useNotesEditor({ api, initialNotes }) {
         event.returnValue = "";
     }
 
+    // Trigger auto-save on any user-driven form change. The watch fires
+    // when selectNote() loads a fresh form too — isDirty is false then,
+    // so no save is scheduled.
+    watch(
+        form,
+        () => {
+            if (!isDirty.value || saving.value) return;
+            scheduleAutoSave();
+        },
+        { deep: true },
+    );
+
     watch(isDirty, (dirty) => {
-        if (dirty) {
+        // Belt-and-braces: even with auto-save, network failures or a
+        // hard tab-close mid-debounce could lose changes. Keep the
+        // beforeunload guard while anything is unsaved or in-flight.
+        if (
+            dirty ||
+            saveStatus.value === "saving" ||
+            saveStatus.value === "pending"
+        ) {
             window.addEventListener("beforeunload", beforeUnloadHandler);
         } else {
             window.removeEventListener("beforeunload", beforeUnloadHandler);
@@ -191,11 +281,14 @@ export function useNotesEditor({ api, initialNotes }) {
         saving,
         deleting,
         pendingDelete,
+        saveStatus,
+        lastSavedAt,
         // actions
         refreshList,
         selectNote,
         createNote,
         saveSelected,
+        flushPendingSave,
         requestDelete,
         cancelDelete,
         confirmDelete,

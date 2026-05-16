@@ -16,6 +16,10 @@ backend:
           created: Note créée
           updated: Note mise à jour
           deleted: Note supprimée
+        tag:
+          renamed: Tag renommé
+          merged: Tags fusionnés
+          removed: Tag supprimé
 
 notes:
   markdown:
@@ -43,6 +47,40 @@ notes:
       edit: Édition seule
       split: Édition + aperçu
       preview: Aperçu seul
+    tags:
+      add_placeholder: Ajouter un tag…
+      filter_label: Filtrer par tag
+      clear: Tout effacer
+      no_results: Aucune note pour ces tags
+      no_results_description: Aucune note de l'arbo ne porte les tags sélectionnés.
+      errors:
+        empty: Le tag est requis.
+        sources_empty: Sélectionnez au moins un tag à fusionner.
+      manage:
+        title: Gérer les tags
+        close: Fermer
+        search_placeholder: Filtrer les tags…
+        search_empty: Aucun tag trouvé
+        search_empty_description: 'Aucun tag ne correspond à « {query} ».'
+        empty_title: Aucun tag
+        empty_description: Aucune note ne porte de tag pour le moment.
+        rename: Renommer
+        rename_confirm: Renommer
+        new_name_placeholder: Nouveau nom du tag…
+        rename_success: 'Aucune note mise à jour. | 1 note mise à jour. | {count} notes mises à jour.'
+        delete: Supprimer
+        delete_yes: Confirmer
+        delete_confirm: 'Retirer « {tag} » de 1 note ? | Retirer « {tag} » de {count} notes ?'
+        delete_success: 'Tag retiré de 0 note. | Tag retiré de 1 note. | Tag retiré de {count} notes.'
+        merge_prompt: 'Fusionner 1 tag en un seul : | Fusionner {count} tags en un seul :'
+        merge_target_placeholder: Tag cible (existant ou nouveau)…
+        merge_confirm: Fusionner
+        merge_success: 'Aucune note fusionnée. | 1 note fusionnée. | {count} notes fusionnées.'
+        note_count: '1 note | {count} notes'
+        errors:
+          rename_failed: Impossible de renommer le tag.
+          delete_failed: Impossible de supprimer le tag.
+          merge_failed: Impossible de fusionner les tags.
     links:
       title: Liens
       open: Afficher les liens entrants

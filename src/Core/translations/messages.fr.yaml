@@ -25,6 +25,12 @@ shared:
     error: Une erreur est survenue.
     saved: Enregistré.
     deleted: Supprimé.
+    autosave:
+      pending: Modifications non enregistrées
+      saving: Enregistrement…
+      saved: Enregistré
+      error: Échec de l'enregistrement
+      last_saved: 'Enregistré {time}'
     actions: Actions
     or: ou
     name: Nom

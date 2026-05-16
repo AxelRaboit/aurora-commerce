@@ -264,6 +264,26 @@ final class MarkdownNotesControllerTest extends IntegrationTestCase
         self::assertSame($mentioner['id'], $body['mentions'][0]['id']);
     }
 
+    public function testTagsListReturnsAggregatedHistogram(): void
+    {
+        $this->createNote(title: 'A', tags: ['alpha', 'beta']);
+        $this->createNote(title: 'B', tags: ['beta', 'gamma']);
+        $this->createNote(title: 'C', tags: ['alpha']);
+
+        [$status, $body] = $this->getJson('backend_notes_markdown_tags_list');
+
+        self::assertSame(200, $status);
+        self::assertTrue($body['success']);
+        $byTag = [];
+        foreach ($body['tags'] as $entry) {
+            $byTag[$entry['tag']] = $entry['count'];
+        }
+
+        self::assertSame(2, $byTag['alpha'] ?? null);
+        self::assertSame(2, $byTag['beta'] ?? null);
+        self::assertSame(1, $byTag['gamma'] ?? null);
+    }
+
     public function testGraphEndpointReturnsNodesAndEdges(): void
     {
         $a = $this->createNote(title: 'Alpha', content: 'links to [[Beta]]');

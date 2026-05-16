@@ -21,4 +21,14 @@ interface MarkdownNoteSerializerInterface
      * @return array<string, mixed>
      */
     public function serializeDetail(MarkdownNoteInterface $note): array;
+
+    /**
+     * Reshape a `tag => count` histogram into the API list shape
+     * `[{tag, count}, …]` for the tag-management modal.
+     *
+     * @param array<string, int> $counts
+     *
+     * @return list<array{tag: string, count: int}>
+     */
+    public function serializeTagCounts(array $counts): array;
 }

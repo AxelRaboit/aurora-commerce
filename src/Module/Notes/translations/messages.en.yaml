@@ -16,6 +16,10 @@ backend:
           created: Note created
           updated: Note updated
           deleted: Note deleted
+        tag:
+          renamed: Tag renamed
+          merged: Tags merged
+          removed: Tag removed
 
 notes:
   markdown:
@@ -42,6 +46,40 @@ notes:
       edit: Edit only
       split: Edit + preview
       preview: Preview only
+    tags:
+      add_placeholder: Add a tag…
+      filter_label: Filter by tag
+      clear: Clear all
+      no_results: No notes for these tags
+      no_results_description: No note in the tree carries the selected tags.
+      errors:
+        empty: Tag is required.
+        sources_empty: Select at least one tag to merge.
+      manage:
+        title: Manage tags
+        close: Close
+        search_placeholder: Filter tags…
+        search_empty: No matching tag
+        search_empty_description: 'No tag matches "{query}".'
+        empty_title: No tags yet
+        empty_description: No note carries a tag for now.
+        rename: Rename
+        rename_confirm: Rename
+        new_name_placeholder: New tag name…
+        rename_success: 'No note updated. | 1 note updated. | {count} notes updated.'
+        delete: Delete
+        delete_yes: Confirm
+        delete_confirm: 'Remove "{tag}" from 1 note? | Remove "{tag}" from {count} notes?'
+        delete_success: 'Tag removed from 0 notes. | Tag removed from 1 note. | Tag removed from {count} notes.'
+        merge_prompt: 'Merge 1 tag into one: | Merge {count} tags into one:'
+        merge_target_placeholder: Target tag (existing or new)…
+        merge_confirm: Merge
+        merge_success: 'No note merged. | 1 note merged. | {count} notes merged.'
+        note_count: '1 note | {count} notes'
+        errors:
+          rename_failed: Could not rename the tag.
+          delete_failed: Could not delete the tag.
+          merge_failed: Could not merge the tags.
     links:
       title: Links
       open: Show incoming links

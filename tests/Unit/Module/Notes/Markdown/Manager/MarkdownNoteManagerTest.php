@@ -349,4 +349,124 @@ final class MarkdownNoteManagerTest extends TestCase
 
         return $note;
     }
+
+    public function testTagCountsDelegatesToRepository(): void
+    {
+        $user = $this->makeUser();
+        $this->repo->expects(self::once())->method('findTagCountsForUser')->with($user)->willReturn(['a' => 2, 'b' => 1]);
+
+        self::assertSame(['a' => 2, 'b' => 1], $this->manager->tagCounts($user));
+    }
+
+    public function testRenameTagRewritesOccurrencesAcrossNotes(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTags(['old', 'kept']);
+        $b = $this->makeNoteWithId(2);
+        $b->setTags(['other']);
+        $c = $this->makeNoteWithId(3);
+        $c->setTags(['old']);
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->em->expects(self::atLeastOnce())->method('flush');
+
+        $affected = $this->manager->renameTag($user, 'old', 'new');
+
+        self::assertSame(2, $affected);
+        self::assertSame(['new', 'kept'], $a->getTags());
+        self::assertSame(['other'], $b->getTags());
+        self::assertSame(['new'], $c->getTags());
+    }
+
+    public function testRenameTagDedupesWhenTargetAlreadyPresent(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTags(['old', 'new', 'kept']);
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+
+        $affected = $this->manager->renameTag($user, 'old', 'new');
+
+        self::assertSame(1, $affected);
+        self::assertSame(['new', 'kept'], $a->getTags(), 'duplicate target dropped, order preserved');
+    }
+
+    public function testRenameTagNoopWhenSourceAndTargetEqual(): void
+    {
+        $user = $this->makeUser();
+        $this->repo->expects(self::never())->method('findAllWithContentForUser');
+        $this->em->expects(self::never())->method('flush');
+
+        self::assertSame(0, $this->manager->renameTag($user, 'same', 'same'));
+        self::assertSame(0, $this->manager->renameTag($user, '', 'x'));
+        self::assertSame(0, $this->manager->renameTag($user, 'x', ''));
+    }
+
+    public function testMergeTagsCollapsesMultipleSourcesIntoTarget(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTags(['draft', 'wip']);
+        $b = $this->makeNoteWithId(2);
+        $b->setTags(['done']);
+        $c = $this->makeNoteWithId(3);
+        $c->setTags(['wip', 'in-progress']);
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->em->expects(self::atLeastOnce())->method('flush');
+
+        $affected = $this->manager->mergeTags($user, ['draft', 'wip', 'in-progress'], 'todo');
+
+        self::assertSame(2, $affected);
+        self::assertSame(['todo'], $a->getTags(), 'draft+wip collapsed to a single todo');
+        self::assertSame(['done'], $b->getTags());
+        self::assertSame(['todo'], $c->getTags());
+    }
+
+    public function testMergeTagsSkipsSourceEqualToTarget(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTags(['todo']);
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+
+        $affected = $this->manager->mergeTags($user, ['todo'], 'todo');
+
+        self::assertSame(0, $affected, 'no-op when only source equals target');
+    }
+
+    public function testRemoveTagStripsItFromEveryNote(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTags(['gone', 'kept']);
+        $b = $this->makeNoteWithId(2);
+        $b->setTags(['kept']);
+        $c = $this->makeNoteWithId(3);
+        $c->setTags(['gone']);
+
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->em->expects(self::atLeastOnce())->method('flush');
+
+        $affected = $this->manager->removeTag($user, 'gone');
+
+        self::assertSame(2, $affected);
+        self::assertSame(['kept'], $a->getTags());
+        self::assertSame(['kept'], $b->getTags());
+        self::assertSame([], $c->getTags());
+    }
+
+    public function testRemoveTagNoopWhenAbsent(): void
+    {
+        $user = $this->makeUser();
+        $a = $this->makeNoteWithId(1);
+        $a->setTags(['x']);
+        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+        $this->em->expects(self::never())->method('flush');
+
+        self::assertSame(0, $this->manager->removeTag($user, 'missing'));
+    }
 }

@@ -31,4 +31,14 @@ class MarkdownNoteSerializer implements MarkdownNoteSerializerInterface
             'content' => $note->getContent(),
         ];
     }
+
+    public function serializeTagCounts(array $counts): array
+    {
+        $tags = [];
+        foreach ($counts as $tag => $count) {
+            $tags[] = ['tag' => $tag, 'count' => $count];
+        }
+
+        return $tags;
+    }
 }

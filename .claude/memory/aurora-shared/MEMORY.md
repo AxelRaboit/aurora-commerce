@@ -9,6 +9,18 @@ Distribué via composer : les clients lisent ces mémoires depuis
 
 ---
 
+## Architecture / responsabilités (règles dures)
+
+- [convention_thin_controller.md](convention_thin_controller.md) — **règle dure** :
+  controllers ultra-fins (routing + auth + DTO + délégation + sérialisation).
+  Toute logique métier dans Manager (mutations) ou Service (calcul pur). À
+  répéter à chaque session.
+- [convention_sfc_thin_presentation.md](convention_sfc_thin_presentation.md) —
+  **règle dure** : les SFC `.vue` restent fines (template + bindings + refs
+  UI-only), toute logique métier (état orchestré, watchers, autosave, HTTP,
+  state machine) va dans un composable co-localisé. Limite : ~80 lignes de
+  `<script setup>`.
+
 ## Vue / composants
 
 - [convention_form_components.md](convention_form_components.md) — toujours

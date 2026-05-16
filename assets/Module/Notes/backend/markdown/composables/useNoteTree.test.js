@@ -3,11 +3,17 @@ import { ref } from "vue";
 import { useNoteTree } from "./useNoteTree.js";
 
 const flatNotes = [
-    { id: 1, parentId: null, title: "Welcome", position: 0 },
-    { id: 2, parentId: 1, title: "Getting Started", position: 0 },
-    { id: 3, parentId: 1, title: "Tips", position: 1 },
-    { id: 4, parentId: null, title: "Tasks", position: 1 },
-    { id: 5, parentId: 4, title: "Errands", position: 0 },
+    { id: 1, parentId: null, title: "Welcome", position: 0, tags: ["intro"] },
+    {
+        id: 2,
+        parentId: 1,
+        title: "Getting Started",
+        position: 0,
+        tags: ["intro", "todo"],
+    },
+    { id: 3, parentId: 1, title: "Tips", position: 1, tags: [] },
+    { id: 4, parentId: null, title: "Tasks", position: 1, tags: ["todo"] },
+    { id: 5, parentId: 4, title: "Errands", position: 0, tags: [] },
 ];
 
 describe("useNoteTree", () => {
@@ -69,5 +75,40 @@ describe("useNoteTree", () => {
         const { tree } = useNoteTree(notes, query);
 
         expect(tree.value).toHaveLength(2);
+    });
+
+    it("filters by selected tags (OR semantics) and preserves ancestors", () => {
+        const notes = ref(flatNotes);
+        const query = ref("");
+        const tags = ref(["todo"]);
+        const { tree } = useNoteTree(notes, query, tags);
+
+        // Welcome stays as ancestor of Getting Started (tagged "todo");
+        // Tasks itself carries the tag.
+        expect(tree.value.map((n) => n.id).sort()).toEqual([1, 4]);
+        const welcome = tree.value.find((n) => n.id === 1);
+        expect(welcome.matched).toBe(false);
+        expect(welcome.children.map((c) => c.id)).toEqual([2]);
+        expect(welcome.children[0].matched).toBe(true);
+    });
+
+    it("combines title query and tag filter", () => {
+        const notes = ref(flatNotes);
+        const query = ref("tasks");
+        const tags = ref(["todo"]);
+        const { tree } = useNoteTree(notes, query, tags);
+
+        // Only Tasks satisfies both filters.
+        expect(tree.value).toHaveLength(1);
+        expect(tree.value[0].id).toBe(4);
+    });
+
+    it("returns an empty tree when no note carries a selected tag", () => {
+        const notes = ref(flatNotes);
+        const query = ref("");
+        const tags = ref(["nonexistent"]);
+        const { tree } = useNoteTree(notes, query, tags);
+
+        expect(tree.value).toHaveLength(0);
     });
 });

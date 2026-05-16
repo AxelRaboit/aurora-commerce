@@ -25,6 +25,12 @@ shared:
     error: An error occurred.
     saved: Saved.
     deleted: Deleted.
+    autosave:
+      pending: Unsaved changes
+      saving: Saving…
+      saved: Saved
+      error: Save failed
+      last_saved: 'Saved {time}'
     actions: Actions
     or: or
     name: Name
