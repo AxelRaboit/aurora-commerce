@@ -2,6 +2,7 @@
 import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNoteEditorTextarea } from "@notes/backend/markdown/composables/useNoteEditorTextarea.js";
+import AppFloatingMenu from "@shared/components/overlay/AppFloatingMenu.vue";
 import { FileText } from "lucide-vue-next";
 
 const props = defineProps({
@@ -58,57 +59,37 @@ const {
         />
 
         <!-- Slash command palette ('/' at line start) -->
-        <div
+        <AppFloatingMenu
             v-if="showSlash && filteredCommands.length > 0"
-            class="absolute z-30 min-w-56 max-h-64 overflow-auto rounded-md border border-line bg-surface shadow-lg py-1"
-            :style="{ top: `${slashPosition.top}px`, left: `${slashPosition.left}px` }"
-            v-on:mousedown.prevent
+            :items="filteredCommands"
+            :position="slashPosition"
+            :active-index="slashIndex"
+            v-on:select="selectCommand"
+            v-on:highlight="highlightCommand"
         >
-            <button
-                v-for="(command, index) in filteredCommands"
-                :key="command.id"
-                type="button"
-                class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
-                :class="
-                    index === slashIndex
-                        ? 'bg-accent-500/15 text-primary'
-                        : 'text-secondary hover:bg-surface-2'
-                "
-                v-on:mousedown.prevent="selectCommand(command)"
-                v-on:mouseenter="highlightCommand(index)"
-            >
+            <template #default="{ item }">
                 <span class="inline-flex w-6 shrink-0 justify-center font-mono text-xs text-muted">
-                    {{ command.icon }}
+                    {{ item.icon }}
                 </span>
-                <span class="flex-1">{{ command.label }}</span>
-            </button>
-        </div>
+                <span class="flex-1">{{ item.label }}</span>
+            </template>
+        </AppFloatingMenu>
 
         <!-- Wiki-link autocomplete ('[[' anywhere on a line) -->
-        <div
+        <AppFloatingMenu
             v-if="showSuggestions && filteredSuggestions.length > 0"
-            class="absolute z-30 min-w-56 max-h-64 overflow-auto rounded-md border border-line bg-surface shadow-lg py-1"
-            :style="{ top: `${suggestionPosition.top}px`, left: `${suggestionPosition.left}px` }"
-            v-on:mousedown.prevent
+            :items="filteredSuggestions"
+            :position="suggestionPosition"
+            :active-index="suggestionIndex"
+            v-on:select="selectSuggestion"
+            v-on:highlight="highlightSuggestion"
         >
-            <button
-                v-for="(note, index) in filteredSuggestions"
-                :key="note.id"
-                type="button"
-                class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
-                :class="
-                    index === suggestionIndex
-                        ? 'bg-accent-500/15 text-primary'
-                        : 'text-secondary hover:bg-surface-2'
-                "
-                v-on:mousedown.prevent="selectSuggestion(note)"
-                v-on:mouseenter="highlightSuggestion(index)"
-            >
+            <template #default="{ item }">
                 <FileText class="w-3.5 h-3.5 shrink-0 text-muted" :stroke-width="2" />
                 <span class="flex-1 truncate">
-                    {{ note.title || t('notes.markdown.untitled') }}
+                    {{ item.title || t('notes.markdown.untitled') }}
                 </span>
-            </button>
-        </div>
+            </template>
+        </AppFloatingMenu>
     </div>
 </template>

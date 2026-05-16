@@ -1,0 +1,75 @@
+<script setup>
+/**
+ * Generic floating menu — a positioned dropdown listing selectable
+ * items, styled to match Aurora surface tokens. Lives on top of a
+ * relatively-positioned parent (the trigger area provides the
+ * positioning context; this component renders inline, not teleported,
+ * because the consumer wants the menu glued to a precise pixel position
+ * inside its own layout — typically a textarea caret).
+ *
+ * Consumers so far:
+ *   - markdown editor: slash command palette ("/" at line start)
+ *   - markdown editor: wiki-link autocomplete ("[[" inside a line)
+ *
+ * The default slot is scoped (`{ item, index, active }`) so each
+ * consumer renders its own row — slash wants a monospace glyph + label,
+ * wiki wants a Lucide icon + truncated title. The menu owns positioning,
+ * keyboard-active highlight, mouseenter routing, and the mousedown.prevent
+ * trick that lets a click pick an item before the trigger element blurs.
+ *
+ * Visibility is left to the parent (v-if on the wrapper). The menu only
+ * renders when the parent decides to show it.
+ */
+
+defineProps({
+    /**
+     * Items rendered as buttons. Each item should have a stable `id`
+     * for the v-for key; the rest of the shape is consumer-defined and
+     * forwarded to the scoped slot.
+     */
+    items: { type: Array, required: true },
+    /**
+     * `{ top, left }` in CSS pixels, relative to the nearest positioned
+     * ancestor. Set by the consumer composable's mirror-div math.
+     */
+    position: {
+        type: Object,
+        required: true,
+        validator: (v) => typeof v.top === "number" && typeof v.left === "number",
+    },
+    /**
+     * Index of the keyboard-highlighted row. Driven by the consumer's
+     * ArrowUp/ArrowDown handlers.
+     */
+    activeIndex: { type: Number, default: 0 },
+    /** Tailwind class for min-width (default ~14rem). */
+    minWidthClass: { type: String, default: "min-w-56" },
+});
+
+const emit = defineEmits(["select", "highlight"]);
+</script>
+
+<template>
+    <div
+        class="absolute z-30 max-h-64 overflow-auto rounded-md border border-line bg-surface shadow-lg py-1"
+        :class="minWidthClass"
+        :style="{ top: `${position.top}px`, left: `${position.left}px` }"
+        v-on:mousedown.prevent
+    >
+        <button
+            v-for="(item, index) in items"
+            :key="item.id"
+            type="button"
+            class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
+            :class="
+                index === activeIndex
+                    ? 'bg-accent-500/15 text-primary'
+                    : 'text-secondary hover:bg-surface-2'
+            "
+            v-on:mousedown.prevent="emit('select', item)"
+            v-on:mouseenter="emit('highlight', index)"
+        >
+            <slot :item="item" :index="index" :active="index === activeIndex" />
+        </button>
+    </div>
+</template>
