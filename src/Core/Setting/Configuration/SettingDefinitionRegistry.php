@@ -9,9 +9,9 @@ namespace Aurora\Core\Setting\Configuration;
  * and how they should be validated/rendered. Aggregates every
  * {@see ConfigurationTabProviderInterface} into one indexed view, used by:
  *
- *  - {@see \Aurora\Core\Setting\View\SettingsViewBuilder} to build the
+ *  - {@see SettingsViewBuilder} to build the
  *    grouped Twig payload.
- *  - {@see \Aurora\Core\Setting\Controller\Backend\SettingsController} to
+ *  - {@see SettingsController} to
  *    decide whether an incoming `key` is admin-writable.
  *
  * The registry replaces direct `ApplicationParameterEnum::tryFrom(...)` calls
@@ -20,12 +20,12 @@ namespace Aurora\Core\Setting\Configuration;
 final class SettingDefinitionRegistry
 {
     /**
-     * @var list<ConfigurationTab>|null Resolved on first access.
+     * @var list<ConfigurationTab>|null resolved on first access
      */
     private ?array $tabs = null;
 
     /**
-     * @var array<string, SettingFieldDescriptor>|null Key → descriptor lookup, built lazily.
+     * @var array<string, SettingFieldDescriptor>|null key → descriptor lookup, built lazily
      */
     private ?array $fieldsByKey = null;
 

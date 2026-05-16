@@ -24,10 +24,14 @@ const components = new Map();
 
 export function registerSettingsTabComponent(name, component) {
     if (typeof name !== "string" || name === "") {
-        throw new Error("registerSettingsTabComponent: name must be a non-empty string");
+        throw new Error(
+            "registerSettingsTabComponent: name must be a non-empty string",
+        );
     }
     if (!component) {
-        throw new Error(`registerSettingsTabComponent: component for "${name}" is required`);
+        throw new Error(
+            `registerSettingsTabComponent: component for "${name}" is required`,
+        );
     }
     components.set(name, markRaw(component));
 }

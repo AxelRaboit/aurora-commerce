@@ -13,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Builds the Twig payload for the admin settings page. Iterates the
  * {@see SettingDefinitionRegistry} (built from every contributed
- * {@see \Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface}),
+ * {@see ConfigurationTabProviderInterface}),
  * resolves the current persisted value for each field, and decorates `media`
  * fields with a public URL the Vue layer can preview.
  *

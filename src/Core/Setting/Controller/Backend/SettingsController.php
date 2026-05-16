@@ -8,6 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Setting\Configuration\SettingDefinitionRegistry;
+use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
@@ -54,7 +55,7 @@ final class SettingsController extends AbstractController
 
         $field = $this->definitionRegistry->getField($key);
 
-        if (null === $field) {
+        if (!$field instanceof SettingFieldDescriptor) {
             return $this->jsonForbidden();
         }
 

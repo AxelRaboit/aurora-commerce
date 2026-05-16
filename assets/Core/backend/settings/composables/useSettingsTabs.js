@@ -11,7 +11,9 @@ export function useSettingsTabs(groups, tabs = []) {
     const { t } = useI18n();
 
     const availableGroups = (Array.isArray(tabs) ? tabs : [])
-        .filter((tab) => tab.alwaysVisible || (groups?.[tab.id]?.length ?? 0) > 0)
+        .filter(
+            (tab) => tab.alwaysVisible || (groups?.[tab.id]?.length ?? 0) > 0,
+        )
         .map((tab) => tab.id);
 
     const { activeTab, select: selectTab } = useTabState(availableGroups, {

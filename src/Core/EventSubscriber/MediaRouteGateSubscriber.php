@@ -4,32 +4,27 @@ declare(strict_types=1);
 
 namespace Aurora\Core\EventSubscriber;
 
-use Aurora\Core\Service\PlatformContext;
+use Aurora\Core\Service\MediaContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s the Platform admin routes (Users, Agencies, Services) when their
- * toggle is OFF — globally or for the current user. Media routes are
- * gated by {@see MediaRouteGateSubscriber} (Jalon 4.5), Configuration
- * routes by {@see ConfigurationRouteGateSubscriber} (Jalon 4).
- *
- * The Dashboard (`backend_dashboard`) is intentionally not gated here:
- * it is the post-login landing page and is always accessible.
+ * 404s the Media admin routes (`backend_media*`) when the Media toggle
+ * is OFF — globally or for the current user. Sibling of
+ * {@see PlatformRouteGateSubscriber}; split out of it in Jalon 4.5 so
+ * route gating mirrors the module split.
  */
-final readonly class PlatformRouteGateSubscriber implements EventSubscriberInterface
+final readonly class MediaRouteGateSubscriber implements EventSubscriberInterface
 {
     /** Map of route prefix → callable returning bool (false ⇒ 404). */
     private array $gates;
 
-    public function __construct(private PlatformContext $platformContext)
+    public function __construct(private MediaContext $mediaContext)
     {
         $this->gates = [
-            'backend_users' => $this->platformContext->isUsersEnabled(...),
-            'backend_agencies' => $this->platformContext->isAgenciesEnabled(...),
-            'backend_services' => $this->platformContext->isServicesEnabled(...),
+            'backend_media' => $this->mediaContext->isLibraryEnabled(...),
         ];
     }
 

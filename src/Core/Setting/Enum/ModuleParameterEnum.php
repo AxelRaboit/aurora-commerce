@@ -14,6 +14,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case GeneralBackend = 'modules_general_backend';
     case PlatformBackend = 'modules_platform_backend';
     case ConfigurationBackend = 'modules_configuration_backend';
+    case MediaBackend = 'modules_media_backend';
     case EditorialBackend = 'modules_editorial_backend';
     case CrmBackend = 'modules_crm_backend';
     case ErpBackend = 'modules_erp_backend';
@@ -36,7 +37,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case GeneralDashboard = 'modules_general_dashboard';
 
     // Sub-modules — Platform
-    case PlatformMedia = 'modules_platform_media';
     case PlatformUsers = 'modules_platform_users';
     case PlatformAgencies = 'modules_platform_agencies';
     case PlatformServices = 'modules_platform_services';
@@ -44,6 +44,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     // Sub-modules — Configuration
     case ConfigurationSettings = 'modules_configuration_settings';
     case ConfigurationThemes = 'modules_configuration_themes';
+
+    // Sub-modules — Media
+    case MediaLibrary = 'modules_media_library';
 
     // Sub-modules — Billing
     case BillingTiers = 'modules_billing_tiers';
@@ -109,13 +112,14 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::GeneralBackend => 'backend.modules.general_backend',
             self::GeneralDashboard => 'backend.nav.dashboard',
             self::PlatformBackend => 'backend.modules.platform_backend',
-            self::PlatformMedia => 'backend.nav.media',
             self::PlatformUsers => 'backend.nav.users',
             self::PlatformAgencies => 'backend.nav.agencies',
             self::PlatformServices => 'backend.nav.services',
             self::ConfigurationBackend => 'backend.modules.configuration',
             self::ConfigurationSettings => 'backend.nav.settings',
             self::ConfigurationThemes => 'backend.nav.themes',
+            self::MediaBackend => 'backend.modules.media_backend',
+            self::MediaLibrary => 'backend.nav.media',
             self::EditorialBackend => 'backend.modules.editorial_backend',
             self::CrmBackend => 'backend.modules.crm_backend',
             self::ErpBackend => 'backend.modules.erp_backend',
@@ -169,13 +173,14 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::GeneralBackend => 'backend.modules.general_backend_description',
             self::GeneralDashboard => 'backend.nav.dashboard_description',
             self::PlatformBackend => 'backend.modules.platform_backend_description',
-            self::PlatformMedia => 'backend.nav.media_description',
             self::PlatformUsers => 'backend.nav.users_description',
             self::PlatformAgencies => 'backend.nav.agencies_description',
             self::PlatformServices => 'backend.nav.services_description',
             self::ConfigurationBackend => 'backend.modules.configuration_description',
             self::ConfigurationSettings => 'backend.nav.settings_description',
             self::ConfigurationThemes => 'backend.nav.themes_description',
+            self::MediaBackend => 'backend.modules.media_backend_description',
+            self::MediaLibrary => 'backend.nav.media_description',
             self::EditorialBackend => 'backend.modules.editorial_backend_description',
             self::CrmBackend => 'backend.modules.crm_backend_description',
             self::ErpBackend => 'backend.modules.erp_backend_description',
@@ -245,9 +250,10 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             self::GeneralDashboard => self::GeneralBackend,
-            self::PlatformMedia, self::PlatformUsers, self::PlatformAgencies,
+            self::PlatformUsers, self::PlatformAgencies,
             self::PlatformServices => self::PlatformBackend,
             self::ConfigurationSettings, self::ConfigurationThemes => self::ConfigurationBackend,
+            self::MediaLibrary => self::MediaBackend,
             self::BillingTiers, self::BillingInvoices, self::BillingCompliance => self::BillingBackend,
             self::CrmContacts, self::CrmCompanies, self::CrmDeals => self::CrmBackend,
             self::EcommerceListings, self::EcommerceOrders => self::EcommerceBackend,
@@ -282,13 +288,14 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // Core sub-modules
             self::GeneralDashboard => self::GeneralBackend->value,
             // Platform sub-modules
-            self::PlatformMedia,
             self::PlatformUsers,
             self::PlatformAgencies,
             self::PlatformServices => self::PlatformBackend->value,
             // Configuration sub-modules
             self::ConfigurationSettings,
             self::ConfigurationThemes => self::ConfigurationBackend->value,
+            // Media sub-modules
+            self::MediaLibrary => self::MediaBackend->value,
             // Billing sub-modules
             self::BillingTiers => self::BillingBackend->value,
             self::BillingInvoices => self::BillingTiers->value,
@@ -380,6 +387,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::GeneralBackend => 'general',
             self::PlatformBackend => 'platform',
             self::ConfigurationBackend => 'configuration',
+            self::MediaBackend => 'media',
             self::EditorialBackend => 'editorial',
             self::CrmBackend => 'crm',
             self::ErpBackend => 'erp',

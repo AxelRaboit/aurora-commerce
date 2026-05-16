@@ -48,6 +48,7 @@ backend:
     sections:
       general: General
       platform: Platform
+      media: Media library
       configuration: Configuration
       dev: Administration
     administration: Developer access

@@ -13,10 +13,11 @@ use Aurora\Core\Service\PlatformContext;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 
 /**
- * Platform section — operational data management (Media, Users, Agencies,
- * Services). Configuration (Settings, Themes) split out in Jalon 4 to
- * its sibling {@see ConfigurationModule}; this class now owns the
- * "manage the things" tabs, not "configure the app" tabs.
+ * Platform section — the organization layer of the backend (Users, Agencies,
+ * Services). Media moved to {@see MediaModule} in Jalon 4.5 (cross-cutting
+ * infra), Configuration (Settings, Themes) lives in {@see ConfigurationModule}
+ * (admin params) — this class now owns the "who works for whom doing what"
+ * triplet.
  *
  * Search (cross-cutting privilege `core.search.view`) lives here as a
  * convenient home — it isn't surfaced as a NavItem, but the permission
@@ -34,8 +35,6 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     public function getPermissions(): array
     {
         return [
-            new NavPermission('core.media.view'),
-            new NavPermission('core.media.manage'),
             new NavPermission('core.users.manage'),
             new NavPermission('core.users.modules.manage'),
             new NavPermission('core.agencies.manage'),
@@ -52,10 +51,6 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
         }
 
         $items = [];
-
-        if ($this->platformContext->isMediaEnabled()) {
-            $items[] = new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'core.media.view', descriptionKey: 'backend.nav.media_description');
-        }
 
         if ($this->platformContext->isUsersEnabled()) {
             $items[] = new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'core.users.manage', descriptionKey: 'backend.nav.users_description');
@@ -80,7 +75,6 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     {
         return [
             new NavSection('platform', [
-                new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'core.media.view', descriptionKey: 'backend.nav.media_description'),
                 new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'core.users.manage', descriptionKey: 'backend.nav.users_description'),
                 new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'core.agencies.manage', descriptionKey: 'backend.nav.agencies_description'),
                 new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'core.services.manage', descriptionKey: 'backend.nav.services_description'),
@@ -92,7 +86,6 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     {
         return [
             ModuleParameterEnum::PlatformBackend->toToggle(),
-            ModuleParameterEnum::PlatformMedia->toToggle(),
             ModuleParameterEnum::PlatformUsers->toToggle(),
             ModuleParameterEnum::PlatformAgencies->toToggle(),
             ModuleParameterEnum::PlatformServices->toToggle(),

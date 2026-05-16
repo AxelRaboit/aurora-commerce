@@ -1,20 +1,24 @@
 ---
 name: pattern-core-submodules-split
-description: Core est éclaté en 4 ModuleInterface implémentations (GeneralModule, PlatformModule, ConfigurationModule, DevModule), pas en 1 monolithe — pour respecter le pattern "1 module class = 1 NavSection = 1 toggle root = 1 context".
+description: Core est éclaté en 5 ModuleInterface implémentations (GeneralModule, PlatformModule, MediaModule, ConfigurationModule, DevModule), pas en 1 monolithe — pour respecter le pattern "1 module class = 1 NavSection = 1 toggle root = 1 context".
 metadata:
   type: project
 ---
 
 ## Règle
 
-`src/Core/` contient **quatre** `<Name>Module.php` au lieu d'un seul
+`src/Core/` contient **cinq** `<Name>Module.php` au lieu d'un seul
 `CoreModule.php` god-class :
 
 - **`GeneralModule`** (priority 10) — Dashboard. Toggle root :
   `GeneralBackend`. Context : `GeneralContext`. Section id : `general`.
-- **`PlatformModule`** (priority 20) — Media, Users, Agencies, Services.
-  Toggle root : `PlatformBackend`. Context : `PlatformContext`. Section id :
-  `platform`.
+- **`PlatformModule`** (priority 20) — Users, Agencies, Services
+  (organization layer). Toggle root : `PlatformBackend`. Context :
+  `PlatformContext`. Section id : `platform`.
+- **`MediaModule`** (priority 22) — Média library. Toggle root :
+  `MediaBackend`. Context : `MediaContext`. Section id : `media`. Split
+  hors de Platform en Jalon 4.5 car cross-cutting (consommé par tous les
+  modules métier).
 - **`ConfigurationModule`** (priority 25) — Settings, Themes. Toggle root :
   `ConfigurationBackend`. Context : `ConfigurationContext`. Section id :
   `configuration`.
@@ -26,8 +30,9 @@ Chacun suit exactement le shape de `VaultModule`/`EditorialModule` côté
 modules métier. Auto-discovery via tag `aurora.module` (services.yaml,
 `_instanceof`).
 
-Route gating est aussi split : `PlatformRouteGateSubscriber` ne gate plus
-Settings/Themes — c'est `ConfigurationRouteGateSubscriber` qui s'en charge.
+Route gating est aussi split par module : `PlatformRouteGateSubscriber`
+gate Users/Agencies/Services, `MediaRouteGateSubscriber` gate
+`backend_media*`, `ConfigurationRouteGateSubscriber` gate Settings/Themes.
 
 ## Pourquoi
 

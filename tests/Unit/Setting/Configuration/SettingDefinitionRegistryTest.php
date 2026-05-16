@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SettingDefinitionRegistryTest extends TestCase
 {
-    public function test_aggregates_tabs_from_all_providers_and_sorts_by_priority(): void
+    public function testAggregatesTabsFromAllProvidersAndSortsByPriority(): void
     {
         $registry = new SettingDefinitionRegistry([
             $this->provider([new ConfigurationTab(id: 'late', priority: 90, fields: [])]),
@@ -27,7 +27,7 @@ final class SettingDefinitionRegistryTest extends TestCase
         self::assertSame(['early', 'middle', 'late'], array_map(static fn ($tab) => $tab->id, $tabs));
     }
 
-    public function test_indexes_fields_by_key_for_O1_lookup(): void
+    public function testIndexesFieldsByKeyForO1Lookup(): void
     {
         $field = new SettingFieldDescriptor(
             key: 'custom_module.toggle',
@@ -46,7 +46,7 @@ final class SettingDefinitionRegistryTest extends TestCase
         self::assertFalse($registry->isAdminAccessible('unknown_key'));
     }
 
-    public function test_merges_tabs_sharing_an_id_across_providers(): void
+    public function testMergesTabsSharingAnIdAcrossProviders(): void
     {
         $coreField = new SettingFieldDescriptor(
             key: 'core_prefix',
@@ -78,7 +78,7 @@ final class SettingDefinitionRegistryTest extends TestCase
         self::assertSame('sequences', $tabs[0]->componentName, 'componentName from first contributor wins over null');
     }
 
-    public function test_caches_resolved_tabs_so_providers_run_once_per_request(): void
+    public function testCachesResolvedTabsSoProvidersRunOncePerRequest(): void
     {
         $provider = new class implements ConfigurationTabProviderInterface {
             public int $calls = 0;

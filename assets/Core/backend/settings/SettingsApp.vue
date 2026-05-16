@@ -102,10 +102,10 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
         <div class="flex-1 min-w-0">
             <!-- Tabs whose body is owned by a registered Vue component -->
             <component
-                v-for="(component, groupName) in customComponentByGroup"
-                :key="groupName"
                 :is="component"
+                v-for="(component, groupName) in customComponentByGroup"
                 v-show="activeTab === groupName"
+                :key="groupName"
                 :groups="groups"
                 :update-path="updatePath"
                 :nav-sections="navSections"
