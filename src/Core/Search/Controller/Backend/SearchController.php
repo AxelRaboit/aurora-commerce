@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/search', name: 'backend_search')]
-#[IsGranted('platform.search.view')]
+#[IsGranted('general.search.view')]
 class SearchController extends AbstractController
 {
     use JsonResponseTrait;

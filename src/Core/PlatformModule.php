@@ -16,12 +16,9 @@ use Aurora\Core\Setting\Enum\ModuleParameterEnum;
  * Platform section — the organization layer of the backend (Users, Agencies,
  * Services). Media moved to {@see MediaModule} in Jalon 4.5 (cross-cutting
  * infra), Configuration (Settings, Themes) lives in {@see ConfigurationModule}
- * (admin params) — this class now owns the "who works for whom doing what"
- * triplet.
- *
- * Search (cross-cutting privilege `platform.search.view`) lives here as a
- * convenient home — it isn't surfaced as a NavItem, but the permission
- * is declared so it shows up in the privileges modal's "platform" group.
+ * (admin params), and global search moved to {@see GeneralModule} in
+ * Jalon 5.1 (it's a header feature, not a Platform-specific concern) —
+ * this class now strictly owns the "who works for whom doing what" triplet.
  */
 final readonly class PlatformModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -39,8 +36,6 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
             new NavPermission('platform.users.modules.manage'),
             new NavPermission('platform.agencies.manage'),
             new NavPermission('platform.services.manage'),
-            // Cross-cutting (no specific UI section — surfaced under platform).
-            new NavPermission('platform.search.view'),
         ];
     }
 

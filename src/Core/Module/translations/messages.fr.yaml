@@ -10,6 +10,8 @@ backend:
       general:
         dashboard:
           view: Accéder au tableau de bord
+        search:
+          view: Utiliser la recherche globale
       platform:
         users:
           manage: Gérer les utilisateurs
@@ -19,8 +21,6 @@ backend:
           manage: Gérer les agences
         services:
           manage: Gérer les services
-        search:
-          view: Utiliser la recherche globale
       media:
         view: Voir la médiathèque
         create: Téléverser des médias

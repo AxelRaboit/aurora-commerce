@@ -32,6 +32,10 @@ final readonly class GeneralModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavPermission('general.dashboard.view'),
+            // Global search (header input — omnipresent across the backend,
+            // not a NavItem in any section). Lives here because it's
+            // general-purpose backend infra, not Platform-specific.
+            new NavPermission('general.search.view'),
         ];
     }
 

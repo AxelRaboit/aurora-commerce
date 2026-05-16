@@ -10,6 +10,8 @@ backend:
       general:
         dashboard:
           view: Access the dashboard
+        search:
+          view: Use global search
       platform:
         users:
           manage: Manage users
@@ -19,8 +21,6 @@ backend:
           manage: Manage agencies
         services:
           manage: Manage services
-        search:
-          view: Use global search
       media:
         view: View media library
         create: Upload media
