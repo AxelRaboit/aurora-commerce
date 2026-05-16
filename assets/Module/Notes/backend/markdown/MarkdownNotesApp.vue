@@ -4,22 +4,28 @@ import { useI18n } from 'vue-i18n';
 import { useMarkdownNotesApi } from '@notes/backend/markdown/composables/useMarkdownNotesApi.js';
 import { useNotesEditor } from '@notes/backend/markdown/composables/useNotesEditor.js';
 import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
+import { useNoteTagFilter } from '@notes/backend/markdown/composables/useNoteTagFilter.js';
+import { useMarkdownTagsApi } from '@notes/backend/markdown/composables/useMarkdownTagsApi.js';
 import { useNoteDragDrop } from '@notes/backend/markdown/composables/useNoteDragDrop.js';
 import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
 import { useResizable } from '@shared/composables/useResizable.js';
+import { useRelativeTime } from '@shared/composables/useRelativeTime.js';
+import { useAutoSaveStatusDisplay } from '@shared/composables/useAutoSaveStatusDisplay.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
 import NoteSidePanel from '@notes/backend/markdown/components/NoteSidePanel.vue';
+import NoteTagManagerModal from '@notes/backend/markdown/components/NoteTagManagerModal.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppInput from '@shared/components/form/AppInput.vue';
 import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
+import AppTagsInput from '@shared/components/form/AppTagsInput.vue';
 import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppTab from '@shared/components/nav/AppTab.vue';
-import { Plus, Save, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose, X } from 'lucide-vue-next';
+import { Plus, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose, X, Settings2 } from 'lucide-vue-next';
 
 const props = defineProps({
     notes: { type: Array, default: () => [] },
@@ -33,6 +39,10 @@ const props = defineProps({
     backlinksPath: { type: String, required: true },
     unlinkedMentionsPath: { type: String, required: true },
     graphPath: { type: String, required: true },
+    tagsListPath: { type: String, required: true },
+    tagsRenamePath: { type: String, required: true },
+    tagsMergePath: { type: String, required: true },
+    tagsDeletePath: { type: String, required: true },
 });
 
 const { t } = useI18n();
@@ -44,12 +54,12 @@ const {
     selectedId,
     selectedNote,
     form,
-    isDirty,
     saving,
     deleting,
+    saveStatus,
+    lastSavedAt,
     selectNote,
     createNote,
-    saveSelected,
     pendingDelete,
     requestDelete,
     cancelDelete,
@@ -57,18 +67,33 @@ const {
     onWikiLinkClick,
     onCheckboxToggle,
     refreshList,
+    reloadCurrent,
 } = useNotesEditor({ api, initialNotes: props.notes });
 
 // UI-only state
 const sidePanelOpen = ref(false);
 const treeQuery = ref('');
 
-const { tree } = useNoteTree(notes, treeQuery);
+const { availableTags, selectedTags, toggleTag, clearTags, pruneMissingTags } = useNoteTagFilter(notes);
+const { tree } = useNoteTree(notes, treeQuery, selectedTags);
+
+const tagsApi = useMarkdownTagsApi(props);
+const tagManagerOpen = ref(false);
+
+// Wire the tag manager modal to the editor: after a global rename/merge/
+// delete, refresh the notes list, drop selected-filter tags that vanished,
+// and reload the currently open note so it reflects the rewritten tags.
+async function onTagsChanged() {
+    await reloadCurrent();
+    pruneMissingTags();
+}
 
 // Drag-drop hierarchy editing (drop ON a note → child of that note,
-// drop on the sidebar root → becomes root). Disabled while the filter
+// drop on the sidebar root → becomes root). Disabled while a filter
 // is active, since the visible tree is a subset of the real one.
-const dragEnabled = computed(() => treeQuery.value.trim() === '');
+const dragEnabled = computed(
+    () => treeQuery.value.trim() === '' && selectedTags.value.length === 0,
+);
 const {
     draggingId,
     dragOverId,
@@ -89,6 +114,9 @@ const viewModeOptions = [
     { value: 'split', icon: Columns, label: t('notes.markdown.view.split') },
     { value: 'preview', icon: Eye, label: t('notes.markdown.view.preview') },
 ];
+
+const { relative: lastSavedRelative } = useRelativeTime(lastSavedAt);
+const { display: saveStatusDisplay } = useAutoSaveStatusDisplay(saveStatus);
 
 // Editor pane width in split mode — drag the seam between editor and preview.
 const editorPaneRef = ref(null);
@@ -125,6 +153,43 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                 />
             </div>
 
+            <div v-if="availableTags.length > 0" class="px-3 pt-2">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-medium text-muted uppercase tracking-wide">
+                        {{ t('notes.markdown.tags.filter_label') }}
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <AppButton
+                            v-if="selectedTags.length > 0"
+                            variant="link"
+                            size="none"
+                            v-on:click="clearTags"
+                        >
+                            {{ t('notes.markdown.tags.clear') }}
+                        </AppButton>
+                        <AppIconButton
+                            size="sm"
+                            variant="ghost"
+                            :title="t('notes.markdown.tags.manage.title')"
+                            v-on:click="tagManagerOpen = true"
+                        >
+                            <Settings2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-1">
+                    <AppTab
+                        v-for="tag in availableTags"
+                        :key="tag"
+                        size="xs"
+                        :active="selectedTags.includes(tag)"
+                        v-on:click="toggleTag(tag)"
+                    >
+                        {{ tag }}
+                    </AppTab>
+                </div>
+            </div>
+
             <div
                 class="flex-1 overflow-auto p-2 transition-colors"
                 :class="rootDragOver ? 'bg-accent-50 dark:bg-accent-900/10 ring-1 ring-accent-500/40 rounded-md' : ''"
@@ -143,6 +208,7 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         :drag-over-id="dragOverId"
                         v-on:select="selectNote"
                         v-on:create-child="createNote"
+                        v-on:delete="requestDelete"
                         v-on:drag-start="onDragStart"
                         v-on:drag-end="onDragEnd"
                         v-on:drag-over="onDragOverNote"
@@ -157,6 +223,12 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                     :icon="FileText"
                 />
                 <AppNoData
+                    v-else-if="selectedTags.length > 0"
+                    :title="t('notes.markdown.tags.no_results')"
+                    :description="t('notes.markdown.tags.no_results_description')"
+                    :icon="FileText"
+                />
+                <AppNoData
                     v-else
                     :title="t('notes.markdown.empty.title')"
                     :description="t('notes.markdown.empty.description')"
@@ -168,53 +240,68 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
         <!-- Editor pane -->
         <section class="flex-1 flex flex-col min-w-0">
             <div v-if="selectedNote" class="flex-1 flex flex-col">
-                <header class="p-4 border-b border-line flex items-center gap-3">
-                    <AppInput
-                        v-model="form.title"
-                        :placeholder="t('notes.markdown.title_placeholder')"
-                        class="flex-1 text-lg font-medium"
-                    />
+                <header class="p-4 border-b border-line flex flex-col gap-2">
+                    <div class="flex items-center gap-3">
+                        <AppInput
+                            v-model="form.title"
+                            :placeholder="t('notes.markdown.title_placeholder')"
+                            class="flex-1 text-lg font-medium"
+                        />
 
-                    <AppIconButton
-                        :title="sidePanelOpen ? t('notes.markdown.links.close') : t('notes.markdown.links.open')"
-                        size="md"
-                        :variant="sidePanelOpen ? 'primary' : 'ghost'"
-                        v-on:click="sidePanelOpen = !sidePanelOpen"
-                    >
-                        <PanelRightClose v-if="sidePanelOpen" class="w-4 h-4" :stroke-width="2" />
-                        <PanelRightOpen v-else class="w-4 h-4" :stroke-width="2" />
-                    </AppIconButton>
-
-                    <!-- View mode toggle (edit / split / preview) — segmented AppTab control -->
-                    <div class="inline-flex rounded-md border border-line overflow-hidden">
-                        <AppTab
-                            v-for="opt in viewModeOptions"
-                            :key="opt.value"
-                            size="sm"
-                            align="center"
-                            shape-class="rounded-none"
-                            :active="viewMode === opt.value"
-                            :title="opt.label"
-                            v-on:click="viewMode = opt.value"
+                        <AppIconButton
+                            :title="sidePanelOpen ? t('notes.markdown.links.close') : t('notes.markdown.links.open')"
+                            size="md"
+                            :variant="sidePanelOpen ? 'primary' : 'ghost'"
+                            v-on:click="sidePanelOpen = !sidePanelOpen"
                         >
-                            <component :is="opt.icon" class="w-4 h-4" :stroke-width="2" />
-                        </AppTab>
+                            <PanelRightClose v-if="sidePanelOpen" class="w-4 h-4" :stroke-width="2" />
+                            <PanelRightOpen v-else class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+
+                        <!-- View mode toggle (edit / split / preview) — segmented AppTab control -->
+                        <div class="inline-flex rounded-md border border-line overflow-hidden">
+                            <AppTab
+                                v-for="opt in viewModeOptions"
+                                :key="opt.value"
+                                size="sm"
+                                align="center"
+                                shape-class="rounded-none"
+                                :active="viewMode === opt.value"
+                                :title="opt.label"
+                                v-on:click="viewMode = opt.value"
+                            >
+                                <component :is="opt.icon" class="w-4 h-4" :stroke-width="2" />
+                            </AppTab>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span
+                                v-if="saveStatusDisplay"
+                                class="inline-flex items-center gap-1.5 text-xs"
+                                :class="saveStatusDisplay.classes"
+                            >
+                                <component
+                                    :is="saveStatusDisplay.icon"
+                                    class="w-3.5 h-3.5"
+                                    :class="saveStatusDisplay.spin ? 'animate-spin' : ''"
+                                    :stroke-width="2"
+                                />
+                                {{ saveStatusDisplay.label }}
+                            </span>
+                            <span
+                                v-if="lastSavedAt"
+                                class="text-xs text-muted"
+                                :title="lastSavedAt.toLocaleString()"
+                            >
+                                {{ t('shared.common.autosave.last_saved', { time: lastSavedRelative }) }}
+                            </span>
+                        </div>
                     </div>
 
-                    <AppButton
-                        variant="primary"
-                        size="md"
-                        :disabled="!isDirty || saving"
-                        :loading="saving"
-                        v-on:click="saveSelected"
-                    >
-                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t('notes.markdown.save') }}
-                    </AppButton>
-                    <AppButton variant="danger" size="md" v-on:click="requestDelete">
-                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t('notes.markdown.delete') }}
-                    </AppButton>
+                    <AppTagsInput
+                        v-model="form.tags"
+                        :placeholder="t('notes.markdown.tags.add_placeholder')"
+                    />
                 </header>
 
                 <div class="flex-1 flex overflow-hidden">
@@ -264,6 +351,13 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                 />
             </div>
         </section>
+
+        <NoteTagManagerModal
+            :show="tagManagerOpen"
+            :api="tagsApi"
+            v-on:close="tagManagerOpen = false"
+            v-on:changed="onTagsChanged"
+        />
 
         <NoteSidePanel
             v-if="sidePanelOpen && selectedNote"

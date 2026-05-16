@@ -26,16 +26,40 @@ Commits `46c6e59d` (scaffold UI) + `48131a9a` (live preview) + `f03548a8` (side 
 
 ## ⏳ À faire — chantiers prioritaires
 
-### Tags UI (petit effort, gain UX immédiat)
+### Auto-save ✅ (fait, 2026-05-16)
 
-- [ ] **Input multi-tag** dans le header de l'éditeur (à côté du titre).
-      Backend `tags` (json array) déjà en place côté `MarkdownNote`.
-      Utiliser `AppTagsInput` partagé si dispo, sinon un wrapper simple.
-- [ ] **Filtre par tag** dans la sidebar — liste de tags uniques agrégés
-      depuis `notes`, click = filtre les notes affichées dans l'arbo.
-      Composable `useNoteTagFilter` ou intégré à `useNoteTree`.
+- [x] Debounced auto-save (800 ms) sur toute modification du titre / contenu / tags.
+- [x] Statut visible dans le header (`Modifications non enregistrées`,
+      `Enregistrement…`, `Enregistré`, `Échec`) avec icônes `Loader2`/`Check`/etc.
+- [x] Flush forcé avant : navigation vers une autre note, ouverture
+      d'un wiki-link, suppression de la note, `beforeunload`.
+- [x] Bouton "Enregistrer" du header retiré (auto-save remplace la
+      sauvegarde manuelle). Le manager backend reste inchangé — il sera
+      réutilisable pour un futur bouton de re-publication si besoin.
+- [x] Bug corrigé en passant : `isDirty` comparait `form.content` à un
+      `selectedNote` sans content (liste plate côté repo), donc toujours
+      `true`. Désormais comparé contre un `loadedSnapshot` séparé qui
+      stocke la valeur retournée par `api.show(id)`.
+
+### Tags UI ✅ (fait)
+
+- [x] **Input multi-tag** dans le header de l'éditeur (sous la rangée
+      titre/actions), via `AppTagsInput` partagé. `isDirty` étendu pour
+      détecter une modif de tags.
+- [x] **Filtre par tag** dans la sidebar — composable `useNoteTagFilter.js`
+      (agrège les tags uniques, gère la sélection), consommé par
+      `useNoteTree` qui filtre l'arbo (sémantique OR, ancêtres préservés).
+      Pills via `AppTab` size="xs" ; drag-drop désactivé quand le filtre
+      est actif.
+- [x] **Gestion globale des tags** — modale `NoteTagManagerModal.vue`
+      ouverte depuis l'icône engrenage du panneau filtre (`Settings2`).
+      Renommer / fusionner (sélection ≥2) / supprimer un tag à travers
+      toutes les notes de l'utilisateur. Backend : 4 endpoints
+      `/backend/notes/markdown/tags{,/rename,/merge,/delete}` +
+      `MarkdownNoteManager::{tagCounts,renameTag,mergeTags,removeTag}`
+      avec dédoublonnage automatique et audit log `notes_markdown.tag.*`.
 - [ ] **Badge tags** sur chaque rangée de l'arbo (optionnel, peut être
-      lourd visuellement).
+      lourd visuellement) — non implémenté.
 
 ### Slash commands (effort moyen)
 

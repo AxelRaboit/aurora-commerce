@@ -10,6 +10,7 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteInputFactoryInterface;
+use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteReorderInput;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\Notes\Markdown\Manager\MarkdownNoteManagerInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
@@ -199,33 +200,10 @@ final class MarkdownNotesController extends AbstractController
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $data = $this->decodeJson($request);
-        $rawEntries = $data['entries'] ?? [];
-        if (!is_array($rawEntries)) {
-            return $this->jsonInvalidInput(['entries' => 'must_be_array']);
-        }
-
-        $entries = [];
-        foreach ($rawEntries as $entry) {
-            if (!is_array($entry)) {
-                continue;
-            }
-
-            if (!isset($entry['id'])) {
-                continue;
-            }
-
-            $entries[] = [
-                'id' => (int) $entry['id'],
-                'parentId' => isset($entry['parentId']) && '' !== $entry['parentId']
-                    ? (int) $entry['parentId']
-                    : null,
-                'position' => (int) ($entry['position'] ?? 0),
-            ];
-        }
+        $input = MarkdownNoteReorderInput::fromArray($this->decodeJson($request));
 
         try {
-            $this->manager->reorder($user, $entries);
+            $this->manager->reorder($user, $input->entries);
         } catch (InvalidArgumentException) {
             return $this->jsonFailure('cycle', extra: ['message' => 'Reorder would create a cycle.']);
         }
@@ -237,7 +215,7 @@ final class MarkdownNotesController extends AbstractController
      * Declared after the static GET routes (/list, /graph) so the router
      * matches those first — otherwise /{id} with id="graph" would shadow them.
      */
-    #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
+    #[Route('/{id}', name: '_show', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Get->value])]
     public function show(int $id): JsonResponse
     {
         /** @var CoreUserInterface $user */

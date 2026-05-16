@@ -30,6 +30,10 @@ final readonly class MarkdownNotesViewBuilder
             'backlinksPath' => $this->urlGenerator->generate('backend_notes_markdown_backlinks', ['id' => '__id__']),
             'unlinkedMentionsPath' => $this->urlGenerator->generate('backend_notes_markdown_unlinked_mentions', ['id' => '__id__']),
             'graphPath' => $this->urlGenerator->generate('backend_notes_markdown_graph'),
+            'tagsListPath' => $this->urlGenerator->generate('backend_notes_markdown_tags_list'),
+            'tagsRenamePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_rename'),
+            'tagsMergePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_merge'),
+            'tagsDeletePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_delete'),
         ];
     }
 }

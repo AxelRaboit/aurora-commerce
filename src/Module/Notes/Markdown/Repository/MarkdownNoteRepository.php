@@ -63,6 +63,49 @@ class MarkdownNoteRepository extends ResolveTargetEntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * Histogram of tag → number of the user's notes carrying it.
+     * Loads only the `tags` JSON column and aggregates in PHP; the volumes
+     * involved (≤ a few hundred notes per user) keep this cheap and
+     * portable across DB engines.
+     *
+     * @return array<string, int>
+     */
+    public function findTagCountsForUser(CoreUserInterface $user): array
+    {
+        $rows = $this->createQueryBuilder('n')
+            ->select('n.tags')
+            ->where('n.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getArrayResult();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $tags = $row['tags'] ?? [];
+            if (!is_array($tags)) {
+                continue;
+            }
+
+            foreach ($tags as $tag) {
+                if (!is_string($tag)) {
+                    continue;
+                }
+
+                $trimmed = mb_trim($tag);
+                if ('' === $trimmed) {
+                    continue;
+                }
+
+                $counts[$trimmed] = ($counts[$trimmed] ?? 0) + 1;
+            }
+        }
+
+        ksort($counts, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $counts;
+    }
+
     public function findMaxPositionForUserAndParent(CoreUserInterface $user, ?int $parentId): ?int
     {
         $qb = $this->createQueryBuilder('n')

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { ChevronRight, ChevronDown, Folder, FileText, Plus } from 'lucide-vue-next';
+import { ChevronRight, ChevronDown, Folder, FileText, Plus, Trash2 } from 'lucide-vue-next';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 
 const props = defineProps({
@@ -15,6 +15,7 @@ const props = defineProps({
 const emit = defineEmits([
     'select',
     'create-child',
+    'delete',
     'drag-start',
     'drag-end',
     'drag-over',
@@ -81,15 +82,24 @@ const indentStyle = computed(() => ({ marginLeft: `${props.depth * 1}rem` }));
                 {{ node.title || $t('notes.markdown.untitled') }}
             </span>
 
-            <AppIconButton
-                size="sm"
-                variant="ghost"
-                class="opacity-0 group-hover:opacity-100 shrink-0"
-                :title="$t('notes.markdown.create_child')"
-                v-on:click.stop="emit('create-child', node.id)"
-            >
-                <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-            </AppIconButton>
+            <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity shrink-0">
+                <AppIconButton
+                    size="sm"
+                    color="accent"
+                    :title="$t('notes.markdown.create_child')"
+                    v-on:click.stop="emit('create-child', node.id)"
+                >
+                    <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                </AppIconButton>
+                <AppIconButton
+                    size="sm"
+                    color="rose"
+                    :title="$t('notes.markdown.delete')"
+                    v-on:click.stop="emit('delete', node)"
+                >
+                    <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                </AppIconButton>
+            </div>
         </div>
 
         <div v-if="hasChildren && expanded" class="space-y-0.5 mt-0.5">
@@ -104,6 +114,7 @@ const indentStyle = computed(() => ({ marginLeft: `${props.depth * 1}rem` }));
                 :depth="depth + 1"
                 v-on:select="(id) => emit('select', id)"
                 v-on:create-child="(id) => emit('create-child', id)"
+                v-on:delete="(n) => emit('delete', n)"
                 v-on:drag-start="(n, e) => emit('drag-start', n, e)"
                 v-on:drag-end="(e) => emit('drag-end', e)"
                 v-on:drag-over="(n, e) => emit('drag-over', n, e)"

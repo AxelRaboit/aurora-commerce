@@ -223,6 +223,19 @@ export function useNotesEditor({ api, initialNotes }) {
      * Interactive checkbox toggle in the preview pane. Mutates the source
      * markdown then auto-saves so the new state is durable server-side.
      */
+    /**
+     * Refresh the flat note list AND reload the currently selected note.
+     * Used after global side-effects (e.g., a tag-management rename
+     * touching multiple notes) so both the sidebar and the editor pane
+     * reflect the new server state in one call.
+     */
+    async function reloadCurrent() {
+        await refreshList();
+        if (selectedId.value !== null) {
+            await selectNote(selectedId.value);
+        }
+    }
+
     async function onCheckboxToggle(index) {
         form.value.content = toggleCheckboxInContent(form.value.content, index);
         await saveSelected();
@@ -285,6 +298,7 @@ export function useNotesEditor({ api, initialNotes }) {
         lastSavedAt,
         // actions
         refreshList,
+        reloadCurrent,
         selectNote,
         createNote,
         saveSelected,

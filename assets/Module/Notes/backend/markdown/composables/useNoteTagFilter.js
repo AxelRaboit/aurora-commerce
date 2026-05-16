@@ -36,5 +36,26 @@ export function useNoteTagFilter(notesRef) {
         selectedTags.value = [];
     }
 
-    return { availableTags, selectedTags, toggleTag, clearTags };
+    /**
+     * Drop selected filter tags that no longer exist in any note. Called
+     * after a global tag operation (rename / merge / delete) so the
+     * sidebar filter doesn't keep a now-orphaned tag selected.
+     */
+    function pruneMissingTags() {
+        if (selectedTags.value.length === 0) return;
+        const existing = new Set(
+            (notesRef.value ?? []).flatMap((n) => n.tags ?? []),
+        );
+        selectedTags.value = selectedTags.value.filter((tag) =>
+            existing.has(tag),
+        );
+    }
+
+    return {
+        availableTags,
+        selectedTags,
+        toggleTag,
+        clearTags,
+        pruneMissingTags,
+    };
 }

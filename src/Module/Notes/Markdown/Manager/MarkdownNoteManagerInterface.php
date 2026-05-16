@@ -56,4 +56,34 @@ interface MarkdownNoteManagerInterface
      * }
      */
     public function graph(CoreUserInterface $user): array;
+
+    /**
+     * Histogram of tag → number of the user's notes carrying it,
+     * sorted alphabetically (natural, case-insensitive).
+     *
+     * @return array<string, int>
+     */
+    public function tagCounts(CoreUserInterface $user): array;
+
+    /**
+     * Replace every occurrence of `$oldTag` by `$newTag` across the user's
+     * notes. Dedupes when the target tag is already present on the same
+     * note. Returns the number of notes mutated.
+     */
+    public function renameTag(CoreUserInterface $user, string $oldTag, string $newTag): int;
+
+    /**
+     * Replace every occurrence of any tag in `$sourceTags` by `$targetTag`
+     * across the user's notes. Source tags equal to the target are
+     * skipped. Returns the number of notes mutated.
+     *
+     * @param list<string> $sourceTags
+     */
+    public function mergeTags(CoreUserInterface $user, array $sourceTags, string $targetTag): int;
+
+    /**
+     * Strip `$tag` from every one of the user's notes. Returns the number
+     * of notes mutated.
+     */
+    public function removeTag(CoreUserInterface $user, string $tag): int;
 }

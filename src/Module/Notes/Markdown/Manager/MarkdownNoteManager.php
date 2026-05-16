@@ -264,6 +264,147 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         return ['nodes' => $nodes, 'edges' => $edges];
     }
 
+    public function tagCounts(CoreUserInterface $user): array
+    {
+        return $this->noteRepository->findTagCountsForUser($user);
+    }
+
+    public function renameTag(CoreUserInterface $user, string $oldTag, string $newTag): int
+    {
+        $oldTag = mb_trim($oldTag);
+        $newTag = mb_trim($newTag);
+        if ('' === $oldTag || '' === $newTag || $oldTag === $newTag) {
+            return 0;
+        }
+
+        $affected = $this->rewriteTags($user, [$oldTag => $newTag]);
+        if ($affected > 0) {
+            $this->entityManager->flush();
+            $this->auditTagsOperation('renamed', [...$this->auditTagsPayload(), 'old' => $oldTag, 'new' => $newTag, 'notes' => $affected]);
+        }
+
+        return $affected;
+    }
+
+    public function mergeTags(CoreUserInterface $user, array $sourceTags, string $targetTag): int
+    {
+        $targetTag = mb_trim($targetTag);
+        if ('' === $targetTag) {
+            return 0;
+        }
+
+        $rewrite = [];
+        foreach ($sourceTags as $source) {
+            $trimmed = mb_trim($source);
+            if ('' === $trimmed) {
+                continue;
+            }
+
+            if ($trimmed === $targetTag) {
+                continue;
+            }
+
+            $rewrite[$trimmed] = $targetTag;
+        }
+
+        if ([] === $rewrite) {
+            return 0;
+        }
+
+        $affected = $this->rewriteTags($user, $rewrite);
+        if ($affected > 0) {
+            $this->entityManager->flush();
+            $this->auditTagsOperation('merged', [...$this->auditTagsPayload(), 'sources' => array_keys($rewrite), 'target' => $targetTag, 'notes' => $affected]);
+        }
+
+        return $affected;
+    }
+
+    public function removeTag(CoreUserInterface $user, string $tag): int
+    {
+        $tag = mb_trim($tag);
+        if ('' === $tag) {
+            return 0;
+        }
+
+        $affected = 0;
+        foreach ($this->noteRepository->findAllWithContentForUser($user) as $note) {
+            $tags = $note->getTags();
+            if (!in_array($tag, $tags, true)) {
+                continue;
+            }
+
+            $note->setTags(array_values(array_filter($tags, static fn (string $existing): bool => $existing !== $tag)));
+            ++$affected;
+        }
+
+        if ($affected > 0) {
+            $this->entityManager->flush();
+            $this->auditTagsOperation('removed', [...$this->auditTagsPayload(), 'tag' => $tag, 'notes' => $affected]);
+        }
+
+        return $affected;
+    }
+
+    /**
+     * Apply a tag → tag map across all the user's notes, deduping when the
+     * target is already present. Returns the count of mutated notes.
+     *
+     * @param array<string, string> $rewrite source → target
+     */
+    protected function rewriteTags(CoreUserInterface $user, array $rewrite): int
+    {
+        $affected = 0;
+        foreach ($this->noteRepository->findAllWithContentForUser($user) as $note) {
+            $current = $note->getTags();
+            $next = [];
+            $seen = [];
+            $changed = false;
+
+            foreach ($current as $tag) {
+                $resolved = $rewrite[$tag] ?? $tag;
+                if ($resolved !== $tag) {
+                    $changed = true;
+                }
+
+                if (isset($seen[$resolved])) {
+                    $changed = true;
+                    continue;
+                }
+
+                $seen[$resolved] = true;
+                $next[] = $resolved;
+            }
+
+            if ($changed) {
+                $note->setTags($next);
+                ++$affected;
+            }
+        }
+
+        return $affected;
+    }
+
+    /**
+     * Hook: base payload merged into every tag-operation audit log
+     * (`tag.renamed`, `tag.merged`, `tag.removed`). Unlike `auditPayload()`
+     * which is per-entity, tag operations are cross-cutting — no single
+     * note to capture — so this returns an empty array by default.
+     * Clients override to splat-merge custom context (workflow id,
+     * triggering user role, etc.) into every tag audit log at once.
+     *
+     * @return array<string, mixed>
+     */
+    protected function auditTagsPayload(): array
+    {
+        return [];
+    }
+
+    protected function auditTagsOperation(string $action, array $payload): void
+    {
+        $this->auditLogger->log('notes_markdown', 'tag.'.$action, 'MarkdownNote', null, $payload);
+    }
+
     /**
      * When a note's title changes, rewrite [[oldTitle]] → [[newTitle]] in all
      * the user's other notes. Case-sensitive substring (matches Onyx).
