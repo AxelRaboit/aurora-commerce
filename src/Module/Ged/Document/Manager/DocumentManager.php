@@ -8,8 +8,8 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
-use Aurora\Module\Ged\Setting\GedSettingEnum;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
@@ -19,6 +19,7 @@ use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\DocumentTag\Repository\DocumentTagRepository;
+use Aurora\Module\Ged\Setting\GedSettingEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -30,6 +31,7 @@ class DocumentManager implements DocumentManagerInterface
         protected readonly DocumentCategoryRepository $categoryRepository,
         protected readonly MediaRepository $mediaRepository,
         protected readonly SequenceGenerator $sequenceGenerator,
+        protected readonly SettingRepository $settingRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly DocumentTagRepository $tagRepository,
         protected readonly DocumentFolderRepository $folderRepository,
@@ -39,7 +41,8 @@ class DocumentManager implements DocumentManagerInterface
     public function create(DocumentInputInterface $input): DocumentInterface
     {
         $document = $this->createDocument();
-        $document->setReference($this->sequenceGenerator->next(GedSettingEnum::DocumentPrefix->value));
+        $prefix = $this->settingRepository->getOrDefault(GedSettingEnum::DocumentPrefix);
+        $document->setReference($this->sequenceGenerator->next($prefix));
         $this->applyInput($document, $input);
         $this->entityManager->persist($document);
         $this->entityManager->flush();

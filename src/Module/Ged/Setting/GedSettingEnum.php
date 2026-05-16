@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Setting;
 
+use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
 
 enum GedSettingEnum: string implements ApplicationParameterEnumInterface
@@ -32,7 +33,7 @@ enum GedSettingEnum: string implements ApplicationParameterEnumInterface
     public function getDefaultValue(): string
     {
         return match ($this) {
-            self::DocumentPrefix => 'DOC',
+            self::DocumentPrefix => SequencePrefixEnum::GedDocument->value,
         };
     }
 

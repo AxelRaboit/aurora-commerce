@@ -8,6 +8,8 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
@@ -48,11 +50,15 @@ final class DocumentManagerTest extends TestCase
         $this->versionRepository = $this->createMock(DocumentVersionRepository::class);
         $this->versionRepository->method('getNextVersionNumber')->willReturn(1);
 
+        $settingRepository = $this->createStub(SettingRepository::class);
+        $settingRepository->method('getOrDefault')->willReturn(SequencePrefixEnum::GedDocument->value);
+
         $this->manager = new DocumentManager(
             $this->entityManager,
             $this->categoryRepository,
             $this->mediaRepository,
             $this->makeSequenceGenerator(),
+            $settingRepository,
             $this->createStub(AuditLogger::class),
             $this->tagRepository,
             $this->folderRepository,
