@@ -6,7 +6,6 @@ namespace Aurora\Module\Crm\Listener;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
@@ -14,6 +13,7 @@ use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
+use Aurora\Module\Crm\Setting\CrmSettingEnum;
 use Aurora\Module\Ecommerce\Order\Event\OrderCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -43,7 +43,7 @@ final readonly class OrderCrmSyncListener
 
     public function __invoke(OrderCreatedEvent $event): void
     {
-        if ('1' !== (string) $this->settingRepository->get(ApplicationParameterEnum::CrmSyncOrders->value, '0')) {
+        if ('1' !== $this->settingRepository->getOrDefault(CrmSettingEnum::SyncOrders)) {
             return;
         }
 

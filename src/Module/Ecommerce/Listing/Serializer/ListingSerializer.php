@@ -6,9 +6,9 @@ namespace Aurora\Module\Ecommerce\Listing\Serializer;
 
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
+use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +30,7 @@ class ListingSerializer implements ListingSerializerInterface
         $priceCents = $product->getPriceCents();
         $displayImage = $listing->getFeaturedImage() ?? $product->getImage();
         $stockQuantity = $product->getStockQuantity();
-        $threshold = (int) $this->settingRepository->getOrDefault(ApplicationParameterEnum::EcommerceLowStockThreshold);
+        $threshold = (int) $this->settingRepository->getOrDefault(EcommerceSettingEnum::LowStockThreshold);
         $isLowStock = $product->isStockTracked()
             && $threshold > 0
             && $stockQuantity > 0

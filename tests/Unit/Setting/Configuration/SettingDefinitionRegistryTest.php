@@ -46,6 +46,37 @@ final class SettingDefinitionRegistryTest extends TestCase
         self::assertFalse($registry->isAdminAccessible('unknown_key'));
     }
 
+    public function test_merges_tabs_sharing_an_id_across_providers(): void
+    {
+        $coreField = new SettingFieldDescriptor(
+            key: 'core_prefix',
+            type: 'string',
+            labelKey: 'core.label',
+            descriptionKey: 'core.help',
+            defaultValue: 'C',
+        );
+        $editorialField = new SettingFieldDescriptor(
+            key: 'editorial_prefix',
+            type: 'string',
+            labelKey: 'editorial.label',
+            descriptionKey: 'editorial.help',
+            defaultValue: 'E',
+        );
+
+        $registry = new SettingDefinitionRegistry([
+            $this->provider([new ConfigurationTab(id: 'sequences', priority: 90, fields: [$coreField])]),
+            $this->provider([new ConfigurationTab(id: 'sequences', priority: 50, fields: [$editorialField], alwaysVisible: true)]),
+        ]);
+
+        $tabs = $registry->getTabs();
+
+        self::assertCount(1, $tabs);
+        self::assertSame('sequences', $tabs[0]->id);
+        self::assertSame(50, $tabs[0]->priority, 'merged tab takes the lowest contributed priority');
+        self::assertSame([$coreField, $editorialField], $tabs[0]->fields, 'fields concat in provider iteration order');
+        self::assertTrue($tabs[0]->alwaysVisible, 'alwaysVisible is OR-ed across contributions');
+    }
+
     public function test_caches_resolved_tabs_so_providers_run_once_per_request(): void
     {
         $provider = new class implements ConfigurationTabProviderInterface {

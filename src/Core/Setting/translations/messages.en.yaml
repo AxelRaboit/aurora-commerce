@@ -22,7 +22,6 @@ backend:
       navigation: Navigation
       navigation_description: Customize sidemenu section and item names.
       modules: Modules
-      ecommerce: E-commerce
     appearance:
       color_presets:
         title: Color picker palette
@@ -145,9 +144,6 @@ backend:
     seo_twitter_handle:
       label: Twitter / X handle
       description: 'Twitter handle of the site (with @, e.g.: @aurora_app). Used in the twitter:site Twitter Cards meta tag.'
-    ecommerce_low_stock_threshold:
-      label: Low stock threshold (e-commerce)
-      description: "Displays a \"Only X left\" warning on the product page when available stock is less than or equal to this value. Set to 0 to disable."
     ged_document_prefix:
       label: DMS document reference prefix
       description: Auto-generated DMS document reference prefix (e.g. DOC). Leave empty to disable.
@@ -175,9 +171,6 @@ backend:
     crm_company_prefix:
       label: CRM company reference prefix
       description: Auto-generated CRM company reference prefix (e.g. CPY). Leave empty to disable.
-    crm_sync_orders:
-      label: Sync orders into CRM
-      description: When enabled, each Ecommerce order automatically creates or enriches a CRM contact matching the buyer (with a "client" tag). Disable in pure B2C setups to avoid flooding the CRM.
     email_locale:
       label: Forced email locale
       description: 'Language used for all outgoing emails. "Follow default locale" applies the site default locale.'

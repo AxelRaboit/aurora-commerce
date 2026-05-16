@@ -1,4 +1,12 @@
 backend:
+  settings:
+    tabs:
+      crm: CRM
+      crm_description: Paramètres du module CRM (synchronisation, contacts…).
+  parameters:
+    crm_sync_orders:
+      label: Synchroniser les commandes vers le CRM
+      description: "Quand activé, chaque commande Ecommerce crée ou enrichit automatiquement un contact CRM correspondant à l'acheteur (avec l'étiquette « client »). Désactivez en B2C pur pour éviter d'inonder le CRM."
   permissions:
     names:
       crm:

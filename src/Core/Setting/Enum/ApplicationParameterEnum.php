@@ -37,7 +37,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case SeoDefaultDescription = 'seo_default_description';
     case SeoDefaultOgImage = 'seo_default_og_image';
     case SeoTwitterHandle = 'seo_twitter_handle';
-    case EcommerceLowStockThreshold = 'backend_ecommerce_low_stock_threshold';
     case GedDocumentPrefix = 'backend_ged_document_prefix';
     case PdfFormDocumentPrefix = 'backend_pdfform_document_prefix';
     case BillingInvoicePrefix = 'backend_billing_invoice_prefix';
@@ -75,7 +74,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoGalleryPickPrefix = 'photo_gallery_pick_prefix';
     case NavSectionAliases = 'nav_section_aliases';
     case NavItemAliases = 'nav_item_aliases';
-    case CrmSyncOrders = 'crm_sync_orders';
     case ColorPickerPresets = 'color_picker_presets';
 
     /**
@@ -125,7 +123,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SeoDefaultDescription => 'backend.parameters.seo_default_description.label',
             self::SeoDefaultOgImage => 'backend.parameters.seo_default_og_image.label',
             self::SeoTwitterHandle => 'backend.parameters.seo_twitter_handle.label',
-            self::EcommerceLowStockThreshold => 'backend.parameters.ecommerce_low_stock_threshold.label',
             self::GedDocumentPrefix => 'backend.parameters.ged_document_prefix.label',
             self::PdfFormDocumentPrefix => 'backend.parameters.pdfform_document_prefix.label',
             self::BillingInvoicePrefix => 'backend.parameters.billing_invoice_prefix.label',
@@ -163,7 +160,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.label',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.label',
             self::NavItemAliases => 'backend.parameters.nav_item_aliases.label',
-            self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.label',
             self::ColorPickerPresets => 'backend.parameters.color_picker_presets.label',
         };
     }
@@ -198,7 +194,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SeoDefaultDescription => 'backend.parameters.seo_default_description.description',
             self::SeoDefaultOgImage => 'backend.parameters.seo_default_og_image.description',
             self::SeoTwitterHandle => 'backend.parameters.seo_twitter_handle.description',
-            self::EcommerceLowStockThreshold => 'backend.parameters.ecommerce_low_stock_threshold.description',
             self::BillingInvoicePrefix => 'backend.parameters.billing_invoice_prefix.description',
             self::BillingCreditNotePrefix => 'backend.parameters.billing_credit_note_prefix.description',
             self::EcommerceListingPrefix => 'backend.parameters.ecommerce_listing_prefix.description',
@@ -236,7 +231,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.description',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.description',
             self::NavItemAliases => 'backend.parameters.nav_item_aliases.description',
-            self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.description',
             self::ColorPickerPresets => 'backend.parameters.color_picker_presets.description',
         };
     }
@@ -271,7 +265,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SeoDefaultDescription => '',
             self::SeoDefaultOgImage => '',
             self::SeoTwitterHandle => '',
-            self::EcommerceLowStockThreshold => '5',
             self::GedDocumentPrefix => 'DOC',
             self::PdfFormDocumentPrefix => SequencePrefixEnum::PdfFormDocument->value,
             self::BillingInvoicePrefix => SequencePrefixEnum::Invoice->value,
@@ -309,7 +302,6 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
             self::NavSectionAliases => '{}',
             self::NavItemAliases => '{}',
-            self::CrmSyncOrders => '0',
             self::ColorPickerPresets => json_encode(self::DEFAULT_COLOR_PICKER_PRESETS, JSON_THROW_ON_ERROR),
         };
     }
@@ -317,10 +309,10 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getType(): string
     {
         return match ($this) {
-            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::EcommerceLowStockThreshold => 'int',
+            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront, self::DefaultLocale, self::EmailLocale, self::Timezone => 'select',
-            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::CrmSyncOrders, self::SingleLocaleMode => 'bool',
+            self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::SingleLocaleMode => 'bool',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix => 'string',
             self::LogoMediaId, self::FaviconMediaId, self::SeoDefaultOgImage => 'media',
             self::ColorPickerPresets => 'json',
@@ -331,7 +323,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function isAdminAccessible(): bool
     {
         return match ($this->getGroup()) {
-            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'ecommerce', 'email', 'sequences', 'media', 'navigation', 'crm', 'appearance' => true,
+            'general', 'reading', 'localization', 'branding', 'seo', 'system', 'email', 'sequences', 'media', 'navigation', 'appearance' => true,
             default => false,
         };
     }
@@ -347,10 +339,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription, self::SeoDefaultOgImage, self::SeoTwitterHandle => 'seo',
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix, self::PdfFormDocumentPrefix => 'sequences',
-            self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
             self::NavSectionAliases, self::NavItemAliases => 'navigation',
-            self::CrmSyncOrders => 'crm',
             self::ColorPickerPresets => 'appearance',
         };
     }

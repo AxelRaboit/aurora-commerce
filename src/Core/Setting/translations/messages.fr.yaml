@@ -22,7 +22,6 @@ backend:
       navigation: Navigation
       navigation_description: Personnalisez les noms des sections et des items du menu latéral.
       modules: Modules
-      ecommerce: E-commerce
     appearance:
       color_presets:
         title: Palette du picker de couleurs
@@ -145,9 +144,6 @@ backend:
     seo_twitter_handle:
       label: Handle Twitter / X
       description: 'Handle Twitter du site (avec @, ex : @aurora_app). Utilisé pour la balise twitter:site dans les Twitter Cards.'
-    ecommerce_low_stock_threshold:
-      label: Seuil de stock bas (e-commerce)
-      description: Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.
     ged_document_prefix:
       label: Préfixe des références documents GED
       description: 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.'
@@ -175,9 +171,6 @@ backend:
     crm_company_prefix:
       label: Préfixe des références entreprises CRM
       description: 'Préfixe de la référence entreprise CRM auto-générée (ex: CPY). Laissez vide pour désactiver.'
-    crm_sync_orders:
-      label: Synchroniser les commandes vers le CRM
-      description: "Quand activé, chaque commande Ecommerce crée ou enrichit automatiquement un contact CRM correspondant à l'acheteur (avec l'étiquette « client »). Désactivez en B2C pur pour éviter d'inonder le CRM."
     email_locale:
       label: Langue forcée pour les emails
       description: "Langue à utiliser pour tous les emails sortants. « Suivre la langue par défaut » applique la langue par défaut du site."

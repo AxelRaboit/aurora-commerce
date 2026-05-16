@@ -8,7 +8,7 @@ use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Core\Setting\Entity\Setting;
 use Aurora\Core\Setting\Entity\SettingInterface;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,11 +39,11 @@ class SettingRepository extends ResolveTargetEntityRepository
      * Returns the stored value for the given parameter, falling back to its
      * declared default when missing or null. Always returns a non-null string.
      */
-    public function getOrDefault(ApplicationParameterEnum $parameter): string
+    public function getOrDefault(ApplicationParameterEnumInterface $parameter): string
     {
         $default = $parameter->getDefaultValue();
 
-        return $this->get($parameter->value, $default) ?? $default;
+        return $this->get($parameter->getKey(), $default) ?? $default;
     }
 
     public function getBoolean(string $key, bool $default = false): bool

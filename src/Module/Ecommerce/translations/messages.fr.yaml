@@ -1,4 +1,12 @@
 backend:
+  settings:
+    tabs:
+      ecommerce: E-commerce
+      ecommerce_description: Paramètres globaux de la boutique (stock, panier…).
+  parameters:
+    ecommerce_low_stock_threshold:
+      label: Seuil de stock bas (e-commerce)
+      description: Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.
   permissions:
     names:
       ecommerce:

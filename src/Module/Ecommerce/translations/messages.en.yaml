@@ -1,4 +1,12 @@
 backend:
+  settings:
+    tabs:
+      ecommerce: E-commerce
+      ecommerce_description: Global shop parameters (stock, cart…).
+  parameters:
+    ecommerce_low_stock_threshold:
+      label: Low stock threshold (e-commerce)
+      description: "Displays a \"Only X left\" warning on the product page when available stock is less than or equal to this value. Set to 0 to disable."
   permissions:
     names:
       ecommerce:

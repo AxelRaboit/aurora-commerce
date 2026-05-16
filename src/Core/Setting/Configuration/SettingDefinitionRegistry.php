@@ -37,11 +37,14 @@ final class SettingDefinitionRegistry
     ) {}
 
     /**
-     * Returns all contributed tabs sorted by priority (ascending), tabs with
-     * the same priority preserve provider iteration order. Tabs that share
-     * the same `$id` across providers are NOT merged — duplicates would
-     * indicate a contribution mistake and are surfaced as-is so the bug is
-     * visible in the UI rather than silently swallowed.
+     * Returns all contributed tabs sorted by priority (ascending).
+     *
+     * Tabs sharing the same `$id` across providers are MERGED: their fields
+     * are concatenated in provider iteration order, the lowest priority wins
+     * for the placement of the merged tab, and `$alwaysVisible` is OR-ed.
+     * This is what lets several modules feed a single shared tab — most
+     * notably `sequences`, where each module contributes its own prefix
+     * settings to one unified screen.
      *
      * @return list<ConfigurationTab>
      */
@@ -51,16 +54,30 @@ final class SettingDefinitionRegistry
             return $this->tabs;
         }
 
-        $collected = [];
+        /** @var array<string, ConfigurationTab> $byId */
+        $byId = [];
         foreach ($this->providers as $provider) {
             foreach ($provider->getTabs() as $tab) {
-                $collected[] = $tab;
+                if (!isset($byId[$tab->id])) {
+                    $byId[$tab->id] = $tab;
+
+                    continue;
+                }
+
+                $existing = $byId[$tab->id];
+                $byId[$tab->id] = new ConfigurationTab(
+                    id: $existing->id,
+                    priority: min($existing->priority, $tab->priority),
+                    fields: [...$existing->fields, ...$tab->fields],
+                    alwaysVisible: $existing->alwaysVisible || $tab->alwaysVisible,
+                );
             }
         }
 
-        usort($collected, static fn (ConfigurationTab $a, ConfigurationTab $b): int => $a->priority <=> $b->priority);
+        $tabs = array_values($byId);
+        usort($tabs, static fn (ConfigurationTab $a, ConfigurationTab $b): int => $a->priority <=> $b->priority);
 
-        return $this->tabs = array_values($collected);
+        return $this->tabs = $tabs;
     }
 
     public function getField(string $key): ?SettingFieldDescriptor

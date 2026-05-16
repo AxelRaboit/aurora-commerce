@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp\Product\Serializer;
 
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -24,7 +24,7 @@ class ProductSerializer implements ProductSerializerInterface
 
         $image = $product->getImage();
         $stockQuantity = $product->getStockQuantity();
-        $threshold = (int) $this->settingRepository->getOrDefault(ApplicationParameterEnum::EcommerceLowStockThreshold);
+        $threshold = (int) $this->settingRepository->getOrDefault(EcommerceSettingEnum::LowStockThreshold);
         $isLowStock = $product->isStockTracked()
             && $threshold > 0
             && $stockQuantity > 0

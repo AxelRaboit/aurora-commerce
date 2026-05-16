@@ -1,4 +1,12 @@
 backend:
+  settings:
+    tabs:
+      crm: CRM
+      crm_description: CRM module parameters (sync, contacts…).
+  parameters:
+    crm_sync_orders:
+      label: Sync orders into CRM
+      description: When enabled, each Ecommerce order automatically creates or enriches a CRM contact matching the buyer (with a "client" tag). Disable in pure B2C setups to avoid flooding the CRM.
   permissions:
     names:
       crm:
