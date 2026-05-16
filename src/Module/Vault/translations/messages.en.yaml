@@ -3,6 +3,8 @@ backend:
     names:
       vault:
         use: Use the vault
+        password_generator:
+          use: Use the password generator
   modules:
     vault: Tools
     vault_backend: Tools

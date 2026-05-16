@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/password-generator', name: 'backend_password_generator')]
-#[IsGranted('password_generator.use')]
+#[IsGranted('vault.password_generator.use')]
 final class PasswordGeneratorController extends AbstractController
 {
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]

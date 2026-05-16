@@ -3,6 +3,8 @@ backend:
     names:
       vault:
         use: Utiliser le coffre-fort
+        password_generator:
+          use: Utiliser le générateur de mots de passe
   modules:
     vault: Outils
     vault_backend: Outils

@@ -1,8 +1,4 @@
 backend:
-  permissions:
-    names:
-      password_generator:
-        use: Use the password generator
   modules:
     password_generator: Password generator
   nav:

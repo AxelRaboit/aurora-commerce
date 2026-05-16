@@ -25,6 +25,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
     {
         return [
             new NavPermission('vault.use'),
+            new NavPermission('vault.password_generator.use'),
         ];
     }
 
@@ -41,7 +42,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
         }
 
         if ($this->vaultContext->isPasswordGeneratorEnabled()) {
-            $items[] = new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'password_generator.use', descriptionKey: 'backend.nav.password_generator_description');
+            $items[] = new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'vault.password_generator.use', descriptionKey: 'backend.nav.password_generator_description');
         }
 
         if ([] === $items) {
@@ -56,7 +57,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
         return [
             new NavSection('vault', [
                 new NavItem('backend_vault', 'backend.nav.vault', 'vault', requiredPrivilege: 'vault.use', descriptionKey: 'backend.nav.vault_description'),
-                new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'password_generator.use', descriptionKey: 'backend.nav.password_generator_description'),
+                new NavItem('backend_password_generator', 'backend.nav.password_generator', 'key-round', requiredPrivilege: 'vault.password_generator.use', descriptionKey: 'backend.nav.password_generator_description'),
             ], priority: 20),
         ];
     }
