@@ -1,31 +1,22 @@
 <script setup>
-import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useMarkdownNotesApi } from '@notes/backend/markdown/composables/useMarkdownNotesApi.js';
-import { useNotesEditor } from '@notes/backend/markdown/composables/useNotesEditor.js';
-import { useNoteTree } from '@notes/backend/markdown/composables/useNoteTree.js';
-import { useNoteTagFilter } from '@notes/backend/markdown/composables/useNoteTagFilter.js';
-import { useMarkdownTagsApi } from '@notes/backend/markdown/composables/useMarkdownTagsApi.js';
-import { useNoteDragDrop } from '@notes/backend/markdown/composables/useNoteDragDrop.js';
-import { useViewMode } from '@notes/backend/markdown/composables/useViewMode.js';
-import { useResizable } from '@shared/composables/useResizable.js';
-import { useRelativeTime } from '@shared/composables/useRelativeTime.js';
-import { useAutoSaveStatusDisplay } from '@shared/composables/useAutoSaveStatusDisplay.js';
+import { useMarkdownNotesPage } from '@notes/backend/markdown/composables/useMarkdownNotesPage.js';
 import NoteTreeItem from '@notes/backend/markdown/components/NoteTreeItem.vue';
 import NotePreview from '@notes/backend/markdown/components/NotePreview.vue';
 import NoteSidePanel from '@notes/backend/markdown/components/NoteSidePanel.vue';
 import NoteTagManagerModal from '@notes/backend/markdown/components/NoteTagManagerModal.vue';
+import NoteEditor from '@notes/backend/markdown/components/NoteEditor.vue';
+import NoteGraph from '@notes/backend/markdown/components/NoteGraph.vue';
 import AppButton from '@shared/components/action/AppButton.vue';
 import AppIconButton from '@shared/components/action/AppIconButton.vue';
 import AppInput from '@shared/components/form/AppInput.vue';
 import AppSearchInput from '@shared/components/form/AppSearchInput.vue';
 import AppTagsInput from '@shared/components/form/AppTagsInput.vue';
-import AppTextarea from '@shared/components/form/AppTextarea.vue';
 import AppNoData from '@shared/components/feedback/AppNoData.vue';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';
 import AppTab from '@shared/components/nav/AppTab.vue';
-import { Plus, Trash2, FileText, Pencil, Eye, Columns, PanelRightOpen, PanelRightClose, X, Settings2 } from 'lucide-vue-next';
+import { Plus, Trash2, FileText, PanelRightOpen, PanelRightClose, X, Settings2, Network } from 'lucide-vue-next';
 
 const props = defineProps({
     notes: { type: Array, default: () => [] },
@@ -46,55 +37,35 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const api = useMarkdownNotesApi(props);
 
-// Domain state + actions
 const {
+    api,
+    tagsApi,
     notes,
     selectedId,
     selectedNote,
     form,
-    saving,
     deleting,
-    saveStatus,
     lastSavedAt,
+    pendingDelete,
     selectNote,
     createNote,
-    pendingDelete,
     requestDelete,
     cancelDelete,
     confirmDelete,
     onWikiLinkClick,
     onCheckboxToggle,
-    refreshList,
-    reloadCurrent,
-} = useNotesEditor({ api, initialNotes: props.notes });
-
-// UI-only state
-const sidePanelOpen = ref(false);
-const treeQuery = ref('');
-
-const { availableTags, selectedTags, toggleTag, clearTags, pruneMissingTags } = useNoteTagFilter(notes);
-const { tree } = useNoteTree(notes, treeQuery, selectedTags);
-
-const tagsApi = useMarkdownTagsApi(props);
-const tagManagerOpen = ref(false);
-
-// Wire the tag manager modal to the editor: after a global rename/merge/
-// delete, refresh the notes list, drop selected-filter tags that vanished,
-// and reload the currently open note so it reflects the rewritten tags.
-async function onTagsChanged() {
-    await reloadCurrent();
-    pruneMissingTags();
-}
-
-// Drag-drop hierarchy editing (drop ON a note → child of that note,
-// drop on the sidebar root → becomes root). Disabled while a filter
-// is active, since the visible tree is a subset of the real one.
-const dragEnabled = computed(
-    () => treeQuery.value.trim() === '' && selectedTags.value.length === 0,
-);
-const {
+    tree,
+    treeQuery,
+    availableTags,
+    selectedTags,
+    toggleTag,
+    clearTags,
+    onTagsChanged,
+    sidePanelOpen,
+    graphOpen,
+    tagManagerOpen,
+    dragEnabled,
     draggingId,
     dragOverId,
     rootDragOver,
@@ -106,28 +77,16 @@ const {
     onDragLeaveRoot,
     onDropOnNote,
     onDropOnRoot,
-} = useNoteDragDrop({ api, refreshList });
-const { mode: viewMode } = useViewMode();
-
-const viewModeOptions = [
-    { value: 'edit', icon: Pencil, label: t('notes.markdown.view.edit') },
-    { value: 'split', icon: Columns, label: t('notes.markdown.view.split') },
-    { value: 'preview', icon: Eye, label: t('notes.markdown.view.preview') },
-];
-
-const { relative: lastSavedRelative } = useRelativeTime(lastSavedAt);
-const { display: saveStatusDisplay } = useAutoSaveStatusDisplay(saveStatus);
-
-// Editor pane width in split mode — drag the seam between editor and preview.
-const editorPaneRef = ref(null);
-const { size: editorWidth, startResize: startSplitResize, dragging: splitDragging } = useResizable({
-    key: 'aurora.notes.markdown.editorWidth',
-    defaultValue: 540,
-    min: 240,
-    max: 1200,
-    axis: 'x',
-    getOrigin: () => editorPaneRef.value,
-});
+    viewMode,
+    viewModeOptions,
+    lastSavedRelative,
+    saveStatusDisplay,
+    editorPaneRef,
+    editorWidth,
+    startSplitResize,
+    splitDragging,
+    navigateFromGraph,
+} = useMarkdownNotesPage(props, t);
 </script>
 
 <template>
@@ -136,14 +95,24 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
         <aside class="w-72 shrink-0 border-r border-line flex flex-col bg-surface-2/30">
             <div class="p-3 border-b border-line flex items-center justify-between gap-2">
                 <h2 class="text-sm font-semibold text-primary">{{ t('notes.markdown.title') }}</h2>
-                <AppIconButton
-                    :title="t('notes.markdown.create_root')"
-                    size="sm"
-                    variant="ghost"
-                    v-on:click="() => createNote(null)"
-                >
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                </AppIconButton>
+                <div class="flex items-center gap-1">
+                    <AppIconButton
+                        :title="t('notes.markdown.graph.open')"
+                        size="sm"
+                        variant="ghost"
+                        v-on:click="graphOpen = true"
+                    >
+                        <Network class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton
+                        :title="t('notes.markdown.create_root')"
+                        size="sm"
+                        variant="ghost"
+                        v-on:click="() => createNote(null)"
+                    >
+                        <Plus class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                </div>
             </div>
 
             <div class="px-3 pt-2">
@@ -312,11 +281,9 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                         :class="viewMode === 'split' ? 'shrink-0' : 'flex-1'"
                         :style="viewMode === 'split' ? { width: `${editorWidth}px` } : {}"
                     >
-                        <AppTextarea
+                        <NoteEditor
                             v-model="form.content"
                             :placeholder="t('notes.markdown.content_placeholder')"
-                            class="h-full w-full font-mono text-sm"
-                            :rows="20"
                         />
                     </div>
 
@@ -351,6 +318,13 @@ const { size: editorWidth, startResize: startSplitResize, dragging: splitDraggin
                 />
             </div>
         </section>
+
+        <NoteGraph
+            :show="graphOpen"
+            :fetch-graph="api.graph"
+            v-on:close="graphOpen = false"
+            v-on:navigate="navigateFromGraph"
+        />
 
         <NoteTagManagerModal
             :show="tagManagerOpen"

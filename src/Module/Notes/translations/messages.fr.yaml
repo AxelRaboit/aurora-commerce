@@ -47,6 +47,22 @@ notes:
       edit: Édition seule
       split: Édition + aperçu
       preview: Aperçu seul
+    slash:
+      h1: Titre 1
+      h2: Titre 2
+      h3: Titre 3
+      bullet: Liste à puces
+      numbered: Liste numérotée
+      checkbox: Case à cocher
+      quote: Citation
+      divider: Séparateur
+      code: Bloc de code
+      callout: Encadré
+      link: Lien wiki
+      bold: Gras
+      italic: Italique
+      strikethrough: Barré
+      table: Tableau
     tags:
       add_placeholder: Ajouter un tag…
       filter_label: Filtrer par tag
@@ -81,6 +97,13 @@ notes:
           rename_failed: Impossible de renommer le tag.
           delete_failed: Impossible de supprimer le tag.
           merge_failed: Impossible de fusionner les tags.
+    graph:
+      title: Graphe des liens
+      open: Ouvrir le graphe
+      loading: Construction du graphe…
+      empty:
+        title: Aucun nœud à afficher
+        description: Créez quelques notes reliées par [[wiki-links]] pour voir le graphe.
     links:
       title: Liens
       open: Afficher les liens entrants

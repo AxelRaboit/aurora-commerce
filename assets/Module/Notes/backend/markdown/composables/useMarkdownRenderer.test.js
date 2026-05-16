@@ -55,6 +55,23 @@ describe("useMarkdownRenderer", () => {
         expect(render("")).toBe("");
         expect(render(null)).toBe("");
     });
+
+    it("highlights a fenced code block with a known language", () => {
+        const html = render("```js\nconst x = 1;\n```");
+        expect(html).toContain('class="code-block"');
+        expect(html).toContain('class="code-block-lang">js<');
+        expect(html).toContain('class="hljs language-js"');
+        // hljs always emits at least one token span for valid input
+        expect(html).toMatch(/<span class="hljs-/);
+    });
+
+    it("falls back to escaped plain text for an unknown language", () => {
+        const html = render("```\n<not-a-tag>\n```");
+        expect(html).toContain('class="code-block"');
+        expect(html).toContain("&lt;not-a-tag&gt;");
+        // no language label for unfenced langs
+        expect(html).not.toContain("code-block-lang");
+    });
 });
 
 describe("toggleCheckboxInContent", () => {

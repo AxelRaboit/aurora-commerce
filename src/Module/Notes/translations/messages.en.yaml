@@ -46,6 +46,22 @@ notes:
       edit: Edit only
       split: Edit + preview
       preview: Preview only
+    slash:
+      h1: Heading 1
+      h2: Heading 2
+      h3: Heading 3
+      bullet: Bullet list
+      numbered: Numbered list
+      checkbox: Checkbox
+      quote: Quote
+      divider: Divider
+      code: Code block
+      callout: Callout
+      link: Wiki link
+      bold: Bold
+      italic: Italic
+      strikethrough: Strikethrough
+      table: Table
     tags:
       add_placeholder: Add a tag…
       filter_label: Filter by tag
@@ -80,6 +96,13 @@ notes:
           rename_failed: Could not rename the tag.
           delete_failed: Could not delete the tag.
           merge_failed: Could not merge the tags.
+    graph:
+      title: Links graph
+      open: Open graph
+      loading: Building graph…
+      empty:
+        title: No nodes to display
+        description: Create a few notes linked with [[wiki-links]] to see the graph.
     links:
       title: Links
       open: Show incoming links

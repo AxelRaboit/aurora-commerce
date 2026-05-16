@@ -9,6 +9,7 @@ import {
     createCheckboxRenderer,
     resetCheckboxCounter,
 } from "./markedExtensions/markedCheckboxes.js";
+import { createHighlightRenderer } from "./markedExtensions/markedHighlight.js";
 
 /**
  * Builds a per-instance Marked parser with Aurora's note-specific
@@ -29,6 +30,7 @@ export function useMarkdownRenderer() {
         extensions: [createWikiLinkExtension(), createCalloutExtension()],
     });
     marked.use({ renderer: createCheckboxRenderer() });
+    marked.use({ renderer: createHighlightRenderer() });
 
     function render(markdown) {
         if (!markdown) return "";

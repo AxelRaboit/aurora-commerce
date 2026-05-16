@@ -8,20 +8,30 @@
 - [x] **Unlinked mentions** — endpoint `GET /backend/notes/markdown/{id}/unlinked-mentions`. Mêmes hooks SidePanel.
 - [x] **Graph data** — endpoint `GET /backend/notes/markdown/graph` retourne `{nodes, edges}` parsé via regex `[[…]]`.
 
-## Frontend — Graph view : ⏳ À faire
+## Frontend — Graph view : ✅ Fait (2026-05-16)
 
-- [ ] **Composant `NoteGraph.vue`** consommant l'endpoint `/graph`. Lib à
-      choisir :
-  - **D3** — flexible, courbe d'apprentissage. ~80kb gzip.
-  - **Cytoscape** — riche, plus orienté graph theory. ~120kb gzip.
-  - **Sigma** — perf sur gros graphes. ~50kb gzip.
-  - **vis-network** — simple drop-in, force layout intégré. ~140kb gzip.
-  - **Recommandation initiale** : Cytoscape (mature, beaucoup d'exemples,
-    force layout + zoom/pan natifs, intégration Vue facile via wrapper).
-- [ ] **UI d'accès** : bouton "Graph" dans le header de l'éditeur ou
-      tab dédié dans la sidebar.
-- [ ] **Click sur node** → ouvre la note correspondante.
-- [ ] **Filtres** (optionnel v1) : par tag, par profondeur de wiki-link.
+- [x] **Composant `NoteGraph.vue`** consommant l'endpoint `/graph` via
+      `useMarkdownNotesApi.graph()`. Pas de lib externe — port du
+      renderer canvas + force-simulation custom d'Onyx
+      (`useNoteGraph.js` composable, ~250 LoC). Cytoscape avait été
+      tenté en premier mais (a) ~140kb gzip pour dessiner des points,
+      (b) le layout `cose` donnait un rendu industriel arrows + cadre
+      qui jurait avec l'esthétique Obsidian. Le moteur custom : nœuds
+      indigo, taille selon connexions, edges fines low-opacity,
+      gravity-center, drag-to-rearrange.
+- [x] **UI d'accès** : icône `Network` (lucide) dans le header de la
+      sidebar, à côté du `+`. Disponible même sans note sélectionnée.
+- [x] **Click sur node** → emit `navigate` → `selectNote(id)` côté
+      parent, ferme la modale.
+- [x] **Highlight** : la note actuellement ouverte est marquée
+      (`.selected` rouge plus gros).
+- [x] **Layout** : force-simulation maison sur canvas — répulsion
+      pairwise 1/d² (constante 800), edge spring rest-length 100,
+      gravité centrale 0.001, damping 0.85, 120 itérations sur open
+      puis re-simule au drag. Drag-and-drop d'un nœud rebrasse les
+      voisins.
+- [ ] **Filtres** (optionnel v1) : par tag, par profondeur de wiki-link
+      — pas implémenté, à voir avec un volume réel de notes.
 
 ## Perf
 

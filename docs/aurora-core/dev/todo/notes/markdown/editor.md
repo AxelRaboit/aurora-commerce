@@ -61,23 +61,33 @@ Commits `46c6e59d` (scaffold UI) + `48131a9a` (live preview) + `f03548a8` (side 
 - [ ] **Badge tags** sur chaque rangée de l'arbo (optionnel, peut être
       lourd visuellement) — non implémenté.
 
-### Slash commands (effort moyen)
+### Slash commands ✅ (fait, 2026-05-16)
 
-- [ ] Composable `useSlashCommands.js` à porter depuis
-      `onyx/resources/js/composables/notes/useSlashCommands.js`.
-- [ ] Palette `/` à la position du curseur dans le textarea, insert
-      blocs prédéfinis : titre H1-H3, liste à puces, liste numérotée,
-      checklist, callout, code block, séparateur.
-- [ ] Raccourcis clavier : ArrowUp/Down pour naviguer, Enter pour valider,
-      Escape pour fermer.
+- [x] Composable `useSlashCommands.js` porté depuis Onyx avec labels
+      i18n (`notes.markdown.slash.*`) et détection ligne-débute-par-`/`.
+- [x] Palette flottante positionnée via mirror-div (top/left absolus
+      relatifs au textarea) — composant dédié `NoteEditor.vue` qui
+      remplace `AppTextarea` dans `MarkdownNotesApp.vue` (raccourci
+      nécessaire car `AppTextarea` n'expose pas le textarea ref ni les
+      événements keydown). 15 commandes : H1-H3, listes, checkbox,
+      citation, séparateur, code, callout, lien wiki, gras, italique,
+      barré, table.
+- [x] Raccourcis clavier : ArrowUp/Down, Enter/Tab pour valider,
+      Escape pour fermer. Hover souris met à jour l'index sélectionné.
+- [x] Tests vitest : `useSlashCommands.test.js` (9 tests).
 
-### Syntax highlighting code blocks (petit effort, niche)
+### Syntax highlighting code blocks ✅ (fait, 2026-05-16)
 
-- [ ] Port `markedHighlight.js` depuis Onyx + bundle highlight.js core
-      avec langages communs (js, ts, php, py, css, html, json, bash, sql,
-      yaml). Peser ~50kb gzip dans le chunk `MarkdownNotesApp.js`.
-- [ ] CSS dans `assets/css/modules/notes/markdown/preview.css` (bloc
-      `.hljs` + tokens).
+- [x] `markedHighlight.js` dans `composables/markedExtensions/` avec
+      highlight.js core + 11 langages (js, ts, php, css, html/xml, json,
+      bash, sql, python, markdown, yaml). Renderer marked override avec
+      wrapper `.code-block` + label langue. Pèse ~138kb gzip dans le
+      chunk `NotePreview` (lazy-loaded — pas dans `MarkdownNotesApp`).
+- [x] CSS dans `assets/css/modules/notes/markdown/preview.css` :
+      wrapper `.code-block` + palette de tokens hljs aurora-tintée
+      (purple/sky/emerald/amber/red), thème compatible light+dark via
+      `--color-*` variables.
+- [x] Couverture vitest étendue (15 tests dans `useMarkdownRenderer.test.js`).
 
 ### À considérer plus tard (Onyx avait, on a pas encore)
 

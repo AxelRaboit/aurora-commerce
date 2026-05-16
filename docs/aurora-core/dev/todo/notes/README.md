@@ -8,11 +8,11 @@ UX distinctes :
 - **Markdown** — éditeur texte markdown + wiki-links + graph (port d'Onyx)
 - **Block** — éditeur block-based (JSON typé) via EditorJS
 
-## État global (au 2026-05-15)
+## État global (au 2026-05-16)
 
 | Sous-module | Statut |
 |---|---|
-| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre) + demo fixtures. Reste : slash commands, images, graphe, syntax highlight, import. |
+| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + graphe Cytoscape + syntax highlighting hljs) + demo fixtures. Reste : images, import Onyx. |
 | Block | ⏳ Pas commencé — spec dans [`block/overview.md`](block/overview.md) |
 
 ## Sous-modules
@@ -27,9 +27,9 @@ UX distinctes :
 | Wiki-links (rename auto, backlinks, mentions, graph) — **backend** | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
 | Éditeur Vue — squelette CRUD + tree + drag-drop + preview live + side panel | ✅ Fait | [editor.md](markdown/editor.md) |
 | Éditeur Vue — **tags UI** (input + filtre sidebar) | ✅ Fait | [editor.md](markdown/editor.md) |
-| Éditeur Vue — **slash commands** (palette `/`) | ⏳ À faire | [editor.md](markdown/editor.md) |
-| Vue graphe des wiki-links (frontend) | ⏳ À faire | [wiki-links.md](markdown/wiki-links.md) |
-| Syntax highlighting code blocks (highlight.js) | ⏳ À faire | [editor.md](markdown/editor.md) |
+| Éditeur Vue — **slash commands** (palette `/`) | ✅ Fait | [editor.md](markdown/editor.md) |
+| Vue graphe des wiki-links (frontend, Cytoscape) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
+| Syntax highlighting code blocks (highlight.js) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Images (upload + serve + cleanup) | ⏳ À faire | [images.md](markdown/images.md) |
 | Script d'import depuis Onyx | ⏳ À faire | [import.md](markdown/import.md) |
 
@@ -45,16 +45,7 @@ Par ROI décroissant :
 1. **Images** — drag-drop upload + endpoint serve + cleanup orphelines
    au save/delete. Plus lourd (storage + sécurité) mais feature
    bloquante pour usage réel.
-2. **Slash commands** — palette `/` dans le textarea pour insérer
-   blocs (titres, listes, callouts). Composable
-   `useSlashCommands.js` à porter depuis Onyx.
-3. **Vue graphe** — backend prêt (`GET /backend/notes/markdown/graph`),
-   reste à choisir une lib (D3, Cytoscape, Sigma, vis-network) et écrire
-   le composant.
-4. **Syntax highlighting** — port direct depuis Onyx
-   (`markedHighlight.js` + highlight.js core). ~50kb gzip à peser
-   contre la valeur niche.
-5. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
+2. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
    du contenu Onyx à migrer.
 
 ## Architecture commune

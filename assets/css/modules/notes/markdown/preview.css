@@ -62,6 +62,73 @@
     margin-bottom: 0;
 }
 
+/* ── Code blocks (syntax highlighting via highlight.js) ──────────── */
+.note-preview .code-block {
+    position: relative;
+    margin: 1rem 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--color-surface-2, #f3f4f6);
+    border: 1px solid var(--color-line, #e5e7eb);
+}
+
+.note-preview .code-block pre {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    background: transparent;
+}
+
+.note-preview .code-block code.hljs {
+    background: transparent;
+    padding: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--color-text-primary, #111827);
+}
+
+.note-preview .code-block-lang {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.7rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--color-text-muted, #6b7280);
+    background: color-mix(in srgb, var(--color-surface-2, #f3f4f6) 60%, transparent);
+    border-bottom-left-radius: 4px;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    user-select: none;
+}
+
+/* highlight.js token palette — Aurora-tinted, works light + dark via
+ * color-mix against text variables. Single-color blocks (e.g. unknown
+ * lang fallback) just inherit the body color. */
+.note-preview .hljs-comment,
+.note-preview .hljs-quote { color: #6b7280; font-style: italic; }
+.note-preview .hljs-keyword,
+.note-preview .hljs-selector-tag,
+.note-preview .hljs-literal,
+.note-preview .hljs-section,
+.note-preview .hljs-link { color: #8b5cf6; }
+.note-preview .hljs-built_in,
+.note-preview .hljs-type { color: #0ea5e9; }
+.note-preview .hljs-string,
+.note-preview .hljs-meta-string { color: #10b981; }
+.note-preview .hljs-number,
+.note-preview .hljs-symbol,
+.note-preview .hljs-bullet { color: #f59e0b; }
+.note-preview .hljs-title,
+.note-preview .hljs-name,
+.note-preview .hljs-attr,
+.note-preview .hljs-variable { color: #ef4444; }
+.note-preview .hljs-tag,
+.note-preview .hljs-meta { color: #6b7280; }
+.note-preview .hljs-emphasis { font-style: italic; }
+.note-preview .hljs-strong { font-weight: 600; }
+
 /* Callout type → accent color. Add new types by extending this map. */
 .note-preview .callout-note { --callout-color: #6b7280; }
 .note-preview .callout-info,
