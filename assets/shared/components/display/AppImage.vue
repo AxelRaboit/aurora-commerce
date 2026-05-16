@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { Image as ImageIcon } from "lucide-vue-next";
 import { ImageLoadStatus } from "@/shared/utils/enums/imageLoadStatus.js";
 
@@ -18,6 +18,15 @@ const status = ref(ImageLoadStatus.Idle); // idle | loading | loaded | error
 function onLoad() { status.value = ImageLoadStatus.Loaded; }
 function onError() { status.value = ImageLoadStatus.Error; }
 function onLoadStart() { status.value = ImageLoadStatus.Loading; }
+
+// Reset status whenever `src` changes — otherwise a previous error /
+// loaded state persists and the new image either stays hidden (img
+// element pruned by `v-if` on Error) or shows the wrong opacity.
+// Real-world trigger: media picker swap in the Settings page where
+// the same AppImage instance is reused across multiple selections.
+watch(() => props.src, () => {
+    status.value = ImageLoadStatus.Idle;
+});
 </script>
 
 <template>

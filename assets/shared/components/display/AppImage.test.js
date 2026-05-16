@@ -47,4 +47,21 @@ describe("AppImage", () => {
         });
         expect(wrapper.find("div").classes()).toContain("rounded-lg");
     });
+
+    it("re-renders the <img> after an error when a new src is provided", async () => {
+        const wrapper = mount(AppImage, {
+            props: { src: "https://example.com/missing.jpg" },
+        });
+
+        // Simulate the first image failing to load — Error pruned the <img>.
+        await wrapper.find("img").trigger("error");
+        expect(wrapper.find("img").exists()).toBe(false);
+
+        // Picking a new media should reset the status and re-render the <img>.
+        await wrapper.setProps({ src: "https://example.com/new.jpg" });
+        expect(wrapper.find("img").exists()).toBe(true);
+        expect(wrapper.find("img").attributes("src")).toBe(
+            "https://example.com/new.jpg",
+        );
+    });
 });
