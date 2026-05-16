@@ -25,7 +25,18 @@ final readonly class SidemenuExtension
     #[AsTwigFunction(name: 'nav_section_aliases')]
     public function getNavSectionAliases(): array
     {
-        $json = $this->settingRepository->get(ApplicationParameterEnum::NavSectionAliases->value, '{}');
+        return $this->decodeJsonMap(ApplicationParameterEnum::NavSectionAliases->value);
+    }
+
+    #[AsTwigFunction(name: 'nav_item_aliases')]
+    public function getNavItemAliases(): array
+    {
+        return $this->decodeJsonMap(ApplicationParameterEnum::NavItemAliases->value);
+    }
+
+    private function decodeJsonMap(string $key): array
+    {
+        $json = $this->settingRepository->get($key, '{}');
         $decoded = json_decode($json ?? '{}', true);
 
         return is_array($decoded) ? $decoded : [];

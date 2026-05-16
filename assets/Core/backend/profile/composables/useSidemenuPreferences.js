@@ -13,6 +13,7 @@ function collectItemKeys(items, out) {
 export function useSidemenuPreferences({
     navPreferences,
     sectionAliases,
+    itemAliases,
     initialHiddenSections,
     initialHiddenItems,
     savePath,
@@ -26,6 +27,10 @@ export function useSidemenuPreferences({
 
     const { loading: saving, request: saveRequest } = useRequest();
     const { loading: resetting, request: resetRequest } = useRequest();
+
+    function resolveItemLabel(item) {
+        return itemAliases?.[item.key]?.trim() || t(item.labelKey);
+    }
 
     const sections = computed(() =>
         (navPreferences ?? []).map((section) => ({
@@ -45,7 +50,7 @@ export function useSidemenuPreferences({
         for (const section of sections.value) {
             const sectionMatches = section.label.toLowerCase().includes(query);
             const matchingItems = section.items.filter((item) =>
-                t(item.labelKey).toLowerCase().includes(query),
+                resolveItemLabel(item).toLowerCase().includes(query),
             );
             if (sectionMatches || matchingItems.length) {
                 results.push({
@@ -124,6 +129,7 @@ export function useSidemenuPreferences({
     return {
         sections,
         filteredSections,
+        resolveItemLabel,
         search,
         hiddenSections,
         hiddenItems,

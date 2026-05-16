@@ -1,4 +1,14 @@
-# Backend Settings → Navigation : alias sur les items (modules)
+# Backend Settings → Navigation : alias sur les items (modules) — ✅ implémenté
+
+> Statut : livré. Setting `nav_item_aliases` (JSON `{route: customLabel}`)
+> géré via l'onglet *Navigation* de `/backend/settings`. Appliqué dans le
+> sidemenu admin (`useSidemenuNav`) et dans la page profile preferences
+> (`useSidemenuPreferences`). Logique métier dans
+> `assets/Core/backend/settings/composables/useNavAliases.js`.
+> Décisions ci-dessous conservées pour référence.
+
+---
+
 
 Étendre la perso de navigation actuelle (qui couvre déjà les **sections**
 du menu latéral via le setting `nav_section_aliases`) pour permettre la

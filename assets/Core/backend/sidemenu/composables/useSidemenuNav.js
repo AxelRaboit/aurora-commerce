@@ -71,7 +71,12 @@ const ICON_MAP = {
     vault: Lock,
 };
 
-export function useSidemenuNav(navSections, activeRoute, sectionAliases = {}) {
+export function useSidemenuNav(
+    navSections,
+    activeRoute,
+    sectionAliases = {},
+    itemAliases = {},
+) {
     const { t } = useI18n();
 
     const {
@@ -97,7 +102,7 @@ export function useSidemenuNav(navSections, activeRoute, sectionAliases = {}) {
         return {
             route: item.route,
             path: item.path,
-            label: t(item.labelKey),
+            label: itemAliases[item.route]?.trim() || t(item.labelKey),
             description: item.descriptionKey ? t(item.descriptionKey) : "",
             icon: ICON_MAP[item.icon] ?? FileText,
             activeColor: item.activeColor ?? "accent",

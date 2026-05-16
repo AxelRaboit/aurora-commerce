@@ -40,6 +40,7 @@
     <div {{ vue_component('core/backend/sidemenu/AppSidemenu', {
         navSections: sidemenu_nav_sections(),
         navSectionAliases: nav_section_aliases(),
+        navItemAliases: nav_item_aliases(),
         userName: app.user.name,
         userEmail: app.user.email,
         userPhotoUrl: app.user.profilePhotoUrl ?? '',

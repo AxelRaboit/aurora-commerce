@@ -20,7 +20,7 @@ backend:
       sequences: Sequences
       sequences_description: Prefixes for auto-generated references.
       navigation: Navigation
-      navigation_description: Customize sidemenu section names.
+      navigation_description: Customize sidemenu section and item names.
       modules: Modules
       ecommerce: E-commerce
     appearance:
@@ -33,6 +33,16 @@ backend:
         reset: Reset to default colors
         invalid_hex: 'Invalid hex code. Expected format: #rrggbb.'
     navAliasesEmpty: No navigation sections available.
+    navAliases:
+      sectionsTitle: Menu sections
+      sectionsHelp: Rename the headings displayed at the top of each sidemenu group.
+      itemsTitle: Menu items
+      itemsHelp: Rename individual modules. Click a section to expand its items.
+      itemsEmpty: No items in this section.
+      resetItem: Reset
+      resetAll: Reset all
+      saveItems: Save items
+      saveSections: Save sections
     cascadeLocked: 'Enable "{parent}" first to edit this setting.'
     mediaSquareHint: 'Recommended: square image (1:1).'
     modulesIntro: Enable or disable application modules. Changes are saved immediately.
@@ -247,6 +257,9 @@ backend:
     nav_section_aliases:
       label: Navigation section aliases
       description: JSON map of section aliases (managed via the UI).
+    nav_item_aliases:
+      label: Navigation item aliases
+      description: JSON map of menu item aliases (managed via the UI).
     color_picker_presets:
       label: Color picker palette
       description: JSON list of hex colors offered as quick-pick swatches in every admin color selector.

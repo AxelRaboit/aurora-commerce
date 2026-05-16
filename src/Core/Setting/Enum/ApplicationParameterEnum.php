@@ -74,6 +74,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PhotoGalleryItemCommentPrefix = 'photo_gallery_item_comment_prefix';
     case PhotoGalleryPickPrefix = 'photo_gallery_pick_prefix';
     case NavSectionAliases = 'nav_section_aliases';
+    case NavItemAliases = 'nav_item_aliases';
     case CrmSyncOrders = 'crm_sync_orders';
     case ColorPickerPresets = 'color_picker_presets';
 
@@ -161,6 +162,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => 'backend.parameters.photo_gallery_item_comment_prefix.label',
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.label',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.label',
+            self::NavItemAliases => 'backend.parameters.nav_item_aliases.label',
             self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.label',
             self::ColorPickerPresets => 'backend.parameters.color_picker_presets.label',
         };
@@ -233,6 +235,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => 'backend.parameters.photo_gallery_item_comment_prefix.description',
             self::PhotoGalleryPickPrefix => 'backend.parameters.photo_gallery_pick_prefix.description',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.description',
+            self::NavItemAliases => 'backend.parameters.nav_item_aliases.description',
             self::CrmSyncOrders => 'backend.parameters.crm_sync_orders.description',
             self::ColorPickerPresets => 'backend.parameters.color_picker_presets.description',
         };
@@ -305,6 +308,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::PhotoGalleryItemCommentPrefix => SequencePrefixEnum::GalleryItemComment->value,
             self::PhotoGalleryPickPrefix => SequencePrefixEnum::GalleryPick->value,
             self::NavSectionAliases => '{}',
+            self::NavItemAliases => '{}',
             self::CrmSyncOrders => '0',
             self::ColorPickerPresets => json_encode(self::DEFAULT_COLOR_PICKER_PRESETS, JSON_THROW_ON_ERROR),
         };
@@ -345,7 +349,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::BillingInvoicePrefix, self::BillingCreditNotePrefix, self::EcommerceOrderPrefix, self::EcommerceListingPrefix, self::ErpProductPrefix, self::CrmDealPrefix, self::CrmContactPrefix, self::CrmCompanyPrefix, self::PhotoGalleryPrefix, self::EditorialPostPrefix, self::EditorialFormPrefix, self::BillingTiersPrefix, self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::EditorialFormSubmissionPrefix, self::PhotoGalleryItemPrefix, self::PhotoGalleryInvitePrefix, self::EditorialCommentPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix, self::BillingOcrJobPrefix, self::EcommerceCartPrefix, self::EcommerceCartItemPrefix, self::EcommerceOrderLinePrefix, self::EditorialFormFieldPrefix, self::EditorialTaxonomyTermPrefix, self::PhotoGalleryFinalizationPrefix, self::PhotoGalleryItemCommentPrefix, self::PhotoGalleryPickPrefix, self::GedDocumentPrefix, self::PdfFormDocumentPrefix => 'sequences',
             self::EcommerceLowStockThreshold => 'ecommerce',
             self::EmailLocale => 'email',
-            self::NavSectionAliases => 'navigation',
+            self::NavSectionAliases, self::NavItemAliases => 'navigation',
             self::CrmSyncOrders => 'crm',
             self::ColorPickerPresets => 'appearance',
         };

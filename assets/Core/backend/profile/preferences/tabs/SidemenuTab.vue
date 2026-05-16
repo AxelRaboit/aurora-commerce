@@ -12,6 +12,7 @@ const { t } = useI18n();
 const props = defineProps({
     navPreferences: { type: Array, default: () => [] },
     sectionAliases: { type: Object, default: () => ({}) },
+    itemAliases: { type: Object, default: () => ({}) },
     hiddenNavSections: { type: Array, default: () => [] },
     hiddenNavItems: { type: Array, default: () => [] },
     savePath: { type: String, required: true },
@@ -21,6 +22,7 @@ const props = defineProps({
 const prefs = useSidemenuPreferences({
     navPreferences: props.navPreferences,
     sectionAliases: props.sectionAliases,
+    itemAliases: props.itemAliases,
     initialHiddenSections: props.hiddenNavSections,
     initialHiddenItems: props.hiddenNavItems,
     savePath: props.savePath,
@@ -123,7 +125,7 @@ const prefs = useSidemenuPreferences({
                         :class="{ 'opacity-60': prefs.isItemHidden(item.key) || prefs.isSectionHidden(section.id) }"
                     >
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm text-primary truncate">{{ t(item.labelKey) }}</p>
+                            <p class="text-sm text-primary truncate">{{ prefs.resolveItemLabel(item) }}</p>
                             <p v-if="item.descriptionKey" class="text-xs text-muted mt-0.5 line-clamp-2">
                                 {{ t(item.descriptionKey) }}
                             </p>

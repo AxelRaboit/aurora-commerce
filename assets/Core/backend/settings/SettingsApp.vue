@@ -1,5 +1,4 @@
 <script setup>
-import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
@@ -15,13 +14,14 @@ import AppListItemButton from "@/shared/components/action/AppListItemButton.vue"
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import AppColorSwatch from "@/shared/components/form/AppColorSwatch.vue";
 import AppColorField from "@/shared/components/form/AppColorField.vue";
-import { Search, FileText, Lock, Save, Plus, X, RotateCcw } from "lucide-vue-next";
-import { toast } from "vue-sonner";
+import { Search, FileText, Lock, Save, Plus, X, RotateCcw, ChevronDown, ChevronRight } from "lucide-vue-next";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
 import { useSettingsPostPicker } from "@core/backend/settings/composables/useSettingsPostPicker.js";
 import { useSettingsSequenceFilter } from "@core/backend/settings/composables/useSettingsSequenceFilter.js";
-import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { useSettingsTabs } from "@core/backend/settings/composables/useSettingsTabs.js";
+import { useNavAliases } from "@core/backend/settings/composables/useNavAliases.js";
+import { useColorPickerPresets } from "@core/backend/settings/composables/useColorPickerPresets.js";
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
@@ -33,111 +33,14 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const groupOrder = ["general", "reading", "localization", "branding", "appearance", "seo", "system", "email", "sequences", "navigation"];
-const availableGroups = groupOrder.filter((groupName) => props.groups[groupName] || groupName === "navigation" || groupName === "appearance");
-const activeTab = ref(availableGroups[0] ?? "general");
-
-const tabLabels = {
-    general:    () => t("backend.settings.tabs.general"),
-    reading:    () => t("backend.settings.tabs.reading"),
-    localization: () => t("backend.settings.tabs.localization"),
-    branding:   () => t("backend.settings.tabs.branding"),
-    appearance: () => t("backend.settings.tabs.appearance"),
-    seo:        () => t("backend.settings.tabs.seo"),
-    system:     () => t("backend.settings.tabs.system"),
-    email:      () => t("backend.settings.tabs.email"),
-    sequences:  () => t("backend.settings.tabs.sequences"),
-    navigation: () => t("backend.settings.tabs.navigation"),
-};
-
-const tabDescriptions = {
-    general:    () => t("backend.settings.tabs.general_description"),
-    reading:    () => t("backend.settings.tabs.reading_description"),
-    localization: () => t("backend.settings.tabs.localization_description"),
-    branding:   () => t("backend.settings.tabs.branding_description"),
-    appearance: () => t("backend.settings.tabs.appearance_description"),
-    seo:        () => t("backend.settings.tabs.seo_description"),
-    system:     () => t("backend.settings.tabs.system_description"),
-    email:      () => t("backend.settings.tabs.email_description"),
-    sequences:  () => t("backend.settings.tabs.sequences_description"),
-    navigation: () => t("backend.settings.tabs.navigation_description"),
-};
+const { availableGroups, activeTab, selectTab, tabLabel, tabDescription } = useSettingsTabs(props.groups);
 
 const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
     useSettingsForm(props.groups, availableGroups, props.updatePath);
 
-// Navigation aliases
-const navAliasesRaw = props.groups?.navigation?.find?.((s) => s.key === "nav_section_aliases")?.value ?? "{}";
-const navAliases = reactive((() => { try { return JSON.parse(navAliasesRaw) || {}; } catch { return {}; } })());
-const { loading: aliasesSaving, request: aliasRequest } = useRequest();
+const navAliases = useNavAliases({ groups: props.groups, updatePath: props.updatePath });
 
-async function saveNavAliases() {
-    const data = await aliasRequest(props.updatePath, {
-        key: "nav_section_aliases",
-        value: JSON.stringify(navAliases),
-    });
-    if (data?.success) {
-        toast.success(t("backend.settings.saved"));
-    }
-}
-
-// Appearance — color picker presets
-const DEFAULT_COLOR_PRESETS = [
-    "#ef4444", "#f97316", "#f59e0b", "#eab308",
-    "#84cc16", "#22c55e", "#10b981", "#14b8a6",
-    "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6",
-    "#a855f7", "#ec4899", "#f43f5e", "#64748b",
-];
-const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
-const appearanceParameter = props.groups?.appearance?.find?.((s) => s.key === "color_picker_presets") ?? null;
-const colorPickerPresets = ref((() => {
-    try {
-        const decoded = JSON.parse(appearanceParameter?.value ?? "[]");
-        return Array.isArray(decoded) ? decoded.filter((c) => HEX_PATTERN.test(c)) : [];
-    } catch {
-        return [];
-    }
-})());
-if (colorPickerPresets.value.length === 0) {
-    colorPickerPresets.value = [...DEFAULT_COLOR_PRESETS];
-}
-const newPresetColor = ref(null);
-const showAddPresetForm = ref(false);
-const { loading: appearanceSaving, request: appearanceRequest } = useRequest();
-
-function addPresetColor() {
-    const value = newPresetColor.value;
-    if (!value || !HEX_PATTERN.test(value)) {
-        toast.error(t("backend.settings.appearance.color_presets.invalid_hex"));
-        return;
-    }
-    const normalised = value.toLowerCase();
-    if (!colorPickerPresets.value.includes(normalised)) {
-        colorPickerPresets.value.push(normalised);
-    }
-    newPresetColor.value = null;
-    showAddPresetForm.value = false;
-}
-
-function removePresetColor(color) {
-    colorPickerPresets.value = colorPickerPresets.value.filter((c) => c !== color);
-}
-
-function resetPresetColors() {
-    colorPickerPresets.value = [...DEFAULT_COLOR_PRESETS];
-}
-
-async function saveColorPickerPresets() {
-    const data = await appearanceRequest(props.updatePath, {
-        key: "color_picker_presets",
-        value: JSON.stringify(colorPickerPresets.value),
-    });
-    if (data?.success) {
-        toast.success(t("backend.settings.saved"));
-    } else {
-        toast.error(t("shared.common.error"));
-    }
-}
+const colorPresets = useColorPickerPresets({ groups: props.groups, updatePath: props.updatePath });
 
 const { postPickerLabels, postPickerSearch, postPickerResults, postPickerOpen, resolvePostLabel, searchPosts, selectPost, clearPost, onPostPickerBlur, onPostPickerFocus } =
     useSettingsPostPicker(props.groups, availableGroups, fieldValues, props.postSearchPath);
@@ -152,15 +55,15 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
             <AppTooltip
                 v-for="groupName in availableGroups"
                 :key="groupName"
-                :title="tabLabels[groupName]?.() ?? groupName"
-                :description="tabDescriptions[groupName]?.()"
+                :title="tabLabel(groupName)"
+                :description="tabDescription(groupName)"
                 placement="right"
             >
                 <AppTab
                     :active="activeTab === groupName"
-                    v-on:click="activeTab = groupName"
+                    v-on:click="selectTab(groupName)"
                 >
-                    {{ tabLabels[groupName]?.() ?? groupName }}
+                    {{ tabLabel(groupName) }}
                 </AppTab>
             </AppTooltip>
         </nav>
@@ -169,40 +72,122 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
             <AppTooltip
                 v-for="groupName in availableGroups"
                 :key="groupName"
-                :title="tabLabels[groupName]?.() ?? groupName"
-                :description="tabDescriptions[groupName]?.()"
+                :title="tabLabel(groupName)"
+                :description="tabDescription(groupName)"
                 placement="bottom"
             >
                 <AppTab
                     :active="activeTab === groupName"
                     size="sm"
-                    v-on:click="activeTab = groupName"
+                    v-on:click="selectTab(groupName)"
                 >
-                    {{ tabLabels[groupName]?.() ?? groupName }}
+                    {{ tabLabel(groupName) }}
                 </AppTab>
             </AppTooltip>
         </div>
 
         <div class="flex-1 min-w-0">
             <!-- Navigation aliases tab — custom UI, not a generic setting renderer -->
-            <div v-show="activeTab === 'navigation'" class="bg-surface border border-line rounded-xl p-6 space-y-4">
+            <div v-show="activeTab === 'navigation'" class="space-y-6">
                 <p class="text-sm text-secondary">{{ t('backend.settings.tabs.navigation_description') }}</p>
-                <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
-                <div v-else class="space-y-3">
-                    <div v-for="section in navSections" :key="section.id" class="flex items-center gap-4">
-                        <span class="text-sm text-secondary w-36 shrink-0">{{ t(`backend.nav.sections.${section.id}`) }}</span>
-                        <AppInput
-                            v-model="navAliases[section.id]"
-                            :placeholder="t(`backend.nav.sections.${section.id}`)"
-                            class="flex-1"
-                        />
+
+                <!-- Sections aliases -->
+                <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
+                    <div>
+                        <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.navAliases.sectionsTitle') }}</h3>
+                        <p class="text-xs text-muted mt-1">{{ t('backend.settings.navAliases.sectionsHelp') }}</p>
+                    </div>
+                    <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
+                    <div v-else class="space-y-3">
+                        <div v-for="section in navSections" :key="section.id" class="flex items-center gap-4">
+                            <span class="text-sm text-secondary w-36 shrink-0">{{ t(`backend.nav.sections.${section.id}`) }}</span>
+                            <AppInput
+                                v-model="navAliases.sectionAliases[section.id]"
+                                :placeholder="t(`backend.nav.sections.${section.id}`)"
+                                class="flex-1"
+                            />
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-line flex justify-end">
+                        <AppButton variant="primary" size="md" :loading="navAliases.sectionsSaving.value" v-on:click="navAliases.saveSections">
+                            <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('backend.settings.navAliases.saveSections') }}
+                        </AppButton>
                     </div>
                 </div>
-                <div class="pt-2">
-                    <AppButton variant="primary" size="md" :loading="aliasesSaving" v-on:click="saveNavAliases">
-                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t('shared.common.save') }}
-                    </AppButton>
+
+                <!-- Items aliases -->
+                <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.navAliases.itemsTitle') }}</h3>
+                            <p class="text-xs text-muted mt-1">{{ t('backend.settings.navAliases.itemsHelp') }}</p>
+                        </div>
+                        <AppButton variant="ghost" size="sm" v-on:click="navAliases.resetAllItems">
+                            <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('backend.settings.navAliases.resetAll') }}
+                        </AppButton>
+                    </div>
+
+                    <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
+                    <div v-else class="space-y-2">
+                        <div
+                            v-for="section in navSections"
+                            :key="section.id"
+                            class="border border-line rounded-lg overflow-hidden"
+                        >
+                            <button
+                                type="button"
+                                class="w-full flex items-center justify-between gap-3 px-3 py-2 bg-surface-2 hover:bg-surface-3 transition-colors text-left"
+                                v-on:click="navAliases.toggleSection(section.id)"
+                            >
+                                <span class="flex items-center gap-2 text-sm font-medium text-primary">
+                                    <component
+                                        :is="navAliases.isSectionExpanded(section.id) ? ChevronDown : ChevronRight"
+                                        class="w-3.5 h-3.5 text-muted"
+                                        :stroke-width="2"
+                                    />
+                                    {{ navAliases.sectionLabel(section) }}
+                                </span>
+                                <span class="text-xs text-muted">{{ section.items?.length ?? 0 }}</span>
+                            </button>
+                            <div v-show="navAliases.isSectionExpanded(section.id)" class="p-3 space-y-2">
+                                <div v-if="!section.items?.length" class="text-xs text-muted italic">
+                                    {{ t('backend.settings.navAliases.itemsEmpty') }}
+                                </div>
+                                <div
+                                    v-for="item in section.items"
+                                    :key="item.route"
+                                    class="flex items-center gap-2"
+                                >
+                                    <span class="text-xs text-secondary w-40 shrink-0 truncate" :title="navAliases.itemDefaultLabel(item)">
+                                        {{ navAliases.itemDefaultLabel(item) }}
+                                    </span>
+                                    <AppInput
+                                        v-model="navAliases.itemAliases[item.route]"
+                                        :placeholder="navAliases.itemDefaultLabel(item)"
+                                        class="flex-1"
+                                    />
+                                    <AppButton
+                                        variant="ghost"
+                                        size="sm"
+                                        :disabled="!navAliases.itemAliases[item.route]"
+                                        :title="t('backend.settings.navAliases.resetItem')"
+                                        v-on:click="navAliases.resetItem(item.route)"
+                                    >
+                                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                                    </AppButton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-line flex justify-end">
+                        <AppButton variant="primary" size="md" :loading="navAliases.itemsSaving.value" v-on:click="navAliases.saveItems">
+                            <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t('backend.settings.navAliases.saveItems') }}
+                        </AppButton>
+                    </div>
                 </div>
             </div>
 
@@ -215,7 +200,7 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
 
                 <div class="flex flex-wrap gap-2">
                     <div
-                        v-for="color in colorPickerPresets"
+                        v-for="color in colorPresets.presets.value"
                         :key="color"
                         class="relative group"
                     >
@@ -224,7 +209,7 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                             type="button"
                             class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-surface border border-line text-muted hover:text-danger hover:border-danger flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-sm"
                             :title="t('backend.settings.appearance.color_presets.remove')"
-                            v-on:click="removePresetColor(color)"
+                            v-on:click="colorPresets.remove(color)"
                         >
                             <X class="w-3 h-3" :stroke-width="2.5" />
                         </button>
@@ -232,28 +217,28 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                 </div>
 
                 <div>
-                    <div v-if="showAddPresetForm" class="border border-line rounded-lg p-4 bg-surface-2 space-y-3">
+                    <div v-if="colorPresets.showAddForm.value" class="border border-line rounded-lg p-4 bg-surface-2 space-y-3">
                         <AppColorField
-                            v-model="newPresetColor"
+                            v-model="colorPresets.newColor.value"
                             :label="t('backend.settings.appearance.color_presets.add')"
                             :show-hex="true"
                             size="md"
                         />
                         <div class="flex gap-2 justify-end">
-                            <AppTextLinkButton color="muted" size="sm" v-on:click="showAddPresetForm = false; newPresetColor = null">
+                            <AppTextLinkButton color="muted" size="sm" v-on:click="colorPresets.cancelAdd">
                                 {{ t('shared.common.cancel') }}
                             </AppTextLinkButton>
-                            <AppButton variant="primary" size="sm" v-on:click="addPresetColor">
+                            <AppButton variant="primary" size="sm" v-on:click="colorPresets.add">
                                 {{ t('backend.settings.appearance.color_presets.confirm_add') }}
                             </AppButton>
                         </div>
                     </div>
                     <div v-else class="flex flex-wrap gap-2">
-                        <AppButton variant="secondary" size="sm" v-on:click="showAddPresetForm = true">
+                        <AppButton variant="secondary" size="sm" v-on:click="colorPresets.openAddForm">
                             <Plus class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t('backend.settings.appearance.color_presets.add') }}
                         </AppButton>
-                        <AppButton variant="ghost" size="sm" v-on:click="resetPresetColors">
+                        <AppButton variant="ghost" size="sm" v-on:click="colorPresets.reset">
                             <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t('backend.settings.appearance.color_presets.reset') }}
                         </AppButton>
@@ -264,9 +249,9 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                     <AppButton
                         variant="primary"
                         size="md"
-                        :loading="appearanceSaving"
-                        :disabled="colorPickerPresets.length === 0"
-                        v-on:click="saveColorPickerPresets"
+                        :loading="colorPresets.saving.value"
+                        :disabled="!colorPresets.canSave.value"
+                        v-on:click="colorPresets.save"
                     >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t('backend.settings.save') }}

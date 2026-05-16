@@ -11,6 +11,7 @@ const { t } = useI18n();
 const props = defineProps({
     navPreferences: { type: Array, default: () => [] },
     sectionAliases: { type: Object, default: () => ({}) },
+    itemAliases: { type: Object, default: () => ({}) },
     hiddenNavSections: { type: Array, default: () => [] },
     hiddenNavItems: { type: Array, default: () => [] },
     savePath: { type: String, required: true },
@@ -26,6 +27,7 @@ const TABS = [
         getProps: () => ({
             navPreferences: props.navPreferences,
             sectionAliases: props.sectionAliases,
+            itemAliases: props.itemAliases,
             hiddenNavSections: props.hiddenNavSections,
             hiddenNavItems: props.hiddenNavItems,
             savePath: props.savePath,

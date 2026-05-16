@@ -51,6 +51,7 @@ const props = defineProps({
     notificationsDeletePath: { type: String, default: "" },
     notificationsDeleteAllPath: { type: String, default: "" },
     navSectionAliases: { type: Object, default: () => ({}) },
+    navItemAliases: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -75,7 +76,7 @@ const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
     isActive, isActiveExact, itemIsActive, itemClasses, iconClasses,
-} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases);
+} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases, props.navItemAliases);
 
 const SECTION_CONFIG = {
     recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },

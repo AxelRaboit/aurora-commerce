@@ -20,7 +20,7 @@ backend:
       sequences: Séquences
       sequences_description: Préfixes des références auto-générées.
       navigation: Navigation
-      navigation_description: Personnalisez les noms des sections du menu latéral.
+      navigation_description: Personnalisez les noms des sections et des items du menu latéral.
       modules: Modules
       ecommerce: E-commerce
     appearance:
@@ -33,6 +33,16 @@ backend:
         reset: Réinitialiser aux couleurs par défaut
         invalid_hex: 'Code hexadécimal invalide. Format attendu : #rrggbb.'
     navAliasesEmpty: Aucune section de navigation disponible.
+    navAliases:
+      sectionsTitle: Sections du menu
+      sectionsHelp: 'Renommez les regroupements affichés en en-tête de chaque groupe du menu latéral.'
+      itemsTitle: Items du menu
+      itemsHelp: 'Renommez les modules individuels. Cliquez sur une section pour développer ses items.'
+      itemsEmpty: Aucun item dans cette section.
+      resetItem: Réinitialiser
+      resetAll: Tout réinitialiser
+      saveItems: Enregistrer les items
+      saveSections: Enregistrer les sections
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: 'Recommandé : image carrée (1:1).'
     modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
@@ -247,6 +257,9 @@ backend:
     nav_section_aliases:
       label: Alias des sections de navigation
       description: 'Carte JSON des alias de sections (géré via l''interface).'
+    nav_item_aliases:
+      label: Alias des items de navigation
+      description: 'Carte JSON des alias d''items du menu (géré via l''interface).'
     color_picker_presets:
       label: Palette du picker de couleurs
       description: 'Liste JSON de couleurs hexadécimales proposées en raccourci dans tous les sélecteurs de couleurs de l''admin.'
