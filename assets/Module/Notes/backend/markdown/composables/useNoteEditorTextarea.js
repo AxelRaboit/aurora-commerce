@@ -118,6 +118,7 @@ export function useNoteEditorTextarea({
         },
         // wiki autocomplete
         showSuggestions: wiki.showSuggestions,
+        suggestionQuery: wiki.suggestionQuery,
         suggestionIndex: wiki.suggestionIndex,
         suggestionPosition: wiki.suggestionPosition,
         filteredSuggestions: wiki.filteredSuggestions,

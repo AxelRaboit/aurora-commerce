@@ -42,6 +42,7 @@ notes:
     confirm_delete: 'Permanently delete "{title}"?'
     confirm_discard_changes: You have unsaved changes. Discard them?
     wiki_link_not_found: 'No note matches "{title}".'
+    wiki_search_placeholder: Type to filter notes…
     view:
       edit: Edit only
       split: Edit + preview

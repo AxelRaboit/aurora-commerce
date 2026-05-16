@@ -51,25 +51,33 @@ const emit = defineEmits(["select", "highlight"]);
 
 <template>
     <div
-        class="absolute z-30 max-h-64 overflow-auto rounded-md border border-line bg-surface shadow-lg py-1"
+        class="absolute z-30 max-h-64 overflow-auto rounded-md border border-line bg-surface shadow-lg flex flex-col"
         :class="minWidthClass"
         :style="{ top: `${position.top}px`, left: `${position.left}px` }"
         v-on:mousedown.prevent
     >
-        <button
-            v-for="(item, index) in items"
-            :key="item.id"
-            type="button"
-            class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
-            :class="
-                index === activeIndex
-                    ? 'bg-accent-500/15 text-primary'
-                    : 'text-secondary hover:bg-surface-2'
-            "
-            v-on:mousedown.prevent="emit('select', item)"
-            v-on:mouseenter="emit('highlight', index)"
-        >
-            <slot :item="item" :index="index" :active="index === activeIndex" />
-        </button>
+        <!-- Optional sticky header (e.g. search bar reflecting an inline
+             filter, section title, etc.). Sits above the scrolling list. -->
+        <div v-if="$slots.header" class="shrink-0 border-b border-line">
+            <slot name="header" />
+        </div>
+
+        <div class="overflow-auto py-1">
+            <button
+                v-for="(item, index) in items"
+                :key="item.id"
+                type="button"
+                class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors"
+                :class="
+                    index === activeIndex
+                        ? 'bg-accent-500/15 text-primary'
+                        : 'text-secondary hover:bg-surface-2'
+                "
+                v-on:mousedown.prevent="emit('select', item)"
+                v-on:mouseenter="emit('highlight', index)"
+            >
+                <slot :item="item" :index="index" :active="index === activeIndex" />
+            </button>
+        </div>
     </div>
 </template>

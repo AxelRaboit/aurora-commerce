@@ -43,6 +43,7 @@ notes:
 
     confirm_discard_changes: Vous avez des modifications non enregistrées. Les abandonner ?
     wiki_link_not_found: 'Aucune note ne correspond à « {title} ».'
+    wiki_search_placeholder: Tapez pour filtrer les notes…
     view:
       edit: Édition seule
       split: Édition + aperçu

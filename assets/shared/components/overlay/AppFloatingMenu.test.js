@@ -67,4 +67,27 @@ describe("AppFloatingMenu", () => {
             "min-w-96",
         );
     });
+
+    it("renders the header slot above the list when provided", () => {
+        const wrapper = mount(AppFloatingMenu, {
+            props: {
+                items,
+                position: { top: 0, left: 0 },
+                activeIndex: 0,
+            },
+            slots: {
+                header: `<div class="my-header">Search: foo</div>`,
+                default: `<template #default="{ item }">{{ item.label }}</template>`,
+            },
+        });
+        const header = wrapper.find(".my-header");
+        expect(header.exists()).toBe(true);
+        expect(header.text()).toBe("Search: foo");
+    });
+
+    it("does not render a header wrapper when the slot is not provided", () => {
+        const wrapper = renderMenu();
+        // No header div with border-b class should exist
+        expect(wrapper.find(".border-b").exists()).toBe(false);
+    });
 });

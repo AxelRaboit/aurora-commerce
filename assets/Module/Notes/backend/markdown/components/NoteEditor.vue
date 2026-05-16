@@ -3,7 +3,7 @@ import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNoteEditorTextarea } from "@notes/backend/markdown/composables/useNoteEditorTextarea.js";
 import AppFloatingMenu from "@shared/components/overlay/AppFloatingMenu.vue";
-import { FileText } from "lucide-vue-next";
+import { FileText, Search } from "lucide-vue-next";
 
 const props = defineProps({
     modelValue: { type: String, default: "" },
@@ -29,6 +29,7 @@ const {
     selectCommand,
     highlightCommand,
     showSuggestions,
+    suggestionQuery,
     suggestionIndex,
     suggestionPosition,
     filteredSuggestions,
@@ -75,7 +76,10 @@ const {
             </template>
         </AppFloatingMenu>
 
-        <!-- Wiki-link autocomplete ('[[' anywhere on a line) -->
+        <!-- Wiki-link autocomplete ('[[' anywhere on a line) — header
+             shows the inline filter so the user sees "what they're
+             searching for". Keystrokes still go into the textarea (the
+             actual source of truth) so this stays a passive display. -->
         <AppFloatingMenu
             v-if="showSuggestions && filteredSuggestions.length > 0"
             :items="filteredSuggestions"
@@ -84,6 +88,17 @@ const {
             v-on:select="selectSuggestion"
             v-on:highlight="highlightSuggestion"
         >
+            <template #header>
+                <div class="flex items-center gap-2 px-3 py-2 text-sm text-secondary">
+                    <Search class="w-3.5 h-3.5 shrink-0 text-muted" :stroke-width="2" />
+                    <span v-if="suggestionQuery" class="flex-1 truncate font-mono text-xs">
+                        {{ suggestionQuery }}
+                    </span>
+                    <span v-else class="flex-1 text-muted text-xs italic">
+                        {{ t('notes.markdown.wiki_search_placeholder') }}
+                    </span>
+                </div>
+            </template>
             <template #default="{ item }">
                 <FileText class="w-3.5 h-3.5 shrink-0 text-muted" :stroke-width="2" />
                 <span class="flex-1 truncate">

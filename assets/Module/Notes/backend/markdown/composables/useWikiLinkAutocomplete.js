@@ -165,6 +165,7 @@ export function useWikiLinkAutocomplete(flatNotes) {
 
     return {
         showSuggestions,
+        suggestionQuery,
         suggestionIndex,
         suggestionPosition,
         filteredSuggestions,
