@@ -47,3 +47,5 @@ backend:
     platform: Plateforme
     platform_backend: Plateforme
     platform_backend_description: Section technique du back-office.
+    configuration: Configuration
+    configuration_description: Paramétrage global de l'application et personnalisation visuelle.

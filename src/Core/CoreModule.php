@@ -38,8 +38,10 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
             new NavPermission('core.users.modules.manage', group: 'platform'),
             new NavPermission('core.agencies.manage', group: 'platform'),
             new NavPermission('core.services.manage', group: 'platform'),
-            new NavPermission('core.settings.manage', group: 'platform'),
-            new NavPermission('core.themes.manage', group: 'platform'),
+            // Configuration — global app parameters & visual customization,
+            // separated from operational data management above.
+            new NavPermission('core.settings.manage', group: 'configuration'),
+            new NavPermission('core.themes.manage', group: 'configuration'),
             // Cross-cutting (no specific UI section — left under module's own group)
             new NavPermission('core.search.view'),
         ];
@@ -80,16 +82,22 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
                 $platformItems[] = new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'core.services.manage', descriptionKey: 'backend.nav.services_description');
             }
 
+            if ([] !== $platformItems) {
+                $sections[] = new NavSection('platform', $platformItems, priority: 20);
+            }
+
+            $configurationItems = [];
+
             if ($this->platformContext->isSettingsEnabled()) {
-                $platformItems[] = new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'core.settings.manage', descriptionKey: 'backend.nav.settings_description');
+                $configurationItems[] = new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'core.settings.manage', descriptionKey: 'backend.nav.settings_description');
             }
 
             if ($this->platformContext->isThemesEnabled()) {
-                $platformItems[] = new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'core.themes.manage', descriptionKey: 'backend.nav.themes_description');
+                $configurationItems[] = new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'core.themes.manage', descriptionKey: 'backend.nav.themes_description');
             }
 
-            if ([] !== $platformItems) {
-                $sections[] = new NavSection('platform', $platformItems, priority: 20);
+            if ([] !== $configurationItems) {
+                $sections[] = new NavSection('configuration', $configurationItems, priority: 25);
             }
         }
 
@@ -111,9 +119,11 @@ final readonly class CoreModule implements ModuleInterface, ModuleToggleProvider
                 new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'core.users.manage', descriptionKey: 'backend.nav.users_description'),
                 new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'core.agencies.manage', descriptionKey: 'backend.nav.agencies_description'),
                 new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'core.services.manage', descriptionKey: 'backend.nav.services_description'),
+            ], priority: 20),
+            new NavSection('configuration', [
                 new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'core.settings.manage', descriptionKey: 'backend.nav.settings_description'),
                 new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'core.themes.manage', descriptionKey: 'backend.nav.themes_description'),
-            ], priority: 20),
+            ], priority: 25),
             new NavSection('dev', [
                 new NavItem('dev_dashboard', 'backend.nav.administration', 'shield', 'ROLE_DEV', 'rose', 'dev_', descriptionKey: 'backend.nav.administration_description'),
             ], priority: 1000),

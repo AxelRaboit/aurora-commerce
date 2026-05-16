@@ -47,3 +47,5 @@ backend:
     platform: Platform
     platform_backend: Platform
     platform_backend_description: Technical backend section.
+    configuration: Configuration
+    configuration_description: Global application parameters and visual customization.

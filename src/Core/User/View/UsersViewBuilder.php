@@ -30,6 +30,7 @@ final readonly class UsersViewBuilder
         'general' => 10,
         'platform' => 20,
         'vault' => 20,
+        'configuration' => 25,
         'editorial' => 30,
         'pdfform' => 34,
         'ged' => 35,

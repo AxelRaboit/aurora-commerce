@@ -47,6 +47,7 @@ backend:
   nav:
     sections:
       platform: Plateforme
+      configuration: Configuration
       dev: Administration
       core: Général
     administration: Accès développeur
