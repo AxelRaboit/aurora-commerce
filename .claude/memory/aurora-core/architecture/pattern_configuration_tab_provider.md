@@ -45,9 +45,11 @@ Aurora (`ModuleInterface`, `MediaUsageProviderInterface`,
 Cohérent avec la convention "Sylius-style" : le core fournit le contrat, le
 client/module implémente.
 
-Phase B (en cours, pilote livré pour `ecommerce` + `crm` au commit
-`b893048c`) : sortir progressivement les groupes de `ApplicationParameterEnum`
-vers leurs modules respectifs. Convention pilote :
+Phase B (terminée aux commits `b893048c` pilot + `b881109d` suite) :
+tous les settings owned par un module ont quitté `ApplicationParameterEnum`
+pour vivre avec leur module. L'enum core a perdu 26 cases sur 39 (~70%
+plus petit). Les cases restantes sont strictement core (User/Media/Audit
+prefixes, site globals, nav aliases, color presets). Convention :
 
 - `src/Module/<Name>/Setting/<Name>SettingEnum.php` — enum implémentant
   `ApplicationParameterEnumInterface` (port direct du contrat existant).
@@ -60,10 +62,14 @@ vers leurs modules respectifs. Convention pilote :
 - `SettingRepository::getOrDefault()` accepte l'interface — les enums
   modules y passent directement.
 
-Modules restants à migrer (Phase B suite) : editorial (prefixes),
-billing (prefixes), photo (prefixes), ged (prefixes), pdfform (prefixes),
-project, planning, hr, vault. Tous sont des préfixes de séquences →
-contribueront au tab partagé `sequences` (merge-by-id du registry).
+Modules migrés en Phase B : ecommerce, crm, billing, editorial, photo,
+ged, pdfform, erp. Le tab partagé `sequences` est maintenant alimenté
+par 9 providers (Core + 8 modules) via le merge-by-id du registry —
+première mise à l'épreuve grandeur nature de ce mécanisme.
+
+Modules sans prefix dédié (project, planning, hr, vault) : pas de
+migration nécessaire, ils n'utilisent que `SequencePrefixEnum` directement
+sans setting personnalisable.
 
 Phase C (à venir) : registre Vue côté assets pour permettre aux clients de
 fournir leurs propres composants custom (équivalent du
