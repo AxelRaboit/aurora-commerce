@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Service;
 
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Storage\Controller\UploadsServeController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Single point that turns a {@see MediaInterface} (or one of its
  * variants) into the user-facing URL pointing at
- * {@see \Aurora\Core\Storage\Controller\UploadsServeController}.
+ * {@see UploadsServeController}.
  *
  * Lives here rather than on `AbstractMedia` so the entity stays a
  * pure domain object — URL building requires `UrlGeneratorInterface`,
@@ -34,7 +35,7 @@ final readonly class MediaUrlGenerator
 
     public function publicUrl(?MediaInterface $media): ?string
     {
-        if (null === $media) {
+        if (!$media instanceof MediaInterface) {
             return null;
         }
 
@@ -47,7 +48,7 @@ final readonly class MediaUrlGenerator
      */
     public function publicUrlAbsolute(?MediaInterface $media): ?string
     {
-        if (null === $media) {
+        if (!$media instanceof MediaInterface) {
             return null;
         }
 
@@ -60,9 +61,10 @@ final readonly class MediaUrlGenerator
 
     public function variantUrl(?MediaInterface $media, string $variant): ?string
     {
-        if (null === $media) {
+        if (!$media instanceof MediaInterface) {
             return null;
         }
+
         $path = $media->getVariantPath($variant);
 
         return null === $path
@@ -77,7 +79,7 @@ final readonly class MediaUrlGenerator
      */
     public function thumbUrl(?MediaInterface $media): ?string
     {
-        if (null === $media) {
+        if (!$media instanceof MediaInterface) {
             return null;
         }
 

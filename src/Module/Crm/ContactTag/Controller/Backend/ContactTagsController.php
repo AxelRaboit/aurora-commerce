@@ -40,7 +40,7 @@ final class ContactTagsController extends AbstractController
     public function index(): Response
     {
         return $this->render(
-            '@Crm/backend/contact_tags/index.html.twig',
+            '@Crm/backend/contact-tags/index.html.twig',
             $this->viewBuilder->indexView($this->buildListPayload()),
         );
     }

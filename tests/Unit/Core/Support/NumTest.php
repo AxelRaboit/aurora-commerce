@@ -15,12 +15,12 @@ final class NumTest extends TestCase
      */
     public static function clampCases(): iterable
     {
-        yield 'below min returns min'        => [-5, 0, 10, 0];
-        yield 'above max returns max'        => [42, 0, 10, 10];
-        yield 'inside range passes through'  => [5, 0, 10, 5];
-        yield 'equal to min'                 => [0, 0, 10, 0];
-        yield 'equal to max'                 => [10, 0, 10, 10];
-        yield 'float clamp keeps float'      => [1.5, 0.0, 1.0, 1.0];
+        yield 'below min returns min' => [-5, 0, 10, 0];
+        yield 'above max returns max' => [42, 0, 10, 10];
+        yield 'inside range passes through' => [5, 0, 10, 5];
+        yield 'equal to min' => [0, 0, 10, 0];
+        yield 'equal to max' => [10, 0, 10, 10];
+        yield 'float clamp keeps float' => [1.5, 0.0, 1.0, 1.0];
         yield 'negative float clamps to min' => [-0.3, 0.0, 1.0, 0.0];
     }
 

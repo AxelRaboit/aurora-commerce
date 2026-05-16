@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Service;
 
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Same separation-of-concerns as {@see \Aurora\Core\Media\Service\MediaUrlGenerator}
+ * Same separation-of-concerns as {@see MediaUrlGenerator}
  * but for user profile photos. The entity holds the filename, this
  * service turns it into a `/uploads/profile-photos/...` URL.
  *
@@ -23,9 +24,10 @@ final readonly class UserProfilePhotoUrlGenerator
 
     public function url(?CoreUserInterface $user): ?string
     {
-        if (null === $user) {
+        if (!$user instanceof CoreUserInterface) {
             return null;
         }
+
         $path = $user->getProfilePhotoPath();
         if (null === $path || '' === $path) {
             return null;

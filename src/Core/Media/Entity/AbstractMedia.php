@@ -244,7 +244,6 @@ abstract class AbstractMedia implements MediaInterface
         return $this->variants[$size] ?? null;
     }
 
-
     /**
      * Returns a CSS object-position value like "50% 25%" based on the focal
      * point, or "50% 50%" (centered) when no focal point is set.

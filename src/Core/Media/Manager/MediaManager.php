@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Support\Num;
 use Aurora\Core\Media\Dto\MediaFolderInputInterface;
 use Aurora\Core\Media\Dto\MediaInputInterface;
 use Aurora\Core\Media\Entity\Media;
@@ -21,6 +20,7 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Support\Num;
 use Aurora\Core\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

@@ -10,6 +10,7 @@ use Aurora\Core\Audit\Entity\AbstractAuditLog;
 use Aurora\Core\Audit\Entity\AuditLog;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\Menu\Entity\Menu;
 use Aurora\Core\Menu\Entity\MenuItem;
 use Aurora\Core\Menu\Entity\MenuItemTranslation;
@@ -94,7 +95,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 /**
  * Comprehensive demo fixtures covering all Aurora modules.
@@ -112,7 +112,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         #[Autowire('%app.upload_dir%')]
         private readonly string $uploadDir,
         private readonly Filesystem $fs = new Filesystem(),
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly ?MediaUrlGenerator $mediaUrlGenerator = null,
     ) {}
 
     public static function getGroups(): array

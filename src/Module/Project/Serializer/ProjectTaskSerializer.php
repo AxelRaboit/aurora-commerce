@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(ProjectTaskSerializerInterface::class)]
 class ProjectTaskSerializer implements ProjectTaskSerializerInterface

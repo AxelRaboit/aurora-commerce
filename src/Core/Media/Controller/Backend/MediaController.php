@@ -18,6 +18,7 @@ use Aurora\Core\Media\Repository\MediaFolderRepository;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Serializer\MediaFolderSerializerInterface;
 use Aurora\Core\Media\Serializer\MediaSerializerInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\Media\Service\MediaUsageService;
 use Aurora\Core\Media\View\MediaViewBuilder;
 use Aurora\Core\Validation\Service\PayloadValidator;
@@ -28,7 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[Route('/backend/media', name: 'backend_media')]
 #[IsGranted('media.view')]

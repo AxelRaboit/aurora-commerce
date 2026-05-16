@@ -40,7 +40,7 @@ final class ListingTagsController extends AbstractController
     public function index(): Response
     {
         return $this->render(
-            '@Ecommerce/backend/listing_tags/index.html.twig',
+            '@Ecommerce/backend/listing-tags/index.html.twig',
             $this->viewBuilder->indexView($this->buildListPayload()),
         );
     }

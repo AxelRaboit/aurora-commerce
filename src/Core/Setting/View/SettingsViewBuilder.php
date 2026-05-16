@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Aurora\Core\Setting\View;
 
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 /**
  * Builds the Twig payload for the admin settings page. Iterates the
@@ -30,7 +30,7 @@ final readonly class SettingsViewBuilder
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
         private SettingDefinitionRegistry $definitionRegistry,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        private MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     /**

@@ -6,10 +6,10 @@ namespace Aurora\Core\Media\Serializer;
 
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Enum\MimeTypeEnum;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(MediaSerializerInterface::class)]
 class MediaSerializer implements MediaSerializerInterface

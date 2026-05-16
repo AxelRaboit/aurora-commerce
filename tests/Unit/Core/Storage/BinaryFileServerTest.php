@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
+use const DIRECTORY_SEPARATOR;
+
 final class BinaryFileServerTest extends TestCase
 {
     private string $rootDir;
@@ -100,7 +102,7 @@ final class BinaryFileServerTest extends TestCase
     public function testPathJoinsRootAndRelative(): void
     {
         self::assertSame(
-            $this->rootDir.\DIRECTORY_SEPARATOR.'foo/bar.png',
+            $this->rootDir.DIRECTORY_SEPARATOR.'foo/bar.png',
             $this->server->path($this->rootDir, 'foo/bar.png'),
         );
     }

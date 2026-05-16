@@ -15,7 +15,7 @@ Documentation à destination d'un développeur qui :
 Selon ce que vous faites, lisez dans cet ordre :
 
 ### Nouveau dev sur le projet
-1. [Getting started](getting_started.md) — prérequis, premier `make setup`, structure obligatoire, premier déploiement local.
+1. [Getting started](getting-started.md) — prérequis, premier `make setup`, structure obligatoire, premier déploiement local.
 2. [Workflow de développement](dev_workflow.md) — commandes du quotidien, debug, ajout d'une feature.
 3. [Assets Vue](assets_vue.md) — structure des assets côté client, aliases Vite, locales Vue.
 4. [Mise à jour aurora-core](update_aurora.md) — `make aurora-update`, breaking changes.
@@ -46,7 +46,7 @@ Selon ce que vous faites, lisez dans cet ordre :
 
 | Doc | Sujet | Quand la lire |
 |---|---|---|
-| [getting_started.md](getting_started.md) | Onboarding zéro | Premier jour sur le projet |
+| [getting-started.md](getting-started.md) | Onboarding zéro | Premier jour sur le projet |
 | [dev_workflow.md](dev_workflow.md) | Commandes quotidiennes, debug | Tous les jours |
 | [overriding.md](overriding.md) | Recettes d'extension par couche | À chaque override |
 | [extra_fields_pattern.md](extra_fields_pattern.md) | `extraFields` + slots Vue | Ajout de champs à un form admin |

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Serializer;
 
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(DocumentSerializerInterface::class)]
 class DocumentSerializer implements DocumentSerializerInterface

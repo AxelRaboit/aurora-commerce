@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Serializer;
 
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(OcrJobSerializerInterface::class)]
 class OcrJobSerializer implements OcrJobSerializerInterface

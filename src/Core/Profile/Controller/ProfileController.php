@@ -19,6 +19,7 @@ use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Core\User\Manager\UserProfilePhotoManagerInterface;
 use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +32,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function in_array;
-use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 
 #[Route('/backend/profile', name: 'backend_profile')]
 #[IsGranted(UserRoleEnum::User->value)]
@@ -48,7 +48,7 @@ final class ProfileController extends AbstractController
         private readonly ProfileViewBuilder $viewBuilder,
         private readonly UserRepository $userRepository,
         private readonly ModuleRegistry $moduleRegistry,
-        protected readonly UserProfilePhotoUrlGenerator $userProfilePhotoUrlGenerator,
+        private readonly UserProfilePhotoUrlGenerator $userProfilePhotoUrlGenerator,
     ) {}
 
     #[Route('', name: '')]

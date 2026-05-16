@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 use function sprintf;
 
+use const DIRECTORY_SEPARATOR;
+
 /**
  * Centralised builder for `BinaryFileResponse` returned by every
  * `*_serve` controller (Media, profile photos, OCR, PDF, notes images,
@@ -38,10 +40,10 @@ final readonly class BinaryFileServer
      * resolves inside `$allowedRoot`. Caller is responsible for the
      * auth/ownership check before reaching here.
      *
-     * @param string  $absolutePath  full filesystem path of the file to serve
-     * @param string  $allowedRoot   absolute path that `$absolutePath` must reside under
-     * @param string  $cacheControl  Cache-Control header value (default: private, 1h)
-     * @param ?string $downloadName  when set, prompts a download with this filename
+     * @param string  $absolutePath full filesystem path of the file to serve
+     * @param string  $allowedRoot  absolute path that `$absolutePath` must reside under
+     * @param string  $cacheControl Cache-Control header value (default: private, 1h)
+     * @param ?string $downloadName when set, prompts a download with this filename
      *
      * @throws RuntimeException when the file is missing, unreadable, or escapes the allowed root
      */
@@ -64,7 +66,7 @@ final readonly class BinaryFileServer
         // The file must reside *under* the allowed root — never alongside
         // or above. We compare with a trailing separator so a path that
         // simply shares a prefix (e.g. `/var/uploadsX/...`) is rejected.
-        $normalisedRoot = rtrim($rootReal, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR;
+        $normalisedRoot = mb_rtrim($rootReal, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         if (!str_starts_with($real, $normalisedRoot)) {
             throw new RuntimeException(sprintf('Path escapes allowed root: %s', $absolutePath));
         }

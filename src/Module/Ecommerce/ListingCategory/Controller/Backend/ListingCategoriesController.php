@@ -40,7 +40,7 @@ final class ListingCategoriesController extends AbstractController
     public function index(): Response
     {
         return $this->render(
-            '@Ecommerce/backend/listing_categories/index.html.twig',
+            '@Ecommerce/backend/listing-categories/index.html.twig',
             $this->viewBuilder->indexView($this->buildListPayload()),
         );
     }

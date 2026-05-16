@@ -179,6 +179,15 @@ distribuée via composer aux clients.
 
 ## 4. Conventions de naming (à appliquer)
 
+> **Heuristique mnémotechnique** :
+> - Lu par un humain (URL, folder assets, CSS) → `kebab-case`
+> - Identifiant interne (route name, setting, DB column, i18n) → `snake_case`
+> - Classe PHP / composant Vue → `PascalCase`
+> - Variable / fonction JS → `camelCase`
+>
+> Doc canonique : [`docs/aurora-core/dev/naming_convention.md`](docs/aurora-core/dev/naming_convention.md).
+> Mémoire shared : `.claude/memory/aurora-shared/convention_naming.md`.
+
 - **Variables** : noms complets (jamais 1-2 lettres). Ex : `$company`, pas
   `$c` ; `$translation`, pas `$tr`.
 - **Repos: éviter le N+1** : `findBy(['id' => $ids])` plutôt que `find()`

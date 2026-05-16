@@ -12,8 +12,8 @@ import {
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
-import { useListingCategoriesForm } from "@ecommerce/backend/listing_categories/composables/useListingCategoriesForm.js";
-import ListingCategoryNode from "@ecommerce/backend/listing_categories/ListingCategoryNode.vue";
+import { useListingCategoriesForm } from "@ecommerce/backend/listing-categories/composables/useListingCategoriesForm.js";
+import ListingCategoryNode from "@ecommerce/backend/listing-categories/ListingCategoryNode.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";

@@ -7,12 +7,12 @@ namespace Aurora\Core\Twig;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Attribute\AsTwigFunction;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 /**
  * Builds the SEO/Open Graph/Twitter Cards payload consumed by the public `head.html.twig` partial.
@@ -38,7 +38,7 @@ final readonly class SeoExtension
         private SettingRepository $settingRepository,
         private MediaRepository $mediaRepository,
         private RequestStack $requestStack,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        private MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     /**

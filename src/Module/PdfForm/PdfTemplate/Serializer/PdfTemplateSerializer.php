@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PdfForm\PdfTemplate\Serializer;
 
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
 use Aurora\Module\PdfForm\PdfTemplateField\Serializer\PdfTemplateFieldSerializerInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(PdfTemplateSerializerInterface::class)]
 class PdfTemplateSerializer implements PdfTemplateSerializerInterface

@@ -7,11 +7,11 @@ namespace Aurora\Core\User\Serializer;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use const DATE_ATOM;
-use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 
 #[AsAlias(UserSerializerInterface::class)]
 class UserSerializer implements UserSerializerInterface

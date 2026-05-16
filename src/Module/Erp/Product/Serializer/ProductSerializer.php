@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp\Product\Serializer;
 
 use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(ProductSerializerInterface::class)]
 class ProductSerializer implements ProductSerializerInterface
 {
-    public function __construct(protected readonly SettingRepository $settingRepository,
+    public function __construct(
+        protected readonly SettingRepository $settingRepository,
         protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 

@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useClientFilteredList } from "@/shared/composables/list/useClientFilteredList.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
-import { useContactTagsForm } from "@crm/backend/contact_tags/composables/useContactTagsForm.js";
+import { useContactTagsForm } from "@crm/backend/contact-tags/composables/useContactTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";

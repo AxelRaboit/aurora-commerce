@@ -8,9 +8,9 @@ conventions d'extensibilité, ops) sont dans [`aurora-core/`](../aurora-core/REA
 
 | Fichier | Contenu |
 |---|---|
-| [getting_started/philosophy.md](getting_started/philosophy.md) | Philosophie du projet — les deux modes de travail, ce qu'on ne fait pas |
-| [getting_started/setup.md](getting_started/setup.md) | Installation locale — première mise en route |
-| [getting_started/architecture.md](getting_started/architecture.md) | Structure du projet, relation avec aurora-core |
+| [getting-started/philosophy.md](getting-started/philosophy.md) | Philosophie du projet — les deux modes de travail, ce qu'on ne fait pas |
+| [getting-started/setup.md](getting-started/setup.md) | Installation locale — première mise en route |
+| [getting-started/architecture.md](getting-started/architecture.md) | Structure du projet, relation avec aurora-core |
 
 ## 🛠️ Développement quotidien
 

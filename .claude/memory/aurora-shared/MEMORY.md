@@ -25,6 +25,11 @@ Distribué via composer : les clients lisent ces mémoires depuis
   jamais `public/`. Servi exclusivement via PHP (`BinaryFileServer`).
   URL building via service dédié injecté, jamais hardcodé dans les
   entités. Apache `mod_xsendfile` offload en prod.
+- [convention_naming.md](convention_naming.md) — **règle dure** :
+  `kebab-case` pour ce qui est lu par un humain (URL, folder assets,
+  CSS), `snake_case` pour les identifiants internes (route name,
+  setting, DB column, i18n), `PascalCase` pour classes/composants,
+  `camelCase` pour JS. Doc canonique : `docs/aurora-core/dev/naming_convention.md`.
 
 ## Vue / composants
 

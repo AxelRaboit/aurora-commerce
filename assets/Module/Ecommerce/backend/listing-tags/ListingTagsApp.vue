@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useClientFilteredList } from "@/shared/composables/list/useClientFilteredList.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
-import { useListingTagsForm } from "@ecommerce/backend/listing_tags/composables/useListingTagsForm.js";
+import { useListingTagsForm } from "@ecommerce/backend/listing-tags/composables/useListingTagsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
