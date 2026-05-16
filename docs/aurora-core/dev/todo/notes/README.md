@@ -12,7 +12,7 @@ UX distinctes :
 
 | Sous-module | Statut |
 |---|---|
-| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + graphe Cytoscape + syntax highlighting hljs) + demo fixtures. Reste : images, import Onyx. |
+| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + autocomplete `[[` + graphe canvas + syntax highlighting hljs) + demo fixtures. Reste : images, import Onyx. |
 | Block | ⏳ Pas commencé — spec dans [`block/overview.md`](block/overview.md) |
 
 ## Sous-modules
@@ -28,7 +28,8 @@ UX distinctes :
 | Éditeur Vue — squelette CRUD + tree + drag-drop + preview live + side panel | ✅ Fait | [editor.md](markdown/editor.md) |
 | Éditeur Vue — **tags UI** (input + filtre sidebar) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Éditeur Vue — **slash commands** (palette `/`) | ✅ Fait | [editor.md](markdown/editor.md) |
-| Vue graphe des wiki-links (frontend, Cytoscape) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
+| Éditeur Vue — **autocomplete `[[`** (popover + search bar) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
+| Vue graphe des wiki-links (frontend, canvas custom) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
 | Syntax highlighting code blocks (highlight.js) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Images (upload + serve + cleanup) | ⏳ À faire | [images.md](markdown/images.md) |
 | Script d'import depuis Onyx | ⏳ À faire | [import.md](markdown/import.md) |

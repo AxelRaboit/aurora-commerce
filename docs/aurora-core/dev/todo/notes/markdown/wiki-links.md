@@ -10,8 +10,22 @@
       les deux menus sont mutuellement exclusifs (patterns disjoints),
       l'event keydown est consommé par celui qui est ouvert.
 - [x] `[[Title]]` inséré sur Enter/Tab/clic, curseur replacé après `]]`.
-- [x] Tests vitest : 10 cas (open/close, filtre, navigation clavier,
-      pick, fallback untitled, etc.).
+- [x] **Barre de recherche focusable** dans le header du popover
+      (composant partagé `AppSearchInput` avec `:debounce="0"`). Auto-
+      focus à l'ouverture, navigation ↑↓/Enter/Esc directement dans
+      l'input. Le textarea reste ouvert quand le focus migre vers
+      l'input via `[data-floating-menu]` + `focusout` guard.
+- [x] **État vide** quand aucune note ne matche : le popover ne ferme
+      plus, slot `#empty` de `AppFloatingMenu` affiche
+      « Aucune note ne correspond à « {query} » ». Idem pour la slash
+      palette (« Aucune commande »).
+- [x] Tests vitest : 10 cas pour `useWikiLinkAutocomplete` + 9 pour
+      `AppFloatingMenu` (slot header/empty inclus).
+
+> Composant partagé spin-off : `assets/shared/components/overlay/AppFloatingMenu.vue`
+> — extrait du slash + wiki, slots `default` (scopé), `header`, `empty`.
+> Réutilisable pour de futurs autocomplete (@mentions, picker
+> templates, palette emoji…).
 
 ## Backend — ✅ Fait (commit `fca34119`)
 
