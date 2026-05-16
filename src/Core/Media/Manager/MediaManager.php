@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Support\Num;
 use Aurora\Core\Media\Dto\MediaFolderInputInterface;
 use Aurora\Core\Media\Dto\MediaInputInterface;
 use Aurora\Core\Media\Entity\Media;
@@ -266,10 +267,10 @@ class MediaManager implements MediaManagerInterface
         $sourceH = imagesy($source);
 
         // Clamp to image bounds
-        $x = max(0, min($x, $sourceW - 1));
-        $y = max(0, min($y, $sourceH - 1));
-        $width = max(1, min($width, $sourceW - $x));
-        $height = max(1, min($height, $sourceH - $y));
+        $x = Num::clamp($x, 0, $sourceW - 1);
+        $y = Num::clamp($y, 0, $sourceH - 1);
+        $width = Num::clamp($width, 1, $sourceW - $x);
+        $height = Num::clamp($height, 1, $sourceH - $y);
 
         $cropped = imagecreatetruecolor($width, $height);
         imagecopy($cropped, $source, 0, 0, $x, $y, $width, $height);

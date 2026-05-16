@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Repository\Trait;
 
+use Aurora\Core\Support\Num;
 use Doctrine\ORM\QueryBuilder;
 
 trait PaginationTrait
@@ -16,7 +17,7 @@ trait PaginationTrait
     ): array {
         $total = (int) $countQueryBuilder->getQuery()->getSingleScalarResult();
         $totalPages = max(1, (int) ceil($total / $limit));
-        $page = max(1, min($page, $totalPages));
+        $page = Num::clamp($page, 1, $totalPages);
         $offset = ($page - 1) * $limit;
 
         $items = $queryBuilder->setMaxResults($limit)->setFirstResult($offset)->getQuery()->getResult();

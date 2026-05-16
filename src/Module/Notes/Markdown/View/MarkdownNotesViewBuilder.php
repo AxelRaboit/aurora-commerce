@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Notes\Markdown\View;
 
 use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Support\Num;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
 use Aurora\Module\Notes\Markdown\Setting\MarkdownNoteSettingEnum;
@@ -40,7 +41,20 @@ final readonly class MarkdownNotesViewBuilder
             'tagsDeletePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_delete'),
             'imageUploadPath' => $this->urlGenerator->generate('backend_notes_markdown_images_upload'),
             'imageMaxEdge' => (int) $this->settingRepository->getOrDefault(MarkdownNoteSettingEnum::ImageMaxEdge),
-            'imageQuality' => max(0.0, min(1.0, ((int) $this->settingRepository->getOrDefault(MarkdownNoteSettingEnum::ImageQualityPct)) / 100)),
+            'imageQuality' => $this->imageQualityRatio(),
         ];
+    }
+
+    /**
+     * Read the WebP-quality setting (stored as an int percentage so the
+     * Settings UI's `int` renderer can edit it) and project it back into
+     * the [0..1] float the canvas encoder expects. Delegates to
+     * {@see Num::percentToRatio()} for the clamping.
+     */
+    private function imageQualityRatio(): float
+    {
+        return Num::percentToRatio(
+            (int) $this->settingRepository->getOrDefault(MarkdownNoteSettingEnum::ImageQualityPct),
+        );
     }
 }
