@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/users/{id}/impersonate-frontend', name: 'backend_users_impersonate_frontend', methods: [HttpMethodEnum::Get->value])]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_DEV')]
 final class ImpersonateFrontendController extends AbstractController
 {
     public function __construct(
