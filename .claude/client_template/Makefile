@@ -372,12 +372,18 @@ aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-
 	make sync-makefile
 	@echo "✅ aurora-core bumped. Run 'make ft' to verify."
 
-sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + .claude/skills (shared) + docs from aurora-core vendor
+sync-claude-md: ## Symlink CLAUDE.md + README.md + .claude/memory + .claude/skills (shared) + docs from aurora-core vendor
 	@if [ -f $(AURORA)/.claude/client_template/CLAUDE.md ]; then \
 		ln -sfn $(AURORA)/.claude/client_template/CLAUDE.md CLAUDE.md; \
 		echo "✅ CLAUDE.md symlinked from vendor"; \
 	else \
 		echo "⚠️  $(AURORA)/.claude/client_template/CLAUDE.md not found — skipping"; \
+	fi
+	@if [ -f $(AURORA)/.claude/client_template/README.md ]; then \
+		ln -sfn $(AURORA)/.claude/client_template/README.md README.md; \
+		echo "✅ README.md symlinked from vendor"; \
+	else \
+		echo "⚠️  $(AURORA)/.claude/client_template/README.md not found — skipping"; \
 	fi
 	@mkdir -p .claude/memory
 	@rm -rf .claude/memory/aurora-core .claude/memory/aurora-client .claude/memory/aurora-shared
