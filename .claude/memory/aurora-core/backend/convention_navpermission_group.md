@@ -1,92 +1,56 @@
 ---
-name: NavPermission $group override for cross-module section display
-description: Quand une permission déclarée par un module doit apparaître sous une section différente dans la modale Privilèges (ex CoreModule's permissions surfacées sous "Plateforme")
+name: NavPermission $group override (rarement nécessaire post-Jalon 5)
+description: Le paramètre $group de NavPermission existe encore mais sert rarement depuis que Core a été éclaté en 5 modules — chaque permission est déclarée par son module owner naturel.
 type: project
 ---
 
 ## Règle
 
-`NavPermission` accepte un paramètre optionnel `$group` (string). Quand
-défini, il **override le module-id par défaut** utilisé pour grouper la
-permission dans la modale Privilèges.
+`NavPermission` accepte un paramètre optionnel `$group` (string) qui
+**override le module-id par défaut** utilisé pour grouper la permission
+dans la modale Privilèges.
 
 ```php
-new NavPermission('core.media.view', group: 'platform'),
+new NavPermission('some.feature.action', group: 'other_module'),
 ```
 
-Le `PermissionRegistry::byModule()` indexera cette permission sous
-`'platform'` au lieu de `'core'` (le `getId()` de `CoreModule`).
+**Quand l'utiliser : presque jamais.** Depuis le Jalon 4 (CoreModule
+splitté en GeneralModule + PlatformModule + MediaModule +
+ConfigurationModule + DevModule) et le Jalon 5 (renaming
+`<module_id>.<entity>.<action>` partout), chaque permission est
+déclarée par son module owner naturel. Le `getId()` du module renvoie
+exactement le préfixe attendu → pas besoin d'override.
 
-## Pourquoi
+## Pourquoi le pattern existe encore
 
-Un module class PHP peut être organisationnellement responsable de
-permissions qui appartiennent **conceptuellement** à une autre section
-d'UI. Cas typique :
+Cas conceptuel résiduel : un module PHP responsable de plusieurs
+sections d'UI distinctes, où une permission appartient
+*conceptuellement* à une autre section. Ce cas ne se produit plus
+aujourd'hui — la convention est `1 module class = 1 section`
+(cf [[pattern-core-submodules-split]]).
 
-- `CoreModule` (un seul `ModuleInterface`) déclare les permissions
-  `core.media.*`, `core.users.*`, `core.agencies.*`, `core.services.*`,
-  `core.settings.*`, `core.themes.*`
-- Ces fonctionnalités sont visibles dans la **section "Plateforme"** du
-  sidemenu (priority 20), pas dans une section "Cœur"
-- Sans `$group`, la modale Privilèges afficherait un groupe "Cœur" avec
-  toutes ces permissions, sans correspondance avec ce que voit l'admin
-  dans le sidemenu
-- Avec `$group: 'platform'`, elles apparaissent sous "Plateforme",
-  cohérent avec le sidemenu
+Garder le mécanisme évite de fermer la porte à un futur cas tordu
+(ex : un module métier qui exposerait une permission cross-cutting
+voulue dans une autre section).
 
-## Comment l'appliquer
+## Comment l'appliquer (au cas où)
 
-### Quand l'utiliser
+**Quand l'utiliser** :
+- Tu déclares une permission dans `MyModule` mais elle gate une feature
+  visuellement rattachée à `OtherModule`.
 
-- Le module class PHP **regroupe** plusieurs sections d'UI (cas
-  `CoreModule` = core + platform + dev)
-- La permission appartient conceptuellement à une de ces sous-sections
-
-### Quand NE PAS l'utiliser
-
-- La permission appartient au module qui la déclare (cas normal — laisser
-  `$group` à null, le `getId()` du module fait le job)
-- Pour ranger artificiellement une permission ailleurs juste pour faire
-  joli — c'est du déplacement organisationnel, pas du structurel
-
-### Exemple complet
-
-```php
-// CoreModule.getPermissions()
-return [
-    // Général — section "Général" dans le sidemenu
-    new NavPermission('general.dashboard.view', group: 'general'),
-
-    // Plateforme — section "Plateforme" dans le sidemenu
-    new NavPermission('core.media.view', group: 'platform'),
-    new NavPermission('core.media.manage', group: 'platform'),
-    new NavPermission('core.users.manage', group: 'platform'),
-    new NavPermission('core.users.modules.manage', group: 'platform'),
-    new NavPermission('core.agencies.manage', group: 'platform'),
-    new NavPermission('core.services.manage', group: 'platform'),
-    new NavPermission('core.settings.manage', group: 'platform'),
-    new NavPermission('core.themes.manage', group: 'platform'),
-
-    // Pas de groupe explicite → reste sous CoreModule's getId() = 'core'
-    // (transverse, pas une section de sidemenu)
-    new NavPermission('core.search.view'),
-];
-```
-
-### Côté ordre d'affichage
-
-`UsersViewBuilder::MODULE_PRIORITY` ordonne les groupes dans la modale
-Privilèges (et la modale Modules) en miroir des priorités NavSection.
-Si on introduit un nouveau group via `$group`, **penser à l'ajouter à
-cette map** sinon il finira en bas avec `UNKNOWN_PRIORITY = 500`.
+**Quand NE PAS l'utiliser** :
+- Convention par défaut (99% des cas) : déclarer chaque permission
+  dans le module qui la possède. Le `getId()` aligne automatiquement
+  avec `MODULE_PRIORITY` dans `UsersViewBuilder`.
 
 ## Lieux clés
 
-- VO : `src/Core/Module/NavPermission.php` (paramètre `$group`)
-- Indexing : `src/Core/Module/PermissionRegistry.php` (utilise
-  `permission->group ?? module->getId()`)
+- VO : `src/Core/Module/Nav/NavPermission.php` (paramètre `$group`)
+- Indexing : `src/Core/Module/Service/PermissionRegistry.php`
+  (utilise `permission->group ?? module->getId()`)
 - Ordre d'affichage : `src/Core/User/View/UsersViewBuilder.php`
   (`MODULE_PRIORITY` const)
-- Traductions : chaque group doit avoir `backend.modules.<group>`
-  (label) — y compris les groups dérivés (`general`, `platform` à côté
-  du `core` historique)
+
+Voir [[convention-privilege-naming]] pour la règle de nommage uniforme
+qui a rendu ce `$group` override quasi obsolète.

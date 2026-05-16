@@ -64,5 +64,5 @@ mécanisme est strictement parallèle à `PermissionRegistry`.
    suffit à désactiver les enfants.
 5. Côté Context du module client, route via `ModuleAccessChecker::isEnabled('app_tracking_admin')`
    ou via une dépendance directe au checker — jamais `SettingRepository::getBoolean()` direct.
-6. Privilege admin de gestion : `core.users.modules.manage` (déjà fourni par core,
+6. Privilege admin de gestion : `platform.users.modules.manage` (déjà fourni par core,
    réutilisable tel quel — pas besoin d'un nouveau privilege client).

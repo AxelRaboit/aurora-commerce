@@ -96,7 +96,7 @@ Une table dédiée serait nécessaire si on voulait :
 | Action | Rôle requis | Privilege |
 |---|---|---|
 | Activer/désactiver un module globalement | `ROLE_DEV` | n/a (dev panel) |
-| Modifier `disabledModules` d'un user | `ROLE_DEV`, `ROLE_ADMIN`, ou user avec `core.users.modules.manage` | `core.users.modules.manage` |
+| Modifier `disabledModules` d'un user | `ROLE_DEV`, `ROLE_ADMIN`, ou user avec `platform.users.modules.manage` | `platform.users.modules.manage` |
 
 **Garde-fou de rang** dans `UserManager::updateDisabledModules()` :
 un actor ne peut modifier les `disabledModules` que d'un user de rang ≤ le

@@ -74,7 +74,7 @@ pour un utilisateur non technique.
 1. Lister tes `NavPermission(...)` dans `<Module>Module.php`.
 2. Ajouter dans `src/Module/<Module>/translations/messages.fr.yaml` ET
    `messages.en.yaml` les entrées `backend.permissions.names.*`.
-3. Lancer `make i18n` pour régénérer les JSON consommés par vue-i18n.
+3. Lancer `make translation` pour régénérer les JSON consommés par vue-i18n + clear cache.
 
 ### Audit
 
@@ -94,11 +94,18 @@ Les deux listes doivent matcher (modulo le nombre — chaque clé apparaît
 
 ## Localisation par module
 
-Chaque module possède SES propres traductions de privilèges. Convention :
-- `core.<entity>.<verb>` → `src/Core/translations/messages.{fr,en}.yaml`
-- `<module>.<entity>.<verb>` → `src/Module/<Module>/translations/messages.{fr,en}.yaml`
+Chaque module possède SES propres traductions de privilèges. Convention
+post-Jalon 5 : nom de privilège = `<module_id>.<entity>.<action>` partout,
+y compris pour les sous-modules Core (general, platform, media,
+configuration). Les traductions vivent dans le YAML du module owner :
 
-Cohérent avec la règle Symfony : chaque module est autonome.
+- `general.<entity>.<verb>` → `src/Core/Module/translations/messages.{fr,en}.yaml`
+- `platform.<entity>.<verb>` → `src/Core/Module/translations/messages.{fr,en}.yaml`
+- `media.<verb>` / `media.folders.<verb>` → `src/Core/Module/translations/messages.{fr,en}.yaml`
+- `configuration.<entity>.<verb>` → `src/Core/Module/translations/messages.{fr,en}.yaml`
+- `<module>.<entity>.<verb>` (modules métier) → `src/Module/<Module>/translations/messages.{fr,en}.yaml`
+
+Voir [[convention-privilege-naming]] pour la règle de nommage uniforme.
 
 ## Source
 

@@ -19,10 +19,11 @@
 - [convention_locale_context.md](convention_locale_context.md) — passer par `LocaleContext` / `LocaleOptionsProvider` / `TranslationLocaleSyncer` ; jamais hardcoder `'fr'`/`'en'` ni `kernel.enabled_locales`
 
 ## Permissions & Navigation backend
+- [convention_privilege_naming.md](convention_privilege_naming.md) — règle uniforme `<module_id>.<entity>.<action>` partout (post-Jalon 5) ; le `getId()` du module owner == préfixe du privilege
 - [convention_privilege_translations.md](convention_privilege_translations.md) — pour chaque `NavPermission('x.y.z')` ajouter `backend.permissions.names.x.y.z` en FR + EN
 - [convention_privilege_gating.md](convention_privilege_gating.md) — gate à 2 endroits : `#[IsGranted]` serveur **et** `v-if="can(...)"` Vue
 - [convention_privilege_granularity.md](convention_privilege_granularity.md) — `view/create/edit/delete`, jamais un `manage` fourre-tout
-- [convention_navpermission_group.md](convention_navpermission_group.md) — `NavPermission(..., group: 'platform')` pour surfacer une perm sous une autre section
+- [convention_navpermission_group.md](convention_navpermission_group.md) — `NavPermission(..., group: '…')` override : quasi obsolète post-Jalon 5
 - [convention_breadcrumb_section.md](convention_breadcrumb_section.md) — premier fil = `backend.nav.sections.<moduleId>|trans`
 
 ## Structure PHP
