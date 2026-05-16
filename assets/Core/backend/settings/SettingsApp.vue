@@ -25,6 +25,7 @@ import { useColorPickerPresets } from "@core/backend/settings/composables/useCol
 
 const props = defineProps({
     groups: { type: Object, default: () => ({}) },
+    tabs: { type: Array, default: () => [] },
     updatePath: { type: String, default: "" },
     mediaPickerPath: { type: String, default: "" },
     postSearchPath: { type: String, default: "" },
@@ -33,7 +34,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const { availableGroups, activeTab, selectTab, tabLabel, tabDescription } = useSettingsTabs(props.groups);
+const { availableGroups, activeTab, selectTab, tabLabel, tabDescription } = useSettingsTabs(props.groups, props.tabs);
 
 const { fieldValues, mediaState, isLocked, lockReason, onBoolChange, onMediaChange, savingGroups, saveGroup } =
     useSettingsForm(props.groups, availableGroups, props.updatePath);

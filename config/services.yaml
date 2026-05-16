@@ -37,6 +37,8 @@ services:
             tags: [aurora.menu_location_provider]
         Aurora\Core\Sequence\SequencePrefixProviderInterface:
             tags: [aurora.sequence_prefix]
+        Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface:
+            tags: [aurora.configuration_tab_provider]
 
     Aurora\Core\Media\Service\MediaUsageService:
         arguments:
@@ -106,6 +108,10 @@ services:
     Aurora\Core\Setting\View\ModulesViewBuilder:
         arguments:
             $modules: !tagged_iterator aurora.module
+
+    Aurora\Core\Setting\Configuration\SettingDefinitionRegistry:
+        arguments:
+            $providers: !tagged_iterator aurora.configuration_tab_provider
 
     Aurora\Module\Billing\Ocr\Service\DocTrClient:
         arguments:

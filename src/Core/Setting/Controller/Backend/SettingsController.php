@@ -7,6 +7,7 @@ namespace Aurora\Core\Setting\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
@@ -31,6 +32,7 @@ final class SettingsController extends AbstractController
     public function __construct(
         private readonly SettingsService $settingsManager,
         private readonly SettingsViewBuilder $viewBuilder,
+        private readonly SettingDefinitionRegistry $definitionRegistry,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -50,13 +52,13 @@ final class SettingsController extends AbstractController
             return $this->jsonFailure('Missing key');
         }
 
-        $parameter = ApplicationParameterEnum::tryFrom($key);
+        $field = $this->definitionRegistry->getField($key);
 
-        if (null === $parameter || !$parameter->isAdminAccessible()) {
+        if (null === $field) {
             return $this->jsonForbidden();
         }
 
-        if (ApplicationParameterEnum::ColorPickerPresets === $parameter) {
+        if (ApplicationParameterEnum::ColorPickerPresets->value === $key) {
             $normalised = $this->normaliseColorPickerPresets($value);
             if (null === $normalised) {
                 return $this->jsonFailure('invalid_color_presets');
@@ -78,7 +80,7 @@ final class SettingsController extends AbstractController
         return $this->jsonSuccess([
             'key' => $key,
             'value' => $value,
-            'mediaUrl' => 'media' === $parameter->getType() ? $this->viewBuilder->resolveMediaUrl($value) : null,
+            'mediaUrl' => 'media' === $field->type ? $this->viewBuilder->resolveMediaUrl($value) : null,
         ]);
     }
 

@@ -14,6 +14,7 @@
 {% block body %}
 <div {{ vue_component('core/backend/settings/SettingsApp', {
     groups: groups,
+    tabs: tabs,
     updatePath: path('backend_settings_update'),
     mediaPickerPath: mediaPickerPath,
     postSearchPath: postSearchPath,

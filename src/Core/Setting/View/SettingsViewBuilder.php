@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Setting\View;
 
-use Aurora\Core\Frontend\Service\Registry;
-use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Core\Setting\Repository\SettingRepository;
-use DateTimeZone;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-use function in_array;
-
 /**
- * Builds the Twig payload for the admin settings page. Centralises the
- * grouped parameters + media URL resolution so the controller stays focused
- * on JSON update flow.
+ * Builds the Twig payload for the admin settings page. Iterates the
+ * {@see SettingDefinitionRegistry} (built from every contributed
+ * {@see \Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface}),
+ * resolves the current persisted value for each field, and decorates `media`
+ * fields with a public URL the Vue layer can preview.
+ *
+ * Wire format kept stable: a `groups` map (tab id → field[]) plus a `tabs`
+ * list carrying ordering metadata so the JS no longer needs to hardcode the
+ * tab order.
  */
 final readonly class SettingsViewBuilder
 {
@@ -26,8 +27,8 @@ final readonly class SettingsViewBuilder
         private SettingRepository $settingRepository,
         private MediaRepository $mediaRepository,
         private UrlGeneratorInterface $urlGenerator,
-        private Registry $registry,
         private TranslatorInterface $translator,
+        private SettingDefinitionRegistry $definitionRegistry,
     ) {}
 
     /**
@@ -36,76 +37,39 @@ final readonly class SettingsViewBuilder
     public function indexView(): array
     {
         $groups = [];
+        $tabs = [];
 
-        foreach (ApplicationParameterEnum::cases() as $parameter) {
-            if (!$parameter->isAdminAccessible()) {
-                continue;
+        foreach ($this->definitionRegistry->getTabs() as $tab) {
+            $fields = [];
+            foreach ($tab->fields as $field) {
+                $value = $this->settingRepository->get($field->key, $field->defaultValue);
+
+                $fields[] = [
+                    'key' => $field->key,
+                    'label' => $this->translator->trans($field->labelKey),
+                    'description' => $this->translator->trans($field->descriptionKey),
+                    'type' => $field->type,
+                    'group' => $tab->id,
+                    'value' => $value,
+                    'mediaUrl' => 'media' === $field->type ? $this->resolveMediaUrl($value) : null,
+                    'options' => $field->options,
+                ];
             }
 
-            $groupName = $parameter->getGroup();
-
-            $value = $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue());
-
-            $groups[$groupName][] = [
-                'key' => $parameter->getKey(),
-                'label' => $this->translator->trans($parameter->getLabel()),
-                'description' => $this->translator->trans($parameter->getDescription()),
-                'type' => $parameter->getType(),
-                'group' => $groupName,
-                'value' => $value,
-                'mediaUrl' => 'media' === $parameter->getType() ? $this->resolveMediaUrl($value) : null,
-                'options' => 'select' === $parameter->getType() ? $this->resolveSelectOptions($parameter) : null,
+            $groups[$tab->id] = $fields;
+            $tabs[] = [
+                'id' => $tab->id,
+                'priority' => $tab->priority,
+                'alwaysVisible' => $tab->alwaysVisible,
             ];
         }
 
         return [
             'groups' => $groups,
+            'tabs' => $tabs,
             'mediaPickerPath' => $this->urlGenerator->generate('backend_media'),
             'postSearchPath' => $this->urlGenerator->generate('backend_posts_search'),
         ];
-    }
-
-    /** @return list<array{value: string, label: string}>|null */
-    private function resolveSelectOptions(ApplicationParameterEnum $parameter): ?array
-    {
-        if (ApplicationParameterEnum::DefaultFront === $parameter) {
-            return array_values(array_map(
-                static fn ($front): array => ['value' => $front->getSlug(), 'label' => $front->getLabel()],
-                array_filter(
-                    $this->registry->all(),
-                    fn ($front): bool => null === $front->getModuleSettingKey()
-                        || $this->settingRepository->getBoolean($front->getModuleSettingKey(), true),
-                ),
-            ));
-        }
-
-        if (in_array($parameter, [ApplicationParameterEnum::DefaultLocale, ApplicationParameterEnum::EmailLocale], true)) {
-            $options = array_map(
-                fn (LocaleEnum $locale): array => [
-                    'value' => $locale->value,
-                    'label' => $this->translator->trans('shared.locales.'.$locale->value),
-                ],
-                LocaleEnum::cases(),
-            );
-
-            if (ApplicationParameterEnum::EmailLocale === $parameter) {
-                array_unshift($options, [
-                    'value' => '',
-                    'label' => $this->translator->trans('backend.parameters.email_locale_auto'),
-                ]);
-            }
-
-            return $options;
-        }
-
-        if (ApplicationParameterEnum::Timezone === $parameter) {
-            return array_map(
-                static fn (string $tz): array => ['value' => $tz, 'label' => $tz],
-                DateTimeZone::listIdentifiers(),
-            );
-        }
-
-        return null;
     }
 
     public function resolveMediaUrl(?string $rawId): ?string
