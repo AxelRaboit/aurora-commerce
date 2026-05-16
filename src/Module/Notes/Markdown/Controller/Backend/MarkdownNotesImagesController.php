@@ -49,8 +49,8 @@ final class MarkdownNotesImagesController extends AbstractController
 
         try {
             $filename = $this->imageService->store($file, $user);
-        } catch (FileException $exception) {
-            return $this->jsonInvalidInput(['image' => $exception->getMessage()]);
+        } catch (FileException $fileException) {
+            return $this->jsonInvalidInput(['image' => $fileException->getMessage()]);
         }
 
         return $this->jsonSuccess([

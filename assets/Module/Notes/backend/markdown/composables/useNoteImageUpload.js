@@ -67,7 +67,10 @@ export function useNoteImageUpload({
         const onPaste = async (event) => {
             const items = Array.from(event.clipboardData?.items ?? []);
             const files = items
-                .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+                .filter(
+                    (item) =>
+                        item.kind === "file" && item.type.startsWith("image/"),
+                )
                 .map((item) => item.getAsFile())
                 .filter(Boolean);
             if (files.length === 0) return;
@@ -139,7 +142,8 @@ export function useNoteImageUpload({
             const newContent = before + insertion + after;
             applyInsert(newContent, caret + insertion.length);
         } catch (error) {
-            lastError.value = error?.message ?? t("notes.markdown.image.upload_failed");
+            lastError.value =
+                error?.message ?? t("notes.markdown.image.upload_failed");
         } finally {
             uploading.value = false;
         }

@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Filesystem\Filesystem;
 
 #[AllowMockObjectsWithoutExpectations]
 final class MarkdownNoteManagerTest extends TestCase
@@ -57,7 +58,7 @@ final class MarkdownNoteManagerTest extends TestCase
     protected function tearDown(): void
     {
         if (is_dir($this->imageDir)) {
-            (new \Symfony\Component\Filesystem\Filesystem())->remove($this->imageDir);
+            (new Filesystem())->remove($this->imageDir);
         }
     }
 

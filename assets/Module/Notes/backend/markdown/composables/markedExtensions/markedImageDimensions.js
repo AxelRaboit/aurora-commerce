@@ -37,7 +37,8 @@ export function createImageDimensionsRenderer() {
             const match = DIMENSION_PATTERN.exec(text ?? "");
             const alt = match ? match[1] : (text ?? "");
             const width = match ? Number.parseInt(match[2], 10) : null;
-            const height = match && match[3] ? Number.parseInt(match[3], 10) : null;
+            const height =
+                match && match[3] ? Number.parseInt(match[3], 10) : null;
 
             const altAttr = alt ? ` alt="${escapeHtml(alt)}"` : ' alt=""';
             const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";

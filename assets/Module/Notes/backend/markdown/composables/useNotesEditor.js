@@ -36,7 +36,10 @@ export function useNotesEditor({ api, initialNotes, extraFields = {} }) {
     }
     function pickExtras(source) {
         return Object.fromEntries(
-            extraKeys.map((key) => [key, source?.[key] ?? extraFields[key]?.default ?? null]),
+            extraKeys.map((key) => [
+                key,
+                source?.[key] ?? extraFields[key]?.default ?? null,
+            ]),
         );
     }
 
@@ -218,7 +221,12 @@ export function useNotesEditor({ api, initialNotes, extraFields = {} }) {
             if (selectedId.value === targetId) {
                 selectedId.value = null;
                 loadedSnapshot.value = null;
-                form.value = { title: "", content: "", tags: [], ...extraDefaults() };
+                form.value = {
+                    title: "",
+                    content: "",
+                    tags: [],
+                    ...extraDefaults(),
+                };
             }
             pendingDelete.value = null;
             await refreshList();
@@ -271,7 +279,11 @@ export function useNotesEditor({ api, initialNotes, extraFields = {} }) {
      * persistence — same flow as a normal edit.
      */
     function onImageResize({ src, width }) {
-        const next = updateImageDimensionInContent(form.value.content, src, width);
+        const next = updateImageDimensionInContent(
+            form.value.content,
+            src,
+            width,
+        );
         if (next !== form.value.content) {
             form.value.content = next;
         }

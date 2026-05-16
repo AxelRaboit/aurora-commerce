@@ -17,6 +17,8 @@ use Symfony\Component\Uid\Uuid;
 use function in_array;
 use function sprintf;
 
+use const DIRECTORY_SEPARATOR;
+
 /**
  * Filesystem-backed image storage for markdown notes. Files are kept
  * **outside** the public document root (`var/uploads/notes-markdown/`)
@@ -69,7 +71,7 @@ final readonly class MarkdownNoteImageService
      * the bare filename (uuid.ext) for embedding into markdown — the
      * controller knows how to recover the absolute path from it.
      *
-     * @throws FileException when validation fails (bad MIME, too big).
+     * @throws FileException when validation fails (bad MIME, too big)
      */
     public function store(UploadedFile $file, CoreUserInterface $user): string
     {
@@ -113,7 +115,7 @@ final readonly class MarkdownNoteImageService
         }
 
         $userRoot = realpath($userDir);
-        if (false === $userRoot || !str_starts_with($real, $userRoot.\DIRECTORY_SEPARATOR) && $real !== $userRoot) {
+        if (false === $userRoot || !str_starts_with($real, $userRoot.DIRECTORY_SEPARATOR) && $real !== $userRoot) {
             throw new RuntimeException(sprintf('Image path escapes user directory: %s', $filename));
         }
 

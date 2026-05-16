@@ -25,7 +25,10 @@ const DEFAULT_QUALITY = 0.85;
 // canvas.toBlob() would flatten them to a single frame.
 const SKIP_MIME = new Set([MimeType.Gif]);
 
-export function useNoteImageResize({ maxEdge = DEFAULT_MAX_EDGE, quality = DEFAULT_QUALITY } = {}) {
+export function useNoteImageResize({
+    maxEdge = DEFAULT_MAX_EDGE,
+    quality = DEFAULT_QUALITY,
+} = {}) {
     /**
      * Returns a Promise<File> — either the resized WebP or the
      * original file when resizing isn't applicable / fails.
@@ -72,13 +75,18 @@ export function useNoteImageResize({ maxEdge = DEFAULT_MAX_EDGE, quality = DEFAU
                 ? await canvas.convertToBlob({ type: MimeType.Webp, quality })
                 : await new Promise((resolve, reject) =>
                       canvas.toBlob(
-                          (result) => (result ? resolve(result) : reject(new Error("toBlob returned null"))),
+                          (result) =>
+                              result
+                                  ? resolve(result)
+                                  : reject(new Error("toBlob returned null")),
                           MimeType.Webp,
                           quality,
                       ),
                   );
             const baseName = file.name.replace(/\.[^.]+$/, "");
-            return new File([blob], `${baseName}.webp`, { type: MimeType.Webp });
+            return new File([blob], `${baseName}.webp`, {
+                type: MimeType.Webp,
+            });
         } catch {
             return file;
         }

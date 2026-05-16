@@ -14,6 +14,9 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use const DIRECTORY_SEPARATOR;
+use const FILE_APPEND;
+
 final class MarkdownNoteImageServiceTest extends TestCase
 {
     private string $storageDir;
@@ -66,7 +69,7 @@ final class MarkdownNoteImageServiceTest extends TestCase
         $resolved = $this->noteImageService->path($filename, $user);
 
         self::assertFileExists($resolved);
-        self::assertStringStartsWith($this->storageDir.\DIRECTORY_SEPARATOR.'9', $resolved);
+        self::assertStringStartsWith($this->storageDir.DIRECTORY_SEPARATOR.'9', $resolved);
     }
 
     public function testPathThrowsOnMissingFile(): void
@@ -105,7 +108,7 @@ final class MarkdownNoteImageServiceTest extends TestCase
     public function testExtractFilenamesParsesContentAndDedupes(): void
     {
         $content = "Hello ![a](/backend/notes/markdown/images/abc.png) and ![b](/backend/notes/markdown/images/def.jpg)\n"
-            ."Again: /backend/notes/markdown/images/abc.png";
+            .'Again: /backend/notes/markdown/images/abc.png';
 
         $filenames = $this->noteImageService->extractFilenames($content);
 
@@ -160,7 +163,7 @@ final class MarkdownNoteImageServiceTest extends TestCase
         // leaves libmagic happy with the original signature.
         $currentSize = filesize($path);
         if ($size > $currentSize) {
-            file_put_contents($path, str_repeat('x', $size - $currentSize), \FILE_APPEND);
+            file_put_contents($path, str_repeat('x', $size - $currentSize), FILE_APPEND);
         }
 
         return new UploadedFile(

@@ -99,9 +99,9 @@ describe("updateImageDimensionInContent", () => {
 
     it("leaves content untouched when the src does not match", () => {
         const source = "![alt](/other.png)";
-        expect(
-            updateImageDimensionInContent(source, "/img/a.png", 200),
-        ).toBe(source);
+        expect(updateImageDimensionInContent(source, "/img/a.png", 200)).toBe(
+            source,
+        );
     });
 
     it("preserves a title parenthesis suffix", () => {
@@ -122,6 +122,8 @@ describe("updateImageDimensionInContent", () => {
     it("noops on null/undefined inputs", () => {
         expect(updateImageDimensionInContent("", "/x.png", 100)).toBe("");
         expect(updateImageDimensionInContent("hi", "", 100)).toBe("hi");
-        expect(updateImageDimensionInContent("hi", "/x.png", Number.NaN)).toBe("hi");
+        expect(updateImageDimensionInContent("hi", "/x.png", Number.NaN)).toBe(
+            "hi",
+        );
     });
 });
