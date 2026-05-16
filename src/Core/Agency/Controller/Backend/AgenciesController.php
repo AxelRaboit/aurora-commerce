@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/agencies', name: 'backend_agencies')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('core.agencies.manage')]
 class AgenciesController extends AbstractController
 {
     use JsonRequestTrait;

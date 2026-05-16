@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/services', name: 'backend_services')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('core.services.manage')]
 final class ServicesController extends AbstractController
 {
     use JsonRequestTrait;
