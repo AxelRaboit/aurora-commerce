@@ -284,6 +284,7 @@ const {
                         <NoteEditor
                             v-model="form.content"
                             :placeholder="t('notes.markdown.content_placeholder')"
+                            :flat-notes="notes"
                         />
                     </div>
 

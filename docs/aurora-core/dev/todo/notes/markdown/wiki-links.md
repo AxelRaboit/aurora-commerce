@@ -1,5 +1,18 @@
 # Notes — Wiki-links & graph
 
+## Autocomplete `[[` — ✅ Fait (2026-05-16)
+
+- [x] Composable `useWikiLinkAutocomplete.js` porté depuis Onyx — détecte
+      un `[[` non fermé sur la ligne courante, ouvre un dropdown filtré
+      sur les titres des notes (cap à 8 suggestions, sous-chaîne case-
+      insensitive). Mirror-div positioning pour suivre le curseur.
+- [x] Wiring dans `useNoteEditorTextarea` à côté de la slash palette :
+      les deux menus sont mutuellement exclusifs (patterns disjoints),
+      l'event keydown est consommé par celui qui est ouvert.
+- [x] `[[Title]]` inséré sur Enter/Tab/clic, curseur replacé après `]]`.
+- [x] Tests vitest : 10 cas (open/close, filtre, navigation clavier,
+      pick, fallback untitled, etc.).
+
 ## Backend — ✅ Fait (commit `fca34119`)
 
 - [x] **Wiki-links `[[titre]]`** parsing + rendu cliquable en preview. Marked.js extension `markedWikiLinks.js`.
