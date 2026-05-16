@@ -382,6 +382,10 @@ pull-update: _no-recent-aurora-update ## After a regular `git pull`: install dep
 	# Safe to run unconditionally — every step is idempotent.
 	$(COMPOSER) install
 	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/twig-cs-fixer
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/rector
+	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
 	$(PNPM) install
 	$(PNPM) --dir=$(AURORA) install
 	$(CONSOLE) cache:clear
