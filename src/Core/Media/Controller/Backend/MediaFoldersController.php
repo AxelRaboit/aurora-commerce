@@ -25,7 +25,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * folder tree). Route names preserved (`backend_media_folder_*`).
  */
 #[Route('/backend/media', name: 'backend_media')]
-#[IsGranted('core.media.manage')]
 final class MediaFoldersController extends AbstractController
 {
     use JsonRequestTrait;
@@ -39,6 +38,7 @@ final class MediaFoldersController extends AbstractController
     ) {}
 
     #[Route('/folders', name: '_folder_create', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('core.media.folders.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
@@ -58,6 +58,7 @@ final class MediaFoldersController extends AbstractController
     }
 
     #[Route('/folders/{id}/edit', name: '_folder_edit', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('core.media.folders.edit')]
     public function edit(MediaFolder $folder, Request $request): JsonResponse
     {
         $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
@@ -77,6 +78,7 @@ final class MediaFoldersController extends AbstractController
     }
 
     #[Route('/folders/{id}/delete', name: '_folder_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('core.media.folders.delete')]
     public function delete(MediaFolder $folder): JsonResponse
     {
         $this->mediaManager->deleteFolder($folder);

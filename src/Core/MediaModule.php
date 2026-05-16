@@ -32,7 +32,12 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
     {
         return [
             new NavPermission('core.media.view'),
-            new NavPermission('core.media.manage'),
+            new NavPermission('core.media.create'),
+            new NavPermission('core.media.edit'),
+            new NavPermission('core.media.delete'),
+            new NavPermission('core.media.folders.create'),
+            new NavPermission('core.media.folders.edit'),
+            new NavPermission('core.media.folders.delete'),
         ];
     }
 

@@ -27,7 +27,13 @@ backend:
           view: Use global search
         media:
           view: View media library
-          manage: 'Manage media library (upload, delete, folders)'
+          create: Upload media
+          edit: Edit media (rename, crop, move)
+          delete: Delete media
+          folders:
+            create: Create media folders
+            edit: Edit media folders
+            delete: Delete media folders
         menus:
           manage: Manage menus
     role: Required role
