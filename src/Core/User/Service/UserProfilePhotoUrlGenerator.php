@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Core\User\Service;
 
-use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

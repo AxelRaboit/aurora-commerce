@@ -22,11 +22,11 @@ use Twig\Attribute\AsTwigFunction;
  * the domain model free of HTTP concerns. See
  * `docs/aurora-core/dev/storage_policy.md` and CLAUDE.md §3bis.
  */
-final class StorageUrlExtension
+final readonly class StorageUrlExtension
 {
     public function __construct(
-        private readonly MediaUrlGenerator $mediaUrlGenerator,
-        private readonly UserProfilePhotoUrlGenerator $userProfilePhotoUrlGenerator,
+        private MediaUrlGenerator $mediaUrlGenerator,
+        private UserProfilePhotoUrlGenerator $userProfilePhotoUrlGenerator,
     ) {}
 
     #[AsTwigFunction(name: 'aurora_media_url')]

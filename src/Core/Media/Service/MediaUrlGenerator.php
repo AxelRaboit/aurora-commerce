@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Service;
 
 use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Storage\Controller\UploadsServeController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
