@@ -179,6 +179,32 @@ php bin/console doctrine:migrations:diff
 
 ---
 
+## 5bis. Storage des fichiers
+
+**Tous les fichiers uploadés/générés vivent sous `var/uploads/`**, hors
+document root. Aucun fichier n'est servable directement par Apache —
+chaque accès passe par un controller PHP via la route catch-all
+`/uploads/{path}` (`UploadsServeController` côté `Core/Storage/`) qui
+délègue à `Aurora\Core\Storage\BinaryFileServer` (path-traversal guard
++ `BinaryFileResponse` + X-Sendfile).
+
+Conventions :
+- `app.upload_dir` pointe sur `%kernel.project_dir%/var/uploads`
+- Sous-dossier par module : `var/uploads/media/`, `var/uploads/profile-photos/`,
+  `var/uploads/notes-markdown/`, etc.
+- Entités exposent `getPublicUrl()` retournant la forme `/uploads/<path>`
+  (URL stable que la route Symfony intercepte — pas de fuite du
+  storage backend dans l'URL côté front)
+- Auth granulaire : pour gater une catégorie (factures OCR, PDF
+  signés, notes per-user), définir une route plus spécifique sous
+  `/backend/<module>/files/...` qui prend précédence sur le catch-all
+- Prod : `mod_xsendfile` offload les bytes une fois l'auth check PHP
+  passé. Voir `docs/aurora-core/dev/deployment/apache_xsendfile.md`
+
+Doc canonique : `docs/aurora-core/dev/storage_policy.md`.
+
+---
+
 ## 6. Conventions Git / commits
 
 - **Pas de `Co-Authored-By` Claude** dans les messages de commit (préférence

@@ -32,7 +32,7 @@ class UserProfilePhotoManager implements UserProfilePhotoManagerInterface
         protected readonly SluggerInterface $slugger,
         protected readonly AuditLogger $auditLogger,
         protected readonly Filesystem $filesystem,
-        #[Autowire('%app.upload_dir%/users')]
+        #[Autowire('%app.upload_dir%/profile-photos')]
         protected readonly string $uploadDir,
     ) {}
 

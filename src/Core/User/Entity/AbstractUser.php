@@ -330,9 +330,14 @@ abstract class AbstractUser implements CoreUserInterface
         return $this;
     }
 
+    /**
+     * Public URL pointing at the user's profile photo, served via the
+     * `/uploads/{path}` catch-all from `var/uploads/profile-photos/`.
+     * Returns `null` when no photo is set.
+     */
     public function getProfilePhotoUrl(): ?string
     {
-        return null === $this->profilePhotoPath ? null : '/uploads/users/'.$this->profilePhotoPath;
+        return null === $this->profilePhotoPath ? null : '/uploads/profile-photos/'.$this->profilePhotoPath;
     }
 
     public function getMoodMessage(): ?string

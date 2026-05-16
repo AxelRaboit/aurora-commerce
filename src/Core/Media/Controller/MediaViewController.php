@@ -17,7 +17,12 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class MediaViewController extends AbstractController
 {
-    #[Route('/media/{id}', name: 'media_view', methods: [HttpMethodEnum::Get->value])]
+    #[Route(
+        '/media/{id}',
+        name: 'media_view',
+        requirements: ['id' => '\d+'],
+        methods: [HttpMethodEnum::Get->value],
+    )]
     public function view(Media $media): RedirectResponse
     {
         return $this->redirect(

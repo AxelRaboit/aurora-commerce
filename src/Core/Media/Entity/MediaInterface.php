@@ -69,6 +69,10 @@ interface MediaInterface extends TimestampableInterface
     /** @param array<string, string> $variants */
     public function setVariants(array $variants): static;
 
+    /** Relative path of the named variant (no leading slash), or null. */
+    public function getVariantPath(string $size): ?string;
+
+    /** URL pointing at the named variant via the `/media/...` route, or null. */
     public function getVariantUrl(string $size): ?string;
 
     public function getFocalPositionCss(): string;
@@ -77,6 +81,7 @@ interface MediaInterface extends TimestampableInterface
 
     public function isVideo(): bool;
 
+    /** URL pointing at the original file via the `/media/...` route. */
     public function getPublicUrl(): string;
 
     public function getPosition(): int;

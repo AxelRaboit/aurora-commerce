@@ -25,7 +25,6 @@
 /public/build/
 
 # Uploads
-/public/uploads/
 
 # Lock files (pnpm only)
 package-lock.json

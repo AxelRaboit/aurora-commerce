@@ -233,9 +233,29 @@ abstract class AbstractMedia implements MediaInterface
         return $this;
     }
 
+    /**
+     * Relative path of the generated variant (e.g. `2026/01/cover_thumb.jpg`),
+     * or `null` when no such variant exists for this media. Use this when
+     * you need the on-disk path (e.g. inside a service injecting
+     * `%app.upload_dir%/media`).
+     */
+    public function getVariantPath(string $size): ?string
+    {
+        return $this->variants[$size] ?? null;
+    }
+
+    /**
+     * URL pointing at the named variant (thumbnail, medium, large, …).
+     * Returns `null` when the variant doesn't exist for this media.
+     *
+     * The URL is `/uploads/{path}` — a Symfony catch-all route served
+     * by {@see \Aurora\Core\Storage\Controller\UploadsServeController}
+     * from `var/uploads/`, never directly by Apache.
+     * See `docs/aurora-core/dev/storage_policy.md`.
+     */
     public function getVariantUrl(string $size): ?string
     {
-        $path = $this->variants[$size] ?? null;
+        $path = $this->getVariantPath($size);
 
         return null === $path ? null : '/uploads/'.$path;
     }
@@ -262,6 +282,13 @@ abstract class AbstractMedia implements MediaInterface
         return str_starts_with($this->mimeType, 'video/');
     }
 
+    /**
+     * URL pointing at the original media file. Always routed through
+     * the `/uploads/{path}` Symfony catch-all (UploadsServeController) —
+     * never directly served by Apache so path-traversal guard +
+     * optional per-area auth checks run in PHP first
+     * (see `docs/aurora-core/dev/storage_policy.md`).
+     */
     public function getPublicUrl(): string
     {
         return '/uploads/'.$this->path;

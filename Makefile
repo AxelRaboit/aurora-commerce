@@ -121,6 +121,9 @@ warmup: ## Warm up cache
 purge: ## Remove all cache and log files
 	rm -rf var/cache/* var/logs/*
 
+purge-uploads: ## Remove all stored files under var/uploads/ (keeps .gitignore)
+	find var/uploads -mindepth 1 -not -name '.gitignore' -delete 2>/dev/null || true
+
 # === Docker ===
 docker-up: ## Start all local services (mailpit + docTR)
 	docker compose up -d mailer
