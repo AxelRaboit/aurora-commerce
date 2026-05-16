@@ -28,12 +28,6 @@ de prise de notes. Vue d'ensemble et arbitrages communs dans
 - [Sous-module Markdown](notes/markdown/entity.md) — éditeur markdown + wiki-links + graph (port d'Onyx)
 - [Sous-module Block](notes/block/overview.md) — éditeur block-based EditorJS
 
-### Core — Settings & navigation
-
-- [Alias sur les items du sidemenu](core/nav_item_aliases.md) — étendre la perso existante des sections aux items/modules (`/backend/settings → Navigation`)
-
----
-
 ## Convention
 
 - Un fichier par **topic** cohérent (ex : tous les TODOs catalogue dans
