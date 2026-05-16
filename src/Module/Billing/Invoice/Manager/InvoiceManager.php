@@ -72,8 +72,9 @@ class InvoiceManager implements InvoiceManagerInterface
     public function validate(InvoiceInterface $invoice): void
     {
         // Always generate an internal sequential number — independent of supplier's number.
+        // Empty prefix = admin opted out (no auto-numbering).
         $prefix = $this->settingRepository->getOrDefault(BillingSettingEnum::InvoicePrefix);
-        if (null !== $prefix && '' !== $prefix && null === $invoice->getNumber()) {
+        if ('' !== $prefix && null === $invoice->getNumber()) {
             $year = (int) ($invoice->getIssuedAt() ?? new DateTimeImmutable())->format('Y');
             $invoice->setNumber($this->invoiceRepository->getNextNumber($prefix, $year));
         }

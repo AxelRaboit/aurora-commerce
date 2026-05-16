@@ -60,7 +60,7 @@ final class Version20260516120000 extends AbstractMigration
         // when an admin had explicitly disabled Platform, the cascade used to
         // also disable Settings/Themes; mirror the off-state explicitly now.
         $this->addSql(
-            "INSERT INTO core_settings (setting_key, value, type, \"group\", description)
+            "INSERT INTO core_settings (setting_key, value, setting_type, setting_group, description)
              SELECT 'modules_configuration_backend', '0', 'bool', 'modules', NULL
              FROM core_settings WHERE setting_key = 'modules_platform_backend' AND value = '0'
              ON CONFLICT (setting_key) DO NOTHING",
