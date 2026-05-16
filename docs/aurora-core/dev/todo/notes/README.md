@@ -12,7 +12,7 @@ UX distinctes :
 
 | Sous-module | Statut |
 |---|---|
-| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + autocomplete `[[` + graphe canvas + syntax highlighting hljs + responsive mobile + images drop/paste) + demo fixtures. Reste : import Onyx. |
+| Markdown | 🟢 **Production-ready** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + autocomplete `[[` + graphe canvas + syntax highlighting hljs + responsive mobile + images drop/paste + drag-to-resize + settings admin) + Layer 5 extensibility complète + demo fixtures. Plus rien à faire. |
 | Block | ⏳ Pas commencé — spec dans [`block/overview.md`](block/overview.md) |
 
 ## Sous-modules
@@ -33,20 +33,20 @@ UX distinctes :
 | Vue graphe des wiki-links (frontend, canvas custom) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
 | Syntax highlighting code blocks (highlight.js) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Responsive mobile (sidebar / éditeur / popovers / graphe) | ✅ Fait | [editor.md](markdown/editor.md) |
-| Images (upload + serve + cleanup orphelines) | ✅ Fait | [images.md](markdown/images.md) |
-| Script d'import depuis Onyx | ⏳ À faire | [import.md](markdown/import.md) |
+| Images (upload + serve + cleanup orphelines + drag-to-resize + settings admin) | ✅ Fait | [images.md](markdown/images.md) |
+| Script d'import depuis Onyx | 🚫 Skippé — pas de contenu à migrer | [import.md](markdown/import.md) |
 
 ### [`block/`](block/) — Notes Block (EditorJS)
 
 ⏳ Pas commencé. Spec dans [`block/overview.md`](block/overview.md). À
 démarrer **après** stabilisation complète de Markdown.
 
-## Prochaine session — ordre suggéré
+## Prochaine session
 
-Par ROI décroissant :
-
-1. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
-   du contenu Onyx à migrer.
+Le sous-module Markdown est **terminé** côté core. Prochain chantier
+naturel : démarrer le sous-module **Block** (EditorJS) qui hérite de
+l'infra Markdown (encryption, controller images, tree composables,
+i18n). Spec dans [`block/overview.md`](block/overview.md).
 
 ## Architecture commune
 
