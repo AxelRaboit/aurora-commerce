@@ -1,4 +1,8 @@
 backend:
+  parameters:
+    erp_product_prefix:
+      label: ERP product reference prefix
+      description: Auto-generated product reference prefix (e.g. PROD). Leave empty to disable.
   permissions:
     names:
       erp:

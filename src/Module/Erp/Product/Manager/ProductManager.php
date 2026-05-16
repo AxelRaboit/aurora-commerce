@@ -7,10 +7,9 @@ namespace Aurora\Module\Erp\Product\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Erp\Product\Dto\ProductInputInterface;
+use Aurora\Module\Erp\Setting\ErpSettingEnum;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
@@ -42,7 +41,7 @@ class ProductManager implements ProductManagerInterface
         if (null !== $input->getReference()) {
             $product->setReference($input->getReference());
         } else {
-            $prefix = $this->settingRepository->get(ApplicationParameterEnum::ErpProductPrefix->value, SequencePrefixEnum::Product->value) ?? SequencePrefixEnum::Product->value;
+            $prefix = $this->settingRepository->getOrDefault(ErpSettingEnum::ProductPrefix);
             $product->setReference($this->sequenceGenerator->next($prefix));
         }
 

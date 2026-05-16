@@ -1,4 +1,17 @@
 backend:
+  parameters:
+    billing_invoice_prefix:
+      label: Invoice number prefix
+      description: Auto-generated invoice number prefix upon validation (e.g. INV). Leave empty to disable.
+    billing_credit_note_prefix:
+      label: Credit note number prefix
+      description: Auto-generated credit note number prefix (e.g. CN). Leave empty to disable.
+    billing_tiers_prefix:
+      label: Third-party reference prefix
+      description: Auto-generated third-party (supplier/client) reference prefix (e.g. TRS).
+    billing_ocr_job_prefix:
+      label: OCR job reference prefix
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
   permissions:
     names:
       billing:

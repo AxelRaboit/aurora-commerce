@@ -7,6 +7,21 @@ backend:
     ecommerce_low_stock_threshold:
       label: Seuil de stock bas (e-commerce)
       description: Affiche un avertissement « Plus que X en stock » sur la fiche produit quand le stock disponible est inférieur ou égal à cette valeur. Mettre 0 pour désactiver l'avertissement.
+    ecommerce_order_prefix:
+      label: Préfixe des numéros de commandes
+      description: 'Préfixe du numéro de commande auto-généré (ex: ORD). Laissez vide pour désactiver.'
+    ecommerce_listing_prefix:
+      label: Préfixe des références produits boutique
+      description: 'Préfixe de la référence produit boutique auto-générée (ex: LST). Laissez vide pour désactiver.'
+    ecommerce_cart_prefix:
+      label: Préfixe des références paniers
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    ecommerce_cart_item_prefix:
+      label: Préfixe des références lignes de panier
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
+    ecommerce_order_line_prefix:
+      label: Préfixe des références lignes de commande
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
   permissions:
     names:
       ecommerce:

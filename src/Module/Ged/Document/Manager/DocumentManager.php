@@ -8,8 +8,8 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
+use Aurora\Module\Ged\Setting\GedSettingEnum;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
@@ -39,7 +39,7 @@ class DocumentManager implements DocumentManagerInterface
     public function create(DocumentInputInterface $input): DocumentInterface
     {
         $document = $this->createDocument();
-        $document->setReference($this->sequenceGenerator->next(ApplicationParameterEnum::GedDocumentPrefix->value));
+        $document->setReference($this->sequenceGenerator->next(GedSettingEnum::DocumentPrefix->value));
         $this->applyInput($document, $input);
         $this->entityManager->persist($document);
         $this->entityManager->flush();

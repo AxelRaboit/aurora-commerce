@@ -7,6 +7,21 @@ backend:
     ecommerce_low_stock_threshold:
       label: Low stock threshold (e-commerce)
       description: "Displays a \"Only X left\" warning on the product page when available stock is less than or equal to this value. Set to 0 to disable."
+    ecommerce_order_prefix:
+      label: Order number prefix
+      description: Auto-generated order number prefix (e.g. ORD). Leave empty to disable.
+    ecommerce_listing_prefix:
+      label: Shop product reference prefix
+      description: Auto-generated shop product reference prefix (e.g. LST). Leave empty to disable.
+    ecommerce_cart_prefix:
+      label: Cart reference prefix
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
+    ecommerce_cart_item_prefix:
+      label: Cart item reference prefix
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
+    ecommerce_order_line_prefix:
+      label: Order line reference prefix
+      description: Auto-generated reference prefix (e.g. XXX). Leave empty to disable.
   permissions:
     names:
       ecommerce:

@@ -6,8 +6,6 @@ namespace Aurora\Module\Ecommerce\Order\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
@@ -18,6 +16,7 @@ use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Event\OrderCreatedEvent;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
+use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Ecommerce\Order\Service\OrderNotificationService;
 use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Erp\Product\Entity\Product;
@@ -56,8 +55,8 @@ class OrderManager implements OrderManagerInterface
         }
 
         $order = $this->createOrder();
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceOrderPrefix->value, SequencePrefixEnum::Order->value);
-        $order->setNumber($this->orderRepository->getNextOrderNumber($prefix ?? SequencePrefixEnum::Order->value));
+        $prefix = $this->settingRepository->getOrDefault(EcommerceSettingEnum::OrderPrefix);
+        $order->setNumber($this->orderRepository->getNextOrderNumber($prefix));
         $order->setToken(bin2hex(random_bytes(16)));
         $order->setCustomer($customer);
         $order->setStatus(OrderStatusEnum::Pending);
@@ -96,7 +95,7 @@ class OrderManager implements OrderManagerInterface
         $this->entityManager->persist($order);
         $this->entityManager->flush();
 
-        $linePrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceOrderLinePrefix->value, SequencePrefixEnum::OrderLine->value) ?? SequencePrefixEnum::OrderLine->value;
+        $linePrefix = $this->settingRepository->getOrDefault(EcommerceSettingEnum::OrderLinePrefix);
         foreach ($order->getLines() as $line) {
             $line->setReference($this->sequenceGenerator->next($linePrefix));
         }

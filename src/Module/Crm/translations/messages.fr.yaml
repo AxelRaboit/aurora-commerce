@@ -7,6 +7,15 @@ backend:
     crm_sync_orders:
       label: Synchroniser les commandes vers le CRM
       description: "Quand activé, chaque commande Ecommerce crée ou enrichit automatiquement un contact CRM correspondant à l'acheteur (avec l'étiquette « client »). Désactivez en B2C pur pour éviter d'inonder le CRM."
+    crm_deal_prefix:
+      label: Préfixe des références affaires CRM
+      description: 'Préfixe de la référence affaire CRM auto-générée (ex: DEAL). Laissez vide pour désactiver.'
+    crm_contact_prefix:
+      label: Préfixe des références contacts CRM
+      description: 'Préfixe de la référence contact CRM auto-générée (ex: CTT). Laissez vide pour désactiver.'
+    crm_company_prefix:
+      label: Préfixe des références entreprises CRM
+      description: 'Préfixe de la référence entreprise CRM auto-générée (ex: CPY). Laissez vide pour désactiver.'
   permissions:
     names:
       crm:

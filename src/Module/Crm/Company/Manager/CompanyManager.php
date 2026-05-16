@@ -6,12 +6,11 @@ namespace Aurora\Module\Crm\Company\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Dto\CompanyInputInterface;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Crm\Setting\CrmSettingEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -29,7 +28,7 @@ class CompanyManager implements CompanyManagerInterface
     {
         $company = $this->createCompany();
         $this->applyInput($company, $input);
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmCompanyPrefix->value, SequencePrefixEnum::Company->value) ?? SequencePrefixEnum::Company->value;
+        $prefix = $this->settingRepository->getOrDefault(CrmSettingEnum::CompanyPrefix);
         $company->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($company);
         $this->entityManager->flush();

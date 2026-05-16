@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
@@ -20,6 +18,7 @@ use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Dto\InvoiceLineDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
+use Aurora\Module\Billing\Setting\BillingSettingEnum;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,10 +72,7 @@ class InvoiceManager implements InvoiceManagerInterface
     public function validate(InvoiceInterface $invoice): void
     {
         // Always generate an internal sequential number — independent of supplier's number.
-        $prefix = $this->settingRepository->get(
-            ApplicationParameterEnum::BillingInvoicePrefix->value,
-            SequencePrefixEnum::Invoice->value,
-        );
+        $prefix = $this->settingRepository->getOrDefault(BillingSettingEnum::InvoicePrefix);
         if (null !== $prefix && '' !== $prefix && null === $invoice->getNumber()) {
             $year = (int) ($invoice->getIssuedAt() ?? new DateTimeImmutable())->format('Y');
             $invoice->setNumber($this->invoiceRepository->getNextNumber($prefix, $year));
@@ -143,10 +139,7 @@ class InvoiceManager implements InvoiceManagerInterface
         $cn = $this->createInvoice();
         $cn->setStatus(InvoiceStatusEnum::CreditNote);
 
-        $cnPrefix = $this->settingRepository->get(
-            ApplicationParameterEnum::BillingCreditNotePrefix->value,
-            SequencePrefixEnum::CreditNote->value,
-        ) ?? SequencePrefixEnum::CreditNote->value;
+        $cnPrefix = $this->settingRepository->getOrDefault(BillingSettingEnum::CreditNotePrefix);
         $cn->setNumber($cnPrefix.'-'.($invoice->getNumber() ?? $invoice->getId()));
         $cn->setSupplierNumber($invoice->getSupplierNumber());
         $cn->setTiers($invoice->getTiers());

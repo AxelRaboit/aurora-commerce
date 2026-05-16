@@ -6,10 +6,9 @@ namespace Aurora\Module\PdfForm\PdfDocument\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\PdfForm\Enum\PdfDocumentStatusEnum;
+use Aurora\Module\PdfForm\Setting\PdfFormSettingEnum;
 use Aurora\Module\PdfForm\PdfDocument\Dto\PdfDocumentInputInterface;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocumentInterface;
@@ -42,7 +41,7 @@ class PdfDocumentManager implements PdfDocumentManagerInterface
         $template = $this->templateRepository->find($input->getTemplateId());
 
         $document = $this->createPdfDocument();
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::PdfFormDocumentPrefix->value, SequencePrefixEnum::PdfFormDocument->value) ?? SequencePrefixEnum::PdfFormDocument->value;
+        $prefix = $this->settingRepository->getOrDefault(PdfFormSettingEnum::DocumentPrefix);
         $document->setReference($this->sequenceGenerator->next($prefix));
         $document->setTemplate($template);
         $document->setLabel($input->getLabel());

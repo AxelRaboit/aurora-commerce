@@ -9,16 +9,23 @@ use Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
 
 /**
- * Contributes the "Crm" tab to the admin Settings page. One descriptor per
- * {@see CrmSettingEnum} case, rendered by the generic Vue field renderer.
+ * Contributes to two tabs of the admin Settings page:
+ *  - `crm` (priority 120) — module-specific switches.
+ *  - `sequences` (priority 90, shared) — reference prefixes, merged with
+ *    other modules' prefix contributions via the registry's merge-by-id.
  */
 final readonly class CrmConfigurationTabProvider implements ConfigurationTabProviderInterface
 {
+    private const array TAB_PRIORITY = [
+        'crm' => 120,
+        'sequences' => 90,
+    ];
+
     public function getTabs(): array
     {
-        $fields = [];
+        $fieldsByGroup = [];
         foreach (CrmSettingEnum::cases() as $case) {
-            $fields[] = new SettingFieldDescriptor(
+            $fieldsByGroup[$case->getGroup()][] = new SettingFieldDescriptor(
                 key: $case->getKey(),
                 type: $case->getType(),
                 labelKey: $case->getLabel(),
@@ -27,8 +34,15 @@ final readonly class CrmConfigurationTabProvider implements ConfigurationTabProv
             );
         }
 
-        return [
-            new ConfigurationTab(id: 'crm', priority: 120, fields: $fields),
-        ];
+        $tabs = [];
+        foreach ($fieldsByGroup as $group => $fields) {
+            $tabs[] = new ConfigurationTab(
+                id: $group,
+                priority: self::TAB_PRIORITY[$group] ?? 200,
+                fields: $fields,
+            );
+        }
+
+        return $tabs;
     }
 }

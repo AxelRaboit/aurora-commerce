@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Cart\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
@@ -15,6 +13,7 @@ use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
+use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -45,7 +44,7 @@ class CartManager implements CartManagerInterface
                 $cart = $this->createCart()->setUser($user);
                 $this->entityManager->persist($cart);
                 $this->entityManager->flush();
-                $cartPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartPrefix->value, SequencePrefixEnum::Cart->value) ?? SequencePrefixEnum::Cart->value;
+                $cartPrefix = $this->settingRepository->getOrDefault(EcommerceSettingEnum::CartPrefix);
                 $cart->setReference($this->sequenceGenerator->next($cartPrefix));
                 $this->entityManager->flush();
             }
@@ -59,7 +58,7 @@ class CartManager implements CartManagerInterface
             $cart = $this->createCart()->setSessionId($sessionId);
             $this->entityManager->persist($cart);
             $this->entityManager->flush();
-            $cartPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartPrefix->value, SequencePrefixEnum::Cart->value) ?? SequencePrefixEnum::Cart->value;
+            $cartPrefix = $this->settingRepository->getOrDefault(EcommerceSettingEnum::CartPrefix);
             $cart->setReference($this->sequenceGenerator->next($cartPrefix));
             $this->entityManager->flush();
         }
@@ -90,7 +89,7 @@ class CartManager implements CartManagerInterface
             $cart->addItem($item);
             $this->entityManager->persist($item);
             $this->entityManager->flush();
-            $itemPrefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceCartItemPrefix->value, SequencePrefixEnum::CartItem->value) ?? SequencePrefixEnum::CartItem->value;
+            $itemPrefix = $this->settingRepository->getOrDefault(EcommerceSettingEnum::CartItemPrefix);
             $item->setReference($this->sequenceGenerator->next($itemPrefix));
         }
 

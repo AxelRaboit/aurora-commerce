@@ -7,8 +7,6 @@ namespace Aurora\Module\Ecommerce\Listing\Manager;
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Dto\ListingInputInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
@@ -16,6 +14,7 @@ use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
 use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
+use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,7 +47,7 @@ class ListingManager implements ListingManagerInterface
         $listing = $this->createListing();
         $listing->setProduct($product);
         $this->applyInput($listing, $input);
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::EcommerceListingPrefix->value, SequencePrefixEnum::Listing->value) ?? SequencePrefixEnum::Listing->value;
+        $prefix = $this->settingRepository->getOrDefault(EcommerceSettingEnum::ListingPrefix);
         $listing->setReference($this->sequenceGenerator->next($prefix));
 
         $this->entityManager->persist($listing);

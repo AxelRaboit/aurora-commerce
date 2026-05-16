@@ -6,8 +6,6 @@ namespace Aurora\Module\Billing\Invoice\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
@@ -15,6 +13,7 @@ use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
 use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
+use Aurora\Module\Billing\Setting\BillingSettingEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -215,7 +214,7 @@ class TiersManager implements TiersManagerInterface
 
     private function assignReference(TiersInterface $tiers): void
     {
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::BillingTiersPrefix->value, SequencePrefixEnum::Tiers->value) ?? SequencePrefixEnum::Tiers->value;
+        $prefix = $this->settingRepository->getOrDefault(BillingSettingEnum::TiersPrefix);
         $tiers->setReference($this->sequenceGenerator->next($prefix));
     }
 }

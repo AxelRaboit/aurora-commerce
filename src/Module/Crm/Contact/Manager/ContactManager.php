@@ -6,8 +6,6 @@ namespace Aurora\Module\Crm\Contact\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Dto\ContactInputInterface;
@@ -16,6 +14,7 @@ use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Module\Crm\Service\CrmNotificationService;
+use Aurora\Module\Crm\Setting\CrmSettingEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -40,7 +39,7 @@ class ContactManager implements ContactManagerInterface
             $contact->setSource(ContactSourceEnum::Manual);
         }
 
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmContactPrefix->value, SequencePrefixEnum::Contact->value) ?? SequencePrefixEnum::Contact->value;
+        $prefix = $this->settingRepository->getOrDefault(CrmSettingEnum::ContactPrefix);
         $contact->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($contact);
         $this->entityManager->flush();

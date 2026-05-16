@@ -144,49 +144,10 @@ backend:
     seo_twitter_handle:
       label: Handle Twitter / X
       description: 'Handle Twitter du site (avec @, ex : @aurora_app). Utilisé pour la balise twitter:site dans les Twitter Cards.'
-    ged_document_prefix:
-      label: Préfixe des références documents GED
-      description: 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.'
-    billing_invoice_prefix:
-      label: Préfixe des numéros de factures
-      description: 'Préfixe du numéro de facture auto-généré à la validation (ex: FAC). Laissez vide pour désactiver.'
-    billing_credit_note_prefix:
-      label: Préfixe des numéros d'avoirs
-      description: "Préfixe du numéro d'avoir auto-généré (ex: AV). Laissez vide pour désactiver."
-    ecommerce_order_prefix:
-      label: Préfixe des numéros de commandes
-      description: 'Préfixe du numéro de commande auto-généré (ex: ORD). Laissez vide pour désactiver.'
-    ecommerce_listing_prefix:
-      label: Préfixe des références produits boutique
-      description: 'Préfixe de la référence produit boutique auto-générée (ex: LST). Laissez vide pour désactiver.'
-    erp_product_prefix:
-      label: Préfixe des références produits ERP
-      description: 'Préfixe de la référence produit auto-générée (ex: PROD). Laissez vide pour désactiver.'
-    crm_deal_prefix:
-      label: Préfixe des références affaires CRM
-      description: 'Préfixe de la référence affaire CRM auto-générée (ex: DEAL). Laissez vide pour désactiver.'
-    crm_contact_prefix:
-      label: Préfixe des références contacts CRM
-      description: 'Préfixe de la référence contact CRM auto-générée (ex: CTT). Laissez vide pour désactiver.'
-    crm_company_prefix:
-      label: Préfixe des références entreprises CRM
-      description: 'Préfixe de la référence entreprise CRM auto-générée (ex: CPY). Laissez vide pour désactiver.'
     email_locale:
       label: Langue forcée pour les emails
       description: "Langue à utiliser pour tous les emails sortants. « Suivre la langue par défaut » applique la langue par défaut du site."
     email_locale_auto: Suivre la langue par défaut
-    photo_gallery_prefix:
-      label: Préfixe des numéros de galeries
-      description: 'Préfixe de la référence galerie photo auto-générée (ex: GAL).'
-    editorial_post_prefix:
-      label: Préfixe des numéros d'articles
-      description: 'Préfixe de la référence article auto-générée (ex: ART).'
-    editorial_form_prefix:
-      label: Préfixe des numéros de formulaires
-      description: 'Préfixe de la référence formulaire auto-générée (ex: FRM).'
-    billing_tiers_prefix:
-      label: Préfixe des numéros de tiers
-      description: 'Préfixe de la référence tiers (fournisseur/client) auto-générée (ex: TRS).'
     core_user_prefix:
       label: Préfixe des références utilisateurs
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
@@ -195,18 +156,6 @@ backend:
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     core_access_request_prefix:
       label: Préfixe des références demandes d'accès
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    editorial_form_submission_prefix:
-      label: Préfixe des numéros de soumissions
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    photo_gallery_item_prefix:
-      label: Préfixe des références photos
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    photo_gallery_invite_prefix:
-      label: Préfixe des références invitations galerie
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    editorial_comment_prefix:
-      label: Préfixe des numéros de commentaires
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     core_audit_log_prefix:
       label: Préfixe des logs d'audit
@@ -219,33 +168,6 @@ backend:
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     core_menu_item_prefix:
       label: Préfixe des références éléments de menu
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    billing_ocr_job_prefix:
-      label: Préfixe des références jobs OCR
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    ecommerce_cart_prefix:
-      label: Préfixe des références paniers
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    ecommerce_cart_item_prefix:
-      label: Préfixe des références lignes de panier
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    ecommerce_order_line_prefix:
-      label: Préfixe des références lignes de commande
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    editorial_form_field_prefix:
-      label: Préfixe des références champs de formulaire
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    editorial_taxonomy_term_prefix:
-      label: Préfixe des références termes de taxonomie
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    photo_gallery_finalization_prefix:
-      label: Préfixe des références finalisations de galerie
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    photo_gallery_item_comment_prefix:
-      label: Préfixe des références commentaires de photo
-      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
-    photo_gallery_pick_prefix:
-      label: Préfixe des références sélections de photo
       description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
     nav_section_aliases:
       label: Alias des sections de navigation

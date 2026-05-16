@@ -8,8 +8,6 @@ use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
@@ -21,6 +19,7 @@ use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage;
+use Aurora\Module\Billing\Setting\BillingSettingEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -53,7 +52,7 @@ class OcrJobManager implements OcrJobManagerInterface
         $this->entityManager->persist($job);
         $this->entityManager->flush();
 
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::BillingOcrJobPrefix->value, SequencePrefixEnum::OcrJob->value) ?? SequencePrefixEnum::OcrJob->value;
+        $prefix = $this->settingRepository->getOrDefault(BillingSettingEnum::OcrJobPrefix);
         $job->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->flush();
 

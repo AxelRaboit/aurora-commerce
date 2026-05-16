@@ -1,4 +1,17 @@
 backend:
+  parameters:
+    billing_invoice_prefix:
+      label: Préfixe des numéros de factures
+      description: 'Préfixe du numéro de facture auto-généré à la validation (ex: FAC). Laissez vide pour désactiver.'
+    billing_credit_note_prefix:
+      label: Préfixe des numéros d'avoirs
+      description: "Préfixe du numéro d'avoir auto-généré (ex: AV). Laissez vide pour désactiver."
+    billing_tiers_prefix:
+      label: Préfixe des numéros de tiers
+      description: 'Préfixe de la référence tiers (fournisseur/client) auto-générée (ex: TRS).'
+    billing_ocr_job_prefix:
+      label: Préfixe des références jobs OCR
+      description: 'Préfixe de la référence auto-générée (ex: XXX). Laissez vide pour désactiver.'
   permissions:
     names:
       billing:

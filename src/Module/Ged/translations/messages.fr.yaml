@@ -1,4 +1,8 @@
 backend:
+  parameters:
+    ged_document_prefix:
+      label: Préfixe des références documents GED
+      description: 'Préfixe de la référence document GED auto-générée (ex: DOC). Laissez vide pour désactiver.'
   permissions:
     names:
       ged:

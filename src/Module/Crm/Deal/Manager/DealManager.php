@@ -6,8 +6,6 @@ namespace Aurora\Module\Crm\Deal\Manager;
 
 use Aurora\Core\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
@@ -16,6 +14,7 @@ use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Service\CrmNotificationService;
+use Aurora\Module\Crm\Setting\CrmSettingEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -37,7 +36,7 @@ class DealManager implements DealManagerInterface
     {
         $deal = $this->createDeal();
         $this->applyInput($deal, $input);
-        $prefix = $this->settingRepository->get(ApplicationParameterEnum::CrmDealPrefix->value, SequencePrefixEnum::Deal->value) ?? SequencePrefixEnum::Deal->value;
+        $prefix = $this->settingRepository->getOrDefault(CrmSettingEnum::DealPrefix);
         $deal->setReference($this->sequenceGenerator->next($prefix));
         $this->entityManager->persist($deal);
         $this->entityManager->flush();

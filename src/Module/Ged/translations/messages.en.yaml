@@ -1,4 +1,8 @@
 backend:
+  parameters:
+    ged_document_prefix:
+      label: DMS document reference prefix
+      description: Auto-generated DMS document reference prefix (e.g. DOC). Leave empty to disable.
   permissions:
     names:
       ged:
