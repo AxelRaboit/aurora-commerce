@@ -1,4 +1,4 @@
-import { ref, nextTick } from "vue";
+import { ref, nextTick, watch } from "vue";
 import { useSlashCommands } from "@notes/backend/markdown/composables/useSlashCommands.js";
 import { useWikiLinkAutocomplete } from "@notes/backend/markdown/composables/useWikiLinkAutocomplete.js";
 import { handleMarkdownShortcut } from "@notes/backend/markdown/composables/useMarkdownShortcuts.js";
@@ -34,9 +34,19 @@ export function useNoteEditorTextarea({
     untitledLabel,
 }) {
     const textareaRef = ref(null);
+    // The SFC binds `ref="searchInputRef"` on the wiki-popover header
+    // search field. When the popover opens we move focus into it so the
+    // user can keep typing without clicking the bar manually.
+    const searchInputRef = ref(null);
 
     const slash = useSlashCommands({ t });
     const wiki = useWikiLinkAutocomplete(flatNotes);
+
+    watch(wiki.showSuggestions, async (open) => {
+        if (!open) return;
+        await nextTick();
+        searchInputRef.value?.focus();
+    });
 
     /**
      * Route input through both menus. The slash handler closes itself
@@ -91,6 +101,15 @@ export function useNoteEditorTextarea({
         await nextTick();
         textarea.focus();
         textarea.setSelectionRange(cursorPos, cursorEnd ?? cursorPos);
+    }
+
+    /**
+     * Public helper used by external composables (image upload, …) that
+     * want to inject content + restore the caret without knowing how
+     * the textarea is wired internally.
+     */
+    function applyInsert(newContent, caretPos) {
+        return applyShortcut({ newContent, cursorPos: caretPos });
     }
 
     /**
@@ -180,6 +199,8 @@ export function useNoteEditorTextarea({
 
     return {
         textareaRef,
+        searchInputRef,
+        applyInsert,
         // slash palette
         showSlash: slash.showSlash,
         slashIndex: slash.slashIndex,

@@ -47,6 +47,7 @@
         "symfony/stimulus-bundle": "^3.0",
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
+        "symfony/uid": "7.4.*",
         "symfony/ux-vue": "^3.0",
         "symfony/validator": "7.4.*",
         "symfony/yaml": "7.4.*",

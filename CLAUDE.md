@@ -98,11 +98,13 @@ en 5 couches. **Doc canonique** :
    `extra-headers`/`extra-cells`/`extra-form-fields` ; composable
    `useXxxForm.js` unifié create+edit avec option `extraFields`.
 
-**Variantes structurelles documentées** (3 cas) :
+**Variantes structurelles documentées** (4 cas) :
 - Manager à hooks multiples sans `applyInput` (User, Menu pré-DTO, Billing,
   Order)
 - Composables Vue séparés `useXxxCreate` + `useXxxEdit` (User invite/edit, Theme)
 - Editor full-page au lieu de modal (Post)
+- Tree-based editor sans table (MarkdownNote) — slots adaptés au layout
+  arbre + éditeur, `extra-cells` propagé récursivement via `NoteTreeItem`
 
 **Repository** : `<Name>Repository` étend
 `Aurora\Core\Repository\ResolveTargetEntityRepository` (jamais

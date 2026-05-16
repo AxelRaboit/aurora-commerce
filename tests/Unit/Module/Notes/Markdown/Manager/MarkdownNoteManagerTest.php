@@ -13,6 +13,7 @@ use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\Notes\Markdown\Manager\MarkdownNoteManager;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
+use Aurora\Module\Notes\Markdown\Service\MarkdownNoteImageService;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -24,22 +25,40 @@ use Symfony\Bundle\SecurityBundle\Security;
 #[AllowMockObjectsWithoutExpectations]
 final class MarkdownNoteManagerTest extends TestCase
 {
-    private EntityManagerInterface $em;
-    private MarkdownNoteRepository $repo;
-    private MarkdownNoteManager $manager;
+    private EntityManagerInterface $entityManager;
+    private MarkdownNoteRepository $markdownNoteRepository;
+    private MarkdownNoteManager $markdownNoteManager;
+    private string $imageDir;
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->repo = $this->createMock(MarkdownNoteRepository::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->markdownNoteRepository = $this->createMock(MarkdownNoteRepository::class);
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
 
-        $this->manager = new MarkdownNoteManager(
-            $this->em,
-            $this->repo,
-            new AuditLogger($this->em, $security, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class)),
+        $auditLogger = new AuditLogger(
+            $this->entityManager,
+            $security,
+            new SequenceGenerator($this->createStub(Connection::class)),
+            $this->createStub(SettingRepository::class),
         );
+
+        $this->imageDir = sys_get_temp_dir().'/aurora-notes-images-'.bin2hex(random_bytes(4));
+
+        $this->markdownNoteManager = new MarkdownNoteManager(
+            $this->entityManager,
+            $this->markdownNoteRepository,
+            $auditLogger,
+            new MarkdownNoteImageService($this->imageDir),
+        );
+    }
+
+    protected function tearDown(): void
+    {
+        if (is_dir($this->imageDir)) {
+            (new \Symfony\Component\Filesystem\Filesystem())->remove($this->imageDir);
+        }
     }
 
     private function makeUser(int $id = 1): User
@@ -56,11 +75,11 @@ final class MarkdownNoteManagerTest extends TestCase
         $user = $this->makeUser();
         $input = new MarkdownNoteInput(title: 'Hello', content: '# Hello', tags: ['foo']);
 
-        $this->repo->method('findMaxPositionForUserAndParent')->willReturn(null);
-        $this->em->expects(self::atLeastOnce())->method('persist');
-        $this->em->expects(self::atLeastOnce())->method('flush');
+        $this->markdownNoteRepository->method('findMaxPositionForUserAndParent')->willReturn(null);
+        $this->entityManager->expects(self::atLeastOnce())->method('persist');
+        $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
-        $note = $this->manager->create($user, $input);
+        $note = $this->markdownNoteManager->create($user, $input);
 
         self::assertSame($user, $note->getUser());
         self::assertSame('Hello', $note->getTitle());
@@ -75,9 +94,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $user = $this->makeUser();
         $input = new MarkdownNoteInput(title: 'Sibling');
 
-        $this->repo->method('findMaxPositionForUserAndParent')->willReturn(4);
+        $this->markdownNoteRepository->method('findMaxPositionForUserAndParent')->willReturn(4);
 
-        $note = $this->manager->create($user, $input);
+        $note = $this->markdownNoteManager->create($user, $input);
 
         self::assertSame(5, $note->getPosition());
     }
@@ -87,7 +106,7 @@ final class MarkdownNoteManagerTest extends TestCase
         $user = $this->makeUser();
         $input = new MarkdownNoteInput(title: 'Pinned', position: 99);
 
-        $note = $this->manager->create($user, $input);
+        $note = $this->markdownNoteManager->create($user, $input);
 
         self::assertSame(99, $note->getPosition());
     }
@@ -101,9 +120,9 @@ final class MarkdownNoteManagerTest extends TestCase
 
         $input = new MarkdownNoteInput(title: 'new', content: 'updated body', tags: ['a', 'b']);
 
-        $this->em->expects(self::atLeastOnce())->method('flush');
+        $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
-        $this->manager->update($note, $input);
+        $this->markdownNoteManager->update($note, $input);
 
         self::assertSame('new', $note->getTitle());
         self::assertSame('updated body', $note->getContent());
@@ -117,10 +136,10 @@ final class MarkdownNoteManagerTest extends TestCase
         $note->setUser($user);
         $parent = new MarkdownNote();
 
-        $this->repo->expects(self::once())->method('findOneByUserAndId')->with($user, 42)->willReturn($parent);
+        $this->markdownNoteRepository->expects(self::once())->method('findOneByUserAndId')->with($user, 42)->willReturn($parent);
 
         $input = new MarkdownNoteInput(parentId: 42);
-        $this->manager->update($note, $input);
+        $this->markdownNoteManager->update($note, $input);
 
         self::assertSame($parent, $note->getParent());
     }
@@ -134,7 +153,7 @@ final class MarkdownNoteManagerTest extends TestCase
         $note->setParent($parent);
 
         $input = new MarkdownNoteInput(parentId: null);
-        $this->manager->update($note, $input);
+        $this->markdownNoteManager->update($note, $input);
 
         self::assertNull($note->getParent());
     }
@@ -144,10 +163,10 @@ final class MarkdownNoteManagerTest extends TestCase
         $note = new MarkdownNote();
         $note->setUser($this->makeUser());
 
-        $this->em->expects(self::once())->method('remove')->with($note);
-        $this->em->expects(self::atLeastOnce())->method('flush');
+        $this->entityManager->expects(self::once())->method('remove')->with($note);
+        $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
-        $this->manager->delete($note);
+        $this->markdownNoteManager->delete($note);
     }
 
     public function testMoveUpdatesParent(): void
@@ -155,9 +174,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $note = new MarkdownNote();
         $parent = new MarkdownNote();
 
-        $this->em->expects(self::once())->method('flush');
+        $this->entityManager->expects(self::once())->method('flush');
 
-        $this->manager->move($note, $parent);
+        $this->markdownNoteManager->move($note, $parent);
 
         self::assertSame($parent, $note->getParent());
     }
@@ -169,11 +188,11 @@ final class MarkdownNoteManagerTest extends TestCase
         $b = $this->makeNoteWithId(20);
         $c = $this->makeNoteWithId(30);
 
-        $this->repo->method('findBy')->willReturn([$a, $b, $c]);
-        $this->em->expects(self::once())->method('flush');
+        $this->markdownNoteRepository->method('findBy')->willReturn([$a, $b, $c]);
+        $this->entityManager->expects(self::once())->method('flush');
 
         // 10 stays root pos 0; 20 becomes child of 10 at pos 0; 30 stays root pos 1
-        $this->manager->reorder($user, [
+        $this->markdownNoteManager->reorder($user, [
             ['id' => 10, 'parentId' => null, 'position' => 0],
             ['id' => 20, 'parentId' => 10, 'position' => 0],
             ['id' => 30, 'parentId' => null, 'position' => 1],
@@ -193,12 +212,12 @@ final class MarkdownNoteManagerTest extends TestCase
         $a = $this->makeNoteWithId(10);
         $b = $this->makeNoteWithId(20);
 
-        $this->repo->method('findBy')->willReturn([$a, $b]);
+        $this->markdownNoteRepository->method('findBy')->willReturn([$a, $b]);
 
         $this->expectException(InvalidArgumentException::class);
 
         // 10's parent is 20, 20's parent is 10 → cycle
-        $this->manager->reorder($user, [
+        $this->markdownNoteManager->reorder($user, [
             ['id' => 10, 'parentId' => 20, 'position' => 0],
             ['id' => 20, 'parentId' => 10, 'position' => 0],
         ]);
@@ -206,10 +225,10 @@ final class MarkdownNoteManagerTest extends TestCase
 
     public function testReorderOnEmptyListIsNoop(): void
     {
-        $this->repo->expects(self::never())->method('findBy');
-        $this->em->expects(self::never())->method('flush');
+        $this->markdownNoteRepository->expects(self::never())->method('findBy');
+        $this->entityManager->expects(self::never())->method('flush');
 
-        $this->manager->reorder($this->makeUser(), []);
+        $this->markdownNoteManager->reorder($this->makeUser(), []);
     }
 
     public function testUpdateRenamesWikiLinksInOtherNotesWhenTitleChanges(): void
@@ -222,9 +241,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $other = $this->makeNoteWithId(2);
         $other->setContent('See [[Old Title]] for details.');
 
-        $this->repo->expects(self::once())->method('findAllWithContentForUser')->with($user)->willReturn([$note, $other]);
+        $this->markdownNoteRepository->expects(self::once())->method('findAllWithContentForUser')->with($user)->willReturn([$note, $other]);
 
-        $this->manager->update($note, new MarkdownNoteInput(title: 'New Title'));
+        $this->markdownNoteManager->update($note, new MarkdownNoteInput(title: 'New Title'));
 
         self::assertSame('See [[New Title]] for details.', $other->getContent());
     }
@@ -236,9 +255,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $note->setUser($user);
         $note->setTitle(null);
 
-        $this->repo->expects(self::never())->method('findAllWithContentForUser');
+        $this->markdownNoteRepository->expects(self::never())->method('findAllWithContentForUser');
 
-        $this->manager->update($note, new MarkdownNoteInput(title: 'Brand new'));
+        $this->markdownNoteManager->update($note, new MarkdownNoteInput(title: 'Brand new'));
     }
 
     public function testBacklinksReturnsNotesContainingTheWikiLink(): void
@@ -257,9 +276,9 @@ final class MarkdownNoteManagerTest extends TestCase
 
         $self = $target;
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$target, $linker, $unrelated]);
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$target, $linker, $unrelated]);
 
-        $results = $this->manager->backlinks($user, $target);
+        $results = $this->markdownNoteManager->backlinks($user, $target);
 
         self::assertCount(1, $results);
         self::assertSame(11, $results[0]['id']);
@@ -272,9 +291,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $target = $this->makeNoteWithId(10);
         $target->setTitle(null);
 
-        $this->repo->expects(self::never())->method('findAllWithContentForUser');
+        $this->markdownNoteRepository->expects(self::never())->method('findAllWithContentForUser');
 
-        self::assertSame([], $this->manager->backlinks($user, $target));
+        self::assertSame([], $this->markdownNoteManager->backlinks($user, $target));
     }
 
     public function testUnlinkedMentionsExcludesLinkedReferences(): void
@@ -291,9 +310,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $mentioner->setTitle('B');
         $mentioner->setContent('I love foo but not linked.');
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$target, $linker, $mentioner]);
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$target, $linker, $mentioner]);
 
-        $results = $this->manager->unlinkedMentions($user, $target);
+        $results = $this->markdownNoteManager->unlinkedMentions($user, $target);
 
         self::assertCount(1, $results);
         self::assertSame(12, $results[0]['id']);
@@ -315,9 +334,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $c->setTitle('Gamma');
         $c->setContent('Refers back to [[Alpha]] and unknown [[Delta]].');
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
 
-        $graph = $this->manager->graph($user);
+        $graph = $this->markdownNoteManager->graph($user);
 
         self::assertCount(3, $graph['nodes']);
         $edges = $graph['edges'];
@@ -334,9 +353,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $a->setTitle('Self');
         $a->setContent('I reference [[Self]] for fun.');
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a]);
 
-        $graph = $this->manager->graph($user);
+        $graph = $this->markdownNoteManager->graph($user);
 
         self::assertSame([], $graph['edges']);
     }
@@ -353,9 +372,9 @@ final class MarkdownNoteManagerTest extends TestCase
     public function testTagCountsDelegatesToRepository(): void
     {
         $user = $this->makeUser();
-        $this->repo->expects(self::once())->method('findTagCountsForUser')->with($user)->willReturn(['a' => 2, 'b' => 1]);
+        $this->markdownNoteRepository->expects(self::once())->method('findTagCountsForUser')->with($user)->willReturn(['a' => 2, 'b' => 1]);
 
-        self::assertSame(['a' => 2, 'b' => 1], $this->manager->tagCounts($user));
+        self::assertSame(['a' => 2, 'b' => 1], $this->markdownNoteManager->tagCounts($user));
     }
 
     public function testRenameTagRewritesOccurrencesAcrossNotes(): void
@@ -368,10 +387,10 @@ final class MarkdownNoteManagerTest extends TestCase
         $c = $this->makeNoteWithId(3);
         $c->setTags(['old']);
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
-        $this->em->expects(self::atLeastOnce())->method('flush');
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
-        $affected = $this->manager->renameTag($user, 'old', 'new');
+        $affected = $this->markdownNoteManager->renameTag($user, 'old', 'new');
 
         self::assertSame(2, $affected);
         self::assertSame(['new', 'kept'], $a->getTags());
@@ -385,9 +404,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $a = $this->makeNoteWithId(1);
         $a->setTags(['old', 'new', 'kept']);
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a]);
 
-        $affected = $this->manager->renameTag($user, 'old', 'new');
+        $affected = $this->markdownNoteManager->renameTag($user, 'old', 'new');
 
         self::assertSame(1, $affected);
         self::assertSame(['new', 'kept'], $a->getTags(), 'duplicate target dropped, order preserved');
@@ -396,12 +415,12 @@ final class MarkdownNoteManagerTest extends TestCase
     public function testRenameTagNoopWhenSourceAndTargetEqual(): void
     {
         $user = $this->makeUser();
-        $this->repo->expects(self::never())->method('findAllWithContentForUser');
-        $this->em->expects(self::never())->method('flush');
+        $this->markdownNoteRepository->expects(self::never())->method('findAllWithContentForUser');
+        $this->entityManager->expects(self::never())->method('flush');
 
-        self::assertSame(0, $this->manager->renameTag($user, 'same', 'same'));
-        self::assertSame(0, $this->manager->renameTag($user, '', 'x'));
-        self::assertSame(0, $this->manager->renameTag($user, 'x', ''));
+        self::assertSame(0, $this->markdownNoteManager->renameTag($user, 'same', 'same'));
+        self::assertSame(0, $this->markdownNoteManager->renameTag($user, '', 'x'));
+        self::assertSame(0, $this->markdownNoteManager->renameTag($user, 'x', ''));
     }
 
     public function testMergeTagsCollapsesMultipleSourcesIntoTarget(): void
@@ -414,10 +433,10 @@ final class MarkdownNoteManagerTest extends TestCase
         $c = $this->makeNoteWithId(3);
         $c->setTags(['wip', 'in-progress']);
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
-        $this->em->expects(self::atLeastOnce())->method('flush');
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
-        $affected = $this->manager->mergeTags($user, ['draft', 'wip', 'in-progress'], 'todo');
+        $affected = $this->markdownNoteManager->mergeTags($user, ['draft', 'wip', 'in-progress'], 'todo');
 
         self::assertSame(2, $affected);
         self::assertSame(['todo'], $a->getTags(), 'draft+wip collapsed to a single todo');
@@ -431,9 +450,9 @@ final class MarkdownNoteManagerTest extends TestCase
         $a = $this->makeNoteWithId(1);
         $a->setTags(['todo']);
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a]);
 
-        $affected = $this->manager->mergeTags($user, ['todo'], 'todo');
+        $affected = $this->markdownNoteManager->mergeTags($user, ['todo'], 'todo');
 
         self::assertSame(0, $affected, 'no-op when only source equals target');
     }
@@ -448,10 +467,10 @@ final class MarkdownNoteManagerTest extends TestCase
         $c = $this->makeNoteWithId(3);
         $c->setTags(['gone']);
 
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
-        $this->em->expects(self::atLeastOnce())->method('flush');
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a, $b, $c]);
+        $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
-        $affected = $this->manager->removeTag($user, 'gone');
+        $affected = $this->markdownNoteManager->removeTag($user, 'gone');
 
         self::assertSame(2, $affected);
         self::assertSame(['kept'], $a->getTags());
@@ -464,9 +483,54 @@ final class MarkdownNoteManagerTest extends TestCase
         $user = $this->makeUser();
         $a = $this->makeNoteWithId(1);
         $a->setTags(['x']);
-        $this->repo->method('findAllWithContentForUser')->willReturn([$a]);
-        $this->em->expects(self::never())->method('flush');
+        $this->markdownNoteRepository->method('findAllWithContentForUser')->willReturn([$a]);
+        $this->entityManager->expects(self::never())->method('flush');
 
-        self::assertSame(0, $this->manager->removeTag($user, 'missing'));
+        self::assertSame(0, $this->markdownNoteManager->removeTag($user, 'missing'));
+    }
+
+    public function testUpdateRemovesImagesNoLongerReferenced(): void
+    {
+        $user = $this->makeUser(99);
+        $note = new MarkdownNote();
+        $note->setUser($user);
+        $note->setTitle('with images');
+        $note->setContent('![a](/backend/notes/markdown/images/keep.png) and ![b](/backend/notes/markdown/images/drop.png)');
+
+        $this->prepareImageFile($user, 'keep.png');
+        $this->prepareImageFile($user, 'drop.png');
+
+        $newContent = '![a](/backend/notes/markdown/images/keep.png) only';
+        $input = new MarkdownNoteInput(title: 'with images', content: $newContent);
+
+        $this->markdownNoteManager->update($note, $input);
+
+        self::assertFileExists($this->imageDir.'/99/keep.png');
+        self::assertFileDoesNotExist($this->imageDir.'/99/drop.png');
+    }
+
+    public function testDeleteRemovesEveryReferencedImage(): void
+    {
+        $user = $this->makeUser(99);
+        $note = new MarkdownNote();
+        $note->setUser($user);
+        $note->setContent('![a](/backend/notes/markdown/images/one.png) ![b](/backend/notes/markdown/images/two.png)');
+
+        $this->prepareImageFile($user, 'one.png');
+        $this->prepareImageFile($user, 'two.png');
+
+        $this->markdownNoteManager->delete($note);
+
+        self::assertFileDoesNotExist($this->imageDir.'/99/one.png');
+        self::assertFileDoesNotExist($this->imageDir.'/99/two.png');
+    }
+
+    private function prepareImageFile(User $user, string $filename): void
+    {
+        $userDir = $this->imageDir.'/'.$user->getId();
+        if (!is_dir($userDir)) {
+            mkdir($userDir, 0o755, true);
+        }
+        file_put_contents($userDir.'/'.$filename, 'fake-image-bytes');
     }
 }

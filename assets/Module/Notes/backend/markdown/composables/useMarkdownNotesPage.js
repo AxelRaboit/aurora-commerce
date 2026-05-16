@@ -30,7 +30,11 @@ export function useMarkdownNotesPage(props, t) {
     const api = useMarkdownNotesApi(props);
     const tagsApi = useMarkdownTagsApi(props);
 
-    const editor = useNotesEditor({ api, initialNotes: props.notes });
+    const editor = useNotesEditor({
+        api,
+        initialNotes: props.notes,
+        extraFields: props.extraFields ?? {},
+    });
     const {
         notes,
         selectedId,
@@ -48,6 +52,7 @@ export function useMarkdownNotesPage(props, t) {
         confirmDelete,
         onWikiLinkClick,
         onCheckboxToggle,
+        onImageResize,
         refreshList,
         reloadCurrent,
     } = editor;
@@ -239,6 +244,7 @@ export function useMarkdownNotesPage(props, t) {
         confirmDelete,
         onWikiLinkClick,
         onCheckboxToggle,
+        onImageResize,
 
         // sidebar tree + tags
         tree,

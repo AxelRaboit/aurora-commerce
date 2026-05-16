@@ -63,4 +63,21 @@ enum MimeTypeEnum: string
 
         return $case?->isRasterImage() ?? false;
     }
+
+    /**
+     * Canonical filesystem extension (no leading dot) — used when an
+     * uploaded file is renamed by the server (e.g. UUID-based names in
+     * `MarkdownNoteImageService`) and the original client filename is dropped.
+     */
+    public function extension(): string
+    {
+        return match ($this) {
+            self::Jpeg, self::Jpg => 'jpg',
+            self::Png => 'png',
+            self::Gif => 'gif',
+            self::Webp => 'webp',
+            self::Svg => 'svg',
+            self::Pdf => 'pdf',
+        };
+    }
 }

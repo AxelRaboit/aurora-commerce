@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onBeforeUnmount } from "vue";
+import { ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNoteGraph } from "@notes/backend/markdown/composables/useNoteGraph.js";
 import AppModal from "@shared/components/overlay/AppModal.vue";
@@ -8,8 +8,9 @@ import { Network, Loader2 } from "lucide-vue-next";
 
 /**
  * Wiki-link graph for the user's notes. Pure presentation: provides a
- * 70vh canvas inside the modal, hands its ref + pointer handlers off to
- * `useNoteGraph` which owns the force simulation and the draw loop.
+ * canvas inside the modal, hands its ref + pointer handlers off to
+ * `useNoteGraph` which owns the force simulation, the draw loop, and
+ * the open/close lifecycle bound to `show`.
  */
 
 const props = defineProps({
@@ -23,31 +24,13 @@ const { t } = useI18n();
 
 const canvasRef = ref(null);
 
-const {
-    loading,
-    empty,
-    open,
-    close,
-    onMouseDown,
-    onMouseMove,
-    onMouseUp,
-    onClick,
-} = useNoteGraph({
+const { loading, empty, onMouseDown, onMouseMove, onMouseUp, onClick } = useNoteGraph({
     fetchGraph: props.fetchGraph,
     canvasRef,
     untitledLabel: t("notes.markdown.untitled"),
     onNavigate: (id) => emit("navigate", id),
+    showRef: toRef(props, "show"),
 });
-
-watch(
-    () => props.show,
-    (show) => {
-        if (show) open();
-        else close();
-    },
-);
-
-onBeforeUnmount(close);
 </script>
 
 <template>

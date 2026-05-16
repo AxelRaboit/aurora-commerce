@@ -12,7 +12,7 @@ UX distinctes :
 
 | Sous-module | Statut |
 |---|---|
-| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + autocomplete `[[` + graphe canvas + syntax highlighting hljs + responsive mobile) + demo fixtures. Reste : images, import Onyx. |
+| Markdown | 🟢 **MVP utilisable** — backend complet + UI Vue (CRUD + preview + wiki-links + drag-drop + side panel backlinks/mentions + tags UI/filtre + slash commands + autocomplete `[[` + graphe canvas + syntax highlighting hljs + responsive mobile + images drop/paste) + demo fixtures. Reste : import Onyx. |
 | Block | ⏳ Pas commencé — spec dans [`block/overview.md`](block/overview.md) |
 
 ## Sous-modules
@@ -33,7 +33,7 @@ UX distinctes :
 | Vue graphe des wiki-links (frontend, canvas custom) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
 | Syntax highlighting code blocks (highlight.js) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Responsive mobile (sidebar / éditeur / popovers / graphe) | ✅ Fait | [editor.md](markdown/editor.md) |
-| Images (upload + serve + cleanup) | ⏳ À faire | [images.md](markdown/images.md) |
+| Images (upload + serve + cleanup orphelines) | ✅ Fait | [images.md](markdown/images.md) |
 | Script d'import depuis Onyx | ⏳ À faire | [import.md](markdown/import.md) |
 
 ### [`block/`](block/) — Notes Block (EditorJS)
@@ -45,10 +45,7 @@ démarrer **après** stabilisation complète de Markdown.
 
 Par ROI décroissant :
 
-1. **Images** — drag-drop upload + endpoint serve + cleanup orphelines
-   au save/delete. Plus lourd (storage + sécurité) mais feature
-   bloquante pour usage réel.
-2. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
+1. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
    du contenu Onyx à migrer.
 
 ## Architecture commune

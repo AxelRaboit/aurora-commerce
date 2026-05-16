@@ -548,7 +548,7 @@ applicable, composables `useXxxForm` unifiés) sont décrites directement dans
 les couches 2/3/5 et ne constituent pas des variantes — juste des
 généralisations de la même règle.
 
-Restent **deux variantes structurelles** où la forme du composant impose
+Restent **quatre variantes structurelles** où la forme du composant impose
 réellement un écart au pattern de référence :
 
 ### 4.bis.1 Manager à hooks multiples (sans `applyInput()`)
@@ -607,6 +607,31 @@ chargement initial des données.
 Pour la liste (`PostsApp.vue`), les slots `extra-headers` / `extra-cells`
 restent identiques au pattern Agency — la complexité de l'editor ne change
 pas la liste.
+
+### 4.bis.3 Tree-based editor (pas une table)
+
+**Cas** : `MarkdownNotesApp.vue`.
+
+Quand l'interface est un **arbre** (sidebar récursive de nœuds parent/enfant)
++ éditeur central, pas de table tabulaire, le mapping des slots
+`extra-headers` / `extra-cells` à la convention Agency demande une
+adaptation :
+
+- **`extra-headers`** : surface du panneau sidebar au-dessus de l'arbre
+  (à côté de la recherche / des filtres tags). Sert à injecter des
+  contrôles globaux (filtre custom, view-switcher, etc.).
+- **`extra-cells`** : décoration par-rangée passée **récursivement** au
+  `NoteTreeItem`, qui forward le slot via une `<template #extra-cells>`
+  imbriquée pour que tous les niveaux de profondeur le rendent.
+- **`extra-form-fields`** : à côté du titre/tags dans l'header de
+  l'éditeur (l'éditeur lui-même reste le textarea markdown — les champs
+  custom vivent dans le header au-dessus).
+
+Le composable form n'est pas `useXxxForm` mais `useNotesEditor` : il
+accepte une option `extraFields` (même shape `{ key: { default } }`),
+seede l'état initial, persiste les valeurs custom en spread dans le
+payload `update`, et inclut les clés extra dans la comparaison `isDirty`
+de l'auto-save.
 
 ---
 

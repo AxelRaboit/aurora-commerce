@@ -10,6 +10,7 @@ import {
     resetCheckboxCounter,
 } from "./markedExtensions/markedCheckboxes.js";
 import { createHighlightRenderer } from "./markedExtensions/markedHighlight.js";
+import { createImageDimensionsRenderer } from "./markedExtensions/markedImageDimensions.js";
 
 /**
  * Builds a per-instance Marked parser with Aurora's note-specific
@@ -36,6 +37,7 @@ export function useMarkdownRenderer() {
     });
     marked.use({ renderer: createCheckboxRenderer() });
     marked.use({ renderer: createHighlightRenderer() });
+    marked.use({ renderer: createImageDimensionsRenderer() });
 
     function render(markdown) {
         if (!markdown) return "";
@@ -48,6 +50,10 @@ export function useMarkdownRenderer() {
                 "data-heading",
                 "data-checkbox-index",
                 "data-icon",
+                "data-md-image",
+                "data-md-src",
+                "data-md-width",
+                "data-md-handle",
             ],
         });
     }

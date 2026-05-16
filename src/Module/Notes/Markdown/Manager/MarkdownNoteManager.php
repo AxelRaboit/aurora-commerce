@@ -10,6 +10,7 @@ use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteInputInterface;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
+use Aurora\Module\Notes\Markdown\Service\MarkdownNoteImageService;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -24,6 +25,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         protected readonly EntityManagerInterface $entityManager,
         protected readonly MarkdownNoteRepository $noteRepository,
         protected readonly AuditLogger $auditLogger,
+        protected readonly MarkdownNoteImageService $imageService,
     ) {}
 
     public function create(CoreUserInterface $user, MarkdownNoteInputInterface $input): MarkdownNoteInterface
@@ -50,6 +52,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
     public function update(MarkdownNoteInterface $note, MarkdownNoteInputInterface $input): void
     {
         $oldTitle = $note->getTitle();
+        $oldContent = $note->getContent();
 
         $this->applyInput($note, $input);
 
@@ -57,6 +60,8 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         if (null !== $oldTitle && null !== $newTitle && '' !== $oldTitle && $oldTitle !== $newTitle) {
             $this->renameWikiLinks($note->getUser(), $note->getId(), $oldTitle, $newTitle);
         }
+
+        $this->cleanupOrphanedImages($note->getUser(), $oldContent, $note->getContent());
 
         $this->entityManager->flush();
 
@@ -66,6 +71,8 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
     public function delete(MarkdownNoteInterface $note): void
     {
         $this->auditDeleted($note);
+
+        $this->cleanupOrphanedImages($note->getUser(), $note->getContent(), null);
 
         $this->entityManager->remove($note);
         $this->entityManager->flush();
@@ -470,6 +477,29 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
     protected function createNote(): MarkdownNoteInterface
     {
         return new MarkdownNote();
+    }
+
+    /**
+     * Hook: drop image files no longer referenced by the note content.
+     * Called from `update` (oldContent vs newContent) and `delete`
+     * (oldContent vs null). The set difference is computed against the
+     * markdown URL regex in `MarkdownNoteImageService::FILENAME_PATTERN` so a
+     * client that picks a different image URL scheme can override this
+     * method to scan its own pattern instead.
+     */
+    protected function cleanupOrphanedImages(CoreUserInterface $user, ?string $oldContent, ?string $newContent): void
+    {
+        $oldFilenames = $this->imageService->extractFilenames($oldContent);
+        if ([] === $oldFilenames) {
+            return;
+        }
+
+        $newFilenames = $this->imageService->extractFilenames($newContent);
+        $orphans = array_diff($oldFilenames, $newFilenames);
+
+        foreach ($orphans as $filename) {
+            $this->imageService->delete($filename, $user);
+        }
     }
 
     /**

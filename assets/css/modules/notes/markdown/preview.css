@@ -7,6 +7,51 @@
  * markedExtensions/`.
  */
 
+/* ── Inline images ───────────────────────────────────────────────── */
+.note-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+}
+
+/* Resizable wrapper. The renderer wraps every image in a span so the
+ * corner handle can sit on top of it without altering the flow.
+ * `inline-block` + `line-height: 0` keeps the wrapper hugging the
+ * image's box exactly. */
+.note-preview .note-image-wrap {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+    max-width: 100%;
+}
+.note-preview .note-image-wrap img {
+    display: block;
+    margin: 0.5rem 0;
+}
+.note-preview .note-image-handle {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    background: var(--color-accent-500, #0ea5e9);
+    border: 2px solid var(--color-surface, #fff);
+    border-radius: 2px;
+    cursor: nwse-resize;
+    opacity: 0;
+    transition: opacity 0.15s;
+    user-select: none;
+    touch-action: none;
+}
+.note-preview .note-image-wrap:hover .note-image-handle,
+.note-preview .note-image-handle.is-active {
+    opacity: 0.9;
+}
+.note-preview .note-image-handle:hover {
+    opacity: 1;
+}
+
 /* ── Wiki-links ──────────────────────────────────────────────────── */
 .note-preview .wiki-link {
     color: var(--color-accent-600, #0ea5e9);

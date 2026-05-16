@@ -35,6 +35,17 @@ const props = defineProps({
     tagsRenamePath: { type: String, required: true },
     tagsMergePath: { type: String, required: true },
     tagsDeletePath: { type: String, required: true },
+    imageUploadPath: { type: String, required: true },
+    imageMaxEdge: { type: Number, default: 2048 },
+    imageQuality: { type: Number, default: 0.85 },
+    /**
+     * Client-extension hook — see `docs/aurora-core/dev/entity_extensibility_convention.md`.
+     * Shape: `{ <fieldKey>: { default: <value> } }`. Each key is seeded into
+     * the form, persisted on save (server-side the client's overridden DTO
+     * factory hydrates the entity), and exposed back to the parent through
+     * the `extra-form-fields` slot's scoped `form` binding.
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -58,6 +69,7 @@ const {
     confirmDelete,
     onWikiLinkClick,
     onCheckboxToggle,
+    onImageResize,
     tree,
     treeQuery,
     availableTags,
@@ -147,6 +159,12 @@ const {
                 />
             </div>
 
+            <!-- Sidebar header extension point. Clients render custom
+                 controls (filter chips, view-switcher, etc.) right above
+                 the tree without forking this component. -->
+            <slot name="extra-headers" />
+
+
             <div v-if="availableTags.length > 0" class="px-3 pt-2">
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-medium text-muted uppercase tracking-wide">
@@ -208,7 +226,15 @@ const {
                         v-on:drag-over="onDragOverNote"
                         v-on:drag-leave="onDragLeaveNote"
                         v-on:drop="onDropOnNote"
-                    />
+                    >
+                        <!-- Forward the `extra-cells` slot down through
+                             the recursive tree so clients can decorate
+                             each row (status pill, custom icon, …)
+                             regardless of nesting depth. -->
+                        <template #extra-cells="{ note }">
+                            <slot name="extra-cells" :note="note" />
+                        </template>
+                    </NoteTreeItem>
                 </div>
                 <AppNoData
                     v-else-if="treeQuery.trim() !== ''"
@@ -306,6 +332,12 @@ const {
                         v-model="form.tags"
                         :placeholder="t('notes.markdown.tags.add_placeholder')"
                     />
+
+                    <!-- Editor form extension point. Scoped slot exposes
+                         `form` (mutable reactive ref) so clients can wire
+                         their custom v-model bindings against entity
+                         fields they've added via aurora-client. -->
+                    <slot name="extra-form-fields" :form="form" />
                 </header>
 
                 <div class="flex-1 flex overflow-hidden">
@@ -320,6 +352,9 @@ const {
                             v-model="form.content"
                             :placeholder="t('notes.markdown.content_placeholder')"
                             :flat-notes="notes"
+                            :upload-image="api.uploadImage"
+                            :image-max-edge="imageMaxEdge"
+                            :image-quality="imageQuality"
                         />
                     </div>
 
@@ -341,6 +376,7 @@ const {
                             :note-titles="notes"
                             v-on:wiki-link-click="onWikiLinkClick"
                             v-on:checkbox-toggle="onCheckboxToggle"
+                            v-on:image-resize="onImageResize"
                         />
                     </div>
                 </div>

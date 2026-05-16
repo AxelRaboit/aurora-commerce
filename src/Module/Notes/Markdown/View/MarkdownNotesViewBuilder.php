@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\View;
 
+use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
+use Aurora\Module\Notes\Markdown\Setting\MarkdownNoteSettingEnum;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class MarkdownNotesViewBuilder
@@ -13,6 +15,7 @@ final readonly class MarkdownNotesViewBuilder
     public function __construct(
         private MarkdownNoteRepository $noteRepository,
         private UrlGeneratorInterface $urlGenerator,
+        private SettingRepository $settingRepository,
     ) {}
 
     /** @return array<string, mixed> */
@@ -35,6 +38,9 @@ final readonly class MarkdownNotesViewBuilder
             'tagsRenamePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_rename'),
             'tagsMergePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_merge'),
             'tagsDeletePath' => $this->urlGenerator->generate('backend_notes_markdown_tags_delete'),
+            'imageUploadPath' => $this->urlGenerator->generate('backend_notes_markdown_images_upload'),
+            'imageMaxEdge' => (int) $this->settingRepository->getOrDefault(MarkdownNoteSettingEnum::ImageMaxEdge),
+            'imageQuality' => max(0.0, min(1.0, ((int) $this->settingRepository->getOrDefault(MarkdownNoteSettingEnum::ImageQualityPct)) / 100)),
         ];
     }
 }

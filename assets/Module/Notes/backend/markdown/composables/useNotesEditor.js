@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useAutoSave } from "@/shared/composables/useAutoSave.js";
 import { toggleCheckboxInContent } from "./markedExtensions/markedCheckboxes.js";
+import { updateImageDimensionInContent } from "./markedExtensions/markedImageDimensions.js";
 
 /**
  * State + actions for the Markdown notes editor.
@@ -18,12 +19,30 @@ import { toggleCheckboxInContent } from "./markedExtensions/markedCheckboxes.js"
  * @param {object} options.api          - useMarkdownNotesApi() instance
  * @param {Array}  options.initialNotes - flat list passed in via props
  */
-export function useNotesEditor({ api, initialNotes }) {
+export function useNotesEditor({ api, initialNotes, extraFields = {} }) {
     const { t } = useI18n();
+
+    // Client-extension points. Each entry of `extraFields` is
+    // `{ default: <value> }` — the value seeds an empty form and is
+    // compared by reference equality in `isDirty`. Custom keys are
+    // spread back into both the create + update payloads so the server
+    // (which has the client's overridden DTO + Input factory) can
+    // hydrate the entity transparently.
+    const extraKeys = Object.keys(extraFields);
+    function extraDefaults() {
+        return Object.fromEntries(
+            extraKeys.map((key) => [key, extraFields[key]?.default ?? null]),
+        );
+    }
+    function pickExtras(source) {
+        return Object.fromEntries(
+            extraKeys.map((key) => [key, source?.[key] ?? extraFields[key]?.default ?? null]),
+        );
+    }
 
     const notes = ref([...initialNotes]);
     const selectedId = ref(null);
-    const form = ref({ title: "", content: "", tags: [] });
+    const form = ref({ title: "", content: "", tags: [], ...extraDefaults() });
     // Snapshot of the last known server state for the selected note —
     // includes content (which the flat `notes` list omits). The isDirty
     // comparison runs against this, not against the flat list entry.
@@ -45,6 +64,9 @@ export function useNotesEditor({ api, initialNotes }) {
         if (a.length !== b.length) return true;
         for (let i = 0; i < a.length; i++) {
             if (a[i] !== b[i]) return true;
+        }
+        for (const key of extraKeys) {
+            if (loadedSnapshot.value[key] !== form.value[key]) return true;
         }
         return false;
     });
@@ -71,6 +93,7 @@ export function useNotesEditor({ api, initialNotes }) {
             title: payload.note.title ?? "",
             content: payload.note.content ?? "",
             tags: [...(payload.note.tags ?? [])],
+            ...pickExtras(payload.note),
         };
         loadedSnapshot.value = snapshot;
         form.value = { ...snapshot, tags: [...snapshot.tags] };
@@ -106,6 +129,7 @@ export function useNotesEditor({ api, initialNotes }) {
             title: form.value.title,
             content: form.value.content,
             tags: [...form.value.tags],
+            ...pickExtras(form.value),
         };
 
         try {
@@ -194,7 +218,7 @@ export function useNotesEditor({ api, initialNotes }) {
             if (selectedId.value === targetId) {
                 selectedId.value = null;
                 loadedSnapshot.value = null;
-                form.value = { title: "", content: "", tags: [] };
+                form.value = { title: "", content: "", tags: [], ...extraDefaults() };
             }
             pendingDelete.value = null;
             await refreshList();
@@ -239,6 +263,18 @@ export function useNotesEditor({ api, initialNotes }) {
     async function onCheckboxToggle(index) {
         form.value.content = toggleCheckboxInContent(form.value.content, index);
         await saveSelected();
+    }
+
+    /**
+     * Drag-to-resize handler. Rewrites the matching `![alt|N](src)` in
+     * the markdown source and lets the auto-save watcher debounce the
+     * persistence — same flow as a normal edit.
+     */
+    function onImageResize({ src, width }) {
+        const next = updateImageDimensionInContent(form.value.content, src, width);
+        if (next !== form.value.content) {
+            form.value.content = next;
+        }
     }
 
     // ── Lifecycle ──────────────────────────────────────────────────────────
@@ -308,5 +344,6 @@ export function useNotesEditor({ api, initialNotes }) {
         confirmDelete,
         onWikiLinkClick,
         onCheckboxToggle,
+        onImageResize,
     };
 }

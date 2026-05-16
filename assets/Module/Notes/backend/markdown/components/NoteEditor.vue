@@ -1,7 +1,8 @@
 <script setup>
-import { ref, toRef, watch, nextTick } from "vue";
+import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useNoteEditorTextarea } from "@notes/backend/markdown/composables/useNoteEditorTextarea.js";
+import { useNoteImageUpload } from "@notes/backend/markdown/composables/useNoteImageUpload.js";
 import AppFloatingMenu from "@shared/components/overlay/AppFloatingMenu.vue";
 import AppSearchInput from "@shared/components/form/input/AppSearchInput.vue";
 import { FileText } from "lucide-vue-next";
@@ -15,6 +16,16 @@ const props = defineProps({
      * appears as soon as the parent's notes ref refreshes).
      */
     flatNotes: { type: Array, default: () => [] },
+    /**
+     * Optional `(file) => Promise<{ok, payload}>` upload hook. When
+     * provided, drag-drop + clipboard paste of images upload and splice
+     * `![filename](url)` into the markdown at the caret.
+     */
+    uploadImage: { type: Function, default: null },
+    /** Max edge (px) for client-side resize before upload. */
+    imageMaxEdge: { type: Number, default: 2048 },
+    /** WebP encoding quality (0–1). */
+    imageQuality: { type: Number, default: 0.85 },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -23,6 +34,8 @@ const { t } = useI18n();
 
 const {
     textareaRef,
+    searchInputRef,
+    applyInsert,
     showSlash,
     slashIndex,
     slashPosition,
@@ -48,14 +61,18 @@ const {
     untitledLabel: t("notes.markdown.untitled"),
 });
 
-// Refocus the search input when the wiki popover opens so the user
-// can keep typing without having to click the bar manually.
-const searchInputRef = ref(null);
-watch(showSuggestions, async (open) => {
-    if (!open) return;
-    await nextTick();
-    searchInputRef.value?.focus();
-});
+// Image upload (drag-drop + Ctrl+V). Only active when the parent
+// provides an upload hook — the editor degrades gracefully without it.
+if (props.uploadImage) {
+    useNoteImageUpload({
+        textareaRef,
+        uploadImage: props.uploadImage,
+        applyInsert,
+        t,
+        maxEdge: props.imageMaxEdge,
+        quality: props.imageQuality,
+    });
+}
 </script>
 
 <template>

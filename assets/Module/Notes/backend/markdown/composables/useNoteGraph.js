@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, watch, onBeforeUnmount } from "vue";
 
 /**
  * Render a wiki-link graph onto a `<canvas>` using a tiny custom
@@ -25,12 +25,18 @@ import { ref } from "vue";
  * @param {import('vue').Ref<HTMLCanvasElement|null>} deps.canvasRef
  * @param {string} deps.untitledLabel
  * @param {(id: number|string) => void} deps.onNavigate
+ * @param {import('vue').Ref<boolean>} [deps.showRef] Optional reactive
+ *   visibility flag. When provided, the composable opens/closes the
+ *   simulation automatically as the flag toggles + cleans up on
+ *   component unmount — saving the consumer SFC the `watch` + the
+ *   `onBeforeUnmount` boilerplate.
  */
 export function useNoteGraph({
     fetchGraph,
     canvasRef,
     untitledLabel,
     onNavigate,
+    showRef = null,
 }) {
     const loading = ref(false);
     const empty = ref(false);
@@ -369,6 +375,14 @@ export function useNoteGraph({
             const { width, height } = canvasCssSize();
             ctx.clearRect(0, 0, width, height);
         }
+    }
+
+    if (showRef) {
+        watch(showRef, (visible) => {
+            if (visible) open();
+            else close();
+        });
+        onBeforeUnmount(close);
     }
 
     return {

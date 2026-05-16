@@ -82,6 +82,10 @@ const indentStyle = computed(() => ({ marginLeft: `${props.depth * 1}rem` }));
                 {{ node.title || $t('notes.markdown.untitled') }}
             </span>
 
+            <!-- Per-row extension point. Wrapped so a client decorator
+                 sits between the title and the hover action buttons. -->
+            <slot name="extra-cells" :note="node" />
+
             <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity shrink-0">
                 <AppIconButton
                     size="sm"
@@ -120,7 +124,14 @@ const indentStyle = computed(() => ({ marginLeft: `${props.depth * 1}rem` }));
                 v-on:drag-over="(n, e) => emit('drag-over', n, e)"
                 v-on:drag-leave="(n, e) => emit('drag-leave', n, e)"
                 v-on:drop="(n, e) => emit('drop', n, e)"
-            />
+            >
+                <!-- Forward the slot recursively so descendants render the
+                     same decoration. Without this template the slot would
+                     stop at depth 0. -->
+                <template #extra-cells="data">
+                    <slot name="extra-cells" v-bind="data" />
+                </template>
+            </NoteTreeItem>
         </div>
     </div>
 </template>

@@ -21,6 +21,8 @@ backend:
       sequences_description: Préfixes des références auto-générées.
       navigation: Navigation
       navigation_description: Personnalisez les noms des sections et des items du menu latéral.
+      notes: Notes
+      notes_description: 'Paramètres du module Notes Markdown : taille / qualité des images uploadées.'
       modules: Modules
     appearance:
       color_presets:

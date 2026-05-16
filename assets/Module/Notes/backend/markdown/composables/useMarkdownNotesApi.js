@@ -59,5 +59,24 @@ export function useMarkdownNotesApi(props) {
                 HttpMethod.Get,
                 `${props.searchPath}?q=${encodeURIComponent(query)}`,
             ),
+        /**
+         * Multipart upload — bypasses the JSON helper because the body
+         * is a `FormData`. Returns `{filename, url}` on success.
+         */
+        uploadImage: async (file) => {
+            const formData = new FormData();
+            formData.append("image", file);
+            const response = await fetch(props.imageUploadPath, {
+                method: HttpMethod.Post,
+                headers: { Accept: "application/json" },
+                body: formData,
+            });
+            const payload = await response.json().catch(() => ({}));
+            return {
+                ok: response.ok && payload.success !== false,
+                status: response.status,
+                payload,
+            };
+        },
     };
 }
