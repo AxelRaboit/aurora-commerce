@@ -41,7 +41,10 @@ describe("useWikiLinkAutocomplete", () => {
 
     it("caps suggestions at 8", () => {
         const many = ref(
-            Array.from({ length: 20 }, (_, i) => ({ id: i, title: `Note ${i}` })),
+            Array.from({ length: 20 }, (_, i) => ({
+                id: i,
+                title: `Note ${i}`,
+            })),
         );
         const w = useWikiLinkAutocomplete(many);
         try {
@@ -65,7 +68,12 @@ describe("useWikiLinkAutocomplete", () => {
     it("does not open when a newline interrupts the bracket", () => {
         const w = useWikiLinkAutocomplete(makeNotes());
         try {
-            w.onInput(makeEvent("[[oops\nstill typing", "[[oops\nstill typing".length));
+            w.onInput(
+                makeEvent(
+                    "[[oops\nstill typing",
+                    "[[oops\nstill typing".length,
+                ),
+            );
         } catch {
             /* ignore */
         }

@@ -194,6 +194,16 @@ final class MarkdownNotesController extends AbstractController
         return $this->jsonSuccess($this->manager->graph($user));
     }
 
+    #[Route('/search', name: '_search', methods: [HttpMethodEnum::Get->value])]
+    public function search(Request $request): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+        $query = (string) $request->query->get('q', '');
+
+        return $this->jsonSuccess(['ids' => $this->manager->searchContent($user, $query)]);
+    }
+
     #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
     public function reorder(Request $request): JsonResponse
     {

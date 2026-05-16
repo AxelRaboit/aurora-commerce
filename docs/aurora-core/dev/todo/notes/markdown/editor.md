@@ -89,6 +89,28 @@ Commits `46c6e59d` (scaffold UI) + `48131a9a` (live preview) + `f03548a8` (side 
       `--color-*` variables.
 - [x] Couverture vitest étendue (15 tests dans `useMarkdownRenderer.test.js`).
 
+### Recherche tree étendue ✅ (fait, 2026-05-16)
+
+- [x] La barre de recherche dans la sidebar ne fait plus seulement
+      "title substring" : elle matche maintenant **title OR any tag OR
+      content** (cas-insensitive).
+- [x] **Tags** : matchés côté client à partir de la flat list (les
+      tags voyagent déjà avec la liste sidebar).
+- [x] **Content** : nouveau endpoint `GET /backend/notes/markdown/search?q=…`
+      → `MarkdownNoteManager::searchContent` charge les notes
+      décryptées et retourne la liste des `id` qui contiennent la
+      query. Fetch debouncé (300ms) depuis `useMarkdownNotesPage`,
+      résultat mergé dans `useNoteTree` via un `Set<id>` 4ème
+      paramètre `contentMatchIdsRef`.
+- [x] Composable `useNoteTree` accepte un set d'ids "content-matched"
+      en plus du title/tags. La fonction `matchesQuery` factorise les
+      3 sources de matching.
+- [x] `useMarkdownNotesApi` utilise désormais `HttpMethod` (enum JS
+      partagé `@/shared/utils/http/httpMethod.js`) au lieu de strings
+      littéraux `"GET"`/`"POST"`.
+- [x] +2 tests vitest dans `useNoteTree.test.js` (tag substring +
+      content ids). PHPUnit reste vert (58/58 sur les Notes).
+
 ### Raccourcis clavier markdown ✅ (fait, 2026-05-16)
 
 - [x] Composable `useMarkdownShortcuts.js` (port d'Onyx). 10 raccourcis

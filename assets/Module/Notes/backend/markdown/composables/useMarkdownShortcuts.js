@@ -100,8 +100,7 @@ export function handleMarkdownShortcut(event, textarea, content) {
     if (!isMod) return null;
 
     const shortcut = SHORTCUTS.find(
-        (s) =>
-            s.key === event.key.toLowerCase() && s.shift === event.shiftKey,
+        (s) => s.key === event.key.toLowerCase() && s.shift === event.shiftKey,
     );
     if (!shortcut) return null;
 

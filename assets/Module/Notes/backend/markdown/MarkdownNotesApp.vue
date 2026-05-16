@@ -30,6 +30,7 @@ const props = defineProps({
     backlinksPath: { type: String, required: true },
     unlinkedMentionsPath: { type: String, required: true },
     graphPath: { type: String, required: true },
+    searchPath: { type: String, required: true },
     tagsListPath: { type: String, required: true },
     tagsRenamePath: { type: String, required: true },
     tagsMergePath: { type: String, required: true },

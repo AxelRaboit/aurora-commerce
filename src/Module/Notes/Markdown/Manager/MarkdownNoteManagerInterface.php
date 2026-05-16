@@ -66,6 +66,18 @@ interface MarkdownNoteManagerInterface
     public function tagCounts(CoreUserInterface $user): array;
 
     /**
+     * Full-text search the user's notes — matches against decrypted
+     * `content` (case-insensitive substring). Title / tag matches are
+     * handled client-side from the flat list (those fields ship in the
+     * sidebar payload), so this method intentionally focuses on the
+     * one field the client doesn't have. Empty or whitespace-only
+     * queries return an empty list.
+     *
+     * @return list<int>
+     */
+    public function searchContent(CoreUserInterface $user, string $query): array;
+
+    /**
      * Replace every occurrence of `$oldTag` by `$newTag` across the user's
      * notes. Dedupes when the target tag is already present on the same
      * note. Returns the number of notes mutated.

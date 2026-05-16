@@ -111,4 +111,43 @@ describe("useNoteTree", () => {
 
         expect(tree.value).toHaveLength(0);
     });
+
+    it("matches a query against any tag substring", () => {
+        const notes = ref(flatNotes);
+        // "intro" is a tag carried by ids 1 and 2 — no title contains
+        // it, so only the tag match drives the result.
+        const query = ref("intro");
+        const { tree } = useNoteTree(notes, query);
+
+        expect(tree.value).toHaveLength(1);
+        expect(tree.value[0].id).toBe(1);
+        expect(tree.value[0].matched).toBe(true);
+        expect(tree.value[0].children.map((c) => c.id)).toEqual([2]);
+    });
+
+    it("includes notes whose ids appear in the contentMatchIds set", () => {
+        const notes = ref(flatNotes);
+        // "errands" isn't a title or tag substring for note 3, but if
+        // the backend reports it as a content match we should keep it.
+        const query = ref("errands");
+        const tags = ref([]);
+        const contentIds = ref(new Set([3]));
+        const { tree } = useNoteTree(notes, query, tags, contentIds);
+
+        const ids = collectIds(tree.value);
+        expect(ids).toContain(3); // pulled in by content match
+        expect(ids).toContain(5); // matched by title "Errands"
+    });
 });
+
+function collectIds(nodes) {
+    const out = [];
+    function walk(list) {
+        for (const n of list) {
+            out.push(n.id);
+            walk(n.children ?? []);
+        }
+    }
+    walk(nodes);
+    return out;
+}

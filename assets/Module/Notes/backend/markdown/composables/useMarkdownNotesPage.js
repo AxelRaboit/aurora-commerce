@@ -1,5 +1,6 @@
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { Pencil, Eye, Columns } from "lucide-vue-next";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useMarkdownNotesApi } from "@notes/backend/markdown/composables/useMarkdownNotesApi.js";
 import { useNotesEditor } from "@notes/backend/markdown/composables/useNotesEditor.js";
 import { useNoteTree } from "@notes/backend/markdown/composables/useNoteTree.js";
@@ -64,7 +65,44 @@ export function useMarkdownNotesPage(props, t) {
         clearTags,
         pruneMissingTags,
     } = useNoteTagFilter(notes);
-    const { tree } = useNoteTree(notes, treeQuery, selectedTags);
+
+    // Server-side content search. The tree filter handles title + tags
+    // client-side (we already have those fields in the flat list), but
+    // note content isn't shipped to the browser — we have to round-trip
+    // a debounced fetch to the `/search` endpoint and merge its matching
+    // ids back in. Empty query short-circuits to an empty set so we
+    // don't hit the endpoint on the way back to "no filter".
+    const contentMatchIds = ref(new Set());
+    const contentSearchLoading = ref(false);
+    const runContentSearch = useDebounce(async (query) => {
+        if (!query) {
+            contentMatchIds.value = new Set();
+            contentSearchLoading.value = false;
+            return;
+        }
+        const { ok, payload } = await api.searchContent(query);
+        contentMatchIds.value = new Set(
+            ok ? (payload.ids ?? []).map((id) => Number(id)) : [],
+        );
+        contentSearchLoading.value = false;
+    }, 300);
+    watch(treeQuery, (q) => {
+        const trimmed = q.trim();
+        if (trimmed === "") {
+            contentMatchIds.value = new Set();
+            contentSearchLoading.value = false;
+            return;
+        }
+        contentSearchLoading.value = true;
+        runContentSearch(trimmed);
+    });
+
+    const { tree } = useNoteTree(
+        notes,
+        treeQuery,
+        selectedTags,
+        contentMatchIds,
+    );
 
     /**
      * After a global tag rename / merge / delete, refresh the flat
@@ -156,6 +194,7 @@ export function useMarkdownNotesPage(props, t) {
         // sidebar tree + tags
         tree,
         treeQuery,
+        contentSearchLoading,
         availableTags,
         selectedTags,
         toggleTag,

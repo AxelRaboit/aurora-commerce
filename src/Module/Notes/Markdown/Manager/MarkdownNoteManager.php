@@ -269,6 +269,35 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
         return $this->noteRepository->findTagCountsForUser($user);
     }
 
+    public function searchContent(CoreUserInterface $user, string $query): array
+    {
+        $needle = mb_strtolower(mb_trim($query));
+        if ('' === $needle) {
+            return [];
+        }
+
+        $matches = [];
+        // Loads every decrypted note in memory — acceptable for the
+        // current per-user volumes (≤ a few hundred notes). If this
+        // ever grows, swap for a DB-side `LIKE` against an indexed
+        // plain-text column or a real full-text index.
+        foreach ($this->noteRepository->findAllWithContentForUser($user) as $note) {
+            $content = $note->getContent();
+            if (null === $content) {
+                continue;
+            }
+            if ('' === $content) {
+                continue;
+            }
+
+            if (str_contains(mb_strtolower($content), $needle)) {
+                $matches[] = $note->getId();
+            }
+        }
+
+        return $matches;
+    }
+
     public function renameTag(CoreUserInterface $user, string $oldTag, string $newTag): int
     {
         $oldTag = mb_trim($oldTag);
