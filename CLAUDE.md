@@ -170,8 +170,10 @@ Exemples qui passent le filtre :
    cas hypothétique = non.
 
 Cette philosophie remplace la règle générique "Don't design for
-hypothetical future requirements" pour ce repo. Voir la mémoire
-[`preference_think_long_term.md`](.claude/memory/aurora-core/preferences/).
+hypothetical future requirements" pour **l'écosystème Aurora entier**
+(core + clients). Voir la mémoire shared
+[`pref_think_long_term.md`](.claude/memory/aurora-shared/pref_think_long_term.md) —
+distribuée via composer aux clients.
 
 ---
 
@@ -240,6 +242,8 @@ Conventions :
   passé. Voir `docs/aurora-core/dev/deployment/apache_xsendfile.md`
 
 Doc canonique : `docs/aurora-core/dev/storage_policy.md`.
+Mémoire shared (distribuée aux clients) :
+[`convention_storage_var_uploads.md`](.claude/memory/aurora-shared/convention_storage_var_uploads.md).
 
 ---
 

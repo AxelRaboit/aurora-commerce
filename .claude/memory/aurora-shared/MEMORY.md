@@ -20,6 +20,11 @@ Distribué via composer : les clients lisent ces mémoires depuis
   UI-only), toute logique métier (état orchestré, watchers, autosave, HTTP,
   state machine) va dans un composable co-localisé. Limite : ~80 lignes de
   `<script setup>`.
+- [convention_storage_var_uploads.md](convention_storage_var_uploads.md) —
+  **règle dure** : tout fichier stocké vit sous `var/uploads/<categorie>/`,
+  jamais `public/`. Servi exclusivement via PHP (`BinaryFileServer`).
+  URL building via service dédié injecté, jamais hardcodé dans les
+  entités. Apache `mod_xsendfile` offload en prod.
 
 ## Vue / composants
 
@@ -77,6 +82,10 @@ Distribué via composer : les clients lisent ces mémoires depuis
   toujours en anglais
 - [pref_french_dialogue.md](pref_french_dialogue.md) — dialogue conversationnel
   en français, code et commits en anglais
+- [pref_think_long_term.md](pref_think_long_term.md) — **inverse de YAGNI** :
+  anticiper les abstractions SOLID dès qu'elles sont saines, même sans
+  utilisateur concret immédiat. Garde-fous explicites contre
+  l'over-engineering aveugle. S'applique core ET client.
 
 ---
 

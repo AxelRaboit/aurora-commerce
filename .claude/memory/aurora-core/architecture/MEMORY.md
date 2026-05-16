@@ -1,7 +1,6 @@
 # Architecture & Décisions
 
 - [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : cascade graph, convention clés sans `_enabled`
-- [decision_storage_var_uploads.md](decision_storage_var_uploads.md) — Tous fichiers stockés vivent sous `var/uploads/<categorie>/`. Aucun Apache direct serve, controllers + UrlGenerator (entités sans `getPublicUrl()`). X-Sendfile prod.
 - [pattern_core_submodules_split.md](pattern_core_submodules_split.md) — Core est 5 `<Name>Module.php` (GeneralModule/PlatformModule/MediaModule/ConfigurationModule/DevModule), pas un god-class. Pattern "1 module = 1 section = 1 toggle root = 1 context" uniforme avec les modules métier
 - [pattern_configuration_tab_provider.md](pattern_configuration_tab_provider.md) — `ConfigurationTabProviderInterface` + `SettingDefinitionRegistry` : un module contribue ses onglets dans la page Settings sans patcher le core
 - [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`
