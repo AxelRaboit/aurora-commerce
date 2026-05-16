@@ -45,9 +45,25 @@ Aurora (`ModuleInterface`, `MediaUsageProviderInterface`,
 Cohérent avec la convention "Sylius-style" : le core fournit le contrat, le
 client/module implémente.
 
-Phase B (à venir) : sortir progressivement les groupes
-`crm`/`ecommerce`/`editorial`/… de `ApplicationParameterEnum` vers leurs
-modules respectifs.
+Phase B (en cours, pilote livré pour `ecommerce` + `crm` au commit
+`b893048c`) : sortir progressivement les groupes de `ApplicationParameterEnum`
+vers leurs modules respectifs. Convention pilote :
+
+- `src/Module/<Name>/Setting/<Name>SettingEnum.php` — enum implémentant
+  `ApplicationParameterEnumInterface` (port direct du contrat existant).
+- `src/Module/<Name>/Setting/<Name>ConfigurationTabProvider.php` — itère
+  l'enum, construit la `ConfigurationTab`. `final readonly`.
+- Traductions `backend.parameters.<key>.*` + `backend.settings.tabs.<id>` +
+  `_description` vivent dans le `messages.<locale>.yaml` du module.
+- Setting keys persistées **inchangées** entre core et module (zéro
+  migration SQL).
+- `SettingRepository::getOrDefault()` accepte l'interface — les enums
+  modules y passent directement.
+
+Modules restants à migrer (Phase B suite) : editorial (prefixes),
+billing (prefixes), photo (prefixes), ged (prefixes), pdfform (prefixes),
+project, planning, hr, vault. Tous sont des préfixes de séquences →
+contribueront au tab partagé `sequences` (merge-by-id du registry).
 
 Phase C (à venir) : registre Vue côté assets pour permettre aux clients de
 fournir leurs propres composants custom (équivalent du
