@@ -34,6 +34,7 @@ UX distinctes :
 | Syntax highlighting code blocks (highlight.js) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Images (upload + serve + cleanup) | ⏳ À faire | [images.md](markdown/images.md) |
 | Script d'import depuis Onyx | ⏳ À faire | [import.md](markdown/import.md) |
+| Responsive mobile (sidebar / éditeur / popovers / graphe) | ⏳ À faire | [editor.md](markdown/editor.md) |
 
 ### [`block/`](block/) — Notes Block (EditorJS)
 
@@ -47,7 +48,13 @@ Par ROI décroissant :
 1. **Images** — drag-drop upload + endpoint serve + cleanup orphelines
    au save/delete. Plus lourd (storage + sécurité) mais feature
    bloquante pour usage réel.
-2. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
+2. **Responsive mobile** — l'éditeur 3-panes (sidebar + édition +
+   preview) est pensé desktop. Sur mobile il faut un layout
+   alternatif : sidebar en drawer escamotable, mode édition OU preview
+   (pas split), repositionnement des popovers slash/wiki pour qu'ils
+   ne sortent pas du viewport, taille adaptée du graphe (canvas
+   pleine largeur).
+3. **Import Onyx** — commande Symfony one-shot, à faire quand on aura
    du contenu Onyx à migrer.
 
 ## Architecture commune

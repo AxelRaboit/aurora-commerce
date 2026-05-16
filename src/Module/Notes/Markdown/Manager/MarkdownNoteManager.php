@@ -286,6 +286,7 @@ class MarkdownNoteManager implements MarkdownNoteManagerInterface
             if (null === $content) {
                 continue;
             }
+
             if ('' === $content) {
                 continue;
             }

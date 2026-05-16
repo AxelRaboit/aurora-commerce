@@ -126,6 +126,39 @@ Commits `46c6e59d` (scaffold UI) + `48131a9a` (live preview) + `f03548a8` (side 
       les popovers slash/wiki.
 - [x] Tests vitest : 14 cas (chaque raccourci + Cmd vs Ctrl).
 
+### Responsive mobile ⏳ À faire
+
+L'éditeur est aujourd'hui conçu desktop : layout flex 3 colonnes
+(sidebar 288px + édition splittable + preview), popovers slash/wiki
+positionnés via mirror-div sans clamp viewport, modale graphe à
+`max-w-6xl × 80vh`. Sur écran étroit (< ~768px) tout déborde ou
+s'écrase.
+
+Chantiers à prévoir :
+- [ ] **Sidebar** → drawer escamotable derrière un bouton burger
+      (overlay translucide quand ouverte). Ferme sur sélection d'une
+      note pour libérer la vue éditeur.
+- [ ] **Layout éditeur** : forcer `viewMode='edit'` ou `'preview'`
+      sur mobile (le split 50/50 n'a pas de sens en portrait), avec
+      un toggle pour basculer.
+- [ ] **Popovers slash + wiki** : clamp horizontal pour qu'ils ne
+      sortent pas du viewport (recalculer `left` après le mirror-div
+      avec `Math.min(left, window.innerWidth - menuWidth - 8)`).
+      Idéalement aussi un bottom-clamp pour pousser le menu au-dessus
+      du curseur quand il déborderait en bas.
+- [ ] **Modale graphe** : passer en plein écran sur mobile
+      (`max-w-full max-h-screen` au lieu de `max-w-6xl × 80vh`).
+      Le canvas custom respecte déjà DPR, juste à adapter la taille.
+- [ ] **Tags input + filtre** : actuellement deux rangées dans la
+      sidebar — empilage vertical OK, vérifier que les pills tags
+      wrappent correctement.
+- [ ] **Side panel backlinks/mentions** : sur mobile l'ouvrir en
+      plein écran plutôt qu'en panneau collé à droite.
+
+Aucun travail backend nécessaire — c'est purement Tailwind/CSS +
+quelques refactors dans `MarkdownNotesApp.vue` autour des
+breakpoints `md:` / `lg:`.
+
 ### À considérer plus tard (Onyx avait, on a pas encore)
 
 - [ ] **Note du jour** — action UI qui ouvre/crée la note `YYYY-MM-DD`.
