@@ -8,6 +8,7 @@ use Aurora\Module\PdfForm\Enum\PdfTemplateStatusEnum;
 use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
 use Aurora\Module\PdfForm\PdfTemplate\Serializer\PdfTemplateSerializer;
 use Aurora\Module\PdfForm\PdfTemplateField\Serializer\PdfTemplateFieldSerializerInterface;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class PdfTemplateSerializerTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     private PdfTemplateSerializer $serializer;
 
     protected function setUp(): void
@@ -25,7 +28,7 @@ final class PdfTemplateSerializerTest extends TestCase
         $fieldSerializer = $this->createStub(PdfTemplateFieldSerializerInterface::class);
         $fieldSerializer->method('serialize')->willReturn([]);
 
-        $this->serializer = new PdfTemplateSerializer($translator, $fieldSerializer);
+        $this->serializer = new PdfTemplateSerializer($translator, $fieldSerializer, $this->makeMediaUrlGenerator());
     }
 
     private function makeTemplateStub(bool $requiresSignature = false, bool $flattenOnGenerate = false): PdfTemplateInterface

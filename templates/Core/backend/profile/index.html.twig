@@ -14,7 +14,7 @@
 <div {{ vue_component('core/backend/profile/ProfileApp', {
     userName: app.user.name,
     userEmail: app.user.email,
-    userPhotoUrl: app.user.profilePhotoUrl ?? '',
+    userPhotoUrl: aurora_profile_photo_url(app.user) ?? '',
     userMoodMessage: app.user.moodMessage ?? '',
     moodMessageMaxLength: moodMessageMaxLength,
     locale: app.request.locale,

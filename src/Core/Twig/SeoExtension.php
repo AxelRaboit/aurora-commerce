@@ -12,6 +12,7 @@ use Aurora\Core\Setting\Repository\SettingRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Attribute\AsTwigFunction;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 /**
  * Builds the SEO/Open Graph/Twitter Cards payload consumed by the public `head.html.twig` partial.
@@ -37,6 +38,7 @@ final readonly class SeoExtension
         private SettingRepository $settingRepository,
         private MediaRepository $mediaRepository,
         private RequestStack $requestStack,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     /**
@@ -166,7 +168,7 @@ final readonly class SeoExtension
     private function extractUrl(mixed $image): string
     {
         if ($image instanceof MediaInterface) {
-            return $image->getPublicUrl();
+            return $this->mediaUrlGenerator->publicUrl($image);
         }
 
         if (is_array($image) && isset($image['publicUrl']) && is_string($image['publicUrl'])) {
@@ -195,7 +197,7 @@ final readonly class SeoExtension
             return null;
         }
 
-        return $this->mediaRepository->find($mediaId)?->getPublicUrl();
+        return $this->mediaUrlGenerator->publicUrl($this->mediaRepository->find($mediaId));
     }
 
     private function absolutize(string $url, string $siteUrl): string

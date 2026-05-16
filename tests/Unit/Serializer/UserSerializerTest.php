@@ -8,6 +8,7 @@ use Aurora\Core\User\Entity\AbstractUser;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Serializer\UserSerializer;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -15,13 +16,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class UserSerializerTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     private UserSerializer $serializer;
 
     protected function setUp(): void
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
-        $this->serializer = new UserSerializer($translator);
+        $this->serializer = new UserSerializer($translator, $this->makeUserProfilePhotoUrlGenerator());
     }
 
     public function testRolePriorityReflectsDevRoleEvenThoughBadgeHidesIt(): void

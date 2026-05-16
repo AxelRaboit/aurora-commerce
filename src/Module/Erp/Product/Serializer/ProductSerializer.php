@@ -10,11 +10,14 @@ use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(ProductSerializerInterface::class)]
 class ProductSerializer implements ProductSerializerInterface
 {
-    public function __construct(protected readonly SettingRepository $settingRepository) {}
+    public function __construct(protected readonly SettingRepository $settingRepository,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+    ) {}
 
     public function serialize(ProductInterface $product): array
     {
@@ -45,7 +48,7 @@ class ProductSerializer implements ProductSerializerInterface
             'requiresShipping' => $product->getType()->requiresShipping(),
             'image' => $image instanceof MediaInterface ? [
                 'id' => $image->getId(),
-                'url' => $image->getPublicUrl(),
+                'url' => $this->mediaUrlGenerator->publicUrl($image),
                 'alt' => $image->getAlt(),
             ] : null,
             'stockQuantity' => $stockQuantity,

@@ -89,8 +89,6 @@ interface CoreUserInterface extends UserInterface, PasswordAuthenticatedUserInte
 
     public function setProfilePhotoPath(?string $profilePhotoPath): static;
 
-    public function getProfilePhotoUrl(): ?string;
-
     public function getMoodMessage(): ?string;
 
     public function setMoodMessage(?string $moodMessage): static;

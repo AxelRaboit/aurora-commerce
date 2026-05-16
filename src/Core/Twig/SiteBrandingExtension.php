@@ -9,12 +9,14 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 final class SiteBrandingExtension extends AbstractExtension implements GlobalsInterface
 {
     public function __construct(
         private readonly SettingRepository $settingRepository,
         private readonly MediaRepository $mediaRepository,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function getGlobals(): array
@@ -44,6 +46,6 @@ final class SiteBrandingExtension extends AbstractExtension implements GlobalsIn
 
         $media = $this->mediaRepository->find($mediaId);
 
-        return $media?->getPublicUrl();
+        return $this->mediaUrlGenerator->publicUrl($media);
     }
 }

@@ -244,21 +244,6 @@ abstract class AbstractMedia implements MediaInterface
         return $this->variants[$size] ?? null;
     }
 
-    /**
-     * URL pointing at the named variant (thumbnail, medium, large, …).
-     * Returns `null` when the variant doesn't exist for this media.
-     *
-     * The URL is `/uploads/{path}` — a Symfony catch-all route served
-     * by {@see \Aurora\Core\Storage\Controller\UploadsServeController}
-     * from `var/uploads/`, never directly by Apache.
-     * See `docs/aurora-core/dev/storage_policy.md`.
-     */
-    public function getVariantUrl(string $size): ?string
-    {
-        $path = $this->getVariantPath($size);
-
-        return null === $path ? null : '/uploads/'.$path;
-    }
 
     /**
      * Returns a CSS object-position value like "50% 25%" based on the focal
@@ -280,18 +265,6 @@ abstract class AbstractMedia implements MediaInterface
     public function isVideo(): bool
     {
         return str_starts_with($this->mimeType, 'video/');
-    }
-
-    /**
-     * URL pointing at the original media file. Always routed through
-     * the `/uploads/{path}` Symfony catch-all (UploadsServeController) —
-     * never directly served by Apache so path-traversal guard +
-     * optional per-area auth checks run in PHP first
-     * (see `docs/aurora-core/dev/storage_policy.md`).
-     */
-    public function getPublicUrl(): string
-    {
-        return '/uploads/'.$this->path;
     }
 
     public function getPosition(): int

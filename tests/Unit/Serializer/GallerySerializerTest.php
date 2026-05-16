@@ -20,6 +20,7 @@ use Aurora\Module\Photo\Gallery\Repository\GalleryItemCommentRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryPickRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
 use Aurora\Module\Photo\Gallery\Serializer\GallerySerializer;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use DateTimeInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -29,6 +30,8 @@ use ReflectionProperty;
 #[AllowMockObjectsWithoutExpectations]
 final class GallerySerializerTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     private GalleryPickRepository $pickRepository;
     private GalleryItemCommentRepository $commentRepository;
     private GalleryFinalizationRepository $finalizationRepository;
@@ -54,6 +57,7 @@ final class GallerySerializerTest extends TestCase
             $this->finalizationRepository,
             $this->inviteRepository,
             $this->galleryRepository,
+            $this->makeMediaUrlGenerator(),
         );
     }
 
@@ -342,7 +346,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository);
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeMediaUrlGenerator());
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -383,7 +387,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([$invite]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository);
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeMediaUrlGenerator());
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -411,7 +415,7 @@ final class GallerySerializerTest extends TestCase
         $finalizations->method('findAllForGallery')->willReturn([$finalization]);
         $finalizations->method('countForGallery')->willReturn(1);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository);
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeMediaUrlGenerator());
 
         $rows = $serializer->serializeInvites($gallery);
 
@@ -477,6 +481,7 @@ final class GallerySerializerTest extends TestCase
             $this->finalizationRepository,
             $this->inviteRepository,
             $this->galleryRepository,
+            $this->makeMediaUrlGenerator(),
         );
 
         $payload = $serializer->serializeComments($gallery);

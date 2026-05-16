@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[Route('/backend/media', name: 'backend_media')]
 #[IsGranted('media.view')]
@@ -48,6 +49,7 @@ class MediaController extends AbstractController
         private readonly MediaUsageService $mediaUsageService,
         private readonly MediaViewBuilder $viewBuilder,
         private readonly MediaInputFactoryInterface $mediaInputFactory,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -146,7 +148,7 @@ class MediaController extends AbstractController
             'success' => 1,
             'file' => [
                 'id' => $media->getId(),
-                'url' => $media->getPublicUrl(),
+                'url' => $this->mediaUrlGenerator->publicUrl($media),
                 'width' => $media->getWidth(),
                 'height' => $media->getHeight(),
             ],

@@ -31,6 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function in_array;
+use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 
 #[Route('/backend/profile', name: 'backend_profile')]
 #[IsGranted(UserRoleEnum::User->value)]
@@ -47,6 +48,7 @@ final class ProfileController extends AbstractController
         private readonly ProfileViewBuilder $viewBuilder,
         private readonly UserRepository $userRepository,
         private readonly ModuleRegistry $moduleRegistry,
+        protected readonly UserProfilePhotoUrlGenerator $userProfilePhotoUrlGenerator,
     ) {}
 
     #[Route('', name: '')]
@@ -171,7 +173,7 @@ final class ProfileController extends AbstractController
             return $this->jsonInvalidInput(['photo' => $invalidArgumentException->getMessage()]);
         }
 
-        return $this->jsonSuccess(['profilePhotoUrl' => $user->getProfilePhotoUrl()]);
+        return $this->jsonSuccess(['profilePhotoUrl' => $this->userProfilePhotoUrlGenerator->url($user)]);
     }
 
     #[Route('/photo/delete', name: '_photo_delete', methods: [HttpMethodEnum::Post->value])]

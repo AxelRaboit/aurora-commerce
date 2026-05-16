@@ -8,12 +8,14 @@ use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(DocumentSerializerInterface::class)]
 class DocumentSerializer implements DocumentSerializerInterface
 {
     public function __construct(
         protected readonly TranslatorInterface $translator,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function serialize(DocumentInterface $document): array
@@ -34,7 +36,7 @@ class DocumentSerializer implements DocumentSerializerInterface
             'categoryName' => $category?->getName(),
             'fileId' => $file?->getId(),
             'fileName' => $file?->getFileName(),
-            'fileUrl' => $file?->getPublicUrl(),
+            'fileUrl' => $this->mediaUrlGenerator->publicUrl($file),
             'fileMime' => $file?->getMimeType(),
             'fileSize' => $file?->getSize(),
             'tagIds' => $document->getTags()->map(static fn ($tag): ?int => $tag->getId())->toArray(),

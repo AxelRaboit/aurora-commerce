@@ -11,6 +11,7 @@ use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DocumentSerializerTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     private TranslatorInterface $translator;
     private DocumentSerializer $serializer;
 
@@ -25,7 +28,7 @@ final class DocumentSerializerTest extends TestCase
     {
         $this->translator = $this->createStub(TranslatorInterface::class);
         $this->translator->method('trans')->willReturnArgument(0);
-        $this->serializer = new DocumentSerializer($this->translator);
+        $this->serializer = new DocumentSerializer($this->translator, $this->makeMediaUrlGenerator());
     }
 
     private function makeDocument(
@@ -105,7 +108,7 @@ final class DocumentSerializerTest extends TestCase
         $file = $this->createStub(MediaInterface::class);
         $file->method('getId')->willReturn(10);
         $file->method('getFileName')->willReturn('report.pdf');
-        $file->method('getPublicUrl')->willReturn('/uploads/report.pdf');
+        $file->method('getPath')->willReturn('report.pdf');
         $file->method('getMimeType')->willReturn('application/pdf');
         $file->method('getSize')->willReturn(98765);
 

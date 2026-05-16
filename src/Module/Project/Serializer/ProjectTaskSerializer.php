@@ -9,6 +9,7 @@ use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(ProjectTaskSerializerInterface::class)]
 class ProjectTaskSerializer implements ProjectTaskSerializerInterface
@@ -16,6 +17,7 @@ class ProjectTaskSerializer implements ProjectTaskSerializerInterface
     public function __construct(
         protected readonly TranslatorInterface $translator,
         protected readonly ProjectTaskCommentSerializerInterface $commentSerializer,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function serialize(ProjectTaskInterface $task): array
@@ -61,10 +63,10 @@ class ProjectTaskSerializer implements ProjectTaskSerializerInterface
             'itemsDone' => $itemsDoneCount,
             'comments' => array_map($this->commentSerializer->serialize(...), $task->getComments()->toArray()),
             'commentCount' => $task->getComments()->count(),
-            'attachments' => array_map(static fn ($media): array => [
+            'attachments' => array_map(fn ($media): array => [
                 'id' => $media->getId(),
                 'name' => $media->getOriginalName(),
-                'url' => $media->getPublicUrl(),
+                'url' => $this->mediaUrlGenerator->publicUrl($media),
                 'mime' => $media->getMimeType(),
             ], $task->getAttachments()->toArray()),
             'watcherIds' => array_map(static fn ($watcher): int => (int) $watcher->getId(), $task->getWatchers()->toArray()),

@@ -19,6 +19,7 @@ use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use Aurora\Module\Project\Serializer\ProjectTaskCommentSerializer;
 use Aurora\Module\Project\Serializer\ProjectTaskSerializer;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -26,13 +27,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProjectTaskSerializerTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     private ProjectTaskSerializer $serializer;
 
     protected function setUp(): void
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
-        $this->serializer = new ProjectTaskSerializer($translator, new ProjectTaskCommentSerializer());
+        $this->serializer = new ProjectTaskSerializer($translator, new ProjectTaskCommentSerializer(), $this->makeMediaUrlGenerator());
     }
 
     private function makeTask(): ProjectTask

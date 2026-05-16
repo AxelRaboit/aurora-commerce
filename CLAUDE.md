@@ -137,6 +137,44 @@ Patterns clés pour étendre :
 
 ---
 
+## 3bis. Philosophie d'architecture — "penser long terme"
+
+**Préférence utilisateur (2026-05-16)** : sur ce projet, on **anticipe**
+les évolutions plutôt que d'attendre qu'un besoin force la refacto. Le
+défaut Aurora n'est PAS "Three similar lines is better than a premature
+abstraction" — c'est l'inverse :
+
+> **Si une abstraction est architecturalement saine (SOLID, séparation
+> des concerns, extensibilité documentée), faire la refacto MAINTENANT
+> même sans utilisateur concret immédiat.**
+
+Exemples qui passent le filtre :
+- Séparer domaine ↔ présentation (entités sans `getPublicUrl()`,
+  URL building via `UrlGeneratorInterface` injecté)
+- Sortir un helper partagé dès le 3e site similaire (cf. `Num::clamp`)
+- Conventions extensibilité Sylius-style sur les entités CRUD
+  (Interface + non-final + hooks `protected`)
+- Settings admin éditables même pour 1 client unique (préparer multi-deploy)
+- Routes sémantiques par module (jamais hardcoder `/uploads/...`)
+
+**Garde-fous quand même** (penser grand ≠ over-engineering aveugle) :
+1. **Pas d'interface sans implémenteur multiple plausible**
+   (`MarkdownNoteImageServiceInterface` sans 2nd service serait du fluff)
+2. **Pas de hook sans usecase d'override identifié**
+   (méthode `protected` qui ne sera jamais surchargée = bruit)
+3. **Pas de config sans utilisateur** (un setting Aurora-bundle = OK
+   car les clients consommateurs peuvent en avoir besoin ; un setting
+   sur une app one-shot = non)
+4. **Le coût doit rester proportionnel** — refactor 22 fichiers pour
+   séparer domaine/HTTP = OK. Ajouter 8 classes d'abstraction pour un
+   cas hypothétique = non.
+
+Cette philosophie remplace la règle générique "Don't design for
+hypothetical future requirements" pour ce repo. Voir la mémoire
+[`preference_think_long_term.md`](.claude/memory/aurora-core/preferences/).
+
+---
+
 ## 4. Conventions de naming (à appliquer)
 
 - **Variables** : noms complets (jamais 1-2 lettres). Ex : `$company`, pas

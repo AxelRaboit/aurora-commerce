@@ -13,6 +13,7 @@ use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(ListingSerializerInterface::class)]
 class ListingSerializer implements ListingSerializerInterface
@@ -21,6 +22,7 @@ class ListingSerializer implements ListingSerializerInterface
         protected readonly SettingRepository $settingRepository,
         protected readonly RequestStack $requestStack,
         protected readonly LocaleContextInterface $localeContext,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function serialize(ListingInterface $listing): array
@@ -47,12 +49,12 @@ class ListingSerializer implements ListingSerializerInterface
             'seoDescription' => $listing->getSeoDescription(),
             'featuredImage' => $listing->getFeaturedImage() instanceof MediaInterface ? [
                 'id' => $listing->getFeaturedImage()->getId(),
-                'url' => $listing->getFeaturedImage()->getPublicUrl(),
+                'url' => $this->mediaUrlGenerator->publicUrl($listing->getFeaturedImage()),
                 'alt' => $listing->getFeaturedImage()->getAlt(),
             ] : null,
             'displayImage' => $displayImage instanceof MediaInterface ? [
                 'id' => $displayImage->getId(),
-                'url' => $displayImage->getPublicUrl(),
+                'url' => $this->mediaUrlGenerator->publicUrl($displayImage),
                 'alt' => $displayImage->getAlt(),
             ] : null,
             'product' => [

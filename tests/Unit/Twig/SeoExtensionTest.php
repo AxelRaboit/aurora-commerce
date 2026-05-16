@@ -12,6 +12,7 @@ use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Core\Twig\SeoExtension;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[AllowMockObjectsWithoutExpectations]
 final class SeoExtensionTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     public function testAppliesTitleTemplateAndDefaults(): void
     {
         $extension = $this->makeExtension(siteName: 'MonSite', siteUrl: 'https://monsite.com');
@@ -72,7 +75,7 @@ final class SeoExtensionTest extends TestCase
     public function testExtractsImageUrlFromMediaEntity(): void
     {
         $media = $this->createMock(MediaInterface::class);
-        $media->method('getPublicUrl')->willReturn('/uploads/x.jpg');
+        $media->method('getPath')->willReturn('x.jpg');
 
         $extension = $this->makeExtension(siteUrl: 'https://monsite.com');
         $seo = $extension->build(['image' => $media]);
@@ -163,6 +166,6 @@ final class SeoExtensionTest extends TestCase
 
         $mediaRepo = $this->createMock(MediaRepository::class);
 
-        return new SeoExtension($context, $settings, $mediaRepo, $stack);
+        return new SeoExtension($context, $settings, $mediaRepo, $stack, $this->makeMediaUrlGenerator());
     }
 }

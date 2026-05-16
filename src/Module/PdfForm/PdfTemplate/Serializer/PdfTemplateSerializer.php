@@ -9,6 +9,7 @@ use Aurora\Module\PdfForm\PdfTemplateField\Serializer\PdfTemplateFieldSerializer
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(PdfTemplateSerializerInterface::class)]
 class PdfTemplateSerializer implements PdfTemplateSerializerInterface
@@ -16,6 +17,7 @@ class PdfTemplateSerializer implements PdfTemplateSerializerInterface
     public function __construct(
         protected readonly TranslatorInterface $translator,
         protected readonly PdfTemplateFieldSerializerInterface $fieldSerializer,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function serialize(PdfTemplateInterface $template): array
@@ -30,7 +32,7 @@ class PdfTemplateSerializer implements PdfTemplateSerializerInterface
             'statusLabel' => $this->translator->trans($template->getStatus()->getLabelKey()),
             'fileId' => $file?->getId(),
             'fileName' => $file?->getOriginalName(),
-            'fileUrl' => $file?->getPublicUrl(),
+            'fileUrl' => $this->mediaUrlGenerator->publicUrl($file),
             'flattenOnGenerate' => $template->isFlattenOnGenerate(),
             'requiresSignature' => $template->isRequiresSignature(),
             'fieldCount' => $template->getFields()->count(),

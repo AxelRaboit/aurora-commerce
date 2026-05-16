@@ -94,6 +94,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 /**
  * Comprehensive demo fixtures covering all Aurora modules.
@@ -111,6 +112,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         #[Autowire('%app.upload_dir%')]
         private readonly string $uploadDir,
         private readonly Filesystem $fs = new Filesystem(),
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public static function getGroups(): array
@@ -377,10 +379,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $createdPosts = [];
 
-        $u0 = isset($media[0]) ? $media[0]->getPublicUrl().'?v=0' : '';
-        $u1 = isset($media[1]) ? $media[1]->getPublicUrl().'?v=0' : '';
-        $u2 = isset($media[2]) ? $media[2]->getPublicUrl().'?v=0' : '';
-        $u3 = isset($media[3]) ? $media[3]->getPublicUrl().'?v=0' : '';
+        $u0 = isset($media[0]) ? $this->mediaUrlGenerator->publicUrl($media[0]).'?v=0' : '';
+        $u1 = isset($media[1]) ? $this->mediaUrlGenerator->publicUrl($media[1]).'?v=0' : '';
+        $u2 = isset($media[2]) ? $this->mediaUrlGenerator->publicUrl($media[2]).'?v=0' : '';
+        $u3 = isset($media[3]) ? $this->mediaUrlGenerator->publicUrl($media[3]).'?v=0' : '';
 
         $tag = static function (Post $post, array $slugs, array $allTerms): void {
             foreach ($slugs as $slug) {
@@ -525,10 +527,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
 
         // French-only posts — richer variety to showcase taxonomy filtering
-        $img0 = isset($media[0]) ? $media[0]->getPublicUrl() : '';
-        $img1 = isset($media[1]) ? $media[1]->getPublicUrl() : '';
-        $img2 = isset($media[2]) ? $media[2]->getPublicUrl() : '';
-        $img3 = isset($media[3]) ? $media[3]->getPublicUrl() : '';
+        $img0 = isset($media[0]) ? $this->mediaUrlGenerator->publicUrl($media[0]) : '';
+        $img1 = isset($media[1]) ? $this->mediaUrlGenerator->publicUrl($media[1]) : '';
+        $img2 = isset($media[2]) ? $this->mediaUrlGenerator->publicUrl($media[2]) : '';
+        $img3 = isset($media[3]) ? $this->mediaUrlGenerator->publicUrl($media[3]) : '';
 
         $frDefs = [
             [

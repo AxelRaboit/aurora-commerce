@@ -11,12 +11,14 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use const DATE_ATOM;
+use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 
 #[AsAlias(UserSerializerInterface::class)]
 class UserSerializer implements UserSerializerInterface
 {
     public function __construct(
         protected readonly TranslatorInterface $translator,
+        protected readonly UserProfilePhotoUrlGenerator $userProfilePhotoUrlGenerator,
     ) {}
 
     /**
@@ -54,7 +56,7 @@ class UserSerializer implements UserSerializerInterface
             'status' => $user->getStatus()->value,
             'statusLabel' => $this->translator->trans($user->getStatus()->getLabelKey()),
             'locale' => $user->getLocale()->value,
-            'profilePhotoUrl' => $user->getProfilePhotoUrl(),
+            'profilePhotoUrl' => $this->userProfilePhotoUrlGenerator->url($user),
             'moodMessage' => $user->getMoodMessage(),
             'moodMessageMaxLength' => User::MOOD_MESSAGE_MAX_LENGTH,
             'managerId' => $manager?->getId(),

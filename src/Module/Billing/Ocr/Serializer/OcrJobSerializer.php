@@ -10,6 +10,7 @@ use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(OcrJobSerializerInterface::class)]
 class OcrJobSerializer implements OcrJobSerializerInterface
@@ -17,6 +18,7 @@ class OcrJobSerializer implements OcrJobSerializerInterface
     public function __construct(
         protected readonly TranslatorInterface $translator,
         protected readonly InvoiceRepository $invoiceRepository,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function serialize(OcrJobInterface $job): array
@@ -26,7 +28,7 @@ class OcrJobSerializer implements OcrJobSerializerInterface
         return [
             'id' => $job->getId(),
             'fileName' => $job->getMedia()->getOriginalName(),
-            'mediaUrl' => $job->getMedia()->getPublicUrl(),
+            'mediaUrl' => $this->mediaUrlGenerator->publicUrl($job->getMedia()),
             'mediaMime' => $job->getMedia()->getMimeType(),
             'status' => $status->value,
             'statusLabel' => $this->translator->trans($status->getLabelKey()),

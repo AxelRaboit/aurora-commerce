@@ -7,16 +7,19 @@ namespace Aurora\Tests\Unit\Module\Ged\Document\Serializer;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializer;
+use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class DocumentVersionSerializerTest extends TestCase
 {
+    use CreatesStorageUrlGenerators;
+
     private function makeVersion(
         int $id = 3,
         int $versionNumber = 2,
         string $fileName = 'contract.pdf',
-        string $fileUrl = '/files/contract.pdf',
+        string $filePath = 'contract.pdf',
         string $fileMime = 'application/pdf',
         int $fileSize = 12345,
         ?string $note = 'Updated contract',
@@ -24,7 +27,7 @@ final class DocumentVersionSerializerTest extends TestCase
     ): DocumentVersionInterface {
         $file = $this->createStub(MediaInterface::class);
         $file->method('getFileName')->willReturn($fileName);
-        $file->method('getPublicUrl')->willReturn($fileUrl);
+        $file->method('getPath')->willReturn($filePath);
         $file->method('getMimeType')->willReturn($fileMime);
         $file->method('getSize')->willReturn($fileSize);
 
@@ -40,12 +43,12 @@ final class DocumentVersionSerializerTest extends TestCase
 
     public function testSerializeReturnsAllExpectedFields(): void
     {
-        $result = (new DocumentVersionSerializer())->serialize($this->makeVersion());
+        $result = (new DocumentVersionSerializer($this->makeMediaUrlGenerator()))->serialize($this->makeVersion());
 
         self::assertSame(3, $result['id']);
         self::assertSame(2, $result['versionNumber']);
         self::assertSame('contract.pdf', $result['fileName']);
-        self::assertSame('/files/contract.pdf', $result['fileUrl']);
+        self::assertSame('/uploads/contract.pdf', $result['fileUrl']);
         self::assertSame('application/pdf', $result['fileMime']);
         self::assertSame(12345, $result['fileSize']);
         self::assertSame('Updated contract', $result['note']);
@@ -54,14 +57,14 @@ final class DocumentVersionSerializerTest extends TestCase
 
     public function testSerializeWithNullNotePreservesNull(): void
     {
-        $result = (new DocumentVersionSerializer())->serialize($this->makeVersion(note: null));
+        $result = (new DocumentVersionSerializer($this->makeMediaUrlGenerator()))->serialize($this->makeVersion(note: null));
 
         self::assertNull($result['note']);
     }
 
     public function testSerializeContainsExactlyExpectedKeys(): void
     {
-        $result = (new DocumentVersionSerializer())->serialize($this->makeVersion());
+        $result = (new DocumentVersionSerializer($this->makeMediaUrlGenerator()))->serialize($this->makeVersion());
 
         self::assertSame(
             ['id', 'versionNumber', 'fileName', 'fileUrl', 'fileMime', 'fileSize', 'note', 'createdAt'],

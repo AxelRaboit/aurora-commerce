@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Cart\Serializer;
 
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
@@ -12,6 +13,10 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 #[AsAlias(CartSerializerInterface::class)]
 class CartSerializer implements CartSerializerInterface
 {
+    public function __construct(
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+    ) {}
+
     public function serialize(?CartInterface $cart): array
     {
         if (!$cart instanceof CartInterface) {
@@ -59,7 +64,7 @@ class CartSerializer implements CartSerializerInterface
             'subtotalCents' => $item->getSubtotalCents(),
             'currency' => $item->getCurrency()->value,
             'currencySymbol' => $item->getCurrency()->symbol(),
-            'imageUrl' => $featured?->getPublicUrl(),
+            'imageUrl' => $this->mediaUrlGenerator->publicUrl($featured),
         ];
     }
 }

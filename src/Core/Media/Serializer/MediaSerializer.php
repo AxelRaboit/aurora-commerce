@@ -9,12 +9,14 @@ use Aurora\Core\Media\Enum\MimeTypeEnum;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 #[AsAlias(MediaSerializerInterface::class)]
 class MediaSerializer implements MediaSerializerInterface
 {
     public function __construct(
         protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     /**
@@ -24,12 +26,12 @@ class MediaSerializer implements MediaSerializerInterface
     {
         $variantUrls = [];
         foreach (array_keys($media->getVariants()) as $name) {
-            $variantUrls[$name] = $media->getVariantUrl($name);
+            $variantUrls[$name] = $this->mediaUrlGenerator->variantUrl($media, $name);
         }
 
         return [
             'id' => $media->getId(),
-            'url' => $media->getPublicUrl().'?v='.$media->getUpdatedAt()->getTimestamp(),
+            'url' => $this->mediaUrlGenerator->publicUrl($media).'?v='.$media->getUpdatedAt()->getTimestamp(),
             'permalink' => $this->urlGenerator->generate('media_view', ['id' => $media->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             'filename' => $media->getFilename(),
             'originalName' => $media->getOriginalName(),
@@ -48,7 +50,7 @@ class MediaSerializer implements MediaSerializerInterface
             'isVideo' => $media->isVideo(),
             'isPdf' => $media->getMimeType() === MimeTypeEnum::Pdf->value,
             'variants' => $variantUrls,
-            'thumbnailUrl' => $variantUrls['thumbnail'] ?? $media->getPublicUrl(),
+            'thumbnailUrl' => $variantUrls['thumbnail'] ?? $this->mediaUrlGenerator->publicUrl($media),
             'position' => $media->getPosition(),
             'createdAt' => $media->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $media->getUpdatedAt()->format(DateTimeInterface::ATOM),

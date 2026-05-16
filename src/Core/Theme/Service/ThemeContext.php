@@ -7,6 +7,7 @@ namespace Aurora\Core\Theme\Service;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Theme\Entity\ThemeInterface;
 use Aurora\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\Media\Service\MediaUrlGenerator;
 
 final class ThemeContext
 {
@@ -21,6 +22,7 @@ final class ThemeContext
         private readonly ThemeRepository $themeRepository,
         private readonly MediaRepository $mediaRepository,
         private readonly PrimaryColorPalette $primaryColorPalette,
+        protected readonly MediaUrlGenerator $mediaUrlGenerator,
     ) {}
 
     public function activeTheme(): ?ThemeInterface
@@ -47,7 +49,7 @@ final class ThemeContext
 
         $media = $this->mediaRepository->find((int) $rawId);
 
-        return $media?->getPublicUrl();
+        return $this->mediaUrlGenerator->publicUrl($media);
     }
 
     public function headerCustomText(): ?string
