@@ -64,6 +64,11 @@ Distribué via composer : les clients lisent ces mémoires depuis
 
 ## Process / commits
 
+- [process_check_aurora_client_sync.md](process_check_aurora_client_sync.md) —
+  **règle dure** : après toute modif d'aurora-core, vérifier que aurora-client
+  (`/home/axel/Documents/dev/personal/aurora-client/`) reste à jour : routes
+  préservées, overrides toujours valides, nouvelles conventions appliquées,
+  breaking changes testés côté client. À répéter à chaque session.
 - [process_make_ft_before_commit.md](process_make_ft_before_commit.md) —
   lancer `make ft` (= fix + test) avant chaque commit ; aucune échappatoire
 - [pref_no_co_authored.md](pref_no_co_authored.md) — ne jamais ajouter
