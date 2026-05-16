@@ -1,6 +1,7 @@
 # Architecture & Décisions
 
 - [architecture_module_parameter_enum.md](architecture_module_parameter_enum.md) — `ModuleParameterEnum` séparé d'`ApplicationParameterEnum` : cascade graph, convention clés sans `_enabled`
+- [pattern_configuration_tab_provider.md](pattern_configuration_tab_provider.md) — `ConfigurationTabProviderInterface` + `SettingDefinitionRegistry` : un module contribue ses onglets dans la page Settings sans patcher le core
 - [pattern_domain_events_cross_module.md](pattern_domain_events_cross_module.md) — Core dispatche des events mutables, les modules écoutent. Jamais d'import `Core → Module`
 - [pattern_user_scoped_module_access.md](pattern_user_scoped_module_access.md) — `ModuleAccessChecker` : global setting + per-user `disabled_modules` JSON + cascade
 - [pattern_user_sidemenu_preferences.md](pattern_user_sidemenu_preferences.md) — couche user-controlled `hidden_nav_sections` + `hidden_nav_items` ; tokens stables NavSection.id / NavItem.route
