@@ -157,8 +157,13 @@ export function useSlashCommands({ t }) {
 
     /**
      * Inspect the textarea on every input. Opens the palette when the
-     * current line starts with `/` and tracks the query (chars after
-     * `/`). Anything else closes it.
+     * caret sits inside `/<query>` where the `/` is at the start of the
+     * buffer, at a line start, or right after a whitespace character —
+     * mirroring how `@mentions` work elsewhere. Anything inside a word
+     * (`http://...`, `foo/bar`) is ignored so users don't accidentally
+     * trigger the palette while typing URLs / paths. The query must not
+     * contain whitespace either, so once the user types a space after
+     * `/foo` the palette closes and the chars become regular text.
      */
     function onInput(event) {
         const textarea = event.target;
@@ -166,19 +171,31 @@ export function useSlashCommands({ t }) {
         const text = textarea.value;
         const before = text.slice(0, caret);
 
-        const lineStart = before.lastIndexOf("\n") + 1;
-        const lineContent = before.slice(lineStart);
-
-        if (lineContent.startsWith("/")) {
-            slashStart.value = lineStart;
-            slashQuery.value = lineContent.slice(1);
-            slashIndex.value = 0;
-            showSlash.value = true;
-            positionDropdown(textarea, lineStart);
+        const slashIdx = before.lastIndexOf("/");
+        if (slashIdx === -1) {
+            closeSlash();
             return;
         }
 
-        closeSlash();
+        const charBefore = slashIdx === 0 ? "" : before[slashIdx - 1];
+        const atBoundary =
+            charBefore === "" || charBefore === "\n" || /\s/.test(charBefore);
+        if (!atBoundary) {
+            closeSlash();
+            return;
+        }
+
+        const query = before.slice(slashIdx + 1);
+        if (/\s/.test(query)) {
+            closeSlash();
+            return;
+        }
+
+        slashStart.value = slashIdx;
+        slashQuery.value = query;
+        slashIndex.value = 0;
+        showSlash.value = true;
+        positionDropdown(textarea, slashIdx);
     }
 
     /**

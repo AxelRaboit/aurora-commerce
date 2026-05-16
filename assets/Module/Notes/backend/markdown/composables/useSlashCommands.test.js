@@ -145,6 +145,64 @@ describe("useSlashCommands", () => {
         expect(newCaret).toBe("foo\n# ".length);
     });
 
+    it("opens for / after a whitespace mid-line", () => {
+        const slash = buildSlash();
+        try {
+            slash.onInput(makeEvent("hello /h", 8));
+        } catch {
+            /* ignore */
+        }
+        expect(slash.showSlash.value).toBe(true);
+        const ids = slash.filteredCommands.value.map((c) => c.id);
+        expect(ids).toContain("h1");
+    });
+
+    it("does not open for / inside a word (URL, path)", () => {
+        const slash = buildSlash();
+        try {
+            slash.onInput(makeEvent("see http://example", 18));
+        } catch {
+            /* ignore */
+        }
+        expect(slash.showSlash.value).toBe(false);
+
+        try {
+            slash.onInput(makeEvent("foo/bar", 7));
+        } catch {
+            /* ignore */
+        }
+        expect(slash.showSlash.value).toBe(false);
+    });
+
+    it("closes when a space appears in the query", () => {
+        const slash = buildSlash();
+        try {
+            slash.onInput(makeEvent("/h ", 3));
+        } catch {
+            /* ignore */
+        }
+        expect(slash.showSlash.value).toBe(false);
+    });
+
+    it("applyCommand splices in place mid-line", () => {
+        const slash = buildSlash();
+        const content = "hello /h1";
+        try {
+            slash.onInput(makeEvent(content, content.length));
+        } catch {
+            /* ignore */
+        }
+        const command = slash.filteredCommands.value.find((c) => c.id === "h1");
+        const textarea = { value: content, selectionStart: content.length };
+        const { newContent, newCaret } = slash.applyCommand(
+            textarea,
+            command,
+            content,
+        );
+        expect(newContent).toBe("hello # ");
+        expect(newCaret).toBe("hello # ".length);
+    });
+
     it("applyCommand honors cursorOffset for inline commands (bold)", () => {
         const slash = buildSlash();
         try {

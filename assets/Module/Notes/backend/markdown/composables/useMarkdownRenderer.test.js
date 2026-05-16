@@ -65,6 +65,13 @@ describe("useMarkdownRenderer", () => {
         expect(html).toMatch(/<span class="hljs-/);
     });
 
+    it("converts a single newline to <br> (soft breaks enabled)", () => {
+        const html = render("line one\nline two");
+        // marked produces a <br> for the soft break — assert on the tag
+        // rather than exact formatting so we survive whitespace tweaks.
+        expect(html).toMatch(/line one\s*<br\s*\/?>\s*line two/);
+    });
+
     it("falls back to escaped plain text for an unknown language", () => {
         const html = render("```\n<not-a-tag>\n```");
         expect(html).toContain('class="code-block"');

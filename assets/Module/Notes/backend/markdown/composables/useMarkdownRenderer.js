@@ -24,7 +24,12 @@ import { createHighlightRenderer } from "./markedExtensions/markedHighlight.js";
 export function useMarkdownRenderer() {
     const marked = new Marked({
         gfm: true,
-        breaks: false,
+        // Soft breaks: a single newline in the source becomes a <br>
+        // in the preview (GitHub-/Obsidian-flavored). Without this,
+        // commonmark merges adjacent lines into one paragraph — which
+        // feels broken in a notes app where users press Enter to
+        // separate visual lines without intending a new paragraph.
+        breaks: true,
     });
     marked.use({
         extensions: [createWikiLinkExtension(), createCalloutExtension()],
