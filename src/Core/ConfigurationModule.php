@@ -1,0 +1,79 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Core;
+
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Nav\NavItem;
+use Aurora\Core\Module\Nav\NavPermission;
+use Aurora\Core\Module\Nav\NavSection;
+use Aurora\Core\Service\ConfigurationContext;
+use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+
+/**
+ * Configuration section — global app parameters (Settings) and visual
+ * customization (Themes). Split from PlatformModule in Jalon 4 so admin
+ * configuration is its own module — peer of Platform at the toggle,
+ * permission, and nav-section levels.
+ */
+final readonly class ConfigurationModule implements ModuleInterface, ModuleToggleProviderInterface
+{
+    public function __construct(private ConfigurationContext $configurationContext) {}
+
+    public function getId(): string
+    {
+        return 'configuration';
+    }
+
+    public function getPermissions(): array
+    {
+        return [
+            new NavPermission('core.settings.manage'),
+            new NavPermission('core.themes.manage'),
+        ];
+    }
+
+    public function getNavSections(): array
+    {
+        if (!$this->configurationContext->isBackendEnabled()) {
+            return [];
+        }
+
+        $items = [];
+
+        if ($this->configurationContext->isSettingsEnabled()) {
+            $items[] = new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'core.settings.manage', descriptionKey: 'backend.nav.settings_description');
+        }
+
+        if ($this->configurationContext->isThemesEnabled()) {
+            $items[] = new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'core.themes.manage', descriptionKey: 'backend.nav.themes_description');
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('configuration', $items, priority: 25)];
+    }
+
+    public function getCatalogNavSections(): array
+    {
+        return [
+            new NavSection('configuration', [
+                new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'core.settings.manage', descriptionKey: 'backend.nav.settings_description'),
+                new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'core.themes.manage', descriptionKey: 'backend.nav.themes_description'),
+            ], priority: 25),
+        ];
+    }
+
+    public function getToggles(): array
+    {
+        return [
+            ModuleParameterEnum::ConfigurationBackend->toToggle(),
+            ModuleParameterEnum::ConfigurationSettings->toToggle(),
+            ModuleParameterEnum::ConfigurationThemes->toToggle(),
+        ];
+    }
+}

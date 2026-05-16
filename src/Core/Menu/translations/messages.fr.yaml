@@ -46,10 +46,10 @@ backend:
       parent_cycle: 'Impossible : cela créerait une boucle dans la hiérarchie.'
   nav:
     sections:
+      general: Général
       platform: Plateforme
       configuration: Configuration
       dev: Administration
-      core: Général
     administration: Accès développeur
     administration_description: "Outils techniques, audit, requêtes d'accès et configuration avancée"
     agencies: Agences

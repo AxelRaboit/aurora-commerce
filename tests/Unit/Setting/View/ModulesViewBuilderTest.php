@@ -24,8 +24,9 @@ final class ModulesViewBuilderTest extends TestCase
         iterable $modules = [],
     ): ModulesViewBuilder {
         // Build a registry from every core ModuleParameterEnum case, matching
-        // what CoreModule + the per-module ::getToggles() declarations do at
-        // runtime — so the view builder sees the same toggle universe.
+        // what the GeneralModule + PlatformModule + ConfigurationModule +
+        // per-business-module ::getToggles() declarations do at runtime — so
+        // the view builder sees the same toggle universe.
         $toggles = array_map(
             static fn (ModuleParameterEnum $case): ModuleToggle => $case->toToggle(),
             ModuleParameterEnum::cases(),

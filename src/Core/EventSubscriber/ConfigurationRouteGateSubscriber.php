@@ -4,33 +4,28 @@ declare(strict_types=1);
 
 namespace Aurora\Core\EventSubscriber;
 
-use Aurora\Core\Service\PlatformContext;
+use Aurora\Core\Service\ConfigurationContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s the Platform admin routes (Media, Users, Agencies, Services) when
- * their toggle is OFF — globally or for the current user. Configuration
- * routes (Settings, Themes) are gated by
- * {@see ConfigurationRouteGateSubscriber} since Jalon 4.
- *
- * The Dashboard (`backend_dashboard`) is intentionally not gated here:
- * it is the post-login landing page and is always accessible.
+ * 404s the Configuration admin routes (Settings, Themes) when their
+ * toggle is OFF — globally or for the current user. Sibling of
+ * {@see PlatformRouteGateSubscriber}; split out of it in Jalon 4 so
+ * route gating mirrors the module split.
  */
-final readonly class PlatformRouteGateSubscriber implements EventSubscriberInterface
+final readonly class ConfigurationRouteGateSubscriber implements EventSubscriberInterface
 {
     /** Map of route prefix → callable returning bool (false ⇒ 404). */
     private array $gates;
 
-    public function __construct(private PlatformContext $platformContext)
+    public function __construct(private ConfigurationContext $configurationContext)
     {
         $this->gates = [
-            'backend_media' => $this->platformContext->isMediaEnabled(...),
-            'backend_users' => $this->platformContext->isUsersEnabled(...),
-            'backend_agencies' => $this->platformContext->isAgenciesEnabled(...),
-            'backend_services' => $this->platformContext->isServicesEnabled(...),
+            'backend_settings' => $this->configurationContext->isSettingsEnabled(...),
+            'backend_themes' => $this->configurationContext->isThemesEnabled(...),
         ];
     }
 

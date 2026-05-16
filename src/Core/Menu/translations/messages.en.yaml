@@ -46,10 +46,10 @@ backend:
       parent_cycle: 'Cannot: this would create a cycle in the hierarchy.'
   nav:
     sections:
+      general: General
       platform: Platform
       configuration: Configuration
       dev: Administration
-      core: General
     administration: Developer access
     administration_description: 'Technical tools, audit log, access requests and advanced configuration'
     agencies: Agencies
