@@ -29,6 +29,7 @@ UX distinctes :
 | Éditeur Vue — **tags UI** (input + filtre sidebar) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Éditeur Vue — **slash commands** (palette `/`) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Éditeur Vue — **autocomplete `[[`** (popover + search bar) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
+| Éditeur Vue — **raccourcis clavier** (Ctrl+B/I/K/H/L/E/etc.) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Vue graphe des wiki-links (frontend, canvas custom) | ✅ Fait | [wiki-links.md](markdown/wiki-links.md) |
 | Syntax highlighting code blocks (highlight.js) | ✅ Fait | [editor.md](markdown/editor.md) |
 | Images (upload + serve + cleanup) | ⏳ À faire | [images.md](markdown/images.md) |

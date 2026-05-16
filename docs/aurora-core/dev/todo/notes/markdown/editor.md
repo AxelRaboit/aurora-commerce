@@ -89,11 +89,25 @@ Commits `46c6e59d` (scaffold UI) + `48131a9a` (live preview) + `f03548a8` (side 
       `--color-*` variables.
 - [x] Couverture vitest étendue (15 tests dans `useMarkdownRenderer.test.js`).
 
+### Raccourcis clavier markdown ✅ (fait, 2026-05-16)
+
+- [x] Composable `useMarkdownShortcuts.js` (port d'Onyx). 10 raccourcis
+      avec gestion `Ctrl` (Linux/Win) + `Cmd` (Mac) via `event.metaKey`.
+- [x] Wrap selection : Ctrl+B (`**…**`), Ctrl+I (`*…*`), Ctrl+E
+      (`` `…` ``), Ctrl+K (`[…](url)`), Ctrl+Shift+K (fenced code),
+      Ctrl+Shift+X (`~~…~~`).
+- [x] Line prepend : Ctrl+H (`# `), Ctrl+L (`- `), Ctrl+Shift+L (`1. `),
+      Ctrl+Shift+C (`- [ ] `).
+- [x] `preventDefault()` sur match → bloque les handlers natifs
+      (Firefox Ctrl+K = focus barre d'URL, etc.).
+- [x] Branché en priorité dans `useNoteEditorTextarea.onKeydown`, avant
+      les popovers slash/wiki.
+- [x] Tests vitest : 14 cas (chaque raccourci + Cmd vs Ctrl).
+
 ### À considérer plus tard (Onyx avait, on a pas encore)
 
 - [ ] **Note du jour** — action UI qui ouvre/crée la note `YYYY-MM-DD`.
 - [ ] **Templates** réutilisables (composable `useNoteTemplates.js`).
 - [ ] **Outline / TOC** de la note courante (composable `useNoteOutline.js`).
-- [ ] **Raccourcis clavier** globaux (composable `useNoteShortcuts.js`).
 - [ ] **i18n** : récupérer les clés depuis `onyx/lang/` (fr/en/es/de) —
       les nôtres en fr+en suffisent pour le MVP.

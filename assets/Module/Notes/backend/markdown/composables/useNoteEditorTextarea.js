@@ -1,6 +1,7 @@
 import { ref, nextTick } from "vue";
 import { useSlashCommands } from "@notes/backend/markdown/composables/useSlashCommands.js";
 import { useWikiLinkAutocomplete } from "@notes/backend/markdown/composables/useWikiLinkAutocomplete.js";
+import { handleMarkdownShortcut } from "@notes/backend/markdown/composables/useMarkdownShortcuts.js";
 
 /**
  * Wiring for the markdown notes textarea + its two floating menus:
@@ -79,11 +80,39 @@ export function useNoteEditorTextarea({
     }
 
     /**
-     * Keydown is consumed by whichever menu is currently open. Slash
-     * gets priority — if it's not open we try wiki. If neither is
-     * open, the event passes through to the textarea unmolested.
+     * Apply a markdown shortcut result to the textarea: emit the new
+     * content, then restore the caret / selection on the next tick.
+     * Used by Ctrl+B / Ctrl+I etc. via `handleMarkdownShortcut`.
+     */
+    async function applyShortcut({ newContent, cursorPos, cursorEnd }) {
+        emitUpdate(newContent);
+        const textarea = textareaRef.value;
+        if (!textarea) return;
+        await nextTick();
+        textarea.focus();
+        textarea.setSelectionRange(cursorPos, cursorEnd ?? cursorPos);
+    }
+
+    /**
+     * Keydown is consumed in priority order: Ctrl/Cmd shortcuts first
+     * (so Ctrl+B always wraps, even with a popover open), then the
+     * floating menus' keyboard handlers. Anything left passes through
+     * to the textarea unmolested.
      */
     function onKeydown(event) {
+        const textarea = textareaRef.value;
+        if (textarea) {
+            const shortcut = handleMarkdownShortcut(
+                event,
+                textarea,
+                textarea.value,
+            );
+            if (shortcut) {
+                applyShortcut(shortcut);
+                return;
+            }
+        }
+
         if (slash.showSlash.value) {
             const picked = slash.onKeydown(event);
             if (picked) selectCommand(picked);
