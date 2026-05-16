@@ -392,6 +392,9 @@ pull-update: _no-recent-aurora-update ## After a regular `git pull`: install dep
 	make sync-makefile
 	@echo "✅ Synced with latest pull. Run 'make ft' to verify."
 
+pull-and-bump: pull-update aurora-update ## Combo: sync to team lock, THEN bump aurora-core on top (the canonical order)
+	@echo "✅ Synced with team + bumped aurora-core. Run 'make ft' to verify."
+
 aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-installs + syncs)
 	# Use THIS only when you explicitly want a newer aurora-core than the
 	# one in composer.lock. For routine teammate-PR pulls, use `make pull-update`
