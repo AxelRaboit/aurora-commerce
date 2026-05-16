@@ -31,13 +31,13 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
     public function getPermissions(): array
     {
         return [
-            new NavPermission('core.media.view'),
-            new NavPermission('core.media.create'),
-            new NavPermission('core.media.edit'),
-            new NavPermission('core.media.delete'),
-            new NavPermission('core.media.folders.create'),
-            new NavPermission('core.media.folders.edit'),
-            new NavPermission('core.media.folders.delete'),
+            new NavPermission('media.view'),
+            new NavPermission('media.create'),
+            new NavPermission('media.edit'),
+            new NavPermission('media.delete'),
+            new NavPermission('media.folders.create'),
+            new NavPermission('media.folders.edit'),
+            new NavPermission('media.folders.delete'),
         ];
     }
 
@@ -50,7 +50,7 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
         $items = [];
 
         if ($this->mediaContext->isLibraryEnabled()) {
-            $items[] = new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'core.media.view', descriptionKey: 'backend.nav.media_description');
+            $items[] = new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description');
         }
 
         if ([] === $items) {
@@ -64,7 +64,7 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
     {
         return [
             new NavSection('media', [
-                new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'core.media.view', descriptionKey: 'backend.nav.media_description'),
+                new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description'),
             ], priority: 22),
         ];
     }

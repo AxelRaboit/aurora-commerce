@@ -38,7 +38,7 @@ final class MediaFoldersController extends AbstractController
     ) {}
 
     #[Route('/folders', name: '_folder_create', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.folders.create')]
+    #[IsGranted('media.folders.create')]
     public function create(Request $request): JsonResponse
     {
         $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
@@ -58,7 +58,7 @@ final class MediaFoldersController extends AbstractController
     }
 
     #[Route('/folders/{id}/edit', name: '_folder_edit', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.folders.edit')]
+    #[IsGranted('media.folders.edit')]
     public function edit(MediaFolder $folder, Request $request): JsonResponse
     {
         $input = $this->folderInputFactory->fromArray($this->decodeJson($request));
@@ -78,7 +78,7 @@ final class MediaFoldersController extends AbstractController
     }
 
     #[Route('/folders/{id}/delete', name: '_folder_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.folders.delete')]
+    #[IsGranted('media.folders.delete')]
     public function delete(MediaFolder $folder): JsonResponse
     {
         $this->mediaManager->deleteFolder($folder);

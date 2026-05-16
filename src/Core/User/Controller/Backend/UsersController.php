@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/users', name: 'backend_users')]
-#[IsGranted('core.users.manage')]
+#[IsGranted('platform.users.manage')]
 class UsersController extends AbstractController
 {
     use JsonRequestTrait;
@@ -55,7 +55,7 @@ class UsersController extends AbstractController
         return $this->render('@Core/backend/users/index.html.twig', $this->viewBuilder->indexView(
             $this->isGranted(UserRoleEnum::Dev->value),
             $currentUser instanceof User ? $currentUser : null,
-            $this->isGranted('core.users.modules.manage'),
+            $this->isGranted('platform.users.modules.manage'),
         ));
     }
 

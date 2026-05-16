@@ -26,7 +26,8 @@ final class PermissionRegistry
                 // Permission can opt into a different display group via
                 // NavPermission::$group — used to surface a permission
                 // declared by one module under another section in the
-                // privileges modal (e.g. core.media.* shown under platform).
+                // privileges modal. Rarely needed since Jalon 5 aligned
+                // every permission name on its owner module id.
                 $group = $permission->group ?? $moduleId;
                 $this->byModule[$group] ??= [];
                 $this->byModule[$group][] = $permission->name;

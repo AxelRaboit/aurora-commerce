@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * `_disabled_modules`).
  */
 #[Route('/backend/users', name: 'backend_users')]
-#[IsGranted('core.users.manage')]
+#[IsGranted('platform.users.manage')]
 final class UserPermissionsController extends AbstractController
 {
     use JsonRequestTrait;
@@ -61,7 +61,7 @@ final class UserPermissionsController extends AbstractController
     }
 
     #[Route('/{id}/disabled-modules', name: '_disabled_modules', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.users.modules.manage')]
+    #[IsGranted('platform.users.modules.manage')]
     public function disabledModules(User $user, Request $request): JsonResponse
     {
         $currentUser = $this->getUser();

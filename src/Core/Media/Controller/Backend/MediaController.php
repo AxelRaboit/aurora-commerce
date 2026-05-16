@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/media', name: 'backend_media')]
-#[IsGranted('core.media.view')]
+#[IsGranted('media.view')]
 class MediaController extends AbstractController
 {
     use JsonRequestTrait;
@@ -122,7 +122,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/upload', name: '_upload', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.create')]
+    #[IsGranted('media.create')]
     public function upload(Request $request): JsonResponse
     {
         $file = $request->files->get('image');
@@ -155,7 +155,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.edit')]
+    #[IsGranted('media.edit')]
     public function edit(Media $media, Request $request): JsonResponse
     {
         $input = $this->mediaInputFactory->fromArray($this->decodeJson($request));
@@ -175,7 +175,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/{id}/move', name: '_move', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.edit')]
+    #[IsGranted('media.edit')]
     public function move(Media $media, Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);
@@ -188,7 +188,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.edit')]
+    #[IsGranted('media.edit')]
     public function reorder(Request $request): JsonResponse
     {
         $ids = $this->decodeJson($request)['ids'] ?? [];
@@ -198,7 +198,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/bulk-delete', name: '_bulk_delete', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.delete')]
+    #[IsGranted('media.delete')]
     public function bulkDelete(Request $request): JsonResponse
     {
         $ids = $this->decodeJson($request)['ids'] ?? [];
@@ -208,7 +208,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/bulk-move', name: '_bulk_move', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.edit')]
+    #[IsGranted('media.edit')]
     public function bulkMove(Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);
@@ -221,7 +221,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.delete')]
+    #[IsGranted('media.delete')]
     public function delete(Media $media): JsonResponse
     {
         $this->mediaManager->delete($media);
@@ -230,7 +230,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/{id}/crop', name: '_crop', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('core.media.edit')]
+    #[IsGranted('media.edit')]
     public function crop(Media $media, Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);

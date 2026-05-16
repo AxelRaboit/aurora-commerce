@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/backend/themes', name: 'backend_themes')]
-#[IsGranted('core.themes.manage')]
+#[IsGranted('configuration.themes.manage')]
 final class ThemesController extends AbstractController
 {
     use JsonRequestTrait;

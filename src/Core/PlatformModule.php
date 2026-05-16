@@ -19,7 +19,7 @@ use Aurora\Core\Setting\Enum\ModuleParameterEnum;
  * (admin params) — this class now owns the "who works for whom doing what"
  * triplet.
  *
- * Search (cross-cutting privilege `core.search.view`) lives here as a
+ * Search (cross-cutting privilege `platform.search.view`) lives here as a
  * convenient home — it isn't surfaced as a NavItem, but the permission
  * is declared so it shows up in the privileges modal's "platform" group.
  */
@@ -35,12 +35,12 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     public function getPermissions(): array
     {
         return [
-            new NavPermission('core.users.manage'),
-            new NavPermission('core.users.modules.manage'),
-            new NavPermission('core.agencies.manage'),
-            new NavPermission('core.services.manage'),
+            new NavPermission('platform.users.manage'),
+            new NavPermission('platform.users.modules.manage'),
+            new NavPermission('platform.agencies.manage'),
+            new NavPermission('platform.services.manage'),
             // Cross-cutting (no specific UI section — surfaced under platform).
-            new NavPermission('core.search.view'),
+            new NavPermission('platform.search.view'),
         ];
     }
 
@@ -53,15 +53,15 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
         $items = [];
 
         if ($this->platformContext->isUsersEnabled()) {
-            $items[] = new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'core.users.manage', descriptionKey: 'backend.nav.users_description');
+            $items[] = new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'platform.users.manage', descriptionKey: 'backend.nav.users_description');
         }
 
         if ($this->platformContext->isAgenciesEnabled()) {
-            $items[] = new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'core.agencies.manage', descriptionKey: 'backend.nav.agencies_description');
+            $items[] = new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'platform.agencies.manage', descriptionKey: 'backend.nav.agencies_description');
         }
 
         if ($this->platformContext->isServicesEnabled()) {
-            $items[] = new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'core.services.manage', descriptionKey: 'backend.nav.services_description');
+            $items[] = new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'platform.services.manage', descriptionKey: 'backend.nav.services_description');
         }
 
         if ([] === $items) {
@@ -75,9 +75,9 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     {
         return [
             new NavSection('platform', [
-                new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'core.users.manage', descriptionKey: 'backend.nav.users_description'),
-                new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'core.agencies.manage', descriptionKey: 'backend.nav.agencies_description'),
-                new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'core.services.manage', descriptionKey: 'backend.nav.services_description'),
+                new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'platform.users.manage', descriptionKey: 'backend.nav.users_description'),
+                new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'platform.agencies.manage', descriptionKey: 'backend.nav.agencies_description'),
+                new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'platform.services.manage', descriptionKey: 'backend.nav.services_description'),
             ], priority: 20),
         ];
     }

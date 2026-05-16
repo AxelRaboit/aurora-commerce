@@ -10,7 +10,7 @@ backend:
       general:
         dashboard:
           view: Accéder au tableau de bord
-      core:
+      platform:
         users:
           manage: Gérer les utilisateurs
           modules:
@@ -19,23 +19,22 @@ backend:
           manage: Gérer les agences
         services:
           manage: Gérer les services
-        themes:
-          manage: Gérer les thèmes
-        settings:
-          manage: Gérer les paramètres
         search:
           view: Utiliser la recherche globale
-        media:
-          view: Voir la médiathèque
-          create: Téléverser des médias
-          edit: Modifier les médias (renommer, recadrer, déplacer)
-          delete: Supprimer des médias
-          folders:
-            create: Créer des dossiers de médias
-            edit: Modifier les dossiers de médias
-            delete: Supprimer des dossiers de médias
-        menus:
-          manage: Gérer les menus
+      media:
+        view: Voir la médiathèque
+        create: Téléverser des médias
+        edit: Modifier les médias (renommer, recadrer, déplacer)
+        delete: Supprimer des médias
+        folders:
+          create: Créer des dossiers de médias
+          edit: Modifier les dossiers de médias
+          delete: Supprimer des dossiers de médias
+      configuration:
+        settings:
+          manage: Gérer les paramètres
+        themes:
+          manage: Gérer les thèmes
     role: Rôle requis
   nav:
     sections:

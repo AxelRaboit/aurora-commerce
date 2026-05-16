@@ -133,7 +133,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     />
                 </div>
                 <AppFilePickerButton
-                    v-if="can('core.media.create')"
+                    v-if="can('media.create')"
                     ref="uploadInput"
                     accept="image/*"
                     multiple
@@ -173,7 +173,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <div class="flex items-center gap-1.5">
                     <h2 class="text-sm font-semibold text-secondary uppercase tracking-wide flex-1">{{ t("backend.media.folders") }}</h2>
                     <AppIconButton
-                        v-if="can('core.media.folders.create')"
+                        v-if="can('media.folders.create')"
                         :title="t('backend.media.newFolder')"
                         v-on:click="openCreateFolder"
                     >
@@ -250,10 +250,10 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             >
                                 <Star class="w-3.5 h-3.5" :stroke-width="2" :fill="favouriteFolderIds.has(folder.id) ? 'currentColor' : 'none'" />
                             </AppIconButton>
-                            <AppIconButton v-if="can('core.media.folders.edit')" color="accent" v-on:click="openEditFolder(folder)">
+                            <AppIconButton v-if="can('media.folders.edit')" color="accent" v-on:click="openEditFolder(folder)">
                                 <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="can('core.media.folders.delete')" color="rose" v-on:click="deletingFolder = folder">
+                            <AppIconButton v-if="can('media.folders.delete')" color="rose" v-on:click="deletingFolder = folder">
                                 <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppIconButton>
                         </div>
@@ -296,7 +296,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             <Move class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("backend.media.move") }}
                         </AppButton>
-                        <AppButton v-if="can('core.media.delete')" size="sm" variant="danger" v-on:click="pendingBulkDelete = true">
+                        <AppButton v-if="can('media.delete')" size="sm" variant="danger" v-on:click="pendingBulkDelete = true">
                             <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                             {{ t("shared.common.delete") }}
                         </AppButton>
@@ -441,7 +441,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                         <Eye class="w-4 h-4" :stroke-width="2" />
                                     </AppOverlayIconButton>
                                     <AppOverlayIconButton
-                                        v-if="can('core.media.edit')"
+                                        v-if="can('media.edit')"
                                         size="sm"
                                         variant="light"
                                         :title="t('shared.common.edit')"
@@ -520,7 +520,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     <td class="px-3 py-2 text-right">
                                         <div class="flex justify-end gap-0.5" v-on:click.stop>
                                             <AppIconButton :title="t('backend.media.preview')" v-on:click="previewMedia = item"><Eye class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
-                                            <AppIconButton v-if="can('core.media.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditMedia(item)"><Pencil class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
+                                            <AppIconButton v-if="can('media.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditMedia(item)"><Pencil class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
                                             <AppIconButton :title="t('backend.media.copyUrl')" v-on:click="copyUrl(item)"><Copy class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
                                             <AppIconButton :title="t('backend.media.qrCode')" v-on:click="openQr(item)"><QrCode class="w-3.5 h-3.5" :stroke-width="2" /></AppIconButton>
                                         </div>
@@ -672,7 +672,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     <AppButton variant="ghost" size="md" v-on:click="openQr(editingMedia)">
                         <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.qrCode") }}
                     </AppButton>
-                    <AppButton v-if="can('core.media.delete')" variant="danger" size="md" v-on:click="askDeleteMedia(editingMedia)">
+                    <AppButton v-if="can('media.delete')" variant="danger" size="md" v-on:click="askDeleteMedia(editingMedia)">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
                     </AppButton>
                     <AppButton variant="ghost" size="md" v-on:click="closeEditMedia"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

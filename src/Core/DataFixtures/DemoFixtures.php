@@ -209,8 +209,8 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     'editorial.forms.view', 'editorial.forms.create', 'editorial.forms.edit', 'editorial.forms.delete',
                     'editorial.sitemap.view', 'editorial.sitemap.regenerate',
                     // Media library (editors need full CRUD on items + folders)
-                    'core.media.view', 'core.media.create', 'core.media.edit', 'core.media.delete',
-                    'core.media.folders.create', 'core.media.folders.edit', 'core.media.folders.delete',
+                    'media.view', 'media.create', 'media.edit', 'media.delete',
+                    'media.folders.create', 'media.folders.edit', 'media.folders.delete',
                 ],
                 'mood' => 'Rédactrice en chef ✍️',
             ],

@@ -10,7 +10,7 @@ backend:
       general:
         dashboard:
           view: Access the dashboard
-      core:
+      platform:
         users:
           manage: Manage users
           modules:
@@ -19,23 +19,22 @@ backend:
           manage: Manage agencies
         services:
           manage: Manage services
-        themes:
-          manage: Manage themes
-        settings:
-          manage: Manage settings
         search:
           view: Use global search
-        media:
-          view: View media library
-          create: Upload media
-          edit: Edit media (rename, crop, move)
-          delete: Delete media
-          folders:
-            create: Create media folders
-            edit: Edit media folders
-            delete: Delete media folders
-        menus:
-          manage: Manage menus
+      media:
+        view: View media library
+        create: Upload media
+        edit: Edit media (rename, crop, move)
+        delete: Delete media
+        folders:
+          create: Create media folders
+          edit: Edit media folders
+          delete: Delete media folders
+      configuration:
+        settings:
+          manage: Manage settings
+        themes:
+          manage: Manage themes
     role: Required role
   nav:
     sections:
