@@ -20,6 +20,47 @@ CLIENT_ASSETS = $(CURDIR)/assets/client
 AURORA_NODE   = $(CURDIR)/$(AURORA)/node_modules
 AURORA_ENV    = AURORA_CLIENT_DIR=$(CLIENT_ASSETS) NODE_PATH=$(AURORA_NODE)
 
+# Marker file written by `aurora-update`, read by `pull-update` to refuse
+# the redundant `aurora-update && pull-update` chain (pull-update right
+# after aurora-update is a no-op at best, and at worst confuses teammates
+# by silently downgrading the lock if they swap the order in their head).
+AURORA_UPDATE_MARKER = var/.aurora-update-marker
+
+# === Safety guards ===
+# Refuse destructive targets when APP_ENV=prod. Checks the shell env first,
+# then falls back to grepping .env.local (Symfony's loaded layer). Default
+# to dev when nothing is set, so fresh checkouts still work.
+_require-dev-env:
+	@detected_env="$${APP_ENV:-}"; \
+	if [ -z "$$detected_env" ] && [ -f .env.local ]; then \
+		detected_env=$$(grep "^APP_ENV=" .env.local | tail -1 | cut -d= -f2- | tr -d '"' | tr -d "'"); \
+	fi; \
+	if [ -z "$$detected_env" ]; then detected_env="dev"; fi; \
+	if [ "$$detected_env" = "prod" ]; then \
+		echo "❌ Refused: target is destructive (drops DB / wipes data via fixtures) and APP_ENV=prod."; \
+		echo "   For prod, use 'make install-prod' or run the SQL/migrations manually."; \
+		exit 1; \
+	fi
+
+# Refuse pull-update when aurora-update was run recently (< 5 min ago).
+# pull-update right after aurora-update is at best a no-op (the lock is
+# already past the team's version) and at worst a sign the user got the
+# order wrong. The correct order is `pull-update && aurora-update`.
+_no-recent-aurora-update:
+	@if [ -f $(AURORA_UPDATE_MARKER) ]; then \
+		ago=$$(($$(date +%s) - $$(stat -c %Y $(AURORA_UPDATE_MARKER) 2>/dev/null || stat -f %m $(AURORA_UPDATE_MARKER)))); \
+		if [ "$$ago" -lt 300 ]; then \
+			echo "❌ Refused: 'aurora-update' was run $${ago}s ago."; \
+			echo "   Running 'pull-update' right after is redundant — composer.lock is already past the team's version."; \
+			echo "   The correct order is 'pull-update && aurora-update' (sync to team, then bump on top)."; \
+			echo "   If you really want to revert to the team's lock, run:"; \
+			echo "      git checkout composer.lock && make pull-update"; \
+			exit 1; \
+		fi \
+	fi
+
+.PHONY: _require-dev-env _no-recent-aurora-update
+
 # === Build Commands ===
 pnpm-setup: ## Setup pnpm via corepack (usage: make pnpm-setup VERSION=10.11.0)
 	@if [ -z "$(VERSION)" ]; then \
@@ -127,7 +168,7 @@ about: ## Show app info
 	$(CONSOLE) about
 
 # === Fixtures & Dev ===
-fixtures: ## Drop DB, re-run migrations, load fixtures and sync all
+fixtures: _require-dev-env ## Drop DB, re-run migrations, load fixtures and sync all (DEV ONLY)
 	$(CONSOLE) doctrine:database:drop --force --if-exists
 	$(CONSOLE) doctrine:database:create --if-not-exists
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
@@ -137,24 +178,24 @@ fixtures: ## Drop DB, re-run migrations, load fixtures and sync all
 	$(CONSOLE) aurora:privileges:sync
 	@echo "✅ Fixtures loaded"
 
-demo: ## Load demo fixtures (DemoFixtures group) + run all syncs
+demo: _require-dev-env ## Load demo fixtures (DemoFixtures group) + run all syncs (DEV ONLY)
 	$(CONSOLE) doctrine:fixtures:load --group=demo --no-interaction
 	$(CONSOLE) aurora:application-parameter
 	$(CONSOLE) aurora:menus:sync
 	$(CONSOLE) aurora:privileges:sync
 	@echo "✅ Demo data loaded"
 
-fixtures-load: ## Load fixtures without dropping DB
+fixtures-load: _require-dev-env ## Load fixtures without dropping DB — purges tables before re-inserting (DEV ONLY)
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 
-fixtures-append: ## Append fixtures without dropping DB
+fixtures-append: ## Append fixtures without dropping DB (safe in any env)
 	$(CONSOLE) doctrine:fixtures:load --append --no-interaction
 
 # === Database ===
 db-create: ## Create the database
 	$(CONSOLE) doctrine:database:create --if-not-exists
 
-db-drop: ## Drop the database
+db-drop: _require-dev-env ## Drop the database (DEV ONLY)
 	$(CONSOLE) doctrine:database:drop --force --if-exists
 
 migration: ## Generate a new migration
@@ -208,7 +249,7 @@ test-e2e: ## Run end-to-end tests (Playwright)
 coverage: db-test ## Generate PHP code coverage report (requires php8.4-pcov)
 	$(PHP_BIN) -d pcov.enabled=1 $(AURORA)/bin/phpunit --coverage
 
-db-test: ## Create test database with fresh schema (schema:create avoids cross-namespace migration ordering issues)
+db-test: _require-dev-env ## Create test database with fresh schema — schema:create avoids cross-namespace migration ordering issues (DEV ONLY)
 	$(CONSOLE) doctrine:database:drop --env=test --force --if-exists
 	$(CONSOLE) doctrine:database:create --env=test
 	$(CONSOLE) doctrine:schema:create --env=test
@@ -273,7 +314,7 @@ help: ## Show this help message
 
 install: install-dev ## Install the project (alias for install-dev)
 
-install-dev: ## Install for local development
+install-dev: _require-dev-env ## Install for local development — wipes DB via fixtures-load (DEV ONLY)
 	$(COMPOSER) install --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
@@ -333,7 +374,7 @@ sync-security: ## Sync security.yaml from aurora vendor (routes change with each
 	cp $(AURORA)/config/packages/security.yaml config/packages/security.yaml
 	@echo "✅ security.yaml synced from aurora"
 
-pull-update: ## After a regular `git pull`: install deps from lock + migrate + cache + syncs
+pull-update: _no-recent-aurora-update ## After a regular `git pull`: install deps from lock + migrate + cache + syncs
 	# Use THIS after pulling a teammate's PR — preserves your local data
 	# (unlike `make install-dev` which wipes the DB via fixtures-load).
 	# Covers composer.lock changes, package.json changes, new migrations,
@@ -370,6 +411,7 @@ aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-
 	make sync-security
 	make sync-claude-md
 	make sync-makefile
+	@mkdir -p var && touch $(AURORA_UPDATE_MARKER)
 	@echo "✅ aurora-core bumped. Run 'make ft' to verify."
 
 sync-claude-md: ## Symlink CLAUDE.md + README.md + .claude/memory + .claude/skills (shared) + docs from aurora-core vendor
