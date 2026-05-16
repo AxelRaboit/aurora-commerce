@@ -333,7 +333,28 @@ sync-security: ## Sync security.yaml from aurora vendor (routes change with each
 	cp $(AURORA)/config/packages/security.yaml config/packages/security.yaml
 	@echo "✅ security.yaml synced from aurora"
 
-aurora-update: ## Pull latest Aurora changes
+pull-update: ## After a regular `git pull`: install deps from lock + migrate + cache + syncs
+	# Use THIS after pulling a teammate's PR — preserves your local data
+	# (unlike `make install-dev` which wipes the DB via fixtures-load).
+	# Covers composer.lock changes, package.json changes, new migrations,
+	# and config drift (jsconfig / security / CLAUDE.md / Makefile syncs).
+	# Safe to run unconditionally — every step is idempotent.
+	$(COMPOSER) install
+	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
+	$(PNPM) install
+	$(PNPM) --dir=$(AURORA) install
+	$(CONSOLE) cache:clear
+	make migrate-f
+	make sync-jsconfig
+	make sync-security
+	make sync-claude-md
+	make sync-makefile
+	@echo "✅ Synced with latest pull. Run 'make ft' to verify."
+
+aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-installs + syncs)
+	# Use THIS only when you explicitly want a newer aurora-core than the
+	# one in composer.lock. For routine teammate-PR pulls, use `make pull-update`
+	# instead — it honours the lock and avoids surprise upstream upgrades.
 	$(COMPOSER) update axelraboit/aurora
 	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
@@ -342,13 +363,14 @@ aurora-update: ## Pull latest Aurora changes
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/phpstan
 	$(PNPM) --dir=$(AURORA) install
 	$(PNPM) install
-	make migrate
+	$(CONSOLE) cache:clear
+	make migrate-f
 	$(CONSOLE) aurora:privileges:sync
 	make sync-jsconfig
 	make sync-security
 	make sync-claude-md
 	make sync-makefile
-	@echo "✅ Aurora updated"
+	@echo "✅ aurora-core bumped. Run 'make ft' to verify."
 
 sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + .claude/skills (shared) + docs from aurora-core vendor
 	@if [ -f $(AURORA)/.claude/client_template/CLAUDE.md ]; then \

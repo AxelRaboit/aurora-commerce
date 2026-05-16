@@ -77,6 +77,19 @@ make ft
 # Lancer le projet et vérifier que les flows utilisateur principaux marchent
 ```
 
+### Note : `pull-update` vs `aurora-update` côté client
+
+Deux targets parallèles pour deux scénarios :
+
+| Scénario | Target | Pourquoi |
+|---|---|---|
+| Pull la PR d'un collègue | **`make pull-update`** | `composer install` (respecte le lock) + sub-deps + migrate + syncs. Pas d'`update` accidentel. |
+| Bump explicite d'aurora-core | `make aurora-update` | `composer update axelraboit/aurora` + idem. À utiliser SEULEMENT quand on veut une version + récente que le lock. |
+
+Erreur fréquente : utiliser `make aurora-update` pour un simple pull → on
+upgrade aurora-core sans le vouloir, on perturbe les coéquipiers à la prochaine
+PR (lockfile divergent). Toujours `make pull-update` pour le workflow quotidien.
+
 ### Piège : `composer update` brut côté client = vendor cassé
 
 Symptôme typique après un simple `composer update axelraboit/aurora` (sans `make aurora-update`) :

@@ -1,29 +1,54 @@
-# Mettre à jour aurora-core
+# Mettre à jour son environnement
 
-## Commande
+Trois scénarios, trois commandes. Choisir le bon évite de wiper la DB
+locale par accident.
+
+| Situation | Commande | Effet sur la BDD |
+|---|---|---|
+| 1ʳᵉ installation du projet | `make install-dev` | Crée la DB, applique migrations, charge fixtures, lance le watcher Vite |
+| Pull d'une PR aurora-client (nouvelle entité, migration, etc.) | **`make pull-update`** | **Données préservées** : `composer install` (lock) + `pnpm install` + `migrate` + cache + syncs config |
+| Bump volontaire d'aurora-core | `make aurora-update` | Données préservées : `composer update axelraboit/aurora` + sub-installs + syncs |
+
+⚠️ **Ne JAMAIS faire `make install-dev` sur un projet déjà setup** — il purge la
+DB via `doctrine:fixtures:load`. Tes données de dev sont écrasées par les fixtures.
+
+---
+
+## `make pull-update` — pull d'une PR aurora-client
+
+```bash
+git pull
+make pull-update
+```
+
+Enchaîne :
+
+| Étape | Commande | Rôle |
+|---|---|---|
+| 1 | `composer install` | Sync `vendor/` selon `composer.lock` (PR a peut-être bumpé une dep ou aurora-core) |
+| 2 | `composer install --working-dir=vendor/axelraboit/aurora --no-scripts` | Au cas où aurora-core a été pull avec une nouvelle sub-dep |
+| 3 | `pnpm install` | Sync `node_modules/` racine selon `pnpm-lock.yaml` |
+| 4 | `pnpm --dir=vendor/axelraboit/aurora install` | Sync les `node_modules` d'aurora-core (eslint, vitest, etc.) |
+| 5 | `php bin/console cache:clear` | Cache Symfony purgé |
+| 6 | `make migrate-f` | Nouvelles migrations appliquées |
+| 7 | `make sync-jsconfig` | Aliases Vite mis à jour si aurora-core en a ajouté |
+| 8 | `make sync-security` | `security.yaml` resynced si firewall a changé |
+| 9 | `make sync-claude-md` | Symlinks CLAUDE.md + mémoires Claude rafraîchis |
+| 10 | `make sync-makefile` | Le Makefile lui-même resynced depuis le template aurora-core |
+
+Toutes les étapes sont idempotentes — safe à relancer.
+
+---
+
+## `make aurora-update` — bump explicite d'aurora-core
 
 ```bash
 make aurora-update
 ```
 
----
-
-## Ce que fait `make aurora-update`
-
-La commande enchaîne automatiquement :
-
-| Étape | Commande | Rôle |
-|---|---|---|
-| 1 | `composer update axelraboit/aurora` | Récupère la dernière version d'aurora-core depuis GitHub |
-| 2 | `composer install --working-dir=vendor/axelraboit/aurora` | Installe les dépendances PHP du bundle |
-| 3 | `pnpm --dir=vendor/axelraboit/aurora install` | Installe les dépendances JS du bundle |
-| 4 | `pnpm install` | Met à jour les deps JS du projet client |
-| 5 | `make migrate` | Joue les nouvelles migrations Aurora + client |
-| 6 | `make sf CMD="aurora:privileges:sync"` | Synchronise les permissions des modules |
-| 7 | `make sync-jsconfig` | Régénère `jsconfig.json` (aliases Vite) |
-| 8 | `make sync-security` | Synchronise `config/packages/security.yaml` depuis Aurora |
-| 9 | `make sync-claude-md` | Met à jour `CLAUDE.md` + recrée les symlinks `.claude/memory/` |
-| 10 | `make sync-makefile` | Met à jour le `Makefile` si Aurora en a une nouvelle version |
+À utiliser **uniquement** quand on veut explicitement la dernière version
+d'aurora-core (et non celle figée dans `composer.lock`). Pour le pull d'une
+PR d'un collègue, préférer `make pull-update` (qui respecte le lock).
 
 ---
 
@@ -33,6 +58,10 @@ Lancer `make aurora-update` :
 - Après chaque push sur la branche `develop` d'aurora-core
 - Avant de démarrer un chantier qui touche des entités ou des conventions Aurora
 - En cas de comportement inattendu (pour s'assurer d'avoir la dernière version)
+
+Lancer `make pull-update` :
+- À chaque `git pull` qui ramène une PR d'un collègue
+- En CI après le checkout (idem effet : sync vendor + node_modules + DB)
 
 ---
 
