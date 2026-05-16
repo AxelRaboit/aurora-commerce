@@ -68,6 +68,17 @@
 
         {% block page_header_slot %}{% endblock %}
 
+        {% if app.environment == 'dev' and aurora_pending_migrations() > 0 %}
+            {% embed '@Shared/components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'database'} %}
+                {% block content %}
+                    {{ 'backend.migrations.pending.banner'|trans({'{count}': aurora_pending_migrations()}) }}
+                {% endblock %}
+                {% block actions %}
+                    <code class="ml-2 font-mono text-xs px-1.5 py-0.5 rounded bg-warning/10 border border-warning/30">make migrate</code>
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+
         {% if is_granted('IS_IMPERSONATOR') %}
             {% embed '@Shared/components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'user-check'} %}
                 {% block content %}{{ 'backend.impersonation.banner'|trans({'{name}': app.user.name}) }}{% endblock %}

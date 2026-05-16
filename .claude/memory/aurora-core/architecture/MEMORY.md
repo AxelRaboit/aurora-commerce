@@ -16,3 +16,4 @@
 - [pattern_app_config_bootstrap.md](pattern_app_config_bootstrap.md) — exposer un `ApplicationParameter` aux composants Vue via `window.__auroraConfig.<key>` (extension Twig dédiée + fallback hardcodé)
 - [pattern_single_locale_mode.md](pattern_single_locale_mode.md) — toggle `single_locale_mode` réversible : filtre l'UI/écritures via `LocaleContext`, préserve les `XxxTranslation` dormantes
 - [decision_locale_added_in_core.md](decision_locale_added_in_core.md) — toute nouvelle locale (es, de…) s'ajoute dans `LocaleEnum` côté core, jamais côté client (capitalisation + cohérence cross-écosystème)
+- [pattern_migration_drift_detection.md](pattern_migration_drift_detection.md) — détection 2-couches des migrations en attente sur le dev DB (banner Twig dans l'admin + warning CLI dans `make ft`)

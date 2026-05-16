@@ -210,6 +210,15 @@ migrate-f: ## Run migrations without interaction
 migrate-prev: ## Rollback last migration
 	$(CONSOLE) doctrine:migrations:migrate prev
 
+migrate-check: ## Warn loud if the dev DB has pending migrations (called by `make ft`)
+	@if ! $(CONSOLE) doctrine:migrations:up-to-date --no-interaction >/dev/null 2>&1; then \
+		echo ""; \
+		printf '\033[33;1m⚠️  PENDING MIGRATIONS DETECTED ON DEV DB ⚠️\033[0m\n'; \
+		$(CONSOLE) doctrine:migrations:up-to-date --no-interaction || true; \
+		printf '\033[36mRun \033[1mmake migrate\033[0;36m to sync the dev DB with the code.\033[0m\n'; \
+		echo ""; \
+	fi
+
 migration-generate: ## Generate a blank migration
 	$(CONSOLE) doctrine:migrations:generate
 
@@ -296,7 +305,7 @@ fd: ## Fix code and build dev assets
 	make fix && make dev
 
 ft: ## Fix code and run all tests
-	make fix && make test
+	make fix && make test && make migrate-check
 
 # === Setup ===
 setup-env: ## Create .env.local from .env.local.example template
