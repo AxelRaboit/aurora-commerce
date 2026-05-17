@@ -29,7 +29,7 @@ de correspondance + le `sed` bulk.
 | `Aurora\Core\Agency\*` | `Aurora\Core\Platform\Agency\*` |
 | `Aurora\Core\Auth\*` | `Aurora\Core\Platform\Auth\*` |
 | `Aurora\Core\Service\{Entity,Dto,Manager,Repository,Serializer,Controller,View}\*` | `Aurora\Core\Platform\Service\{...}\*` |
-| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | inchangé (contextes cross-module) |
+| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\Module\Context\{...}Context` |
 
 **Inchangé** (cross-cutting infra) : `Encryption`, `Frontend`, `Locale`,
 `Mail`, `Menu`, `Migration`, `Module`, `MountPoint`, `Notification`,

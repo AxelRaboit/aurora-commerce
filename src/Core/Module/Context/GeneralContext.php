@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Service;
+namespace Aurora\Core\Module\Context;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;

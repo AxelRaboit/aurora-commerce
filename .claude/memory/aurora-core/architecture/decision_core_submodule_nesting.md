@@ -65,13 +65,12 @@ Le chemin client miroir le namespace Aurora. Avant : `Aurora\Core\Agency`
 
 ### Pour les contextes globaux (PlatformContext, MediaContext, etc.)
 
-Ils restent à `src/Core/Service/` (pas sous Platform/Media/etc.) — ce sont
-des contextes **cross-module** consommés par plusieurs modules. À ne pas
-confondre avec l'entité Service qui, elle, a bougé sous `Platform/`.
-
-Ticket de suivi possible : renommer `src/Core/Service/*Context.php` →
-`src/Core/Module/Context/*Context.php` pour cohérence. Hors-scope du
-refacto initial.
+Déplacés sous `src/Core/Module/Context/` depuis 0.4.0 (suivi du refacto
+principal). Namespace : `Aurora\Core\Module\Context\<Name>Context`.
+Ces contextes restent **cross-module** (consommés par plusieurs modules)
+mais sous une infra centralisée plutôt que sous l'ancien `Service/`
+trompeur. Ne pas confondre avec l'entité Service qui, elle, a bougé sous
+`src/Core/Platform/Service/`.
 
 ## Périmètre exclu
 
@@ -105,7 +104,7 @@ fichiers).
 2. **Conflit `Aurora\Core\Media` vs `Aurora\Core\MediaModule`** : le
    pattern `Aurora\\Core\\Media\\` (avec backslash final) discrimine bien
    les deux (MediaModule n'a pas de `\` après "Media").
-3. **`src/Core/Service/` dual-purpose** : entité Service + contextes
+3. **`src/Core/Service/` dual-purpose au moment du refacto initial** : hébergeait à la fois l'entité Service ET les contextes
    globaux. Le pattern sed doit cibler explicitement les 7 sous-namespaces
    de Service (`Entity`, `Dto`, `Manager`, …) — pas le préfixe
    `Aurora\\Core\\Service\\` qui capturerait aussi les contextes.

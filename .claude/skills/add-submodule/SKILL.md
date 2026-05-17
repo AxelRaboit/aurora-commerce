@@ -48,7 +48,7 @@ Same detection as `/add-module` (composer.json check). Adapts :
    before adding togglable sub-modules."
 4. **Confirm parent has a `<Parent>Context` class** :
    - Business : `src/Module/<Parent>/Service/<Parent>Context.php`
-   - Core : `src/Core/Service/<Parent>Context.php`
+   - Core : `src/Core/Module/Context/<Parent>Context.php` (depuis 0.4.0)
    - If absent, stop with same message as 3.
 5. **Permission(s)** — single (`<parent>.<sub>.use`) or granular
    (`view`/`create`/`edit`/`delete`) ? Ask the user.

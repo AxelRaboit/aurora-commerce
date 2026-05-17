@@ -34,7 +34,7 @@ sous-modules à l'intérieur**.
 | `Aurora\Core\Service\Serializer\*` | `Aurora\Core\Platform\Service\Serializer\*` |
 | `Aurora\Core\Service\Controller\*` | `Aurora\Core\Platform\Service\Controller\*` |
 | `Aurora\Core\Service\View\*` | `Aurora\Core\Platform\Service\View\*` |
-| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | **inchangé** (ce sont des contextes globaux, pas de l'entité Service) |
+| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\Module\Context\{...}Context` (déplacés pour cohérence — ce sont des contextes cross-module, pas du code de l'entité Service) |
 
 ### Inchangé (cross-cutting infra)
 
