@@ -112,19 +112,12 @@ function bubbleClass(role) {
                             <pre class="px-3 py-2 border-t border-line/60 text-secondary font-mono whitespace-pre-wrap wrap-break-word">{{ msg.content }}</pre>
                         </details>
 
-                        <div v-else class="flex">
+                        <div v-else-if="msg.content && msg.content.trim()" class="flex">
                             <div
                                 class="max-w-[80%] rounded-lg px-3 py-2 whitespace-pre-wrap wrap-break-word"
                                 :class="bubbleClass(msg.role)"
                             >
                                 {{ msg.content }}
-                                <div
-                                    v-if="msg.role === 'assistant' && msg.toolCalls && msg.toolCalls.length"
-                                    class="mt-2 text-[10px] text-muted uppercase tracking-wide flex items-center gap-1"
-                                >
-                                    <Wrench class="w-3 h-3" :stroke-width="2" />
-                                    {{ t('assistant.chat.tool_call') }}: {{ msg.toolCalls.map(c => c.function?.name).filter(Boolean).join(', ') }}
-                                </div>
                             </div>
                         </div>
                     </template>
