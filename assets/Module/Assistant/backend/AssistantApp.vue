@@ -1,7 +1,11 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Trash2, Send, MessageSquare, Wrench } from "lucide-vue-next";
-import AppButton from "@shared/components/action/AppButton.vue";
+import { Plus, Trash2, Send, MessageSquare, Wrench, X } from "lucide-vue-next";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import { useAssistant } from "./composables/useAssistant.js";
 
 const props = defineProps({
@@ -25,30 +29,14 @@ const {
     pendingMessage,
     sending,
     draft,
+    deletingConversation,
     selectConversation,
     newConversation,
     sendDraft,
-    confirmTool,
-    deleteConversation,
+    approvePendingCalls,
+    rejectPendingCalls,
+    confirmDeleteConversation,
 } = useAssistant(props);
-
-function approveAll() {
-    const calls = pendingMessage.value?.toolCalls ?? [];
-    const decisions = {};
-    calls.forEach((c, i) => {
-        decisions[c.id ?? String(i)] = "approve";
-    });
-    confirmTool(decisions);
-}
-
-function rejectAll() {
-    const calls = pendingMessage.value?.toolCalls ?? [];
-    const decisions = {};
-    calls.forEach((c, i) => {
-        decisions[c.id ?? String(i)] = "reject";
-    });
-    confirmTool(decisions);
-}
 
 function onKeydown(event) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -66,7 +54,6 @@ function bubbleClass(role) {
 
 <template>
     <div class="flex h-[calc(100vh-9rem)] gap-4">
-        <!-- Sidebar -->
         <aside class="w-72 shrink-0 flex flex-col bg-surface border border-line rounded-xl overflow-hidden">
             <div class="p-3 border-b border-line">
                 <AppButton variant="primary" size="sm" class="w-full" v-on:click="newConversation">
@@ -76,30 +63,30 @@ function bubbleClass(role) {
                 <p class="text-xs text-muted mt-2 truncate" :title="props.model">{{ props.model }}</p>
             </div>
             <div class="flex-1 overflow-y-auto">
-                <ul class="divide-y divide-line">
+                <AppNoData v-if="!conversations.length" :message="t('assistant.chat.no_conversations')" />
+                <ul v-else class="divide-y divide-line">
                     <li
                         v-for="conv in conversations"
                         :key="conv.id"
-                        class="px-3 py-2 cursor-pointer hover:bg-surface-2 flex items-center gap-2"
+                        class="px-3 py-2 cursor-pointer hover:bg-surface-2 flex items-center gap-2 group"
                         :class="activeId === conv.id ? 'bg-surface-2' : ''"
                         v-on:click="selectConversation(conv.id)"
                     >
                         <MessageSquare class="w-4 h-4 text-muted shrink-0" :stroke-width="1.5" />
                         <span class="flex-1 text-sm text-primary truncate">{{ conv.title || t('assistant.chat.untitled') }}</span>
-                        <button
-                            type="button"
-                            class="text-muted hover:text-red-500 shrink-0"
-                            :title="t('assistant.chat.delete')"
-                            v-on:click.stop="deleteConversation(conv.id)"
+                        <AppIconButton
+                            color="rose"
+                            :title="t('shared.common.delete')"
+                            class="opacity-0 group-hover:opacity-100 transition-opacity"
+                            v-on:click.stop="deletingConversation = conv"
                         >
                             <Trash2 class="w-4 h-4" :stroke-width="1.5" />
-                        </button>
+                        </AppIconButton>
                     </li>
                 </ul>
             </div>
         </aside>
 
-        <!-- Chat panel -->
         <section class="flex-1 flex flex-col bg-surface border border-line rounded-xl overflow-hidden">
             <div v-if="!activeConversation" class="flex-1 flex items-center justify-center text-muted text-sm">
                 {{ t('assistant.chat.empty') }}
@@ -145,10 +132,10 @@ function bubbleClass(role) {
                             <pre class="mt-1 text-xs text-secondary whitespace-pre-wrap wrap-break-word">{{ JSON.stringify(call.function?.arguments ?? {}, null, 2) }}</pre>
                         </div>
                         <div class="flex gap-2">
-                            <AppButton variant="primary" size="sm" :disabled="sending" v-on:click="approveAll">
+                            <AppButton variant="primary" size="sm" :disabled="sending" v-on:click="approvePendingCalls">
                                 {{ t('assistant.chat.approve') }}
                             </AppButton>
-                            <AppButton variant="ghost" size="sm" :disabled="sending" v-on:click="rejectAll">
+                            <AppButton variant="ghost" size="sm" :disabled="sending" v-on:click="rejectPendingCalls">
                                 {{ t('assistant.chat.reject') }}
                             </AppButton>
                         </div>
@@ -171,5 +158,30 @@ function bubbleClass(role) {
                 </AppButton>
             </div>
         </section>
+
+        <AppModal
+            :show="!!deletingConversation"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="deletingConversation = null"
+        >
+            <p class="text-sm text-primary">
+                {{ t('assistant.chat.delete_confirm', { title: deletingConversation?.title || t('assistant.chat.untitled') }) }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="deletingConversation = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.cancel') }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" v-on:click="confirmDeleteConversation">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t('shared.common.delete') }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
     </div>
 </template>

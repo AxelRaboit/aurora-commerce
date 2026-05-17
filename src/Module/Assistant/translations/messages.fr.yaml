@@ -6,9 +6,10 @@ assistant:
     placeholder: Posez une question à l'assistant…
     send: Envoyer
     empty: Démarrez une nouvelle conversation pour discuter avec l'assistant.
+    no_conversations: Aucune conversation pour le moment.
     new: Nouvelle conversation
     delete: Supprimer
-    delete_confirm: Supprimer définitivement cette conversation ?
+    delete_confirm: Supprimer définitivement la conversation « {title} » ?
     untitled: Sans titre
     thinking: L'assistant réfléchit…
     tool_call: Appel outil
@@ -21,8 +22,9 @@ assistant:
     description: Chemins du système de fichiers auxquels l'assistant peut accéder.
     add: Ajouter un point de montage
     edit: Modifier
+    edit_title: 'Modifier « {name} »'
     delete: Supprimer
-    delete_confirm: Supprimer ce point de montage ?
+    delete_confirm: 'Supprimer le point de montage « {name} » ?'
     fields:
       name: Nom
       path: Chemin absolu

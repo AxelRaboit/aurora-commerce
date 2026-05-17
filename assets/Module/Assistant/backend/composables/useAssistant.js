@@ -1,13 +1,22 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { useRequest } from "@shared/composables/http/backend/useRequest.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 
-function resolvePath(template, id) {
-    return template.replace("__id__", String(id));
-}
-
+/**
+ * State machine + I/O for the AI assistant chat panel.
+ *
+ * Owns: conversation list, currently-loaded conversation, the in-flight
+ * draft, the pending-confirmation pointer, and every HTTP roundtrip the
+ * panel makes. The SFC consumes these as refs/computed and renders only.
+ *
+ * Optimistic updates: create/delete mutate the local `conversations`
+ * array directly so the sidebar reacts without a list refetch. The list
+ * is only refetched when timestamps are likely to have shifted (after
+ * a successful send, which updates `updatedAt`).
+ */
 export function useAssistant(props) {
     const { t } = useI18n();
     const { request } = useRequest();
@@ -17,6 +26,7 @@ export function useAssistant(props) {
     const activeConversation = ref(null);
     const sending = ref(false);
     const draft = ref("");
+    const deletingConversation = ref(null);
 
     const activeMessages = computed(
         () => activeConversation.value?.messages ?? [],
@@ -30,32 +40,45 @@ export function useAssistant(props) {
     );
 
     async function refreshList() {
-        const res = await request(props.listPath, null, HttpMethod.Get);
-        if (res?.success) {
-            conversations.value = res.data.conversations;
+        const data = await request(props.listPath, null, HttpMethod.Get);
+        if (data?.success) {
+            conversations.value = data.data.conversations;
         }
     }
 
     async function selectConversation(id) {
         activeId.value = id;
         activeConversation.value = null;
-        const res = await request(
-            resolvePath(props.showPath, id),
+        const data = await request(
+            buildPath(props.showPath, { id }),
             null,
             HttpMethod.Get,
         );
-        if (res?.success) {
-            activeConversation.value = res.data.conversation;
+        if (data?.success) {
+            activeConversation.value = data.data.conversation;
         }
     }
 
     async function newConversation() {
-        const res = await request(props.createPath);
-        if (res?.success) {
-            activeConversation.value = res.data.conversation;
-            activeId.value = res.data.conversation.id;
-            await refreshList();
-        }
+        const data = await request(props.createPath);
+        if (!data?.success) return;
+
+        const conversation = data.data.conversation;
+        activeConversation.value = conversation;
+        activeId.value = conversation.id;
+
+        // Optimistic push: insert at the top so the sidebar reacts
+        // immediately, without a second roundtrip.
+        conversations.value = [
+            {
+                id: conversation.id,
+                title: conversation.title,
+                model: conversation.model,
+                createdAt: conversation.createdAt,
+                updatedAt: conversation.updatedAt,
+            },
+            ...conversations.value,
+        ];
     }
 
     async function sendDraft() {
@@ -68,12 +91,14 @@ export function useAssistant(props) {
         }
 
         sending.value = true;
-        const url = resolvePath(props.sendPath, activeConversation.value.id);
+        const url = buildPath(props.sendPath, {
+            id: activeConversation.value.id,
+        });
         draft.value = "";
         try {
-            const res = await request(url, { content });
-            if (res?.success) {
-                activeConversation.value = res.data.conversation;
+            const data = await request(url, { content });
+            if (data?.success) {
+                activeConversation.value = data.data.conversation;
                 await refreshList();
             } else {
                 toast.error(t("assistant.errors.message_empty"));
@@ -87,13 +112,12 @@ export function useAssistant(props) {
         if (!activeConversation.value || sending.value) return;
         sending.value = true;
         try {
-            const url = resolvePath(
-                props.confirmToolPath,
-                activeConversation.value.id,
-            );
-            const res = await request(url, { decisions });
-            if (res?.success) {
-                activeConversation.value = res.data.conversation;
+            const url = buildPath(props.confirmToolPath, {
+                id: activeConversation.value.id,
+            });
+            const data = await request(url, { decisions });
+            if (data?.success) {
+                activeConversation.value = data.data.conversation;
                 await refreshList();
             }
         } finally {
@@ -101,17 +125,38 @@ export function useAssistant(props) {
         }
     }
 
-    async function deleteConversation(id) {
-        if (!window.confirm(t("assistant.chat.delete_confirm"))) return;
-        const res = await request(resolvePath(props.deletePath, id));
-        if (res?.success) {
-            if (activeId.value === id) {
-                activeId.value = null;
-                activeConversation.value = null;
-            }
+    function approvePendingCalls() {
+        const decisions = buildDecisions("approve");
+        if (decisions) confirmTool(decisions);
+    }
 
-            await refreshList();
+    function rejectPendingCalls() {
+        const decisions = buildDecisions("reject");
+        if (decisions) confirmTool(decisions);
+    }
+
+    function buildDecisions(verdict) {
+        const calls = pendingMessage.value?.toolCalls ?? [];
+        if (!calls.length) return null;
+        return Object.fromEntries(
+            calls.map((call, i) => [call.id ?? String(i), verdict]),
+        );
+    }
+
+    async function confirmDeleteConversation() {
+        if (!deletingConversation.value) return;
+        const id = deletingConversation.value.id;
+        const data = await request(buildPath(props.deletePath, { id }));
+        if (!data?.success) return;
+
+        conversations.value = conversations.value.filter((c) => c.id !== id);
+        if (activeId.value === id) {
+            activeId.value = null;
+            activeConversation.value = null;
         }
+
+        toast.success(t("shared.common.deleted"));
+        deletingConversation.value = null;
     }
 
     return {
@@ -122,10 +167,12 @@ export function useAssistant(props) {
         pendingMessage,
         sending,
         draft,
+        deletingConversation,
         selectConversation,
         newConversation,
         sendDraft,
-        confirmTool,
-        deleteConversation,
+        approvePendingCalls,
+        rejectPendingCalls,
+        confirmDeleteConversation,
     };
 }

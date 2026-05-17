@@ -6,9 +6,10 @@ assistant:
     placeholder: Ask the assistant a question…
     send: Send
     empty: Start a new conversation to chat with the assistant.
+    no_conversations: No conversations yet.
     new: New conversation
     delete: Delete
-    delete_confirm: Permanently delete this conversation?
+    delete_confirm: 'Permanently delete the conversation "{title}"?'
     untitled: Untitled
     thinking: Assistant is thinking…
     tool_call: Tool call
@@ -21,8 +22,9 @@ assistant:
     description: Filesystem paths the assistant is allowed to access.
     add: Add mount point
     edit: Edit
+    edit_title: 'Edit "{name}"'
     delete: Delete
-    delete_confirm: Delete this mount point?
+    delete_confirm: 'Delete the mount point "{name}"?'
     fields:
       name: Name
       path: Absolute path
