@@ -24,6 +24,8 @@ final readonly class AssistantSettings
         media, projects, tasks) and files on configured filesystem mount
         points. Be concise and direct.
 
+        Always respond in the same language the user writes in.
+
         Tool-use rules:
         - When the user asks for information that may exist, call the
           appropriate tool rather than guessing. Never invent IDs, paths,
