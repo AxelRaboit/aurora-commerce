@@ -117,7 +117,7 @@ déclare son propre `repositoryClass` sur l'entité concrète.
 ## 3. Côté client (aurora-client)
 
 Pour étendre une entité depuis l'app client :
-- **Cheatsheet** : [`docs/aurora-core/dev/client_quickstart.md`](docs/aurora-core/dev/client_quickstart.md)
+- **Cheatsheet** : [`docs/aurora-client/getting-started/setup.md`](docs/aurora-client/getting-started/setup.md)
 - **Guide pas-à-pas** (exemple Agency complet) :
   [`docs/aurora-core/dev/extending_agency_pilot.md`](docs/aurora-core/dev/extending_agency_pilot.md)
 - **Vue d'ensemble** : [`docs/aurora-core/dev/extending_aurora.md`](docs/aurora-core/dev/extending_aurora.md)
@@ -185,7 +185,7 @@ distribuée via composer aux clients.
 > - Classe PHP / composant Vue → `PascalCase`
 > - Variable / fonction JS → `camelCase`
 >
-> Doc canonique : [`docs/aurora-core/dev/naming_convention.md`](docs/aurora-core/dev/naming_convention.md).
+> Convention résumée ici ; voir aussi la mémoire shared `convention_naming.md`.
 > Mémoire shared : `.claude/memory/aurora-shared/convention_naming.md`.
 
 - **Variables** : noms complets (jamais 1-2 lettres). Ex : `$company`, pas
@@ -250,7 +250,7 @@ Conventions :
 - Prod : `mod_xsendfile` offload les bytes une fois l'auth check PHP
   passé. Voir `docs/aurora-client/deployment/apache_xsendfile.md`
 
-Doc canonique : `docs/aurora-core/dev/storage_policy.md`.
+Mémoire de référence : `aurora-shared/convention_storage_var_uploads.md`.
 Mémoire shared (distribuée aux clients) :
 [`convention_storage_var_uploads.md`](.claude/memory/aurora-shared/convention_storage_var_uploads.md).
 

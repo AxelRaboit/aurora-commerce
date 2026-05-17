@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * Catch-all serve endpoint for everything under `var/uploads/`.
  *
  * Aurora stores all files outside the Apache document root (see
- * `docs/aurora-core/dev/storage_policy.md`). This controller is the
+ * CLAUDE.md §5bis). This controller is the
  * gateway: every URL of the shape `/uploads/{path}` is intercepted by
  * Symfony, the path-traversal guard runs, and the bytes are streamed
  * either via PHP `readfile()` (dev) or via Apache `mod_xsendfile`

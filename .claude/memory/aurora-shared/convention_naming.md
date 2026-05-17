@@ -37,8 +37,8 @@ metadata:
 
 ## Doc canonique
 
-`docs/aurora-core/dev/naming_convention.md` — distribuée aux clients via
-`vendor/axelraboit/aurora/docs/aurora-core/dev/naming_convention.md`.
+Cette mémoire **est** la doc canonique (le fichier `docs/.../naming_convention.md`
+de l'ancien temps a été supprimé pour éviter le double-emploi avec CLAUDE.md §4).
 
 ## Why
 

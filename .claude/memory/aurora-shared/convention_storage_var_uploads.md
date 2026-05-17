@@ -54,7 +54,7 @@ ait fait l'auth check. Dev local sans le module → fallback PHP
 - Fichier dans `public/uploads/` → migration vers `var/uploads/<categorie>/`
 - nginx en prod → Aurora cible Apache + `mod_xsendfile`
 
-**Doc canonique** : `docs/aurora-core/dev/storage_policy.md` (lisible
+**Doc résumée** : CLAUDE.md §5bis + cette mémoire (lisible
 côté client via `vendor/axelraboit/aurora/docs/...`).
 **Apache config** : `docs/aurora-client/deployment/apache_xsendfile.md`.
 Lié à [[pref_think_long_term]] (l'extraction des URL builders hors des

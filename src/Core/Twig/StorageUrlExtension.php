@@ -20,7 +20,7 @@ use Twig\Attribute\AsTwigFunction;
  * `media.publicUrl` / `user.profilePhotoUrl` no longer exist on
  * entities — URL building was moved into dedicated services to keep
  * the domain model free of HTTP concerns. See
- * `docs/aurora-core/dev/storage_policy.md` and CLAUDE.md §3bis.
+ * CLAUDE.md §5bis and CLAUDE.md §3bis.
  */
 final readonly class StorageUrlExtension
 {

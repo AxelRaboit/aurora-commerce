@@ -2,7 +2,7 @@
 
 In production, Aurora stores every uploaded/generated file under
 `var/uploads/` and serves them exclusively through Symfony controllers
-(see `docs/aurora-core/dev/storage_policy.md`). For high traffic, you
+(see `apache_xsendfile.md` here and CLAUDE.md §5bis in aurora-core). For high traffic, you
 don't want PHP-FPM to stream the bytes itself — `mod_xsendfile` lets
 PHP return *just the X-Sendfile header*, and Apache reads the file
 directly from disk.

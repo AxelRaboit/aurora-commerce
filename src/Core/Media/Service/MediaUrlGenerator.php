@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Lives here rather than on `AbstractMedia` so the entity stays a
  * pure domain object — URL building requires `UrlGeneratorInterface`,
  * a presentation concern entities should not depend on. See
- * `docs/aurora-core/dev/storage_policy.md` and CLAUDE.md §3bis
+ * CLAUDE.md §5bis and CLAUDE.md §3bis
  * ("penser long terme").
  *
  * Consumers: every serializer / Twig extension / page renderer that

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * service turns it into a `/uploads/profile-photos/...` URL.
  *
  * Returns `null` when the user has no photo set. See
- * `docs/aurora-core/dev/storage_policy.md` and CLAUDE.md §3bis.
+ * CLAUDE.md §5bis and CLAUDE.md §3bis.
  */
 final readonly class UserProfilePhotoUrlGenerator
 {

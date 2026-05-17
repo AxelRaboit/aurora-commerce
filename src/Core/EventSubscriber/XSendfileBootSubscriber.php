@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * subscriber runs at the highest priority so even an earlier filter
  * that returns a `BinaryFileResponse` benefits from the optimisation.
  *
- * See `docs/aurora-core/dev/storage_policy.md` for the Apache config
+ * See CLAUDE.md §5bis for the Apache config
  * snippet (`a2enmod xsendfile` + `XSendFilePath`).
  */
 final readonly class XSendfileBootSubscriber implements EventSubscriberInterface
