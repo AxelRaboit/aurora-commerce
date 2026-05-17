@@ -237,7 +237,7 @@ function bubbleClass(role) {
                 </div>
             </div>
 
-            <div class="border-t border-line p-3 flex gap-2">
+            <div class="border-t border-line p-3 flex flex-col sm:flex-row gap-2">
                 <textarea
                     v-model="draft"
                     rows="2"
@@ -246,7 +246,7 @@ function bubbleClass(role) {
                     :disabled="sending"
                     v-on:keydown="onKeydown"
                 />
-                <AppButton variant="primary" size="md" :disabled="sending || !draft.trim()" v-on:click="sendDraft">
+                <AppButton variant="primary" size="md" class="w-full sm:w-auto" :disabled="sending || !draft.trim()" v-on:click="sendDraft">
                     <Send class="w-4 h-4" :stroke-width="2" />
                     {{ t('assistant.chat.send') }}
                 </AppButton>
