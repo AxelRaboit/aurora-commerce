@@ -52,7 +52,7 @@
         sidemenuPreferencesPath: path('backend_profile_sidemenu'),
         logoutPath: path('backend_logout'),
         locale: app.request.locale,
-        mailpitUrl: app.environment == 'dev' ? 'http://127.0.0.1:8025' : '',
+        mailpitUrl: aurora_is_dev() ? 'http://127.0.0.1:8025' : '',
         siteName: siteName ?? '',
         siteLogoUrl: siteLogoUrl ?? '',
         appVersion: appVersion is defined ? appVersion : '',
@@ -68,7 +68,7 @@
 
         {% block page_header_slot %}{% endblock %}
 
-        {% if app.environment == 'dev' and aurora_pending_migrations() > 0 %}
+        {% if aurora_is_dev() and aurora_pending_migrations() > 0 %}
             {% embed '@Shared/components/app_message.html.twig' with {variant: 'warning', strip: true, icon: 'database'} %}
                 {% block content %}
                     {{ 'backend.migrations.pending.banner'|trans({'{count}': aurora_pending_migrations()}) }}
@@ -79,7 +79,7 @@
             {% endembed %}
         {% endif %}
 
-        {% if app.environment == 'dev' %}
+        {% if aurora_is_dev() %}
             {% for warning in aurora_dev_warnings() %}
                 {% set variant = warning.level == 'warning' ? 'warning' : 'info' %}
                 {% set icon = warning.level == 'warning' ? 'triangle-alert' : 'info' %}
