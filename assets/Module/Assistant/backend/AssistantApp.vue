@@ -84,8 +84,8 @@ function bubbleClass(role) {
     <div class="flex h-[calc(100vh-9rem)] gap-0 md:gap-4">
         <!-- Sidebar — full screen on mobile (hidden when chat is open), fixed width on desktop -->
         <aside
-            class="flex-col bg-surface border border-line rounded-xl overflow-hidden"
-            :class="mobileView === 'list' ? 'flex w-full md:w-72 md:shrink-0' : 'hidden md:flex md:w-72 md:shrink-0'"
+            class="bg-surface border border-line rounded-xl overflow-hidden md:flex md:flex-col md:w-72 md:shrink-0"
+            :class="mobileView === 'list' ? 'flex flex-col w-full' : 'hidden'"
         >
             <div class="p-3 border-b border-line">
                 <AppButton variant="primary" size="sm" class="w-full" v-on:click="newAndShowChat">
@@ -148,8 +148,8 @@ function bubbleClass(role) {
 
         <!-- Chat panel — hidden on mobile when list is shown -->
         <section
-            class="flex-col bg-surface border border-line rounded-xl overflow-hidden flex-1"
-            :class="mobileView === 'chat' ? 'flex' : 'hidden md:flex'"
+            class="bg-surface border border-line rounded-xl overflow-hidden flex-1 md:flex md:flex-col"
+            :class="mobileView === 'chat' ? 'flex flex-col' : 'hidden'"
         >
             <!-- Mobile back button -->
             <div class="md:hidden flex items-center gap-2 px-3 py-2 border-b border-line">
