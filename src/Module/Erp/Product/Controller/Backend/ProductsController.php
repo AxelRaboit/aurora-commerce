@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Controller\Backend;
 
-use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;

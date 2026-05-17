@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Dev\MountPoint\Entity\MountPoint;
-use Aurora\Core\Dev\MountPoint\Enum\MountPointTypeEnum;
+use Aurora\Module\Dev\MountPoint\Entity\MountPoint;
+use Aurora\Module\Dev\MountPoint\Enum\MountPointTypeEnum;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

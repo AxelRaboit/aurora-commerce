@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Serializer;
 
-use Aurora\Core\Dev\Audit\Entity\AuditLog;
+use Aurora\Module\Dev\Audit\Entity\AuditLog;
 use DateTimeInterface;
 
 class ProductActivitySerializer

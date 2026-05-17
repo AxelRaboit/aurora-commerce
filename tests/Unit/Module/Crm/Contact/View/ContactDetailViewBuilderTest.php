@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Crm\Contact\View;
 
-use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Aurora\Module\Crm\Contact\View\ContactDetailViewBuilder;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Erp\Product\View;
 
-use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Serializer\ProductSerializerInterface;
 use Aurora\Module\Erp\Product\View\ProductDetailViewBuilder;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Project\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Project\Dto\ProjectLabelInputInterface;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectLabel;

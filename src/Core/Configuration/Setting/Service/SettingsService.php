@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Configuration\Setting\Service;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Configuration\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;

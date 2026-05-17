@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ecommerce\Order\View;
 
-use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 use Aurora\Module\Ecommerce\Order\View\OrderDetailViewBuilder;

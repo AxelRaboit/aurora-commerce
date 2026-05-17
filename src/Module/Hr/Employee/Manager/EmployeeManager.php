@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Hr\Employee\Manager;
 
 use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Platform\Service\Repository\ServiceRepository;
 use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Core\Platform\User\Repository\UserRepository;

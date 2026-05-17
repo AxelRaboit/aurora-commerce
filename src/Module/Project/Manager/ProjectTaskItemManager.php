@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Project\Dto\ProjectTaskItemsInputInterface;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Entity\ProjectTaskItem;

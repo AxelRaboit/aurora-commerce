@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Twig;
 
-use Aurora\Core\Dev\Prerequisite\DevPrerequisiteChecker;
+use Aurora\Module\Dev\Prerequisite\DevPrerequisiteChecker;
 use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Twig\Extension\AbstractExtension;

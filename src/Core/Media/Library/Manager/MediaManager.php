@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Media\Library\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Library\Dto\MediaFolderInputInterface;
 use Aurora\Core\Media\Library\Dto\MediaInputInterface;
 use Aurora\Core\Media\Library\Entity\Media;

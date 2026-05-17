@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Service;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Payment\StripeService;

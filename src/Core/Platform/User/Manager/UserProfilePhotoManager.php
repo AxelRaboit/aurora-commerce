@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Platform\User\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Platform\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

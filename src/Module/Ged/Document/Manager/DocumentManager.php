@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;

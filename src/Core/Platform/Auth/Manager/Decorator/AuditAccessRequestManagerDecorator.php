@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Platform\Auth\Manager\Decorator;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Platform\Auth\Entity\AccessRequest;
 use Aurora\Core\Platform\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Platform\Auth\Manager\AccessRequestManagerInterface;

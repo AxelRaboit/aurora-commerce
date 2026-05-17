@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Planning\Manager;
 
 use Aurora\Core\Platform\Agency\Entity\Agency;
 use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Platform\User\Repository\UserRepository;

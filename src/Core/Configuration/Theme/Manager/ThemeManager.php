@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Configuration\Theme\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Configuration\Theme\Dto\ThemeInputInterface;
 use Aurora\Core\Configuration\Theme\Entity\Theme;
 use Aurora\Core\Configuration\Theme\Entity\ThemeInterface;

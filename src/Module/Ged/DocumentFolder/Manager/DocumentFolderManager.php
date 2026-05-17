@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentFolder\Manager;
 
-use Aurora\Core\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\DocumentFolder\Dto\DocumentFolderInputInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
