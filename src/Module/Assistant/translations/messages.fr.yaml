@@ -1,0 +1,26 @@
+assistant:
+  title: Assistant IA
+  errors:
+    message_empty: Le message ne peut pas être vide.
+  chat:
+    placeholder: Posez une question à l'assistant…
+    send: Envoyer
+    empty: Démarrez une nouvelle conversation pour discuter avec l'assistant.
+    new: Nouvelle conversation
+    delete: Supprimer
+    delete_confirm: Supprimer définitivement cette conversation ?
+    untitled: Sans titre
+    thinking: L'assistant réfléchit…
+    tool_call: Appel outil
+    tool_result: Résultat outil
+
+backend:
+  nav:
+    sections:
+      assistant: Assistant
+    assistant: Assistant IA
+    assistant_description: Discuter avec l'assistant IA local (Ollama)
+  permissions:
+    names:
+      assistant:
+        use: Utiliser l'assistant IA

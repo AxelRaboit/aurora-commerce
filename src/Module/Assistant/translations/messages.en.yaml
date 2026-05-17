@@ -1,0 +1,26 @@
+assistant:
+  title: AI Assistant
+  errors:
+    message_empty: Message cannot be empty.
+  chat:
+    placeholder: Ask the assistant a question…
+    send: Send
+    empty: Start a new conversation to chat with the assistant.
+    new: New conversation
+    delete: Delete
+    delete_confirm: Permanently delete this conversation?
+    untitled: Untitled
+    thinking: Assistant is thinking…
+    tool_call: Tool call
+    tool_result: Tool result
+
+backend:
+  nav:
+    sections:
+      assistant: Assistant
+    assistant: AI Assistant
+    assistant_description: Chat with the local AI assistant (Ollama)
+  permissions:
+    names:
+      assistant:
+        use: Use the AI assistant
