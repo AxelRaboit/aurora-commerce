@@ -42,7 +42,7 @@ export function useAssistant(props) {
     async function refreshList() {
         const data = await request(props.listPath, null, HttpMethod.Get);
         if (data?.success) {
-            conversations.value = data.data.conversations;
+            conversations.value = data.conversations;
         }
     }
 
@@ -55,7 +55,7 @@ export function useAssistant(props) {
             HttpMethod.Get,
         );
         if (data?.success) {
-            activeConversation.value = data.data.conversation;
+            activeConversation.value = data.conversation;
         }
     }
 
@@ -63,7 +63,7 @@ export function useAssistant(props) {
         const data = await request(props.createPath);
         if (!data?.success) return;
 
-        const conversation = data.data.conversation;
+        const conversation = data.conversation;
         activeConversation.value = conversation;
         activeId.value = conversation.id;
 
@@ -98,7 +98,7 @@ export function useAssistant(props) {
         try {
             const data = await request(url, { content });
             if (data?.success) {
-                activeConversation.value = data.data.conversation;
+                activeConversation.value = data.conversation;
                 await refreshList();
             } else {
                 toast.error(t("assistant.errors.message_empty"));
@@ -117,7 +117,7 @@ export function useAssistant(props) {
             });
             const data = await request(url, { decisions });
             if (data?.success) {
-                activeConversation.value = data.data.conversation;
+                activeConversation.value = data.conversation;
                 await refreshList();
             }
         } finally {
