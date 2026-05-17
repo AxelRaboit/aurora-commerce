@@ -71,6 +71,7 @@ final class SettingDefinitionRegistry
                     fields: [...$existing->fields, ...$tab->fields],
                     alwaysVisible: $existing->alwaysVisible || $tab->alwaysVisible,
                     componentName: $existing->componentName ?? $tab->componentName,
+                    devOnly: $existing->devOnly || $tab->devOnly,
                 );
             }
         }
