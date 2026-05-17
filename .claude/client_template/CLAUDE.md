@@ -224,10 +224,28 @@ Voici exactement ce qui est écrasé vs ce qui appartient au client.
 |---|---|
 | `README.md` | copié depuis le template au 1er install. Une fois présent = client-owned. |
 | `.claude/settings.json` | idem |
-| `.env` blocs `###> aurora/* ###` | **ajoutés** si absents (`make sync-env`). Valeurs existantes jamais touchées. |
+| `.env` blocs `###> aurora/* ###` | **ajoutés** si absents (`make sync-env`), insérés **au-dessus** du divider `# === CLIENT CUSTOM ===`. Valeurs existantes jamais touchées. |
+
+#### Layout d'un `.env` aurora-client
+
+```
+# Symfony Flex blocks (DATABASE_URL, MAILER_DSN, …)
+# aurora/* blocks (sync-env les maintient ici, valeurs préservées)
+…
+# ====================== CLIENT CUSTOM ======================
+# Variables propres au projet client.
+# `make aurora-update` ne touche JAMAIS aux lignes en dessous.
+# ===========================================================
+MY_API_KEY=…             ← À toi
+WHATEVER_TOKEN=…         ← À toi
+```
+
+`sync-env` ajoute le divider tout seul au premier run et insère les
+nouveaux blocs aurora juste au-dessus.
 
 ### 100% client-owned — jamais touché par les sync
 
+- **Tout ce qui est sous le divider `# === CLIENT CUSTOM ===` du `.env`**
 - `composer.json` (le client ajoute ses propres deps)
 - `.env.local`, `.env.test`, `.env.test.local`
 - `config/services.yaml` (client-side)
