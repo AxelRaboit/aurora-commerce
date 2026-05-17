@@ -7,6 +7,70 @@ projets clients doivent répercuter après avoir lancé `make aurora-update`.
 
 ## [Unreleased]
 
+### ⚠️ Cassant — namespaces Core déplacés sous leur module parent
+
+Alignement de `src/Core/` sur la convention Vault-style déjà en place
+côté `src/Module/` : les sous-modules Core vivent désormais dans un
+sous-dossier de leur module parent (`Aurora\Core\Platform\User`,
+`Aurora\Core\Configuration\Setting`, etc.). Voir
+[`MIGRATION_0.4.md`](docs/aurora-client/MIGRATION_0.4.md) pour la table
+de correspondance + le `sed` bulk.
+
+| Avant | Après |
+|---|---|
+| `Aurora\Core\Dashboard\*` | `Aurora\Core\General\Dashboard\*` |
+| `Aurora\Core\Profile\*` | `Aurora\Core\General\Profile\*` |
+| `Aurora\Core\Search\*` | `Aurora\Core\General\Search\*` |
+| `Aurora\Core\Audit\*` | `Aurora\Core\Dev\Audit\*` |
+| `Aurora\Core\Setting\*` | `Aurora\Core\Configuration\Setting\*` |
+| `Aurora\Core\Theme\*` | `Aurora\Core\Configuration\Theme\*` |
+| `Aurora\Core\Media\*` | `Aurora\Core\Media\Library\*` |
+| `Aurora\Core\User\*` | `Aurora\Core\Platform\User\*` |
+| `Aurora\Core\Agency\*` | `Aurora\Core\Platform\Agency\*` |
+| `Aurora\Core\Auth\*` | `Aurora\Core\Platform\Auth\*` |
+| `Aurora\Core\Service\{Entity,Dto,Manager,Repository,Serializer,Controller,View}\*` | `Aurora\Core\Platform\Service\{...}\*` |
+| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | inchangé (contextes cross-module) |
+
+**Inchangé** (cross-cutting infra) : `Encryption`, `Frontend`, `Locale`,
+`Mail`, `Menu`, `Migration`, `Module`, `MountPoint`, `Notification`,
+`Repository`, `Scheduler`, `Sequence`, `Storage`, `Support`,
+`Timestampable`, `Twig`, `Validation`.
+
+**Aucune migration Doctrine** — les tables (`core_user`, `core_agency`,
+`core_audit_log`, `core_media`, `core_setting`, etc.) gardent leur nom.
+
+### Dans aurora-client
+
+Lancer après `make aurora-update` :
+
+```bash
+# 1. Déplacer les dossiers d'extension (Agency, User, …) sous Core/Platform/
+git mv src/Module/Core/Agency src/Module/Core/Platform/Agency
+
+# 2. Renommer les namespaces (sed bulk — voir MIGRATION_0.4.md pour la commande complète)
+grep -rl 'Aurora\\Core\\Agency\\' src tests config | xargs sed -i 's|Aurora\\Core\\Agency\\|Aurora\\Core\\Platform\\Agency\\|g'
+
+# 3. Re-générer + valider
+composer dump-autoload && make cc && make ft
+```
+
+### Ajouté
+- Skills Claude Code `/add-module` et `/add-submodule` (scaffold de nouveaux
+  modules / sous-features).
+- Doc consolidée `docs/aurora-client/extending/extend_module.md` (remplace
+  `extend_entity.md` + `custom_permissions.md` + `dev/overriding.md`).
+- Convention `process_doc_audit_before_commit.md` (audit des docs/mémoires
+  liées à un changement avant chaque commit).
+- Glob translations élargi à depth 2 (`src/Core/*/*/translations`) pour
+  supporter le nesting.
+
+### Changé
+- `extend-aurora-entity` skill : clarifie le Repository optionnel +
+  rappel User-style hooks obligatoires.
+- `check-extensibility` skill : ajoute check 17b (vérifier que l'absence
+  d'`applyInput()` est légitimement User-style) + check 26 (audit des
+  toggles de sous-modules).
+
 ---
 
 ## [0.3.0] — 2026-05-17

@@ -12,10 +12,18 @@ d'entités Aurora. Il n'y a **pas** de dossiers plats `src/Entity/`,
 
 Le chemin du module **miroir** le namespace Aurora de l'entité étendue :
 
-| Namespace Aurora | Chemin client |
+| Namespace Aurora (depuis 0.4.0) | Chemin client |
 |---|---|
-| `Aurora\Core\Agency\…` | `src/Module/Core/Agency/…` |
+| `Aurora\Core\Platform\Agency\…` | `src/Module/Core/Platform/Agency/…` |
+| `Aurora\Core\Platform\User\…` | `src/Module/Core/Platform/User/…` |
+| `Aurora\Core\Configuration\Setting\…` | `src/Module/Core/Configuration/Setting/…` |
+| `Aurora\Core\Media\Library\…` | `src/Module/Core/Media/Library/…` |
 | `Aurora\Module\Crm\Deal\…` | `src/Module/Crm/Deal/…` |
+
+> **Note 0.4.0** : les entités Core ont été nichées sous leur module
+> parent (Platform, Configuration, Media, General, Dev) — cf.
+> [`docs/aurora-client/MIGRATION_0.4.md`](../../docs/aurora-client/MIGRATION_0.4.md)
+> et [[decision-core-submodule-nesting]] côté aurora-core.
 
 Pour un module entièrement nouveau (sans entité Aurora à étendre) :
 `src/Module/<NomModule>/` avec la même arborescence qu'aurora-core
@@ -56,5 +64,6 @@ App\Module\:
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
+            # Depuis 0.4.0 : Agency vit sous Aurora\Core\Platform\Agency
+            Aurora\Core\Platform\Agency\Entity\AgencyInterface: App\Module\Core\Platform\Agency\Entity\Agency
 ```

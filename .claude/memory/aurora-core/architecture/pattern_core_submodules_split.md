@@ -57,12 +57,18 @@ son propre module peut copier-coller n'importe quel `<X>Module.php`
 
 ## Comment l'appliquer
 
-**Ajouter une nouvelle section Core** (rare) : créer
-`src/Core/<Name>Module.php` flat (pas `src/Core/<Name>/<Name>Module.php`
-— le sous-dossier est réservé aux **business modules** sous `src/Module/`).
-Ajouter la case `<Name>Backend` dans `ModuleParameterEnum` + son context
-dans `src/Core/Service/<Name>Context.php`. L'auto-discovery fait le
-reste.
+**Ajouter une nouvelle section Core** (rare) :
+- **Module class** (`<Name>Module.php`) : reste à plat à
+  `src/Core/<Name>Module.php`, namespace `Aurora\Core\<Name>Module`.
+- **Sous-modules** du module : nichés sous `src/Core/<Name>/<SubModule>/`
+  (depuis 0.4.0, cf. [[decision-core-submodule-nesting]]). Exemple :
+  `src/Core/Platform/User/`, `src/Core/Configuration/Setting/`,
+  `src/Core/General/Dashboard/`.
+- Ajouter la case `<Name>Backend` dans `ModuleParameterEnum` + son context
+  dans `src/Core/Service/<Name>Context.php` (les contextes globaux
+  restent cross-module à `Service/`, **pas** sous Platform/Media/etc.).
+- L'auto-discovery fait le reste (services.yaml `_instanceof`, Twig glob,
+  translations glob à depth 2).
 
 **Renommage de section.id** : la section "Dashboard" a vu son id passer
 de `'core'` à `'general'` pour aligner avec `getModuleId()`. Migration
