@@ -13,6 +13,29 @@ assistant:
     thinking: Assistant is thinking…
     tool_call: Tool call
     tool_result: Tool result
+  mount_point:
+    title: Mount points
+    description: Filesystem paths the assistant is allowed to access.
+    add: Add mount point
+    edit: Edit
+    delete: Delete
+    delete_confirm: Delete this mount point?
+    fields:
+      name: Name
+      path: Absolute path
+      access: Access
+      active: Active
+    access:
+      read_only: Read only
+      read_write: Read + write
+    placeholder:
+      name: e.g. Downloads
+      path: /home/user/Downloads
+    errors:
+      name_required: Name is required.
+      path_required: Path is required.
+      path_absolute: Path must be absolute (start with /).
+    empty: No mount points configured. Add one so the assistant can read files.
 
 backend:
   nav:
@@ -20,6 +43,8 @@ backend:
       assistant: Assistant
     assistant: AI Assistant
     assistant_description: Chat with the local AI assistant (Ollama)
+    assistant_mount_points: Mount points
+    assistant_mount_points_description: Configure folders the assistant can read
   permissions:
     names:
       assistant:

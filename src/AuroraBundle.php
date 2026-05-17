@@ -43,6 +43,8 @@ use Aurora\Module\Assistant\Conversation\Entity\Conversation;
 use Aurora\Module\Assistant\Conversation\Entity\ConversationInterface;
 use Aurora\Module\Assistant\Conversation\Entity\Message;
 use Aurora\Module\Assistant\Conversation\Entity\MessageInterface;
+use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
+use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
@@ -313,6 +315,7 @@ class AuroraBundle extends AbstractBundle
                     BlockNoteInterface::class => BlockNote::class,
                     ConversationInterface::class => Conversation::class,
                     MessageInterface::class => Message::class,
+                    AssistantMountPointInterface::class => AssistantMountPoint::class,
                 ],
                 'mappings' => array_merge(
                     [

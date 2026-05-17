@@ -34,6 +34,13 @@ final readonly class AssistantModule implements ModuleInterface
                     requiredPrivilege: 'assistant.use',
                     descriptionKey: 'backend.nav.assistant_description',
                 ),
+                new NavItem(
+                    'backend_assistant_mount_points',
+                    'backend.nav.assistant_mount_points',
+                    'folder-key',
+                    requiredPrivilege: 'assistant.use',
+                    descriptionKey: 'backend.nav.assistant_mount_points_description',
+                ),
             ], priority: 27),
         ];
     }
