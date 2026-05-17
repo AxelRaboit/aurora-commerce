@@ -62,6 +62,10 @@ final class SettingsController extends AbstractController
             return $this->jsonForbidden();
         }
 
+        if ($this->definitionRegistry->isDevOnly($key) && !$this->isGranted(UserRoleEnum::Dev->value)) {
+            return $this->jsonForbidden();
+        }
+
         if (ApplicationParameterEnum::ColorPickerPresets->value === $key) {
             $normalised = $this->normaliseColorPickerPresets($value);
             if (null === $normalised) {

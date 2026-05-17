@@ -98,6 +98,41 @@ final class SettingDefinitionRegistry
     }
 
     /**
+     * True when the key belongs to a tab marked `devOnly`. Such keys must
+     * only be written by users with ROLE_DEV — the controller enforces this
+     * at the HTTP boundary so it cannot be bypassed by a crafted POST even
+     * when the key IS technically in the registry.
+     */
+    public function isDevOnly(string $key): bool
+    {
+        return $this->devOnlyKeys()[$key] ?? false;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    private function devOnlyKeys(): array
+    {
+        static $map = null;
+        if (null !== $map) {
+            return $map;
+        }
+
+        $map = [];
+        foreach ($this->getTabs() as $tab) {
+            if (!$tab->devOnly) {
+                continue;
+            }
+
+            foreach ($tab->fields as $field) {
+                $map[$field->key] = true;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
      * @return array<string, SettingFieldDescriptor>
      */
     private function fieldsByKey(): array
