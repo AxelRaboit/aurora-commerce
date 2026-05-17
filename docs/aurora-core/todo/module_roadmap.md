@@ -21,6 +21,26 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 
 ## 🔴 Haute priorité
 
+### PersonalFinance (Spendly)
+**Port de :** [Spendly](https://github.com/AxelRaboit/spendly) (projet Laravel maison)
+**Pourquoi :** Module mature et complet à porter. Couvre la gestion financière
+personnelle de bout en bout — usage déjà éprouvé, design itéré, valeur immédiate
+pour tout client Aurora ayant besoin de tracking de dépenses.
+**Fonctionnalités cibles :**
+- Portefeuilles multiples (modes Budget vs Simple) + partage Owner/Editor/Viewer
+- Transactions Income/Expense + virements (2 tx liées) + splits + attachments
+- Budget mensuel avec sections, carry-over, copy-from-previous, presets
+- Objectifs d'épargne (auto-trackés via category)
+- Transactions récurrentes (mensuelles) + planifiées (one-off)
+- Catégories scope-wallet + auto-catégorisation par patterns appris
+- Statistiques multi-charts + projection année
+- Import Excel 2-steps
+**Cible :** module `src/Module/PersonalFinance/` — voir [TODO détaillé](spendly/README.md)
+**Hors scope :** Administration, plan Free/Pro/Stripe, guide de démarrage
+(décision utilisateur explicite mai 2026)
+
+---
+
 ### Contrats / Abonnements
 **Inspiré de :** Dolibarr — Module Contrats  
 **Pourquoi :** Génère des factures récurrentes automatiquement. Indispensable pour les modèles SaaS, maintenance, abonnements.  

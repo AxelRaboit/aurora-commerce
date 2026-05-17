@@ -34,6 +34,25 @@ de prise de notes. Vue d'ensemble et arbitrages communs dans
 - [Sous-module Markdown](notes/markdown/entity.md) — éditeur markdown + wiki-links + graph (port d'Onyx)
 - [Sous-module Block](notes/block/overview.md) — éditeur block-based EditorJS
 
+### PersonalFinance (Spendly) — nouveau module
+
+Module `src/Module/PersonalFinance/` à créer, port du projet Spendly (Laravel) — gestion
+financière personnelle avec portefeuilles multi-modes, budget mensuel, virements,
+objectifs, transactions récurrentes, auto-catégorisation, statistiques, import
+Excel. Décisions transverses et architecture cible dans
+[`spendly/README.md`](spendly/README.md). 10 sous-modules un par entrée sidebar.
+
+- [Tableau de bord](spendly/tableau_de_bord.md) — agrégation KPI page d'accueil
+- [Vue globale](spendly/vue_globale.md) — synthèse multi-wallets avec navigation mensuelle
+- [Portefeuilles](spendly/portefeuilles.md) — wallets (Budget/Simple) + members + invitations + balance adjustment
+- [Transactions](spendly/transactions.md) — Income/Expense + virements (2 tx liées) + splits + attachments
+- [Objectifs](spendly/objectifs.md) — savings goals auto-trackés via EventSubscriber
+- [Automatiques](spendly/automatiques.md) — récurrentes mensuelles + planifiées one-off + commande cron
+- [Catégories](spendly/categories.md) — taxonomie scope-wallet + system categories
+- [Auto-catégorisation](spendly/auto_categorisation.md) — patterns appris description → catégorie
+- [Statistiques](spendly/statistiques.md) — 6 charts analytiques sur période sélectionnable
+- [Importer](spendly/importer.md) — import Excel 2-steps (upload → preview → process)
+
 ## Convention
 
 - Un fichier par **topic** cohérent (ex : tous les TODOs catalogue dans
