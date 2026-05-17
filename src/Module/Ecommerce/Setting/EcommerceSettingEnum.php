@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Setting;
 
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
  * Ecommerce module's own setting parameters. Persisted keys kept identical

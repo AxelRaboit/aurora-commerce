@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Vault\VaultFolder\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Vault\VaultFolder\Dto\VaultFolderInput;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;

@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Core\Configuration\Theme\Service\ThemeResolver;
 use Aurora\Module\Ged\Document\View\Frontend\DocumentsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

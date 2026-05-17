@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Vault\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Vault\Service\VaultContext;
 use PHPUnit\Framework\TestCase;
 

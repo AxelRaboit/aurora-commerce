@@ -6,7 +6,7 @@ namespace Aurora\Core\Auth\View\Frontend;
 
 use Aurora\Core\Auth\Security\Frontend\LoginAuthenticator;
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Configuration\Theme\Service\ThemeContext;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 

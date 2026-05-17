@@ -9,7 +9,7 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Locale\Enum\CountryEnum;
-use Aurora\Core\Theme\Service\ThemeResolver;
+use Aurora\Core\Configuration\Theme\Service\ThemeResolver;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;

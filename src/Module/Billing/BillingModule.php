@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Billing\Service\BillingContext;
 
 final readonly class BillingModule implements ModuleInterface, ModuleToggleProviderInterface

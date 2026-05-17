@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Comment\View;
 
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Editorial\Comment\Repository\CommentRepository;
 use Aurora\Module\Editorial\Comment\View\CommentsViewBuilder;
 use PHPUnit\Framework\TestCase;

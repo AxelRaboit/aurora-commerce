@@ -6,7 +6,7 @@ namespace Aurora\Core\General\Dashboard\View;
 
 use Aurora\Core\General\Dashboard\Service\StatsService;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final readonly class DashboardViewBuilder
 {

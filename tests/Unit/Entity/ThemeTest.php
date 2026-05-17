@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Theme\Entity\Theme;
+use Aurora\Core\Configuration\Theme\Entity\Theme;
 use PHPUnit\Framework\TestCase;
 
 final class ThemeTest extends TestCase

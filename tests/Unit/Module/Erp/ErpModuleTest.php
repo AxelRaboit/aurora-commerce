@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Erp;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Erp\ErpModule;
 use Aurora\Module\Erp\Service\ErpContext;
 use PHPUnit\Framework\TestCase;

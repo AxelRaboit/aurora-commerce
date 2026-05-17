@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Editorial\Taxonomy\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Editorial\Post\Entity\PostType;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Module\Editorial\Taxonomy\Dto\TaxonomyInput;

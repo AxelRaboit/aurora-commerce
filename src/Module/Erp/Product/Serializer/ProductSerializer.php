@@ -6,7 +6,7 @@ namespace Aurora\Module\Erp\Product\Serializer;
 
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Service\MediaUrlGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use DateTimeInterface;

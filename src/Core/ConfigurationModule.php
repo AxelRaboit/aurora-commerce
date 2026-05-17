@@ -10,7 +10,7 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Service\ConfigurationContext;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Configuration section — global app parameters (Settings) and visual

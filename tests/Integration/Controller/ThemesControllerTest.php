@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Theme\Entity\Theme;
-use Aurora\Core\Theme\Repository\ThemeRepository;
+use Aurora\Core\Configuration\Theme\Entity\Theme;
+use Aurora\Core\Configuration\Theme\Repository\ThemeRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;

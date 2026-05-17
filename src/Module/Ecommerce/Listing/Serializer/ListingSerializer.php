@@ -7,7 +7,7 @@ namespace Aurora\Module\Ecommerce\Listing\Serializer;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Service\MediaUrlGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use DateTimeInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\View;
 
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Configuration\Theme\Service\ThemeContext;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;

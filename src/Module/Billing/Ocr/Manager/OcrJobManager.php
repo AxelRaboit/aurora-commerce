@@ -8,7 +8,7 @@ use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Enum\StorageAreaEnum;
 use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;

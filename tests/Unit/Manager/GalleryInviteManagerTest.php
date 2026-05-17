@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Manager;
 
 use Aurora\Core\Mail\Service\MailService;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
 use Aurora\Module\Photo\Gallery\Manager\GalleryInviteManager;

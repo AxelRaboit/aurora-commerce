@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Invoice\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;

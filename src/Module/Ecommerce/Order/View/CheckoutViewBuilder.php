@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Order\View;
 
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Locale\Enum\CountryEnum;
-use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Configuration\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;

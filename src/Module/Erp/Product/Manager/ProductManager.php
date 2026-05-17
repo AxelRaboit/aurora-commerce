@@ -7,7 +7,7 @@ namespace Aurora\Module\Erp\Product\Manager;
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Erp\Product\Dto\ProductInputInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;

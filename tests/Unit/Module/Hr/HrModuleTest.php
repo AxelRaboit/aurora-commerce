@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Hr;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Hr\HrModule;
 use Aurora\Module\Hr\Service\HrContext;
 use PHPUnit\Framework\TestCase;

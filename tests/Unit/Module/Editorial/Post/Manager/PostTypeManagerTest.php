@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Editorial\Post\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Editorial\Post\Dto\PostTypeFieldInput;
 use Aurora\Module\Editorial\Post\Dto\PostTypeInput;
 use Aurora\Module\Editorial\Post\Entity\Post;

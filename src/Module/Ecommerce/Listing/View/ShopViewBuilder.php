@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Listing\View;
 
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Configuration\Theme\Service\ThemeContext;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Listing\Serializer\ListingSerializerInterface;

@@ -7,7 +7,7 @@ namespace Aurora\Module\Ecommerce\Listing\Manager;
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Dto\ListingInputInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;

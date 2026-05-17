@@ -6,7 +6,7 @@ namespace Aurora\Module\PdfForm\PdfDocument\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\PdfForm\Enum\PdfDocumentStatusEnum;
 use Aurora\Module\PdfForm\PdfDocument\Dto\PdfDocumentInputInterface;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;

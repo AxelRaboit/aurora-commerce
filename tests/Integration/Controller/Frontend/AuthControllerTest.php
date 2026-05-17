@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Enum\UserStatusEnum;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ged\Setting;
 
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 enum GedSettingEnum: string implements ApplicationParameterEnumInterface
 {

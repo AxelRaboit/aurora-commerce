@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\MessageHandler;
 
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;

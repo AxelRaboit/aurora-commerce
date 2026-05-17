@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Manager\UserManagerInterface;
 use Aurora\Tests\Integration\Concern\CreatesTestUsers;

@@ -6,8 +6,8 @@ namespace Aurora\Core\Twig;
 
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Media\Service\MediaUrlGenerator;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 

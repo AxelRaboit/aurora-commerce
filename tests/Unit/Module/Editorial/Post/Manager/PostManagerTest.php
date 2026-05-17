@@ -7,7 +7,7 @@ namespace Aurora\Tests\Unit\Module\Editorial\Post\Manager;
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Editorial\Post\Dto\PostInput;
 use Aurora\Module\Editorial\Post\Dto\PostTranslationInput;

@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Editorial\Comment\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Editorial\Comment\Dto\CommentInput;
 use Aurora\Module\Editorial\Comment\Entity\AbstractComment;
 use Aurora\Module\Editorial\Comment\Entity\Comment;

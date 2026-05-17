@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Twig;
 
 use Aurora\Core\Module\Service\ModuleRegistry;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Twig\Attribute\AsTwigFunction;
 
 final readonly class SidemenuExtension

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Block\View;
 
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Support\Num;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;

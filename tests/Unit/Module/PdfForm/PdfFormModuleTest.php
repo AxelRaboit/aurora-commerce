@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\PdfForm;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\PdfForm\PdfFormModule;
 use Aurora\Module\PdfForm\Service\PdfFormContext;
 use PHPUnit\Framework\TestCase;

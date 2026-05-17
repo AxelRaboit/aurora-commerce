@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Setting;
 
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 enum BillingSettingEnum: string implements ApplicationParameterEnumInterface
 {

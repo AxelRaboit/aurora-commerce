@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Module\Service;
 
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 

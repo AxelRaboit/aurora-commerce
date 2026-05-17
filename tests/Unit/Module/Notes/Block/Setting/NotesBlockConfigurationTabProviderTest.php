@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Notes\Block\Setting;
 
-use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Core\Configuration\Setting\Configuration\SettingFieldDescriptor;
 use Aurora\Module\Notes\Block\Setting\BlockNoteSettingEnum;
 use Aurora\Module\Notes\Block\Setting\NotesBlockConfigurationTabProvider;
 use PHPUnit\Framework\TestCase;

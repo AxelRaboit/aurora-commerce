@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Frontend\View;
 
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Core\Configuration\Theme\Service\ThemeContext;
 
 /**
  * Provides the base template variables required by the default front layout.

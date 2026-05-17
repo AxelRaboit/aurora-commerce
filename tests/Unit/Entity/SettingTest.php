@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Setting\Entity\Setting;
+use Aurora\Core\Configuration\Setting\Entity\Setting;
 use PHPUnit\Framework\TestCase;
 
 final class SettingTest extends TestCase

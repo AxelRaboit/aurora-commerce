@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Setting\Command;
 
-use Aurora\Core\Setting\Command\ApplicationParameterCommand;
-use Aurora\Core\Setting\Entity\Setting;
-use Aurora\Core\Setting\Entity\SettingInterface;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Command\ApplicationParameterCommand;
+use Aurora\Core\Configuration\Setting\Entity\Setting;
+use Aurora\Core\Configuration\Setting\Entity\SettingInterface;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;

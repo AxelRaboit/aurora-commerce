@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Setting;
 
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 
 /**
  * Reads Assistant runtime config with a two-step fallback chain :

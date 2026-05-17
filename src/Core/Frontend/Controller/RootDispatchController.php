@@ -8,7 +8,7 @@ use Aurora\Core\Frontend\Contract\FrontendInterface;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Frontend\Service\Registry;
 use Aurora\Core\Frontend\Service\Router;
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;

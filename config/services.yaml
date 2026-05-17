@@ -42,7 +42,7 @@ services:
             tags: [aurora.menu_location_provider]
         Aurora\Core\Sequence\SequencePrefixProviderInterface:
             tags: [aurora.sequence_prefix]
-        Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface:
+        Aurora\Core\Configuration\Setting\Configuration\ConfigurationTabProviderInterface:
             tags: [aurora.configuration_tab_provider]
         Aurora\Module\Assistant\Tool\Contract\ToolInterface:
             tags: [aurora.assistant.tool]
@@ -90,15 +90,15 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Theme\Service\ThemeResolver:
+    Aurora\Core\Configuration\Theme\Service\ThemeResolver:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Theme\Manager\ThemeManager:
+    Aurora\Core\Configuration\Theme\Manager\ThemeManager:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
+    Aurora\Core\Configuration\Setting\Command\DumpJsTranslationsCommand:
         arguments:
             $auroraDir: '%kernel.project_dir%'
 
@@ -114,11 +114,11 @@ services:
         arguments:
             $modules: !tagged_iterator aurora.module
 
-    Aurora\Core\Setting\View\ModulesViewBuilder:
+    Aurora\Core\Configuration\Setting\View\ModulesViewBuilder:
         arguments:
             $modules: !tagged_iterator aurora.module
 
-    Aurora\Core\Setting\Configuration\SettingDefinitionRegistry:
+    Aurora\Core\Configuration\Setting\Configuration\SettingDefinitionRegistry:
         arguments:
             $providers: !tagged_iterator aurora.configuration_tab_provider
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Setting;
 
-use Aurora\Core\Setting\Configuration\ConfigurationTab;
-use Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface;
-use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Core\Configuration\Setting\Configuration\ConfigurationTab;
+use Aurora\Core\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
+use Aurora\Core\Configuration\Setting\Configuration\SettingFieldDescriptor;
 
 /**
  * Surfaces the Assistant module's settings as a dedicated tab on the

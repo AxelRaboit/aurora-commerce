@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Setting\Service;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
-use Aurora\Core\Setting\Exception\CascadeViolationException;
-use Aurora\Core\Setting\Repository\SettingRepository;
-use Aurora\Core\Setting\Service\SettingsService;
+use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Exception\CascadeViolationException;
+use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Core\Configuration\Setting\Service\SettingsService;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 

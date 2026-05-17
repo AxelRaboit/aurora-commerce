@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Toggle façade for the "Général" backend section (Dashboard).
