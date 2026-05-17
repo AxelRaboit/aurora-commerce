@@ -70,8 +70,8 @@ final class SettingDefinitionRegistry
                     priority: min($existing->priority, $tab->priority),
                     fields: [...$existing->fields, ...$tab->fields],
                     alwaysVisible: $existing->alwaysVisible || $tab->alwaysVisible,
-                    componentName: $existing->componentName ?? $tab->componentName,
                     devOnly: $existing->devOnly || $tab->devOnly,
+                    componentName: $existing->componentName ?? $tab->componentName,
                 );
             }
         }

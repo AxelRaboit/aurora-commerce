@@ -104,7 +104,7 @@ final class DevPrerequisiteChecker
         }
 
         // Warn if version < 18
-        $version = mb_ltrim($output[0] ?? '', 'v');
+        $version = mb_ltrim($output[0], 'v');
         if (version_compare($version, '18.0.0', '<')) {
             return [new PrerequisiteWarning(
                 message: sprintf('Node.js %s < 18 requis', $version),

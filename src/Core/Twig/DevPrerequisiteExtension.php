@@ -17,7 +17,7 @@ use Twig\TwigFunction;
  *                           Replaces the magic string `app.environment == 'dev'`
  *                           everywhere in templates.
  *
- *   aurora_dev_warnings() — list of {@see \Aurora\Core\Dev\Prerequisite\PrerequisiteWarning}
+ *   aurora_dev_warnings() — list of {@see PrerequisiteWarning}
  *                           for missing dev prerequisites (PHP extensions,
  *                           Node.js, Ollama, models…).
  */
