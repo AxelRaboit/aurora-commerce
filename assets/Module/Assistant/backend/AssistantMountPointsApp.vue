@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Save, Pencil, Trash2, X, FolderKey } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -8,9 +7,11 @@ import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppSelect from "@/shared/components/form/select/AppSelect.vue";
 import AppToggle from "@/shared/components/form/toggle/AppToggle.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
+import { useClientFilteredList } from "@/shared/composables/list/useClientFilteredList.js";
 import { useAssistantMountPointsForm } from "./composables/useAssistantMountPointsForm.js";
 import { useAssistantMountPointsDelete } from "./composables/useAssistantMountPointsDelete.js";
 
@@ -24,7 +25,17 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const mountPointList = ref([...props.mountPoints]);
+const {
+    items: mountPointList,
+    searchInput,
+    filteredItems,
+} = useClientFilteredList(
+    props.mountPoints,
+    null,
+    (mountPoint, query) =>
+        (mountPoint.name ?? "").toLowerCase().includes(query)
+        || (mountPoint.path ?? "").toLowerCase().includes(query),
+);
 const { modal, form, errors, loading, openCreate, openEdit, submit } =
     useAssistantMountPointsForm(mountPointList, props.createPath, props.updatePath);
 const { deletingMountPoint, confirmDelete } = useAssistantMountPointsDelete(
@@ -41,7 +52,10 @@ const accessOptions = [
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <p class="text-sm text-secondary self-center">{{ t('assistant.mount_point.description') }}</p>
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('assistant.mount_point.search_placeholder')"
+            />
             <template #actions>
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
@@ -52,9 +66,9 @@ const accessOptions = [
 
         <!-- Mobile: cards -->
         <div class="sm:hidden space-y-2">
-            <AppNoData v-if="!mountPointList.length" :message="t('assistant.mount_point.empty')" />
+            <AppNoData v-if="!filteredItems.length" :message="t('assistant.mount_point.empty')" />
             <div
-                v-for="mountPoint in mountPointList"
+                v-for="mountPoint in filteredItems"
                 :key="mountPoint.id"
                 class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm"
             >
@@ -85,7 +99,7 @@ const accessOptions = [
 
         <!-- Desktop: table -->
         <div class="hidden sm:block bg-surface border border-line/60 rounded-xl overflow-hidden">
-            <AppNoData v-if="!mountPointList.length" :message="t('assistant.mount_point.empty')" />
+            <AppNoData v-if="!filteredItems.length" :message="t('assistant.mount_point.empty')" />
             <table v-else class="w-full text-sm">
                 <thead>
                     <tr class="bg-surface-2/50 border-b border-line/40">
@@ -97,7 +111,7 @@ const accessOptions = [
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line/40">
-                    <tr v-for="mountPoint in mountPointList" :key="mountPoint.id" class="group hover:bg-surface-2/40 transition-colors">
+                    <tr v-for="mountPoint in filteredItems" :key="mountPoint.id" class="group hover:bg-surface-2/40 transition-colors">
                         <td class="px-4 py-3 font-medium text-primary">{{ mountPoint.name }}</td>
                         <td class="px-4 py-3 font-mono text-xs text-secondary">{{ mountPoint.path }}</td>
                         <td class="px-4 py-3 text-secondary">{{ t(`assistant.mount_point.access.${mountPoint.access}`) }}</td>

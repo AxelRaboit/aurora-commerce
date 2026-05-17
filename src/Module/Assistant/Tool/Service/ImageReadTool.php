@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\Tool\Service;
 
 use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
+use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Module\Assistant\Vision\Contract\VisionDescriberInterface;
 use Throwable;
@@ -31,7 +31,7 @@ final readonly class ImageReadTool implements ToolInterface
     private const array SUPPORTED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
 
     public function __construct(
-        private AssistantMountPointRepository $mountPointRepository,
+        private MountPointPathGuard $pathGuard,
         private VisionDescriberInterface $describer,
     ) {}
 
@@ -95,7 +95,7 @@ final readonly class ImageReadTool implements ToolInterface
             );
         }
 
-        if (!$this->isAllowed($resolved, $user)) {
+        if (!$this->pathGuard->isAllowed($resolved, $user)) {
             return sprintf('Error: image is outside any active mount point: %s', $resolved);
         }
 
@@ -110,21 +110,5 @@ final readonly class ImageReadTool implements ToolInterface
         }
 
         return sprintf("Image %s:\n%s", $resolved, $description);
-    }
-
-    private function isAllowed(string $resolvedPath, CoreUserInterface $user): bool
-    {
-        foreach ($this->mountPointRepository->findActiveForUser($user) as $mountPoint) {
-            $base = realpath($mountPoint->getPath());
-            if (false === $base) {
-                continue;
-            }
-
-            if (str_starts_with($resolvedPath, $base.'/')) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

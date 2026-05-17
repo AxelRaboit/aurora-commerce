@@ -41,6 +41,7 @@ assistant:
       path_required: Path is required.
       path_absolute: Path must be absolute (start with /).
     empty: No mount points configured. Add one so the assistant can read files.
+    search_placeholder: Search by name or path…
 
 backend:
   settings:

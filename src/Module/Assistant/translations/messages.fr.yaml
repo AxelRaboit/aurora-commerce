@@ -41,6 +41,7 @@ assistant:
       path_required: Le chemin est requis.
       path_absolute: Le chemin doit être absolu (commencer par /).
     empty: Aucun point de montage configuré. Ajoutez-en un pour que l'assistant puisse lire des fichiers.
+    search_placeholder: Rechercher par nom ou chemin…
 
 backend:
   settings:

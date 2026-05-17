@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\Tool\Service;
 
 use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
+use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 
 use function count;
@@ -38,7 +38,7 @@ final readonly class FilesystemReadTool implements ToolInterface
     private const int MAX_DIR_ENTRIES = 200;
 
     public function __construct(
-        private AssistantMountPointRepository $mountPointRepository,
+        private MountPointPathGuard $pathGuard,
     ) {}
 
     public function getName(): string
@@ -92,7 +92,7 @@ final readonly class FilesystemReadTool implements ToolInterface
             return $this->describeMissingPath($rawPath, $user);
         }
 
-        if (!$this->isAllowed($resolved, $user)) {
+        if (!$this->pathGuard->isAllowed($resolved, $user)) {
             return sprintf('Error: path is outside any active mount point: %s', $resolved);
         }
 
@@ -116,7 +116,7 @@ final readonly class FilesystemReadTool implements ToolInterface
         $needle = mb_strtolower(basename($rawPath));
         $resolvedParent = realpath($parent);
 
-        if (false === $resolvedParent || !$this->isAllowed($resolvedParent, $user) || !is_dir($resolvedParent)) {
+        if (false === $resolvedParent || !$this->pathGuard->isAllowed($resolvedParent, $user) || !is_dir($resolvedParent)) {
             return sprintf('Error: path does not exist: %s', $rawPath);
         }
 
@@ -154,26 +154,6 @@ final readonly class FilesystemReadTool implements ToolInterface
             $rawPath,
             implode(', ', $candidates),
         );
-    }
-
-    private function isAllowed(string $resolvedPath, CoreUserInterface $user): bool
-    {
-        foreach ($this->mountPointRepository->findActiveForUser($user) as $mountPoint) {
-            $base = realpath($mountPoint->getPath());
-            if (false === $base) {
-                continue;
-            }
-
-            if ($resolvedPath === $base) {
-                return true;
-            }
-
-            if (str_starts_with($resolvedPath, $base.'/')) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private function listDirectory(string $path): string

@@ -8,6 +8,7 @@ use Aurora\Core\User\Entity\User;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
+use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Service\FilesystemReadTool;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -134,7 +135,7 @@ final class FilesystemReadToolTest extends TestCase
         $repository = $this->createStub(AssistantMountPointRepository::class);
         $repository->method('findActiveForUser')->willReturn($active ? $mountPoints : []);
 
-        return new FilesystemReadTool($repository);
+        return new FilesystemReadTool(new MountPointPathGuard($repository));
     }
 
     private function makeUser(int $id = 42): User

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\Tool\Service;
 
 use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
+use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
@@ -51,7 +51,7 @@ final readonly class FilesystemSearchTool implements ToolInterface
     private const array SKIP_DIRS = ['.git', 'node_modules', 'vendor', '.cache', '.idea', 'dist', 'build'];
 
     public function __construct(
-        private AssistantMountPointRepository $mountPointRepository,
+        private MountPointPathGuard $pathGuard,
     ) {}
 
     public function getName(): string
@@ -172,30 +172,18 @@ final readonly class FilesystemSearchTool implements ToolInterface
      */
     private function resolveSearchRoots(array $arguments, CoreUserInterface $user): ?array
     {
-        $bases = [];
-        foreach ($this->mountPointRepository->findActiveForUser($user) as $mountPoint) {
-            $base = realpath($mountPoint->getPath());
-            if (false !== $base) {
-                $bases[] = $base;
-            }
-        }
+        $bases = $this->pathGuard->activeBases($user);
 
         if (!isset($arguments['path']) || !is_string($arguments['path']) || '' === mb_trim($arguments['path'])) {
             return $bases;
         }
 
         $requested = realpath(mb_trim($arguments['path']));
-        if (false === $requested) {
+        if (false === $requested || !$this->pathGuard->isAllowed($requested, $user)) {
             return null;
         }
 
-        foreach ($bases as $base) {
-            if ($requested === $base || str_starts_with($requested, $base.'/')) {
-                return [$requested];
-            }
-        }
-
-        return null;
+        return [$requested];
     }
 
     /**

@@ -197,14 +197,55 @@ class ConversationManager implements ConversationManagerInterface
     protected function anyToolRequiresConfirmation(array $toolCalls): bool
     {
         foreach ($toolCalls as $call) {
-            $function = $call['function'] ?? [];
-            $name = is_array($function) && isset($function['name']) && is_string($function['name']) ? $function['name'] : '';
+            $name = $this->extractToolName($call);
             if ('' !== $name && $this->toolRegistry->requiresConfirmation($name)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Pulls the `function.name` out of an OpenAI/Ollama-shaped tool call,
+     * defensively — model libraries return slightly different shapes, and
+     * the field is nullable on JSON decode.
+     *
+     * @param array<string, mixed> $call
+     */
+    protected function extractToolName(array $call): string
+    {
+        $function = $call['function'] ?? null;
+
+        return is_array($function) && isset($function['name']) && is_string($function['name'])
+            ? $function['name']
+            : '';
+    }
+
+    /**
+     * @param array<string, mixed> $call
+     *
+     * @return array<string, mixed>
+     */
+    protected function extractToolArguments(array $call): array
+    {
+        $function = $call['function'] ?? null;
+        if (!is_array($function) || !isset($function['arguments'])) {
+            return [];
+        }
+
+        $arguments = $function['arguments'];
+        if (is_string($arguments)) {
+            try {
+                $decoded = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
+
+                return is_array($decoded) ? $decoded : [];
+            } catch (JsonException) {
+                return [];
+            }
+        }
+
+        return is_array($arguments) ? $arguments : [];
     }
 
     protected function findPendingAssistantMessage(ConversationInterface $conversation): ?MessageInterface
@@ -223,8 +264,7 @@ class ConversationManager implements ConversationManagerInterface
      */
     protected function appendRejectedToolMessage(ConversationInterface $conversation, array $call, string $toolCallId): void
     {
-        $function = $call['function'] ?? [];
-        $name = is_array($function) && isset($function['name']) && is_string($function['name']) ? $function['name'] : '';
+        $name = $this->extractToolName($call);
 
         $message = $this->createMessage();
         $message->setConversation($conversation);
@@ -243,21 +283,8 @@ class ConversationManager implements ConversationManagerInterface
      */
     protected function executeToolCall(ConversationInterface $conversation, array $call, string $fallbackId): void
     {
-        $function = $call['function'] ?? [];
-        $name = is_array($function) && isset($function['name']) && is_string($function['name']) ? $function['name'] : '';
-        $arguments = is_array($function) && isset($function['arguments']) ? $function['arguments'] : [];
-        if (is_string($arguments)) {
-            try {
-                $decoded = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
-                $arguments = is_array($decoded) ? $decoded : [];
-            } catch (JsonException) {
-                $arguments = [];
-            }
-        }
-
-        if (!is_array($arguments)) {
-            $arguments = [];
-        }
+        $name = $this->extractToolName($call);
+        $arguments = $this->extractToolArguments($call);
 
         $toolCallId = isset($call['id']) && is_string($call['id']) && '' !== $call['id'] ? $call['id'] : $fallbackId;
 

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\Tool\Service;
 
 use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
-use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
+use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 
 use function dirname;
@@ -30,7 +29,7 @@ final readonly class FilesystemWriteTool implements ToolInterface
     private const int MAX_CONTENT_BYTES = 256 * 1024;
 
     public function __construct(
-        private AssistantMountPointRepository $mountPointRepository,
+        private MountPointPathGuard $pathGuard,
     ) {}
 
     public function getName(): string
@@ -89,7 +88,7 @@ final readonly class FilesystemWriteTool implements ToolInterface
 
         $resolved = $parentDir.'/'.basename($rawPath);
 
-        if (!$this->isAllowed($resolved, $user)) {
+        if (!$this->pathGuard->isAllowed($resolved, $user, requireWrite: true)) {
             return sprintf('Error: path is outside any active ReadWrite mount point: %s', $resolved);
         }
 
@@ -115,25 +114,5 @@ final readonly class FilesystemWriteTool implements ToolInterface
             $resolved,
             mb_strlen($content, '8bit'),
         );
-    }
-
-    private function isAllowed(string $resolvedPath, CoreUserInterface $user): bool
-    {
-        foreach ($this->mountPointRepository->findActiveForUser($user) as $mountPoint) {
-            if (MountPointAccessEnum::ReadWrite !== $mountPoint->getAccess()) {
-                continue;
-            }
-
-            $base = realpath($mountPoint->getPath());
-            if (false === $base) {
-                continue;
-            }
-
-            if (str_starts_with($resolvedPath, $base.'/')) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
