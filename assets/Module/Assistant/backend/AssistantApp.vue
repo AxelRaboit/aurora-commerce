@@ -197,7 +197,7 @@ function bubbleClass(role) {
                 <div class="flex-1 max-w-56">
                     <AppMultiselect
                         :model-value="selectedSourceId"
-                        :options="[{ value: null, label: t('assistant.chat.source_all') }, ...props.mountPoints.map(mp => ({ value: mp.id, label: mp.name }))]"
+                        :options="[{ value: null, label: t('assistant.chat.source_all') }, ...props.mountPoints.map(mp => ({ value: mp.id, label: `${mp.name} — ${mp.access === 'read_write' ? t('assistant.mount_point.access.read_write') : t('assistant.mount_point.access.read_only')}` }))]"
                         :searchable="false"
                         open-direction="top"
                         track-by="value"

@@ -28,6 +28,7 @@ final readonly class AssistantViewBuilder
                 'id' => $mp->getId(),
                 'name' => $mp->getName(),
                 'path' => $mp->getPath(),
+                'access' => $mp->getAccess()->value,
             ],
             $this->mountPointRepository->findActiveForUser($user),
         );
