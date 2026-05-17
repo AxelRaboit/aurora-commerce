@@ -29,7 +29,8 @@ de correspondance + le `sed` bulk.
 | `Aurora\Core\Agency\*` | `Aurora\Core\Platform\Agency\*` |
 | `Aurora\Core\Auth\*` | `Aurora\Core\Platform\Auth\*` |
 | `Aurora\Core\Service\{Entity,Dto,Manager,Repository,Serializer,Controller,View}\*` | `Aurora\Core\Platform\Service\{...}\*` |
-| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\Module\Context\{...}Context` |
+| `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\{Platform,Media,Configuration,General}\{Same}Context` (racine du folder du module) |
+| `Aurora\Module\<X>\Service\<X>Context` (12 business modules) | `Aurora\Module\<X>\<X>Context` (racine du folder du module) |
 
 **Inchangé** (cross-cutting infra) : `Encryption`, `Frontend`, `Locale`,
 `Mail`, `Menu`, `Migration`, `Module`, `MountPoint`, `Notification`,

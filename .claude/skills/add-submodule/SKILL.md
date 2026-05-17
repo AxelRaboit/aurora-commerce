@@ -47,8 +47,8 @@ Same detection as `/add-module` (composer.json check). Adapts :
    `ModuleToggleProviderInterface`. Add it first (cf. `/add-module` cas 2)
    before adding togglable sub-modules."
 4. **Confirm parent has a `<Parent>Context` class** :
-   - Business : `src/Module/<Parent>/Service/<Parent>Context.php`
-   - Core : `src/Core/Module/Context/<Parent>Context.php` (depuis 0.4.0)
+   - Business : `src/Module/<Parent>/<Parent>Context.php` (à la racine du module)
+   - Core : `src/Core/<Parent>/<Parent>Context.php` (à la racine du folder du module)
    - If absent, stop with same message as 3.
 5. **Permission(s)** — single (`<parent>.<sub>.use`) or granular
    (`view`/`create`/`edit`/`delete`) ? Ask the user.
@@ -67,7 +67,7 @@ Add the new toggle key + accessor.
 **CLIENT** (string constant directly on Context) :
 
 ```php
-// src/Module/<Parent>/Service/<Parent>Context.php
+// src/Module/<Parent>/<Parent>Context.php
 final readonly class <Parent>Context
 {
     public const string BACKEND_KEY = 'app_<parent_id>_backend';

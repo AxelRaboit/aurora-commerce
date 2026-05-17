@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Ged\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Ged\Service\GedContext;
+use Aurora\Module\Ged\GedContext;
 use PHPUnit\Framework\TestCase;
 
 final class GedContextTest extends TestCase

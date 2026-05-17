@@ -8,7 +8,7 @@ use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\PdfForm\PdfFormModule;
-use Aurora\Module\PdfForm\Service\PdfFormContext;
+use Aurora\Module\PdfForm\PdfFormContext;
 use PHPUnit\Framework\TestCase;
 
 final class PdfFormModuleTest extends TestCase

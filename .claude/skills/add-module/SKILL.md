@@ -229,8 +229,16 @@ backend:
 Adds **on top of cas 1** :
 
 ```
-src/Module/<Module>/Service/<Module>Context.php
+# CLIENT or business CORE module
+src/Module/<Module>/<Module>Context.php
+
+# Core module
+src/Core/<Module>/<Module>Context.php
 ```
+
+> Convention 0.4.0 : le Context vit à la **racine du folder du module**,
+> à côté des sous-modules. Pas sous `Service/` (Service/ reste pour les
+> vrais services métier comme Crm/Service/CrmNotificationService).
 
 And **edits** `<Module>Module.php` to :
 - implement `ModuleToggleProviderInterface` in addition to `ModuleInterface`
@@ -241,7 +249,7 @@ And **edits** `<Module>Module.php` to :
 **Context snippet (CLIENT)** :
 
 ```php
-namespace App\Module\<Module>\Service;
+namespace App\Module\<Module>;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 
@@ -261,7 +269,7 @@ final readonly class <Module>Context
 **Context snippet (CORE)** — keys live in `ModuleParameterEnum` :
 
 ```php
-namespace Aurora\Module\<Module>\Service;
+namespace Aurora\Core\<Module>;   // ou Aurora\Module\<Module> pour un business module
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;

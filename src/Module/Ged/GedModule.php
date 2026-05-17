@@ -10,7 +10,7 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Ged\Service\GedContext;
+use Aurora\Module\Ged\GedContext;
 
 final readonly class GedModule implements ModuleInterface, ModuleToggleProviderInterface
 {

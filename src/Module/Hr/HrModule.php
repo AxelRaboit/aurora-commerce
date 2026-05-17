@@ -10,7 +10,7 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Hr\Service\HrContext;
+use Aurora\Module\Hr\HrContext;
 
 final readonly class HrModule implements ModuleInterface, ModuleToggleProviderInterface
 {

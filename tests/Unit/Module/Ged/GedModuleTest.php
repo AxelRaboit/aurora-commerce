@@ -8,7 +8,7 @@ use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Ged\GedModule;
-use Aurora\Module\Ged\Service\GedContext;
+use Aurora\Module\Ged\GedContext;
 use PHPUnit\Framework\TestCase;
 
 final class GedModuleTest extends TestCase

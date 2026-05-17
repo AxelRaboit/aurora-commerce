@@ -8,7 +8,7 @@ use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Ecommerce\EcommerceModule;
-use Aurora\Module\Ecommerce\Service\EcommerceContext;
+use Aurora\Module\Ecommerce\EcommerceContext;
 use PHPUnit\Framework\TestCase;
 
 final class EcommerceModuleTest extends TestCase

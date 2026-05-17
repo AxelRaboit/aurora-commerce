@@ -8,7 +8,7 @@ use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Photo\PhotoModule;
-use Aurora\Module\Photo\Service\PhotoContext;
+use Aurora\Module\Photo\PhotoContext;
 use PHPUnit\Framework\TestCase;
 
 final class PhotoModuleTest extends TestCase

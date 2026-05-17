@@ -10,7 +10,7 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\PdfForm\Service\PdfFormContext;
+use Aurora\Module\PdfForm\PdfFormContext;
 
 final readonly class PdfFormModule implements ModuleInterface, ModuleToggleProviderInterface
 {

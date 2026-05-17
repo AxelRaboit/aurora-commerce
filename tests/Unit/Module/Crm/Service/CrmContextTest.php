@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Crm\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Crm\Service\CrmContext;
+use Aurora\Module\Crm\CrmContext;
 use PHPUnit\Framework\TestCase;
 
 final class CrmContextTest extends TestCase

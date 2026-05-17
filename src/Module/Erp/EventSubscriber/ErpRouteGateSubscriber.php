@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\EventSubscriber;
 
-use Aurora\Module\Erp\Service\ErpContext;
+use Aurora\Module\Erp\ErpContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

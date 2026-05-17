@@ -65,9 +65,9 @@ son propre module peut copier-coller n'importe quel `<X>Module.php`
   `src/Core/Platform/User/`, `src/Core/Configuration/Setting/`,
   `src/Core/General/Dashboard/`.
 - Ajouter la case `<Name>Backend` dans `ModuleParameterEnum` + son context
-  dans `src/Core/Module/Context/<Name>Context.php` (les contextes cross-module
-  vivent sous `Aurora\Core\Module\Context\` depuis 0.4.0, **pas** sous
-  Platform/Media/etc.).
+  dans `src/Core/<Name>/<Name>Context.php` (le Context vit à la racine du
+  folder du module, à côté de ses sous-modules — convention unifiée
+  core+business depuis 0.4.0).
 - L'auto-discovery fait le reste (services.yaml `_instanceof`, Twig glob,
   translations glob à depth 2).
 

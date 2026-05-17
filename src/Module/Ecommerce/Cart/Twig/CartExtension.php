@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Cart\Twig;
 
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
-use Aurora\Module\Ecommerce\Service\EcommerceContext;
+use Aurora\Module\Ecommerce\EcommerceContext;
 use Twig\Attribute\AsTwigFunction;
 
 final readonly class CartExtension

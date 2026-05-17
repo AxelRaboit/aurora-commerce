@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Erp\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Erp\Service\ErpContext;
+use Aurora\Module\Erp\ErpContext;
 use PHPUnit\Framework\TestCase;
 
 final class ErpContextTest extends TestCase

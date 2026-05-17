@@ -8,7 +8,7 @@ use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Planning\PlanningModule;
-use Aurora\Module\Planning\Service\PlanningContext;
+use Aurora\Module\Planning\PlanningContext;
 use PHPUnit\Framework\TestCase;
 
 final class PlanningModuleTest extends TestCase

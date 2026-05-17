@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\EventSubscriber;
 
-use Aurora\Core\Module\Context\GeneralContext;
+use Aurora\Core\General\GeneralContext;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;

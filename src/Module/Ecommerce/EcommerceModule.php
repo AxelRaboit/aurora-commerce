@@ -10,7 +10,7 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Ecommerce\Service\EcommerceContext;
+use Aurora\Module\Ecommerce\EcommerceContext;
 
 final readonly class EcommerceModule implements ModuleInterface, ModuleToggleProviderInterface
 {

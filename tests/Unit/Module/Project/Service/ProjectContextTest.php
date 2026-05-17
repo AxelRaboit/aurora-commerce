@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Project\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Project\Service\ProjectContext;
+use Aurora\Module\Project\ProjectContext;
 use PHPUnit\Framework\TestCase;
 
 final class ProjectContextTest extends TestCase

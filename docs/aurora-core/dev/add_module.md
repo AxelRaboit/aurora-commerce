@@ -211,11 +211,11 @@ et tous les services concernés. Permet de garder les `if (! $context->isXEnable
 **hors** du `<Module>Module.php`.
 
 ```php
-// src/Module/Vault/Service/VaultContext.php
-namespace Aurora\Module\Vault\Service;
+// src/Module/Vault/VaultContext.php
+namespace Aurora\Module\Vault;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final readonly class VaultContext
 {

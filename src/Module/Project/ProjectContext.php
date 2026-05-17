@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Erp\Service;
+namespace Aurora\Module\Project;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
-final readonly class ErpContext
+final readonly class ProjectContext
 {
     public function __construct(private ModuleAccessChecker $moduleAccessChecker) {}
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpBackend);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectBackend);
     }
 
-    public function isProductsEnabled(): bool
+    public function isProjectsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpProducts);
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectProjects);
     }
 }

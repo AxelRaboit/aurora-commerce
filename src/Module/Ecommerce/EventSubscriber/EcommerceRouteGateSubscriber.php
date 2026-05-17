@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\EventSubscriber;
 
-use Aurora\Module\Ecommerce\Service\EcommerceContext;
+use Aurora\Module\Ecommerce\EcommerceContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

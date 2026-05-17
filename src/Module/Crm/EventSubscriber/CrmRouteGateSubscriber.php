@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\EventSubscriber;
 
-use Aurora\Module\Crm\Service\CrmContext;
+use Aurora\Module\Crm\CrmContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

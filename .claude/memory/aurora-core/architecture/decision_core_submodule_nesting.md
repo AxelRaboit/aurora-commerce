@@ -63,14 +63,31 @@ Le chemin client miroir le namespace Aurora. Avant : `Aurora\Core\Agency`
 [`convention_module_structure.md`](../../aurora-client/convention_module_structure.md)
 (à mettre à jour côté client si pas déjà fait).
 
-### Pour les contextes globaux (PlatformContext, MediaContext, etc.)
+### Pour les contextes des modules (PlatformContext, VaultContext, etc.)
 
-Déplacés sous `src/Core/Module/Context/` depuis 0.4.0 (suivi du refacto
-principal). Namespace : `Aurora\Core\Module\Context\<Name>Context`.
-Ces contextes restent **cross-module** (consommés par plusieurs modules)
-mais sous une infra centralisée plutôt que sous l'ancien `Service/`
-trompeur. Ne pas confondre avec l'entité Service qui, elle, a bougé sous
-`src/Core/Platform/Service/`.
+**Convention unique** : `<racine-du-module>/<Module>Context.php` (à la
+racine du folder du module, à côté des sous-modules). S'applique core
+ET business :
+
+- **Core** : `src/Core/Platform/PlatformContext.php`,
+  `src/Core/Configuration/ConfigurationContext.php`,
+  `src/Core/Media/MediaContext.php`,
+  `src/Core/General/GeneralContext.php`.
+- **Business** : `src/Module/Vault/VaultContext.php`,
+  `src/Module/Editorial/EditorialContext.php`, etc. (12 modules).
+
+L'historique : avant l'alignement, les Core contexts vivaient à
+`src/Core/Service/`, puis à `src/Core/Module/Context/` (étape
+intermédiaire éphémère), avant d'atterrir à la racine du folder du
+module. Les Business contexts vivaient à
+`src/Module/<X>/Service/<X>Context.php` (10/12 modules n'avaient QUE le
+Context dans Service/ — dossier trompeur). Le pattern actuel reflète
+mieux la réalité : le Context **appartient** au module et vit à sa
+racine, comme `<Module>FrontendDescriptor.php`.
+
+Le dossier `Service/` reste valide pour des **vrais services métier**
+(ex. `Crm/Service/CrmNotificationService.php`,
+`PdfForm/Service/PdfManipulator.php`) — pas pour le Context.
 
 ## Périmètre exclu
 

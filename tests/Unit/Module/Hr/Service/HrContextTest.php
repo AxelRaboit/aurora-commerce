@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Hr\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Hr\Service\HrContext;
+use Aurora\Module\Hr\HrContext;
 use PHPUnit\Framework\TestCase;
 
 final class HrContextTest extends TestCase

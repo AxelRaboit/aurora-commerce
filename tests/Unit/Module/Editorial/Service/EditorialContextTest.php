@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Editorial\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Editorial\Service\EditorialContext;
+use Aurora\Module\Editorial\EditorialContext;
 use PHPUnit\Framework\TestCase;
 
 final class EditorialContextTest extends TestCase

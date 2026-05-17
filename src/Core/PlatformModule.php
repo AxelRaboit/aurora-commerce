@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Core\Module\Context\PlatformContext;
+use Aurora\Core\Platform\PlatformContext;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**

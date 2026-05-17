@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Photo\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Photo\Service\PhotoContext;
+use Aurora\Module\Photo\PhotoContext;
 use PHPUnit\Framework\TestCase;
 
 final class PhotoContextTest extends TestCase
