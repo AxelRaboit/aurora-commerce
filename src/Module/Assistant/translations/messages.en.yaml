@@ -46,6 +46,19 @@ assistant:
     search_placeholder: Search by name or path…
 
 backend:
+  modules:
+    assistant: AI Assistant
+  audit:
+    actions:
+      assistant:
+        conversation:
+          created: Conversation created
+          deleted: Conversation deleted
+          renamed: Conversation renamed
+        mount_point:
+          created: Mount point added
+          updated: Mount point updated
+          deleted: Mount point deleted
   settings:
     tabs:
       assistant: Assistant
