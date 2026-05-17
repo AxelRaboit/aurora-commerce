@@ -14,6 +14,8 @@ assistant:
     thinking: Assistant is thinking…
     tool_call: Tool call
     tool_result: Tool result
+    source: Source
+    source_all: All sources
     confirm_required: Action requires confirmation
     approve: Approve
     reject: Reject

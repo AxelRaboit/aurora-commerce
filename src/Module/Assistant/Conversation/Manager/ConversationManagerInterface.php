@@ -21,7 +21,12 @@ interface ConversationManagerInterface
      * roundtrips if needed), and return the conversation with all new
      * messages persisted.
      */
-    public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input): ConversationInterface;
+    /**
+     * @param int|null $sourceMountPointId When set, the system prompt narrows
+     *                                     the filesystem context to that single
+     *                                     mount point instead of all active ones.
+     */
+    public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input, ?int $sourceMountPointId = null): ConversationInterface;
 
     /**
      * Resume a conversation that paused on a pending tool confirmation.

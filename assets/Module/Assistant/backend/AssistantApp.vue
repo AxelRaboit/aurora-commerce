@@ -4,6 +4,7 @@ import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight, Loader2, Pe
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
@@ -11,6 +12,7 @@ import { useAssistant } from "./composables/useAssistant.js";
 
 const props = defineProps({
     conversations: { type: Array, required: true },
+    mountPoints: { type: Array, default: () => [] },
     model: { type: String, required: true },
     listPath: { type: String, required: true },
     showPath: { type: String, required: true },
@@ -31,6 +33,7 @@ const {
     pendingMessage,
     sending,
     draft,
+    selectedSourceId,
     deletingConversation,
     renamingId,
     renameDraft,
@@ -188,6 +191,21 @@ function bubbleClass(role) {
                     </div>
                 </div>
             </template>
+
+            <div v-if="props.mountPoints.length > 1" class="border-t border-line px-3 pt-2 flex items-center gap-2">
+                <span class="text-xs text-muted shrink-0">{{ t('assistant.chat.source') }}</span>
+                <div class="flex-1 max-w-56">
+                    <AppMultiselect
+                        :model-value="selectedSourceId"
+                        :options="[{ value: null, label: t('assistant.chat.source_all') }, ...props.mountPoints.map(mp => ({ value: mp.id, label: mp.name }))]"
+                        :searchable="false"
+                        open-direction="top"
+                        track-by="value"
+                        option-label="label"
+                        v-on:update:model-value="selectedSourceId = $event"
+                    />
+                </div>
+            </div>
 
             <div class="border-t border-line p-3 flex gap-2">
                 <textarea

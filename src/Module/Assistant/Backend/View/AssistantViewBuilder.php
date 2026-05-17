@@ -7,12 +7,15 @@ namespace Aurora\Module\Assistant\Backend\View;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Conversation\Repository\ConversationRepository;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
+use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;
+use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class AssistantViewBuilder
 {
     public function __construct(
         private ConversationRepository $conversationRepository,
+        private AssistantMountPointRepository $mountPointRepository,
         private ChatClientInterface $chatClient,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
@@ -20,8 +23,18 @@ final readonly class AssistantViewBuilder
     /** @return array<string, mixed> */
     public function indexView(CoreUserInterface $user): array
     {
+        $mountPoints = array_map(
+            static fn (AssistantMountPointInterface $mp): array => [
+                'id' => $mp->getId(),
+                'name' => $mp->getName(),
+                'path' => $mp->getPath(),
+            ],
+            $this->mountPointRepository->findActiveForUser($user),
+        );
+
         return [
             'conversations' => $this->conversationRepository->findListForUser($user),
+            'mountPoints' => $mountPoints,
             'model' => $this->chatClient->getModel(),
             'listPath' => $this->urlGenerator->generate('backend_assistant_chat_list'),
             'showPath' => $this->urlGenerator->generate('backend_assistant_chat_show', ['id' => '__id__']),

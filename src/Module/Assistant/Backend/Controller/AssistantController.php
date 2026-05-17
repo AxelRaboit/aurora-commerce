@@ -89,14 +89,16 @@ final class AssistantController extends AbstractController
             return $this->jsonNotFound();
         }
 
-        $input = $this->inputFactory->fromArray($this->decodeJson($request));
+        $payload = $this->decodeJson($request);
+        $input = $this->inputFactory->fromArray($payload);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
             return $this->jsonInvalidInput($errors);
         }
 
-        $this->manager->sendMessage($conversation, $input);
+        $sourceMountPointId = isset($payload['sourceMountPointId']) ? (int) $payload['sourceMountPointId'] : null;
+        $this->manager->sendMessage($conversation, $input, $sourceMountPointId);
 
         return $this->jsonSuccess(['conversation' => $this->serializer->serializeDetail($conversation)]);
     }

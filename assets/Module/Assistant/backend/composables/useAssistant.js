@@ -27,6 +27,7 @@ export function useAssistant(props) {
     const sending = ref(false);
     const draft = ref("");
     const deletingConversation = ref(null);
+    const selectedSourceId = ref(null);
     const renamingId = ref(null);
     const renameDraft = ref("");
 
@@ -116,7 +117,9 @@ export function useAssistant(props) {
             id: activeConversation.value.id,
         });
         try {
-            const data = await request(url, { content });
+            const body = { content };
+            if (selectedSourceId.value) body.sourceMountPointId = selectedSourceId.value;
+            const data = await request(url, body);
             if (data?.success) {
                 activeConversation.value = data.conversation;
                 await refreshList();
@@ -223,6 +226,7 @@ export function useAssistant(props) {
         pendingMessage,
         sending,
         draft,
+        selectedSourceId,
         deletingConversation,
         renamingId,
         renameDraft,

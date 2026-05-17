@@ -77,7 +77,7 @@ class ConversationManager implements ConversationManagerInterface
         $this->auditLogger->log('assistant', 'conversation.renamed', 'Conversation', $conversation->getId(), $this->auditPayload($conversation));
     }
 
-    public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input): ConversationInterface
+    public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input, ?int $sourceMountPointId = null): ConversationInterface
     {
         $content = mb_trim($input->getContent());
         if ('' === $content) {
@@ -103,7 +103,7 @@ class ConversationManager implements ConversationManagerInterface
             $conversation->setTitle($this->deriveTitle($content));
         }
 
-        $this->runChatLoop($conversation);
+        $this->runChatLoop($conversation, $sourceMountPointId);
 
         $this->entityManager->flush();
 
@@ -115,12 +115,12 @@ class ConversationManager implements ConversationManagerInterface
      * resend until the model emits an assistant message with no tool calls
      * (or we hit MAX_TOOL_ROUNDTRIPS).
      */
-    protected function runChatLoop(ConversationInterface $conversation): void
+    protected function runChatLoop(ConversationInterface $conversation, ?int $sourceMountPointId = null): void
     {
         $tools = $this->toolRegistry->describe();
 
         for ($i = 0; $i < self::MAX_TOOL_ROUNDTRIPS; ++$i) {
-            $payload = $this->buildOllamaMessages($conversation);
+            $payload = $this->buildOllamaMessages($conversation, $sourceMountPointId);
 
             try {
                 $response = $this->chatClient->chat($payload, $tools);
@@ -313,10 +313,10 @@ class ConversationManager implements ConversationManagerInterface
     /**
      * @return list<array<string, mixed>>
      */
-    protected function buildOllamaMessages(ConversationInterface $conversation): array
+    protected function buildOllamaMessages(ConversationInterface $conversation, ?int $sourceMountPointId = null): array
     {
         $out = [
-            ['role' => 'system', 'content' => $this->buildSystemPrompt($conversation)],
+            ['role' => 'system', 'content' => $this->buildSystemPrompt($conversation, $sourceMountPointId)],
         ];
 
         foreach ($conversation->getMessages() as $message) {
@@ -332,23 +332,37 @@ class ConversationManager implements ConversationManagerInterface
      * points. Without this, the LLM has to guess at paths (or hallucinate
      * `/mnt/<thing>` conventions) before any tool call can succeed.
      */
-    protected function buildSystemPrompt(ConversationInterface $conversation): string
+    protected function buildSystemPrompt(ConversationInterface $conversation, ?int $sourceMountPointId = null): string
     {
         $prompt = $this->settings->getSystemPrompt();
-        $context = $this->renderMountPointContext($conversation);
+        $context = $this->renderMountPointContext($conversation, $sourceMountPointId);
 
         return '' === $context ? $prompt : $prompt."\n\n".$context;
     }
 
-    protected function renderMountPointContext(ConversationInterface $conversation): string
+    protected function renderMountPointContext(ConversationInterface $conversation, ?int $sourceMountPointId = null): string
     {
-        $mountPoints = $this->mountPointRepository->findActiveForUser($conversation->getUser());
-        if ([] === $mountPoints) {
+        $all = $this->mountPointRepository->findActiveForUser($conversation->getUser());
+
+        // When the user has pre-selected a source, narrow the context to that
+        // single mount point so the LLM goes straight to it.
+        if (null !== $sourceMountPointId) {
+            $all = array_values(array_filter(
+                $all,
+                static fn ($mp): bool => $mp->getId() === $sourceMountPointId,
+            ));
+        }
+
+        if ([] === $all) {
             return 'Filesystem mount points: none configured. Tell the user to add one in /backend/assistant/mount-points before asking you to read files.';
         }
 
-        $lines = ['Filesystem mount points available to filesystem_read / filesystem_write tools (use these exact paths — never invent paths like /mnt/...):'];
-        foreach ($mountPoints as $mountPoint) {
+        $intro = null !== $sourceMountPointId
+            ? 'Filesystem context scoped to the user-selected source (use this path — never invent others):'
+            : 'Filesystem mount points available to filesystem_read / filesystem_write tools (use these exact paths — never invent paths like /mnt/...):';
+
+        $lines = [$intro];
+        foreach ($all as $mountPoint) {
             $lines[] = sprintf(
                 '- "%s" → %s (%s)',
                 $mountPoint->getName(),
