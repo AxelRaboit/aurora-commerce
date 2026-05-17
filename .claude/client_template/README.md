@@ -19,6 +19,33 @@ make install-dev                        # composer + pnpm + DB create + migrate 
 
 **Identifiants par défaut** : `admin@aurora.app` / `password`
 
+### Services externes optionnels (Ollama)
+
+Aurora-core embarque deux modules qui s'appuient sur **Ollama**. Les valeurs
+par défaut pointent sur `http://localhost:11434` et marchent si tu installes
+Ollama sur la même machine que le dev server — sinon override les
+`*_OLLAMA_URL` dans `.env.local`.
+
+| Module | Modèle Ollama | Pull |
+|--------|---------------|------|
+| **Billing OCR** | `qwen2.5vl:3b` (vision, JSON structuré) | `ollama pull qwen2.5vl:3b` |
+| **Assistant IA** chat | `qwen3:8b` (tool-calling **obligatoire**) | `ollama pull qwen3:8b` |
+| **Assistant IA** vision | `qwen2.5vl:3b` (réutilisé de l'OCR) | déjà tiré ci-dessus |
+
+```bash
+curl -fsSL https://ollama.ai/install.sh | sh
+ollama pull qwen3:8b
+ollama pull qwen2.5vl:3b
+```
+
+⚠ Modèles de chat compatibles tool-calling : `qwen3:*`, `qwen2.5:*`,
+`llama3.1:*`, `mistral-nemo`. Les `gemma` / `phi3` ne marchent pas.
+
+Les variables (`ASSISTANT_*`, `OLLAMA_URL`, `OCR_*`) sont déjà dans `.env`
+avec des défauts sains. Le modèle, le timeout et le prompt système peuvent
+ensuite être ajustés sans redéploiement via `/backend/settings` → onglet
+**Assistant**.
+
 ## Le quotidien
 
 | Situation | Commande | Effet |

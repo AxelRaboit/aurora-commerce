@@ -87,27 +87,39 @@ Le verrouillage optimiste utilise la colonne `#[ORM\Version]` de Doctrine combin
 | `pdftk` | **PDF Forms** | Détection des champs AcroForm (`dump_data_fields`) | `sudo apt install pdftk` (ou `pdftk-java` sur Ubuntu 22+) |
 | `node` (Node.js ≥ 18) | **PDF Forms** | Remplissage et aplatissement Unicode-safe via `tools/pdf/fill.mjs` (basé sur `pdf-lib`, installé via `pnpm install`) | Déjà requis pour le build assets — aucune install supplémentaire |
 | `ssh` (OpenSSH client) | **MountPoint** | Tunnels SSH vers des bases de données distantes | Inclus par défaut sur Linux/macOS |
-| `ollama` | **Billing OCR** | Inférence du modèle vision pour l'extraction de factures | [ollama.ai](https://ollama.ai) — voir [ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md) |
+| `ollama` | **Billing OCR** + **Assistant IA** | Inférence locale (modèle vision OCR + chat assistant + vision assistant) | [ollama.ai](https://ollama.ai) — voir [ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md) |
 
 > Les modules dont la dépendance est absente se dégradent proprement : PDF Forms crée les documents en statut *Brouillon*, MountPoint affiche une erreur de connexion, OCR met les jobs en erreur avec un message explicite.
 
-### Services externes (OCR Billing)
+### Services externes (OCR Billing + Assistant IA)
 
-Le module OCR du Billing nécessite deux services supplémentaires — **optionnels** si le module n'est pas activé :
+Deux modules utilisent un Ollama local — **optionnels** si tu ne les actives pas :
 
-- **docTR** (microservice Python, lancé via Docker) — extraction texte/layout des PDF et images
-- **Ollama** + modèle vision (`qwen2.5vl:3b` par défaut) — compréhension structurée des factures
+| Module | Service | Modèle par défaut | Var .env |
+|--------|---------|-------------------|----------|
+| **Billing OCR** | docTR (Docker) + Ollama vision (JSON structuré) | `qwen2.5vl:3b` | `OLLAMA_URL`, `OLLAMA_VISION_MODEL` |
+| **Assistant IA** | Ollama chat (tool-calling) | `qwen3:8b` | `ASSISTANT_OLLAMA_URL`, `ASSISTANT_CHAT_MODEL` |
+| **Assistant IA** | Ollama vision (image_read tool, prose) | `qwen2.5vl:3b` | `ASSISTANT_VISION_MODEL` |
 
 ```bash
-# Lancer docTR (Docker requis)
-make docker-up
-
-# Installer Ollama et télécharger le modèle
+# Installer Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
+
+# Modèle Billing OCR (réutilisé par l'assistant image_read)
 ollama pull qwen2.5vl:3b
+
+# Modèle Assistant IA (chat avec tool calling — doit être tools-aware)
+ollama pull qwen3:8b
+
+# Lancer docTR si tu utilises l'OCR (Docker requis)
+make docker-up
 ```
 
-→ Documentation complète : [docs/aurora-core/ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md)
+⚠ Le modèle de chat **doit supporter le tool calling** : `qwen3:*`, `qwen2.5:*`, `llama3.1:*`, `mistral-nemo` OK ; `gemma`, `phi3` non.
+
+Tunables sans redéploiement via [`/backend/settings`](http://localhost:8000/backend/settings) → onglet **Assistant** : modèle chat, modèle vision, timeout, num_ctx, prompt système.
+
+→ Documentation complète OCR : [docs/aurora-core/ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md)
 
 ### Mise en place
 
