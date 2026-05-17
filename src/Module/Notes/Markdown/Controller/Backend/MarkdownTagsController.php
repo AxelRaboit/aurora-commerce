@@ -9,9 +9,9 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Notes\Markdown\Dto\TagDeleteInput;
-use Aurora\Module\Notes\Markdown\Dto\TagMergeInput;
-use Aurora\Module\Notes\Markdown\Dto\TagRenameInput;
+use Aurora\Module\Notes\Markdown\Dto\TagDeleteInputFactoryInterface;
+use Aurora\Module\Notes\Markdown\Dto\TagMergeInputFactoryInterface;
+use Aurora\Module\Notes\Markdown\Dto\TagRenameInputFactoryInterface;
 use Aurora\Module\Notes\Markdown\Manager\MarkdownNoteManagerInterface;
 use Aurora\Module\Notes\Markdown\Serializer\MarkdownNoteSerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,6 +39,9 @@ final class MarkdownTagsController extends AbstractController
         private readonly MarkdownNoteManagerInterface $manager,
         private readonly MarkdownNoteSerializerInterface $serializer,
         private readonly PayloadValidator $payloadValidator,
+        private readonly TagRenameInputFactoryInterface $tagRenameFactory,
+        private readonly TagMergeInputFactoryInterface $tagMergeFactory,
+        private readonly TagDeleteInputFactoryInterface $tagDeleteFactory,
     ) {}
 
     #[Route('', name: '_list', methods: [HttpMethodEnum::Get->value])]
@@ -58,7 +61,7 @@ final class MarkdownTagsController extends AbstractController
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $input = TagRenameInput::fromArray($this->decodeJson($request));
+        $input = $this->tagRenameFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -74,7 +77,7 @@ final class MarkdownTagsController extends AbstractController
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $input = TagMergeInput::fromArray($this->decodeJson($request));
+        $input = $this->tagMergeFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
@@ -90,7 +93,7 @@ final class MarkdownTagsController extends AbstractController
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $input = TagDeleteInput::fromArray($this->decodeJson($request));
+        $input = $this->tagDeleteFactory->fromArray($this->decodeJson($request));
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {

@@ -10,7 +10,7 @@ use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteInputFactoryInterface;
-use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteReorderInput;
+use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteReorderInputFactoryInterface;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\Notes\Markdown\Manager\MarkdownNoteManagerInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
@@ -37,6 +37,7 @@ final class MarkdownNotesController extends AbstractController
         private readonly MarkdownNoteManagerInterface $manager,
         private readonly MarkdownNoteRepository $repository,
         private readonly MarkdownNoteInputFactoryInterface $inputFactory,
+        private readonly MarkdownNoteReorderInputFactoryInterface $reorderInputFactory,
         private readonly PayloadValidator $payloadValidator,
         private readonly MarkdownNotesViewBuilder $viewBuilder,
         private readonly MarkdownNoteHierarchyService $hierarchy,
@@ -210,7 +211,7 @@ final class MarkdownNotesController extends AbstractController
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $input = MarkdownNoteReorderInput::fromArray($this->decodeJson($request));
+        $input = $this->reorderInputFactory->fromArray($this->decodeJson($request));
 
         try {
             $this->manager->reorder($user, $input->entries);

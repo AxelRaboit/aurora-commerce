@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\Dto;
 
-use Aurora\Core\Support\Str;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class TagMergeInput
@@ -23,37 +22,4 @@ final readonly class TagMergeInput
         #[Assert\Length(max: 64)]
         public string $targetTag,
     ) {}
-
-    /** @param array<string, mixed> $data */
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            sourceTags: self::stringList($data['sourceTags'] ?? null),
-            targetTag: Str::trimFromArray($data, 'targetTag'),
-        );
-    }
-
-    /** @return list<string> */
-    private static function stringList(mixed $raw): array
-    {
-        if (!is_array($raw)) {
-            return [];
-        }
-
-        $tags = [];
-        foreach ($raw as $value) {
-            if (!is_string($value)) {
-                continue;
-            }
-
-            $trimmed = mb_trim($value);
-            if ('' === $trimmed) {
-                continue;
-            }
-
-            $tags[] = $trimmed;
-        }
-
-        return array_values(array_unique($tags));
-    }
 }
