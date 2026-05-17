@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
-use Aurora\Core\General\Search\Service\SearchSnippetBuilder;
+use Aurora\Module\General\Search\Service\SearchSnippetBuilder;
 use PHPUnit\Framework\TestCase;
 
 final class SearchSnippetBuilderTest extends TestCase

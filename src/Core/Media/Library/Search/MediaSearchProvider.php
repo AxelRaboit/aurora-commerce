@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Library\Search;
 
 use Aurora\Core\Media\Library\Repository\MediaRepository;
-use Aurora\Core\General\Search\Provider\SearchProviderInterface;
+use Aurora\Module\General\Search\Provider\SearchProviderInterface;
 use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 
 use function sprintf;

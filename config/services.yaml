@@ -46,7 +46,7 @@ services:
             tags: [aurora.configuration_tab_provider]
         Aurora\Module\Assistant\Tool\Contract\ToolInterface:
             tags: [aurora.assistant.tool]
-        Aurora\Core\General\Search\Provider\SearchProviderInterface:
+        Aurora\Module\General\Search\Provider\SearchProviderInterface:
             tags: [aurora.search_provider]
 
     Aurora\Core\Media\Library\Service\MediaUsageService:
