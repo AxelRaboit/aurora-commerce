@@ -18,7 +18,6 @@ use Aurora\Core\Setting\Repository\SettingRepository;
  */
 final readonly class AssistantSettings
 {
-
     public function __construct(
         private SettingRepository $settings,
         private string $envChatModel,

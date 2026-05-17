@@ -625,7 +625,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :multiple="true"
                     :allow-empty="true"
                     open-direction="top"
-                        :use-teleport="false"
+                    :use-teleport="false"
                 />
                 <AppMultiselect
                     v-model="newProject.crmCompanyId"
@@ -634,7 +634,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="companyOptions"
                     :allow-empty="true"
                     open-direction="top"
-                        :use-teleport="false"
+                    :use-teleport="false"
                 />
                 <AppMultiselect
                     v-model="newProject.crmDealId"
@@ -643,7 +643,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="dealOptions"
                     :allow-empty="true"
                     open-direction="top"
-                        :use-teleport="false"
+                    :use-teleport="false"
                 />
             </div>
             <template #footer>
@@ -700,7 +700,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :multiple="true"
                     :allow-empty="true"
                     open-direction="top"
-                        :use-teleport="false"
+                    :use-teleport="false"
                 />
                 <AppMultiselect
                     v-model="editProjectForm.crmCompanyId"
@@ -709,7 +709,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="companyOptions"
                     :allow-empty="true"
                     open-direction="top"
-                        :use-teleport="false"
+                    :use-teleport="false"
                 />
                 <AppMultiselect
                     v-model="editProjectForm.crmDealId"
@@ -718,7 +718,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="dealOptions"
                     :allow-empty="true"
                     open-direction="top"
-                        :use-teleport="false"
+                    :use-teleport="false"
                 />
             </div>
             <template #footer>

@@ -246,7 +246,13 @@ function bubbleClass(role) {
                     :disabled="sending"
                     v-on:keydown="onKeydown"
                 />
-                <AppButton variant="primary" size="md" class="w-full sm:w-auto" :disabled="sending || !draft.trim()" v-on:click="sendDraft">
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :disabled="sending || !draft.trim()"
+                    v-on:click="sendDraft"
+                >
                     <Send class="w-4 h-4" :stroke-width="2" />
                     {{ t('assistant.chat.send') }}
                 </AppButton>

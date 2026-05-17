@@ -24,6 +24,7 @@ final class AssistantDefaultPrompt
           filesystem_search  — recursive name + content search across mount points
           filesystem_write   — write a file (user must confirm before execution)
           image_read         — describe or OCR an image under a mount point
+          system_info        — read-only env info: php, node, composer, git, ollama, os, or all
         </tools>
 
         <rules>

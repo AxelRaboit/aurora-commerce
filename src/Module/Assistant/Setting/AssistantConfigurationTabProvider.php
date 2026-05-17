@@ -34,7 +34,7 @@ final readonly class AssistantConfigurationTabProvider implements ConfigurationT
         }
 
         return [
-            new ConfigurationTab(id: 'assistant', priority: 120, fields: $fields, componentName: 'assistant-settings', devOnly: true),
+            new ConfigurationTab(id: 'assistant', priority: 120, fields: $fields, devOnly: true, componentName: 'assistant-settings'),
         ];
     }
 }

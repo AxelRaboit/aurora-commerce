@@ -14,8 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
-use function sprintf;
-
 #[Route('/backend/assistant/settings', name: 'backend_assistant_settings')]
 #[IsGranted('configuration.settings.manage')]
 final class AssistantSettingsController extends AbstractController
