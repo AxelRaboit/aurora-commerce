@@ -181,25 +181,26 @@ async function selectOgFromLibrary() {
                             >
                             <ImagePlus v-else class="w-6 h-6 sm:w-5 sm:h-5 text-muted" :stroke-width="2" />
                         </div>
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-col sm:flex-row sm:flex-wrap gap-2">
                             <AppFilePickerButton
                                 ref="ogInputRef"
                                 accept="image/*"
                                 variant="secondary"
                                 size="sm"
                                 :loading="uploadingOg"
-                                class="flex-1 sm:flex-none"
+                                class="w-full sm:w-auto"
                                 v-on:change="uploadOgImage"
                             >
                                 <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.seo.ogImageUpload") }}
                             </AppFilePickerButton>
-                            <AppButton variant="ghost" size="sm" class="flex-1 sm:flex-none" v-on:click="selectOgFromLibrary">
+                            <AppButton variant="ghost" size="sm" class="w-full sm:w-auto" v-on:click="selectOgFromLibrary">
                                 <ImagePlus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.selectFromLibrary") }}
                             </AppButton>
                             <AppButton
                                 v-if="translation.ogImageUrl"
                                 variant="ghost"
                                 size="sm"
+                                class="w-full sm:w-auto"
                                 v-on:click="removeOgImage"
                             >
                                 <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -235,11 +236,11 @@ async function selectOgFromLibrary() {
         </div>
 
         <div class="border-t border-line pt-4 space-y-2">
-            <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <label class="text-xs text-secondary uppercase tracking-wide">
                     {{ t("backend.posts.seo.jsonLd") }}
                 </label>
-                <AppButton variant="secondary" size="sm" v-on:click="generateArticleJsonLd">
+                <AppButton variant="secondary" size="sm" class="w-full sm:w-auto" v-on:click="generateArticleJsonLd">
                     <Sparkles class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.posts.seo.generateArticle") }}
                 </AppButton>
             </div>

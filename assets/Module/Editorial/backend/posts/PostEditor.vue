@@ -1,8 +1,5 @@
 <script setup>
-import { ref, reactive, computed, onMounted, watch, provide, nextTick } from "vue";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { ArrowLeft, Save, Eye, X, LayoutTemplate, Lock, Unlock, Merge, History } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -14,7 +11,7 @@ import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import AppToggle from "@/shared/components/form/toggle/AppToggle.vue";
 import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
-import EditorBlock from "@editorial/backend/EditorBlock.vue";
+import AppBlockEditor from "@shared/components/editor/AppBlockEditor.vue";
 import PostPreviewOverlay from "./PostPreviewOverlay.vue";
 import ConflictMergeOverlay from "./ConflictMergeOverlay.vue";
 import RevisionsOverlay from "./RevisionsOverlay.vue";
@@ -24,32 +21,29 @@ import PostTaxonomiesPanel from "./PostTaxonomiesPanel.vue";
 import PostFeaturedImagePanel from "./PostFeaturedImagePanel.vue";
 import PostTemplatesOverlay from "./PostTemplatesOverlay.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import { usePostSave } from "./composables/usePostSave.js";
-import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { useConflictResolution } from "./composables/useConflictResolution.js";
-import { useRelatedSearch } from "./composables/useRelatedSearch.js";
-import { applyPostData } from "./utils/applyPostData.js";
-import { PostStatus, POST_STATUS_VALUES } from "@editorial/shared/enums/postStatus.js";
-import { useSlugLock } from "@/shared/composables/form/useSlugLock.js";
-import { useKeyboardShortcut } from "@/shared/composables/useKeyboardShortcut.js";
+import { usePostEditor } from "./composables/usePostEditor.js";
+import { PostStatus } from "@editorial/shared/enums/postStatus.js";
 import { statusBadge } from "@/shared/utils/format/statusStyles.js";
 import { DEFAULT_LOCALES } from "@/shared/utils/lang.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
-const { request: getRequest } = useRequest();
 
 const props = defineProps({
-    postId: { type: Number, default: null },
+    /** Initial post payload (PostSerializer::serializeFull). Null in create mode. */
+    post: { type: Object, default: null },
     postTypes: { type: Array, default: () => [] },
     taxonomies: { type: Array, default: () => [] },
     locales: { type: Array, default: () => DEFAULT_LOCALES },
     showPath: { type: String, required: true },
     createPath: { type: String, required: true },
-    editPath: { type: String, required: true },
+    updatePath: { type: String, required: true },
     previewPath: { type: String, required: true },
+    /** GET URL to navigate back to the posts list. */
+    backPath: { type: String, required: true },
+    /** GET URL template (with `__id__`) to switch from /new to /{id}/edit after a successful create. */
+    editPath: { type: String, required: true },
     /**
      * Extra fields to register on the post form. Lets clients extend the
      * post editor without forking this component. The extra-form-fields
@@ -57,305 +51,40 @@ const props = defineProps({
      * Example: { highlight: { default: false, fromEntity: (p) => p.highlight ?? false } }
      */
     extraFields: { type: Object, default: () => ({}) },
+    /**
+     * Editor.js tools contributed by other modules / the client app —
+     * merged into the AppBlockEditor `extraTools` config. Editorial itself
+     * ships `postsList` (Post-domain). Any tool tied to another module
+     * (e.g. Ecommerce's `productGrid`) must be passed in here by the
+     * downstream consumer (aurora-client) so Editorial stays decoupled.
+     * Shape: { toolName: { class, config?, inlineToolbar? } | ToolClass }
+     */
+    extraEditorTools: { type: Object, default: () => ({}) },
 });
 
-const emit = defineEmits(["saved", "back"]);
+const emit = defineEmits(["saved"]);
 
-const activeLocale = ref(props.locales[0] ?? "fr");
-const fetching = ref(false);
-
+// Full orchestration in usePostEditor (~330 lines) — this SFC stays
+// a thin shell over the composable per the SFC-thin-presentation rule.
 const {
-    version,
-    baseTranslations,
-    remotePost,
-    remoteLoading,
-    showMerge,
-    mergeRemoteTranslations,
-    snapshotBase,
-    openRemoteVersion,
-    closeRemoteVersion,
-    openMerge,
-    closeMerge,
-} = useConflictResolution({ showPath: props.showPath, postId: computed(() => props.postId) });
-
-let flushEditor      = null;
-let renderEditorBlocks = null;
-provide("registerEditorFlush",  (fn) => { flushEditor       = fn; });
-provide("registerEditorRender", (fn) => { renderEditorBlocks = fn; });
-
-function makeEmptyTranslation() {
-    return {
-        title: "",
-        slug: "",
-        blocks: [],
-        metaTitle: "",
-        metaDescription: "",
-        customFields: {},
-        ogImageMediaId: null,
-        ogImageUrl: null,
-        ogImageFocalPosition: "50% 50%",
-        canonicalUrl: "",
-        noindex: false,
-        focusKeyword: "",
-        jsonLd: null,
-    };
-}
-
-const postTypeOptions = computed(() =>
-    props.postTypes.map((pt) => ({ value: String(pt.id), label: pt.label })),
-);
-
-const statusOptions = computed(() =>
-    POST_STATUS_VALUES.map((value) => ({ value, label: t(`backend.posts.statusOptions.${value}`) })),
-);
-
-const form = reactive({
-    postTypeId: String(props.postTypes[0]?.id ?? ""),
-    status: PostStatus.Draft,
-    scheduledAt: "",
-    featuredMediaId: null,
-    termIds: [],
-    translations: Object.fromEntries(props.locales.map((locale) => [locale, makeEmptyTranslation()])),
-    relatedPostIds: [],
-    commentsEnabled: true,
-    ...Object.fromEntries(
-        Object.entries(props.extraFields ?? {}).map(([key, def]) => [key, def.default]),
-    ),
-});
-
-const publishedAt = ref(null);
-const trashed = ref(false);
-
-// ── Related posts ────────────────────────────────────────────────────────────
-const {
-    query: relatedSearchQuery,
-    results: relatedSearchResults,
-    loading: relatedSearchLoading,
-    open: relatedSearchOpen,
-    selected: relatedPosts,
-    add: addRelatedPost,
-    remove: removeRelatedPost,
-    setSelected: setRelatedPosts,
-} = useRelatedSearch({
-    excludeId: props.postId,
-    getSelectedIds: () => form.relatedPostIds,
-    addId: (id) => form.relatedPostIds.push(id),
-    removeId: (id) => { form.relatedPostIds = form.relatedPostIds.filter((existing) => existing !== id); },
-});
-
-// ── Slug lock ────────────────────────────────────────────────────────────────
-const { locked: slugLocked, toggle: toggleSlugLock } = useSlugLock({
-    getTitle: () => form.translations[activeLocale.value]?.title ?? "",
-    setSlug: (value) => {
-        const tr = form.translations[activeLocale.value];
-        if (tr) tr.slug = value;
-    },
-});
-
-async function switchLocale(locale) {
-    if (locale === activeLocale.value) return;
-    await flushEditor?.();
-    activeLocale.value = locale;
-}
-
-// ── Dirty state ──────────────────────────────────────────────────────────────
-const isDirty = ref(false);
-watch(form, () => { isDirty.value = true; }, { deep: true });
-
-// ── Featured image ───────────────────────────────────────────────────────────
-const featuredMediaUrl = ref(null);
-const featuredMediaFocalPosition = ref("50% 50%");
-
-const activeTranslation = computed(() => form.translations[activeLocale.value] ?? null);
-
-// ── Keyboard shortcut Ctrl+S ─────────────────────────────────────────────────
-useKeyboardShortcut({ key: "s", ctrl: true }, () => handleSave());
-
-const sideState = {
-    publishedAt,
-    trashed,
-    featuredMediaUrl,
-    featuredMediaFocalPosition,
-    relatedPosts,
-    version,
-};
-
-onMounted(async () => {
-    if (!props.postId) return;
-    fetching.value = true;
-    const data = await getRequest(buildPath(props.showPath, { id: props.postId }), null, HttpMethod.Get);
-    fetching.value = false;
-    if (!data) {
-        emit("back");
-    } else if (data.success) {
-        applyPostData(data.post, form, sideState);
-        setRelatedPosts(data.post.relatedPosts ?? []);
-        // Hydrate client-registered extra fields from the loaded post.
-        for (const [key, def] of Object.entries(props.extraFields ?? {})) {
-            form[key] = def.fromEntity ? def.fromEntity(data.post) : (data.post[key] ?? def.default);
-        }
-        snapshotBase(form.translations);
-    }
-    nextTick(() => { isDirty.value = false; });
-});
-
-function toggleTerm(termId) {
-    const index = form.termIds.indexOf(termId);
-    if (index === -1) {
-        form.termIds.push(termId);
-    } else {
-        form.termIds.splice(index, 1);
-    }
-}
-
-// ── Taxonomy picker helpers ──────────────────────────────────────────────────
-const availableTaxonomies = computed(() => {
-    const currentPostTypeId = Number(form.postTypeId);
-    if (!currentPostTypeId) return [];
-    return (props.taxonomies ?? []).filter((tx) => (tx.postTypeIds ?? []).includes(currentPostTypeId));
-});
-
-// ── Custom fields (defined on the current PostType) ──────────────────────────
-const customFieldsDefs = computed(() => {
-    const currentPostTypeId = Number(form.postTypeId);
-    const pt = props.postTypes.find((postType) => postType.id === currentPostTypeId);
-    if (!pt) return [];
-    return [...(pt.fields ?? [])].sort((a, b) => a.position - b.position);
-});
-
-const currentPostTypeSlug = computed(() => {
-    const currentPostTypeId = Number(form.postTypeId);
-    const pt = props.postTypes.find((postType) => postType.id === currentPostTypeId);
-    return pt?.slug ?? "";
-});
-
-const frontUrl = computed(() => {
-    const slug = form.translations[activeLocale.value]?.slug;
-    if (!slug || !currentPostTypeSlug.value) return null;
-    return `/${activeLocale.value}/${currentPostTypeSlug.value}/${slug}`;
-});
-
-function defaultValueForField(field) {
-    if (field.type === "checkbox") return false;
-    if (field.type === "reference" && field.options?.multiple === true) return [];
-    return null;
-}
-
-function ensureCustomFieldsForLocale(locale) {
-    const translation = form.translations[locale];
-    if (!translation) return;
-    for (const field of customFieldsDefs.value) {
-        if (!(field.name in translation.customFields)) {
-            translation.customFields[field.name] = defaultValueForField(field);
-        }
-    }
-}
-
-watch(
-    [customFieldsDefs, activeLocale],
-    () => ensureCustomFieldsForLocale(activeLocale.value),
-    { immediate: true },
-);
-
-const showPreview   = ref(false);
-const showTemplates = ref(false);
-const showRevisions = ref(false);
-const editorKey     = ref(0);
-
-async function reloadAfterRestore() {
-    showRevisions.value = false;
-    const data = await getRequest(buildPath(props.showPath, { id: props.postId }), null, HttpMethod.Get);
-    if (!data) return;
-    if (data.success) {
-        applyPostData(data.post, form, sideState);
-        setRelatedPosts(data.post.relatedPosts ?? []);
-        snapshotBase(form.translations);
-        if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
-            await nextTick();
-            await renderEditorBlocks(form.translations[activeLocale.value].blocks);
-        } else {
-            editorKey.value++;
-        }
-        nextTick(() => { isDirty.value = false; });
-    }
-}
-
-// ── Template panel ───────────────────────────────────────────────────────────
-async function applyTemplate(template) {
-    const blocks = structuredClone(template.blocks);
-    showTemplates.value = false;
-    if (renderEditorBlocks) {
-        await renderEditorBlocks(blocks);
-    } else {
-        form.translations[activeLocale.value].blocks = blocks;
-        editorKey.value++;
-    }
-}
-
-function openPreview() {
-    if (isDirty.value) toast.info(t("backend.posts.previewSavedHint"));
-    showPreview.value = true;
-}
-
-const previewPost = computed(() => {
-    if (!props.postId) return null;
-    const postType = props.postTypes.find((pt) => pt.id === Number(form.postTypeId));
-    return {
-        id: props.postId,
-        title: form.translations[activeLocale.value]?.title ?? "",
-        slug: form.translations[activeLocale.value]?.slug ?? "",
-        status: form.status,
-        trashed: trashed.value,
-        translations: form.translations,
-        postType: postType ? { id: postType.id, slug: postType.slug, label: postType.label } : null,
-    };
-});
-
-const { loading, errors, conflict, save: savePost } = usePostSave(
-    props.createPath,
-    props.editPath,
-    (post) => {
-        toast.success(props.postId ? t("backend.posts.updated") : t("backend.posts.created"));
-        version.value = post.version ?? null;
-        snapshotBase(form.translations);
-        emit("saved", post, !props.postId);
-    },
-);
-
-async function handleSave({ force = false } = {}) {
-    await flushEditor?.();
-    const success = await savePost(props.postId, {
-        postTypeId: Number(form.postTypeId),
-        status: form.status,
-        scheduledAt: form.status === PostStatus.Scheduled && form.scheduledAt ? form.scheduledAt : null,
-        featuredMediaId: form.featuredMediaId,
-        termIds: form.termIds,
-        relatedPostIds: form.relatedPostIds,
-        commentsEnabled: form.commentsEnabled,
-        translations: form.translations,
-        version: version.value,
-        force,
-    });
-    if (success) isDirty.value = false;
-}
-
-async function applyMergeResolution(resolvedBlocksByLocale) {
-    for (const [locale, blocks] of Object.entries(resolvedBlocksByLocale)) {
-        if (form.translations[locale]) {
-            form.translations[locale].blocks = blocks;
-        }
-    }
-    closeMerge();
-    await nextTick();
-    if (renderEditorBlocks && form.translations[activeLocale.value]?.blocks) {
-        await renderEditorBlocks(form.translations[activeLocale.value].blocks);
-    }
-    await handleSave({ force: true });
-}
-
-function forceSave() {
-    handleSave({ force: true });
-}
+    postId,
+    activeLocale, fetching, switchLocale,
+    form, activeTranslation, publishedAt, trashed,
+    featuredMediaUrl, featuredMediaFocalPosition, isDirty,
+    postTypeOptions, statusOptions, availableTaxonomies, customFieldsDefs,
+    currentPostTypeSlug, frontUrl,
+    editorExtraTools, editorKey,
+    version, baseTranslations, remotePost, remoteLoading,
+    showMerge, mergeRemoteTranslations,
+    openRemoteVersion, closeRemoteVersion, closeMerge,
+    relatedSearchQuery, relatedSearchResults, relatedSearchLoading, relatedSearchOpen,
+    relatedPosts, addRelatedPost, removeRelatedPost,
+    slugLocked, toggleSlugLock, toggleTerm,
+    showPreview, showTemplates, showRevisions,
+    openPreview, previewPost, applyTemplate, reloadAfterRestore,
+    loading, errors, conflict,
+    handleSave, forceSave, applyMergeResolution,
+} = usePostEditor({ props, emit, t });
 </script>
 
 <template>
@@ -363,7 +92,7 @@ function forceSave() {
         {{ t("shared.common.loading") }}
     </div>
 
-    <div v-else class="space-y-6">
+    <div v-else class="space-y-4 lg:space-y-6">
         <AppMessage v-if="trashed" variant="trash">
             {{ t("backend.posts.trashedBanner") }}
         </AppMessage>
@@ -386,30 +115,18 @@ function forceSave() {
             </template>
         </AppMessage>
 
-        <div class="space-y-3">
+        <!-- Top action bar : back + page title (left) and Templates / Revisions / Preview / Save (right).
+             Mobile: title row on top, then actions stacked full-width below. From sm+ everything fits on one line. -->
+        <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
             <div class="flex items-center gap-3 min-w-0">
-                <AppButton variant="ghost" size="none" class="p-2 shrink-0" v-on:click="$emit('back')">
+                <AppButton variant="ghost" size="none" class="p-2 shrink-0" :href="backPath">
                     <ArrowLeft class="w-5 h-5" :stroke-width="2" />
                 </AppButton>
                 <h1 class="flex-1 text-lg font-semibold text-primary truncate min-w-0">
                     {{ postId ? t("backend.posts.edit") : t("backend.posts.create") }}
                 </h1>
             </div>
-
-            <div class="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-2">
-                <AppMultiselect
-                    v-model="form.status"
-                    :options="statusOptions"
-                    track-by="value"
-                    option-label="label"
-                    class="w-full sm:w-44"
-                />
-                <AppDatePicker
-                    v-if="form.status === PostStatus.Scheduled"
-                    v-model="form.scheduledAt"
-                    :enable-time="true"
-                    class="w-full sm:w-auto"
-                />
+            <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:ml-auto">
                 <AppButton variant="secondary" size="md" class="w-full sm:w-auto" v-on:click="showTemplates = true">
                     <LayoutTemplate class="w-4 h-4" :stroke-width="2" />
                     <span>Templates</span>
@@ -453,177 +170,213 @@ function forceSave() {
             <p v-for="(message, field) in errors" :key="field">{{ message }}</p>
         </AppMessage>
 
-        <p v-if="postId" class="px-1 text-xs text-muted font-mono">ID : {{ postId }}</p>
+        <!-- 2-column layout : main (title + blocks + translations) + right sidebar (publish + taxonomies + featured + related + SEO). -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+            <!-- Main column. -->
+            <div class="lg:col-span-2 space-y-4">
+                <!-- Translation locale tabs. -->
+                <div class="flex gap-1 border-b border-line overflow-x-auto scrollbar-hide">
+                    <AppTab
+                        v-for="locale in locales"
+                        :key="locale"
+                        variant="underline"
+                        :active="activeLocale === locale"
+                        v-on:click="switchLocale(locale)"
+                    >
+                        {{ t("shared.locales." + locale) }}
+                    </AppTab>
+                </div>
 
-        <p v-if="publishedAt" class="px-1 text-xs text-muted">
-            {{ t("backend.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
-        </p>
+                <!-- Title + slug + front-URL preview. -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <AppInput
+                        v-model="form.translations[activeLocale].title"
+                        :label="t('backend.posts.title')"
+                        :placeholder="t('backend.posts.titlePlaceholder')"
+                    />
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                            <AppInput
+                                v-model="form.translations[activeLocale].slug"
+                                :label="t('backend.posts.slug')"
+                                :placeholder="t('backend.posts.slugPlaceholder')"
+                                :readonly="slugLocked"
+                            />
+                        </div>
+                        <AppButton
+                            variant="secondary"
+                            size="none"
+                            class="p-2 mb-0.5 shrink-0"
+                            :title="slugLocked ? t('backend.posts.slugUnlock') : t('backend.posts.slugLock')"
+                            v-on:click="toggleSlugLock"
+                        >
+                            <Lock v-if="slugLocked" class="w-4 h-4" :stroke-width="2" />
+                            <Unlock v-else class="w-4 h-4" :stroke-width="2" />
+                        </AppButton>
+                    </div>
+                    <p v-if="frontUrl" class="text-xs text-muted sm:col-span-2">
+                        <span class="text-secondary">URL :</span>
+                        <a v-if="form.status === 'published'" :href="frontUrl" target="_blank" class="ml-1 font-mono text-accent-400 hover:underline break-all">{{ frontUrl }}</a>
+                        <span v-else class="ml-1 font-mono text-muted break-all">{{ frontUrl }}</span>
+                    </p>
+                </div>
 
-        <div class="flex flex-col gap-3 px-1">
-            <div v-if="postTypes.length" class="flex items-center gap-2 shrink-0">
-                <span class="text-xs text-muted uppercase tracking-wide shrink-0">{{ t("backend.posts.postType") }}</span>
-                <div class="min-w-40">
+                <!-- Per-PostType custom fields. -->
+                <div v-if="customFieldsDefs.length" class="border-t border-line pt-4 space-y-3">
+                    <p class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.customFields") }}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <PostCustomField
+                            v-for="field in customFieldsDefs"
+                            :key="field.id"
+                            :field="field"
+                            :model-value="form.translations[activeLocale].customFields[field.name]"
+                            v-on:update:model-value="form.translations[activeLocale].customFields[field.name] = $event"
+                        />
+                    </div>
+                </div>
+
+                <slot name="extra-form-fields" :form="form" :errors="errors" />
+
+                <!-- Blocks editor — full height of the main column (the writing surface). -->
+                <div class="border-t border-line pt-4">
+                    <label class="block text-xs text-secondary uppercase tracking-wide mb-2">
+                        {{ t("backend.posts.blocks") }}
+                    </label>
+                    <div class="rounded-xl border border-line bg-surface shadow-sm p-4 overflow-auto min-h-120 max-h-[calc(100vh-12rem)]">
+                        <AppBlockEditor
+                            :key="`${activeLocale}-${editorKey}`"
+                            v-model="form.translations[activeLocale].blocks"
+                            :extra-tools="editorExtraTools"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar : settings cards, WordPress-style. Stays single-column on mobile (collapses under main). -->
+            <aside class="space-y-4">
+                <!-- Publish / status card. -->
+                <section class="rounded-xl border border-line bg-surface p-4 space-y-3">
+                    <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.publish") }}</h3>
+                    <AppMultiselect
+                        v-model="form.status"
+                        :options="statusOptions"
+                        track-by="value"
+                        option-label="label"
+                    />
+                    <AppDatePicker
+                        v-if="form.status === PostStatus.Scheduled"
+                        v-model="form.scheduledAt"
+                        :enable-time="true"
+                    />
+                    <p v-if="publishedAt" class="text-xs text-muted">
+                        {{ t("backend.posts.publishedAt") }} {{ formatDateTime(publishedAt) }}
+                    </p>
+                    <p v-if="postId" class="text-xs text-muted font-mono">ID : {{ postId }}</p>
+                </section>
+
+                <!-- Post type. -->
+                <section v-if="postTypes.length" class="rounded-xl border border-line bg-surface p-4 space-y-3">
+                    <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.postType") }}</h3>
                     <AppMultiselect
                         v-model="form.postTypeId"
                         :options="postTypeOptions"
                         track-by="value"
                         option-label="label"
                     />
-                </div>
-            </div>
-            <PostTaxonomiesPanel
-                :taxonomies="availableTaxonomies"
-                :selected-term-ids="form.termIds"
-                :active-locale="activeLocale"
-                :default-locale="locales[0]"
-                v-on:toggle-term="toggleTerm"
-            />
-        </div>
+                </section>
 
-        <div class="px-1">
-            <AppToggle
-                :model-value="form.commentsEnabled"
-                :label="t('backend.posts.commentsEnabled')"
-                v-on:update:model-value="form.commentsEnabled = $event"
-            />
-        </div>
-
-        <div class="flex flex-col gap-2 px-1">
-            <span class="text-xs text-muted uppercase tracking-wide">{{ t("backend.posts.relatedPosts.title") }}</span>
-
-            <div v-if="relatedPosts.length" class="flex flex-col gap-1.5">
-                <div
-                    v-for="related in relatedPosts"
-                    :key="related.id"
-                    class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface border border-line/60"
-                >
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(related.status)">
-                        {{ t("backend.stats.postStatus." + related.status) }}
-                    </span>
-                    <div class="flex-1 min-w-0">
-                        <div class="text-sm text-primary truncate">{{ related.title ?? "(—)" }}</div>
-                        <div class="text-xs text-muted truncate">{{ related.postType }}</div>
-                    </div>
-                    <AppIconButton color="rose" v-on:click="removeRelatedPost(related.id)">
-                        <X class="w-3.5 h-3.5" :stroke-width="2" />
-                    </AppIconButton>
-                </div>
-            </div>
-
-            <div class="relative">
-                <AppInput
-                    v-model="relatedSearchQuery"
-                    :placeholder="t('backend.posts.relatedPosts.searchPlaceholder')"
-                    v-on:focus="relatedSearchOpen = true; runRelatedSearch()"
-                    v-on:blur="setTimeout(() => { relatedSearchOpen = false; }, 150)"
-                />
-                <div
-                    v-if="relatedSearchOpen && (relatedSearchResults.length || relatedSearchLoading)"
-                    class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto scrollbar-thin rounded-md border border-line bg-surface shadow-lg"
-                >
-                    <div v-if="relatedSearchLoading" class="px-3 py-2 text-xs text-muted">{{ t("shared.common.loading") }}</div>
-                    <AppListItemButton
-                        v-for="result in relatedSearchResults"
-                        :key="result.id"
-                        v-on:mousedown.prevent="addRelatedPost(result)"
-                    >
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(result.status)">
-                            {{ t("backend.stats.postStatus." + result.status) }}
-                        </span>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
-                            <div class="text-xs text-muted truncate">{{ result.postType }}</div>
-                        </div>
-                    </AppListItemButton>
-                </div>
-            </div>
-        </div>
-
-        <PostFeaturedImagePanel
-            v-model:media-id="form.featuredMediaId"
-            v-model:media-url="featuredMediaUrl"
-            v-model:focal-position="featuredMediaFocalPosition"
-        />
-
-        <div class="flex gap-1 border-b border-line overflow-x-auto scrollbar-hide">
-            <AppTab
-                v-for="locale in locales"
-                :key="locale"
-                variant="underline"
-                :active="activeLocale === locale"
-                v-on:click="switchLocale(locale)"
-            >
-                {{ t("shared.locales." + locale) }}
-            </AppTab>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <AppInput
-                v-model="form.translations[activeLocale].title"
-                :label="t('backend.posts.title')"
-                :placeholder="t('backend.posts.titlePlaceholder')"
-            />
-            <div class="flex items-end gap-2">
-                <div class="flex-1">
-                    <AppInput
-                        v-model="form.translations[activeLocale].slug"
-                        :label="t('backend.posts.slug')"
-                        :placeholder="t('backend.posts.slugPlaceholder')"
-                        :readonly="slugLocked"
+                <!-- Taxonomies — embedded component renders its own term tree. -->
+                <section v-if="availableTaxonomies.length" class="rounded-xl border border-line bg-surface p-4">
+                    <PostTaxonomiesPanel
+                        :taxonomies="availableTaxonomies"
+                        :selected-term-ids="form.termIds"
+                        :active-locale="activeLocale"
+                        :default-locale="locales[0]"
+                        v-on:toggle-term="toggleTerm"
                     />
-                </div>
-                <AppButton
-                    variant="secondary"
-                    size="none"
-                    class="p-2 mb-0.5 shrink-0"
-                    :title="slugLocked ? t('backend.posts.slugUnlock') : t('backend.posts.slugLock')"
-                    v-on:click="toggleSlugLock"
-                >
-                    <Lock v-if="slugLocked" class="w-4 h-4" :stroke-width="2" />
-                    <Unlock v-else class="w-4 h-4" :stroke-width="2" />
-                </AppButton>
-            </div>
-            <p v-if="frontUrl" class="text-xs text-muted">
-                <span class="text-secondary">URL :</span>
-                <a v-if="form.status === 'published'" :href="frontUrl" target="_blank" class="ml-1 font-mono text-accent-400 hover:underline break-all">{{ frontUrl }}</a>
-                <span v-else class="ml-1 font-mono text-muted break-all">{{ frontUrl }}</span>
-            </p>
-        </div>
+                </section>
 
-        <div v-if="customFieldsDefs.length" class="border-t border-line pt-4 space-y-3">
-            <p class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.customFields") }}</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <PostCustomField
-                    v-for="field in customFieldsDefs"
-                    :key="field.id"
-                    :field="field"
-                    :model-value="form.translations[activeLocale].customFields[field.name]"
-                    v-on:update:model-value="form.translations[activeLocale].customFields[field.name] = $event"
-                />
-            </div>
-        </div>
+                <!-- Comments toggle. -->
+                <section class="rounded-xl border border-line bg-surface p-4">
+                    <AppToggle
+                        :model-value="form.commentsEnabled"
+                        :label="t('backend.posts.commentsEnabled')"
+                        v-on:update:model-value="form.commentsEnabled = $event"
+                    />
+                </section>
 
-        <slot name="extra-form-fields" :form="form" :errors="errors" />
+                <!-- Featured image. -->
+                <section class="rounded-xl border border-line bg-surface p-4 space-y-3">
+                    <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.featuredImage") }}</h3>
+                    <PostFeaturedImagePanel
+                        v-model:media-id="form.featuredMediaId"
+                        v-model:media-url="featuredMediaUrl"
+                        v-model:focal-position="featuredMediaFocalPosition"
+                    />
+                </section>
 
-        <PostSeoPanel
-            v-if="form.translations[activeLocale]"
-            :translation="form.translations[activeLocale]"
-            :locale="activeLocale"
-            :post-type-slug="currentPostTypeSlug"
-            :published-at="publishedAt"
-        />
+                <!-- Related posts. -->
+                <section class="rounded-xl border border-line bg-surface p-4 space-y-3">
+                    <h3 class="text-xs font-semibold text-secondary uppercase tracking-wide">{{ t("backend.posts.relatedPosts.title") }}</h3>
 
-        <div class="border-t border-line pt-4">
-            <label class="block text-xs text-secondary uppercase tracking-wide mb-2">
-                {{ t("backend.posts.blocks") }}
-            </label>
-            <div class="rounded-xl border border-line bg-surface shadow-sm">
-                <EditorBlock
-                    :key="`${activeLocale}-${editorKey}`"
-                    v-model="form.translations[activeLocale].blocks"
-                    :post-types="postTypes"
-                />
-            </div>
+                    <div v-if="relatedPosts.length" class="flex flex-col gap-1.5">
+                        <div
+                            v-for="related in relatedPosts"
+                            :key="related.id"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md bg-surface-2 border border-line/60"
+                        >
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(related.status)">
+                                {{ t("backend.stats.postStatus." + related.status) }}
+                            </span>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm text-primary truncate">{{ related.title ?? "(—)" }}</div>
+                                <div class="text-xs text-muted truncate">{{ related.postType }}</div>
+                            </div>
+                            <AppIconButton color="rose" v-on:click="removeRelatedPost(related.id)">
+                                <X class="w-3.5 h-3.5" :stroke-width="2" />
+                            </AppIconButton>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <AppInput
+                            v-model="relatedSearchQuery"
+                            :placeholder="t('backend.posts.relatedPosts.searchPlaceholder')"
+                            v-on:focus="relatedSearchOpen = true"
+                            v-on:blur="setTimeout(() => { relatedSearchOpen = false; }, 150)"
+                        />
+                        <div
+                            v-if="relatedSearchOpen && (relatedSearchResults.length || relatedSearchLoading)"
+                            class="absolute z-10 mt-1 w-full max-h-64 overflow-y-auto scrollbar-thin rounded-md border border-line bg-surface shadow-lg"
+                        >
+                            <div v-if="relatedSearchLoading" class="px-3 py-2 text-xs text-muted">{{ t("shared.common.loading") }}</div>
+                            <AppListItemButton
+                                v-for="result in relatedSearchResults"
+                                :key="result.id"
+                                v-on:mousedown.prevent="addRelatedPost(result)"
+                            >
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium" :class="statusBadge(result.status)">
+                                    {{ t("backend.stats.postStatus." + result.status) }}
+                                </span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm text-primary truncate">{{ result.title ?? "(—)" }}</div>
+                                    <div class="text-xs text-muted truncate">{{ result.postType }}</div>
+                                </div>
+                            </AppListItemButton>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEO. PostSeoPanel ships with its own internal `border-t` separator, harmless inside a card. -->
+                <section v-if="form.translations[activeLocale]" class="rounded-xl border border-line bg-surface p-4">
+                    <PostSeoPanel
+                        :translation="form.translations[activeLocale]"
+                        :locale="activeLocale"
+                        :post-type-slug="currentPostTypeSlug"
+                        :published-at="publishedAt"
+                    />
+                </section>
+            </aside>
         </div>
     </div>
 

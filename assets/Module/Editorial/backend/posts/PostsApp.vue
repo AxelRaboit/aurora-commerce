@@ -2,7 +2,6 @@
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { usePostsTrash } from "@editorial/backend/posts/composables/usePostsTrash.js";
-import { usePostsEditor } from "@editorial/backend/posts/composables/usePostsEditor.js";
 import { usePostsPreview } from "@editorial/backend/posts/composables/usePostsPreview.js";
 import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.js";
 import { useI18n } from "vue-i18n";
@@ -21,7 +20,6 @@ import { usePostDelete } from "@editorial/backend/posts/composables/usePostDelet
 import { usePostFilters } from "@editorial/backend/posts/composables/usePostFilters.js";
 import { usePostTermLabels } from "@editorial/backend/posts/composables/usePostTermLabels.js";
 import { FileText, Eye, Inbox, LayoutList, List, Pencil, Plus, RotateCcw, Trash2, X } from "lucide-vue-next";
-import PostEditor from "@editorial/backend/posts/PostEditor.vue";
 import PostPreviewOverlay from "@editorial/backend/posts/PostPreviewOverlay.vue";
 import PostTaxonomiesPanel from "@editorial/backend/posts/PostTaxonomiesPanel.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -51,15 +49,24 @@ const props = defineProps({
     postTypeIds: { type: Array, default: () => [] },
     termIds: { type: Array, default: () => [] },
     statuses: { type: Array, default: () => [] },
-    createPath: { type: String, required: true },
+    /** GET URL to the standalone "new post" page. */
+    newPath: { type: String, required: true },
+    /** GET URL to the standalone "edit post" page, with `__id__` placeholder. */
+    editPath: { type: String, required: true },
     showPath: { type: String, required: true },
     previewPath: { type: String, required: true },
-    editPath: { type: String, required: true },
     deletePath: { type: String, required: true },
     restorePath: { type: String, required: true },
     forceDeletePath: { type: String, required: true },
     emptyTrashPath: { type: String, default: "" },
     extraFields: { type: Object, default: () => ({}) },
+    /**
+     * Editor.js tools contributed by aurora-client (or another module)
+     * — forwarded to PostEditor. Lets a deployment that bundles e.g.
+     * Ecommerce inject `productGrid` without Editorial having to import
+     * it. See AppBlockEditor's `extraTools` prop for the shape.
+     */
+    extraEditorTools: { type: Object, default: () => ({}) },
 });
 
 const parsedPostTypes  = props.postTypes ?? [];
@@ -104,7 +111,10 @@ const { posts, page, totalPages, loading, search: searchInput, addPost, updatePo
     }));
 
 const { emptyingTrash, confirmEmptyTrash, emptyTrash, restorePost } = usePostsTrash(props, removePost, setTrashedFilter);
-const { view, editingPostId, openCreate, openEdit, closeEditor, onEditorSaved } = usePostsEditor(addPost, updatePost);
+
+function editUrl(id) {
+    return props.editPath.replace("__id__", String(id));
+}
 
 const syncSearchUrl = useUrlSearchSync();
 function onSearch(value) {
@@ -127,21 +137,7 @@ const { termMap, postTermLabels } = usePostTermLabels({ parsedTaxonomies, defaul
 </script>
 
 <template>
-    <PostEditor
-        v-if="view === 'editor'"
-        :post-id="editingPostId"
-        :post-types="parsedPostTypes"
-        :taxonomies="parsedTaxonomies"
-        :locales="parsedLocales"
-        :show-path="showPath"
-        :create-path="createPath"
-        :edit-path="editPath"
-        :preview-path="previewPath"
-        v-on:saved="onEditorSaved"
-        v-on:back="view = 'list'"
-    />
-
-    <div v-else class="flex flex-col md:flex-row gap-6">
+    <div class="flex flex-col md:flex-row gap-6">
         <!-- Desktop sidemenu -->
         <nav class="hidden md:flex flex-col w-52 shrink-0 gap-4">
             <div class="flex flex-col gap-0.5">
@@ -237,7 +233,7 @@ const { termMap, postTermLabels } = usePostTermLabels({ parsedTaxonomies, defaul
                             variant="primary"
                             size="md"
                             class="flex-1 sm:flex-none"
-                            v-on:click="openCreate"
+                            :href="newPath"
                         >
                             <Plus class="w-4 h-4" :stroke-width="2" />
                             {{ t("backend.posts.add") }}
@@ -318,7 +314,7 @@ const { termMap, postTermLabels } = usePostTermLabels({ parsedTaxonomies, defaul
                                 <AppIconButton color="sky" v-on:click="openPreview(post)">
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
-                                <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
+                                <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" :href="editUrl(post.id)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
                                 <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
@@ -380,7 +376,7 @@ const { termMap, postTermLabels } = usePostTermLabels({ parsedTaxonomies, defaul
                                         <AppIconButton color="sky" v-on:click="openPreview(post)">
                                             <Eye class="w-4 h-4" :stroke-width="2" />
                                         </AppIconButton>
-                                        <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" v-on:click="openEdit(post)">
+                                        <AppIconButton v-if="!trashed && can('editorial.posts.edit')" color="accent" :href="editUrl(post.id)">
                                             <Pencil class="w-4 h-4" :stroke-width="2" />
                                         </AppIconButton>
                                         <AppIconButton v-if="trashed" color="emerald" v-on:click="restorePost(post)">
