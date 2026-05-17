@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Search;
 
-use Aurora\Core\Search\Provider\SearchProviderInterface;
+use Aurora\Core\General\Search\Provider\SearchProviderInterface;
 use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Repository\ProjectTaskRepository;
 

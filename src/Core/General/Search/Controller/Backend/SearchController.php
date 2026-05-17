@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Search\Controller\Backend;
+namespace Aurora\Core\General\Search\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Media\Entity\MediaInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Search\Service\SearchResultSorter;
-use Aurora\Core\Search\Service\SearchSnippetBuilder;
+use Aurora\Core\General\Search\Service\SearchResultSorter;
+use Aurora\Core\General\Search\Service\SearchSnippetBuilder;
 use Aurora\Module\Editorial\Post\Entity\PostInterface;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;

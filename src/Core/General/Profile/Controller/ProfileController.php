@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Profile\Controller;
+namespace Aurora\Core\General\Profile\Controller;
 
 use Aurora\Core\Auth\Dto\ChangePasswordInput;
 use Aurora\Core\Enum\HttpMethodEnum;
@@ -11,7 +11,7 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Module\Service\ModuleRegistry;
-use Aurora\Core\Profile\View\ProfileViewBuilder;
+use Aurora\Core\General\Profile\View\ProfileViewBuilder;
 use Aurora\Core\User\Dto\MoodInput;
 use Aurora\Core\User\Dto\UpdateProfileInput;
 use Aurora\Core\User\Entity\User;

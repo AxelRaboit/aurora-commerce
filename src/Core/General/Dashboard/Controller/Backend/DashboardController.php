@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\Controller\Backend;
+namespace Aurora\Core\General\Dashboard\Controller\Backend;
 
-use Aurora\Core\Dashboard\View\DashboardViewBuilder;
+use Aurora\Core\General\Dashboard\View\DashboardViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

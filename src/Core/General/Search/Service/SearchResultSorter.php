@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Search\Service;
+namespace Aurora\Core\General\Search\Service;
 
 use Aurora\Module\Editorial\Post\Entity\PostInterface;
 

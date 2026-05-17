@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Core\Search\Service;
+namespace Aurora\Tests\Unit\Core\General\Search\Service;
 
-use Aurora\Core\Search\Service\SearchResultSorter;
+use Aurora\Core\General\Search\Service\SearchResultSorter;
 use Aurora\Module\Editorial\Post\Entity\PostInterface;
 use PHPUnit\Framework\TestCase;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\Service;
+namespace Aurora\Core\General\Dashboard\Service;
 
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Core\Menu\Repository\MenuRepository;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\View;
+namespace Aurora\Core\General\Dashboard\View;
 
-use Aurora\Core\Dashboard\Service\StatsService;
+use Aurora\Core\General\Dashboard\Service\StatsService;
 
 /**
  * Builds the Twig payload for the dev overview tab. Wraps StatsService

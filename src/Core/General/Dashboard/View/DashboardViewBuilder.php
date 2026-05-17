@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Dashboard\View;
+namespace Aurora\Core\General\Dashboard\View;
 
-use Aurora\Core\Dashboard\Service\StatsService;
+use Aurora\Core\General\Dashboard\Service\StatsService;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Core\Setting\Enum\ModuleParameterEnum;
 

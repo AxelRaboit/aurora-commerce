@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Search\Command;
+namespace Aurora\Core\General\Search\Command;
 
 use Aurora\Module\Editorial\Post\Entity\PostTranslation;
 use Aurora\Module\Editorial\Post\Repository\PostTranslationRepository;
