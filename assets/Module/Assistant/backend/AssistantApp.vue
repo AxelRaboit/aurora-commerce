@@ -221,7 +221,7 @@ function bubbleClass(role) {
                 </div>
             </template>
 
-            <div v-if="props.mountPoints.length > 1" class="border-t border-line px-3 py-2 flex items-center gap-2">
+            <div v-if="props.mountPoints.length > 1" class="border-t border-line px-3 py-2 flex flex-col sm:flex-row sm:items-center gap-2">
                 <span class="text-xs text-muted shrink-0">{{ t('assistant.chat.source') }}</span>
                 <div class="flex-1">
                     <AppMultiselect
