@@ -36,7 +36,7 @@ les `{% set %}` au top-level ne traversent qu'un seul niveau d'extends. La
 fonction `seo()` contourne ces deux limites via un side-effect sur la request
 (le head appelle `seo_current()` pour relire).
 
-Doc canonique : [`convention_seo_head.md`](../../../docs/aurora-core/dev/convention_seo_head.md).
+Doc canonique : [`convention_seo_head.md`](../../../docs/aurora-shared/convention_seo_head.md).
 
 ## Comment l'appliquer
 

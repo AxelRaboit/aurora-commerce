@@ -52,4 +52,4 @@ Servis via `GET /backend/pdfform/documents/{id}/download` (auth requise).
 
 - `src/Core/Scheduler/MainSchedule.php`
 - `src/Core/Scheduler/MessageHandler/CleanTempFilesHandler.php`
-- `docs/aurora-core/dev/scheduler.md`
+- `docs/aurora-shared/scheduler.md`

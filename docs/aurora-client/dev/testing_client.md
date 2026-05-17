@@ -5,8 +5,8 @@ kernel utilisé, comment tester une extension d'entité ou un override de
 service. Pour le détail de l'écriture des tests (Unit vs Integration,
 fixtures, helpers, conventions), lire **avant** :
 
-- [`../../aurora-core/dev/testing_php.md`](../../aurora-core/dev/testing_php.md) — tests PHP (Unit/Integration, PHPUnit)
-- [`../../aurora-core/dev/testing_vue.md`](../../aurora-core/dev/testing_vue.md) — tests Vue (Vitest)
+- [`../../aurora-shared/testing_php.md`](../../aurora-shared/testing_php.md) — tests PHP (Unit/Integration, PHPUnit)
+- [`../../aurora-shared/testing_vue.md`](../../aurora-shared/testing_vue.md) — tests Vue (Vitest)
 
 ---
 
@@ -71,7 +71,7 @@ Règle simple :
 
 Pour les classes de base et helpers (`IntegrationTestCase`, fixtures
 loaders), voir
-[`../../aurora-core/dev/testing_php.md`](../../aurora-core/dev/testing_php.md).
+[`../../aurora-shared/testing_php.md`](../../aurora-shared/testing_php.md).
 Aurora les expose en tant que classes du vendor — vous pouvez les hériter
 directement.
 

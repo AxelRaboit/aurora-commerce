@@ -116,7 +116,7 @@ Voir [`database.md`](database.md) pour le détail des syncs.
 
 Aurora utilise **Symfony Scheduler** pour ses tâches récurrentes (publication
 de posts programmés, purge de corbeille, OCR billing…). Détails côté core :
-[`../../aurora-core/dev/scheduler.md`](../../aurora-core/dev/scheduler.md).
+[`../../aurora-shared/scheduler.md`](../../aurora-shared/scheduler.md).
 
 **Pas de cron système requis.** Un worker Messenger consomme les deux
 transports `async` + `scheduler_main`. À lancer en service système (systemd,

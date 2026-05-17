@@ -39,4 +39,4 @@ Ne jamais chercher à uniformiser en un seul style — le mixte est sans frictio
 
 ## Référence
 
-Doc complète : `docs/aurora-core/dev/translations.md` § "Casse des clés"
+Doc complète : `docs/aurora-shared/translations.md` § "Casse des clés"

@@ -66,4 +66,4 @@ valide sur toutes les paires FR/EN (25 au total) :
 
 - Nouveau module : créer `src/Module/<Module>/translations/messages.{fr,en}.yaml`, découvert auto.
 - Nouvelle feature Core : créer `src/Core/<Feature>/translations/messages.{fr,en}.yaml`, découvert auto.
-- Doc complète : `docs/aurora-core/dev/translations.md`
+- Doc complète : `docs/aurora-shared/translations.md`

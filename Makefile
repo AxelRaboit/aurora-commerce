@@ -344,8 +344,9 @@ sync-claude-memory: ## Sync .claude/memory/ + docs/aurora-{core,client}/ into th
 	mkdir -p "$$DEST/docs"; \
 	rsync -a --delete --include="*.md" --include="*/" --exclude="*" docs/aurora-core/ "$$DEST/docs/aurora-core/"; \
 	rsync -a --delete --include="*.md" --include="*/" --exclude="*" docs/aurora-client/ "$$DEST/docs/aurora-client/"; \
+	rsync -a --delete --include="*.md" --include="*/" --exclude="*" docs/aurora-shared/ "$$DEST/docs/aurora-shared/"; \
 	MEM=$$(find .claude/memory -name '*.md' | wc -l | tr -d ' '); \
-	DOC=$$(find docs/aurora-core docs/aurora-client -name '*.md' | wc -l | tr -d ' '); \
+	DOC=$$(find docs/aurora-core docs/aurora-client docs/aurora-shared -name '*.md' | wc -l | tr -d ' '); \
 	echo "✅ $$MEM fichiers mémoire + $$DOC fichiers docs synchronisés → $$DEST"
 
 # === Setup ===

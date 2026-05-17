@@ -24,7 +24,7 @@ metadata:
 {% endblock %}
 ```
 
-- **SEO** via la fonction Twig `seo({...})` appelée dans `{% block seo_define %}` (override le block du layout, rendu avant l'include du head). Doc complète : [`docs/aurora-core/dev/convention_seo_head.md`](../../../docs/aurora-core/dev/convention_seo_head.md).
+- **SEO** via la fonction Twig `seo({...})` appelée dans `{% block seo_define %}` (override le block du layout, rendu avant l'include du head). Doc complète : [`docs/aurora-shared/convention_seo_head.md`](../../../docs/aurora-shared/convention_seo_head.md).
 - **Body** = un seul `<div {{ vue_component(...) }}></div>`. Aucun markup HTML, aucune logique métier.
 
 ## Pourquoi cette mécanique (block + side-effect)
@@ -46,7 +46,7 @@ Les **blocks**, en revanche, traversent toute la chaîne extends. D'où le patte
 ## Comment l'appliquer
 
 1. Nouvelle page frontend → créer `<Module>/frontend/<feature>/index.html.twig` (cf [[structure_template_folders]]), extends `layout.html.twig`.
-2. Override `{% block seo_define %}{% do seo({...}) %}{% endblock %}` au minimum avec `title`. Cf. cookbook par type de page dans [`convention_seo_head.md`](../../../docs/aurora-core/dev/convention_seo_head.md).
+2. Override `{% block seo_define %}{% do seo({...}) %}{% endblock %}` au minimum avec `title`. Cf. cookbook par type de page dans [`convention_seo_head.md`](../../../docs/aurora-shared/convention_seo_head.md).
 3. `{% block body %}` = un seul `vue_component(...)`.
 4. Pages privées (panier, checkout, compte, login, order…) → toujours `noindex: true` dans `seo({...})`.
 

@@ -77,12 +77,12 @@ ou consultez la version en ligne :
 | [`add_module.md`](../../aurora-core/dev/add_module.md) | Créer un nouveau module dans votre repo client. |
 | [`app_architecture.md`](../../aurora-core/dev/app_architecture.md) | Cartographie d'aurora-core (modules, namespaces). |
 | [`frontend_theme_override.md`](../../aurora-core/dev/frontend_theme_override.md) | Créer son thème frontend. |
-| [`form_validation.md`](../../aurora-core/dev/form_validation.md) | Conventions de validation de form. |
+| [`form_validation.md`](../../aurora-shared/form_validation.md) | Conventions de validation de form. |
 | [`per_user_module_access.md`](../../aurora-core/dev/per_user_module_access.md) | RBAC + désactivation de modules par utilisateur. |
-| [`translations.md`](../../aurora-core/dev/translations.md) | i18n côté core et client. |
-| [`testing_php.md`](../../aurora-core/dev/testing_php.md) | Fondamentaux PHPUnit (s'applique aussi côté client). |
-| [`testing_vue.md`](../../aurora-core/dev/testing_vue.md) | Fondamentaux Vitest. |
-| [`scheduler.md`](../../aurora-core/dev/scheduler.md) | Cron / scheduler d'aurora-core. |
+| [`translations.md`](../../aurora-shared/translations.md) | i18n côté core et client. |
+| [`testing_php.md`](../../aurora-shared/testing_php.md) | Fondamentaux PHPUnit (s'applique aussi côté client). |
+| [`testing_vue.md`](../../aurora-shared/testing_vue.md) | Fondamentaux Vitest. |
+| [`scheduler.md`](../../aurora-shared/scheduler.md) | Cron / scheduler d'aurora-core. |
 
 ---
 

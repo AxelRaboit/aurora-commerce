@@ -95,4 +95,4 @@ Créer un user ad hoc : `use CreatesTestUsers` + `$this->createTestUser('Alice',
 
 **How to apply:** Nouveau service/manager → test Unit en miroir dans `tests/Unit/`. Nouveau Controller → test Integration dans `tests/Integration/Controller/`. 3–5 assertions ciblées par test.
 
-**Doc canonique** : [`docs/aurora-core/dev/testing_php.md`](../../../docs/aurora-core/dev/testing_php.md)
+**Doc canonique** : [`docs/aurora-shared/testing_php.md`](../../../docs/aurora-shared/testing_php.md)
