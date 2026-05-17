@@ -12,6 +12,12 @@ Scaffold a new Aurora module following the convention documented in
 minimum-viable wiring then adds optional layers (toggles, frontend,
 settings) on demand.
 
+> **Nesting convention (depuis 0.4.0)** : si le module ajoute des
+> sous-features, elles vont sous `src/<root>/<Module>/<SubFeature>/`
+> (Vault-style). Le `<Module>Module.php` lui-même reste à la racine.
+> Cf. `.claude/memory/aurora-core/architecture/decision_core_submodule_nesting.md`.
+> Pour ajouter une sous-feature à un module existant, voir `/add-submodule`.
+
 ## Step 0 — Detect context (CORE vs CLIENT)
 
 Before doing anything else, decide which side of the ecosystem you're in :
@@ -30,7 +36,7 @@ will produce broken code if wrong.
 
 | Detected | Namespace prefix | Sequence prefix | Asset path | Settings storage |
 |---|---|---|---|---|
-| CORE | `Aurora\Module\<X>` | `seq_core_<entity>_id` | `assets/Module/<X>/` | `ModuleParameterEnum` enum case |
+| CORE (business module) | `Aurora\Module\<X>` | `seq_core_<entity>_id` | `assets/Module/<X>/` | `Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum` enum case (since 0.4.0) |
 | CLIENT | `App\Module\<X>` | `seq_app_<entity>_id` | `assets/client/Module/<X>/` | `<X>Context` constants (`app_<x>_<feature>`) |
 
 ## Required inputs (ask upfront if missing)
@@ -258,7 +264,7 @@ final readonly class <Module>Context
 namespace Aurora\Module\<Module>\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final readonly class <Module>Context
 {
@@ -307,7 +313,7 @@ CORE example (Photo template) :
 namespace Aurora\Module\<Module>;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final class <Module>FrontendDescriptor implements FrontendInterface
 {
