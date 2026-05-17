@@ -9,7 +9,7 @@ use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Manager\TiersManagerInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\Conversation\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Conversation\Entity\Conversation;
 use Aurora\Module\Assistant\Conversation\Entity\ConversationInterface;
 use Aurora\Module\Assistant\Conversation\Entity\Message;

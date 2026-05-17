@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Vault\VaultEntry\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Vault\VaultEntry\Dto\VaultEntryInputInterface;
 use Aurora\Module\Vault\VaultEntry\Entity\VaultEntry;
 use Aurora\Module\Vault\VaultEntry\Entity\VaultEntryInterface;

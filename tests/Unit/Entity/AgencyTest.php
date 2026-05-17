@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Entity\Agency;
 use PHPUnit\Framework\TestCase;
 
 final class AgencyTest extends TestCase

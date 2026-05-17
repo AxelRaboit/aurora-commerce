@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Module\Security;
 
 use Aurora\Core\Module\Service\PermissionRegistry;
-use Aurora\Core\Platform\User\Entity\User;
-use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Manager;
 
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectTaskCommentInputInterface;
 use Aurora\Module\Project\Entity\ProjectTaskCommentInterface;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;

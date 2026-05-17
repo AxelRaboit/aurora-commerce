@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface as CrmCompany;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface as CrmContact;
 use Aurora\Module\Crm\Deal\Entity\DealInterface as CrmDeal;

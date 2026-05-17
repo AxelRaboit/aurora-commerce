@@ -6,7 +6,7 @@ namespace Aurora\Module\Notes\Markdown\View;
 
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Support\Num;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
 use Aurora\Module\Notes\Markdown\Setting\MarkdownNoteSettingEnum;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

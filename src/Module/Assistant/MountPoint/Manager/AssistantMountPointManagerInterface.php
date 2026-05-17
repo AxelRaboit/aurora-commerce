@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\MountPoint\Manager;
 
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Dto\AssistantMountPointInputInterface;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;
 

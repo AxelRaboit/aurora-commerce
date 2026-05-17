@@ -6,7 +6,7 @@ namespace Aurora\Module\Project\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Notification\Manager\NotificationManager;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectTaskCommentInputInterface;
 use Aurora\Module\Project\Entity\ProjectTaskComment;
 use Aurora\Module\Project\Entity\ProjectTaskCommentInterface;

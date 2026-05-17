@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Module\Configuration\Theme\Service\ThemeResolver;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\View\AccountOrdersViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;

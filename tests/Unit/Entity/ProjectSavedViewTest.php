@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectSavedView;
 use PHPUnit\Framework\TestCase;

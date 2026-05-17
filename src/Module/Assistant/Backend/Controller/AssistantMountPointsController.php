@@ -7,7 +7,7 @@ namespace Aurora\Module\Assistant\Backend\Controller;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Assistant\Backend\View\AssistantMountPointsViewBuilder;
 use Aurora\Module\Assistant\MountPoint\Dto\AssistantMountPointInputFactoryInterface;

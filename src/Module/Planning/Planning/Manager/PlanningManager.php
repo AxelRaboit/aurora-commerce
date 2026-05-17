@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Planning\Manager;
 
-use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Planning\Planning\Dto\PlanningInputInterface;
 use Aurora\Module\Planning\Planning\Entity\Planning;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;

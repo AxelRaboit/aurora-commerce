@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectTaskTimeEntryInputInterface;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;

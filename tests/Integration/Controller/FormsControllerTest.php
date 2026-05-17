@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
-use Aurora\Core\Platform\User\Entity\User;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Form\Entity\Form;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;

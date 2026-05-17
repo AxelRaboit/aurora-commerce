@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\DataFixtures;
 
-use Aurora\Core\Platform\Agency\Entity\Agency;
-use Aurora\Core\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Dev\Audit\Entity\AbstractAuditLog;
 use Aurora\Module\Dev\Audit\Entity\AuditLog;
 use Aurora\Core\Locale\Enum\LocaleEnum;
@@ -15,12 +15,12 @@ use Aurora\Module\Editorial\Menu\Entity\Menu;
 use Aurora\Module\Editorial\Menu\Entity\MenuItem;
 use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslation;
 use Aurora\Module\Editorial\Menu\Enum\MenuItemTargetTypeEnum;
-use Aurora\Core\Platform\Service\Entity\Service;
-use Aurora\Core\Platform\Service\Entity\ServiceInterface;
+use Aurora\Module\Platform\Service\Entity\Service;
+use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Service\SettingsService;
-use Aurora\Core\Platform\User\Entity\User;
-use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;

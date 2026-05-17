@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\Entity;
 
-use Aurora\Core\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface MarkdownNoteInterface extends TimestampableInterface

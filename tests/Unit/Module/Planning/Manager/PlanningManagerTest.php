@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Planning\Manager;
 
-use Aurora\Core\Platform\Agency\Entity\Agency;
-use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Planning\Planning\Dto\PlanningInputInterface;
 use Aurora\Module\Planning\Planning\Entity\Planning;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;

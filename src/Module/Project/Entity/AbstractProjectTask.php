@@ -6,7 +6,7 @@ namespace Aurora\Module\Project\Entity;
 
 use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;

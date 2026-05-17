@@ -7,7 +7,7 @@ namespace Aurora\Core\Notification\Repository;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Hr\Serializer;
 
-use Aurora\Core\Platform\Agency\Entity\Agency;
-use Aurora\Core\Platform\Service\Entity\Service;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Service\Entity\Service;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\Hr\Employee\Serializer\EmployeeSerializer;
 use DateTimeImmutable;

@@ -7,7 +7,7 @@ namespace Aurora\Module\Project\Manager;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Repository\DealRepository;

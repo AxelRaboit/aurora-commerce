@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Platform\User\Entity\User;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;

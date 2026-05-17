@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Manager;
 
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;

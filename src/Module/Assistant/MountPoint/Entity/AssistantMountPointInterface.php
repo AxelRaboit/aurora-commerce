@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\MountPoint\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
 
 interface AssistantMountPointInterface extends TimestampableInterface

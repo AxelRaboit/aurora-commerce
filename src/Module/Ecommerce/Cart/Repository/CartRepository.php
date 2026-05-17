@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Cart\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Doctrine\Persistence\ManagerRegistry;

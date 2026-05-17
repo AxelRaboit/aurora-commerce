@@ -9,12 +9,12 @@ security:
     providers:
         app_user_provider:
             entity:
-                class: Aurora\Core\Platform\User\Entity\User
+                class: Aurora\Module\Platform\User\Entity\User
                 property: email
         admin_user_provider:
-            id: Aurora\Core\Platform\Auth\Security\Backend\UserProvider
+            id: Aurora\Module\Platform\Auth\Security\Backend\UserProvider
         front_user_provider:
-            id: Aurora\Core\Platform\Auth\Security\Frontend\UserProvider
+            id: Aurora\Module\Platform\Auth\Security\Frontend\UserProvider
 
     firewalls:
         dev:
@@ -26,7 +26,7 @@ security:
             context: admin
             pattern: ^/(backend|dev)
             provider: admin_user_provider
-            user_checker: Aurora\Core\Platform\Auth\Security\Backend\UserChecker
+            user_checker: Aurora\Module\Platform\Auth\Security\Backend\UserChecker
             form_login:
                 login_path: backend_login
                 check_path: backend_login
@@ -50,10 +50,10 @@ security:
             context: front
             lazy: true
             provider: front_user_provider
-            user_checker: Aurora\Core\Platform\Auth\Security\Frontend\UserChecker
+            user_checker: Aurora\Module\Platform\Auth\Security\Frontend\UserChecker
             custom_authenticators:
-                - Aurora\Core\Platform\Auth\Security\Frontend\LoginAuthenticator
-            entry_point: Aurora\Core\Platform\Auth\Security\Frontend\AuthEntryPoint
+                - Aurora\Module\Platform\Auth\Security\Frontend\LoginAuthenticator
+            entry_point: Aurora\Module\Platform\Auth\Security\Frontend\AuthEntryPoint
             login_throttling:
                 max_attempts: 5
                 interval: '15 minutes'

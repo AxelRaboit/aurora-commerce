@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Core\Platform\User\Entity\User;
-use Aurora\Core\Platform\User\Manager\UserHierarchyManager;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Manager\UserHierarchyManager;
 use Aurora\Tests\Integration\Concern\CreatesTestUsers;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;

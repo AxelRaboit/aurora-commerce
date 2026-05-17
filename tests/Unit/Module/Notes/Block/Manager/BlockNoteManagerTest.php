@@ -7,7 +7,7 @@ namespace Aurora\Tests\Unit\Module\Notes\Block\Manager;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Notes\Block\Dto\BlockInput;
 use Aurora\Module\Notes\Block\Dto\BlockNoteInput;
 use Aurora\Module\Notes\Block\Entity\BlockNote;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Vault\VaultUserConfig\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\MappedSuperclass]

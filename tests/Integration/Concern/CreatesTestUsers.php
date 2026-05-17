@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Concern;
 
-use Aurora\Core\Platform\User\Entity\User;
-use Aurora\Core\Platform\User\Enum\UserRoleEnum;
-use Aurora\Core\Platform\User\Enum\UserStatusEnum;
-use Aurora\Core\Platform\User\Enum\UserTypeEnum;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Enum\UserRoleEnum;
+use Aurora\Module\Platform\User\Enum\UserStatusEnum;
+use Aurora\Module\Platform\User\Enum\UserTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 

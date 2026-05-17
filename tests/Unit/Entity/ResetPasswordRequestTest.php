@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Platform\Auth\Entity\ResetPasswordRequest;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
+use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

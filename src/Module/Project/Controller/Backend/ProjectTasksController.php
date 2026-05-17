@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Project\Dto\ProjectTaskCommentInputFactoryInterface;
 use Aurora\Module\Project\Dto\ProjectTaskInputFactoryInterface;

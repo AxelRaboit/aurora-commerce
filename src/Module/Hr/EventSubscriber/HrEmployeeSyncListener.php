@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Hr\EventSubscriber;
 
-use Aurora\Core\Platform\User\Event\UserAgencyServiceUpdatingEvent;
+use Aurora\Module\Platform\User\Event\UserAgencyServiceUpdatingEvent;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\Hr\Employee\Repository\EmployeeRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

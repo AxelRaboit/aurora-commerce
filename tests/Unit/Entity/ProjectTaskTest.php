@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectLabel;

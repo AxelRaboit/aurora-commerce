@@ -6,7 +6,7 @@ namespace Aurora\Module\General\Dashboard\Service;
 
 use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;

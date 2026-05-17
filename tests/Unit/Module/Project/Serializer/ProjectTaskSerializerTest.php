@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Serializer;
 
 use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\AbstractProjectTask;
 use Aurora\Module\Project\Entity\AbstractProjectTaskComment;
 use Aurora\Module\Project\Entity\Project;

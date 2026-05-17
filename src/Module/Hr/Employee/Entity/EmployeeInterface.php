@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Hr\Employee\Entity;
 
-use Aurora\Core\Platform\Agency\Entity\AgencyInterface;
-use Aurora\Core\Platform\Service\Entity\ServiceInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 
 interface EmployeeInterface extends TimestampableInterface

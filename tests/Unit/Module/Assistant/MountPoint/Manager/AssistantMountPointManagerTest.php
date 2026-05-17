@@ -7,7 +7,7 @@ namespace Aurora\Tests\Unit\Module\Assistant\MountPoint\Manager;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Assistant\MountPoint\Dto\AssistantMountPointInput;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Tool\Service;
 
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Module\Assistant\Vision\Contract\VisionDescriberInterface;

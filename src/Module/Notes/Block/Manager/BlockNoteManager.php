@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Notes\Block\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Dto\BlockInput;
 use Aurora\Module\Notes\Block\Dto\BlockNoteInputInterface;
 use Aurora\Module\Notes\Block\Entity\BlockNote;

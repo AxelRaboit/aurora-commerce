@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Notes\Markdown\View;
 
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;
 use Aurora\Module\Notes\Markdown\Setting\MarkdownNoteSettingEnum;
 use Aurora\Module\Notes\Markdown\View\MarkdownNotesViewBuilder;

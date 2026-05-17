@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Notification\Manager;
 
 use Aurora\Core\Notification\Entity\NotificationInterface;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\User;
 
 interface NotificationManagerInterface
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Module\Project;
 
 use Aurora\Core\Notification\Repository\NotificationRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectInput;
 use Aurora\Module\Project\Dto\ProjectTaskInput;
 use Aurora\Module\Project\Entity\Project;

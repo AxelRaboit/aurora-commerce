@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Backend\View;
 
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Conversation\Repository\ConversationRepository;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;

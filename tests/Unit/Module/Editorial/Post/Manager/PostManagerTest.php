@@ -8,7 +8,7 @@ use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Editorial\Post\Dto\PostInput;
 use Aurora\Module\Editorial\Post\Dto\PostTranslationInput;
 use Aurora\Module\Editorial\Post\Entity\AbstractPost;

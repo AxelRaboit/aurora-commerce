@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Entity\User;
 
 interface ProjectTaskCommentInterface extends TimestampableInterface
 {

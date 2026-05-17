@@ -13,7 +13,7 @@ use Aurora\Module\Dev\MountPoint\Manager\MountPointManagerInterface;
 use Aurora\Module\Dev\MountPoint\Serializer\MountPointSerializerInterface;
 use Aurora\Module\Dev\MountPoint\Service\MountPointTesterService;
 use Aurora\Module\Dev\MountPoint\View\MountPointsViewBuilder;
-use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

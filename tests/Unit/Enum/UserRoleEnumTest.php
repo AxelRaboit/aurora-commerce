@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Enum;
 
-use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use PHPUnit\Framework\TestCase;
 
 final class UserRoleEnumTest extends TestCase

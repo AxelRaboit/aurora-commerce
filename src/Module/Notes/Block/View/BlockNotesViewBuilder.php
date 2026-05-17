@@ -6,7 +6,7 @@ namespace Aurora\Module\Notes\Block\View;
 
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Support\Num;
-use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
 use Aurora\Module\Notes\Block\Setting\BlockNoteSettingEnum;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

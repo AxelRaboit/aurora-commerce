@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Planning\Event\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Planning\Event\Dto\PlanningEventInputInterface;
 use Aurora\Module\Planning\Event\Entity\PlanningEvent;
 use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;

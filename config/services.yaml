@@ -65,24 +65,24 @@ services:
         arguments:
             $providers: !tagged_iterator aurora.menu_location_provider
 
-    Aurora\Core\Platform\Auth\Service\ImpersonationTokenService:
+    Aurora\Module\Platform\Auth\Service\ImpersonationTokenService:
         arguments:
             $secret: '%kernel.secret%'
 
-    Aurora\Core\Platform\Auth\Manager\AccessRequestManager:
+    Aurora\Module\Platform\Auth\Manager\AccessRequestManager:
         arguments:
             $adminEmail: '%app.admin_email%'
             $mailerFrom: '%app.mailer_from%'
 
-    Aurora\Core\Platform\Auth\Manager\InvitationManager:
+    Aurora\Module\Platform\Auth\Manager\InvitationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    Aurora\Core\Platform\Auth\Manager\PasswordResetManager:
+    Aurora\Module\Platform\Auth\Manager\PasswordResetManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    Aurora\Core\Platform\Auth\Manager\EmailVerificationManager:
+    Aurora\Module\Platform\Auth\Manager\EmailVerificationManager:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
