@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Core\General\Profile\View;
 
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 
 use function in_array;
 

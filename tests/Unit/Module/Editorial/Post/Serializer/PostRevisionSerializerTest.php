@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Post\Serializer;
 
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Editorial\Post\Entity\PostRevisionInterface;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Serializer\PostRevisionSerializer;

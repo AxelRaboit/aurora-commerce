@@ -13,7 +13,7 @@ use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
 use Aurora\Core\Menu\Manager\MenuManager;
 use Aurora\Core\Menu\Repository\MenuRepository;
 use Aurora\Core\Menu\Service\MenuRenderer;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;

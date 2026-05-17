@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Auth\Entity\AccessRequest;
-use Aurora\Core\Auth\Enum\AccessRequestStatusEnum;
+use Aurora\Core\Platform\Auth\Entity\AccessRequest;
+use Aurora\Core\Platform\Auth\Enum\AccessRequestStatusEnum;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

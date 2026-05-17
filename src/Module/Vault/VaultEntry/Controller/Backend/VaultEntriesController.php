@@ -7,7 +7,7 @@ namespace Aurora\Module\Vault\VaultEntry\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Vault\VaultEntry\Dto\VaultEntryInputFactoryInterface;
 use Aurora\Module\Vault\VaultEntry\Entity\VaultEntryInterface;

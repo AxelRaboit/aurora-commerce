@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager\Frontend;
 
-use Aurora\Core\Auth\Dto\Frontend\RegisterInput;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Enum\UserStatusEnum;
-use Aurora\Core\User\Enum\UserTypeEnum;
-use Aurora\Core\User\Manager\Frontend\UserManager;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\Auth\Dto\Frontend\RegisterInput;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Enum\UserStatusEnum;
+use Aurora\Core\Platform\User\Enum\UserTypeEnum;
+use Aurora\Core\Platform\User\Manager\Frontend\UserManager;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

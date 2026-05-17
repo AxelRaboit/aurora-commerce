@@ -6,8 +6,8 @@ namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Locale\Enum\LocaleEnum;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;

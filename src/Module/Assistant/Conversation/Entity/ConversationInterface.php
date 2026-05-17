@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Conversation\Entity;
 
-use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Core\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ConversationInterface extends TimestampableInterface

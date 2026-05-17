@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\General\Search\Provider;
 
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 
 /**
  * Module-contributed search adapter aggregated by the Assistant's

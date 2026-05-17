@@ -6,7 +6,7 @@ namespace Aurora\Core\Module\Service;
 
 use Aurora\Core\Module\Contract\ModuleInterface;
 use Aurora\Core\Module\Nav\NavItem;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;

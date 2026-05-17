@@ -21,7 +21,7 @@ use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Support\Num;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use GdImage;

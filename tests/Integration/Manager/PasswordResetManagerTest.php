@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Core\Auth\Entity\ResetPasswordRequest;
-use Aurora\Core\Auth\Manager\PasswordResetManager;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Enum\UserStatusEnum;
-use Aurora\Core\User\Enum\UserTypeEnum;
+use Aurora\Core\Platform\Auth\Entity\ResetPasswordRequest;
+use Aurora\Core\Platform\Auth\Manager\PasswordResetManager;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Enum\UserStatusEnum;
+use Aurora\Core\Platform\User\Enum\UserTypeEnum;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

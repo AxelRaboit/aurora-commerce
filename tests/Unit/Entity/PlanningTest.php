@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Agency\Entity\Agency;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\Agency\Entity\Agency;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Planning\Planning\Entity\Planning;
 use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
 use PHPUnit\Framework\TestCase;

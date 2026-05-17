@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Vault\VaultEntry\Serializer;
 
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Vault\Enum\VaultRecordTypeEnum;
 use Aurora\Module\Vault\VaultEntry\Entity\AbstractVaultEntry;
 use Aurora\Module\Vault\VaultEntry\Entity\VaultEntry;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Vault\VaultUserConfig\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
 use Doctrine\Persistence\ManagerRegistry;

@@ -11,7 +11,7 @@ use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;

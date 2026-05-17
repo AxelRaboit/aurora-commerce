@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Planning\Planning\Serializer;
 
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;
 use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
 use Aurora\Module\Planning\Planning\Serializer\PlanningSerializer;

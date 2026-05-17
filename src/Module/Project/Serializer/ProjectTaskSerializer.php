@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Serializer;
 
 use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

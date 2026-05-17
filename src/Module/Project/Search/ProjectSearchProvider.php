@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Search;
 
 use Aurora\Core\General\Search\Provider\SearchProviderInterface;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Repository\ProjectRepository;
 
 use function sprintf;

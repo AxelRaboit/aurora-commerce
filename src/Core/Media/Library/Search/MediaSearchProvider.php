@@ -6,7 +6,7 @@ namespace Aurora\Core\Media\Library\Search;
 
 use Aurora\Core\Media\Library\Repository\MediaRepository;
 use Aurora\Core\General\Search\Provider\SearchProviderInterface;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 
 use function sprintf;
 

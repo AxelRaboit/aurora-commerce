@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Assistant\Tool\Service;
 
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;

@@ -7,7 +7,7 @@ namespace Aurora\Module\Notes\Block\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Notes\Block\Dto\BlockNoteInputFactoryInterface;
 use Aurora\Module\Notes\Block\Dto\BlockNoteReorderInputFactoryInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Core\Notification\Entity\Notification;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

@@ -6,7 +6,7 @@ namespace Aurora\Core\Dev\Audit\Controller\Dev;
 
 use Aurora\Core\Dev\Audit\View\AuditViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Platform\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

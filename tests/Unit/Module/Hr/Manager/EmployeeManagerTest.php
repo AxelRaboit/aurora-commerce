@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Hr\Manager;
 
-use Aurora\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Core\Platform\Agency\Entity\Agency;
+use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Service\Entity\Service;
-use Aurora\Core\Service\Repository\ServiceRepository;
+use Aurora\Core\Platform\Service\Entity\Service;
+use Aurora\Core\Platform\Service\Repository\ServiceRepository;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Hr\Employee\Dto\EmployeeInputInterface;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;

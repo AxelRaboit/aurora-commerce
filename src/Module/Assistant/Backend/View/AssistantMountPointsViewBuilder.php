@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Backend\View;
 
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\MountPoint\Serializer\AssistantMountPointSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

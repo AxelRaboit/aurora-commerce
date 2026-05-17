@@ -6,7 +6,7 @@ namespace Aurora\Core\Locale\EventSubscriber;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;

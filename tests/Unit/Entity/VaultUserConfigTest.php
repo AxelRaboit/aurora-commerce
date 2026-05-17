@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use PHPUnit\Framework\TestCase;
 

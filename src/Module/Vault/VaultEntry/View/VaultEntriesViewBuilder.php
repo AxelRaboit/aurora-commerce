@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Vault\VaultEntry\View;
 
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Vault\VaultEntry\Repository\VaultEntryRepository;
 use Aurora\Module\Vault\VaultEntry\Serializer\VaultEntrySerializerInterface;
 use Aurora\Module\Vault\VaultFolder\Repository\VaultFolderRepository;

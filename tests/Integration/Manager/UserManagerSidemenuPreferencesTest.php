@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\User\Manager\UserManagerInterface;
+use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Core\Platform\User\Manager\UserManagerInterface;
 use Aurora\Tests\Integration\Concern\CreatesTestUsers;
 use Aurora\Tests\Integration\IntegrationTestCase;
 

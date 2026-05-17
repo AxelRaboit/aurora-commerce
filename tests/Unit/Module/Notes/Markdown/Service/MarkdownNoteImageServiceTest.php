@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Notes\Markdown\Service;
 
 use Aurora\Core\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Notes\Markdown\Service\MarkdownNoteImageService;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;

@@ -6,11 +6,11 @@ namespace Aurora\Tests\Integration\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Enum\UserRoleEnum;
-use Aurora\Core\User\Enum\UserStatusEnum;
-use Aurora\Core\User\Enum\UserTypeEnum;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Enum\UserRoleEnum;
+use Aurora\Core\Platform\User\Enum\UserStatusEnum;
+use Aurora\Core\Platform\User\Enum\UserTypeEnum;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

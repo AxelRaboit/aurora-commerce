@@ -6,7 +6,7 @@ namespace Aurora\Module\Billing\Ocr\Entity;
 
 use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use DateTimeImmutable;
 

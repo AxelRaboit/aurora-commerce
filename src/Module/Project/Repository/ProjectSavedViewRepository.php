@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectSavedView;
 use Aurora\Module\Project\Entity\ProjectSavedViewInterface;

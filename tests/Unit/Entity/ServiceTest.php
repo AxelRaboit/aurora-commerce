@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Service\Entity\Service;
+use Aurora\Core\Platform\Service\Entity\Service;
 use PHPUnit\Framework\TestCase;
 
 final class ServiceTest extends TestCase

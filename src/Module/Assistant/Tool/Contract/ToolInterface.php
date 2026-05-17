@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Tool\Contract;
 
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 
 /**
  * A capability the LLM can call. The LLM sees `getName()`, `getDescription()`

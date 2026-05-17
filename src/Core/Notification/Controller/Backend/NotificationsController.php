@@ -10,7 +10,7 @@ use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Notification\Manager\NotificationManagerInterface;
 use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\Notification\Serializer\NotificationSerializer;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

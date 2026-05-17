@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Notes\Block\Service;
 
 use Aurora\Core\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;

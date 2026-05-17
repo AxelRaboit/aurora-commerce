@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Hr\EventSubscriber;
 
-use Aurora\Core\Agency\Entity\Agency;
-use Aurora\Core\Service\Entity\Service;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Event\UserAgencyServiceUpdatingEvent;
+use Aurora\Core\Platform\Agency\Entity\Agency;
+use Aurora\Core\Platform\Service\Entity\Service;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Event\UserAgencyServiceUpdatingEvent;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\Hr\Employee\Repository\EmployeeRepository;
 use Aurora\Module\Hr\EventSubscriber\HrEmployeeSyncListener;

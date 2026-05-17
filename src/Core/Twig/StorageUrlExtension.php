@@ -6,8 +6,8 @@ namespace Aurora\Core\Twig;
 
 use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
-use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Service\UserProfilePhotoUrlGenerator;
 use Twig\Attribute\AsTwigFunction;
 
 /**

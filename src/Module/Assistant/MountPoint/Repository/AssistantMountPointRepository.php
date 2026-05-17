@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\MountPoint\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;
 use Doctrine\Common\Collections\Order;

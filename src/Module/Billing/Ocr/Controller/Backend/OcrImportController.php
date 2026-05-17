@@ -7,7 +7,7 @@ namespace Aurora\Module\Billing\Ocr\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;

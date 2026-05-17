@@ -10,7 +10,7 @@ use Aurora\Core\Notification\Manager\NotificationManager;
 use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectTaskCommentInput;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectTask;

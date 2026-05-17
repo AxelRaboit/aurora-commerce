@@ -7,7 +7,7 @@ namespace Aurora\Tests\Unit\Module\Vault\VaultUserConfig\Manager;
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Vault\Enum\VaultRecordTypeEnum;
 use Aurora\Module\Vault\VaultEntry\Entity\VaultEntry;
 use Aurora\Module\Vault\VaultEntry\Repository\VaultEntryRepository;

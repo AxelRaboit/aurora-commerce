@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Hr\Employee\Manager;
 
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Service\Repository\ServiceRepository;
-use Aurora\Core\User\Entity\CoreUserInterface;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\Service\Repository\ServiceRepository;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Hr\Employee\Dto\EmployeeInputInterface;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;

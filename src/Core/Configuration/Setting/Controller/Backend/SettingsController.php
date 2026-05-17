@@ -14,7 +14,7 @@ use Aurora\Core\Configuration\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Configuration\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Configuration\Setting\Service\SettingsService;
 use Aurora\Core\Configuration\Setting\View\SettingsViewBuilder;
-use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Platform\User\Enum\UserRoleEnum;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

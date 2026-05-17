@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\General\Dashboard\Controller\Dev;
 
 use Aurora\Core\General\Dashboard\View\OverviewViewBuilder;
-use Aurora\Core\User\Enum\UserRoleEnum;
+use Aurora\Core\Platform\User\Enum\UserRoleEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

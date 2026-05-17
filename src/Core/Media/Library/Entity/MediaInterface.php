@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Media\Library\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 
 interface MediaInterface extends TimestampableInterface
 {

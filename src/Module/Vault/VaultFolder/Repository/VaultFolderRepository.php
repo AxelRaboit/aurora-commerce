@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Vault\VaultFolder\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;
 use Doctrine\Common\Collections\Order;

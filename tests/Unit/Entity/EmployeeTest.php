@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Agency\Entity\Agency;
-use Aurora\Core\Service\Entity\Service;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\Agency\Entity\Agency;
+use Aurora\Core\Platform\Service\Entity\Service;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

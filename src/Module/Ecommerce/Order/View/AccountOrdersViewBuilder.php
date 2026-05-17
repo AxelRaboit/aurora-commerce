@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Order\View;
 
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Core\Configuration\Theme\Service\ThemeContext;
-use Aurora\Core\User\Entity\User;
+use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 

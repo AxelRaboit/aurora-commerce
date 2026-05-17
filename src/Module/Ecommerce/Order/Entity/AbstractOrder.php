@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Core\User\Entity\CoreUserInterface;
+use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Doctrine\Common\Collections\ArrayCollection;

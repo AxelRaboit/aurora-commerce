@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Tests\Unit\Core\Platform\Auth\Enum;
+
+use Aurora\Core\Platform\Auth\Enum\AccessRequestStatusEnum;
+use PHPUnit\Framework\TestCase;
+
+final class AccessRequestStatusEnumTest extends TestCase
+{
+    public function testGetLabelKeyPrefixesValue(): void
+    {
+        self::assertSame('backend.access_requests.status_pending', AccessRequestStatusEnum::Pending->getLabelKey());
+        self::assertSame('backend.access_requests.status_approved', AccessRequestStatusEnum::Approved->getLabelKey());
+        self::assertSame('backend.access_requests.status_rejected', AccessRequestStatusEnum::Rejected->getLabelKey());
+    }
+}

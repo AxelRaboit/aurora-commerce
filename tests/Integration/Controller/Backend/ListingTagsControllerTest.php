@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\User\Entity\User;
-use Aurora\Core\User\Repository\UserRepository;
+use Aurora\Core\Platform\User\Entity\User;
+use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
