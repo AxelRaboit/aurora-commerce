@@ -27,12 +27,15 @@ const fieldByKey = computed(() =>
     Object.fromEntries(fields.value.map((f) => [f.key, f])),
 );
 
-const values = reactive({});
-onMounted(() => {
-    fields.value.forEach((f) => {
-        values[f.key] = f.value ?? f.defaultValue ?? "";
-    });
-});
+// Initialise synchronously so fields are pre-populated before the first render.
+const values = reactive(
+    Object.fromEntries(
+        (props.groups?.assistant ?? []).map((f) => [
+            f.key,
+            f.value ?? f.defaultValue ?? "",
+        ]),
+    ),
+);
 
 // ── Model list ────────────────────────────────────────────────────────
 const availableModels = ref([]);

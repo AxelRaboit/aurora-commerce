@@ -55,10 +55,10 @@ backend:
       description: 'Choose between Ollama (local) and Anthropic Claude (cloud). For Anthropic, set ANTHROPIC_API_KEY in .env.local and set the Chat model to a Claude identifier (e.g. claude-haiku-4-5).'
     assistant_chat_model:
       label: Chat model
-      description: 'Ollama: local model name (e.g. qwen3:8b — must support tool calling). Anthropic: Claude identifier (e.g. claude-haiku-4-5, claude-sonnet-4-6, claude-opus-4-7). Leave blank to fall back to ASSISTANT_CHAT_MODEL from .env.'
+      description: 'Ollama: must support tool calling (e.g. qwen3:8b). Anthropic: claude-haiku-4-5, claude-sonnet-4-6, claude-opus-4-7.'
     assistant_vision_model:
-      label: Ollama vision model
-      description: 'Vision-capable model used by the image_read tool to describe/OCR images (e.g. qwen2.5vl:3b, llava:7b, minicpm-v). Leave blank to fall back to ASSISTANT_VISION_MODEL from .env.'
+      label: Vision model
+      description: 'Model used by the image_read tool to describe or OCR images (e.g. qwen2.5vl:3b, llava:7b).'
     assistant_http_timeout:
       label: HTTP timeout (s)
       description: 'Per-request idle timeout (Ollama or Anthropic), in seconds. Raise if you hit transport errors mid-generation. .env default: 300.'
@@ -70,7 +70,7 @@ backend:
       description: 'Maximum number of tokens in the response. Recommended: 4096.'
     assistant_system_prompt:
       label: System prompt
-      description: 'Instructions given to the model at the start of every conversation. Leave blank to use the built-in Aurora default.'
+      description: 'Instructions given to the model at the start of every conversation. Uses the built-in Aurora default if empty.'
   nav:
     sections:
       assistant: Assistant
