@@ -39,6 +39,14 @@ final class DevPrerequisiteChecker
         private readonly string $projectDir,
         #[Autowire('%env(ASSISTANT_OLLAMA_URL)%')]
         private readonly string $ollamaUrl,
+        #[Autowire('%env(ASSISTANT_PROVIDER)%')]
+        private readonly string $assistantProvider,
+        #[Autowire('%env(ASSISTANT_CHAT_MODEL)%')]
+        private readonly string $assistantChatModel,
+        #[Autowire('%env(ASSISTANT_VISION_MODEL)%')]
+        private readonly string $assistantVisionModel,
+        #[Autowire('%env(OLLAMA_VISION_MODEL)%')]
+        private readonly string $ocrVisionModel,
     ) {}
 
     /**
@@ -135,15 +143,28 @@ final class DevPrerequisiteChecker
         }
 
         $pulledModels = $status['models'];
-        $required = [
-            'qwen3:8b' => 'Assistant IA (chat)',
-            'qwen2.5vl:3b' => 'OCR Billing + Assistant vision',
-        ];
+
+        // Build the list of required Ollama models from env config.
+        // - OCR vision model: always needed (Billing OCR module is always active).
+        // - Assistant chat model: only when provider is Ollama.
+        // - Assistant vision model: only when provider is Ollama (Anthropic handles vision natively).
+        $required = [];
+        $required[$this->ocrVisionModel] = 'OCR Billing';
+
+        if ('anthropic' !== $this->assistantProvider) {
+            if ('' !== $this->assistantChatModel) {
+                $required[$this->assistantChatModel] = 'Assistant IA (chat)';
+            }
+
+            if ('' !== $this->assistantVisionModel && $this->assistantVisionModel !== $this->ocrVisionModel) {
+                $required[$this->assistantVisionModel] = 'Assistant IA (vision)';
+            }
+        }
 
         foreach ($required as $model => $usage) {
             $pulled = false;
-            foreach ($pulledModels as $pulled_model) {
-                if (str_starts_with($pulled_model, $model)) {
+            foreach ($pulledModels as $pulledModel) {
+                if (str_starts_with($pulledModel, $model)) {
                     $pulled = true;
                     break;
                 }
