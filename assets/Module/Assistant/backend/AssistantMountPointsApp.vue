@@ -7,6 +7,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppSelect from "@/shared/components/form/select/AppSelect.vue";
 import AppToggle from "@/shared/components/form/toggle/AppToggle.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
@@ -39,19 +40,15 @@ const accessOptions = [
 
 <template>
     <div class="space-y-4">
-        <header class="flex items-start gap-3">
-            <FolderKey class="w-6 h-6 text-accent-500 shrink-0 mt-0.5" :stroke-width="1.5" />
-            <div class="min-w-0">
-                <h1 class="text-2xl font-bold text-primary">{{ t('assistant.mount_point.title') }}</h1>
-                <p class="text-sm text-secondary">{{ t('assistant.mount_point.description') }}</p>
-            </div>
-            <div class="ml-auto">
-                <AppButton variant="primary" size="md" v-on:click="openCreate">
+        <AppListToolbar>
+            <p class="text-sm text-secondary self-center">{{ t('assistant.mount_point.description') }}</p>
+            <template #actions>
+                <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t('assistant.mount_point.add') }}
                 </AppButton>
-            </div>
-        </header>
+            </template>
+        </AppListToolbar>
 
         <!-- Mobile: cards -->
         <div class="sm:hidden space-y-2">
