@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
@@ -28,6 +28,14 @@ export function useAssistant(props) {
     const draft = ref("");
     const deletingConversation = ref(null);
     const selectedSourceId = ref(null);
+
+    // When the source changes, automatically start a fresh conversation so
+    // the LLM context doesn't carry paths from the previous source.
+    watch(selectedSourceId, (newId, oldId) => {
+        if (newId === oldId) return;
+        activeId.value = null;
+        activeConversation.value = null;
+    });
     const renamingId = ref(null);
     const renameDraft = ref("");
 
