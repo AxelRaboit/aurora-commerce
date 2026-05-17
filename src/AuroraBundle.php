@@ -388,7 +388,10 @@ class AuroraBundle extends AbstractBundle
             'enable_profiler' => false,
         ]);
 
-        $coreDirs = glob($dir.'/src/Core/*/translations', GLOB_ONLYDIR) ?: [];
+        $coreDirs = array_merge(
+            glob($dir.'/src/Core/*/translations', GLOB_ONLYDIR) ?: [],
+            glob($dir.'/src/Core/*/*/translations', GLOB_ONLYDIR) ?: [],
+        );
 
         $builder->prependExtensionConfig('framework', [
             'default_locale' => LocaleEnum::default()->value,
