@@ -156,7 +156,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: '_edit', methods: [HttpMethodEnum::Post->value])]
+    #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('media.edit')]
     public function edit(Media $media, Request $request): JsonResponse
     {

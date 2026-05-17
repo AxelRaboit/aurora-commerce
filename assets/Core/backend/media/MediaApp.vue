@@ -48,7 +48,7 @@ const props = defineProps({
     currentFolderId: { type: Number, default: null },
     search: { type: String, default: "" },
     uploadPath: { type: String, default: "/backend/media/upload" },
-    editPath: { type: String, default: "/backend/media/__id__/edit" },
+    updatePath: { type: String, default: "/backend/media/__id__/update" },
     deletePath: { type: String, default: "/backend/media/__id__/delete" },
     movePath: { type: String, default: "/backend/media/__id__/move" },
     folderCreatePath: { type: String, default: "/backend/media/folders" },

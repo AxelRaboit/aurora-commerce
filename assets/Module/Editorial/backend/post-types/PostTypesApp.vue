@@ -27,7 +27,7 @@ const props = defineProps({
     postTypes: { type: Array, default: () => [] },
     taxonomies: { type: Array, default: () => [] },
     createPath: { type: String, required: true },
-    editPath: { type: String, required: true },
+    updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     fieldCreatePath: { type: String, required: true },
     fieldEditPath: { type: String, required: true },

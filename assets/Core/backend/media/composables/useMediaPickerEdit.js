@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
-export function useMediaPickerEdit({ editPath, items, selected }) {
+export function useMediaPickerEdit({ updatePath, items, selected }) {
     const { t } = useI18n();
     const { loading: editSaving, request } = useRequest();
     const editAlt = ref("");
@@ -26,7 +26,7 @@ export function useMediaPickerEdit({ editPath, items, selected }) {
             editCaption.value === (item.caption ?? "")
         )
             return;
-        const url = buildPath(editPath, { id: item.id });
+        const url = buildPath(updatePath, { id: item.id });
         const data = await request(url, {
             alt: editAlt.value,
             caption: editCaption.value,

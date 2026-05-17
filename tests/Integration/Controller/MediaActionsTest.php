@@ -61,7 +61,7 @@ final class MediaActionsTest extends IntegrationTestCase
     {
         $media = $this->uploadAndPersist('alt.png', 200, 150);
 
-        [$status, $body] = $this->postJson('backend_media_edit', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
             'alt' => 'A scenic banner',
             'caption' => 'Hero of the homepage',
             'focalX' => 0.4,

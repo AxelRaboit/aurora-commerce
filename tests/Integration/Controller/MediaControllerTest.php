@@ -77,7 +77,7 @@ final class MediaControllerTest extends IntegrationTestCase
     {
         $media = $this->createMedia();
 
-        [$status, $body] = $this->postJson('backend_media_edit', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
             'alt' => '',
         ]);
 
@@ -90,7 +90,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $media = $this->createMedia();
         $folder = $this->createFolder('Banners');
 
-        [$status, $body] = $this->postJson('backend_media_edit', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
             'alt' => 'A nice banner',
             'caption' => 'Marketing banner for homepage',
             'focalX' => 0.5,
@@ -124,7 +124,7 @@ final class MediaControllerTest extends IntegrationTestCase
     {
         $media = $this->createMedia();
 
-        [$status, $body] = $this->postJson('backend_media_edit', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
             'alt' => 'x',
             'focalX' => 1.5,
             'focalY' => -0.2,

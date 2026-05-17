@@ -139,7 +139,7 @@ final class FormsControllerTest extends IntegrationTestCase
         $updated = $this->createFormPayload($suffix);
         $updated['translations']['fr']['title'] = 'Formulaire Modifié';
 
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/edit", $updated);
+        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/update", $updated);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);

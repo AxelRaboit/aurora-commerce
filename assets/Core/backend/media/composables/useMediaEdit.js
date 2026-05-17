@@ -104,7 +104,7 @@ export function useMediaEdit(props, media) {
         editSaving.value = true;
         editErrors.value = {};
         try {
-            const url = buildPath(props.editPath, {
+            const url = buildPath(props.updatePath, {
                 id: editingMedia.value.id,
             });
             const data = await editRequest(url, editForm, { noGuard: true });

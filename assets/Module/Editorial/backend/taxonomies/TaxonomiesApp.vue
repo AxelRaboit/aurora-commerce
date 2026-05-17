@@ -34,7 +34,7 @@ const props = defineProps({
     postTypes: { type: Array, default: () => [] },
     locales: { type: Array, default: () => ["fr"] },
     createPath: { type: String, required: true },
-    editPath: { type: String, required: true },
+    updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     termCreatePath: { type: String, required: true },
     termEditPath: { type: String, required: true },
@@ -79,7 +79,7 @@ const {
         }])),
     }),
     createUrl: () => props.createPath,
-    editUrl:   (tx) => buildPath(props.editPath, { id: tx.id }),
+    editUrl:   (tx) => buildPath(props.updatePath, { id: tx.id }),
     rules: () => ({
         slug: () => required(t("backend.taxonomies.errors.slug_required"))(taxonomyForm.slug),
         [`translations[${activeLocale.value}].label`]: () =>

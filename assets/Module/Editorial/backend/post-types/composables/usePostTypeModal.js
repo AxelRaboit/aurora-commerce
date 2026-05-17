@@ -35,7 +35,7 @@ export function usePostTypeModal(
             taxonomyIds: [...(pt.taxonomyIds ?? [])],
         }),
         createUrl: () => props.createPath,
-        editUrl: (pt) => buildPath(props.editPath, { id: pt.id }),
+        editUrl: (pt) => buildPath(props.updatePath, { id: pt.id }),
         onSuccess: ({ data }) => {
             replacePostType(data.postType);
             selectedId.value = data.postType.id;

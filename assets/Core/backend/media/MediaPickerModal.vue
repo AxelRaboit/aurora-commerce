@@ -53,7 +53,7 @@ const props = defineProps({
     multiple:   { type: Boolean, default: false },
     listPath:   { type: String,  default: "/backend/media/list" },
     uploadPath: { type: String,  default: "/backend/media/upload" },
-    editPath:   { type: String,  default: "/backend/media/__id__/edit" },
+    updatePath: { type: String,  default: "/backend/media/__id__/update" },
 });
 
 const emit           = defineEmits(["close", "select"]);
@@ -73,7 +73,7 @@ const { fileInputRef, uploading, dragOver, uploadFiles, onDragOver, onDragLeave,
     useMediaPickerUpload({ uploadPath: props.uploadPath, imagesOnly: props.imagesOnly, items, currentFolderId, selected });
 
 const { editAlt, editCaption, editSaving, editSaved, saveEdit } =
-    useMediaPickerEdit({ editPath: props.editPath, items, selected });
+    useMediaPickerEdit({ updatePath: props.updatePath, items, selected });
 
 function typeIcon(item) {
     if (item.isImage) return ImageIcon;
