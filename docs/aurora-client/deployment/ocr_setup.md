@@ -199,7 +199,7 @@ Le pipeline loggue chaque étape dans `OcrJob.logs` (consultable en direct depui
 - [ ] `OCR_NUM_CTX=12288` et `OCR_NUM_PREDICT=-1` configurés
 - [ ] `OCR_RENDER_DPI=200` (ajuster selon qualité des documents)
 - [ ] Vérifier que `var/cache/ocr/` est accessible en écriture (cache des PNG)
-- [ ] Vérifier que `public/uploads/ocr/` est accessible en écriture (fichiers uploadés)
+- [ ] Vérifier que `var/uploads/ocr/` est accessible en écriture (fichiers uploadés — hors document root, convention `var/uploads/`)
 - [ ] Redémarrer le worker après chaque déploiement
 
 ---

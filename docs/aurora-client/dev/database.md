@@ -148,11 +148,18 @@ Aurora expose des paramètres d'application configurables depuis l'admin
 Pour accéder à un paramètre depuis le code :
 
 ```php
-use Aurora\Core\Setting\Service\ApplicationParameterService;
+use Aurora\Core\Setting\Repository\SettingRepository;
 
 // Dans un service
-$value = $this->applicationParameterService->get(ApplicationParameterEnum::SomeSetting);
+$value = $this->settingRepository->getOrDefault(ApplicationParameterEnum::SomeSetting);
+// ou, sans fallback automatique sur le defaultValue de l'enum :
+$value = $this->settingRepository->get(ApplicationParameterEnum::SomeSetting->getKey());
 ```
+
+`SettingRepository` est la classe canonique pour lire un paramètre. Méthodes utiles :
+- `getOrDefault(ApplicationParameterEnumInterface): string` — retourne la valeur stockée ou le `getDefaultValue()` de l'enum
+- `get(string $key, ?string $default = null): ?string` — lookup brut
+- `getBoolean(string $key, bool $default = false): bool` — typed accessor
 
 Après modification de `ApplicationParameterEnum` (ajout d'une nouvelle valeur) :
 

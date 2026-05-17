@@ -10,12 +10,16 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | CRM (contacts, entreprises, affaires) | ✅ Core |
 | ERP (produits) | ✅ Core |
 | Ecommerce (catalogue, panier, commandes) | ✅ Core |
-| Facturation (factures, avoir, OCR, tiers) | ✅ Core |
+| Billing (factures, avoir, OCR, tiers) | ✅ Core |
 | GED (documents) | ✅ Core |
 | Photo (galeries client) | ✅ Core |
-| Projets / Tâches | ✅ Core |
+| Project (projets / tâches) | ✅ Core |
 | Planning / Agenda | ✅ Core |
-| RH (fiches employés) | ✅ Core (partiel — fiches employés avec lien User) |
+| HR (fiches employés) | ✅ Core (entité `Employee` avec lien `User`, CRUD complet) |
+| Notes (Markdown + Block / EditorJS) | ✅ Core |
+| Vault (Safe + PasswordGenerator) | ✅ Core |
+| PdfForm (formulaires PDF) | ✅ Core |
+| Assistant (Ollama / chat IA) | ✅ Core |
 
 ---
 
@@ -69,7 +73,7 @@ pour tout client Aurora ayant besoin de tracking de dépenses.
 **Inspiré de :** Dolibarr — Module RH  
 **Pourquoi :** Gestion interne de l'équipe. Moins prioritaire pour les projets client.  
 **Fonctionnalités cibles :**
-- Fiches employés ✅ implémentées (entité `HrEmployee` avec lien `User`, CRUD backend complet, synchronisation agence/service via `UserAgencyServiceUpdatingEvent`)
+- Fiches employés ✅ implémentées (entité `Employee` dans `src/Module/Hr/Employee/Entity/`, lien `User`, CRUD backend complet, synchronisation agence/service via `UserAgencyServiceUpdatingEvent`)
 - Gestion des congés / absences
 - Notes de frais
 - Organigramme (lien avec le système Manager existant dans Users)

@@ -12,8 +12,12 @@ UX distinctes :
 
 | Sous-module | Statut |
 |---|---|
-| Markdown | 🟢 **Terminé** — production-ready, plus rien à faire côté core. Voir le code dans `src/Module/Notes/Markdown/` et `assets/Module/Notes/backend/markdown/`. |
-| Block    | ⏳ **Pas commencé** — spec dans [`block/overview.md`](block/overview.md). Hérite de l'infra Markdown (encryption, images, tree/drag-drop, voter ownership). |
+| Markdown | 🟢 **Terminé** — production-ready. Voir `src/Module/Notes/Markdown/` et `assets/Module/Notes/backend/markdown/`. |
+| Block    | 🟢 **Terminé** — implémentation complète (Entity + Manager + Serializer + Controller + assets EditorJS). Voir `src/Module/Notes/Block/` et `assets/Module/Notes/backend/block/`. |
+
+> **Statut global module Notes** : 🟢 Core, plus rien à faire ici. Ce dossier
+> reste utile comme **doc historique d'architecture** (justifications des
+> choix entités séparées, partage encryption/images/tree, etc.).
 
 ## Architecture commune (référence pour le sous-module Block)
 

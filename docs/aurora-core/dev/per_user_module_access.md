@@ -150,9 +150,9 @@ implémente simplement `ModuleToggleProviderInterface` :
 ```php
 namespace App\Module\Tracking;
 
-use Aurora\Core\Module\ModuleInterface;
-use Aurora\Core\Module\ModuleToggle;
-use Aurora\Core\Module\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Toggle\ModuleToggle;
 
 final readonly class TrackingModule implements ModuleInterface, ModuleToggleProviderInterface
 {

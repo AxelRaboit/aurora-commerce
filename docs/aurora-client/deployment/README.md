@@ -148,15 +148,20 @@ Aurora écrit dans :
 | `var/cache/` | Cache Symfony (généré au runtime) |
 | `var/log/` | Logs |
 | `var/share/` (cf. `APP_SHARE_DIR`) | Fichiers partagés temporaires |
-| `public/uploads/` | Médias uploadés (Media module) |
+| `var/uploads/` | Médias uploadés (Media, Photo, GED, OCR, notes markdown…) — hors document root, servis via le catch-all `/uploads/{path}` (`UploadsServeController`) |
 
-Le user PHP-FPM / CLI doit avoir le droit **rwx** sur ces 4 dossiers. Sur
-serveur Nginx + PHP-FPM standard :
+Le user PHP-FPM / CLI doit avoir le droit **rwx** sur `var/` (qui couvre les
+4 sous-dossiers ci-dessus). Sur serveur Apache + PHP-FPM standard :
 
 ```bash
-chown -R www-data:www-data var/ public/uploads/
-chmod -R u+rwX,g+rX,o+rX var/ public/uploads/
+chown -R www-data:www-data var/
+chmod -R u+rwX,g+rX,o+rX var/
 ```
+
+> Convention storage : tous les fichiers utilisateur vivent sous `var/uploads/`,
+> hors document root, servis par PHP avec auth granulaire. Voir la mémoire
+> [`convention_storage_var_uploads.md`](../../../.claude/memory/aurora-shared/convention_storage_var_uploads.md)
+> et `apache_xsendfile.md` pour le offload prod.
 
 ---
 

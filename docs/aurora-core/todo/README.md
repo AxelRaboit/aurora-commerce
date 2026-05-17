@@ -25,14 +25,12 @@ sont importants ; stock avancé est optionnel.
 - [Moyens de paiement](ecommerce/paiement.md) — abstraction PaymentMethod, config backend
 - [Stock avancé](ecommerce/stock.md) — par variante, mouvements, multi-entrepôt
 
-### Notes — nouveau module
+### Notes — module implémenté (doc historique)
 
-Module `src/Module/Notes/` à créer, regroupant deux sous-modules complémentaires
-de prise de notes. Vue d'ensemble et arbitrages communs dans
-[`notes/README.md`](notes/README.md).
-
-- [Sous-module Markdown](notes/markdown/entity.md) — éditeur markdown + wiki-links + graph (port d'Onyx)
-- [Sous-module Block](notes/block/overview.md) — éditeur block-based EditorJS
+🟢 Module `src/Module/Notes/` complet — Markdown + Block tous deux en
+production. Le sous-dossier [`notes/`](notes/README.md) reste comme **doc
+historique d'architecture** (choix entités séparées, partage
+encryption/images/tree, port d'Onyx). Plus rien à implémenter ici.
 
 ### PersonalFinance (Spendly) — nouveau module
 
