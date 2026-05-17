@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Trash2, Send, MessageSquare, Wrench, X } from "lucide-vue-next";
+import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -43,6 +43,11 @@ function onKeydown(event) {
         event.preventDefault();
         sendDraft();
     }
+}
+
+function toolSummary(content) {
+    const firstLine = (content ?? "").split("\n", 1)[0]?.trim() ?? "";
+    return firstLine.length > 80 ? firstLine.slice(0, 77) + "…" : firstLine;
 }
 
 function bubbleClass(role) {
@@ -93,25 +98,36 @@ function bubbleClass(role) {
             </div>
             <template v-else>
                 <div class="flex-1 overflow-y-auto p-4 space-y-3">
-                    <div v-for="msg in activeMessages" :key="msg.id" class="flex">
-                        <div
-                            class="max-w-[80%] rounded-lg px-3 py-2 whitespace-pre-wrap wrap-break-word"
-                            :class="bubbleClass(msg.role)"
+                    <template v-for="msg in activeMessages" :key="msg.id">
+                        <details
+                            v-if="msg.role === 'tool'"
+                            class="group rounded-md border border-line bg-surface-2/60 text-xs max-w-[80%]"
                         >
-                            <div v-if="msg.role === 'tool'" class="flex items-center gap-1 text-muted text-[10px] uppercase tracking-wide mb-1">
+                            <summary class="flex items-center gap-2 px-2 py-1 cursor-pointer select-none text-muted hover:text-primary list-none">
+                                <ChevronRight class="w-3 h-3 transition-transform group-open:rotate-90" :stroke-width="2" />
                                 <Wrench class="w-3 h-3" :stroke-width="2" />
-                                {{ msg.toolName || t('assistant.chat.tool_result') }}
-                            </div>
-                            {{ msg.content }}
+                                <span class="font-mono">{{ msg.toolName || t('assistant.chat.tool_result') }}</span>
+                                <span class="text-muted/70 truncate">— {{ toolSummary(msg.content) }}</span>
+                            </summary>
+                            <pre class="px-3 py-2 border-t border-line/60 text-secondary font-mono whitespace-pre-wrap wrap-break-word">{{ msg.content }}</pre>
+                        </details>
+
+                        <div v-else class="flex">
                             <div
-                                v-if="msg.role === 'assistant' && msg.toolCalls && msg.toolCalls.length"
-                                class="mt-2 text-[10px] text-muted uppercase tracking-wide flex items-center gap-1"
+                                class="max-w-[80%] rounded-lg px-3 py-2 whitespace-pre-wrap wrap-break-word"
+                                :class="bubbleClass(msg.role)"
                             >
-                                <Wrench class="w-3 h-3" :stroke-width="2" />
-                                {{ t('assistant.chat.tool_call') }}: {{ msg.toolCalls.map(c => c.function?.name).filter(Boolean).join(', ') }}
+                                {{ msg.content }}
+                                <div
+                                    v-if="msg.role === 'assistant' && msg.toolCalls && msg.toolCalls.length"
+                                    class="mt-2 text-[10px] text-muted uppercase tracking-wide flex items-center gap-1"
+                                >
+                                    <Wrench class="w-3 h-3" :stroke-width="2" />
+                                    {{ t('assistant.chat.tool_call') }}: {{ msg.toolCalls.map(c => c.function?.name).filter(Boolean).join(', ') }}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </template>
                     <div v-if="sending" class="text-xs text-muted italic">{{ t('assistant.chat.thinking') }}</div>
 
                     <div
