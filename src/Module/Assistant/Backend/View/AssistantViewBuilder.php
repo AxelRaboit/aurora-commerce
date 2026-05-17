@@ -23,12 +23,12 @@ final readonly class AssistantViewBuilder
         return [
             'conversations' => $this->conversationRepository->findListForUser($user),
             'model' => $this->chatClient->getModel(),
-            'listPath' => $this->urlGenerator->generate('backend_assistant_list'),
-            'showPath' => $this->urlGenerator->generate('backend_assistant_show', ['id' => '__id__']),
-            'createPath' => $this->urlGenerator->generate('backend_assistant_create'),
-            'sendPath' => $this->urlGenerator->generate('backend_assistant_send', ['id' => '__id__']),
-            'confirmToolPath' => $this->urlGenerator->generate('backend_assistant_confirm_tool', ['id' => '__id__']),
-            'deletePath' => $this->urlGenerator->generate('backend_assistant_delete', ['id' => '__id__']),
+            'listPath' => $this->urlGenerator->generate('backend_assistant_chat_list'),
+            'showPath' => $this->urlGenerator->generate('backend_assistant_chat_show', ['id' => '__id__']),
+            'createPath' => $this->urlGenerator->generate('backend_assistant_chat_create'),
+            'sendPath' => $this->urlGenerator->generate('backend_assistant_chat_send', ['id' => '__id__']),
+            'confirmToolPath' => $this->urlGenerator->generate('backend_assistant_chat_confirm_tool', ['id' => '__id__']),
+            'deletePath' => $this->urlGenerator->generate('backend_assistant_chat_delete', ['id' => '__id__']),
         ];
     }
 }

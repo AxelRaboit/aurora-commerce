@@ -28,7 +28,7 @@ final readonly class AssistantModule implements ModuleInterface
         return [
             new NavSection('assistant', [
                 new NavItem(
-                    'backend_assistant',
+                    'backend_assistant_chat',
                     'backend.nav.assistant',
                     'message-square',
                     requiredPrivilege: 'assistant.use',

@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function is_array;
 use function is_string;
 
-#[Route('/backend/assistant', name: 'backend_assistant')]
+#[Route('/backend/assistant/chat', name: 'backend_assistant_chat')]
 #[IsGranted('assistant.use')]
 final class AssistantController extends AbstractController
 {
