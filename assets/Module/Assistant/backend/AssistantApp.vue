@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight } from "lucide-vue-next";
+import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight, Loader2 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -121,7 +121,10 @@ function bubbleClass(role) {
                             </div>
                         </div>
                     </template>
-                    <div v-if="sending" class="text-xs text-muted italic">{{ t('assistant.chat.thinking') }}</div>
+                    <div v-if="sending" class="flex items-center gap-2 text-xs text-muted italic">
+                        <Loader2 class="w-3.5 h-3.5 animate-spin" :stroke-width="2" />
+                        <span>{{ t('assistant.chat.thinking') }}</span>
+                    </div>
 
                     <div
                         v-if="pendingMessage"
