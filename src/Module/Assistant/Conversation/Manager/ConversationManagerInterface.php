@@ -14,6 +14,8 @@ interface ConversationManagerInterface
 
     public function delete(ConversationInterface $conversation): void;
 
+    public function rename(ConversationInterface $conversation, string $title): void;
+
     /**
      * Append a user message to the conversation, run the LLM (with tool
      * roundtrips if needed), and return the conversation with all new

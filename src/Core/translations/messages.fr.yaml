@@ -17,6 +17,7 @@ shared:
     cancel: Annuler
     delete: Supprimer
     edit: Modifier
+    rename: Renommer
     create: Créer
     add: Ajouter
     loading: Chargement…

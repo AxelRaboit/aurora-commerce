@@ -28,6 +28,7 @@ final readonly class AssistantViewBuilder
             'createPath' => $this->urlGenerator->generate('backend_assistant_chat_create'),
             'sendPath' => $this->urlGenerator->generate('backend_assistant_chat_send', ['id' => '__id__']),
             'confirmToolPath' => $this->urlGenerator->generate('backend_assistant_chat_confirm_tool', ['id' => '__id__']),
+            'renamePath' => $this->urlGenerator->generate('backend_assistant_chat_rename', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_assistant_chat_delete', ['id' => '__id__']),
         ];
     }

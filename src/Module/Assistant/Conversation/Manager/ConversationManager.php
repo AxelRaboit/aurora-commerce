@@ -68,6 +68,15 @@ class ConversationManager implements ConversationManagerInterface
         $this->entityManager->flush();
     }
 
+    public function rename(ConversationInterface $conversation, string $title): void
+    {
+        $trimmed = mb_trim($title);
+        $conversation->setTitle('' === $trimmed ? null : mb_substr($trimmed, 0, 200));
+        $this->entityManager->flush();
+
+        $this->auditLogger->log('assistant', 'conversation.renamed', 'Conversation', $conversation->getId(), $this->auditPayload($conversation));
+    }
+
     public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input): ConversationInterface
     {
         $content = mb_trim($input->getContent());

@@ -1,8 +1,9 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight, Loader2 } from "lucide-vue-next";
+import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight, Loader2, Pencil, Check } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
@@ -16,6 +17,7 @@ const props = defineProps({
     createPath: { type: String, required: true },
     sendPath: { type: String, required: true },
     confirmToolPath: { type: String, required: true },
+    renamePath: { type: String, required: true },
     deletePath: { type: String, required: true },
 });
 
@@ -30,11 +32,16 @@ const {
     sending,
     draft,
     deletingConversation,
+    renamingId,
+    renameDraft,
     selectConversation,
     newConversation,
     sendDraft,
     approvePendingCalls,
     rejectPendingCalls,
+    startRename,
+    cancelRename,
+    commitRename,
     confirmDeleteConversation,
 } = useAssistant(props);
 
@@ -73,20 +80,47 @@ function bubbleClass(role) {
                     <li
                         v-for="conv in conversations"
                         :key="conv.id"
-                        class="px-3 py-2 cursor-pointer hover:bg-surface-2 flex items-center gap-2 group"
-                        :class="activeId === conv.id ? 'bg-surface-2' : ''"
-                        v-on:click="selectConversation(conv.id)"
+                        class="px-3 py-2 hover:bg-surface-2 flex items-center gap-2 group"
+                        :class="[activeId === conv.id ? 'bg-surface-2' : '', renamingId === conv.id ? '' : 'cursor-pointer']"
+                        v-on:click="renamingId !== conv.id && selectConversation(conv.id)"
                     >
                         <MessageSquare class="w-4 h-4 text-muted shrink-0" :stroke-width="1.5" />
-                        <span class="flex-1 text-sm text-primary truncate">{{ conv.title || t('assistant.chat.untitled') }}</span>
-                        <AppIconButton
-                            color="rose"
-                            :title="t('shared.common.delete')"
-                            class="opacity-0 group-hover:opacity-100 transition-opacity"
-                            v-on:click.stop="deletingConversation = conv"
-                        >
-                            <Trash2 class="w-4 h-4" :stroke-width="1.5" />
-                        </AppIconButton>
+                        <template v-if="renamingId === conv.id">
+                            <div class="flex-1 flex items-center gap-1" v-on:click.stop>
+                                <AppInput
+                                    v-model="renameDraft"
+                                    :placeholder="t('assistant.chat.untitled')"
+                                    class="flex-1"
+                                    v-on:keyup.enter="commitRename"
+                                    v-on:keyup.escape="cancelRename"
+                                />
+                                <AppIconButton size="xs" color="accent" :title="t('shared.common.save')" v-on:click="commitRename">
+                                    <Check class="w-3.5 h-3.5" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton size="xs" :title="t('shared.common.cancel')" v-on:click="cancelRename">
+                                    <X class="w-3.5 h-3.5" :stroke-width="2" />
+                                </AppIconButton>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <span class="flex-1 text-sm text-primary truncate">{{ conv.title || t('assistant.chat.untitled') }}</span>
+                            <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <AppIconButton
+                                    color="accent"
+                                    :title="t('shared.common.rename')"
+                                    v-on:click.stop="startRename(conv)"
+                                >
+                                    <Pencil class="w-4 h-4" :stroke-width="1.5" />
+                                </AppIconButton>
+                                <AppIconButton
+                                    color="rose"
+                                    :title="t('shared.common.delete')"
+                                    v-on:click.stop="deletingConversation = conv"
+                                >
+                                    <Trash2 class="w-4 h-4" :stroke-width="1.5" />
+                                </AppIconButton>
+                            </div>
+                        </template>
                     </li>
                 </ul>
             </div>

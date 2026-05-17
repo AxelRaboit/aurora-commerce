@@ -125,6 +125,22 @@ final class AssistantController extends AbstractController
         return $this->jsonSuccess(['conversation' => $this->serializer->serializeDetail($conversation)]);
     }
 
+    #[Route('/{id}/rename', name: '_rename', methods: [HttpMethodEnum::Post->value])]
+    public function rename(int $id, Request $request): JsonResponse
+    {
+        $conversation = $this->resolveOrNull($id);
+        if (!$conversation instanceof ConversationInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $payload = $this->decodeJson($request);
+        $title = isset($payload['title']) && is_string($payload['title']) ? $payload['title'] : '';
+
+        $this->manager->rename($conversation, $title);
+
+        return $this->jsonSuccess(['conversation' => $this->serializer->serializeDetail($conversation)]);
+    }
+
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(int $id): JsonResponse
     {

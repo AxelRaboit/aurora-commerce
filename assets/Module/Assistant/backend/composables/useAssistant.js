@@ -27,6 +27,8 @@ export function useAssistant(props) {
     const sending = ref(false);
     const draft = ref("");
     const deletingConversation = ref(null);
+    const renamingId = ref(null);
+    const renameDraft = ref("");
 
     const activeMessages = computed(
         () => activeConversation.value?.messages ?? [],
@@ -161,6 +163,42 @@ export function useAssistant(props) {
         );
     }
 
+    function startRename(conversation) {
+        renamingId.value = conversation.id;
+        renameDraft.value = conversation.title ?? "";
+    }
+
+    function cancelRename() {
+        renamingId.value = null;
+        renameDraft.value = "";
+    }
+
+    async function commitRename() {
+        if (renamingId.value === null) return;
+        const id = renamingId.value;
+        const title = renameDraft.value.trim();
+        renamingId.value = null;
+        renameDraft.value = "";
+
+        const data = await request(buildPath(props.renamePath, { id }), {
+            title,
+        });
+        if (!data?.success) return;
+
+        const newTitle = data.conversation?.title ?? null;
+        const idx = conversations.value.findIndex((c) => c.id === id);
+        if (idx !== -1) {
+            conversations.value[idx] = {
+                ...conversations.value[idx],
+                title: newTitle,
+            };
+        }
+
+        if (activeConversation.value?.id === id) {
+            activeConversation.value.title = newTitle;
+        }
+    }
+
     async function confirmDeleteConversation() {
         if (!deletingConversation.value) return;
         const id = deletingConversation.value.id;
@@ -186,11 +224,16 @@ export function useAssistant(props) {
         sending,
         draft,
         deletingConversation,
+        renamingId,
+        renameDraft,
         selectConversation,
         newConversation,
         sendDraft,
         approvePendingCalls,
         rejectPendingCalls,
+        startRename,
+        cancelRename,
+        commitRename,
         confirmDeleteConversation,
     };
 }
