@@ -133,12 +133,15 @@ services:
             $numCtx: '%env(int:OCR_NUM_CTX)%'
             $numPredict: '%env(int:OCR_NUM_PREDICT)%'
 
+    Aurora\Module\Assistant\Setting\AssistantSettings:
+        arguments:
+            $envChatModel: '%env(ASSISTANT_CHAT_MODEL)%'
+            $envHttpTimeout: '%env(int:ASSISTANT_HTTP_TIMEOUT)%'
+            $envNumCtx: '%env(int:ASSISTANT_NUM_CTX)%'
+
     Aurora\Module\Assistant\Llm\Service\OllamaChatClient:
         arguments:
             $baseUrl: '%env(ASSISTANT_OLLAMA_URL)%'
-            $model: '%env(ASSISTANT_CHAT_MODEL)%'
-            $timeout: '%env(int:ASSISTANT_HTTP_TIMEOUT)%'
-            $numCtx: '%env(int:ASSISTANT_NUM_CTX)%'
 
     Aurora\Core\Mail\Service\MailService:
         arguments:

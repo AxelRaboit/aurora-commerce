@@ -5,4 +5,5 @@ export const ParameterType = Object.freeze({
     Int: "int",
     Select: "select",
     Text: "text",
+    Textarea: "textarea",
 });

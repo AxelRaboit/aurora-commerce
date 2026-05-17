@@ -14,6 +14,7 @@ use Aurora\Module\Assistant\Conversation\Entity\MessageInterface;
 use Aurora\Module\Assistant\Conversation\Enum\MessageRoleEnum;
 use Aurora\Module\Assistant\Conversation\Repository\ConversationRepository;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
+use Aurora\Module\Assistant\Setting\AssistantSettings;
 use Aurora\Module\Assistant\Tool\Registry\ToolRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
@@ -31,21 +32,13 @@ class ConversationManager implements ConversationManagerInterface
     /** Safety cap on tool roundtrips in a single user turn — prevents infinite loops. */
     private const int MAX_TOOL_ROUNDTRIPS = 4;
 
-    private const string SYSTEM_PROMPT = <<<'PROMPT'
-        You are Aurora's in-app assistant. You help the signed-in user navigate
-        and reason about their own Aurora workspace (posts, taxonomy terms,
-        media, projects, tasks). Be concise and direct. When the user asks for
-        information that may exist in Aurora, call the appropriate tool rather
-        than guessing. Never invent IDs, references, or filenames; only quote
-        what tools return.
-        PROMPT;
-
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly ConversationRepository $conversationRepository,
         protected readonly ChatClientInterface $chatClient,
         protected readonly ToolRegistry $toolRegistry,
         protected readonly AuditLogger $auditLogger,
+        protected readonly AssistantSettings $settings,
     ) {}
 
     public function create(CoreUserInterface $user): ConversationInterface
@@ -283,7 +276,7 @@ class ConversationManager implements ConversationManagerInterface
     protected function buildOllamaMessages(ConversationInterface $conversation): array
     {
         $out = [
-            ['role' => 'system', 'content' => self::SYSTEM_PROMPT],
+            ['role' => 'system', 'content' => $this->settings->getSystemPrompt()],
         ];
 
         foreach ($conversation->getMessages() as $message) {

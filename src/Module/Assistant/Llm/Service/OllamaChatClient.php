@@ -6,6 +6,7 @@ namespace Aurora\Module\Assistant\Llm\Service;
 
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
+use Aurora\Module\Assistant\Setting\AssistantSettings;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpClient\Exception\TransportException;
@@ -29,27 +30,26 @@ final readonly class OllamaChatClient implements ChatClientInterface
 {
     public function __construct(
         private HttpClientInterface $httpClient,
+        private AssistantSettings $settings,
         private string $baseUrl,
-        private string $model,
-        private int $timeout,
-        private int $numCtx = 8192,
     ) {}
 
     public function getModel(): string
     {
-        return $this->model;
+        return $this->settings->getChatModel();
     }
 
     public function chat(array $messages, array $tools = []): array
     {
+        $timeout = $this->settings->getHttpTimeout();
         $body = [
-            'model' => $this->model,
+            'model' => $this->settings->getChatModel(),
             'messages' => $messages,
             'stream' => false,
             'think' => false,
             'options' => [
                 'temperature' => 0.7,
-                'num_ctx' => $this->numCtx,
+                'num_ctx' => $this->settings->getNumCtx(),
             ],
         ];
 
@@ -60,8 +60,8 @@ final readonly class OllamaChatClient implements ChatClientInterface
         try {
             $response = $this->httpClient->request('POST', mb_rtrim($this->baseUrl, '/').'/api/chat', [
                 'json' => $body,
-                'timeout' => $this->timeout,
-                'max_duration' => $this->timeout * 5,
+                'timeout' => $timeout,
+                'max_duration' => $timeout * 5,
             ]);
 
             $statusCode = $response->getStatusCode();

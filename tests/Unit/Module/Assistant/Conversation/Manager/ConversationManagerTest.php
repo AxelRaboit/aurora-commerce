@@ -15,6 +15,7 @@ use Aurora\Module\Assistant\Conversation\Enum\MessageRoleEnum;
 use Aurora\Module\Assistant\Conversation\Manager\ConversationManager;
 use Aurora\Module\Assistant\Conversation\Repository\ConversationRepository;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
+use Aurora\Module\Assistant\Setting\AssistantSettings;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Module\Assistant\Tool\Registry\ToolRegistry;
 use Doctrine\DBAL\Connection;
@@ -358,12 +359,17 @@ final class ConversationManagerTest extends TestCase
             $this->createStub(SettingRepository::class),
         );
 
+        $settingRepository = $this->createStub(SettingRepository::class);
+        $settingRepository->method('get')->willReturn(null);
+        $settings = new AssistantSettings($settingRepository, 'test-model', 60, 4096);
+
         return new ConversationManager(
             $this->entityManager,
             $this->repository,
             $chatClient,
             new ToolRegistry($tools),
             $auditLogger,
+            $settings,
         );
     }
 

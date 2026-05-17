@@ -43,6 +43,22 @@ assistant:
     empty: No mount points configured. Add one so the assistant can read files.
 
 backend:
+  settings:
+    tabs:
+      assistant: Assistant
+  parameters:
+    assistant_chat_model:
+      label: Ollama chat model
+      description: 'Exact Ollama model identifier (e.g. qwen3:8b, mistral-nemo, llama3.1:8b). Must be a tool-calling model. Leave blank to fall back to ASSISTANT_CHAT_MODEL from .env.'
+    assistant_http_timeout:
+      label: Ollama HTTP timeout (s)
+      description: 'Per-request idle timeout against Ollama, in seconds. Raise on CPU / underpowered hosts if you hit transport errors mid-generation. .env default: 300.'
+    assistant_num_ctx:
+      label: Context window (num_ctx)
+      description: 'Token count loaded into the model context. Higher = longer conversations but more RAM. .env default: 8192.'
+    assistant_system_prompt:
+      label: System prompt
+      description: 'Instructions given to the model at the start of every conversation. Leave blank to use the built-in Aurora default prompt.'
   nav:
     sections:
       assistant: Assistant

@@ -239,6 +239,18 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                             <p v-if="parameter.description" class="text-xs text-muted mt-1">{{ parameter.description }}</p>
                         </template>
 
+                        <template v-else-if="parameter.type === ParameterType.Textarea">
+                            <label class="block text-sm font-medium text-secondary mb-1">{{ parameter.label }}</label>
+                            <textarea
+                                :placeholder="parameter.key"
+                                :value="fieldValues[parameter.key]"
+                                rows="6"
+                                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary resize-y focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition"
+                                v-on:input="fieldValues[parameter.key] = $event.target.value"
+                            />
+                            <p v-if="parameter.description" class="text-xs text-muted mt-1">{{ parameter.description }}</p>
+                        </template>
+
                         <template v-else>
                             <AppInput
                                 type="text"
