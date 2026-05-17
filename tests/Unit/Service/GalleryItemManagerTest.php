@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Entity\Media;
-use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Entity\Media;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Cart\Serializer;
 
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;

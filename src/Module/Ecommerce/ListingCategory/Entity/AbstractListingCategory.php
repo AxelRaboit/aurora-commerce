@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingCategory\Entity;
 
-use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 

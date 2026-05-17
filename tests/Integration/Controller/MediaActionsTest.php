@@ -6,10 +6,10 @@ namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Media\Entity\Media;
-use Aurora\Core\Media\Entity\MediaFolder;
-use Aurora\Core\Media\Repository\MediaFolderRepository;
-use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Entity\Media;
+use Aurora\Core\Media\Library\Entity\MediaFolder;
+use Aurora\Core\Media\Library\Repository\MediaFolderRepository;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
 use Aurora\Core\User\Entity\User;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\User\Repository\UserRepository;

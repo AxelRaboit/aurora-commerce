@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
-use Aurora\Core\Media\Service\ImageVariantGenerator;
+use Aurora\Core\Media\Library\Service\ImageVariantGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;

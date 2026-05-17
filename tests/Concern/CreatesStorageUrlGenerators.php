@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Concern;
 
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Core\User\Service\UserProfilePhotoUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

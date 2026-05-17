@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingCategory\Serializer;
 
-use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

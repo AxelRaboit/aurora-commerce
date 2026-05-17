@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ged\Document\Serializer;
 
-use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializer;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;

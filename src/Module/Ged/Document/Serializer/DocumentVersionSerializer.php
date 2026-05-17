@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Serializer;
 
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Configuration\Setting\View;
 
-use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Core\Configuration\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

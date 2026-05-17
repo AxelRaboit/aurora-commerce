@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PdfForm\PdfTemplate\Entity;
 
-use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\PdfForm\Enum\PdfTemplateStatusEnum;
 use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;

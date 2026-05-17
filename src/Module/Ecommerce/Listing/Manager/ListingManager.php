@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Listing\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Dto\ListingInputInterface;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Service;
 
-use Aurora\Core\Media\Enum\MimeTypeEnum;
+use Aurora\Core\Media\Library\Enum\MimeTypeEnum;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;

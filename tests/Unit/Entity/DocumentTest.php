@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Media\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;

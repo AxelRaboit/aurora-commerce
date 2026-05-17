@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Core\Twig;
 
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Component\HttpFoundation\Request;

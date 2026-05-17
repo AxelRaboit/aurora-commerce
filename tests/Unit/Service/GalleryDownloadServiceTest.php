@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
-use Aurora\Core\Media\Entity\Media;
+use Aurora\Core\Media\Library\Entity\Media;
 use Aurora\Module\Photo\Gallery\Service\GalleryDownloadService;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
 use PHPUnit\Framework\TestCase;

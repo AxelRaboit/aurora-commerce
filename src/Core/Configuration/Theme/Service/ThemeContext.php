@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Configuration\Theme\Service;
 
-use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Core\Configuration\Theme\Entity\ThemeInterface;
 use Aurora\Core\Configuration\Theme\Repository\ThemeRepository;
 

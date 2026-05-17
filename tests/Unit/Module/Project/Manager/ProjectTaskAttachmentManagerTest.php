@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Manager;
 
 use Aurora\Core\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Entity\MediaInterface;
-use Aurora\Core\Media\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Manager\ProjectTaskAttachmentManager;

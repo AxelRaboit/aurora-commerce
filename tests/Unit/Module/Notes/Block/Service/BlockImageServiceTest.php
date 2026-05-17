@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Notes\Block\Service;
 
-use Aurora\Core\Media\Enum\MimeTypeEnum;
+use Aurora\Core\Media\Library\Enum\MimeTypeEnum;
 use Aurora\Core\User\Entity\User;
 use Aurora\Module\Notes\Block\Service\BlockImageService;
 use PHPUnit\Framework\TestCase;

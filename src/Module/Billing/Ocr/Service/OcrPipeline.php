@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Service;
 
-use Aurora\Core\Media\Service\MediaPathResolver;
+use Aurora\Core\Media\Library\Service\MediaPathResolver;
 use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;

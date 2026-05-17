@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Twig;
 
-use Aurora\Core\Media\Repository\MediaRepository;
-use Aurora\Core\Media\Service\MediaUrlGenerator;
+use Aurora\Core\Media\Library\Repository\MediaRepository;
+use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Twig\Extension\AbstractExtension;

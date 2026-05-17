@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Configuration\Setting\Service;
 
-use Aurora\Core\Media\Contract\MediaUsageProviderInterface;
+use Aurora\Core\Media\Library\Contract\MediaUsageProviderInterface;
 use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
