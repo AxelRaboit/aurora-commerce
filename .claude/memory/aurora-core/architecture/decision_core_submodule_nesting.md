@@ -105,17 +105,34 @@ Twig, Validation, Enum, EventSubscriber, DataFixtures.
 - `src/Core/MountPoint/` → `src/Core/Dev/MountPoint/` (seul controller
   exposé est `Dev/MountPointsController`)
 
-## Règle "module vs infra"
+## Règle "module vs infra" (finale après 0.4.0)
 
-Pour décider si un nouveau folder doit être un sous-module ou rester en
-Core infra cross-cutting :
+Pour décider si un folder doit aller sous `src/Module/<X>/` ou rester en
+`src/Core/` :
 
-| Cas | Verdict |
-|---|---|
-| A un NavItem dans la sidemenu, déclaré dans `<X>Module` | Sous-module de X → `<X>/<Folder>/` |
-| Pas de NavItem, mais utilisé exclusivement par UN module | Sous-module de ce module |
-| Pas de NavItem, utilisé par PLUSIEURS modules | Infra Core cross-cutting (top-level) |
-| Pas de NavItem, pas d'usage cross-module clair, juste utilitaires | Infra Core cross-cutting |
+| Cas | Verdict | Exemple |
+|---|---|---|
+| A un NavItem dans la sidemenu | `src/Module/<X>/` (module ou sous-module) | Platform, Editorial, Vault |
+| Pas de NavItem mais cross-cutting (utilisé par plusieurs modules pour leur fonctionnement) | `src/Core/<X>/` (infra) | Mail, Notification, Sequence, Storage, Locale, Encryption, Twig |
+| Définit ce qu'est un Module (Contract, Nav, Toggle…) | `src/Core/Module/` | ModuleInterface, NavItem, ModuleToggle |
+| Pas de NavItem mais c'est une feature à part entière (entité + UI minimale + 1 seul usage) | À discuter — par défaut **module** sous src/Module/ | (rare) |
+
+### Le cas Notification (pédagogique)
+
+Notification reste en `src/Core/Notification/` malgré son entité +
+controller :
+- C'est un **service cross-cutting** (n'importe quel module peut envoyer
+  une notif, équivalent à `Mail`)
+- L'UI (badge cloche + dropdown) est un **trigger** trans-module, pas une
+  feature de produit
+- Pas de NavItem propre dans la sidemenu
+
+Le critère décisif est "**le NavItem dans la sidemenu**" + "**est-ce
+qu'un module pourrait être désactivé sans casser les autres ?**". Pour
+Notification, désactiver = casser tous les modules qui envoient des notifs.
+Pour Mail, idem. → Infrastructure.
+
+Pour Editorial, désactiver = juste plus de CMS, le reste tourne. → Module.
 
 ## Commits du refacto
 
