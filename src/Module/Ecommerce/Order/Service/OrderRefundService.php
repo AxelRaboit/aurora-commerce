@@ -22,7 +22,7 @@ use Stripe\Exception\ApiErrorException;
  * orchestration can each be tested in isolation. OrderManager delegates here
  * for cancel-induced refunds.
  */
-final readonly class OrderRefundService
+readonly class OrderRefundService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
