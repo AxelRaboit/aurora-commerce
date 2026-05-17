@@ -11,6 +11,14 @@ Distribué via composer : les clients lisent ces mémoires depuis
 
 ## Architecture / responsabilités (règles dures)
 
+- [convention_no_cross_module_dep.md](convention_no_cross_module_dep.md) —
+  **règle dure** : pas d'import inter-modules dans aurora-core (Editorial
+  → Ecommerce, etc.). Le câblage cross-module se fait via points
+  d'extension typés (`extraXxx` props/DTO) remplis par aurora-client.
+- [convention_edit_vs_update_route_naming.md](convention_edit_vs_update_route_naming.md) —
+  **règle dure** : `_edit` = GET page Twig d'édition ; `_update` = POST API
+  JSON. Jamais un seul nom pour les deux. CRUD SPA inline = seulement
+  `_update` (pas de page `_edit` car édition vit dans une modal de l'index).
 - [convention_thin_controller.md](convention_thin_controller.md) — **règle dure** :
   controllers ultra-fins (routing + auth + DTO + délégation + sérialisation).
   Toute logique métier dans Manager (mutations) ou Service (calcul pur). À
