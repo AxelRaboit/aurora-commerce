@@ -5,7 +5,7 @@ const props = defineProps({
     active: { type: Boolean, default: false },
     /** Visual variant — `pill` for filters/sidemenu, `underline` for in-card panel switchers. */
     variant: { type: String, default: "pill" }, // pill | underline
-    color: { type: String, default: "accent" }, // accent | rose
+    color: { type: String, default: "accent" }, // accent | rose | violet
     size: { type: String, default: "md" }, // md | sm | xs
     align: { type: String, default: "left" }, // left | center
     /** Escape hatches: override the resolved active/inactive classes (e.g. for per-item colour like deal stages). */
@@ -26,6 +26,7 @@ const variants = {
         active: {
             accent: "bg-accent-600/15 text-accent-400",
             rose: "bg-rose-500/15 text-rose-400",
+            violet: "bg-violet-500/15 text-violet-400",
         },
         inactive: "text-secondary hover:text-primary hover:bg-surface-2",
     },
@@ -39,6 +40,7 @@ const variants = {
         active: {
             accent: "border-accent-500 text-accent-400",
             rose: "border-rose-500 text-rose-400",
+            violet: "border-violet-500 text-violet-400",
         },
         inactive: "border-transparent text-secondary hover:text-primary",
     },

@@ -77,11 +77,12 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
             >
                 <AppTab
                     :active="activeTab === groupName"
+                    :color="isDevOnly(groupName) ? 'violet' : 'accent'"
                     v-on:click="selectTab(groupName)"
                 >
                     <span class="flex items-center gap-1.5">
                         {{ tabLabel(groupName) }}
-                        <Code2 v-if="isDevOnly(groupName)" class="w-3 h-3 text-accent-500 shrink-0" :stroke-width="2" :title="'Dev only'" />
+                        <Code2 v-if="isDevOnly(groupName)" class="w-3 h-3 shrink-0" :stroke-width="2" />
                     </span>
                 </AppTab>
             </AppTooltip>
@@ -97,10 +98,14 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
             >
                 <AppTab
                     :active="activeTab === groupName"
+                    :color="isDevOnly(groupName) ? 'violet' : 'accent'"
                     size="sm"
                     v-on:click="selectTab(groupName)"
                 >
-                    {{ tabLabel(groupName) }}
+                    <span class="flex items-center gap-1.5">
+                        {{ tabLabel(groupName) }}
+                        <Code2 v-if="isDevOnly(groupName)" class="w-3 h-3 shrink-0" :stroke-width="2" />
+                    </span>
                 </AppTab>
             </AppTooltip>
         </div>
