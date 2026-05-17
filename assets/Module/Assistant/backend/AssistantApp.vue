@@ -1,6 +1,7 @@
 <script setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight, Loader2, Pencil, Check } from "lucide-vue-next";
+import { Plus, Trash2, Send, MessageSquare, Wrench, X, ChevronRight, Loader2, Pencil, Check, ArrowLeft } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -25,6 +26,8 @@ const props = defineProps({
 
 const { t } = useI18n();
 
+const mobileView = ref("list"); // 'list' | 'chat'
+
 const {
     conversations,
     activeId,
@@ -48,6 +51,16 @@ const {
     confirmDeleteConversation,
 } = useAssistant(props);
 
+function selectAndShowChat(id) {
+    selectConversation(id);
+    mobileView.value = "chat";
+}
+
+function newAndShowChat() {
+    newConversation();
+    mobileView.value = "chat";
+}
+
 function onKeydown(event) {
     if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
@@ -68,10 +81,14 @@ function bubbleClass(role) {
 </script>
 
 <template>
-    <div class="flex h-[calc(100vh-9rem)] gap-4">
-        <aside class="w-72 shrink-0 flex flex-col bg-surface border border-line rounded-xl overflow-hidden">
+    <div class="flex h-[calc(100vh-9rem)] gap-0 md:gap-4">
+        <!-- Sidebar — full screen on mobile (hidden when chat is open), fixed width on desktop -->
+        <aside
+            class="flex-col bg-surface border border-line rounded-xl overflow-hidden"
+            :class="mobileView === 'list' ? 'flex w-full md:w-72 md:shrink-0' : 'hidden md:flex md:w-72 md:shrink-0'"
+        >
             <div class="p-3 border-b border-line">
-                <AppButton variant="primary" size="sm" class="w-full" v-on:click="newConversation">
+                <AppButton variant="primary" size="sm" class="w-full" v-on:click="newAndShowChat">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t('assistant.chat.new') }}
                 </AppButton>
@@ -85,7 +102,7 @@ function bubbleClass(role) {
                         :key="conv.id"
                         class="px-3 py-2 hover:bg-surface-2 flex items-center gap-2 group"
                         :class="[activeId === conv.id ? 'bg-surface-2' : '', renamingId === conv.id ? '' : 'cursor-pointer']"
-                        v-on:click="renamingId !== conv.id && selectConversation(conv.id)"
+                        v-on:click="renamingId !== conv.id && selectAndShowChat(conv.id)"
                     >
                         <MessageSquare class="w-4 h-4 text-muted shrink-0" :stroke-width="1.5" />
                         <template v-if="renamingId === conv.id">
@@ -129,7 +146,19 @@ function bubbleClass(role) {
             </div>
         </aside>
 
-        <section class="flex-1 flex flex-col bg-surface border border-line rounded-xl overflow-hidden">
+        <!-- Chat panel — hidden on mobile when list is shown -->
+        <section
+            class="flex-col bg-surface border border-line rounded-xl overflow-hidden flex-1"
+            :class="mobileView === 'chat' ? 'flex' : 'hidden md:flex'"
+        >
+            <!-- Mobile back button -->
+            <div class="md:hidden flex items-center gap-2 px-3 py-2 border-b border-line">
+                <AppButton variant="ghost" size="sm" v-on:click="mobileView = 'list'">
+                    <ArrowLeft class="w-4 h-4" :stroke-width="2" />
+                    {{ t('assistant.chat.conversations') }}
+                </AppButton>
+            </div>
+
             <div v-if="!activeConversation" class="flex-1 flex items-center justify-center text-muted text-sm">
                 {{ t('assistant.chat.empty') }}
             </div>

@@ -391,7 +391,6 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                         :error="editModal.errors.role ?? ''"
                         open-direction="top"
                         :use-teleport="false"
-                        :use-teleport="false"
                         required
                     />
                     <AppMultiselect
@@ -402,7 +401,6 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                         :error="editModal.errors.managerId ?? ''"
                         open-direction="top"
                         :use-teleport="false"
-                        :use-teleport="false"
                     />
                     <AppMultiselect
                         v-if="agencyOptions.length > 1"
@@ -412,7 +410,6 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                         :allow-empty="true"
                         open-direction="top"
                         :use-teleport="false"
-                        :use-teleport="false"
                     />
                     <AppMultiselect
                         v-if="serviceOptions.length > 1"
@@ -421,7 +418,6 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                         :label="t('backend.nav.services')"
                         :allow-empty="true"
                         open-direction="top"
-                        :use-teleport="false"
                         :use-teleport="false"
                     />
                 </div>

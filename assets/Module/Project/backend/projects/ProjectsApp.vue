@@ -625,7 +625,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :multiple="true"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
                 <AppMultiselect
@@ -635,7 +634,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="companyOptions"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
                 <AppMultiselect
@@ -645,7 +643,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="dealOptions"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
             </div>
@@ -703,7 +700,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :multiple="true"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
                 <AppMultiselect
@@ -713,7 +709,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="companyOptions"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
                 <AppMultiselect
@@ -723,7 +718,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :options="dealOptions"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
             </div>

@@ -14,7 +14,7 @@ assistant:
     thinking: L'assistant réfléchit…
     tool_call: Appel outil
     tool_result: Résultat outil
-    source: Source
+    conversations: Conversations
     source_all: Toutes les sources
     confirm_required: Action nécessitant confirmation
     approve: Approuver

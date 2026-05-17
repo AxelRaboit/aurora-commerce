@@ -493,7 +493,6 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                     :placeholder="t('vault.folders.noParent')"
                     :allow-empty="true"
                     open-direction="top"
-                    :use-teleport="false"
                         :use-teleport="false"
                 />
             </form>

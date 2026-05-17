@@ -272,7 +272,6 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                 <div>
                     <AppFieldLabel :label="t('backend.employees.fields.user')" />
                     <AppMultiselect v-model="form.userId" :options="userOptions" :placeholder="t('backend.employees.placeholders.user')" open-direction="top"
- :use-teleport="false"
                         :use-teleport="false" />
                 </div>
                 <slot name="extra-form-fields" :form="form" />
