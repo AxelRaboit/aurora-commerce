@@ -108,7 +108,10 @@ class SettingRepository extends ResolveTargetEntityRepository
     /**
      * @return array{items: Setting[], total: int, page: int, totalPages: int}
      */
-    public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?string $group = null): array
+    /**
+     * @param list<string> $excludeKeys Keys to exclude from results (e.g. those already surfaced in /backend/settings)
+     */
+    public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?string $group = null, array $excludeKeys = []): array
     {
         $queryBuilder = $this->createQueryBuilder('s')
             ->orderBy('s.group', Order::Ascending->value)
@@ -126,6 +129,11 @@ class SettingRepository extends ResolveTargetEntityRepository
         } else {
             $queryBuilder->andWhere('s.group != :modules')->setParameter('modules', ModuleParameterEnum::MODULE);
             $countQueryBuilder->andWhere('s.group != :modules')->setParameter('modules', ModuleParameterEnum::MODULE);
+        }
+
+        if ([] !== $excludeKeys) {
+            $queryBuilder->andWhere('s.key NOT IN (:excludeKeys)')->setParameter('excludeKeys', $excludeKeys);
+            $countQueryBuilder->andWhere('s.key NOT IN (:excludeKeys)')->setParameter('excludeKeys', $excludeKeys);
         }
 
         return $this->paginate($queryBuilder, $countQueryBuilder, $page, $limit);
