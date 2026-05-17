@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { usePasswordGenerator } from '@password-generator/backend/composables/usePasswordGenerator.js';
+import { usePasswordGenerator } from '@shared/composables/usePasswordGenerator.js';
 import { calculatePasswordStrength } from '@shared/utils/validation/passwordStrength.js';
 import AppModal from '@shared/components/overlay/AppModal.vue';
 import AppModalFooter from '@shared/components/overlay/AppModalFooter.vue';

@@ -26,8 +26,8 @@
 @import "./base/scrollbar.css";
 
 /* ── Shared component styles (loaded everywhere, used everywhere) ──── */
-@import "./shared/input.css";
-@import "./shared/loader.css";
-@import "./shared/modal.css";
+@import "./base/input.css";
+@import "./base/loader.css";
+@import "./base/modal.css";
 
 @import "flag-icons/css/flag-icons.min.css";

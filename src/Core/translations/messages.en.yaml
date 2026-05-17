@@ -86,3 +86,85 @@ shared:
     en: English
     es: Español
     de: Deutsch
+
+# Editor.js — keys shared by all consumers of AppBlockEditor (Editorial
+# Post, Notes/Block, …). Module-specific labels (postsList in Editorial,
+# productGrid in Ecommerce) stay in their own messages.en.yaml.
+backend:
+  editor:
+    placeholder: Start writing…
+    toolNames:
+      text: Text
+      heading: Heading
+      list: List
+      orderedList: Ordered List
+      unorderedList: Unordered List
+      checklist: Checklist
+      quote: Quote
+      code: Code
+      delimiter: Delimiter
+      table: Table
+      image: Image
+      embed: Embed
+      marker: Marker
+      inlineCode: Inline Code
+      underline: Underline
+      strikethrough: Strikethrough
+      textColor: Text Color
+      textBackground: Background Color
+      fontSize: Font Size
+      clearFormatting: Clear formatting
+      callout: Callout
+      mediaText: Image + Text
+      twoColumn: 2 Columns
+    ui:
+      blockTunes:
+        toggler:
+          Click to tune: Click to tune
+          or drag to move: or drag to move
+      inlineToolbar:
+        converter:
+          Convert to: Convert to
+      toolbar:
+        toolbox:
+          Add: Add
+      popover:
+        Filter: Filter
+        Nothing found: Nothing found
+        nothingFoundExtended: Nothing found. Try searching for something else.
+    blockTunes:
+      delete:
+        Delete: Delete
+        Click to delete: Click to delete
+      moveUp:
+        Move up: Move up
+      moveDown:
+        Move down: Move down
+    image:
+      captionPlaceholder: Caption…
+    quote:
+      placeholder: Quote…
+      captionPlaceholder: Author…
+    mediaText:
+      flipLeft: ⇄ Image left
+      flipRight: ⇄ Image right
+      captionPlaceholder: Caption…
+      textPlaceholder: Your text…
+      urlPlaceholder: Image URL…
+      changeUrl: Change URL
+      confirm: Confirm
+      browse: Browse
+      actions: Actions
+      or: or
+      mediaIdPlaceholder: Existing media ID…
+      mediaIdNotFound: Media not found
+    mediaPicker:
+      title: Choose a media
+      search: Search by name or alt…
+      allFolders: All folders
+      empty: No media found
+      loading: Loading…
+      select: Select
+    callout:
+      titlePlaceholder: Title…
+      messagePlaceholder: Message…

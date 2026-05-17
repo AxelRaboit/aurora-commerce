@@ -86,3 +86,86 @@ shared:
     en: English
     es: Español
     de: Deutsch
+
+# Editor.js — clés partagées par tous les modules consommateurs de
+# AppBlockEditor (Editorial Post, Notes/Block, …). Les libellés
+# module-specific (postsList côté Editorial, productGrid côté Ecommerce)
+# restent dans leur propre messages.fr.yaml.
+backend:
+  editor:
+    placeholder: Commencez à rédiger…
+    toolNames:
+      text: Texte
+      heading: Titre
+      list: Liste
+      orderedList: Liste ordonnée
+      unorderedList: Liste non ordonnée
+      checklist: Liste de cases
+      quote: Citation
+      code: Code
+      delimiter: Séparateur
+      table: Tableau
+      image: Image
+      embed: Intégration
+      marker: Marqueur
+      inlineCode: Code inline
+      underline: Souligné
+      strikethrough: Barré
+      textColor: Couleur du texte
+      textBackground: Couleur de fond
+      fontSize: Taille du texte
+      clearFormatting: Effacer le formatage
+      callout: Callout
+      mediaText: Image + Texte
+      twoColumn: 2 Colonnes
+    ui:
+      blockTunes:
+        toggler:
+          Click to tune: Configurer
+          or drag to move: ou glisser pour déplacer
+      inlineToolbar:
+        converter:
+          Convert to: Convertir en
+      toolbar:
+        toolbox:
+          Add: Ajouter
+      popover:
+        Filter: Filtrer
+        Nothing found: Aucun résultat
+        nothingFoundExtended: Aucun résultat. Essayez un autre terme.
+    blockTunes:
+      delete:
+        Delete: Supprimer
+        Click to delete: Cliquez pour supprimer
+      moveUp:
+        Move up: Déplacer vers le haut
+      moveDown:
+        Move down: Déplacer vers le bas
+    image:
+      captionPlaceholder: Légende…
+    quote:
+      placeholder: Citation…
+      captionPlaceholder: Auteur…
+    mediaText:
+      flipLeft: ⇄ Image à gauche
+      flipRight: ⇄ Image à droite
+      captionPlaceholder: Légende…
+      textPlaceholder: Votre texte…
+      urlPlaceholder: URL de l'image…
+      changeUrl: Changer l'URL
+      confirm: Valider
+      browse: Parcourir
+      actions: Actions
+      or: ou
+      mediaIdPlaceholder: ID média existant…
+      mediaIdNotFound: Média introuvable
+    mediaPicker:
+      title: Choisir un média
+      search: Rechercher par nom ou alt…
+      allFolders: Tous les dossiers
+      empty: Aucun média trouvé
+      loading: Chargement…
+      select: Sélectionner
+    callout:
+      titlePlaceholder: Titre…
+      messagePlaceholder: Message…

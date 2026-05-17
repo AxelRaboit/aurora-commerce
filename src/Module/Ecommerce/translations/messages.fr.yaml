@@ -236,6 +236,17 @@ backend:
       visible: Visible
       hidden: Masqué
       delete_confirm: 'Supprimer le tag « {name} » ?'
+  # Editor.js — tool ProductGrid (côté Ecommerce). Le reste de
+  # `backend.editor.*` (placeholder, toolkit standard) vit dans
+  # src/Core/translations/messages.fr.yaml.
+  editor:
+    productGrid:
+      titleLabel: Titre
+      columnsLabel: Colonnes
+      searchPlaceholderLabel: Rechercher un produit…
+      selectedLabel: Produits sélectionnés
+      emptyLabel: Aucun produit sélectionné
+      noResultsLabel: Aucun résultat
 ecommerce:
   mail:
     subject:

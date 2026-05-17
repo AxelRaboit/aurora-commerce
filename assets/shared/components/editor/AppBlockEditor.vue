@@ -1,6 +1,6 @@
 <script setup>
-import "@/css/modules/editorial/editor.css";
-import "@/css/modules/editorial/blocks.css";
+import "@/css/shared/components/editor/editor.css";
+import "@/css/shared/components/editor/blocks.css";
 
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { ref, onMounted, onBeforeUnmount, inject } from "vue";
@@ -17,27 +17,47 @@ import Embed from "@editorjs/embed";
 import Image from "@editorjs/image";
 import Marker from "@editorjs/marker";
 import InlineCode from "@editorjs/inline-code";
-import { TextColorTool } from "@editorial/shared/editorjs/TextColorTool.js";
-import { FontSizeTool } from "@editorial/shared/editorjs/FontSizeTool.js";
-import { UnderlineTool } from "@editorial/shared/editorjs/UnderlineTool.js";
-import { StrikethroughTool } from "@editorial/shared/editorjs/StrikethroughTool.js";
-import { BackgroundColorTool } from "@editorial/shared/editorjs/BackgroundColorTool.js";
-import { ClearFormattingTool } from "@editorial/shared/editorjs/ClearFormattingTool.js";
+import { TextColorTool } from "@shared/components/editor/tools/TextColorTool.js";
+import { FontSizeTool } from "@shared/components/editor/tools/FontSizeTool.js";
+import { UnderlineTool } from "@shared/components/editor/tools/UnderlineTool.js";
+import { StrikethroughTool } from "@shared/components/editor/tools/StrikethroughTool.js";
+import { BackgroundColorTool } from "@shared/components/editor/tools/BackgroundColorTool.js";
+import { ClearFormattingTool } from "@shared/components/editor/tools/ClearFormattingTool.js";
+import MediaTextBlock from "@shared/components/editor/tools/MediaTextBlock.js";
+import TwoColumnBlock from "@shared/components/editor/tools/TwoColumnBlock.js";
+import CalloutBlock from "@shared/components/editor/tools/CalloutBlock.js";
 import DragDrop from "editorjs-drag-drop";
 import Undo from "editorjs-undo";
-import MediaTextBlock from "@editorial/shared/editorjs/MediaTextBlock.js";
-import TwoColumnBlock from "@editorial/shared/editorjs/TwoColumnBlock.js";
-import CalloutBlock from "@editorial/shared/editorjs/CalloutBlock.js";
-import PostsListBlock from "@editorial/shared/editorjs/PostsListBlock.js";
-import ProductGridBlock from "@ecommerce/shared/editorjs/ProductGridBlock.js";
 
+/**
+ * Generic Editor.js wrapper. Lives in @shared so any module that needs
+ * a rich-block editor (Editorial Post translations, Notes/Block notes,
+ * future docs/wiki modules…) can reuse the exact same shell.
+ *
+ * Module-specific tools (Editorial PostsList, Ecommerce ProductGrid, …)
+ * are injected by the consumer via the `extraTools` prop — the wrapper
+ * merges them into its built-in toolkit at editor init.
+ *
+ * Two integration patterns are supported:
+ *   - v-model + `:key="<entity-id>"` re-mount: simplest, one editor
+ *     instance per selected entity (Notes uses this).
+ *   - `provide('registerEditorFlush'/'registerEditorRender')` callbacks:
+ *     parent captures them and can flush before save or push fresh
+ *     blocks without remounting (Editorial PostEditor uses this for
+ *     locale switches).
+ */
 const { t } = useI18n();
 
 const props = defineProps({
     modelValue: { type: Array, default: () => [] },
     placeholder: { type: String, default: "" },
     uploadUrl: { type: String, default: "/backend/media/upload" },
-    postTypes: { type: Array, default: () => [] },
+    /**
+     * Module-specific tools dict, merged on top of the built-in set.
+     * Shape matches Editor.js' native `tools` config:
+     *   { toolName: { class, config?, inlineToolbar? } | ToolClass }
+     */
+    extraTools: { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -266,37 +286,12 @@ onMounted(async () => {
                     mediaIdNotFound:    t("backend.editor.mediaText.mediaIdNotFound"),
                 },
             },
-            twoColumn: {
-                class: TwoColumnBlock,
-            },
-            postsList: {
-                class: PostsListBlock,
-                config: {
-                    postTypes: props.postTypes,
-                    titleLabel: t("backend.editor.postsList.titleLabel"),
-                    postTypeLabel: t("backend.editor.postsList.postTypeLabel"),
-                    columnsLabel: t("backend.editor.postsList.columnsLabel"),
-                    modeLabel: t("backend.editor.postsList.modeLabel"),
-                    modeAutoLabel: t("backend.editor.postsList.modeAutoLabel"),
-                    modeManualLabel: t("backend.editor.postsList.modeManualLabel"),
-                    perPageLabel: t("backend.editor.postsList.perPageLabel"),
-                    searchPlaceholderLabel: t("backend.editor.postsList.searchPlaceholderLabel"),
-                    selectedLabel: t("backend.editor.postsList.selectedLabel"),
-                    emptyLabel: t("backend.editor.postsList.emptyLabel"),
-                    noResultsLabel: t("backend.editor.postsList.noResultsLabel"),
-                },
-            },
-            productGrid: {
-                class: ProductGridBlock,
-                config: {
-                    titleLabel: t("backend.editor.productGrid.titleLabel"),
-                    columnsLabel: t("backend.editor.productGrid.columnsLabel"),
-                    searchPlaceholderLabel: t("backend.editor.productGrid.searchPlaceholderLabel"),
-                    selectedLabel: t("backend.editor.productGrid.selectedLabel"),
-                    emptyLabel: t("backend.editor.productGrid.emptyLabel"),
-                    noResultsLabel: t("backend.editor.productGrid.noResultsLabel"),
-                },
-            },
+            twoColumn: { class: TwoColumnBlock },
+
+            // Module-specific tools (postsList, productGrid, …) — Editor.js
+            // shape `{ toolName: { class, config?, inlineToolbar? } | Class }`.
+            // Spread last so a consumer can override built-in configs too.
+            ...props.extraTools,
         },
         onChange: async () => {
             if (!editor) return;

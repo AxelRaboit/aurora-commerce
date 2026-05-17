@@ -6,7 +6,7 @@ import {
     countConflicts,
     summarize,
     MergeKind,
-} from "@/shared/utils/data/mergeBlocks.js";
+} from "@/shared/utils/editor/mergeBlocks.js";
 
 function makeBlock(id, text) {
     return { id, type: "paragraph", data: { text } };

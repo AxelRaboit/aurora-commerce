@@ -4,8 +4,8 @@ import "@/css/modules/editorial/prose.css";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Check } from "lucide-vue-next";
-import { renderBlocks } from "@/shared/utils/data/blocksRenderer.js";
-import { MergeKind } from "@/shared/utils/data/mergeBlocks.js";
+import { renderBlocks } from "@/shared/utils/editor/blocksRenderer.js";
+import { MergeKind } from "@/shared/utils/editor/mergeBlocks.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 
 const { t } = useI18n();

@@ -236,6 +236,16 @@ backend:
       visible: Visible
       hidden: Hidden
       delete_confirm: 'Delete tag "{name}"?'
+  # Editor.js — ProductGrid tool (Ecommerce-owned). Generic editor
+  # keys live in src/Core/translations/messages.en.yaml.
+  editor:
+    productGrid:
+      titleLabel: Title (optional)
+      columnsLabel: Columns
+      searchPlaceholderLabel: Search a product…
+      selectedLabel: Selected products
+      emptyLabel: No product selected
+      noResultsLabel: No results
 ecommerce:
   mail:
     subject:

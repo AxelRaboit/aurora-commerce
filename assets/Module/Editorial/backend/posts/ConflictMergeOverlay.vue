@@ -10,7 +10,7 @@ import {
     countConflicts,
     summarize,
     MergeKind,
-} from "@/shared/utils/data/mergeBlocks.js";
+} from "@/shared/utils/editor/mergeBlocks.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
 import MergeBlockEntry from "./MergeBlockEntry.vue";
