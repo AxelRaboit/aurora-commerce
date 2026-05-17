@@ -1,17 +1,17 @@
 backend:
   parameters:
     notes_markdown_image_max_edge:
-      label: Maximum size of uploaded images (px)
-      description: "Longest edge in pixels. Images larger than this are downscaled in the browser before upload. Recommended: 2048."
+      label: Notes Markdown — Max image size (px)
+      description: "Notes Markdown: longest edge in pixels. Images larger than this are downscaled in the browser before upload. Recommended: 2048."
     notes_markdown_image_quality_pct:
-      label: WebP encoding quality (%)
-      description: "WebP quality applied during the resize, 0 to 100. Recommended: 85 (good size/quality trade-off)."
+      label: Notes Markdown — WebP encoding quality (%)
+      description: "Notes Markdown: WebP quality applied during the resize, 0 to 100. Recommended: 85 (good size/quality trade-off)."
     notes_block_image_max_edge:
-      label: Maximum size of uploaded images (px)
-      description: "Longest edge in pixels. Images larger than this are downscaled in the browser before upload. Recommended: 2048."
+      label: Notes Block — Max image size (px)
+      description: "Notes Block: longest edge in pixels. Images larger than this are downscaled in the browser before upload. Recommended: 2048."
     notes_block_image_quality_pct:
-      label: WebP encoding quality (%)
-      description: "WebP quality applied during the resize, 0 to 100. Recommended: 85 (good size/quality trade-off)."
+      label: Notes Block — WebP encoding quality (%)
+      description: "Notes Block: WebP quality applied during the resize, 0 to 100. Recommended: 85 (good size/quality trade-off)."
   permissions:
     names:
       notes:
