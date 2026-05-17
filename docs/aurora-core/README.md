@@ -10,8 +10,8 @@
 
 | Fichier | Contenu |
 |---|---|
-| [todo/](dev/todo/README.md) | Index des TODOs techniques, organisés par module puis par topic (catalogue, tarification, livraison…) |
-| [module_roadmap.md](dev/todo/module_roadmap.md) | Modules à venir, classés par priorité |
+| [todo/](todo/README.md) | Index des TODOs techniques, organisés par module puis par topic (catalogue, tarification, livraison…) |
+| [module_roadmap.md](todo/module_roadmap.md) | Modules à venir, classés par priorité |
 | [scheduler.md](dev/scheduler.md) | Symfony Scheduler — ajouter des tâches récurrentes, convention fichiers temporaires, tâches existantes |
 
 ## dev/ — Guides développeur
