@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Platform\Auth\Manager;
 
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Platform\User\Entity\User;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Mailer\MailerInterface;

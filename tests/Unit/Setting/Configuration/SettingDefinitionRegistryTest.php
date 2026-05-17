@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Setting\Configuration;
 
-use Aurora\Core\Configuration\Setting\Configuration\ConfigurationTab;
-use Aurora\Core\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
-use Aurora\Core\Configuration\Setting\Configuration\SettingDefinitionRegistry;
-use Aurora\Core\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
+use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
+use Aurora\Module\Configuration\Setting\Configuration\SettingDefinitionRegistry;
+use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 use PHPUnit\Framework\TestCase;
 
 final class SettingDefinitionRegistryTest extends TestCase

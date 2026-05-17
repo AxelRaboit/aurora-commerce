@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Serializer;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;

@@ -10,7 +10,7 @@ use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Platform\Service\Entity\Service;
 use Aurora\Core\Platform\Service\Repository\ServiceRepository;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Hr\Employee\Dto\EmployeeInputInterface;

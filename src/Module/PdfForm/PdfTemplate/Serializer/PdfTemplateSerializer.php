@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PdfForm\PdfTemplate\Serializer;
 
-use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
 use Aurora\Module\PdfForm\PdfTemplateField\Serializer\PdfTemplateFieldSerializerInterface;
 use DateTimeInterface;

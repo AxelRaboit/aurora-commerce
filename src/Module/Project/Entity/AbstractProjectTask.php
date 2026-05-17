@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;

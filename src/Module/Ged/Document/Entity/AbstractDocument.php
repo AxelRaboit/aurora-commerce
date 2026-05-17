@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Entity;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;

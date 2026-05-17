@@ -6,7 +6,7 @@ namespace Aurora\Module\Billing\Invoice\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;

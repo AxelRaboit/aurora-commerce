@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Frontend\Twig;
 
 use Aurora\Core\Frontend\Service\Registry;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Twig\Attribute\AsTwigFunction;
 
 /**

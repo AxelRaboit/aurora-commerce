@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Notes\Block\View;
 
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
 use Aurora\Module\Notes\Block\Setting\BlockNoteSettingEnum;

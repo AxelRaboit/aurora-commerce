@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Serializer;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
-use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use DateTimeInterface;

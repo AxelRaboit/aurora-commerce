@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\View;
 
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Support\Num;
 use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Markdown\Repository\MarkdownNoteRepository;

@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Company\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Dto\CompanyInputInterface;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;

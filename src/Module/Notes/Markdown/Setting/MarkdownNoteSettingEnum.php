@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\Setting;
 
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
  * Module-level settings surfaced on the `/backend/settings` page under

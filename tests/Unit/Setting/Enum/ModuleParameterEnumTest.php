@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Setting\Enum;
 
-use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleParameterEnumTest extends TestCase

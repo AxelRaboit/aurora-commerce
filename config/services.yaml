@@ -34,7 +34,7 @@ services:
     _instanceof:
         Aurora\Core\Module\Contract\ModuleInterface:
             tags: [aurora.module]
-        Aurora\Core\Media\Library\Contract\MediaUsageProviderInterface:
+        Aurora\Module\Media\Library\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
         Aurora\Core\Frontend\Contract\FrontendInterface:
             tags: [aurora.front]
@@ -42,14 +42,14 @@ services:
             tags: [aurora.menu_location_provider]
         Aurora\Core\Sequence\SequencePrefixProviderInterface:
             tags: [aurora.sequence_prefix]
-        Aurora\Core\Configuration\Setting\Configuration\ConfigurationTabProviderInterface:
+        Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface:
             tags: [aurora.configuration_tab_provider]
         Aurora\Module\Assistant\Tool\Contract\ToolInterface:
             tags: [aurora.assistant.tool]
         Aurora\Module\General\Search\Provider\SearchProviderInterface:
             tags: [aurora.search_provider]
 
-    Aurora\Core\Media\Library\Service\MediaUsageService:
+    Aurora\Module\Media\Library\Service\MediaUsageService:
         arguments:
             $providers: !tagged_iterator aurora.media_usage_provider
 
@@ -90,15 +90,15 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Configuration\Theme\Service\ThemeResolver:
+    Aurora\Module\Configuration\Theme\Service\ThemeResolver:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Configuration\Theme\Manager\ThemeManager:
+    Aurora\Module\Configuration\Theme\Manager\ThemeManager:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
-    Aurora\Core\Configuration\Setting\Command\DumpJsTranslationsCommand:
+    Aurora\Module\Configuration\Setting\Command\DumpJsTranslationsCommand:
         arguments:
             $auroraDir: '%kernel.project_dir%'
 
@@ -114,11 +114,11 @@ services:
         arguments:
             $modules: !tagged_iterator aurora.module
 
-    Aurora\Core\Configuration\Setting\View\ModulesViewBuilder:
+    Aurora\Module\Configuration\Setting\View\ModulesViewBuilder:
         arguments:
             $modules: !tagged_iterator aurora.module
 
-    Aurora\Core\Configuration\Setting\Configuration\SettingDefinitionRegistry:
+    Aurora\Module\Configuration\Setting\Configuration\SettingDefinitionRegistry:
         arguments:
             $providers: !tagged_iterator aurora.configuration_tab_provider
 

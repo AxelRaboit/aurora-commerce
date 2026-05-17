@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Setting\Enum;
 
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 use const JSON_THROW_ON_ERROR;

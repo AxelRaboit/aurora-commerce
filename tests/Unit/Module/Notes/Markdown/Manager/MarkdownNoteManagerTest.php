@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Notes\Markdown\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Notes\Markdown\Dto\MarkdownNoteInput;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;

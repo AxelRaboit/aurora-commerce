@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Configuration\Theme\Service\ThemeResolver;
+use Aurora\Module\Configuration\Theme\Service\ThemeResolver;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Cart\Serializer\CartSerializer;

@@ -8,7 +8,7 @@ use Aurora\Core\Platform\Agency\Entity\Agency;
 use Aurora\Core\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Planning\Planning\Dto\PlanningInputInterface;
 use Aurora\Module\Planning\Planning\Entity\Planning;

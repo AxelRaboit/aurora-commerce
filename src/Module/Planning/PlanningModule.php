@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Planning\PlanningContext;
 
 final readonly class PlanningModule implements ModuleInterface, ModuleToggleProviderInterface

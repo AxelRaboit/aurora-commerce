@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Service;
 
 use Aurora\Core\Mail\Service\MailService;
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

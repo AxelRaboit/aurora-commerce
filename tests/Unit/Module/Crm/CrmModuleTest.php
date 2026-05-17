@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Crm;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Crm\CrmModule;
 use Aurora\Module\Crm\CrmContext;
 use PHPUnit\Framework\TestCase;

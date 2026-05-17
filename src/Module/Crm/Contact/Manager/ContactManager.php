@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Contact\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Dto\ContactInputInterface;
 use Aurora\Module\Crm\Contact\Entity\Contact;

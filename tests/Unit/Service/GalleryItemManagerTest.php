@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Library\Entity\Media;
-use Aurora\Core\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use Aurora\Module\Photo\Gallery\Manager\GalleryItemManager;

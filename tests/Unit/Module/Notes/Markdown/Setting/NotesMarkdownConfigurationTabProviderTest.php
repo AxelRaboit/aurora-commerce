@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Notes\Markdown\Setting;
 
-use Aurora\Core\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 use Aurora\Module\Notes\Markdown\Setting\MarkdownNoteSettingEnum;
 use Aurora\Module\Notes\Markdown\Setting\NotesMarkdownConfigurationTabProvider;
 use PHPUnit\Framework\TestCase;

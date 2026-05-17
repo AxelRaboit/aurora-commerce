@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use DateTimeImmutable;

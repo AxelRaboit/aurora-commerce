@@ -6,8 +6,8 @@ namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Locale\Entity\Locale;
 use Aurora\Core\Locale\Enum\LocaleEnum;
-use Aurora\Core\Configuration\Setting\Entity\Setting;
-use Aurora\Core\Configuration\Theme\Entity\Theme;
+use Aurora\Module\Configuration\Setting\Entity\Setting;
+use Aurora\Module\Configuration\Theme\Entity\Theme;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Core\Platform\User\Enum\UserRoleEnum;
 use Aurora\Core\Platform\User\Enum\UserTypeEnum;

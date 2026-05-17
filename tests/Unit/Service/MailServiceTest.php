@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Core\Mail\Service\MailService;
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;

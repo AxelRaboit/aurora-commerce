@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Media\Library\Entity\MediaFolder;
+use Aurora\Module\Media\Library\Entity\MediaFolder;
 use PHPUnit\Framework\TestCase;
 
 final class MediaFolderTest extends TestCase

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Core\Frontend\Service;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use RuntimeException;
 
 final readonly class Router

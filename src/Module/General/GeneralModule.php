@@ -10,7 +10,7 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Module\General\GeneralContext;
-use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * General section — the post-login landing page (Dashboard). Sibling of

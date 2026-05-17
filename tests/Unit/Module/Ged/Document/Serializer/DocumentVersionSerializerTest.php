@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ged\Document\Serializer;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializer;
 use Aurora\Tests\Concern\CreatesStorageUrlGenerators;

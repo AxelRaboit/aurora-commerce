@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Frontend\EventSubscriber;
 
 use Aurora\Core\Frontend\Service\Registry;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\Setting;
 
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
  * Crm module's own setting parameters. Persisted keys kept identical to the

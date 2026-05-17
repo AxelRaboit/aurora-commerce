@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Twig;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
-use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Core\Platform\User\Entity\CoreUserInterface;
 use Aurora\Core\Platform\User\Service\UserProfilePhotoUrlGenerator;
 use Twig\Attribute\AsTwigFunction;

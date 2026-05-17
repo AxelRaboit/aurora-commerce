@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;

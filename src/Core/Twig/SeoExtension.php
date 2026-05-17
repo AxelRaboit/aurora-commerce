@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Aurora\Core\Twig;
 
 use Aurora\Core\Frontend\Service\Context;
-use Aurora\Core\Media\Library\Entity\MediaInterface;
-use Aurora\Core\Media\Library\Repository\MediaRepository;
-use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Attribute\AsTwigFunction;

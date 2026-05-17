@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\EventSubscriber;
 
-use Aurora\Core\Media\MediaContext;
+use Aurora\Module\Media\MediaContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

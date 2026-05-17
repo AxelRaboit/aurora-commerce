@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Ged;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Ged\GedModule;
 use Aurora\Module\Ged\GedContext;
 use PHPUnit\Framework\TestCase;

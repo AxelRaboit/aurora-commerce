@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Editorial\Post\Serializer;
 
 use Aurora\Core\Locale\Service\LocaleContextInterface;
-use Aurora\Core\Media\Library\Entity\Media;
-use Aurora\Core\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Editorial\Post\Entity\AbstractPost;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Entity\PostInterface;

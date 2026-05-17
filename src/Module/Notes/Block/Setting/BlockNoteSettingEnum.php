@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Block\Setting;
 
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
  * Module-level settings for block notes — image-upload tunables for the

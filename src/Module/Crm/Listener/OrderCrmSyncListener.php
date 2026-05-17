@@ -6,7 +6,7 @@ namespace Aurora\Module\Crm\Listener;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;

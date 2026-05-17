@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Media\Library\Entity\MediaFolder;
-use Aurora\Core\Media\Library\Repository\MediaFolderRepository;
-use Aurora\Core\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Entity\MediaFolder;
+use Aurora\Module\Media\Library\Repository\MediaFolderRepository;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;

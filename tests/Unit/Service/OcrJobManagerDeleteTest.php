@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Media\Library\Entity\Media;
-use Aurora\Core\Media\Library\Manager\MediaManagerInterface;
+use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;

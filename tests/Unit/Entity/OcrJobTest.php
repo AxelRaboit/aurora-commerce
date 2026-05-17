@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;

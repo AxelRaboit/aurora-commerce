@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Module\Ecommerce\Order\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp\Setting;
 
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Core\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 enum ErpSettingEnum: string implements ApplicationParameterEnumInterface
 {
