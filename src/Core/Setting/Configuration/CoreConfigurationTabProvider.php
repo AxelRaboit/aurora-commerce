@@ -59,7 +59,7 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
     ];
 
     /** Groups that should only appear for ROLE_DEV users. */
-    private const array DEV_ONLY_GROUPS = ['sequences'];
+    private const array DEV_ONLY_GROUPS = ['sequences', 'media'];
 
     public function __construct(
         private SettingRepository $settingRepository,
