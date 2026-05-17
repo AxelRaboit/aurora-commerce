@@ -101,12 +101,42 @@ Read the file first to find the existing block; append, don't replace.
 
 ### Layer 1ter — Repository (optional, only if custom finders requested)
 
+**Default behaviour** : you do **NOT** need to create a client repository.
+Aurora's own `AgencyRepository` extends `ResolveTargetEntityRepository`, so once
+`resolve_target_entities` routes the interface to your client class, all queries
+go to your `app_agencies` table automatically.
+
+**Only create a custom client repo when the client needs custom finder methods.**
+In that case :
+
 ```
 src/Module/Core/Agency/Repository/AgencyRepository.php
 ```
 
-Extends `Aurora\Core\Agency\Repository\AgencyRepository`. No new interface
-(Aurora doesn't expose one — limite assumée).
+```php
+namespace App\Module\Core\Agency\Repository;
+
+use App\Module\Core\Agency\Entity\Agency;
+use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Core\Agency\Repository\AgencyRepository as AuroraAgencyRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+class AgencyRepository extends AuroraAgencyRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Agency::class, AgencyInterface::class);
+    }
+
+    public function findByCode(string $code): ?AgencyInterface { /* ... */ }
+}
+```
+
+Then point the entity's `repositoryClass` to **your** repo :
+`#[ORM\Entity(repositoryClass: \App\Module\Core\Agency\Repository\AgencyRepository::class)]`.
+
+No interface to create (Aurora doesn't expose `AgencyRepositoryInterface` —
+limite assumée).
 
 ### Layer 2 — DTO + Factory extension
 
@@ -208,6 +238,16 @@ class AgencyManager extends AuroraAgencyManager
 NOT generate `applyInput`. Instead, list the Aurora Manager's public methods
 to the user and ask which ones to override. Each override starts with
 `parent::xxx()`.
+
+> ⚠️ **Even for the User-style variant, the other hard rules still apply** :
+> - `protected function createX(): XInterface` is **mandatory** for every
+>   class the Manager instantiates (else Doctrine persists the parent class
+>   and the client column is silently lost — cf. `pitfall_create_hook_required.md`)
+> - `auditCreated`, `auditUpdated`, `auditDeleted` and `auditPayload` are
+>   **mandatory** if the Manager uses `AuditLogger`
+>
+> Only `applyInput()` is omitted in the User-style variant. Cf. hard rules
+> in `.claude/memory/aurora-core/architecture/decision_4_hard_rules.md`.
 
 ### Layer 4 — Serializer extension
 

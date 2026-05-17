@@ -83,6 +83,18 @@ In `src/<Module>/<Name>/Manager/`:
     methods, no simple create+update flow, distinct security per operation).
     Only `User` currently qualifies — for anything else, missing `applyInput`
     is ❌.
+17b. **If `applyInput()` is missing, verify it's a legitimate User-style variant** :
+    - Count public methods on the Manager (must be ≥6 specialized, beyond
+      basic create/update/delete) → grep `public function` and inspect
+    - No simple create+update flow with a shared DTO → check Controller :
+      if it just dispatches to `manager->create($input)` / `manager->update($entity, $input)`,
+      that's NOT User-style
+    - Distinct security/validation per operation → check `#[IsGranted]` per
+      Controller method differs from a single class-level grant
+    If any criterion fails → ❌ (`applyInput()` should exist).
+    Reference list of legitimate variants : User, Order, Invoice, Tiers, OcrJob,
+    Comment (per `decision_variant_user_style.md`). Anything else missing
+    `applyInput()` is a bug.
 18. **Audit hooks** — if the Manager uses `AuditLogger`, then
     `protected function auditCreated`, `auditUpdated`, `auditDeleted`, and
     `auditPayload` all exist. Inline domain events (paid, validated, …) are
@@ -124,6 +136,17 @@ In `src/<Module>/<Name>/Controller/Backend/`:
     - `<Name>ManagerInterface`
     - `<Name>InputFactoryInterface`
     - `<Name>SerializerInterface`
+
+### Module toggles (only if the entity belongs to a toggleable sub-feature)
+
+26. **Out of scope for entity audit, but worth a quick look** : if the entity
+    is part of a sub-feature that has its own enable/disable toggle (e.g.,
+    Vault.Safe, Vault.PasswordGenerator), the parent `<Module>Module.php`
+    should implement `Aurora\Core\Module\Contract\ModuleToggleProviderInterface`
+    and the Controller / Nav should gate via `<Module>Context`. This is a
+    module-level concern — flag it as a note ("toggle present ✅" / "toggle
+    missing, consider adding ⚠️"), don't ❌ if missing.
+    Cf. `pattern_user_scoped_module_access.md` and the Vault example.
 
 ## Output format
 
