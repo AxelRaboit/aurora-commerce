@@ -5,6 +5,12 @@ puis par topic.
 
 ## Index
 
+### Roadmap modules
+
+Liste des modules à venir, classés par priorité et impact.
+
+- [Roadmap modules](module_roadmap.md)
+
 ### Ecommerce — gaps vs Sylius
 
 Fonctionnalités manquantes identifiées par comparaison avec Sylius. Les 3 premiers

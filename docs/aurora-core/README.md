@@ -11,6 +11,7 @@
 | Fichier | Contenu |
 |---|---|
 | [todo/](dev/todo/README.md) | Index des TODOs techniques, organisés par module puis par topic (catalogue, tarification, livraison…) |
+| [module_roadmap.md](dev/todo/module_roadmap.md) | Modules à venir, classés par priorité |
 | [scheduler.md](dev/scheduler.md) | Symfony Scheduler — ajouter des tâches récurrentes, convention fichiers temporaires, tâches existantes |
 
 ## dev/ — Guides développeur
@@ -31,8 +32,3 @@
 | [worker_systemd.md](ops/worker_systemd.md) | Configuration du service systemd `aurora-worker` en production |
 | [ocr_setup.md](ops/ocr_setup.md) | Mise en place du pipeline OCR (Billing) |
 
-## product/ — Roadmap & planification
-
-| Fichier | Contenu |
-|---|---|
-| [module_roadmap.md](product/module_roadmap.md) | Modules à venir, classés par priorité |
