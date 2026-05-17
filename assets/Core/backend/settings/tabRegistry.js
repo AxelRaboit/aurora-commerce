@@ -2,6 +2,7 @@ import { markRaw } from "vue";
 
 import NavigationTab from "@core/backend/settings/tabs/NavigationTab.vue";
 import AppearanceTab from "@core/backend/settings/tabs/AppearanceTab.vue";
+import AssistantSettingsTab from "@assistant/backend/settings/AssistantSettingsTab.vue";
 
 /**
  * Registry mapping a tab's `componentName` (declared by a
@@ -42,5 +43,7 @@ export function getSettingsTabComponent(name) {
 }
 
 // Built-in registrations — Aurora's own custom-UI tabs.
+
 registerSettingsTabComponent("navigation", NavigationTab);
 registerSettingsTabComponent("appearance", AppearanceTab);
+registerSettingsTabComponent("assistant-settings", AssistantSettingsTab);
