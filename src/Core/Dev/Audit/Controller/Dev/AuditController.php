@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\Controller\Dev;
+namespace Aurora\Core\Dev\Audit\Controller\Dev;
 
-use Aurora\Core\Audit\View\AuditViewBuilder;
+use Aurora\Core\Dev\Audit\View\AuditViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\User\Enum\UserRoleEnum;
 use Aurora\Core\Validation\Dto\PaginationRequest;

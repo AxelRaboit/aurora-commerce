@@ -6,8 +6,8 @@ namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Audit\Entity\AbstractAuditLog;
-use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Dev\Audit\Entity\AbstractAuditLog;
+use Aurora\Core\Dev\Audit\Entity\AuditLog;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Service\MediaUrlGenerator;

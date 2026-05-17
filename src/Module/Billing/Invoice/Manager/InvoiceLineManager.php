@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;

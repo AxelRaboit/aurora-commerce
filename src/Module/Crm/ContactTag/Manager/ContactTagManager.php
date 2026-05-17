@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\ContactTag\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Crm\ContactTag\Dto\ContactTagInputInterface;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\View;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

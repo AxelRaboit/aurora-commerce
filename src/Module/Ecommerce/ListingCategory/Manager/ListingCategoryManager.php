@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingCategory\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Service\TranslationLocaleSyncerInterface;
 use Aurora\Core\Media\Repository\MediaRepository;
 use Aurora\Module\Ecommerce\ListingCategory\Dto\ListingCategoryInputInterface;

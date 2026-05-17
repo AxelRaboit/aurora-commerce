@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;

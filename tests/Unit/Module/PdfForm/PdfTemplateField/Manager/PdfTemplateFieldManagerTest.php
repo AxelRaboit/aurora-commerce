@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\PdfForm\PdfTemplateField\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PdfForm\Enum\PdfFieldTypeEnum;
 use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplate;
 use Aurora\Module\PdfForm\PdfTemplateField\Dto\PdfTemplateFieldInputInterface;

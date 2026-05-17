@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\Serializer;
+namespace Aurora\Core\Dev\Audit\Serializer;
 
-use Aurora\Core\Audit\Entity\AuditLogInterface;
+use Aurora\Core\Dev\Audit\Entity\AuditLogInterface;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Entity\MediaFolder;

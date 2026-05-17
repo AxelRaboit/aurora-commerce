@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\MountPoint\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\MountPoint\Dto\MountPointInputInterface;
 use Aurora\Core\MountPoint\Entity\MountPoint;
 use Aurora\Core\MountPoint\Entity\MountPointInterface;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\View;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Core\Audit\Serializer;
+namespace Aurora\Tests\Unit\Core\Dev\Audit\Serializer;
 
-use Aurora\Core\Audit\Entity\AuditLogInterface;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Dev\Audit\Entity\AuditLogInterface;
+use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\View;
+namespace Aurora\Core\Dev\Audit\View;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
 
 /**
  * Builds the Twig payload for the audit log dashboard tab. Centralises the

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Controller\Backend;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
-use Aurora\Core\Audit\Serializer\AuditLogSerializer;
+use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\Entity;
+namespace Aurora\Core\Dev\Audit\Entity;
 
-use Aurora\Core\Audit\Repository\AuditLogRepository;
+use Aurora\Core\Dev\Audit\Repository\AuditLogRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuditLogRepository::class)]

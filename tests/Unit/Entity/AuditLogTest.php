@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Dev\Audit\Entity\AuditLog;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\DocumentTag\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\DocumentTag\Dto\DocumentTagInputInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;

@@ -6,8 +6,8 @@ namespace Aurora;
 
 use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Audit\Entity\AuditLog;
-use Aurora\Core\Audit\Entity\AuditLogInterface;
+use Aurora\Core\Dev\Audit\Entity\AuditLog;
+use Aurora\Core\Dev\Audit\Entity\AuditLogInterface;
 use Aurora\Core\Auth\Entity\AccessRequest;
 use Aurora\Core\Auth\Entity\AccessRequestInterface;
 use Aurora\Core\Auth\Entity\ResetPasswordRequest;

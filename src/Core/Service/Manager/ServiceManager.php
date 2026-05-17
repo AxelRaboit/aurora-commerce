@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Service\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Service\Dto\ServiceInputInterface;
 use Aurora\Core\Service\Entity\Service;
 use Aurora\Core\Service\Entity\ServiceInterface;

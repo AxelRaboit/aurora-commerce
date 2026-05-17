@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\Entity;
+namespace Aurora\Core\Dev\Audit\Entity;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

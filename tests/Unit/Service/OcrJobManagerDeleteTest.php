@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Media\Entity\Media;
 use Aurora\Core\Media\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\Service;
+namespace Aurora\Core\Dev\Audit\Service;
 
-use Aurora\Core\Audit\Entity\AuditLog;
+use Aurora\Core\Dev\Audit\Entity\AuditLog;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Setting\Enum\ApplicationParameterEnum;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\PdfForm\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Setting\Repository\SettingRepository;
 use Aurora\Module\PdfForm\Enum\PdfDocumentStatusEnum;

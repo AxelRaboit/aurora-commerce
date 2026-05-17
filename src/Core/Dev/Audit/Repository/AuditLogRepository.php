@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Audit\Repository;
+namespace Aurora\Core\Dev\Audit\Repository;
 
-use Aurora\Core\Audit\Entity\AuditLog;
-use Aurora\Core\Audit\Entity\AuditLogInterface;
+use Aurora\Core\Dev\Audit\Entity\AuditLog;
+use Aurora\Core\Dev\Audit\Entity\AuditLogInterface;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use DateTimeInterface;

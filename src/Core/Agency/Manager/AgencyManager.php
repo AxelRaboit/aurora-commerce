@@ -7,7 +7,7 @@ namespace Aurora\Core\Agency\Manager;
 use Aurora\Core\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Agency\Entity\Agency;
 use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

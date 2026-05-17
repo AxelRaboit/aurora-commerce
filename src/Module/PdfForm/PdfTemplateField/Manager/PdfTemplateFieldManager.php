@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PdfForm\PdfTemplateField\Manager;
 
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Core\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PdfForm\PdfTemplateField\Dto\PdfTemplateFieldInputInterface;
 use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;
 use Doctrine\ORM\EntityManagerInterface;
