@@ -431,18 +431,24 @@ aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-
 	@mkdir -p var && touch $(AURORA_UPDATE_MARKER)
 	@echo "✅ aurora-core bumped. Run 'make ft' to verify."
 
-sync-claude-md: ## Symlink CLAUDE.md + README.md + .claude/memory + .claude/skills (shared) + docs from aurora-core vendor
+sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + .claude/skills (shared) ; seed README.md once
 	@if [ -f $(AURORA)/.claude/client_template/CLAUDE.md ]; then \
 		ln -sfn $(AURORA)/.claude/client_template/CLAUDE.md CLAUDE.md; \
 		echo "✅ CLAUDE.md symlinked from vendor"; \
 	else \
 		echo "⚠️  $(AURORA)/.claude/client_template/CLAUDE.md not found — skipping"; \
 	fi
-	@if [ -f $(AURORA)/.claude/client_template/README.md ]; then \
-		ln -sfn $(AURORA)/.claude/client_template/README.md README.md; \
-		echo "✅ README.md symlinked from vendor"; \
-	else \
-		echo "⚠️  $(AURORA)/.claude/client_template/README.md not found — skipping"; \
+	@# README.md is intentionally NOT symlinked — it's the client's own
+	@# project README, free to customise. If a previous install left a
+	@# vendor symlink in place, replace it with a real file copied from
+	@# the template so the client can edit it. A real file already there
+	@# is left alone.
+	@if [ -L README.md ]; then rm -f README.md; fi
+	@if [ ! -f README.md ] && [ -f $(AURORA)/.claude/client_template/README.md ]; then \
+		cp $(AURORA)/.claude/client_template/README.md README.md; \
+		echo "✅ README.md seeded from aurora template (now editable — never overwritten by sync)"; \
+	elif [ -f README.md ]; then \
+		echo "ℹ️  README.md kept as-is (client-owned, won't be overwritten)"; \
 	fi
 	@mkdir -p .claude/memory
 	@rm -rf .claude/memory/aurora-core .claude/memory/aurora-client .claude/memory/aurora-shared

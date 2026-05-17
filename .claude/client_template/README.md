@@ -1,10 +1,13 @@
-# aurora-client
+# aurora-client — base README
 
-> 🔗 **Fichier symlinké** vers `vendor/axelraboit/aurora/.claude/client_template/README.md`.
-> Toujours à jour avec la version installée d'aurora-core — aucun sync manuel
-> requis. Pour ajouter du contenu **spécifique au projet client** (URL de
-> staging, particularités métier, logo, etc.), créer `README.local.md` à
-> côté de ce fichier — il sera lu en parallèle par les nouveaux arrivants.
+> 📦 **Template d'amorçage**. Ce fichier vit dans aurora-core à
+> `vendor/axelraboit/aurora/.claude/client_template/README.md`. À la
+> première installation, `make aurora-update` le copie à la racine du
+> projet client comme `README.md`. **Une fois copié, le client en est
+> propriétaire** : libre à lui de réécrire le titre, ajouter logo / URL
+> de staging / contacts équipe / etc. — les `make aurora-update`
+> suivants ne l'écrasent **plus jamais**. La référence canonique reste
+> ici, pointable via le chemin vendor depuis n'importe quel doc client.
 
 A client application built on [Aurora](https://github.com/AxelRaboit/aurora-core).
 Aurora is installed as a Composer dependency at `vendor/axelraboit/aurora/`
