@@ -506,6 +506,8 @@ onMounted(() => {
                     :allow-empty="true"
                     :disabled="eventForm.editModal.readOnly"
                     open-direction="top"
+                    :use-teleport="false"
+                        :use-teleport="false"
                 />
             </form>
             <template #footer>

@@ -194,7 +194,7 @@ function bubbleClass(role) {
 
             <div v-if="props.mountPoints.length > 1" class="border-t border-line px-3 py-2 flex items-center gap-2">
                 <span class="text-xs text-muted shrink-0">{{ t('assistant.chat.source') }}</span>
-                <div class="flex-1 max-w-56">
+                <div class="flex-1 max-w-xs">
                     <AppMultiselect
                         :model-value="selectedSourceId"
                         :options="[{ value: null, label: t('assistant.chat.source_all') }, ...props.mountPoints.map(mp => ({ value: mp.id, label: `${mp.name} — ${mp.access === 'read_write' ? t('assistant.mount_point.access.read_write') : t('assistant.mount_point.access.read_only')}` }))]"
