@@ -18,7 +18,7 @@ Le client peut **ajouter** des finders, pas **remplacer** ceux d'Aurora.
 ```php
 namespace App\Repository;
 
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 
 class AppAgencyRepository extends AgencyRepository
 {

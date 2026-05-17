@@ -49,7 +49,7 @@ Mirror rule (idem `src/`) :
 
 | Code testé | Test |
 |---|---|
-| `src/Module/Core/Agency/Manager/AgencyManager.php` | `tests/Unit/Module/Core/Agency/Manager/AgencyManagerTest.php` |
+| `src/Module/Platform/Agency/Manager/AgencyManager.php` | `tests/Unit/Module/Core/Agency/Manager/AgencyManagerTest.php` |
 | `src/Module/Tracking/Project/Manager/ProjectManager.php` | `tests/Integration/Module/Tracking/Project/Manager/ProjectManagerTest.php` |
 
 Règle simple :
@@ -88,10 +88,10 @@ ce champ.
 ```php
 namespace App\Tests\Unit\Module\Core\Agency\Manager;
 
-use App\Module\Core\Agency\Dto\AgencyInput;
-use App\Module\Core\Agency\Entity\Agency;
-use App\Module\Core\Agency\Manager\AgencyManager;
-use Aurora\Core\Audit\Service\AuditLogger;
+use App\Module\Platform\Agency\Dto\AgencyInput;
+use App\Module\Platform\Agency\Entity\Agency;
+use App\Module\Platform\Agency\Manager\AgencyManager;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -127,14 +127,14 @@ Points utiles :
 ```php
 namespace App\Tests\Integration\Module\Core\Agency;
 
-use Aurora\Core\Agency\Manager\AgencyManagerInterface;
+use Aurora\Module\Platform\Agency\Manager\AgencyManagerInterface;
 // … hérite de la classe IntegrationTestCase d'Aurora
 final class AgencyExtensionTest extends \Aurora\Tests\Integration\IntegrationTestCase
 {
     public function testManagerInterfaceResolvesToClientManager(): void
     {
         $manager = self::getContainer()->get(AgencyManagerInterface::class);
-        self::assertInstanceOf(\App\Module\Core\Agency\Manager\AgencyManager::class, $manager);
+        self::assertInstanceOf(\App\Module\Platform\Agency\Manager\AgencyManager::class, $manager);
     }
 }
 ```

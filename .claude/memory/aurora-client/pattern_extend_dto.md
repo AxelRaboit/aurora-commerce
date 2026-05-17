@@ -22,10 +22,10 @@ Pour ajouter un champ au DTO d'entrée (ex: `code` sur `AgencyInput`), 2 étapes
 ### 1. DTO étendu
 
 ```php
-namespace App\Module\Core\Agency\Dto;
+namespace App\Module\Platform\Agency\Dto;
 
-use Aurora\Core\Agency\Dto\AgencyInput as BaseAgencyInput;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInput as BaseAgencyInput;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AgencyInput extends BaseAgencyInput
@@ -48,17 +48,17 @@ class AgencyInput extends BaseAgencyInput
 **Note** : si le DTO étendu doit être consommé par du code qui type-hint
 `AgencyInputInterface`, on peut soit :
 - Étendre l'interface aussi (`AppAgencyInputInterface extends AgencyInputInterface`)
-- Ou utiliser `instanceof App\Module\Core\Agency\Dto\AgencyInput` quand on a besoin de
+- Ou utiliser `instanceof App\Module\Platform\Agency\Dto\AgencyInput` quand on a besoin de
   `getCode()`.
 
 ### 2. Factory étendue
 
 ```php
-namespace App\Module\Core\Agency\Dto;
+namespace App\Module\Platform\Agency\Dto;
 
-use Aurora\Core\Agency\Dto\AgencyInputFactory as BaseAgencyInputFactory;
-use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactory as BaseAgencyInputFactory;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactoryInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Support\Str;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

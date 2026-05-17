@@ -132,8 +132,8 @@ final class MyControllerTest extends IntegrationTestCase
 ### Authentifier un utilisateur
 
 ```php
-use Aurora\Core\User\Repository\UserRepository;
-use Aurora\Core\User\Entity\User;
+use Aurora\Module\Platform\User\Repository\UserRepository;
+use Aurora\Module\Platform\User\Entity\User;
 
 $userRepository = static::getContainer()->get(UserRepository::class);
 $admin = $userRepository->findOneBy(['email' => 'dev@aurora.app', 'type' => 'backend']);

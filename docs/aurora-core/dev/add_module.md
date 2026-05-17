@@ -215,7 +215,7 @@ et tous les services concernés. Permet de garder les `if (! $context->isXEnable
 namespace Aurora\Module\Vault;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final readonly class VaultContext
 {
@@ -397,7 +397,7 @@ Pour un module qui expose des pages publiques (pas que back-office), créer
 namespace Aurora\Module\Photo;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
-use Aurora\Core\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final class PhotoFrontendDescriptor implements FrontendInterface
 {
@@ -433,9 +433,9 @@ Pour contribuer un onglet à la page admin Settings, implémenter
 // src/Module/MyModule/Setting/MyModuleConfigurationTabProvider.php
 namespace Aurora\Module\MyModule\Setting;
 
-use Aurora\Core\Setting\Configuration\ConfigurationTab;
-use Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface;
-use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
+use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
+use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 
 final readonly class MyModuleConfigurationTabProvider implements ConfigurationTabProviderInterface
 {

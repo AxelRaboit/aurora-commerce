@@ -95,7 +95,7 @@ twig:
 
 ```yaml
 services:
-    Aurora\Core\Setting\Command\DumpJsTranslationsCommand:
+    Aurora\Module\Configuration\Setting\Command\DumpJsTranslationsCommand:
         arguments:
             $auroraDir: '%kernel.project_dir%/vendor/axelraboit/aurora'
             $extraSourceDirs:
@@ -106,7 +106,7 @@ services:
 > Même logique que Twig : aurora-core auto-globe `src/Module/*/translations/`
 > mais uniquement dans son propre arbre. Côté client, déclarer chaque dossier
 > de traduction module.
-> Nom de classe **exact** : `Aurora\Core\Setting\Command\DumpJsTranslationsCommand`
+> Nom de classe **exact** : `Aurora\Module\Configuration\Setting\Command\DumpJsTranslationsCommand`
 > (pas `App\Core\Command\...`). Paramètre nommé `$extraSourceDirs`.
 
 ---
@@ -571,7 +571,7 @@ namespace App\Module\Tracking\Project\Manager;
 use App\Module\Tracking\Project\Dto\ProjectInputInterface;
 use App\Module\Tracking\Project\Entity\Project;
 use App\Module\Tracking\Project\Entity\ProjectInterface;
-use Aurora\Core\Audit\Service\AuditLogger;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -874,9 +874,9 @@ Pour contribuer un onglet à la page admin Settings, implémenter
 // src/Module/Tracking/Setting/TrackingConfigurationTabProvider.php
 namespace App\Module\Tracking\Setting;
 
-use Aurora\Core\Setting\Configuration\ConfigurationTab;
-use Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface;
-use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
+use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
+use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 
 final readonly class TrackingConfigurationTabProvider implements ConfigurationTabProviderInterface
 {
@@ -893,7 +893,7 @@ client veut contribuer aux settings :
 
 ```yaml
 _instanceof:
-    Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface:
+    Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface:
         tags: [aurora.configuration_tab_provider]
 ```
 

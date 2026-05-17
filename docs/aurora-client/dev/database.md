@@ -148,7 +148,7 @@ Aurora expose des paramètres d'application configurables depuis l'admin
 Pour accéder à un paramètre depuis le code :
 
 ```php
-use Aurora\Core\Setting\Repository\SettingRepository;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 
 // Dans un service
 $value = $this->settingRepository->getOrDefault(ApplicationParameterEnum::SomeSetting);

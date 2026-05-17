@@ -14,10 +14,10 @@ Le chemin du module **miroir** le namespace Aurora de l'entité étendue :
 
 | Namespace Aurora (depuis 0.4.0) | Chemin client |
 |---|---|
-| `Aurora\Core\Platform\Agency\…` | `src/Module/Core/Platform/Agency/…` |
-| `Aurora\Core\Platform\User\…` | `src/Module/Core/Platform/User/…` |
-| `Aurora\Core\Configuration\Setting\…` | `src/Module/Core/Configuration/Setting/…` |
-| `Aurora\Core\Media\Library\…` | `src/Module/Core/Media/Library/…` |
+| `Aurora\Module\Platform\Agency\…` | `src/Module/Platform/Agency/…` |
+| `Aurora\Module\Platform\User\…` | `src/Module/Core/Platform/User/…` |
+| `Aurora\Module\Configuration\Setting\…` | `src/Module/Core/Configuration/Setting/…` |
+| `Aurora\Module\Media\Library\…` | `src/Module/Core/Media/Library/…` |
 | `Aurora\Module\Crm\Deal\…` | `src/Module/Crm/Deal/…` |
 
 > **Note 0.4.0** : les entités Core ont été nichées sous leur module
@@ -64,6 +64,6 @@ App\Module\:
 doctrine:
     orm:
         resolve_target_entities:
-            # Depuis 0.4.0 : Agency vit sous Aurora\Core\Platform\Agency
-            Aurora\Core\Platform\Agency\Entity\AgencyInterface: App\Module\Core\Platform\Agency\Entity\Agency
+            # Depuis 0.4.0 : Agency vit sous Aurora\Module\Platform\Agency
+            Aurora\Module\Platform\Agency\Entity\AgencyInterface: App\Module\Platform\Agency\Entity\Agency
 ```

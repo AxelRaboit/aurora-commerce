@@ -13,10 +13,10 @@ Tout `<Name>Repository` Aurora **étend** `Aurora\Core\Repository\ResolveTargetE
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Agency\Repository;
+namespace Aurora\Module\Platform\Agency\Repository;
 
-use Aurora\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

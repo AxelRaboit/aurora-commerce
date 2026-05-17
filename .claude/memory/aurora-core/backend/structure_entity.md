@@ -32,7 +32,7 @@ src/<Module>/<Feature>/Entity/
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Agency\Entity;
+namespace Aurora\Module\Platform\Agency\Entity;
 
 use Aurora\Core\Contract\TimestampableInterface;
 
@@ -61,7 +61,7 @@ interface AgencyInterface extends TimestampableInterface
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Agency\Entity;
+namespace Aurora\Module\Platform\Agency\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
@@ -101,9 +101,9 @@ abstract class AbstractAgency implements AgencyInterface
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Agency\Entity;
+namespace Aurora\Module\Platform\Agency\Entity;
 
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]

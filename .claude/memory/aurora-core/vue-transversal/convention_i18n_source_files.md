@@ -21,7 +21,7 @@ src/Module/<Module>/translations/messages.{fr,en}.yaml
 src/Core/Auth/translations/         → backend.auth, frontend.login/register/…, shared.password
 src/Core/Audit/translations/        → backend.audit
 src/Core/Mail/translations/         → frontend.mail, shared.mail
-src/Core/Media/translations/        → backend.media, shared.media, shared.dropZone
+src/Module/Media/translations/        → backend.media, shared.media, shared.dropZone
 src/Core/Menu/translations/         → backend.menus, backend.nav, frontend.menu
 src/Core/Module/translations/       → backend.permissions, backend.modules
 src/Core/MountPoint/translations/   → backend.mountPoints
@@ -47,12 +47,12 @@ make translation   # régénère assets/locales/generated/{fr,en}.json
 ## Where does a key go?
 
 - `backend.billing.*` → `src/Module/Billing/translations/`
-- `backend.media.*` → `src/Core/Media/translations/`
+- `backend.media.*` → `src/Module/Media/translations/`
 - `shared.common.*` → `src/Core/translations/messages.{fr,en}.yaml`
 - Nouvelle feature Core → créer `src/Core/<Feature>/translations/messages.{fr,en}.yaml`
 
 **Why:** séparation par feature = co-localisation avec le code qui utilise la traduction.
-Un dev qui touche `src/Core/Media/` sait exactement où sont ses traductions.
+Un dev qui touche `src/Module/Media/` sait exactement où sont ses traductions.
 
 ## Tests de cohérence
 

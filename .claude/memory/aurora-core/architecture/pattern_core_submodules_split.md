@@ -7,8 +7,10 @@ metadata:
 
 ## Règle
 
-`src/Core/` contient **cinq** `<Name>Module.php` au lieu d'un seul
-`CoreModule.php` god-class :
+Aurora-core expose **cinq** `<Name>Module.php` au lieu d'un seul
+`CoreModule.php` god-class. Depuis 0.4.0, ces 5 modules vivent sous
+`src/Module/` (et non plus `src/Core/`) pour aligner avec les modules
+métier (`src/Module/Vault/`, `src/Module/Editorial/`, etc.) :
 
 - **`GeneralModule`** (priority 10) — Dashboard. Toggle root :
   `GeneralBackend`. Context : `GeneralContext`. Section id : `general`.
@@ -58,14 +60,14 @@ son propre module peut copier-coller n'importe quel `<X>Module.php`
 ## Comment l'appliquer
 
 **Ajouter une nouvelle section Core** (rare) :
-- **Module class** (`<Name>Module.php`) : reste à plat à
-  `src/Core/<Name>Module.php`, namespace `Aurora\Core\<Name>Module`.
-- **Sous-modules** du module : nichés sous `src/Core/<Name>/<SubModule>/`
+- **Module class** (`<Name>Module.php`) : à la racine du folder du module,
+  `src/Module/<Name>/<Name>Module.php`, namespace `Aurora\Module\<Name>\<Name>Module`.
+- **Sous-modules** du module : nichés sous `src/Module/<Name>/<SubModule>/`
   (depuis 0.4.0, cf. [[decision-core-submodule-nesting]]). Exemple :
-  `src/Core/Platform/User/`, `src/Core/Configuration/Setting/`,
-  `src/Core/General/Dashboard/`.
+  `src/Module/Platform/User/`, `src/Module/Configuration/Setting/`,
+  `src/Module/General/Dashboard/`.
 - Ajouter la case `<Name>Backend` dans `ModuleParameterEnum` + son context
-  dans `src/Core/<Name>/<Name>Context.php` (le Context vit à la racine du
+  dans `src/Module/<Name>/<Name>Context.php` (le Context vit à la racine du
   folder du module, à côté de ses sous-modules — convention unifiée
   core+business depuis 0.4.0).
 - L'auto-discovery fait le reste (services.yaml `_instanceof`, Twig glob,

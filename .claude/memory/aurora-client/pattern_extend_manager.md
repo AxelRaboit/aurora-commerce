@@ -26,14 +26,14 @@ Override les hooks :
 ### Squelette d'extension
 
 ```php
-namespace App\Module\Core\Agency\Manager;
+namespace App\Module\Platform\Agency\Manager;
 
-use Aurora\Core\Agency\Manager\AgencyManager as BaseAgencyManager;
-use Aurora\Core\Agency\Manager\AgencyManagerInterface;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use App\Module\Core\Agency\Dto\AgencyInput as AppAgencyInput;
-use App\Module\Core\Agency\Entity\Agency as AppAgency;
+use Aurora\Module\Platform\Agency\Manager\AgencyManager as BaseAgencyManager;
+use Aurora\Module\Platform\Agency\Manager\AgencyManagerInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use App\Module\Platform\Agency\Dto\AgencyInput as AppAgencyInput;
+use App\Module\Platform\Agency\Entity\Agency as AppAgency;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencyManagerInterface::class)]
@@ -74,7 +74,7 @@ class AgencyManager extends BaseAgencyManager
 ### 1. Oublier de override `createX()`
 
 Si `createAgency()` n'est pas override, le Manager Aurora fait `new
-\Aurora\…\Agency()` — la classe Aurora, pas `App\Module\Core\Agency\Entity\Agency`. Doctrine
+\Aurora\…\Agency()` — la classe Aurora, pas `App\Module\Platform\Agency\Entity\Agency`. Doctrine
 persiste la classe Aurora et **les champs custom du client sont perdus
 silencieusement**.
 

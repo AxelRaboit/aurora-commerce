@@ -40,14 +40,14 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Agency\Controller\Backend;
+namespace Aurora\Module\Platform\Agency\Controller\Backend;
 
-use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Manager\AgencyManagerInterface;
-use Aurora\Core\Agency\Repository\AgencyRepository;
-use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
-use Aurora\Core\Agency\View\AgenciesViewBuilder;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactoryInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Manager\AgencyManagerInterface;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Serializer\AgencySerializerInterface;
+use Aurora\Module\Platform\Agency\View\AgenciesViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;

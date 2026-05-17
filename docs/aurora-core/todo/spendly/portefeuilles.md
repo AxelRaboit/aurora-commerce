@@ -232,5 +232,5 @@ considéré "section budget" — à splitter si la fiche dépasse 600 lignes.
 - Spendly : tous les fichiers listés en intro
 - Aurora — patterns référence :
   - Voter : `Aurora\Module\Project\Voter\TaskVoter` (ownership + membres)
-  - Invitation flow : `Aurora\Core\User\Manager\UserInvitationManager`
-  - Pivot user-ressource : `Aurora\Core\User\Entity\UserAgencyMembership`
+  - Invitation flow : `Aurora\Module\Platform\User\Manager\UserInvitationManager`
+  - Pivot user-ressource : `Aurora\Module\Platform\User\Entity\UserAgencyMembership`

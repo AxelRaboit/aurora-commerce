@@ -62,7 +62,7 @@ candidates :
 - `Aurora\Core\Module\Contract\ModuleInterface` → `aurora.module`
 - `Aurora\Core\Frontend\Contract\FrontendInterface` → `aurora.front`
 - `Aurora\Core\Media\Contract\MediaUsageProviderInterface` → `aurora.media_usage_provider`
-- `Aurora\Core\Menu\Contract\MenuLocationProviderInterface` → `aurora.menu_location_provider`
+- `Aurora\Module\Editorial\Menu\Contract\MenuLocationProviderInterface` → `aurora.menu_location_provider`
   (réservé en pratique à `EditorialFrontendDescriptor` côté aurora-core ; rarement utile côté client)
 - `Aurora\Core\Sequence\SequencePrefixProviderInterface` → `aurora.sequence_prefix`
 

@@ -68,7 +68,7 @@ doctrine:
                 prefix: 'App\Module'
                 alias: AuroraClient
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
+            Aurora\Module\Platform\Agency\Entity\AgencyInterface: App\Module\Platform\Agency\Entity\Agency
 ```
 
 - **AuroraClient** — couvre tout `src/Module/` : extensions Aurora ET modules propres au client

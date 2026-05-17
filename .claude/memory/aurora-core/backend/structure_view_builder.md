@@ -22,10 +22,10 @@ ViewBuilder.
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Agency\View;
+namespace Aurora\Module\Platform\Agency\View;
 
-use Aurora\Core\Agency\Repository\AgencyRepository;
-use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Serializer\AgencySerializerInterface;
 
 final readonly class AgenciesViewBuilder
 {

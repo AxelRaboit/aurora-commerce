@@ -8,7 +8,7 @@ metadata:
 ## Règle
 
 La page admin Settings est extensible : tout service implémentant
-`Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface` voit ses
+`Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface` voit ses
 `ConfigurationTab[]` agrégés par `SettingDefinitionRegistry` (tagged
 `aurora.configuration_tab_provider`). Aucun patch sur `SettingsViewBuilder` ou
 `SettingsController` n'est nécessaire pour ajouter un onglet.

@@ -10,7 +10,7 @@ voici les étapes ordonnées. Chaque étape pointe vers le pattern détaillé.
 - [ ] Créer `App\Module\<Mirror>\<Name>\Entity\<Name>` qui étend
       `Aurora\…\Abstract<Name>` et `implements <Name>Interface`.
       Le chemin miroir reprend le namespace Aurora :
-      `Aurora\Core\Agency` → `src/Module/Core/Agency/Entity/`.
+      `Aurora\Module\Platform\Agency` → `src/Module/Platform/Agency/Entity/`.
 - [ ] Ajouter colonnes Doctrine + getters/setters pour les champs custom.
 - [ ] Sequence client : `seq_app_<entity>_id` (préfixe `app_` pour éviter
       collision avec `seq_core_*` Aurora).

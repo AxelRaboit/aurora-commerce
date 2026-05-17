@@ -35,7 +35,7 @@ Pattern documenté pour étendre les finders :
 // 1. Étendre le repo Aurora
 namespace App\Repository;
 
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 
 class AppAgencyRepository extends AgencyRepository
 {
@@ -49,7 +49,7 @@ class AppAgencyRepository extends AgencyRepository
 
 // 2. Déclarer dans l'entité concrète client
 #[ORM\Entity(repositoryClass: AppAgencyRepository::class)]
-class Agency extends \Aurora\Core\Agency\Entity\AbstractAgency implements AgencyInterface
+class Agency extends \Aurora\Module\Platform\Agency\Entity\AbstractAgency implements AgencyInterface
 {
     // …
 }

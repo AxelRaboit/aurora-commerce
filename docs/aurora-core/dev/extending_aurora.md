@@ -104,7 +104,7 @@ Use Symfony's `#[AsDecorator]` to swap behaviour without touching core code:
 ```php
 namespace App\Service;
 
-use Aurora\Core\Theme\Service\ThemeContext;
+use Aurora\Module\Configuration\Theme\Service\ThemeContext;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 
 #[AsDecorator(decorates: ThemeContext::class)]

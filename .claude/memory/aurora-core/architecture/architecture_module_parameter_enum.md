@@ -6,7 +6,7 @@ type: project
 
 ## Règle
 
-Les paramètres "module on/off" vivent dans `Aurora\Core\Setting\Enum\ModuleParameterEnum`,
+Les paramètres "module on/off" vivent dans `Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum`,
 **séparément** de `ApplicationParameterEnum` qui gère les paramètres applicatifs
 (SEO, séquences, seuils, etc.).
 

@@ -43,13 +43,13 @@ Hors des 5 couches :
 
 **Diff côté client** :
 
-`src/Module/Core/Agency/Entity/Agency.php` :
+`src/Module/Platform/Agency/Entity/Agency.php` :
 
 ```php
-namespace App\Module\Core\Agency\Entity;
+namespace App\Module\Platform\Agency\Entity;
 
-use Aurora\Core\Agency\Entity\{AbstractAgency, AgencyInterface};
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Entity\{AbstractAgency, AgencyInterface};
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
@@ -77,13 +77,13 @@ class Agency extends AbstractAgency implements AgencyInterface
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
+            Aurora\Module\Platform\Agency\Entity\AgencyInterface: App\Module\Platform\Agency\Entity\Agency
 ```
 
 ### Règles dures à respecter
 
 - On étend **`AbstractAgency`** (le `MappedSuperclass`), pas la classe
-  concrète `Aurora\Core\Agency\Entity\Agency`. Sinon Doctrine exige une
+  concrète `Aurora\Module\Platform\Agency\Entity\Agency`. Sinon Doctrine exige une
   inheritance type + discriminator — non voulu.
 - Table : préfixe **`app_*`** (jamais `core_*` qui est réservé à Aurora,
   jamais sans préfixe).
@@ -104,7 +104,7 @@ Le chemin client miroir le namespace Aurora :
 
 | Aurora | Client |
 |---|---|
-| `Aurora\Core\Agency\…` | `src/Module/Core/Agency/…` |
+| `Aurora\Module\Platform\Agency\…` | `src/Module/Platform/Agency/…` |
 | `Aurora\Module\Crm\Deal\…` | `src/Module/Crm/Deal/…` |
 | `Aurora\Module\Billing\Invoice\…` | `src/Module/Billing/Invoice/…` |
 
@@ -118,12 +118,12 @@ Le reste est identique au cas Agency.
 
 **Diff côté client** :
 
-`src/Module/Core/Agency/Dto/AgencyInput.php` — étend le DTO Aurora :
+`src/Module/Platform/Agency/Dto/AgencyInput.php` — étend le DTO Aurora :
 
 ```php
-namespace App\Module\Core\Agency\Dto;
+namespace App\Module\Platform\Agency\Dto;
 
-use Aurora\Core\Agency\Dto\AgencyInput as AuroraAgencyInput;
+use Aurora\Module\Platform\Agency\Dto\AgencyInput as AuroraAgencyInput;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AgencyInput extends AuroraAgencyInput
@@ -143,15 +143,15 @@ class AgencyInput extends AuroraAgencyInput
 }
 ```
 
-`src/Module/Core/Agency/Dto/AgencyInputFactory.php` — étend la factory et
+`src/Module/Platform/Agency/Dto/AgencyInputFactory.php` — étend la factory et
 écrase l'alias :
 
 ```php
-namespace App\Module\Core\Agency\Dto;
+namespace App\Module\Platform\Agency\Dto;
 
-use Aurora\Core\Agency\Dto\AgencyInputFactory as AuroraAgencyInputFactory;
-use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactory as AuroraAgencyInputFactory;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactoryInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Support\Str;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -191,17 +191,17 @@ le DTO racine et fournissez vos propres sub-DTO via la factory cliente.
 
 ### Cas : persister + auditer le champ `code` à la création / édition
 
-**Diff côté client** — `src/Module/Core/Agency/Manager/AgencyManager.php` :
+**Diff côté client** — `src/Module/Platform/Agency/Manager/AgencyManager.php` :
 
 ```php
-namespace App\Module\Core\Agency\Manager;
+namespace App\Module\Platform\Agency\Manager;
 
-use App\Module\Core\Agency\Dto\AgencyInput;
-use App\Module\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Manager\AgencyManager as AuroraAgencyManager;
-use Aurora\Core\Agency\Manager\AgencyManagerInterface;
+use App\Module\Platform\Agency\Dto\AgencyInput;
+use App\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Manager\AgencyManager as AuroraAgencyManager;
+use Aurora\Module\Platform\Agency\Manager\AgencyManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencyManagerInterface::class)]
@@ -272,15 +272,15 @@ Cf. [`entity_extensibility_convention.md §4.bis.1`](../../aurora-core/dev/entit
 ### Cas : exposer `code` dans le JSON envoyé au front
 
 **Diff côté client** —
-`src/Module/Core/Agency/Serializer/AgencySerializer.php` :
+`src/Module/Platform/Agency/Serializer/AgencySerializer.php` :
 
 ```php
-namespace App\Module\Core\Agency\Serializer;
+namespace App\Module\Platform\Agency\Serializer;
 
-use App\Module\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Serializer\AgencySerializer as AuroraAgencySerializer;
-use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
+use App\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Serializer\AgencySerializer as AuroraAgencySerializer;
+use Aurora\Module\Platform\Agency\Serializer\AgencySerializerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencySerializerInterface::class)]
@@ -373,12 +373,12 @@ non justifié — voir
 Le pattern côté client est simple : étendre le repo Aurora, déclarer le
 `repositoryClass` sur l'entité concrète.
 
-`src/Module/Core/Agency/Repository/AppAgencyRepository.php` :
+`src/Module/Platform/Agency/Repository/AppAgencyRepository.php` :
 
 ```php
-namespace App\Module\Core\Agency\Repository;
+namespace App\Module\Platform\Agency\Repository;
 
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 
 class AppAgencyRepository extends AgencyRepository
 {

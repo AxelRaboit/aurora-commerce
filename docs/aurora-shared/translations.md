@@ -37,41 +37,56 @@ Exemple — Billing :
 src/Module/Billing/translations/messages.fr.yaml   → billing.*, backend.billing.*, backend.nav.invoices, ...
 ```
 
-### Core — découpé par feature
+### Core — pure infrastructure (depuis 0.4.0)
 
-Le Core suit le même principe : chaque feature a son propre dossier `translations/`.
+`src/Core/` n'héberge plus de modules (Platform, Configuration, etc. sont
+sous `src/Module/`). Il contient uniquement de l'infrastructure cross-cutting
+qui a éventuellement quelques YAML :
 
 ```
 src/Core/
-├── Auth/translations/messages.{fr,en}.yaml         → backend.auth, frontend.login/register/…, shared.password
-├── Audit/translations/messages.{fr,en}.yaml        → backend.audit
 ├── Mail/translations/messages.{fr,en}.yaml         → frontend.mail, shared.mail
-├── Media/translations/messages.{fr,en}.yaml        → backend.media, shared.media, shared.dropZone
-├── Menu/translations/messages.{fr,en}.yaml         → backend.menus, backend.nav, frontend.menu
-├── Module/translations/messages.{fr,en}.yaml       → backend.permissions, backend.modules
-├── MountPoint/translations/messages.{fr,en}.yaml   → backend.mountPoints
 ├── Notification/translations/messages.{fr,en}.yaml → backend.notifications
-├── Profile/translations/messages.{fr,en}.yaml      → backend.profile, backend.impersonation
-├── Search/translations/messages.{fr,en}.yaml       → backend.search
-├── Setting/translations/messages.{fr,en}.yaml      → backend.settings, backend.parameters, backend.tabs, backend.stats
-├── Theme/translations/messages.{fr,en}.yaml        → backend.themes, frontend.theme
-├── User/translations/messages.{fr,en}.yaml         → backend.users, backend.roles, backend.invitations, backend.access_requests
-└── translations/                                   → clés vraiment transversales + security + validators
+└── translations/                                   → clés transversales + security + validators
     ├── messages.{fr,en}.yaml                       → shared.common, shared.locales, shared.pagination, shared.form, shared.comment
     ├── security.{fr,en,es,de}.yaml
     └── validators.{fr,en,es,de}.yaml
 ```
 
+### Modules — chacun avec ses translations
+
+Tous les modules (Core promus + business) vivent sous `src/Module/<X>/` et
+ont leur dossier `translations/`. Sous-modules pareil (depth 2).
+
+```
+src/Module/
+├── Platform/User/translations/messages.{fr,en}.yaml         → backend.users, backend.roles, backend.invitations, backend.access_requests
+├── Platform/Auth/translations/messages.{fr,en}.yaml         → backend.auth, frontend.login/register/…, shared.password
+├── Configuration/Setting/translations/messages.{fr,en}.yaml → backend.settings, backend.parameters, …
+├── Configuration/Theme/translations/messages.{fr,en}.yaml   → backend.themes, frontend.theme
+├── Media/Library/translations/messages.{fr,en}.yaml         → backend.media, shared.media, shared.dropZone
+├── General/Dashboard/translations/messages.{fr,en}.yaml     → backend.dashboard
+├── General/Profile/translations/messages.{fr,en}.yaml       → backend.profile, backend.impersonation
+├── General/Search/translations/messages.{fr,en}.yaml        → backend.search
+├── Dev/Audit/translations/messages.{fr,en}.yaml             → backend.audit
+├── Dev/MountPoint/translations/messages.{fr,en}.yaml        → backend.mountPoints
+├── Editorial/Menu/translations/messages.{fr,en}.yaml        → backend.menus, backend.nav, frontend.menu
+├── Editorial/translations/messages.{fr,en}.yaml             → backend.posts, ...
+├── Vault/translations/messages.{fr,en}.yaml                 → backend.vault, ...
+└── ... (tous les autres modules métier)
+```
+
 ### Découverte automatique
 
 `AuroraBundle` et `DumpJsTranslationsCommand` scannent automatiquement
-**par glob** :
+**par glob** (depth 1 ET depth 2 depuis 0.4.0) :
 - `src/Core/translations/`
-- `src/Core/*/translations/`
-- `src/Module/*/translations/`
+- `src/Core/*/translations/` (Mail, Notification)
+- `src/Module/*/translations/` (modules au top-level)
+- `src/Module/*/*/translations/` (sous-modules nichés)
 
-Ajouter un nouveau dossier `Feature/translations/` dans Core suffit — aucune
-configuration manuelle requise.
+Ajouter un nouveau dossier `translations/` à un module ou sous-module
+suffit — aucune configuration manuelle requise.
 
 ---
 
@@ -80,12 +95,12 @@ configuration manuelle requise.
 ```bash
 # 1. Identifier le bon fichier YAML
 #    - Clé backend.billing.* → src/Module/Billing/translations/messages.fr.yaml
-#    - Clé backend.media.*   → src/Core/Media/translations/messages.fr.yaml
+#    - Clé backend.media.*   → src/Module/Media/translations/messages.fr.yaml
 #    - Clé shared.common.*   → src/Core/translations/messages.fr.yaml
 
 # 2. Éditer FR ET EN
-vim src/Core/Media/translations/messages.fr.yaml
-vim src/Core/Media/translations/messages.en.yaml
+vim src/Module/Media/translations/messages.fr.yaml
+vim src/Module/Media/translations/messages.en.yaml
 
 # 3. Régénérer le JSON frontend
 make translation

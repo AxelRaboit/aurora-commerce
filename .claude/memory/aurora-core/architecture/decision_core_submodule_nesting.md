@@ -1,6 +1,6 @@
 ---
 name: decision-core-submodule-nesting
-description: Décision (mai 2026) — les sous-modules Core (User, Agency, Service, Auth, Setting, Theme, Audit, Dashboard, Profile, Search, Media) vivent désormais sous le dossier de leur module parent (Aurora\Core\Platform\User, etc.) pour aligner avec la convention Vault-style déjà en place côté src/Module/.
+description: Décision (mai 2026) — les sous-modules Core (User, Agency, Service, Auth, Setting, Theme, Audit, Dashboard, Profile, Search, Media) vivent désormais sous le dossier de leur module parent (Aurora\Module\Platform\User, etc.) pour aligner avec la convention Vault-style déjà en place côté src/Module/.
 metadata:
   type: project
 ---
@@ -49,8 +49,8 @@ Editorial…) les sous-modules vivaient dans un sous-dossier
 
 Toujours créer sous `src/Core/<ParentModule>/<SubModule>/`. Exemple :
 ajouter une sub-feature `Webhook` à `ConfigurationModule` →
-`src/Core/Configuration/Webhook/Entity/Webhook.php`, namespace
-`Aurora\Core\Configuration\Webhook\Entity\Webhook`.
+`src/Module/Configuration/Webhook/Entity/Webhook.php`, namespace
+`Aurora\Module\Configuration\Webhook\Entity\Webhook`.
 
 ### Pour un nouveau module Core (rare)
 
@@ -60,8 +60,8 @@ ajouter une sub-feature `Webhook` à `ConfigurationModule` →
 ### Pour aurora-client qui étend une entité Aurora
 
 Le chemin client miroir le namespace Aurora. Avant : `Aurora\Core\Agency`
-→ `src/Module/Core/Agency/` côté client. Après : `Aurora\Core\Platform\Agency`
-→ `src/Module/Core/Platform/Agency/`. Cf.
+→ `src/Module/Platform/Agency/` côté client. Après : `Aurora\Module\Platform\Agency`
+→ `src/Module/Platform/Agency/`. Cf.
 [`convention_module_structure.md`](../../aurora-client/convention_module_structure.md)
 (à mettre à jour côté client si pas déjà fait).
 
@@ -71,10 +71,10 @@ Le chemin client miroir le namespace Aurora. Avant : `Aurora\Core\Agency`
 racine du folder du module, à côté des sous-modules). S'applique core
 ET business :
 
-- **Core** : `src/Core/Platform/PlatformContext.php`,
-  `src/Core/Configuration/ConfigurationContext.php`,
-  `src/Core/Media/MediaContext.php`,
-  `src/Core/General/GeneralContext.php`.
+- **Core** : `src/Module/Platform/PlatformContext.php`,
+  `src/Module/Configuration/ConfigurationContext.php`,
+  `src/Module/Media/MediaContext.php`,
+  `src/Module/General/GeneralContext.php`.
 - **Business** : `src/Module/Vault/VaultContext.php`,
   `src/Module/Editorial/EditorialContext.php`, etc. (12 modules).
 
@@ -102,7 +102,7 @@ Twig, Validation, Enum, EventSubscriber, DataFixtures.
 **Menu** et **MountPoint** ont été déplacés (vague follow-up de 0.4.0) :
 - `src/Core/Menu/` → `src/Module/Editorial/Menu/` (le NavItem `backend_menus`
   est déjà déclaré dans `EditorialModule` → Menu = sous-module d'Editorial)
-- `src/Core/MountPoint/` → `src/Core/Dev/MountPoint/` (seul controller
+- `src/Core/MountPoint/` → `src/Module/Dev/MountPoint/` (seul controller
   exposé est `Dev/MountPointsController`)
 
 ## Règle "module vs infra" (finale après 0.4.0)
@@ -156,7 +156,7 @@ fichiers).
    `;` (pas de backslash final). N'est un problème que pour les
    namespaces à profondeur > 2 (Service\Entity\). Solution : 2e passe de
    sed avec patterns sans `\\` final ciblés sur les déclarations namespace.
-2. **Conflit `Aurora\Core\Media` vs `Aurora\Core\MediaModule`** : le
+2. **Conflit `Aurora\Core\Media` vs `Aurora\Module\Media\MediaModule`** : le
    pattern `Aurora\\Core\\Media\\` (avec backslash final) discrimine bien
    les deux (MediaModule n'a pas de `\` après "Media").
 3. **`src/Core/Service/` dual-purpose au moment du refacto initial** : hébergeait à la fois l'entité Service ET les contextes

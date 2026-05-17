@@ -1,5 +1,5 @@
 /**
- * Mirrors src/Core/Media/Enum/MimeTypeEnum.php so the front-end can share the
+ * Mirrors src/Module/Media/Library/Enum/MimeTypeEnum.php so the front-end can share the
  * same vocabulary as the back-end without scattering raw `'image/png'` strings
  * across components.
  *

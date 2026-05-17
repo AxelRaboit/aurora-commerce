@@ -63,7 +63,7 @@ correspondait plus à un module class réel.
 
 **Bénéfices du nommage uniforme** :
 - Un dev qui lit `media.folders.create` sait immédiatement que c'est
-  déclaré dans `MediaModule.php` (`src/Core/MediaModule.php`).
+  déclaré dans `MediaModule.php` (`src/Module/Media/MediaModule.php`).
 - Le `PermissionRegistry::byModule()` indexe naturellement sous le bon
   groupe sans `$group:` override (cf
   [[convention-navpermission-group]] devenu quasi obsolète).

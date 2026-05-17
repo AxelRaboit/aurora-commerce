@@ -7,7 +7,7 @@ Pour ajouter un champ à une entité Aurora (ex: `code` sur `Agency`), 4 étapes
 1. Créer `App\Module\<Mirror>\<Name>\Entity\<Name>` qui étend
    `Aurora\…\Abstract<Name>` et `implements <Name>Interface`.
    Le chemin miroir reprend le namespace Aurora : une entité de
-   `Aurora\Core\Agency` va dans `src/Module/Core/Agency/Entity/`.
+   `Aurora\Module\Platform\Agency` va dans `src/Module/Platform/Agency/Entity/`.
 2. Ajouter les colonnes Doctrine + getters/setters pour les champs custom.
 3. Inscrire dans `config/packages/doctrine.yaml` →
    `resolve_target_entities`.
@@ -26,15 +26,15 @@ Pour ajouter un champ à une entité Aurora (ex: `code` sur `Agency`), 4 étapes
 
 ### 1. Entité concrète client
 
-Chemin : `src/Module/Core/Agency/Entity/Agency.php`
-(miroir du namespace Aurora `Aurora\Core\Agency`)
+Chemin : `src/Module/Platform/Agency/Entity/Agency.php`
+(miroir du namespace Aurora `Aurora\Module\Platform\Agency`)
 
 ```php
-namespace App\Module\Core\Agency\Entity;
+namespace App\Module\Platform\Agency\Entity;
 
-use Aurora\Core\Agency\Entity\AbstractAgency;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Entity\AbstractAgency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
@@ -76,7 +76,7 @@ Dans `config/packages/doctrine.yaml` (pas dans `AuroraBundle.php`) :
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
+            Aurora\Module\Platform\Agency\Entity\AgencyInterface: App\Module\Platform\Agency\Entity\Agency
 ```
 
 ### 3. Migration

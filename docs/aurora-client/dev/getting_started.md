@@ -133,13 +133,13 @@ mon-projet/
 
 Exemple minimal — ajouter un champ `code` à `Agency` :
 
-### a) Entité — `src/Module/Core/Agency/Entity/Agency.php`
+### a) Entité — `src/Module/Platform/Agency/Entity/Agency.php`
 
 ```php
-namespace App\Module\Core\Agency\Entity;
+namespace App\Module\Platform\Agency\Entity;
 
-use Aurora\Core\Agency\Entity\{AbstractAgency, AgencyInterface};
-use Aurora\Core\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Agency\Entity\{AbstractAgency, AgencyInterface};
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
@@ -167,7 +167,7 @@ class Agency extends AbstractAgency implements AgencyInterface
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
+            Aurora\Module\Platform\Agency\Entity\AgencyInterface: App\Module\Platform\Agency\Entity\Agency
         mappings:
             AuroraClient:
                 type: attribute
