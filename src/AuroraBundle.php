@@ -121,6 +121,8 @@ use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
+use Aurora\Module\Notes\Block\Entity\BlockNote;
+use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
@@ -304,6 +306,7 @@ class AuroraBundle extends AbstractBundle
                     VaultUserConfigInterface::class => VaultUserConfig::class,
                     MountPointInterface::class => MountPoint::class,
                     MarkdownNoteInterface::class => MarkdownNote::class,
+                    BlockNoteInterface::class => BlockNote::class,
                 ],
                 'mappings' => array_merge(
                     [

@@ -20,6 +20,7 @@ final readonly class NotesModule implements ModuleInterface
     {
         return [
             new NavPermission('notes.markdown.use'),
+            new NavPermission('notes.block.use'),
         ];
     }
 
@@ -33,6 +34,13 @@ final readonly class NotesModule implements ModuleInterface
                     'file-text',
                     requiredPrivilege: 'notes.markdown.use',
                     descriptionKey: 'backend.nav.notes_markdown_description',
+                ),
+                new NavItem(
+                    'backend_notes_block',
+                    'backend.nav.notes_block',
+                    'layers',
+                    requiredPrivilege: 'notes.block.use',
+                    descriptionKey: 'backend.nav.notes_block_description',
                 ),
             ], priority: 25),
         ];

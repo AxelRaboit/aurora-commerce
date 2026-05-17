@@ -198,7 +198,7 @@ fixtures: ## Drop DB, re-run migrations and load fixtures
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	@echo "✅ Fixtures loaded"
 
-demo: ## Load demo fixtures (DemoFixtures group) + run all syncs
+demo: purge-uploads ## Purge var/uploads/ then load demo fixtures + run all syncs
 	$(CONSOLE) doctrine:fixtures:load --group=demo --no-interaction
 	$(CONSOLE) aurora:application-parameter
 	$(CONSOLE) aurora:menus:sync

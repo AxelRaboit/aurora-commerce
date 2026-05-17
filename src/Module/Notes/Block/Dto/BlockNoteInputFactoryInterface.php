@@ -1,0 +1,11 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\Notes\Block\Dto;
+
+interface BlockNoteInputFactoryInterface
+{
+    /** @param array<string, mixed> $data */
+    public function fromArray(array $data): BlockNoteInputInterface;
+}

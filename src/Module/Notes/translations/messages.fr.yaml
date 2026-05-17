@@ -6,16 +6,26 @@ backend:
     notes_markdown_image_quality_pct:
       label: Qualité d'encodage WebP (%)
       description: "Qualité WebP appliquée au redimensionnement, entre 0 et 100. Recommandé : 85 (bon compromis taille/qualité)."
+    notes_block_image_max_edge:
+      label: Taille maximale des images uploadées (px)
+      description: "Côté le plus long, en pixels. Les images dépassant cette limite sont redimensionnées côté navigateur avant l'envoi. Recommandé : 2048."
+    notes_block_image_quality_pct:
+      label: Qualité d'encodage WebP (%)
+      description: "Qualité WebP appliquée au redimensionnement, entre 0 et 100. Recommandé : 85 (bon compromis taille/qualité)."
   permissions:
     names:
       notes:
         markdown:
           use: Utiliser les notes Markdown
+        block:
+          use: Utiliser les notes Block
   nav:
     sections:
       notes: Notes
     notes_markdown: Notes Markdown
     notes_markdown_description: Prise de notes Markdown façon Obsidian (wiki-links, graphe)
+    notes_block: Notes Block
+    notes_block_description: Prise de notes par blocs façon Notion
   audit:
     actions:
       notes_markdown:
@@ -23,6 +33,15 @@ backend:
           created: Note créée
           updated: Note mise à jour
           deleted: Note supprimée
+        tag:
+          renamed: Tag renommé
+          merged: Tags fusionnés
+          removed: Tag supprimé
+      notes_block:
+        note:
+          created: Note Block créée
+          updated: Note Block mise à jour
+          deleted: Note Block supprimée
         tag:
           renamed: Tag renommé
           merged: Tags fusionnés
@@ -138,3 +157,98 @@ notes:
       delete_failed: Impossible de supprimer la note.
       reorder_failed: Impossible de réordonner les notes.
       reorder_cycle: Impossible de déplacer une note sous l'une de ses sous-notes.
+  block:
+    title: Notes Block
+    save: Enregistrer
+    delete: Supprimer
+    cancel: Annuler
+    saved: Note enregistrée
+    untitled: Sans titre
+    title_placeholder: Titre de la note…
+    create_root: Nouvelle note
+    create_child: Ajouter une sous-note
+    search_placeholder: Rechercher dans l'arbo…
+    search_no_results: Aucun résultat
+    search_no_results_description: 'Aucune note ne correspond à « {query} ».'
+    confirm_delete: 'Supprimer définitivement « {title} » ?'
+    delete_warning: Cette action est irréversible. Les sous-notes seront détachées de leur parent.
+    add_block: Ajouter un bloc
+    block_menu: Choisir un type de bloc
+    move_up: Monter
+    move_down: Descendre
+    resize_handle: Glisser pour redimensionner
+    editor:
+      placeholder: Commencez à écrire ou tapez "/" pour insérer un bloc…
+    empty:
+      title: Aucune note
+      description: Cliquez sur + pour créer votre première note.
+    empty_blocks:
+      title: Cette note est vide
+      description: Cliquez sur + en bas pour ajouter votre premier bloc.
+    no_selection:
+      title: Sélectionnez une note
+      description: Choisissez une note dans l'arborescence ou créez-en une nouvelle.
+    types:
+      text: Texte
+      heading: Titre
+      todo: Tâche
+      image: Image
+      code: Code
+      divider: Séparateur
+    placeholders:
+      text: Écrivez quelque chose…
+      heading: Titre
+      todo: Tâche…
+      code: Collez du code…
+      caption: Légende…
+      url: https://…
+    image:
+      upload: Téléverser une image
+      library: Choisir dans la médiathèque
+      or: ou
+      replace_upload: Téléverser un nouveau fichier
+      replace_library: Changer depuis la médiathèque
+      resize_handle: Glisser pour redimensionner
+    errors:
+      invalid_type: Type de bloc inconnu.
+      load_failed: Impossible de charger la note.
+      create_failed: Impossible de créer la note.
+      save_failed: Impossible d'enregistrer la note.
+      delete_failed: Impossible de supprimer la note.
+      reorder_failed: Impossible de réordonner les notes.
+      reorder_cycle: Impossible de déplacer une note sous l'une de ses sous-notes.
+      upload_failed: Impossible d'envoyer l'image.
+    tags:
+      add_placeholder: Ajouter un tag…
+      filter_label: Filtrer par tag
+      clear: Tout effacer
+      no_results: Aucune note pour ces tags
+      no_results_description: Aucune note de l'arbo ne porte les tags sélectionnés.
+      errors:
+        empty: Le tag est requis.
+        sources_empty: Sélectionnez au moins un tag à fusionner.
+      manage:
+        title: Gérer les tags
+        close: Fermer
+        search_placeholder: Filtrer les tags…
+        search_empty: Aucun tag trouvé
+        search_empty_description: 'Aucun tag ne correspond à « {query} ».'
+        empty_title: Aucun tag
+        empty_description: Aucune note ne porte de tag pour le moment.
+        rename: Renommer
+        rename_confirm: Renommer
+        new_name_placeholder: Nouveau nom du tag…
+        rename_success: 'Aucune note mise à jour. | 1 note mise à jour. | {count} notes mises à jour.'
+        delete: Supprimer
+        delete_yes: Confirmer
+        delete_confirm: 'Retirer « {tag} » de 1 note ? | Retirer « {tag} » de {count} notes ?'
+        delete_success: 'Tag retiré de 0 note. | Tag retiré de 1 note. | Tag retiré de {count} notes.'
+        merge_prompt: 'Fusionner 1 tag en un seul : | Fusionner {count} tags en un seul :'
+        merge_target_placeholder: Tag cible (existant ou nouveau)…
+        merge_confirm: Fusionner
+        merge_success: 'Aucune note fusionnée. | 1 note fusionnée. | {count} notes fusionnées.'
+        note_count: '1 note | {count} notes'
+        errors:
+          rename_failed: Impossible de renommer le tag.
+          delete_failed: Impossible de supprimer le tag.
+          merge_failed: Impossible de fusionner les tags.
