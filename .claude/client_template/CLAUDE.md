@@ -198,3 +198,58 @@ sans les perdre :
 
 `Makefile.local` n'est **jamais** touché par `sync-makefile`.
 
+---
+
+## Contrat de synchronisation — qui possède quoi
+
+`make aurora-update` (et `make pull-update`) touchent au projet client.
+Voici exactement ce qui est écrasé vs ce qui appartient au client.
+
+### Sync agressif — écrasé à chaque run
+
+| Fichier / dossier | Mécanisme |
+|---|---|
+| `CLAUDE.md` | symlink vers vendor (toujours canonique) |
+| `Makefile` | `cp` depuis vendor — **refuse si tu as des edits non commités** (sauf `FORCE=1`). Targets perso → `Makefile.local`. |
+| `config/packages/security.yaml` | `cp` depuis vendor à chaque run. Custom-sec → `security_custom.yaml` chargé en complément, ou `EventSubscriber`. |
+| `jsconfig.json` | régénéré depuis les modules vendor (`bin/sync-client-jsconfig`) |
+| `.claude/memory/aurora-core/` | symlink vers vendor |
+| `.claude/memory/aurora-client/` | symlink vers vendor |
+| `.claude/memory/aurora-shared/` | symlink vers vendor |
+| `.claude/skills/<nom>/` (avec `scope: shared`) | symlink par skill vers vendor |
+
+### Seed once — créé si absent, jamais écrasé
+
+| Fichier | Mécanisme |
+|---|---|
+| `README.md` | copié depuis le template au 1er install. Une fois présent = client-owned. |
+| `.claude/settings.json` | idem |
+| `.env` blocs `###> aurora/* ###` | **ajoutés** si absents (`make sync-env`). Valeurs existantes jamais touchées. |
+
+### 100% client-owned — jamais touché par les sync
+
+- `composer.json` (le client ajoute ses propres deps)
+- `.env.local`, `.env.test`, `.env.test.local`
+- `config/services.yaml` (client-side)
+- `config/packages/*.yaml` **sauf** `security.yaml`
+- `src/`, `assets/`, `templates/`, `tests/`, `migrations/`
+- `Makefile.local`
+- `CLAUDE.local.md`
+- `.claude/skills/<custom-name>/` (skills non symlinkés)
+- `public/uploads/`, `var/`
+
+### Effets en DB (additifs, pas destructifs)
+
+| Commande | Effet |
+|---|---|
+| `make migrate-f` | applique les nouvelles migrations Doctrine (vendor + client). Jamais de downgrade auto. |
+| `aurora:privileges:sync` | crée les nouveaux `NavPermission` déclarés dans le code. Ne supprime pas les anciens. |
+| `aurora:application-parameter` | synchronise les settings registry. Ne supprime jamais une valeur saisie côté admin. |
+| `aurora:menus:sync` | crée les menus manquants par location. Ne supprime jamais ceux existants. |
+
+### Points d'attention
+
+- **`config/services.yaml`** : pas sync. Si aurora-core introduit un nouveau pattern `_instanceof` (genre `aurora.assistant.tool`), le client doit l'ajouter manuellement.
+- **Privilège renommé** (ancien `notes.write` → nouveau `notes.markdown.write`) : pas de migration auto, prévoir une commande de cleanup ad-hoc.
+- **Migration vendor + client partagent le même namespace** (`DoctrineMigrations`). Éviter de créer une migration locale avec le même horodatage qu'une à venir côté core.
+

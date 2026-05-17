@@ -372,6 +372,9 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 sync-jsconfig: ## Regenerate jsconfig.json from aurora module aliases
 	node $(AURORA)/bin/sync-client-jsconfig
 
+sync-env: ## Add any missing `###> aurora/* ###` block to .env (never overwrites existing values)
+	@bash $(AURORA)/bin/sync-client-env
+
 make-frontend: ## Scaffold a new frontend module (header, footer, layout, home). Usage: make make-frontend name=MyModule
 	@if [ -z "$(name)" ]; then \
 		read -p "Module name (PascalCase, e.g. Billing): " name && \
@@ -401,6 +404,7 @@ pull-update: _no-recent-aurora-update ## After a regular `git pull`: install dep
 	$(CONSOLE) cache:clear
 	make migrate-f
 	make sync-jsconfig
+	make sync-env
 	make sync-security
 	make sync-claude-md
 	make sync-makefile
@@ -425,6 +429,7 @@ aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-
 	make migrate-f
 	$(CONSOLE) aurora:privileges:sync
 	make sync-jsconfig
+	make sync-env
 	make sync-security
 	make sync-claude-md
 	make sync-makefile
@@ -478,16 +483,27 @@ sync-claude-md: ## Symlink CLAUDE.md + .claude/memory + .claude/skills (shared) 
 	fi
 
 sync-makefile: ## Refresh Makefile from aurora-core template (auto-generated, do not edit by hand)
-	@if [ -f $(AURORA)/.claude/client_template/Makefile ]; then \
-		if ! cmp -s $(AURORA)/.claude/client_template/Makefile Makefile; then \
-			cp $(AURORA)/.claude/client_template/Makefile Makefile; \
-			echo "✅ Makefile updated from aurora-core — re-run 'make aurora-update' if needed"; \
-		else \
-			echo "✅ Makefile already up-to-date with aurora-core"; \
-		fi \
-	else \
+	@if [ ! -f $(AURORA)/.claude/client_template/Makefile ]; then \
 		echo "⚠️  $(AURORA)/.claude/client_template/Makefile not found — skipping"; \
-	fi
+		exit 0; \
+	fi; \
+	if cmp -s $(AURORA)/.claude/client_template/Makefile Makefile; then \
+		echo "✅ Makefile already up-to-date with aurora-core"; \
+		exit 0; \
+	fi; \
+	if [ "$(FORCE)" != "1" ] && git rev-parse --git-dir > /dev/null 2>&1; then \
+		if ! git diff --quiet -- Makefile 2>/dev/null || ! git diff --cached --quiet -- Makefile 2>/dev/null; then \
+			echo "❌ Makefile has uncommitted local edits."; \
+			echo "   The sync would overwrite them without saving."; \
+			echo "   Options:"; \
+			echo "     1. Move custom targets to Makefile.local (never overwritten)."; \
+			echo "     2. Commit / stash your changes, then re-run."; \
+			echo "     3. Force overwrite anyway: make sync-makefile FORCE=1"; \
+			exit 1; \
+		fi; \
+	fi; \
+	cp $(AURORA)/.claude/client_template/Makefile Makefile; \
+	echo "✅ Makefile updated from aurora-core — re-run 'make aurora-update' if needed"
 
 # ─────────────────────────────────────────────────────────────────────
 # Makefile.local — client-specific targets
