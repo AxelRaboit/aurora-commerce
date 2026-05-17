@@ -14,6 +14,7 @@ use Aurora\Core\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Core\Setting\Exception\CascadeViolationException;
 use Aurora\Core\Setting\Service\SettingsService;
 use Aurora\Core\Setting\View\SettingsViewBuilder;
+use Aurora\Core\User\Enum\UserRoleEnum;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,7 +40,9 @@ final class SettingsController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        return $this->render('@Core/backend/settings/index.html.twig', $this->viewBuilder->indexView());
+        return $this->render('@Core/backend/settings/index.html.twig', $this->viewBuilder->indexView(
+            isDev: $this->isGranted(UserRoleEnum::Dev->value),
+        ));
     }
 
     #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]

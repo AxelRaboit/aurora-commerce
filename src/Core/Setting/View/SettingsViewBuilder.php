@@ -36,12 +36,16 @@ final readonly class SettingsViewBuilder
     /**
      * @return array<string, mixed>
      */
-    public function indexView(): array
+    public function indexView(bool $isDev = false): array
     {
         $groups = [];
         $tabs = [];
 
         foreach ($this->definitionRegistry->getTabs() as $tab) {
+            if ($tab->devOnly && !$isDev) {
+                continue;
+            }
+
             $fields = [];
             foreach ($tab->fields as $field) {
                 $value = $this->settingRepository->get($field->key, $field->defaultValue);
@@ -64,6 +68,7 @@ final readonly class SettingsViewBuilder
                 'priority' => $tab->priority,
                 'alwaysVisible' => $tab->alwaysVisible,
                 'componentName' => $tab->componentName,
+                'devOnly' => $tab->devOnly,
             ];
         }
 

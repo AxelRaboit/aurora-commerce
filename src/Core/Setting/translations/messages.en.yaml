@@ -17,8 +17,10 @@ backend:
       system_description: 'Maintenance, registrations, access and uploads.'
       email: Emails
       email_description: Language for outgoing emails.
+      media: Media & uploads
+      media_description: File upload limits (max size, allowed extensions).
       sequences: Sequences
-      sequences_description: Prefixes for auto-generated references.
+      sequences_description: Prefixes for auto-generated references. Developer-only tab.
       navigation: Navigation
       navigation_description: Customize sidemenu section and item names.
       notes: Notes

@@ -6,7 +6,6 @@
     {% set tabLabels = {
         overview: 'backend.tabs.overview'|trans,
         users: 'backend.tabs.users'|trans,
-        parameters: 'backend.tabs.parameters'|trans,
         access_requests: 'backend.tabs.access_requests'|trans,
         audit: 'backend.tabs.audit'|trans,
         permissions: 'backend.tabs.permissions'|trans,
@@ -26,7 +25,6 @@
 <div {{ vue_component('core/backend/AdministrationApp', {
     tab: tab,
     stats: tab == 'overview' ? stats : {},
-    parameters: tab == 'parameters' ? parameters : {},
     users: tab == 'users' ? users : {},
     accessRequests: tab == 'access_requests' ? accessRequests : {},
     audit: tab == 'audit' ? audit : {},
@@ -36,8 +34,6 @@
     search: search ?? '',
     group: group ?? '',
     overviewPath: path('dev_dashboard'),
-    parametersPath: path('dev_parameters'),
-    parameterUpdatePath: path('dev_parameters_update', {key: '__key__'}),
     usersPath: path('dev_users'),
     userCreatePath: path('dev_users_create'),
     userUpdatePath: path('dev_users_update', {id: '__id__'}),

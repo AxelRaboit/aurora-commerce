@@ -13,7 +13,7 @@ import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppListItemButton from "@/shared/components/action/AppListItemButton.vue";
 import AppTextLinkButton from "@/shared/components/action/AppTextLinkButton.vue";
-import { Search, FileText, Lock, Save } from "lucide-vue-next";
+import { Search, FileText, Lock, Save, Code2 } from "lucide-vue-next";
 import { ParameterType } from "@core/utils/enums/settings/parameterType.js";
 import { useSettingsForm } from "@core/backend/settings/composables/useSettingsForm.js";
 import { useSettingsPostPicker } from "@core/backend/settings/composables/useSettingsPostPicker.js";
@@ -60,6 +60,9 @@ const { postPickerLabels, postPickerSearch, postPickerResults, postPickerOpen, r
 
 const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, goToSequencePage } =
     useSettingsSequenceFilter(props.groups);
+
+const tabMeta = Object.fromEntries(props.tabs.map((t) => [t.id, t]));
+const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
 </script>
 
 <template>
@@ -76,7 +79,10 @@ const { sequenceSearch, paginatedSequences, sequencePage, sequenceTotalPages, go
                     :active="activeTab === groupName"
                     v-on:click="selectTab(groupName)"
                 >
-                    {{ tabLabel(groupName) }}
+                    <span class="flex items-center gap-1.5">
+                        {{ tabLabel(groupName) }}
+                        <Code2 v-if="isDevOnly(groupName)" class="w-3 h-3 text-accent-500 shrink-0" :stroke-width="2" :title="'Dev only'" />
+                    </span>
                 </AppTab>
             </AppTooltip>
         </nav>

@@ -4,7 +4,6 @@ import { useUrlSyncedState } from "@/shared/composables/list/useUrlSyncedState.j
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppTooltip from "@/shared/components/overlay/AppTooltip.vue";
 import DashboardOverview from "@core/backend/dashboard/DashboardOverview.vue";
-import ParametersTab from "@core/backend/dev/parameters/ParametersTab.vue";
 import UsersTab from "@core/backend/dev/users/UsersTab.vue";
 import AccessRequestsTab from "@core/backend/dev/access-requests/AccessRequestsTab.vue";
 import AuditTab from "@core/backend/dev/audit/AuditTab.vue";
@@ -13,7 +12,6 @@ import ModulesTab from "@core/backend/dev/modules/ModulesTab.vue";
 import MountPointsTab from "@core/backend/dev/mount-points/MountPointsTab.vue";
 import {
     LayoutDashboard,
-    Sliders,
     Users,
     KeyRound,
     ScrollText,
@@ -27,7 +25,6 @@ const { t } = useI18n();
 const props = defineProps({
     tab: { type: String, default: "overview" },
     stats: { type: Object, default: () => ({}) },
-    parameters: { type: Object, default: () => ({}) },
     users: { type: Object, default: () => ({}) },
     accessRequests: { type: Object, default: () => ({}) },
     audit: { type: Object, default: () => ({}) },
@@ -37,8 +34,6 @@ const props = defineProps({
     search: { type: String, default: "" },
     group: { type: String, default: "" },
     overviewPath: { type: String, required: true },
-    parametersPath: { type: String, required: true },
-    parameterUpdatePath: { type: String, required: true },
     usersPath: { type: String, required: true },
     userCreatePath: { type: String, required: true },
     userUpdatePath: { type: String, required: true },
@@ -65,7 +60,6 @@ const props = defineProps({
 // Each tab is self-describing: label, icon, URL path and initial SSR data colocated.
 const tabs = [
     { key: "overview",        label: () => t("backend.tabs.overview"),        description: () => t("backend.tabs.overview_description"),        icon: LayoutDashboard, path: () => props.overviewPath,        initialData: () => props.stats },
-    { key: "parameters",      label: () => t("backend.tabs.parameters"),      description: () => t("backend.tabs.parameters_description"),      icon: Sliders,         path: () => props.parametersPath,      initialData: () => props.parameters },
     { key: "users",           label: () => t("backend.tabs.users"),           description: () => t("backend.tabs.users_description"),           icon: Users,           path: () => props.usersPath,           initialData: () => props.users },
     { key: "access_requests", label: () => t("backend.tabs.access_requests"), description: () => t("backend.tabs.access_requests_description"), icon: KeyRound,        path: () => props.accessRequestsPath,  initialData: () => props.accessRequests },
     { key: "audit",           label: () => t("backend.tabs.audit"),           description: () => t("backend.tabs.audit_description"),           icon: ScrollText,      path: () => props.auditPath,           initialData: () => props.audit },
@@ -134,14 +128,6 @@ function initialDataFor(key) {
                 <DashboardOverview
                     v-if="tab === 'overview'"
                     :stats="initialDataFor('overview') ?? {}"
-                />
-                <ParametersTab
-                    v-else-if="tab === 'parameters'"
-                    :parameters-path="parametersPath"
-                    :parameter-update-path="parameterUpdatePath"
-                    :initial-data="initialDataFor('parameters')"
-                    :initial-search="search"
-                    :initial-group="group"
                 />
                 <UsersTab
                     v-else-if="tab === 'users'"

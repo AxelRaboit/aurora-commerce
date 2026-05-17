@@ -28,6 +28,13 @@ class ConfigurationTab
          */
         public readonly bool $alwaysVisible = false,
         /**
+         * When true, this tab is only rendered for users with ROLE_DEV.
+         * Regular admins do not see it. Use for technical / low-level settings
+         * that should not be touched in normal operation (sequences, upload
+         * limits, internal prefixes, etc.).
+         */
+        public readonly bool $devOnly = false,
+        /**
          * Optional name resolved against the Vue-side tab registry
          * (`assets/Core/backend/settings/tabRegistry.js`). When set, the
          * Settings page renders the matching component instead of the

@@ -43,7 +43,8 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
         'seo' => 60,
         'system' => 70,
         'email' => 80,
-        'sequences' => 90,
+        'media' => 85,      // upload limits — visible to all admins
+        'sequences' => 90,  // internal prefixes — dev only
         'navigation' => 100,
     ];
 
@@ -56,6 +57,9 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
         'navigation' => 'navigation',
         'appearance' => 'appearance',
     ];
+
+    /** Groups that should only appear for ROLE_DEV users. */
+    private const array DEV_ONLY_GROUPS = ['sequences'];
 
     public function __construct(
         private SettingRepository $settingRepository,
@@ -99,6 +103,7 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
                 priority: $priority,
                 fields: $fields,
                 alwaysVisible: null !== $componentName,
+                devOnly: in_array($group, self::DEV_ONLY_GROUPS, true),
                 componentName: $componentName,
             );
         }
