@@ -64,13 +64,13 @@ backend:
       description: 'Per-request idle timeout (Ollama or Anthropic), in seconds. Raise if you hit transport errors mid-generation. .env default: 300.'
     assistant_num_ctx:
       label: Context window (num_ctx)
-      description: 'Ollama only. Token count loaded into the model context. Higher = longer conversations but more RAM. .env default: 8192.'
+      description: 'Token count loaded into the model context. Higher = longer conversations but more RAM. .env default: 8192.'
     assistant_max_tokens:
       label: Max tokens (response)
-      description: 'Anthropic only. Maximum number of tokens in the response. Recommended: 4096.'
+      description: 'Maximum number of tokens in the response. Recommended: 4096.'
     assistant_system_prompt:
       label: System prompt
-      description: 'Instructions given to the model at the start of every conversation (Ollama and Anthropic). Leave blank to use the built-in Aurora default.'
+      description: 'Instructions given to the model at the start of every conversation. Leave blank to use the built-in Aurora default.'
   nav:
     sections:
       assistant: Assistant
