@@ -50,8 +50,11 @@ backend:
     tabs:
       assistant: Assistant
   parameters:
+    assistant_provider:
+      label: AI provider
+      description: 'Choose between Ollama (local) and Anthropic Claude (cloud). For Anthropic, set ANTHROPIC_API_KEY in .env.local and pick a Claude model in "Chat model".'
     assistant_chat_model:
-      label: Ollama chat model
+      label: Chat model
       description: 'Exact Ollama model identifier (e.g. qwen3:8b, mistral-nemo, llama3.1:8b). Must be a tool-calling model. Leave blank to fall back to ASSISTANT_CHAT_MODEL from .env.'
     assistant_vision_model:
       label: Ollama vision model

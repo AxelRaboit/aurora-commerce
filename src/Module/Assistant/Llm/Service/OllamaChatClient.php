@@ -8,7 +8,6 @@ use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
 use Aurora\Module\Assistant\Setting\AssistantSettings;
 use RuntimeException;
-use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -25,7 +24,6 @@ use function sprintf;
  * on qwen3 thinking models so the response payload isn't crowded out by
  * <think>...</think> tokens.
  */
-#[AsAlias(ChatClientInterface::class)]
 final readonly class OllamaChatClient implements ChatClientInterface
 {
     public function __construct(

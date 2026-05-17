@@ -54,7 +54,15 @@ final readonly class AssistantSettings
         private int $envHttpTimeout,
         private int $envNumCtx,
         private string $envVisionModel,
+        private string $envProvider,
     ) {}
+
+    public function getProvider(): string
+    {
+        $value = $this->settings->get(AssistantSettingEnum::Provider->value);
+
+        return (null !== $value && '' !== $value) ? $value : $this->envProvider;
+    }
 
     public function getVisionModel(): string
     {

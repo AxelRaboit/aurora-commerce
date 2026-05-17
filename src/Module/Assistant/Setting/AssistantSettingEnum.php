@@ -19,6 +19,7 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
  */
 enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
 {
+    case Provider = 'assistant_provider';
     case ChatModel = 'assistant_chat_model';
     case VisionModel = 'assistant_vision_model';
     case HttpTimeout = 'assistant_http_timeout';
@@ -33,6 +34,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
     public function getLabel(): string
     {
         return match ($this) {
+            self::Provider => 'backend.parameters.assistant_provider.label',
             self::ChatModel => 'backend.parameters.assistant_chat_model.label',
             self::VisionModel => 'backend.parameters.assistant_vision_model.label',
             self::HttpTimeout => 'backend.parameters.assistant_http_timeout.label',
@@ -44,6 +46,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
     public function getDescription(): string
     {
         return match ($this) {
+            self::Provider => 'backend.parameters.assistant_provider.description',
             self::ChatModel => 'backend.parameters.assistant_chat_model.description',
             self::VisionModel => 'backend.parameters.assistant_vision_model.description',
             self::HttpTimeout => 'backend.parameters.assistant_http_timeout.description',
@@ -59,6 +62,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
         // {@see AssistantSettings} which falls back to env vars (closer
         // to deployment truth) when the setting is blank.
         return match ($this) {
+            self::Provider => 'ollama',
             self::ChatModel => 'qwen3:8b',
             self::VisionModel => 'qwen2.5vl:3b',
             self::HttpTimeout => '300',
@@ -70,6 +74,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
     public function getType(): string
     {
         return match ($this) {
+            self::Provider => 'select',
             self::ChatModel, self::VisionModel => 'text',
             self::HttpTimeout, self::NumCtx => 'int',
             self::SystemPrompt => 'textarea',

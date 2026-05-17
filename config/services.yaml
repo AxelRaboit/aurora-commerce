@@ -141,10 +141,15 @@ services:
             $envHttpTimeout: '%env(int:ASSISTANT_HTTP_TIMEOUT)%'
             $envNumCtx: '%env(int:ASSISTANT_NUM_CTX)%'
             $envVisionModel: '%env(ASSISTANT_VISION_MODEL)%'
+            $envProvider: '%env(ASSISTANT_PROVIDER)%'
 
     Aurora\Module\Assistant\Llm\Service\OllamaChatClient:
         arguments:
             $baseUrl: '%env(ASSISTANT_OLLAMA_URL)%'
+
+    Aurora\Module\Assistant\Llm\Service\AnthropicChatClient:
+        arguments:
+            $apiKey: '%env(ANTHROPIC_API_KEY)%'
 
     Aurora\Module\Assistant\Vision\Service\OllamaVisionDescriber:
         arguments:

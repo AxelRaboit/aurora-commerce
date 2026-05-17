@@ -126,7 +126,8 @@ export function useAssistant(props) {
         });
         try {
             const body = { content };
-            if (selectedSourceId.value) body.sourceMountPointId = selectedSourceId.value;
+            if (selectedSourceId.value)
+                body.sourceMountPointId = selectedSourceId.value;
             const data = await request(url, body);
             if (data?.success) {
                 activeConversation.value = data.conversation;

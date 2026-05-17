@@ -22,9 +22,9 @@ interface ConversationManagerInterface
      * messages persisted.
      */
     /**
-     * @param int|null $sourceMountPointId When set, the system prompt narrows
+     * @param int|null $sourceMountPointId when set, the system prompt narrows
      *                                     the filesystem context to that single
-     *                                     mount point instead of all active ones.
+     *                                     mount point instead of all active ones
      */
     public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input, ?int $sourceMountPointId = null): ConversationInterface;
 

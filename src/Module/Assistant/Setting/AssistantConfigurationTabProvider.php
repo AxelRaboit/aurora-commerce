@@ -10,14 +10,15 @@ use Aurora\Core\Setting\Configuration\SettingFieldDescriptor;
 
 /**
  * Surfaces the Assistant module's settings as a dedicated tab on the
- * `/backend/settings` page. Adding another `case` to
- * {@see AssistantSettingEnum} immediately shows up in the same tab.
- *
- * Priority 120 keeps it grouped with the other module-contributed tabs
- * (notes = 110, …) right after the Core platform-wide tabs (10–100).
+ * `/backend/settings` page.
  */
 final readonly class AssistantConfigurationTabProvider implements ConfigurationTabProviderInterface
 {
+    private const array PROVIDER_OPTIONS = [
+        ['value' => 'ollama', 'label' => 'Ollama (local)'],
+        ['value' => 'anthropic', 'label' => 'Anthropic Claude'],
+    ];
+
     public function getTabs(): array
     {
         $fields = [];
@@ -28,6 +29,7 @@ final readonly class AssistantConfigurationTabProvider implements ConfigurationT
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                options: AssistantSettingEnum::Provider === $case ? self::PROVIDER_OPTIONS : null,
             );
         }
 
