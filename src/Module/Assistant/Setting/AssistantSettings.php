@@ -40,6 +40,10 @@ final readonly class AssistantSettings
         - When filesystem_read refuses a file as "appears binary" and the
           extension is .png/.jpg/.jpeg/.webp/.gif, call image_read with
           the same path to get a textual description from a vision model.
+        - When the user asks "find a file …" / "where is the … that
+          mentions X" / "search for X", use filesystem_search (recursive
+          name + content match) instead of guessing or walking the tree
+          one directory at a time with filesystem_read.
         PROMPT;
 
     public function __construct(
