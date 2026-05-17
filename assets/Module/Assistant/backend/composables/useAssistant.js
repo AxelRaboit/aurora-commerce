@@ -22,6 +22,13 @@ export function useAssistant(props) {
         () => activeConversation.value?.messages ?? [],
     );
 
+    const pendingMessage = computed(
+        () =>
+            activeMessages.value.find(
+                (m) => m.role === "assistant" && m.awaitingConfirmation,
+            ) ?? null,
+    );
+
     async function refreshList() {
         const res = await request(props.listPath, null, HttpMethod.Get);
         if (res?.success) {
@@ -76,6 +83,24 @@ export function useAssistant(props) {
         }
     }
 
+    async function confirmTool(decisions) {
+        if (!activeConversation.value || sending.value) return;
+        sending.value = true;
+        try {
+            const url = resolvePath(
+                props.confirmToolPath,
+                activeConversation.value.id,
+            );
+            const res = await request(url, { decisions });
+            if (res?.success) {
+                activeConversation.value = res.data.conversation;
+                await refreshList();
+            }
+        } finally {
+            sending.value = false;
+        }
+    }
+
     async function deleteConversation(id) {
         if (!window.confirm(t("assistant.chat.delete_confirm"))) return;
         const res = await request(resolvePath(props.deletePath, id));
@@ -94,11 +119,13 @@ export function useAssistant(props) {
         activeId,
         activeConversation,
         activeMessages,
+        pendingMessage,
         sending,
         draft,
         selectConversation,
         newConversation,
         sendDraft,
+        confirmTool,
         deleteConversation,
     };
 }

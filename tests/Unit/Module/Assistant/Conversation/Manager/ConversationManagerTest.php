@@ -82,6 +82,11 @@ final class ConversationManagerTest extends TestCase
                 return 'echo';
             }
 
+            public function requiresConfirmation(): bool
+            {
+                return false;
+            }
+
             public function getDescription(): string
             {
                 return 'echo';
@@ -174,6 +179,163 @@ final class ConversationManagerTest extends TestCase
         self::assertSame(MessageRoleEnum::Assistant, $messages[1]->getRole());
         self::assertStringContainsString('boom', $messages[1]->getContent());
         self::assertStringContainsString('Assistant error', $messages[1]->getContent());
+    }
+
+    public function testWriteToolPausesForConfirmation(): void
+    {
+        $this->repository->method('findMaxPositionFor')->willReturn(null);
+
+        $writeTool = new class implements ToolInterface {
+            public int $callCount = 0;
+
+            public function getName(): string
+            {
+                return 'write_thing';
+            }
+
+            public function requiresConfirmation(): bool
+            {
+                return true;
+            }
+
+            public function getDescription(): string
+            {
+                return '';
+            }
+
+            public function getParameterSchema(): array
+            {
+                return ['type' => 'object', 'properties' => []];
+            }
+
+            public function execute(array $arguments, CoreUserInterface $user): string
+            {
+                ++$this->callCount;
+
+                return 'wrote';
+            }
+        };
+
+        $chatClient = new class($writeTool) implements ChatClientInterface {
+            public int $turn = 0;
+
+            public function __construct(private readonly ToolInterface $tool) {}
+
+            public function getModel(): string
+            {
+                return 'm';
+            }
+
+            public function chat(array $messages, array $tools = []): array
+            {
+                ++$this->turn;
+                if (1 === $this->turn) {
+                    return [
+                        'role' => 'assistant',
+                        'content' => '',
+                        'tool_calls' => [[
+                            'id' => 'call_w',
+                            'function' => ['name' => $this->tool->getName(), 'arguments' => []],
+                        ]],
+                    ];
+                }
+
+                return ['role' => 'assistant', 'content' => 'done', 'tool_calls' => null];
+            }
+        };
+
+        $manager = $this->makeManager(chatClient: $chatClient, tools: [$writeTool]);
+
+        $conversation = new Conversation();
+        $conversation->setUser($this->makeUser());
+
+        $manager->sendMessage($conversation, new MessageInput(content: 'write please'));
+
+        $msgs = $conversation->getMessages()->toArray();
+        self::assertCount(2, $msgs, 'pauses before executing write tool');
+        self::assertTrue($msgs[1]->isAwaitingConfirmation());
+        self::assertSame(0, $writeTool->callCount, 'tool not executed before approval');
+
+        $manager->resumeAfterConfirmation($conversation, ['call_w' => 'approve']);
+
+        $msgs = $conversation->getMessages()->toArray();
+        self::assertSame(['user', 'assistant', 'tool', 'assistant'], array_map(static fn ($m) => $m->getRole()->value, $msgs));
+        self::assertFalse($msgs[1]->isAwaitingConfirmation());
+        self::assertSame(1, $writeTool->callCount);
+        self::assertStringContainsString('wrote', $msgs[2]->getContent());
+    }
+
+    public function testRejectedToolEmitsRejectionMessage(): void
+    {
+        $this->repository->method('findMaxPositionFor')->willReturn(null);
+
+        $writeTool = new class implements ToolInterface {
+            public int $callCount = 0;
+
+            public function getName(): string
+            {
+                return 'danger';
+            }
+
+            public function requiresConfirmation(): bool
+            {
+                return true;
+            }
+
+            public function getDescription(): string
+            {
+                return '';
+            }
+
+            public function getParameterSchema(): array
+            {
+                return ['type' => 'object', 'properties' => []];
+            }
+
+            public function execute(array $arguments, CoreUserInterface $user): string
+            {
+                ++$this->callCount;
+
+                return 'should not run';
+            }
+        };
+
+        $chatClient = new class($writeTool) implements ChatClientInterface {
+            public int $turn = 0;
+
+            public function __construct(private readonly ToolInterface $tool) {}
+
+            public function getModel(): string
+            {
+                return 'm';
+            }
+
+            public function chat(array $messages, array $tools = []): array
+            {
+                ++$this->turn;
+                if (1 === $this->turn) {
+                    return [
+                        'role' => 'assistant',
+                        'content' => '',
+                        'tool_calls' => [['id' => 'c1', 'function' => ['name' => $this->tool->getName(), 'arguments' => []]]],
+                    ];
+                }
+
+                return ['role' => 'assistant', 'content' => 'okay, skipping.', 'tool_calls' => null];
+            }
+        };
+
+        $manager = $this->makeManager(chatClient: $chatClient, tools: [$writeTool]);
+
+        $conversation = new Conversation();
+        $conversation->setUser($this->makeUser());
+
+        $manager->sendMessage($conversation, new MessageInput(content: 'do the thing'));
+        $manager->resumeAfterConfirmation($conversation, ['c1' => 'reject']);
+
+        $msgs = $conversation->getMessages()->toArray();
+        self::assertSame(0, $writeTool->callCount);
+        self::assertStringContainsString('rejected', $msgs[2]->getContent());
     }
 
     public function testEmptyMessageThrows(): void

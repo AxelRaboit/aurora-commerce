@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+use function is_array;
+use function is_string;
+
 #[Route('/backend/assistant', name: 'backend_assistant')]
 #[IsGranted('assistant.use')]
 final class AssistantController extends AbstractController
@@ -94,6 +97,30 @@ final class AssistantController extends AbstractController
         }
 
         $this->manager->sendMessage($conversation, $input);
+
+        return $this->jsonSuccess(['conversation' => $this->serializer->serializeDetail($conversation)]);
+    }
+
+    #[Route('/{id}/confirm-tool', name: '_confirm_tool', methods: [HttpMethodEnum::Post->value])]
+    public function confirmTool(int $id, Request $request): JsonResponse
+    {
+        $conversation = $this->resolveOrNull($id);
+        if (!$conversation instanceof ConversationInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $payload = $this->decodeJson($request);
+        $rawDecisions = $payload['decisions'] ?? [];
+        $decisions = [];
+        if (is_array($rawDecisions)) {
+            foreach ($rawDecisions as $key => $value) {
+                if (is_string($key) && is_string($value)) {
+                    $decisions[$key] = $value;
+                }
+            }
+        }
+
+        $this->manager->resumeAfterConfirmation($conversation, $decisions);
 
         return $this->jsonSuccess(['conversation' => $this->serializer->serializeDetail($conversation)]);
     }

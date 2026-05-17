@@ -13,6 +13,9 @@ assistant:
     thinking: L'assistant réfléchit…
     tool_call: Appel outil
     tool_result: Résultat outil
+    confirm_required: Action nécessitant confirmation
+    approve: Approuver
+    reject: Refuser
   mount_point:
     title: Points de montage
     description: Chemins du système de fichiers auxquels l'assistant peut accéder.

@@ -20,4 +20,13 @@ interface ConversationManagerInterface
      * messages persisted.
      */
     public function sendMessage(ConversationInterface $conversation, MessageInputInterface $input): ConversationInterface;
+
+    /**
+     * Resume a conversation that paused on a pending tool confirmation.
+     * `$decisions` maps each tool_call_id → "approve" or "reject". Calls
+     * absent from the map default to "reject".
+     *
+     * @param array<string, string> $decisions
+     */
+    public function resumeAfterConfirmation(ConversationInterface $conversation, array $decisions): ConversationInterface;
 }

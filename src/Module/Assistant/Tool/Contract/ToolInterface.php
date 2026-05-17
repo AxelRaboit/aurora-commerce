@@ -24,6 +24,14 @@ interface ToolInterface
     public function getDescription(): string;
 
     /**
+     * Whether the assistant must surface this tool call to the user for
+     * explicit approval before {@see execute()} runs. Mutating tools
+     * (filesystem write, shell exec, …) must return `true`; pure read
+     * tools return `false`.
+     */
+    public function requiresConfirmation(): bool;
+
+    /**
      * JSON Schema for the `arguments` object the LLM passes back.
      *
      * @return array<string, mixed>

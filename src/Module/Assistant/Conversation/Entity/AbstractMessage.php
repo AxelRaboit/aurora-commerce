@@ -52,6 +52,15 @@ abstract class AbstractMessage implements MessageInterface
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true, 'default' => 0])]
     protected int $position = 0;
 
+    /**
+     * Set on assistant messages whose `toolCalls` contain at least one
+     * mutating tool: the chat loop persists the message, then halts so
+     * the UI can render a confirmation prompt. Flipped to false once the
+     * user approves or rejects each call.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    protected bool $awaitingConfirmation = false;
+
     public function getConversation(): ConversationInterface
     {
         return $this->conversation;
@@ -132,6 +141,18 @@ abstract class AbstractMessage implements MessageInterface
     public function setPosition(int $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function isAwaitingConfirmation(): bool
+    {
+        return $this->awaitingConfirmation;
+    }
+
+    public function setAwaitingConfirmation(bool $awaitingConfirmation): static
+    {
+        $this->awaitingConfirmation = $awaitingConfirmation;
 
         return $this;
     }

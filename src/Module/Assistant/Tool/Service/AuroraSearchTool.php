@@ -43,6 +43,11 @@ final readonly class AuroraSearchTool implements ToolInterface
         return 'aurora_search';
     }
 
+    public function requiresConfirmation(): bool
+    {
+        return false;
+    }
+
     public function getDescription(): string
     {
         return 'Search the Aurora backend (posts, taxonomy terms, media, projects, tasks) and return matching items as a compact list.';

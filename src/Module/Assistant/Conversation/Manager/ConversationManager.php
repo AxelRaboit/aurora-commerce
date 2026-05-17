@@ -140,6 +140,13 @@ class ConversationManager implements ConversationManagerInterface
                 return;
             }
 
+            if ($this->anyToolRequiresConfirmation($toolCalls)) {
+                $assistant->setAwaitingConfirmation(true);
+                $this->entityManager->flush();
+
+                return;
+            }
+
             foreach ($toolCalls as $idx => $call) {
                 $this->executeToolCall($conversation, $call, (string) $idx);
             }
@@ -148,6 +155,81 @@ class ConversationManager implements ConversationManagerInterface
         }
 
         $this->appendAssistantError($conversation, sprintf('Tool roundtrip limit reached (%d).', self::MAX_TOOL_ROUNDTRIPS));
+    }
+
+    public function resumeAfterConfirmation(ConversationInterface $conversation, array $decisions): ConversationInterface
+    {
+        $pending = $this->findPendingAssistantMessage($conversation);
+        if (!$pending instanceof MessageInterface) {
+            return $conversation;
+        }
+
+        $toolCalls = $pending->getToolCalls() ?? [];
+        foreach ($toolCalls as $idx => $call) {
+            $id = isset($call['id']) && is_string($call['id']) && '' !== $call['id'] ? $call['id'] : (string) $idx;
+            $decision = $decisions[$id] ?? 'reject';
+
+            if ('approve' === $decision) {
+                $this->executeToolCall($conversation, $call, $id);
+            } else {
+                $this->appendRejectedToolMessage($conversation, $call, $id);
+            }
+        }
+
+        $pending->setAwaitingConfirmation(false);
+        $this->entityManager->flush();
+
+        $this->runChatLoop($conversation);
+        $this->entityManager->flush();
+
+        return $conversation;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $toolCalls
+     */
+    protected function anyToolRequiresConfirmation(array $toolCalls): bool
+    {
+        foreach ($toolCalls as $call) {
+            $function = $call['function'] ?? [];
+            $name = is_array($function) && isset($function['name']) && is_string($function['name']) ? $function['name'] : '';
+            if ('' !== $name && $this->toolRegistry->requiresConfirmation($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function findPendingAssistantMessage(ConversationInterface $conversation): ?MessageInterface
+    {
+        foreach ($conversation->getMessages() as $message) {
+            if (MessageRoleEnum::Assistant === $message->getRole() && $message->isAwaitingConfirmation()) {
+                return $message;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $call
+     */
+    protected function appendRejectedToolMessage(ConversationInterface $conversation, array $call, string $toolCallId): void
+    {
+        $function = $call['function'] ?? [];
+        $name = is_array($function) && isset($function['name']) && is_string($function['name']) ? $function['name'] : '';
+
+        $message = $this->createMessage();
+        $message->setConversation($conversation);
+        $message->setRole(MessageRoleEnum::Tool);
+        $message->setContent('The user rejected this action. Do not retry; explain or propose an alternative.');
+        $message->setToolCallId($toolCallId);
+        $message->setToolName($name);
+        $message->setPosition($this->nextPosition($conversation));
+
+        $conversation->addMessage($message);
+        $this->entityManager->persist($message);
     }
 
     /**

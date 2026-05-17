@@ -40,4 +40,8 @@ interface MessageInterface extends TimestampableInterface
     public function getPosition(): int;
 
     public function setPosition(int $position): static;
+
+    public function isAwaitingConfirmation(): bool;
+
+    public function setAwaitingConfirmation(bool $awaitingConfirmation): static;
 }

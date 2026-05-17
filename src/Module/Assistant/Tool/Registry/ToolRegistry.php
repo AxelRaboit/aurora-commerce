@@ -67,6 +67,11 @@ final readonly class ToolRegistry
         return isset($this->byName[$name]);
     }
 
+    public function requiresConfirmation(string $name): bool
+    {
+        return isset($this->byName[$name]) && $this->byName[$name]->requiresConfirmation();
+    }
+
     /**
      * @param array<string, mixed> $arguments
      */

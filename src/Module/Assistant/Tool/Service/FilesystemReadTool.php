@@ -44,6 +44,11 @@ final readonly class FilesystemReadTool implements ToolInterface
         return 'filesystem_read';
     }
 
+    public function requiresConfirmation(): bool
+    {
+        return false;
+    }
+
     public function getDescription(): string
     {
         return "Read a file or list a directory under one of the user's configured mount points. Returns text content (text files only, capped at 64KB) or a sorted list of entries (capped at 200).";

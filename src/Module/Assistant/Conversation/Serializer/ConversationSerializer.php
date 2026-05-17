@@ -41,6 +41,7 @@ class ConversationSerializer implements ConversationSerializerInterface
             'toolCallId' => $message->getToolCallId(),
             'toolName' => $message->getToolName(),
             'position' => $message->getPosition(),
+            'awaitingConfirmation' => $message->isAwaitingConfirmation(),
             'createdAt' => $message->getCreatedAt()->format(DateTimeInterface::ATOM),
         ];
     }

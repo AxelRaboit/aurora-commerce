@@ -11,6 +11,7 @@ const props = defineProps({
     showPath: { type: String, required: true },
     createPath: { type: String, required: true },
     sendPath: { type: String, required: true },
+    confirmToolPath: { type: String, required: true },
     deletePath: { type: String, required: true },
 });
 
@@ -21,13 +22,33 @@ const {
     activeId,
     activeConversation,
     activeMessages,
+    pendingMessage,
     sending,
     draft,
     selectConversation,
     newConversation,
     sendDraft,
+    confirmTool,
     deleteConversation,
 } = useAssistant(props);
+
+function approveAll() {
+    const calls = pendingMessage.value?.toolCalls ?? [];
+    const decisions = {};
+    calls.forEach((c, i) => {
+        decisions[c.id ?? String(i)] = "approve";
+    });
+    confirmTool(decisions);
+}
+
+function rejectAll() {
+    const calls = pendingMessage.value?.toolCalls ?? [];
+    const decisions = {};
+    calls.forEach((c, i) => {
+        decisions[c.id ?? String(i)] = "reject";
+    });
+    confirmTool(decisions);
+}
 
 function onKeydown(event) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -105,6 +126,33 @@ function bubbleClass(role) {
                         </div>
                     </div>
                     <div v-if="sending" class="text-xs text-muted italic">{{ t('assistant.chat.thinking') }}</div>
+
+                    <div
+                        v-if="pendingMessage"
+                        class="rounded-lg border border-amber-500/40 bg-amber-50 dark:bg-amber-950/30 p-3 space-y-2"
+                    >
+                        <div class="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wide">
+                            {{ t('assistant.chat.confirm_required') }}
+                        </div>
+                        <div
+                            v-for="(call, i) in pendingMessage.toolCalls"
+                            :key="call.id || i"
+                            class="rounded bg-white dark:bg-surface-2 border border-line p-2 text-xs"
+                        >
+                            <div class="font-mono font-semibold text-primary">
+                                {{ call.function?.name }}
+                            </div>
+                            <pre class="mt-1 text-xs text-secondary whitespace-pre-wrap wrap-break-word">{{ JSON.stringify(call.function?.arguments ?? {}, null, 2) }}</pre>
+                        </div>
+                        <div class="flex gap-2">
+                            <AppButton variant="primary" size="sm" :disabled="sending" v-on:click="approveAll">
+                                {{ t('assistant.chat.approve') }}
+                            </AppButton>
+                            <AppButton variant="ghost" size="sm" :disabled="sending" v-on:click="rejectAll">
+                                {{ t('assistant.chat.reject') }}
+                            </AppButton>
+                        </div>
+                    </div>
                 </div>
             </template>
 

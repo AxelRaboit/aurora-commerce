@@ -27,6 +27,7 @@ final readonly class AssistantViewBuilder
             'showPath' => $this->urlGenerator->generate('backend_assistant_show', ['id' => '__id__']),
             'createPath' => $this->urlGenerator->generate('backend_assistant_create'),
             'sendPath' => $this->urlGenerator->generate('backend_assistant_send', ['id' => '__id__']),
+            'confirmToolPath' => $this->urlGenerator->generate('backend_assistant_confirm_tool', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_assistant_delete', ['id' => '__id__']),
         ];
     }
