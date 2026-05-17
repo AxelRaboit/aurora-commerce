@@ -15,6 +15,7 @@ use Aurora\Module\Assistant\Conversation\Enum\MessageRoleEnum;
 use Aurora\Module\Assistant\Conversation\Manager\ConversationManager;
 use Aurora\Module\Assistant\Conversation\Repository\ConversationRepository;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
+use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\Setting\AssistantSettings;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Module\Assistant\Tool\Registry\ToolRegistry;
@@ -363,6 +364,9 @@ final class ConversationManagerTest extends TestCase
         $settingRepository->method('get')->willReturn(null);
         $settings = new AssistantSettings($settingRepository, 'test-model', 60, 4096);
 
+        $mountPointRepository = $this->createStub(AssistantMountPointRepository::class);
+        $mountPointRepository->method('findActiveForUser')->willReturn([]);
+
         return new ConversationManager(
             $this->entityManager,
             $this->repository,
@@ -370,6 +374,7 @@ final class ConversationManagerTest extends TestCase
             new ToolRegistry($tools),
             $auditLogger,
             $settings,
+            $mountPointRepository,
         );
     }
 

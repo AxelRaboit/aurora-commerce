@@ -8,6 +8,8 @@ use Aurora\Core\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 
+use function count;
+use function dirname;
 use function in_array;
 use function is_string;
 use function sprintf;
@@ -87,7 +89,7 @@ final readonly class FilesystemReadTool implements ToolInterface
 
         $resolved = realpath($rawPath);
         if (false === $resolved) {
-            return sprintf('Error: path does not exist: %s', $rawPath);
+            return $this->describeMissingPath($rawPath, $user);
         }
 
         if (!$this->isAllowed($resolved, $user)) {
@@ -99,6 +101,57 @@ final readonly class FilesystemReadTool implements ToolInterface
         }
 
         return $this->readFile($resolved);
+    }
+
+    /**
+     * Build a "path not found" message that includes up to 5 sibling
+     * entries whose names start with the missing filename (case-
+     * insensitive). Small LLMs often guess `README` when the file is
+     * `README.md` — surfacing the candidates lets the next turn fix
+     * itself without a separate `list` roundtrip.
+     */
+    private function describeMissingPath(string $rawPath, CoreUserInterface $user): string
+    {
+        $parent = dirname($rawPath);
+        $needle = mb_strtolower(basename($rawPath));
+        $resolvedParent = realpath($parent);
+
+        if (false === $resolvedParent || !$this->isAllowed($resolvedParent, $user) || !is_dir($resolvedParent)) {
+            return sprintf('Error: path does not exist: %s', $rawPath);
+        }
+
+        $entries = @scandir($resolvedParent);
+        if (false === $entries) {
+            return sprintf('Error: path does not exist: %s', $rawPath);
+        }
+
+        $candidates = [];
+        foreach ($entries as $entry) {
+            if (in_array($entry, ['.', '..'], true)) {
+                continue;
+            }
+            if (str_starts_with($entry, '.')) {
+                continue;
+            }
+            $lower = mb_strtolower($entry);
+            if (str_starts_with($lower, $needle) || str_contains($lower, $needle)) {
+                $candidates[] = $entry;
+            }
+
+            if (count($candidates) >= 5) {
+                break;
+            }
+        }
+
+        if ([] === $candidates) {
+            return sprintf('Error: path does not exist: %s', $rawPath);
+        }
+
+        return sprintf(
+            "Error: path does not exist: %s\nDid you mean one of: %s ? Retry with the full filename.",
+            $rawPath,
+            implode(', ', $candidates),
+        );
     }
 
     private function isAllowed(string $resolvedPath, CoreUserInterface $user): bool

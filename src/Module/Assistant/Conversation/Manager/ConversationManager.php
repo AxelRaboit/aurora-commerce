@@ -14,6 +14,9 @@ use Aurora\Module\Assistant\Conversation\Entity\MessageInterface;
 use Aurora\Module\Assistant\Conversation\Enum\MessageRoleEnum;
 use Aurora\Module\Assistant\Conversation\Repository\ConversationRepository;
 use Aurora\Module\Assistant\Llm\Contract\ChatClientInterface;
+use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;
+use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
+use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\Setting\AssistantSettings;
 use Aurora\Module\Assistant\Tool\Registry\ToolRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,6 +42,7 @@ class ConversationManager implements ConversationManagerInterface
         protected readonly ToolRegistry $toolRegistry,
         protected readonly AuditLogger $auditLogger,
         protected readonly AssistantSettings $settings,
+        protected readonly AssistantMountPointRepository $mountPointRepository,
     ) {}
 
     public function create(CoreUserInterface $user): ConversationInterface
@@ -276,7 +280,7 @@ class ConversationManager implements ConversationManagerInterface
     protected function buildOllamaMessages(ConversationInterface $conversation): array
     {
         $out = [
-            ['role' => 'system', 'content' => $this->settings->getSystemPrompt()],
+            ['role' => 'system', 'content' => $this->buildSystemPrompt($conversation)],
         ];
 
         foreach ($conversation->getMessages() as $message) {
@@ -284,6 +288,48 @@ class ConversationManager implements ConversationManagerInterface
         }
 
         return $out;
+    }
+
+    /**
+     * Builds the system message: the admin-configured prompt + a freshly-
+     * rendered context block listing the user's active filesystem mount
+     * points. Without this, the LLM has to guess at paths (or hallucinate
+     * `/mnt/<thing>` conventions) before any tool call can succeed.
+     */
+    protected function buildSystemPrompt(ConversationInterface $conversation): string
+    {
+        $prompt = $this->settings->getSystemPrompt();
+        $context = $this->renderMountPointContext($conversation);
+
+        return '' === $context ? $prompt : $prompt."\n\n".$context;
+    }
+
+    protected function renderMountPointContext(ConversationInterface $conversation): string
+    {
+        $mountPoints = $this->mountPointRepository->findActiveForUser($conversation->getUser());
+        if ([] === $mountPoints) {
+            return 'Filesystem mount points: none configured. Tell the user to add one in /backend/assistant/mount-points before asking you to read files.';
+        }
+
+        $lines = ['Filesystem mount points available to filesystem_read / filesystem_write tools (use these exact paths — never invent paths like /mnt/...):'];
+        foreach ($mountPoints as $mountPoint) {
+            $lines[] = sprintf(
+                '- "%s" → %s (%s)',
+                $mountPoint->getName(),
+                $mountPoint->getPath(),
+                $this->describeAccess($mountPoint),
+            );
+        }
+
+        return implode("\n", $lines);
+    }
+
+    protected function describeAccess(AssistantMountPointInterface $mountPoint): string
+    {
+        return match ($mountPoint->getAccess()) {
+            MountPointAccessEnum::ReadWrite => 'read + write',
+            default => 'read only',
+        };
     }
 
     /**
