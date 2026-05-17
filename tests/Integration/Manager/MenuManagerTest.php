@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Manager;
 
-use Aurora\Core\Menu\Dto\MenuInput;
-use Aurora\Core\Menu\Dto\MenuItemInput;
-use Aurora\Core\Menu\Entity\MenuItem;
-use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
-use Aurora\Core\Menu\Manager\MenuManager;
-use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Module\Editorial\Menu\Dto\MenuInput;
+use Aurora\Module\Editorial\Menu\Dto\MenuItemInput;
+use Aurora\Module\Editorial\Menu\Entity\MenuItem;
+use Aurora\Module\Editorial\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Module\Editorial\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Module\Editorial\Menu\Manager\MenuManager;
+use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

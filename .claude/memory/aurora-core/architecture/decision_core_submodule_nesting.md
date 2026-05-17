@@ -92,9 +92,28 @@ Le dossier `Service/` reste valide pour des **vrais services métier**
 ## Périmètre exclu
 
 `src/Core/Notification/` reste à plat — n'a pas de NavItem dédié,
-c'est de l'infra cross-cutting. Idem pour Encryption, Frontend, Locale,
-Mail, Menu, Migration, Module, MountPoint, Repository, Scheduler,
-Sequence, Storage, Support, Timestampable, Twig, Validation.
+c'est de l'infra cross-cutting (Project + d'autres modules émettent
+des notifs). Idem pour Encryption, Frontend, Locale, Mail, Migration,
+Module, Repository, Scheduler, Sequence, Storage, Support, Timestampable,
+Twig, Validation, Enum, EventSubscriber, DataFixtures.
+
+**Menu** et **MountPoint** ont été déplacés (vague follow-up de 0.4.0) :
+- `src/Core/Menu/` → `src/Module/Editorial/Menu/` (le NavItem `backend_menus`
+  est déjà déclaré dans `EditorialModule` → Menu = sous-module d'Editorial)
+- `src/Core/MountPoint/` → `src/Core/Dev/MountPoint/` (seul controller
+  exposé est `Dev/MountPointsController`)
+
+## Règle "module vs infra"
+
+Pour décider si un nouveau folder doit être un sous-module ou rester en
+Core infra cross-cutting :
+
+| Cas | Verdict |
+|---|---|
+| A un NavItem dans la sidemenu, déclaré dans `<X>Module` | Sous-module de X → `<X>/<Folder>/` |
+| Pas de NavItem, mais utilisé exclusivement par UN module | Sous-module de ce module |
+| Pas de NavItem, utilisé par PLUSIEURS modules | Infra Core cross-cutting (top-level) |
+| Pas de NavItem, pas d'usage cross-module clair, juste utilitaires | Infra Core cross-cutting |
 
 ## Commits du refacto
 

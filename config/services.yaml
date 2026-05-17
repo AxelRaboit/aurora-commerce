@@ -38,7 +38,7 @@ services:
             tags: [aurora.media_usage_provider]
         Aurora\Core\Frontend\Contract\FrontendInterface:
             tags: [aurora.front]
-        Aurora\Core\Menu\Contract\MenuLocationProviderInterface:
+        Aurora\Module\Editorial\Menu\Contract\MenuLocationProviderInterface:
             tags: [aurora.menu_location_provider]
         Aurora\Core\Sequence\SequencePrefixProviderInterface:
             tags: [aurora.sequence_prefix]
@@ -61,7 +61,7 @@ services:
         arguments:
             $fronts: !tagged_iterator aurora.front
 
-    Aurora\Core\Menu\Service\MenuLocationRegistry:
+    Aurora\Module\Editorial\Menu\Service\MenuLocationRegistry:
         arguments:
             $providers: !tagged_iterator aurora.menu_location_provider
 

@@ -36,6 +36,8 @@ sous-modules à l'intérieur**.
 | `Aurora\Core\Service\View\*` | `Aurora\Core\Platform\Service\View\*` |
 | `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\{Platform,Media,Configuration,General}\{Same}Context` (à la racine du folder du module) |
 | `Aurora\Module\<X>\Service\<X>Context` (12 modules business) | `Aurora\Module\<X>\<X>Context` (à la racine du folder du module) |
+| `Aurora\Core\Menu\*` | `Aurora\Module\Editorial\Menu\*` (Menu est un sous-module d'Editorial) |
+| `Aurora\Core\MountPoint\*` | `Aurora\Core\Dev\MountPoint\*` (MountPoint est utilisé par les controllers `Dev/`) |
 
 ### Inchangé (cross-cutting infra)
 

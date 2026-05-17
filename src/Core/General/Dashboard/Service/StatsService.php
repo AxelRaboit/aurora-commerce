@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\General\Dashboard\Service;
 
 use Aurora\Core\Media\Library\Repository\MediaRepository;
-use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
 use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;

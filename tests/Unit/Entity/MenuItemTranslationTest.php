@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Menu\Entity\MenuItemInterface;
-use Aurora\Core\Menu\Entity\MenuItemTranslation;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemInterface;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslation;
 use PHPUnit\Framework\TestCase;
 
 final class MenuItemTranslationTest extends TestCase

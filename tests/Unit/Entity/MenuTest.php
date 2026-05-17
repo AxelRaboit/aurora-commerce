@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Menu\Entity\Menu;
-use Aurora\Core\Menu\Entity\MenuItemInterface;
+use Aurora\Module\Editorial\Menu\Entity\Menu;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemInterface;
 use PHPUnit\Framework\TestCase;
 
 final class MenuTest extends TestCase

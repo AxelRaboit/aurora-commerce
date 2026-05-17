@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Core\Menu\Entity\Menu;
-use Aurora\Core\Menu\Entity\MenuItem;
-use Aurora\Core\Menu\Entity\MenuItemTranslation;
-use Aurora\Core\Menu\Enum\MenuItemTargetTypeEnum;
-use Aurora\Core\Menu\Enum\MenuItemVisibilityEnum;
+use Aurora\Module\Editorial\Menu\Entity\Menu;
+use Aurora\Module\Editorial\Menu\Entity\MenuItem;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslation;
+use Aurora\Module\Editorial\Menu\Enum\MenuItemTargetTypeEnum;
+use Aurora\Module\Editorial\Menu\Enum\MenuItemVisibilityEnum;
 use PHPUnit\Framework\TestCase;
 
 final class MenuItemTest extends TestCase

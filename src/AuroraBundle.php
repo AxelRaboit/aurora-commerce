@@ -21,14 +21,14 @@ use Aurora\Core\Media\Library\Entity\Media;
 use Aurora\Core\Media\Library\Entity\MediaFolder;
 use Aurora\Core\Media\Library\Entity\MediaFolderInterface;
 use Aurora\Core\Media\Library\Entity\MediaInterface;
-use Aurora\Core\Menu\Entity\Menu;
-use Aurora\Core\Menu\Entity\MenuInterface;
-use Aurora\Core\Menu\Entity\MenuItem;
-use Aurora\Core\Menu\Entity\MenuItemInterface;
-use Aurora\Core\Menu\Entity\MenuItemTranslation;
-use Aurora\Core\Menu\Entity\MenuItemTranslationInterface;
-use Aurora\Core\MountPoint\Entity\MountPoint;
-use Aurora\Core\MountPoint\Entity\MountPointInterface;
+use Aurora\Module\Editorial\Menu\Entity\Menu;
+use Aurora\Module\Editorial\Menu\Entity\MenuInterface;
+use Aurora\Module\Editorial\Menu\Entity\MenuItem;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemInterface;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslation;
+use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslationInterface;
+use Aurora\Core\Dev\MountPoint\Entity\MountPoint;
+use Aurora\Core\Dev\MountPoint\Entity\MountPointInterface;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
 use Aurora\Core\Platform\Service\Entity\Service;
@@ -401,6 +401,7 @@ class AuroraBundle extends AbstractBundle
                 'paths' => array_values(array_filter(
                     array_merge(
                         array_map(static fn (string $moduleDir): string => $moduleDir.'/translations', $moduleDirs),
+                        glob($dir.'/src/Module/*/*/translations', GLOB_ONLYDIR) ?: [],
                         $coreDirs,
                     ),
                     is_dir(...),

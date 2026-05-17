@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Menu\Dto\MenuInput;
-use Aurora\Core\Menu\Manager\MenuManager;
-use Aurora\Core\Menu\Repository\MenuRepository;
+use Aurora\Module\Editorial\Menu\Dto\MenuInput;
+use Aurora\Module\Editorial\Menu\Manager\MenuManager;
+use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
 use Aurora\Core\Platform\User\Entity\User;
 use Aurora\Core\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
