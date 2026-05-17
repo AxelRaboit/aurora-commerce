@@ -87,7 +87,7 @@ Le verrouillage optimiste utilise la colonne `#[ORM\Version]` de Doctrine combin
 | `pdftk` | **PDF Forms** | Détection des champs AcroForm (`dump_data_fields`) | `sudo apt install pdftk` (ou `pdftk-java` sur Ubuntu 22+) |
 | `node` (Node.js ≥ 18) | **PDF Forms** | Remplissage et aplatissement Unicode-safe via `tools/pdf/fill.mjs` (basé sur `pdf-lib`, installé via `pnpm install`) | Déjà requis pour le build assets — aucune install supplémentaire |
 | `ssh` (OpenSSH client) | **MountPoint** | Tunnels SSH vers des bases de données distantes | Inclus par défaut sur Linux/macOS |
-| `ollama` | **Billing OCR** + **Assistant IA** | Inférence locale (modèle vision OCR + chat assistant + vision assistant) | [ollama.ai](https://ollama.ai) — voir [ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md) |
+| `ollama` | **Billing OCR** + **Assistant IA** | Inférence locale (modèle vision OCR + chat assistant + vision assistant) | [ollama.ai](https://ollama.ai) — voir [deployment/ocr_setup.md](docs/aurora-client/deployment/ocr_setup.md) |
 
 > Les modules dont la dépendance est absente se dégradent proprement : PDF Forms crée les documents en statut *Brouillon*, MountPoint affiche une erreur de connexion, OCR met les jobs en erreur avec un message explicite.
 
@@ -122,7 +122,7 @@ make docker-up
 
 Tunables sans redéploiement via [`/backend/settings`](http://localhost:8000/backend/settings) → onglet **Assistant** : modèle chat, modèle vision, timeout, num_ctx, prompt système.
 
-→ Documentation complète OCR : [docs/aurora-core/ops/ocr_setup.md](docs/aurora-core/ops/ocr_setup.md)
+→ Documentation complète OCR : [docs/aurora-client/deployment/ocr_setup.md](docs/aurora-client/deployment/ocr_setup.md)
 
 ### Mise en place
 

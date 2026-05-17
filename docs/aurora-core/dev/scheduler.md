@@ -118,7 +118,7 @@ Le scheduler tourne via le worker `scheduler_main` :
 php bin/console messenger:consume async scheduler_main
 
 # Prod (systemd)
-# Voir docs/aurora-core/ops/worker_systemd.md
+# Voir docs/aurora-client/deployment/worker_systemd.md
 ```
 
 Le worker doit être **redémarré après chaque déploiement** pour prendre en compte les nouvelles tâches.

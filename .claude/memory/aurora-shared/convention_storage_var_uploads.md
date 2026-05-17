@@ -56,6 +56,6 @@ ait fait l'auth check. Dev local sans le module → fallback PHP
 
 **Doc canonique** : `docs/aurora-core/dev/storage_policy.md` (lisible
 côté client via `vendor/axelraboit/aurora/docs/...`).
-**Apache config** : `docs/aurora-core/dev/deployment/apache_xsendfile.md`.
+**Apache config** : `docs/aurora-client/deployment/apache_xsendfile.md`.
 Lié à [[pref_think_long_term]] (l'extraction des URL builders hors des
 entités est l'application directe de cette philosophie).

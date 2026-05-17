@@ -25,10 +25,11 @@
 | [client_quickstart.md](dev/client_quickstart.md) | Démarrage rapide côté client consommateur |
 | [form_validation.md](dev/form_validation.md) | Convention de validation des formulaires (DTO, PayloadValidator, useForm) |
 
-## ops/ — Infrastructure & déploiement
+## ops/ — Prérequis bundle
 
 | Fichier | Contenu |
 |---|---|
-| [worker_systemd.md](ops/worker_systemd.md) | Configuration du service systemd `aurora-worker` en production |
-| [ocr_setup.md](ops/ocr_setup.md) | Mise en place du pipeline OCR (Billing) |
+| [prerequisites.md](ops/prerequisites.md) | Checklist exhaustive des dépendances système, PHP, Node, modèles Ollama, vars d'env |
+
+> Tout ce qui touche au **déploiement** d'un projet client (séquence install-prod, systemd, mod_xsendfile, setup OCR) vit côté aurora-client : [`docs/aurora-client/deployment/`](../aurora-client/README.md#-déploiement-production).
 

@@ -248,7 +248,7 @@ Conventions :
   signés, notes per-user), définir une route plus spécifique sous
   `/backend/<module>/files/...` qui prend précédence sur le catch-all
 - Prod : `mod_xsendfile` offload les bytes une fois l'auth check PHP
-  passé. Voir `docs/aurora-core/dev/deployment/apache_xsendfile.md`
+  passé. Voir `docs/aurora-client/deployment/apache_xsendfile.md`
 
 Doc canonique : `docs/aurora-core/dev/storage_policy.md`.
 Mémoire shared (distribuée aux clients) :

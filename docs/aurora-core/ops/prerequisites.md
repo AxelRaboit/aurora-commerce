@@ -128,7 +128,7 @@ Au-delà du dev :
 
 - **Apache `mod_xsendfile`** : indispensable côté prod pour servir les
   fichiers de `var/uploads/` sans saturer PHP-FPM. Voir
-  [deployment/apache_xsendfile.md](../dev/deployment/apache_xsendfile.md).
+  [apache_xsendfile.md](../../aurora-client/deployment/apache_xsendfile.md).
 - **Droits du dossier `var/uploads/`** : l'utilisateur du web (`www-data`)
   doit avoir l'écriture sous `var/uploads/` et la lecture sur tout le
   contenu déjà uploadé.
