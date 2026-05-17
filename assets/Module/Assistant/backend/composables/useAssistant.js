@@ -90,11 +90,29 @@ export function useAssistant(props) {
             if (!activeConversation.value) return;
         }
 
+        // Optimistic: render the user bubble right away, before the LLM
+        // roundtrip (which can take 10-30s with a CPU-only model). The
+        // full conversation comes back from the server and replaces this
+        // placeholder once the roundtrip resolves.
+        const messages = activeConversation.value.messages ?? [];
+        messages.push({
+            id: `temp-${Date.now()}`,
+            role: "user",
+            content,
+            toolCalls: null,
+            toolCallId: null,
+            toolName: null,
+            position: messages.length,
+            awaitingConfirmation: false,
+            createdAt: new Date().toISOString(),
+        });
+        activeConversation.value.messages = messages;
+
+        draft.value = "";
         sending.value = true;
         const url = buildPath(props.sendPath, {
             id: activeConversation.value.id,
         });
-        draft.value = "";
         try {
             const data = await request(url, { content });
             if (data?.success) {
