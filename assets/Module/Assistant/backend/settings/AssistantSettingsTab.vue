@@ -193,8 +193,8 @@ const providerOptions = computed(
             <label class="block text-sm font-medium text-secondary">{{ t('backend.parameters.assistant_system_prompt.label') }}</label>
             <textarea
                 v-model="values['assistant_system_prompt']"
-                rows="10"
-                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary resize-y focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition"
+                rows="20"
+                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary resize-y focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition font-mono"
                 :placeholder="fieldByKey['assistant_system_prompt']?.defaultValue ?? ''"
             />
             <p class="text-xs text-muted">{{ t('backend.parameters.assistant_system_prompt.description') }}</p>
