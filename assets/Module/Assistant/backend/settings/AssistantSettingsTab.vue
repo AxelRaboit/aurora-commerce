@@ -134,12 +134,24 @@ const providerOptions = computed(
             <p class="text-xs text-muted">{{ t('backend.parameters.assistant_chat_model.description') }}</p>
         </div>
 
-        <!-- Vision model -->
-        <div class="space-y-1">
+        <!-- Vision model — same dynamic list as chat model -->
+        <div class="relative space-y-1">
+            <AppLoader :active="modelsLoading" />
+            <label class="block text-sm font-medium text-secondary">{{ t('backend.parameters.assistant_vision_model.label') }}</label>
+            <AppMultiselect
+                v-if="availableModels.length"
+                :model-value="values['assistant_vision_model']"
+                :options="availableModels"
+                track-by="value"
+                option-label="label"
+                :searchable="true"
+                :placeholder="t('backend.parameters.assistant_vision_model.label')"
+                v-on:update:model-value="values['assistant_vision_model'] = $event"
+            />
             <AppInput
+                v-else
                 v-model="values['assistant_vision_model']"
-                :label="t('backend.parameters.assistant_vision_model.label')"
-                :placeholder="'qwen2.5vl:3b'"
+                :placeholder="modelsLoading ? '…' : 'qwen2.5vl:3b'"
             />
             <p class="text-xs text-muted">{{ t('backend.parameters.assistant_vision_model.description') }}</p>
         </div>
