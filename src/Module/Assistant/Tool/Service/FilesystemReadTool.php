@@ -130,9 +130,11 @@ final readonly class FilesystemReadTool implements ToolInterface
             if (in_array($entry, ['.', '..'], true)) {
                 continue;
             }
+
             if (str_starts_with($entry, '.')) {
                 continue;
             }
+
             $lower = mb_strtolower($entry);
             if (str_starts_with($lower, $needle) || str_contains($lower, $needle)) {
                 $candidates[] = $entry;

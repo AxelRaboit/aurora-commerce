@@ -138,8 +138,13 @@ services:
             $envChatModel: '%env(ASSISTANT_CHAT_MODEL)%'
             $envHttpTimeout: '%env(int:ASSISTANT_HTTP_TIMEOUT)%'
             $envNumCtx: '%env(int:ASSISTANT_NUM_CTX)%'
+            $envVisionModel: '%env(ASSISTANT_VISION_MODEL)%'
 
     Aurora\Module\Assistant\Llm\Service\OllamaChatClient:
+        arguments:
+            $baseUrl: '%env(ASSISTANT_OLLAMA_URL)%'
+
+    Aurora\Module\Assistant\Vision\Service\OllamaVisionDescriber:
         arguments:
             $baseUrl: '%env(ASSISTANT_OLLAMA_URL)%'
 

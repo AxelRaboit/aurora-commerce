@@ -50,6 +50,9 @@ backend:
     assistant_chat_model:
       label: Ollama chat model
       description: 'Exact Ollama model identifier (e.g. qwen3:8b, mistral-nemo, llama3.1:8b). Must be a tool-calling model. Leave blank to fall back to ASSISTANT_CHAT_MODEL from .env.'
+    assistant_vision_model:
+      label: Ollama vision model
+      description: 'Vision-capable model used by the image_read tool to describe/OCR images (e.g. qwen2.5vl:3b, llava:7b, minicpm-v). Leave blank to fall back to ASSISTANT_VISION_MODEL from .env.'
     assistant_http_timeout:
       label: Ollama HTTP timeout (s)
       description: 'Per-request idle timeout against Ollama, in seconds. Raise on CPU / underpowered hosts if you hit transport errors mid-generation. .env default: 300.'

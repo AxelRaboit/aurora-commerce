@@ -37,6 +37,9 @@ final readonly class AssistantSettings
         - Use ONLY the absolute paths listed in the Filesystem mount points
           context block — never paths like /mnt/<thing> or /var/<thing>
           unless they appear there.
+        - When filesystem_read refuses a file as "appears binary" and the
+          extension is .png/.jpg/.jpeg/.webp/.gif, call image_read with
+          the same path to get a textual description from a vision model.
         PROMPT;
 
     public function __construct(
@@ -44,7 +47,15 @@ final readonly class AssistantSettings
         private string $envChatModel,
         private int $envHttpTimeout,
         private int $envNumCtx,
+        private string $envVisionModel,
     ) {}
+
+    public function getVisionModel(): string
+    {
+        $value = $this->settings->get(AssistantSettingEnum::VisionModel->value);
+
+        return null !== $value && '' !== $value ? $value : $this->envVisionModel;
+    }
 
     public function getChatModel(): string
     {

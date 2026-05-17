@@ -20,6 +20,7 @@ use Aurora\Core\Setting\Enum\ApplicationParameterEnumInterface;
 enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
 {
     case ChatModel = 'assistant_chat_model';
+    case VisionModel = 'assistant_vision_model';
     case HttpTimeout = 'assistant_http_timeout';
     case NumCtx = 'assistant_num_ctx';
     case SystemPrompt = 'assistant_system_prompt';
@@ -33,6 +34,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             self::ChatModel => 'backend.parameters.assistant_chat_model.label',
+            self::VisionModel => 'backend.parameters.assistant_vision_model.label',
             self::HttpTimeout => 'backend.parameters.assistant_http_timeout.label',
             self::NumCtx => 'backend.parameters.assistant_num_ctx.label',
             self::SystemPrompt => 'backend.parameters.assistant_system_prompt.label',
@@ -43,6 +45,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             self::ChatModel => 'backend.parameters.assistant_chat_model.description',
+            self::VisionModel => 'backend.parameters.assistant_vision_model.description',
             self::HttpTimeout => 'backend.parameters.assistant_http_timeout.description',
             self::NumCtx => 'backend.parameters.assistant_num_ctx.description',
             self::SystemPrompt => 'backend.parameters.assistant_system_prompt.description',
@@ -57,6 +60,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
         // to deployment truth) when the setting is blank.
         return match ($this) {
             self::ChatModel => 'qwen3:8b',
+            self::VisionModel => 'qwen2.5vl:3b',
             self::HttpTimeout => '300',
             self::NumCtx => '8192',
             self::SystemPrompt => '',
@@ -66,7 +70,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
     public function getType(): string
     {
         return match ($this) {
-            self::ChatModel => 'text',
+            self::ChatModel, self::VisionModel => 'text',
             self::HttpTimeout, self::NumCtx => 'int',
             self::SystemPrompt => 'textarea',
         };

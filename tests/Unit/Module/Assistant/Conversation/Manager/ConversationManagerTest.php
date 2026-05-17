@@ -362,7 +362,7 @@ final class ConversationManagerTest extends TestCase
 
         $settingRepository = $this->createStub(SettingRepository::class);
         $settingRepository->method('get')->willReturn(null);
-        $settings = new AssistantSettings($settingRepository, 'test-model', 60, 4096);
+        $settings = new AssistantSettings($settingRepository, 'test-model', 60, 4096, 'test-vision');
 
         $mountPointRepository = $this->createStub(AssistantMountPointRepository::class);
         $mountPointRepository->method('findActiveForUser')->willReturn([]);
