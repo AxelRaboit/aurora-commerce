@@ -200,6 +200,7 @@ function bubbleClass(role) {
                         :options="[{ value: null, label: t('assistant.chat.source_all') }, ...props.mountPoints.map(mp => ({ value: mp.id, label: `${mp.name} — ${mp.access === 'read_write' ? t('assistant.mount_point.access.read_write') : t('assistant.mount_point.access.read_only')}` }))]"
                         :searchable="false"
                         open-direction="top"
+                        :use-teleport="false"
                         track-by="value"
                         option-label="label"
                         v-on:update:model-value="selectedSourceId = $event"

@@ -19,6 +19,7 @@ const props = defineProps({
     trackBy: { type: String, default: "value" },
     optionLabel: { type: String, default: "label" },
     openDirection: { type: String, default: "bottom" },
+    useTeleport: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -53,7 +54,7 @@ function onSelect(value) {
             :allow-empty="allowEmpty"
             :open-direction="openDirection"
             :placeholder="placeholder || t('shared.common.select_placeholder')"
-            :use-teleport="true"
+            :use-teleport="useTeleport"
             select-label=""
             selected-label=""
             deselect-label=""
