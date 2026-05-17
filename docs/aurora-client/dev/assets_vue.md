@@ -41,19 +41,33 @@ Dans Twig :
 
 ## Aliases Vite disponibles
 
-| Alias | Chemin |
-|---|---|
-| `@` | `vendor/axelraboit/aurora/assets/` |
-| `@core` | `vendor/axelraboit/aurora/assets/Core/` |
-| `@shared` | `vendor/axelraboit/aurora/assets/shared/` |
-| `@editorial` | `vendor/axelraboit/aurora/assets/Module/Editorial/` |
-| `@crm` | `vendor/axelraboit/aurora/assets/Module/Crm/` |
-| `@erp` | `vendor/axelraboit/aurora/assets/Module/Erp/` |
-| `@ged` | `vendor/axelraboit/aurora/assets/Module/Ged/` |
-| `@planning` | `vendor/axelraboit/aurora/assets/Module/Planning/` |
-| `@client` | `assets/client/` |
+Source de vérité : `aliases.js` à la racine du repo aurora-core (consommé
+par Vite et Vitest). Côté client, `make sync-jsconfig` régénère
+`jsconfig.json` à partir de cette source.
 
-Les aliases sont régénérés dans `jsconfig.json` via `make sync-jsconfig`.
+| Alias | Chemin (côté client : préfixer par `vendor/axelraboit/aurora/`) |
+|---|---|
+| `@` | `assets/` |
+| `@core` | `assets/Core/` |
+| `@shared` | `assets/shared/` |
+| `@editorial` | `assets/Module/Editorial/` |
+| `@crm` | `assets/Module/Crm/` |
+| `@erp` | `assets/Module/Erp/` |
+| `@ecommerce` | `assets/Module/Ecommerce/` |
+| `@photo` | `assets/Module/Photo/` |
+| `@billing` | `assets/Module/Billing/` |
+| `@ged` | `assets/Module/Ged/` |
+| `@hr` | `assets/Module/Hr/` |
+| `@planning` | `assets/Module/Planning/` |
+| `@project` | `assets/Module/Project/` |
+| `@notes` | `assets/Module/Notes/` |
+| `@assistant` | `assets/Module/Assistant/` |
+| `@vault` | `assets/Module/Vault/` |
+| `@password-generator` | `assets/Module/PasswordGenerator/` |
+| `@client` | `assets/client/` (uniquement côté client) |
+
+Quand un module est ajouté côté core, ajouter l'alias dans `aliases.js`
+puis lancer `make sync-jsconfig` côté client pour propager.
 
 ---
 

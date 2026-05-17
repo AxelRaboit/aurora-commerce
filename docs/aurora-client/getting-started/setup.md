@@ -10,7 +10,7 @@
 |---|---|---|
 | PHP | 8.4 | |
 | Composer | 2.x | |
-| PostgreSQL | 16+ | |
+| PostgreSQL | 18+ | en prod et dans le template `.env.local.example` |
 | Node.js | 20+ | |
 | pnpm | 10+ | |
 | php8.4-pcov | — | driver de coverage PHPUnit (optionnel, pour `--coverage`) |
@@ -63,7 +63,7 @@ Variables obligatoires dans `.env.local` :
 
 ```dotenv
 APP_SECRET=<chaine-aléatoire-32-chars>
-DATABASE_URL=postgresql://app:password@127.0.0.1:5432/aurora_client_dev?serverVersion=16
+DATABASE_URL=postgresql://app:password@127.0.0.1:5432/aurora_client_dev?serverVersion=18&charset=utf8
 ```
 
 Variables optionnelles (déjà définies dans `.env`, à surcharger si besoin) :

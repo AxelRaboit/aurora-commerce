@@ -1,4 +1,10 @@
-# Notes Block (EditorJS) — vue d'ensemble
+# Notes Block (EditorJS) — vue d'ensemble (doc historique)
+
+> 🟢 **Implémenté** — voir `src/Module/Notes/Block/` et
+> `assets/Module/Notes/backend/block/` pour le code de référence.
+> Cette doc est gardée pour **archive d'architecture** : les justifications
+> ci-dessous (entité séparée, choix EditorJS, plugins shortlistés…)
+> documentent les arbitrages pris lors de la conception.
 
 Sous-module miroir du sous-module Markdown, **même UX globale** (arbo à
 gauche + éditeur full-page au centre + tags + recherche), mais l'éditeur
@@ -25,10 +31,10 @@ au lieu d'être du markdown texte.
 - Recherche full-text côté front
 - Ownership par user (voter Symfony)
 - Convention 5-couches (Entity / DTO / Manager / Serializer / Vue)
-- Chiffrement at-rest du contenu (réutiliser le Type Doctrine de
-  [`../markdown/encryption.md`](../markdown/encryption.md))
-- Images upload/serve/cleanup — partager le `NoteImageController` du
-  sous-module Markdown (c'est juste un stockage de fichiers)
+- Chiffrement at-rest du contenu — Type Doctrine encrypted partagé
+  (`src/Core/Encryption/`)
+- Images upload/serve/cleanup — `MarkdownNoteImageService` +
+  `MarkdownNotesImagesController` (code dans `src/Module/Notes/Markdown/`)
 - Templates, raccourcis clavier, sommaire (TOC)
 
 ## Ce qui change
@@ -68,12 +74,11 @@ au lieu d'être du markdown texte.
 - Éditeur Vue : intégrer `@editorjs/editorjs` + plugins, wrapper Vue 3
   custom (ou lib existante), gérer save debounced du JSON
 
-## Ordre d'exécution
+## Ordre d'exécution (historique)
 
-Démarrer **après** le sous-module Markdown stabilisé. Réutilisations
-directes :
-- Type Doctrine encrypted (`../markdown/encryption.md`)
-- Controller images (`../markdown/images.md`)
-- Pattern Manager + voter ownership (`../markdown/manager.md`)
+Démarré après stabilisation de Markdown. Réutilisations effectives :
+- Type Doctrine encrypted (`src/Core/Encryption/`)
+- Controller images (`src/Module/Notes/Markdown/Controller/`)
+- Pattern Manager + voter ownership (cf. `src/Module/Notes/Markdown/Note/Manager/`)
 - Composable `useNoteTree.js` (drag-drop arbo) — strictement identique
 - i18n base notes

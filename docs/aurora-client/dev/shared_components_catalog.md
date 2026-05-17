@@ -744,11 +744,99 @@ Wrapper Chart.js (vue-chartjs).
 
 ---
 
+## Composants complémentaires
+
+### `AppBlockEditor` (`@shared/components/editor/`)
+
+Wrapper Vue 3 autour d'**EditorJS** (éditeur block-based : paragraph, header,
+list, image, code…). Utilisé par le sous-module Notes/Block.
+
+| Prop | Type | Défaut |
+|---|---|---|
+| `modelValue` | `Object` (data EditorJS) | `null` |
+| `placeholder` | `String` | `""` |
+| `readonly` | `Boolean` | `false` |
+| `autofocus` | `Boolean` | `false` |
+
+**Emits** : `update:modelValue(blocks)`, `ready`, `change`.
+
+### `AppCardLink` (`@shared/components/nav/`)
+
+Card cliquable façon "tuile de navigation" (dashboard, picker de module).
+
+| Prop | Type | Défaut |
+|---|---|---|
+| `href` | `String` | **requis** |
+| `title` | `String` | **requis** |
+| `description` | `String` | `""` |
+| `icon` | `String` | `null` |
+
+### `AppNavListItem` (`@shared/components/nav/`)
+
+Item de liste de navigation (mobile drawer, dropdown user). Distinct
+d'`AppNavLink` (qui est sidemenu desktop).
+
+### `AppListToolbar` (`@shared/components/list/`)
+
+Toolbar standard au-dessus d'une liste admin : slot pour `AppSearchInput`,
+filtres, bouton "Nouveau", bulk actions. Réutilisé par `useListPage`.
+
+```vue
+<AppListToolbar>
+    <template #search><AppSearchInput v-model="search" v-on:search="onSearch" /></template>
+    <template #actions><AppButton v-on:click="openCreate">{{ $t('common.new') }}</AppButton></template>
+</AppListToolbar>
+```
+
+### `AppFloatingMenu` (`@shared/components/overlay/`)
+
+Menu contextuel positionné via floating-ui (popper-like). Remplace les
+anciens dropdowns ad-hoc.
+
+| Prop | Type | Défaut |
+|---|---|---|
+| `placement` | `String` | `"bottom-start"` |
+| `offset` | `Number` | `4` |
+
+```vue
+<AppFloatingMenu>
+    <template #trigger="{ toggle }">
+        <AppIconButton icon="more-vertical" v-on:click="toggle" />
+    </template>
+    <AppListItemButton v-on:click="edit">{{ $t('common.edit') }}</AppListItemButton>
+    <AppListItemButton v-on:click="del">{{ $t('common.delete') }}</AppListItemButton>
+</AppFloatingMenu>
+```
+
+### `AppLoader` (`@shared/components/feedback/`)
+
+Spinner / loader inline. Préférer un état `loading` sur `AppButton` quand
+applicable ; `AppLoader` est pour les zones de chargement page-level.
+
+| Prop | Type | Défaut |
+|---|---|---|
+| `size` | `String` | `"md"` (`sm` `md` `lg`) |
+
+### `AppColorPicker` (détail complet)
+
+`AppColorPicker` est mentionné §Form (`AppColorField` / `AppColorPicker` /
+`AppColorSwatch`) — précision sur le picker lui-même :
+
+| Prop | Type | Défaut |
+|---|---|---|
+| `modelValue` | `String` (hex) | `null` |
+| `palette` | `Array<string>` | palette par défaut (10 couleurs) |
+| `allowCustom` | `Boolean` | `true` (permet la saisie hex libre) |
+
+`AppColorField` = wrapper form avec label/error. `AppColorSwatch` = pastille
+read-only utilisée en cell de tableau ou badge.
+
+---
+
 ## Composants non documentés ici
 
 Volontairement omis car internes ou trop nichés pour un usage client courant :
 
-- `AppChart` — documenté ci-dessus mais usage rare (préférer un panel custom).
 - Tous les composants spécifiques à un module (`PostEditor.vue`,
   `MediaPickerModal.vue`, etc.) — voir l'arborescence
   `assets/Module/<Module>/` et les docs correspondantes.

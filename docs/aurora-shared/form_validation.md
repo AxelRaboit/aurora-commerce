@@ -20,29 +20,53 @@ Utilisateur soumet  →  [Client] validation minimale (required, email)
 
 ### 1. DTO — structure obligatoire
 
-Chaque formulaire dispose d'un DTO `final readonly` avec injection de constructeur et Symfony Constraints en attributs.
+Deux variantes selon l'usage :
+
+#### A. DTO instrumenté (entité avec page backend CRUD)
+
+Suit la **convention 5-couches Sylius-style** : `<Name>InputInterface` + classe
+**non-`final`** + `public readonly` par propriété + factory séparée avec
+`#[AsAlias]`. Permet l'override d'un projet client / d'un client de client.
+Doc canonique :
+[`../aurora-core/dev/entity_extensibility_convention.md` §3](../aurora-core/dev/entity_extensibility_convention.md).
 
 ```php
-// src/Module/Foo/Dto/FooInput.php
-final readonly class FooInput
+// src/Module/Foo/Dto/FooInputInterface.php
+interface FooInputInterface
+{
+    public function getName(): string;
+    public function getStatus(): string;
+}
+
+// src/Module/Foo/Dto/FooInput.php — NON-final pour permettre extends côté client
+class FooInput implements FooInputInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'backend.foo.errors.name_required')]
         #[Assert\Length(max: 255, maxMessage: 'backend.foo.errors.name_too_long')]
-        public string $name,
+        public readonly string $name,            // public readonly per-prop (pas readonly class)
 
-        #[Assert\NotBlank(message: 'backend.foo.errors.status_required')]
-        #[Assert\Choice(callback: [FooStatusEnum::class, 'values'], message: 'backend.foo.errors.status_invalid')]
-        public string $status,
+        #[Assert\Choice(callback: [FooStatusEnum::class, 'values'])]
+        public readonly string $status,
 
         #[Assert\PositiveOrZero]
-        public ?int $relatedId = null,
+        public readonly ?int $relatedId = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public function getName(): string   { return $this->name; }
+    public function getStatus(): string { return $this->status; }
+}
+```
+
+```php
+// src/Module/Foo/Dto/FooInputFactory.php
+#[AsAlias(FooInputFactoryInterface::class)]
+class FooInputFactory implements FooInputFactoryInterface
+{
+    public function fromArray(array $data): FooInputInterface
     {
-        return new self(
-            name:      trim((string) ($data['name'] ?? '')),
+        return new FooInput(
+            name:      Str::trimFromArray($data, 'name'),
             status:    (string) ($data['status'] ?? ''),
             relatedId: isset($data['relatedId']) ? (int) $data['relatedId'] : null,
         );
@@ -50,12 +74,32 @@ final readonly class FooInput
 }
 ```
 
-**Règles :**
-- Toujours `final readonly`
-- Propriétés publiques, pas de getters
+**Pourquoi pas `final readonly class` global** : un parent `readonly class`
+contraint l'enfant à être également `readonly class` → un client ne peut pas
+ajouter une propriété mutable. La validation Symfony se fait sur la classe,
+elle s'applique transparemment aux enfants.
+
+#### B. DTO interne / sub-DTO (pas instrumenté, pas étendu)
+
+Pour les value objects internes (sub-DTOs imbriqués, payloads d'event,
+DTOs de réponse) qui **ne sont pas exposés** à l'extension client, garder
+`final readonly` reste OK et plus expressif :
+
+```php
+final readonly class FooLineInput  // sub-DTO inclus dans FooInput.lines[]
+{
+    public function __construct(
+        public string $sku,
+        public int $quantity,
+    ) {}
+}
+```
+
+**Règles communes (A et B)** :
+- Propriétés publiques, pas de getters (sauf si Interface contrainte de Manager les exige — cf. variante A)
 - Messages de contrainte = clé de traduction (ex: `'backend.foo.errors.name_required'`)
-- Factory statique nommée `fromArray(array $data)` pour les endpoints JSON, `fromRequest(Request $request)` si besoin de lire les headers
-- Normalisation dans le factory : `trim()`, cast, nullification des chaînes vides
+- **Pas** de méthode statique `fromArray()` dans le DTO en cas A — c'est la factory qui le fait (elle peut être décorée par un client)
+- Normalisation (`trim()`, cast, nullification) toujours dans la factory ou le constructeur
 
 ---
 

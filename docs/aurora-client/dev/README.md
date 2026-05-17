@@ -71,7 +71,7 @@ ou consultez la version en ligne :
 | Doc core | Pourquoi vous en avez besoin |
 |---|---|
 | [`entity_extensibility_convention.md`](../../aurora-core/dev/entity_extensibility_convention.md) | **Doc canonique** de la convention 5 couches. À lire au moins une fois. |
-| [`client_quickstart.md`](../../aurora-core/dev/client_quickstart.md) | Cheatsheet d'extension côté client. |
+| [`extend_module.md`](../extending/extend_module.md) | Cheatsheet d'extension côté client (5 couches + Twig + finders + décorateurs + permissions). |
 | [`extending_aurora.md`](../../aurora-core/dev/extending_aurora.md) | Vue d'ensemble du modèle d'extensibilité. |
 | [`extending_agency_pilot.md`](../../aurora-core/dev/extending_agency_pilot.md) | Tutorial complet : étendre `Agency` avec `code`. |
 | [`add_module.md`](../../aurora-core/dev/add_module.md) | Créer un nouveau module dans votre repo client. |

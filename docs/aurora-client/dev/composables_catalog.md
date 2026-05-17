@@ -557,6 +557,99 @@ seulement si vous gérez le HTTP vous-même.
 
 ---
 
+## 7. Composables — Format & UI helpers
+
+### `useDateFormat()` (`@shared/composables/format/`)
+
+Format de date/heure suivant la locale courante (intl).
+
+```js
+const { formatDate, formatDateTime, formatRelative } = useDateFormat();
+formatDate(post.createdAt);          // '15 mai 2026'
+formatDateTime(post.updatedAt);      // '15 mai 2026 14:32'
+```
+
+### `useFileSize()` (`@shared/composables/format/`)
+
+Format de taille fichier humain-readable.
+
+```js
+const { format } = useFileSize();
+format(1024 * 1024 * 3.5);           // '3,5 Mo'
+```
+
+### `useRelativeTime()` (`@shared/composables/`)
+
+Temps relatif réactif ("il y a 5 minutes") avec auto-refresh.
+
+```js
+const { relative } = useRelativeTime(() => message.sentAt);
+// <span>{{ relative }}</span>  → s'auto-met à jour toutes les minutes
+```
+
+### `useMediaQuery(query)` (`@shared/composables/`)
+
+Match d'une media query CSS, réactif.
+
+```js
+const isMobile = useMediaQuery('(max-width: 768px)');
+// isMobile.value === true | false
+```
+
+### `useLayoutMount({ onMount?, onUnmount? })` (`@shared/composables/`)
+
+Lifecycle helper pour des side-effects au mount/unmount d'un layout
+(register/cleanup d'event listeners globaux, theme switch, etc.).
+
+---
+
+## 8. Composables — Auto-save (`@shared/composables/`)
+
+### `useAutoSave({ value, save, debounce? })`
+
+Debounced auto-save d'une valeur (form long, éditeur notes…). Gère
+loading state, dirty flag, dernière sauvegarde, conflits.
+
+```js
+const { status, lastSavedAt, forceSave } = useAutoSave({
+    value: () => editorContent.value,
+    save: async (content) => await request('/save', { content }),
+    debounce: 1500,
+});
+```
+
+### `useAutoSaveStatusDisplay(status)`
+
+Compagnon de `useAutoSave` : convertit le status en label/icône affichable.
+
+```js
+const { label, icon } = useAutoSaveStatusDisplay(status);
+// <AppBadge :icon="icon">{{ label }}</AppBadge>
+```
+
+### `usePasswordGenerator()` (`@shared/composables/`)
+
+Génération de mot de passe avec contrôles (longueur, classes de caractères).
+Utilisé par le sous-module `PasswordGenerator` de Vault.
+
+```js
+const { length, options, password, generate, copy } = usePasswordGenerator();
+```
+
+### `useClientFilteredList(source, opts?)` (`@shared/composables/list/`)
+
+Filtre/tri **côté client** d'une liste déjà chargée (search + custom filters
+sans XHR). Utile quand le backend renvoie tout d'un coup et qu'on filtre dans
+l'UI.
+
+```js
+const { items, search, filters, reset } = useClientFilteredList(props.allItems, {
+    searchKeys: ['title', 'description'],
+});
+```
+
+---
+
 ## 7. Utilitaires — HTTP (`@shared/utils/http/`)
 
 ### `buildPath(template, params)`

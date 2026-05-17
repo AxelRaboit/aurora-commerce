@@ -2,7 +2,9 @@
     SEO / Open Graph / Twitter Cards head partial.
     See docs/aurora-core/dev/convention_seo_head.md for the full contract.
 
-    Each passerelle must `{% set seo = seo({...}) %}` at its top (after `{% extends %}`).
+    Each passerelle must call `{% do seo({...}) %}` inside a `{% block seo_define %}{% endblock %}`
+    (after `{% extends %}`). The call is a side-effect: it stores the payload in the request
+    attributes; the head template below reads it back via `{% set seo = seo_current() %}`.
     The `seo()` function (SeoExtension) returns a normalized hash with these keys, all
     pre-resolved (title template applied, URLs absolutized, defaults injected):
 

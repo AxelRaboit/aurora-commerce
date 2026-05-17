@@ -193,6 +193,19 @@ make schema-validate    # doit dire "schema in sync"
 Cf. [`database.md`](database.md) pour les détails (sequences, fixtures,
 migrations Aurora vs client).
 
+### d) DTO + Manager + Serializer + Vue
+
+L'entité seule ne suffit pas pour exposer le champ `code` dans le formulaire
+admin et le persister. Il faut **les 5 couches complètes** :
+
+1. **DTO** : étendre `AgencyInput` + décorer `AgencyInputFactory` avec `#[AsAlias]`
+2. **Manager** : étendre `AgencyManager` + override `createAgency()` (instancier la classe cliente) + `applyInput()` (mapper `$input->code` → `$agency->setCode()`)
+3. **Serializer** : étendre `AgencySerializer` + spread `parent::serialize()` avec `'code'`
+4. **Vue** : wrapper `AgenciesApp.vue` sous `assets/client/Overrides/backend/agencies/` avec `extraFields` + slots `extra-headers` / `extra-cells` / `extra-form-fields`
+
+Snippets complets et patterns d'extension dans
+[`../extending/extend_module.md`](../extending/extend_module.md) (sections §1-5).
+
 ---
 
 ## 6. Créer un nouveau module client autonome
@@ -257,5 +270,5 @@ Ensuite : `make fixtures` (ou `migrate` puis seeders du nouveau projet).
 | Mettre à jour aurora-core | [`update_aurora.md`](update_aurora.md) |
 | Tests côté client | [`testing_client.md`](testing_client.md) |
 | Déploiement production | [`deployment.md`](deployment.md) |
-| Cheatsheet « où je mets mon code ? » | [`../../aurora-core/dev/client_quickstart.md`](../../aurora-core/dev/client_quickstart.md) |
+| Cheatsheet « où je mets mon code ? » | [`../extending/add_module.md`](../extending/add_module.md) (nouveau module) ou [`../extending/extend_module.md`](../extending/extend_module.md) (étendre Aurora) |
 | Mémoire IA / Claude Code dans le projet client | [`memory_for_ai.md`](memory_for_ai.md) |

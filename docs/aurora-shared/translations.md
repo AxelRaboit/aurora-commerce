@@ -11,6 +11,13 @@ YAML sources  ──make translation──►  assets/locales/generated/{fr,en}.
      └──  Symfony Translator (Twig, PHP, console)
 ```
 
+> **Locales actives** : `fr` et `en` uniquement (cf. `Aurora\Core\Locale\Enum\LocaleEnum`).
+> Des fichiers `security.{es,de}.yaml` / `validators.{es,de}.yaml` existent
+> historiquement dans `src/Core/translations/` mais **ne sont pas générés en
+> JSON frontend** tant que `LocaleEnum` n'a pas les cases correspondantes.
+> Ajouter une locale = code change centralisé dans `LocaleEnum` côté core
+> (cf. mémoire `decision_locale_added_in_core.md`).
+
 ---
 
 ## Structure des fichiers YAML
