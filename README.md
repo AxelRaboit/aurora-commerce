@@ -91,6 +91,9 @@ Le verrouillage optimiste utilise la colonne `#[ORM\Version]` de Doctrine combin
 
 > Les modules dont la dépendance est absente se dégradent proprement : PDF Forms crée les documents en statut *Brouillon*, MountPoint affiche une erreur de connexion, OCR met les jobs en erreur avec un message explicite.
 
+> 📋 **Liste exhaustive** des prérequis (système, PHP exts, binaires CLI, services externes, modèles Ollama, vars d'env, spécificités prod) :
+> [`docs/aurora-core/ops/prerequisites.md`](docs/aurora-core/ops/prerequisites.md) — à consulter avant chaque install/déploiement.
+
 ### Services externes (OCR Billing + Assistant IA)
 
 Deux modules utilisent un Ollama local — **optionnels** si tu ne les actives pas :

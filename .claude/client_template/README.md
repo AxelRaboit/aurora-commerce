@@ -19,6 +19,8 @@ make install-dev                        # composer + pnpm + DB create + migrate 
 
 **Identifiants par défaut** : `admin@aurora.app` / `password`
 
+> 📋 **Checklist complète** des prérequis (PHP, Node, Postgres, binaires CLI, modèles Ollama, vars d'env, prod) : [`docs/aurora-core/ops/prerequisites.md`](docs/aurora-core/ops/prerequisites.md) — à lire avant l'install initial.
+
 ### Services externes optionnels (Ollama)
 
 Aurora-core embarque deux modules qui s'appuient sur **Ollama**. Les valeurs
