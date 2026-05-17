@@ -67,7 +67,7 @@ enum AssistantSettingEnum: string implements ApplicationParameterEnumInterface
             self::VisionModel => 'qwen2.5vl:3b',
             self::HttpTimeout => '300',
             self::NumCtx => '8192',
-            self::SystemPrompt => '',
+            self::SystemPrompt => AssistantDefaultPrompt::TEXT,
         };
     }
 
