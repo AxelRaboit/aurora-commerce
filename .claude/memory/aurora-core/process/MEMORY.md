@@ -1,6 +1,7 @@
 # Process & Méthode
 
 - [process_make_ft_before_commit.md](process_make_ft_before_commit.md) — **toujours** `make ft` avant chaque commit
+- [process_doc_audit_before_commit.md](process_doc_audit_before_commit.md) — **toujours** auditer les docs/mémoires qui parlent du sujet touché, dans le même commit (vaut code↔doc)
 - [process_audit_ged_lessons.md](process_audit_ged_lessons.md) — checklist d'audit post-module : hooks manager, interfaces serializer, TimestampableTrait, fetch bruts
 - [process_audit_before_generalize.md](process_audit_before_generalize.md) — auditer avant de généraliser une convention sur N entités
 - [process_atomic_commits.md](process_atomic_commits.md) — un commit par entité lors des rollouts massifs

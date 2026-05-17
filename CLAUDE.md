@@ -266,6 +266,16 @@ Mémoire shared (distribuée aux clients) :
   `fix:`, `test:` (suivre l'historique récent : `git log --oneline -20`).
 - **Commits atomiques par entité** lors du rollout d'extensibilité (cf
   l'historique récent : 24 commits, un par entité).
+- **Audit docs/mémoires avant chaque commit** : pour chaque fichier
+  modifié, vérifier si une doc sous `docs/` ou une mémoire sous
+  `.claude/memory/` mentionne le sujet touché (`grep -rn
+  "<ClassName>\|<methodName>" docs/ .claude/memory/`). Si oui,
+  s'assurer que les snippets et affirmations sont encore exacts contre
+  le code actuel ; sinon, mettre à jour **dans le même commit**
+  (préférable) ou dans un commit `docs:` qui suit immédiatement. Vaut
+  dans les deux sens : renommer/supprimer une doc → grep ses
+  références aussi. Détail :
+  [`process_doc_audit_before_commit.md`](.claude/memory/aurora-core/process/process_doc_audit_before_commit.md).
 
 ---
 
