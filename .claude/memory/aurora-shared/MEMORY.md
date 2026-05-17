@@ -19,6 +19,11 @@ Distribué via composer : les clients lisent ces mémoires depuis
   **règle dure** : `_edit` = GET page Twig d'édition ; `_update` = POST API
   JSON. Jamais un seul nom pour les deux. CRUD SPA inline = seulement
   `_update` (pas de page `_edit` car édition vit dans une modal de l'index).
+- [convention_service_final_vs_readonly.md](convention_service_final_vs_readonly.md) —
+  **règle dure** : services purs `final readonly`, mais thin shells
+  (notifications, webhooks, audit) juste `readonly` pour rester
+  mock-ables en unit test. Repos jamais `final`. Matrice de décision
+  incluse + commande de détection des outliers.
 - [convention_thin_controller.md](convention_thin_controller.md) — **règle dure** :
   controllers ultra-fins (routing + auth + DTO + délégation + sérialisation).
   Toute logique métier dans Manager (mutations) ou Service (calcul pur). À
