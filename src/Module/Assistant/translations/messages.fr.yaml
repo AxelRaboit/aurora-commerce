@@ -15,6 +15,7 @@ assistant:
     tool_call: Appel outil
     tool_result: Résultat outil
     conversations: Conversations
+    source: Source
     source_all: Toutes les sources
     confirm_required: Action nécessitant confirmation
     approve: Approuver
