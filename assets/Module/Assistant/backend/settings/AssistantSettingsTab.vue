@@ -156,7 +156,7 @@ const providerOptions = computed(
             <p class="text-xs text-muted">{{ t('backend.parameters.assistant_vision_model.description') }}</p>
         </div>
 
-        <!-- HTTP timeout + num_ctx side by side -->
+        <!-- HTTP timeout (applies to both providers) + num_ctx/max_tokens -->
         <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1">
                 <AppInput
@@ -167,7 +167,9 @@ const providerOptions = computed(
                 />
                 <p class="text-xs text-muted">{{ t('backend.parameters.assistant_http_timeout.description') }}</p>
             </div>
-            <div class="space-y-1">
+
+            <!-- num_ctx for Ollama only -->
+            <div v-if="values['assistant_provider'] !== 'anthropic'" class="space-y-1">
                 <AppInput
                     v-model="values['assistant_num_ctx']"
                     type="number"
@@ -175,6 +177,17 @@ const providerOptions = computed(
                     placeholder="8192"
                 />
                 <p class="text-xs text-muted">{{ t('backend.parameters.assistant_num_ctx.description') }}</p>
+            </div>
+
+            <!-- max_tokens for Anthropic only -->
+            <div v-else class="space-y-1">
+                <AppInput
+                    v-model="values['assistant_num_ctx']"
+                    type="number"
+                    :label="t('backend.parameters.assistant_max_tokens.label')"
+                    placeholder="4096"
+                />
+                <p class="text-xs text-muted">{{ t('backend.parameters.assistant_max_tokens.description') }}</p>
             </div>
         </div>
 

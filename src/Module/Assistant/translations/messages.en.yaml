@@ -60,14 +60,17 @@ backend:
       label: Ollama vision model
       description: 'Vision-capable model used by the image_read tool to describe/OCR images (e.g. qwen2.5vl:3b, llava:7b, minicpm-v). Leave blank to fall back to ASSISTANT_VISION_MODEL from .env.'
     assistant_http_timeout:
-      label: Ollama HTTP timeout (s)
-      description: 'Per-request idle timeout against Ollama, in seconds. Raise on CPU / underpowered hosts if you hit transport errors mid-generation. .env default: 300.'
+      label: HTTP timeout (s)
+      description: 'Per-request idle timeout (Ollama or Anthropic), in seconds. Raise if you hit transport errors mid-generation. .env default: 300.'
     assistant_num_ctx:
       label: Context window (num_ctx)
-      description: 'Token count loaded into the model context. Higher = longer conversations but more RAM. .env default: 8192.'
+      description: 'Ollama only. Token count loaded into the model context. Higher = longer conversations but more RAM. .env default: 8192.'
+    assistant_max_tokens:
+      label: Max tokens (response)
+      description: 'Anthropic only. Maximum number of tokens in the response. Recommended: 4096.'
     assistant_system_prompt:
       label: System prompt
-      description: 'Instructions given to the model at the start of every conversation. Leave blank to use the built-in Aurora default prompt.'
+      description: 'Instructions given to the model at the start of every conversation (Ollama and Anthropic). Leave blank to use the built-in Aurora default.'
   nav:
     sections:
       assistant: Assistant
