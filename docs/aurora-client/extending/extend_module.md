@@ -1,10 +1,14 @@
-# Étendre / Override aurora-core depuis le projet client
+# Étendre un module Aurora
 
 Ce document est le **recettier** pour étendre n'importe quel point
 d'extension d'aurora-core depuis votre projet client. Chaque section traite
-un cas concret (« je veux X → voici le diff minimal côté client »). Pour la
-théorie complète du pattern Sylius en 5 couches, voir la doc canonique
-[`../../aurora-core/dev/entity_extensibility_convention.md`](../../aurora-core/dev/entity_extensibility_convention.md).
+un cas concret (« je veux X → voici le diff minimal côté client »).
+
+> Pour **créer** un module client (de zéro, pas étendre Aurora), voir
+> [`add_module.md`](add_module.md).
+
+Pour la théorie complète du pattern Sylius en 5 couches, voir la doc
+canonique [`../../aurora-core/dev/entity_extensibility_convention.md`](../../aurora-core/dev/entity_extensibility_convention.md).
 Pour un tutoriel pas-à-pas qui ajoute un champ `code` à `Agency`, voir
 [`../../aurora-core/dev/extending_agency_pilot.md`](../../aurora-core/dev/extending_agency_pilot.md).
 
@@ -305,7 +309,7 @@ client, on ne réécrit pas le composant — on le **wrap** dans
 `assets/client/Overrides/`.
 
 Exemple détaillé (slots, composables, gotchas `editForm`) :
-[`assets_vue.md`](assets_vue.md) et la mémoire dédiée
+[`../dev/assets_vue.md`](../dev/assets_vue.md) et la mémoire dédiée
 [`pattern_extend_vue.md`](../../../.claude/memory/aurora-client/pattern_extend_vue.md).
 
 Squelette d'override Vue —
@@ -334,7 +338,7 @@ import CoreAgenciesApp from '@core/backend/agencies/AgenciesApp.vue';
 > **Piège `editForm`** : `editForm` doit contenir **uniquement** les champs
 > envoyés au backend (string/number/boolean). Pas d'état UI, pas de computed,
 > pas de refs imbriqués. Le submit fait `request(url, { ...editForm })` —
-> tout ce qui est dedans part au backend. Détail dans `assets_vue.md`.
+> tout ce qui est dedans part au backend. Détail dans [`../dev/assets_vue.md`](../dev/assets_vue.md).
 
 ---
 
@@ -451,19 +455,146 @@ Placement standard : `src/EventListener/MyListener.php` (autoconfiguré) ou
 
 ## 9. Permissions et modules
 
-Pour ajouter une permission custom à un module client (ou exposer un module
-au panel d'accès utilisateur) :
+### 9.1 Ajouter une permission custom à un module Aurora
 
-- **Ajouter une permission** : `ModuleInterface::getPermissions()` retourne
-  un `NavPermission('mon_module.action')`. Traduction obligatoire dans
-  `assets/client/locales/{fr,en}.js` sous
-  `backend.permissions.names.mon_module.action`. Cf. memory
-  [`pattern_add_custom_permissions.md`](../../../.claude/memory/aurora-client/pattern_add_custom_permissions.md).
-- **Toggle de module utilisateur** : `ModuleToggleProviderInterface::getToggles()`
-  retourne des `ModuleToggle`. Exemple complet dans
-  `src/Module/Tracking/TrackingModule.php` du template. Doc core :
-  [`../../aurora-core/dev/per_user_module_access.md`](../../aurora-core/dev/per_user_module_access.md).
-- **Sync** après chaque ajout : `make sf CMD="aurora:privileges:sync"`.
+Quand un projet client a besoin de permissions supplémentaires sur un module
+Aurora existant (ex. `crm.contacts.export`, `crm.deals.archive`), créer un
+**module de permissions** dédié — un service qui implémente `ModuleInterface`
+avec le **même `getId()`** que le module Aurora cible (pour grouper les
+permissions sous la même section dans `/dev/dashboard/permissions`).
+
+```php
+// src/Module/ClientCrm/ClientCrmPermissionsModule.php
+namespace App\Module\ClientCrm;
+
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Nav\NavPermission;
+
+final readonly class ClientCrmPermissionsModule implements ModuleInterface
+{
+    public function getId(): string { return 'crm'; }  // même id que CrmModule core
+
+    public function getPermissions(): array
+    {
+        return [
+            new NavPermission('crm.contacts.export'),
+            new NavPermission('crm.deals.archive'),
+        ];
+    }
+
+    public function getNavSections(): array        { return []; }   // pas de nav, juste des permissions
+    public function getCatalogNavSections(): array { return []; }
+}
+```
+
+Pas besoin de toucher `services.yaml` — le bloc `_instanceof: ModuleInterface`
+(cf. [`add_module.md` §2.1](add_module.md)) tague automatiquement.
+
+**Traduction obligatoire** (sans elle, le dashboard affiche la clé brute) :
+
+```yaml
+# src/Module/ClientCrm/translations/messages.fr.yaml
+backend:
+    permissions:
+        names:
+            crm:
+                contacts:
+                    export: Exporter les contacts (CSV)
+                deals:
+                    archive: Archiver les opportunités
+```
+
+Côté controller / Vue :
+
+```php
+#[IsGranted('crm.contacts.export')]
+public function export(): Response { /* ... */ }
+```
+
+```js
+const canExport = computed(() => can('crm.contacts.export'));
+```
+
+Cf. memory [`pattern_add_custom_permissions.md`](../../../.claude/memory/aurora-client/pattern_add_custom_permissions.md).
+
+### 9.2 Bonne pratique : permissions granulaires
+
+Toujours décomposer en actions atomiques plutôt qu'un `manage` fourre-tout —
+permet d'attribuer des profils de droits fins aux utilisateurs `ROLE_USER`
+(lecture seule, création sans suppression, etc.) :
+
+```php
+// ✅ Granulaire — recommandé
+return [
+    new NavPermission('crm.contacts.view'),
+    new NavPermission('crm.contacts.create'),
+    new NavPermission('crm.contacts.edit'),
+    new NavPermission('crm.contacts.delete'),
+];
+
+// ❌ Trop vague
+return [
+    new NavPermission('crm.contacts.view'),
+    new NavPermission('crm.contacts.manage'),
+];
+```
+
+Correspondance Controller ↔ permission :
+
+| Action | `#[IsGranted]` |
+|---|---|
+| `index()` / `list()` | `*.view` (sur la classe) |
+| `create()` | `*.create` |
+| `update()` | `*.edit` |
+| `delete()` | `*.delete` |
+
+Côté Vue, si une action regroupe create + edit + delete (ex. un bouton
+"Modifier" qui peut aussi créer), utiliser un computed combiné :
+
+```js
+const canManage = computed(() =>
+    can('crm.contacts.create') || can('crm.contacts.edit') || can('crm.contacts.delete')
+);
+```
+
+### 9.3 Règles d'accès héritées d'aurora-core
+
+| Rôle | Comportement |
+|---|---|
+| `ROLE_DEV`   | Accès accordé automatiquement à toutes les permissions |
+| `ROLE_ADMIN` | Accès accordé automatiquement à toutes les permissions |
+| `ROLE_USER`  | Accès accordé seulement si la permission est dans `$user->getPrivileges()` |
+
+Les privilèges d'un `ROLE_USER` se gèrent depuis
+`/backend/users → Modifier → Privilèges`.
+
+### 9.4 Plusieurs modules de permissions
+
+Rien n'empêche d'avoir plusieurs modules de permissions clients, un par
+domaine (chacun s'enregistre automatiquement via `_instanceof`) :
+
+```
+src/Module/ClientCrm/ClientCrmPermissionsModule.php       → id 'crm'
+src/Module/ClientBilling/ClientBillingPermissionsModule.php → id 'billing'
+src/Module/ClientHr/ClientHrPermissionsModule.php         → id 'hr'
+```
+
+### 9.5 Toggle de module utilisateur
+
+`ModuleToggleProviderInterface::getToggles()` retourne des `ModuleToggle`
+pour exposer un module au panel "Accès aux modules par user". Exemple
+complet dans `src/Module/Tracking/TrackingModule.php` du template client
+(cf. [`add_module.md` §4](add_module.md#4-cas-2--module-avec-toggles--context-class)).
+Doc core : [`../../aurora-core/dev/per_user_module_access.md`](../../aurora-core/dev/per_user_module_access.md).
+
+### 9.6 Sync après chaque ajout
+
+```bash
+make sf CMD="aurora:privileges:sync"
+make sf CMD="aurora:menus:sync"
+```
+
+À relancer à chaque ajout/suppression de permission ou de NavItem.
 
 ---
 

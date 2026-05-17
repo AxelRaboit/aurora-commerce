@@ -77,8 +77,8 @@ version installée :
 |---|---|
 | **Quickstart** — *où mettre mon code ?* | `vendor/axelraboit/aurora/docs/aurora-client/getting_started/setup.md` |
 | Architecture du projet | `vendor/axelraboit/aurora/docs/aurora-client/getting_started/architecture.md` |
-| Étendre une entité (5 couches) | `vendor/axelraboit/aurora/docs/aurora-client/extending/extend_entity.md` |
-| Créer un module client complet | `vendor/axelraboit/aurora/docs/aurora-client/extending/add_module.md` |
+| Créer un nouveau module client | `vendor/axelraboit/aurora/docs/aurora-client/extending/add_module.md` |
+| Étendre un module Aurora (5 couches, Twig, finders, décorateurs, permissions) | `vendor/axelraboit/aurora/docs/aurora-client/extending/extend_module.md` |
 | Workflow dev quotidien | `vendor/axelraboit/aurora/docs/aurora-client/dev/dev_workflow.md` |
 | Mises à jour Aurora (détaillé) | `vendor/axelraboit/aurora/docs/aurora-client/dev/update_aurora.md` |
 | Conventions globales (Vue, fetch, JS, i18n, commits) | `vendor/axelraboit/aurora/.claude/memory/aurora-shared/MEMORY.md` |

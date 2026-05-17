@@ -5,7 +5,7 @@ aurora-core. À lire quand on vient de cloner le template `aurora-client` (ou
 qu'on en hérite) et qu'on doit l'avoir tournant en local pour la première
 fois. Pour le workflow quotidien (cache, tests, migrations…), voir
 [`dev_workflow.md`](dev_workflow.md). Pour étendre une entité Aurora, voir
-[`overriding.md`](overriding.md).
+[`../extending/extend_module.md`](../extending/extend_module.md).
 
 ---
 
@@ -179,7 +179,7 @@ doctrine:
 
 > **Préfixes obligatoires côté client** : tables en `app_*`, séquences en
 > `seq_app_*`. Le préfixe `core_` est réservé à aurora-core (collision sinon).
-> Voir [`overriding.md`](overriding.md) pour le détail.
+> Voir [`../extending/extend_module.md`](../extending/extend_module.md) pour le détail.
 
 ### c) Migration
 
@@ -251,7 +251,7 @@ Ensuite : `make fixtures` (ou `migrate` puis seeders du nouveau projet).
 | Sujet | Doc |
 |---|---|
 | Workflow quotidien (start, tests, fix, migrations…) | [`dev_workflow.md`](dev_workflow.md) |
-| Étendre une entité Aurora (5 couches) | [`overriding.md`](overriding.md) |
+| Étendre une entité Aurora (5 couches) | [`../extending/extend_module.md`](../extending/extend_module.md) |
 | Assets Vue, aliases, overrides | [`assets_vue.md`](assets_vue.md) |
 | Migrations, fixtures, séquences | [`database.md`](database.md) |
 | Mettre à jour aurora-core | [`update_aurora.md`](update_aurora.md) |

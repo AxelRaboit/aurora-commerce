@@ -25,9 +25,8 @@ conventions d'extensibilité, ops) sont dans [`aurora-core/`](../aurora-core/REA
 
 | Fichier | Contenu |
 |---|---|
-| [extending/extend_entity.md](extending/extend_entity.md) | Étendre une entité Aurora (champ, DTO, Manager, Serializer, Vue) |
-| [extending/add_module.md](extending/add_module.md) | Créer un module client complet |
-| [extending/custom_permissions.md](extending/custom_permissions.md) | Ajouter des permissions custom (granularité view/create/edit/delete) |
+| [extending/add_module.md](extending/add_module.md) | Créer un nouveau module client (5 cas types : stateless → toggles → CRUD → frontend → settings) |
+| [extending/extend_module.md](extending/extend_module.md) | Étendre un module Aurora (5 couches d'entité, Twig override, finders custom, décorer un service, permissions custom) |
 
 ## 🚢 Déploiement production
 

@@ -95,9 +95,8 @@ la doc à jour en même temps que le code.
 - [dev/assets_vue.md](vendor/axelraboit/aurora/docs/aurora-client/dev/assets_vue.md) — Composants Vue côté client
 - [dev/update_aurora.md](vendor/axelraboit/aurora/docs/aurora-client/dev/update_aurora.md) — Mettre à jour aurora-core
 - [deployment/](vendor/axelraboit/aurora/docs/aurora-client/deployment/) — Tout le déploiement prod (systemd, mod_xsendfile, OCR)
-- [extending/extend_entity.md](vendor/axelraboit/aurora/docs/aurora-client/extending/extend_entity.md) — Étendre une entité Aurora (5 couches)
-- [extending/add_module.md](vendor/axelraboit/aurora/docs/aurora-client/extending/add_module.md) — Créer un module client complet
-- [extending/custom_permissions.md](vendor/axelraboit/aurora/docs/aurora-client/extending/custom_permissions.md) — Permissions custom
+- [extending/add_module.md](vendor/axelraboit/aurora/docs/aurora-client/extending/add_module.md) — Créer un nouveau module client (5 cas types)
+- [extending/extend_module.md](vendor/axelraboit/aurora/docs/aurora-client/extending/extend_module.md) — Étendre un module Aurora (5 couches d'entité + Twig + finders + décorateurs + permissions custom)
 
 ### vendor/axelraboit/aurora/docs/aurora-shared/ — Conventions trans-couches
 - [form_validation.md](vendor/axelraboit/aurora/docs/aurora-shared/form_validation.md) — DTO + PayloadValidator + useForm

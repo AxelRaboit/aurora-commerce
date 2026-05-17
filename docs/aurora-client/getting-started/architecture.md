@@ -49,7 +49,7 @@ aurora-client  ──uses──►  vendor/axelraboit/aurora  (aurora-core)
 
 **Règle d'or** : ne jamais modifier de fichier sous `vendor/`. Toute
 personnalisation passe par les points d'extension d'Aurora (héritage,
-`#[AsAlias]`, slots Vue, override Twig). Voir [extend_entity.md](extend_entity.md).
+`#[AsAlias]`, slots Vue, override Twig). Voir [../extending/extend_module.md](../extending/extend_module.md).
 
 ---
 

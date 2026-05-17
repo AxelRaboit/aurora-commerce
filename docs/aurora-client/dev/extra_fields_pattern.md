@@ -4,7 +4,7 @@
 > une page admin Aurora (un nouveau champ `code` sur Agency, une `priority` sur
 > Project, etc.) sans forker le composant `<Plural>App.vue`. Ce doc décrit
 > uniquement la couche Vue 5 du pattern Sylius-style d'Aurora ; pour le
-> remplacement complet d'un composant, voir [Overriding](overriding.md). Pour
+> remplacement complet d'un composant, voir [extend_module.md](../extending/extend_module.md). Pour
 > les conventions générales d'assets Vue, voir [assets_vue.md](assets_vue.md).
 
 ---
@@ -305,7 +305,7 @@ déclarées via `extraFields` pour passer dans le payload.
 
 Si vous changez la **structure** du form (sections, layout, ordre), votre
 seule option propre est l'**override complet** du composant
-`<Plural>App.vue` — voir [Overriding](overriding.md). Dans ce cas, plus
+`<Plural>App.vue` — voir [extend_module.md](../extending/extend_module.md). Dans ce cas, plus
 besoin d'`extraFields` : vous gérez `editForm` vous-même.
 
 > Avant de partir sur un override complet, demandez-vous si le contrat

@@ -61,7 +61,7 @@ Le contrat est simple : **ne jamais modifier `vendor/`**. Tout ce que tu écris
 vit dans `src/` ou `assets/client/`. Une mise à jour Aurora (`make aurora-update`)
 ne casse rien.
 
-Pour le guide technique pas-à-pas : [extend_entity.md](extend_entity.md).
+Pour le guide technique pas-à-pas : [../extending/extend_module.md](../extending/extend_module.md).
 
 ---
 

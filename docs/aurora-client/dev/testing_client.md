@@ -186,7 +186,7 @@ make schema-validate
 Si vous voyez une erreur du type *"Sequence already exists"*, c'est qu'une
 de vos entités cliente partage un nom de séquence avec une entité Aurora —
 préfixez **`seq_app_*`** systématiquement (cf.
-[`overriding.md`](overriding.md) §1).
+[`../extending/extend_module.md`](../extending/extend_module.md) §1).
 
 ### c) Ordre des fixtures
 

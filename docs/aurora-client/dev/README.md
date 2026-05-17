@@ -21,7 +21,7 @@ Selon ce que vous faites, lisez dans cet ordre :
 4. [Mise à jour aurora-core](update_aurora.md) — `make aurora-update`, breaking changes.
 
 ### J'étends une entité / un Manager / une Vue d'aurora-core
-1. [Overriding](overriding.md) — recettes concrètes pour chaque couche (entité, DTO, Manager, Serializer, Vue, Twig).
+1. [Étendre un module Aurora](../extending/extend_module.md) — recettes concrètes pour chaque couche (entité, DTO, Manager, Serializer, Vue, Twig) + permissions + décorer un service.
 2. [Pattern `extraFields`](extra_fields_pattern.md) — ajouter des champs à un formulaire admin via slots Vue.
 3. [Doc canonique de la convention 5 couches](../../aurora-core/dev/entity_extensibility_convention.md) (côté core).
 4. [Tutoriel pas-à-pas Agency](../../aurora-core/dev/extending_agency_pilot.md) (côté core).
@@ -48,7 +48,7 @@ Selon ce que vous faites, lisez dans cet ordre :
 |---|---|---|
 | [getting-started.md](getting-started.md) | Onboarding zéro | Premier jour sur le projet |
 | [dev_workflow.md](dev_workflow.md) | Commandes quotidiennes, debug | Tous les jours |
-| [overriding.md](overriding.md) | Recettes d'extension par couche | À chaque override |
+| [../extending/extend_module.md](../extending/extend_module.md) | Recettes d'extension par couche (entité, Twig, finders, décorateurs, permissions) | À chaque override |
 | [extra_fields_pattern.md](extra_fields_pattern.md) | `extraFields` + slots Vue | Ajout de champs à un form admin |
 | [shared_components_catalog.md](shared_components_catalog.md) | API des `App*.vue` partagés | Référence Ctrl+F |
 | [composables_catalog.md](composables_catalog.md) | API des composables et utils | Référence Ctrl+F |
@@ -97,7 +97,7 @@ Trois règles dures qui structurent tout le reste :
 
 2. **Type-hint d'interface partout** dans les signatures publiques (controllers,
    managers, serializers, getters/setters de relations). Permet la substitution
-   `#[AsAlias]` côté client. Voir [overriding.md](overriding.md#type-hints).
+   `#[AsAlias]` côté client. Voir [extend_module.md](../extending/extend_module.md).
 
 3. **Templates Twig = passerelles Vue**. Côté frontend public ET côté admin,
    `{% block body %}` ne contient qu'un `{{ vue_component(...) }}`. Le head meta
@@ -113,7 +113,7 @@ Si vous tombez sur un sujet absent ou périmé pendant que vous codez :
   `.claude/memory/aurora-client/` (cf [memory_for_ai.md](memory_for_ai.md)) et,
   si la convention est durable, pondez aussi un fichier ici.
 - Pour les recettes d'override / patterns → enrichissez
-  [overriding.md](overriding.md) ou [extra_fields_pattern.md](extra_fields_pattern.md).
+  [../extending/extend_module.md](../extending/extend_module.md) ou [extra_fields_pattern.md](extra_fields_pattern.md).
 - Pour l'API d'un composant Vue qui change → mettez à jour
   [shared_components_catalog.md](shared_components_catalog.md) ou
   [composables_catalog.md](composables_catalog.md).
