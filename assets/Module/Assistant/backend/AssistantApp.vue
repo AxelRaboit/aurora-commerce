@@ -240,7 +240,7 @@ function bubbleClass(role) {
             <div class="border-t border-line p-3 flex flex-col sm:flex-row gap-2">
                 <textarea
                     v-model="draft"
-                    rows="2"
+                    rows="5"
                     class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary resize-none focus:outline-none focus:ring-2 focus:ring-accent-500/40"
                     :placeholder="t('assistant.chat.placeholder')"
                     :disabled="sending"
