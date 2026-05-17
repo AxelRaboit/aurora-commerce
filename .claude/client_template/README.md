@@ -19,7 +19,9 @@ make install-dev                        # composer + pnpm + DB create + migrate 
 
 **Identifiants par défaut** : `admin@aurora.app` / `password`
 
-> 📋 **Checklist complète** des prérequis (PHP, Node, Postgres, binaires CLI, modèles Ollama, vars d'env, prod) : [`docs/aurora-core/ops/prerequisites.md`](docs/aurora-core/ops/prerequisites.md) — à lire avant l'install initial.
+> 📋 **Checklist complète** des prérequis (PHP, Node, Postgres, binaires CLI, modèles Ollama, vars d'env, prod) : [`vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md`](vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md) — à lire avant l'install initial.
+>
+> ℹ️ Toute la doc Aurora vit dans `vendor/axelraboit/aurora/docs/` (trois dossiers : `aurora-core/`, `aurora-client/`, `aurora-shared/`). Pas de copie locale, pas de sync : un `composer update axelraboit/aurora` met le code et la doc à jour ensemble.
 
 ### Services externes optionnels (Ollama)
 

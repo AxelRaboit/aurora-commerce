@@ -460,11 +460,9 @@ sync-claude-md: ## Symlink CLAUDE.md + README.md + .claude/memory + .claude/skil
 			echo "✅ .claude/skills/$$skill_name symlinked from vendor (scope: shared)"; \
 		fi \
 	done
-	@mkdir -p docs
-	@rm -rf docs/aurora-core docs/aurora-client
-	@ln -sfn ../$(AURORA)/docs/aurora-core docs/aurora-core
-	@ln -sfn ../$(AURORA)/docs/aurora-client docs/aurora-client
-	@echo "✅ docs/aurora-core + aurora-client symlinked from vendor"
+	@rm -rf docs/aurora-core docs/aurora-client docs/aurora-shared 2>/dev/null; \
+	if [ -d docs ] && [ -z "$$(ls -A docs 2>/dev/null)" ]; then rmdir docs; fi
+	@echo "ℹ️  Aurora docs live in $(AURORA)/docs/{aurora-core,aurora-client,aurora-shared}/ — no local copy/symlink."
 	@if [ ! -f .claude/settings.json ] && [ -f $(AURORA)/.claude/client_template/.claude/settings.json ]; then \
 		mkdir -p .claude; \
 		cp $(AURORA)/.claude/client_template/.claude/settings.json .claude/settings.json; \

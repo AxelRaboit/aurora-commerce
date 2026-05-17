@@ -79,28 +79,40 @@ depuis vendor).
 
 ---
 
-## 📖 Documentation développeur (symlinks vers vendor via `make aurora-update`)
+## 📖 Documentation développeur (lue depuis vendor — pas de copie locale)
 
-Les docs sont des **symlinks** vers `vendor/axelraboit/aurora/docs/`.
-**Ne pas éditer ces fichiers** — ils vivent dans vendor.
+Toute la documentation Aurora vit dans `vendor/axelraboit/aurora/docs/`.
+Pas de symlink, pas de sync : on lit directement le vendor. Tu obtiens
+toujours la version installée d'aurora-core, et un `composer update` met
+la doc à jour en même temps que le code.
 
-### docs/aurora-client/ — Guide dev pour travailler dans ce projet
-- [getting_started/philosophy.md](docs/aurora-client/getting_started/philosophy.md) — Philosophie du projet (deux modes : étendre Aurora vs créer un module)
-- [getting_started/setup.md](docs/aurora-client/getting_started/setup.md) — Installation locale
-- [getting_started/architecture.md](docs/aurora-client/getting_started/architecture.md) — Structure du projet, relation avec aurora-core
-- [dev/dev_workflow.md](docs/aurora-client/dev/dev_workflow.md) — Commandes du quotidien
-- [dev/database.md](docs/aurora-client/dev/database.md) — Migrations, fixtures, séquences
-- [dev/assets_vue.md](docs/aurora-client/dev/assets_vue.md) — Composants Vue côté client
-- [dev/update_aurora.md](docs/aurora-client/dev/update_aurora.md) — Mettre à jour aurora-core
-- [extending/extend_entity.md](docs/aurora-client/extending/extend_entity.md) — Étendre une entité Aurora (5 couches)
-- [extending/add_module.md](docs/aurora-client/extending/add_module.md) — Créer un module client complet
-- [extending/custom_permissions.md](docs/aurora-client/extending/custom_permissions.md) — Permissions custom (granularité view/create/edit/delete)
+### vendor/axelraboit/aurora/docs/aurora-client/ — Guide dev pour ce projet
+- [getting-started/philosophy.md](vendor/axelraboit/aurora/docs/aurora-client/getting-started/philosophy.md) — Philosophie (deux modes : étendre Aurora vs créer un module)
+- [getting-started/setup.md](vendor/axelraboit/aurora/docs/aurora-client/getting-started/setup.md) — Installation locale
+- [getting-started/architecture.md](vendor/axelraboit/aurora/docs/aurora-client/getting-started/architecture.md) — Structure du projet
+- [dev/dev_workflow.md](vendor/axelraboit/aurora/docs/aurora-client/dev/dev_workflow.md) — Commandes du quotidien
+- [dev/database.md](vendor/axelraboit/aurora/docs/aurora-client/dev/database.md) — Migrations, fixtures, séquences
+- [dev/assets_vue.md](vendor/axelraboit/aurora/docs/aurora-client/dev/assets_vue.md) — Composants Vue côté client
+- [dev/update_aurora.md](vendor/axelraboit/aurora/docs/aurora-client/dev/update_aurora.md) — Mettre à jour aurora-core
+- [deployment/](vendor/axelraboit/aurora/docs/aurora-client/deployment/) — Tout le déploiement prod (systemd, mod_xsendfile, OCR)
+- [extending/extend_entity.md](vendor/axelraboit/aurora/docs/aurora-client/extending/extend_entity.md) — Étendre une entité Aurora (5 couches)
+- [extending/add_module.md](vendor/axelraboit/aurora/docs/aurora-client/extending/add_module.md) — Créer un module client complet
+- [extending/custom_permissions.md](vendor/axelraboit/aurora/docs/aurora-client/extending/custom_permissions.md) — Permissions custom
 
-### docs/aurora-core/ — Architecture interne du bundle
-- [philosophy.md](docs/aurora-core/philosophy.md) — Philosophie d'Aurora Core (zéro fork, 5 couches, système de modules)
-- [dev/app_architecture.md](docs/aurora-core/dev/app_architecture.md) — Architecture, modules, Vite aliases
-- [dev/entity_extensibility_convention.md](docs/aurora-core/dev/entity_extensibility_convention.md) — Convention d'extensibilité des entités
-- [dev/extending_aurora.md](docs/aurora-core/dev/extending_aurora.md) — Points d'extension publics du bundle
+### vendor/axelraboit/aurora/docs/aurora-shared/ — Conventions trans-couches
+- [form_validation.md](vendor/axelraboit/aurora/docs/aurora-shared/form_validation.md) — DTO + PayloadValidator + useForm
+- [testing_php.md](vendor/axelraboit/aurora/docs/aurora-shared/testing_php.md) — Patterns PHPUnit
+- [testing_vue.md](vendor/axelraboit/aurora/docs/aurora-shared/testing_vue.md) — Patterns Vitest
+- [translations.md](vendor/axelraboit/aurora/docs/aurora-shared/translations.md) — Workflow i18n
+- [scheduler.md](vendor/axelraboit/aurora/docs/aurora-shared/scheduler.md) — Symfony Scheduler
+- [convention_seo_head.md](vendor/axelraboit/aurora/docs/aurora-shared/convention_seo_head.md) — SEO macros frontend
+
+### vendor/axelraboit/aurora/docs/aurora-core/ — Architecture interne du bundle
+- [philosophy.md](vendor/axelraboit/aurora/docs/aurora-core/philosophy.md) — Philosophie (zéro fork, 5 couches, modules)
+- [dev/app_architecture.md](vendor/axelraboit/aurora/docs/aurora-core/dev/app_architecture.md) — Architecture, modules, Vite aliases
+- [dev/entity_extensibility_convention.md](vendor/axelraboit/aurora/docs/aurora-core/dev/entity_extensibility_convention.md) — Convention d'extensibilité des entités
+- [dev/extending_aurora.md](vendor/axelraboit/aurora/docs/aurora-core/dev/extending_aurora.md) — Points d'extension publics du bundle
+- [ops/prerequisites.md](vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md) — Checklist exhaustive des prérequis
 
 ---
 
