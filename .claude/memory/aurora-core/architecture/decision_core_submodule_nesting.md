@@ -7,23 +7,25 @@ metadata:
 
 # Décision : nesting des sous-modules Core sous leur module parent
 
-## Décision (mai 2026)
+## Décision (mai 2026, finalisée dans 0.4.0)
 
-Les entités Core qui appartiennent logiquement à un `<X>Module` vivent
-désormais dans un sous-dossier de ce module, pas au top-level de
-`src/Core/`. Conséquences concrètes :
+**Tout module (avec NavItem dans la sidemenu) vit sous `src/Module/`.**
+Plus de séparation src/Core ≠ src/Module pour les modules — ils sont
+tous au même endroit. `src/Core/` héberge **uniquement** de l'infrastructure
+cross-cutting (sans NavItem propre).
 
-| Module parent | Sous-modules nichés sous lui |
+| Module | Localisation finale |
 |---|---|
-| `PlatformModule` | `Platform/User`, `Platform/Agency`, `Platform/Service`, `Platform/Auth` |
-| `ConfigurationModule` | `Configuration/Setting`, `Configuration/Theme` |
-| `GeneralModule` | `General/Dashboard`, `General/Profile`, `General/Search` |
-| `MediaModule` | `Media/Library` |
-| `DevModule` | `Dev/Audit` |
+| `PlatformModule` | `src/Module/Platform/` (sous-modules : User, Agency, Service, Auth) |
+| `ConfigurationModule` | `src/Module/Configuration/` (Setting, Theme) |
+| `GeneralModule` | `src/Module/General/` (Dashboard, Profile, Search) |
+| `MediaModule` | `src/Module/Media/` (Library) |
+| `DevModule` | `src/Module/Dev/` (Audit, MountPoint, Prerequisite) |
+| Business modules | `src/Module/{Editorial,Vault,Crm,Billing,...}/` (déjà là) |
 
-Le **fichier `<X>Module.php` reste à la racine** de `src/Core/` (jamais
-sous `src/Core/Platform/PlatformModule.php` — toujours
-`src/Core/PlatformModule.php`).
+Le **fichier `<X>Module.php` vit à la racine du folder du module** :
+`src/Module/Platform/PlatformModule.php`, `src/Module/Editorial/EditorialModule.php`,
+etc. Convention symétrique entre tous les modules (Core et business).
 
 ## Why
 

@@ -32,7 +32,19 @@ de correspondance + le `sed` bulk.
 | `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\{Platform,Media,Configuration,General}\{Same}Context` (racine du folder du module) |
 | `Aurora\Module\<X>\Service\<X>Context` (12 business modules) | `Aurora\Module\<X>\<X>Context` (racine du folder du module) |
 | `Aurora\Core\Menu\*` | `Aurora\Module\Editorial\Menu\*` (Menu = sous-module d'Editorial) |
-| `Aurora\Core\MountPoint\*` | `Aurora\Core\Dev\MountPoint\*` (MountPoint = sous-module de Dev) |
+| `Aurora\Core\MountPoint\*` | `Aurora\Module\Dev\MountPoint\*` |
+| `Aurora\Core\Platform\*` | `Aurora\Module\Platform\*` (promotion Core → Module) |
+| `Aurora\Core\Configuration\*` | `Aurora\Module\Configuration\*` |
+| `Aurora\Core\Media\*` | `Aurora\Module\Media\*` |
+| `Aurora\Core\General\*` | `Aurora\Module\General\*` |
+| `Aurora\Core\Dev\*` | `Aurora\Module\Dev\*` |
+| `Aurora\Core\{Platform,Configuration,Media,General,Dev}Module` | `Aurora\Module\<X>\<X>Module` |
+
+**Convention unique** : tout module (avec une entrée dans la sidemenu) vit
+sous `src/Module/`. `src/Core/` ne contient plus **que** de l'infrastructure
+cross-cutting (Encryption, Frontend, Locale, Mail, Notification, Module/Contract,
+Repository, Scheduler, Sequence, Storage, Support, Twig, Validation, etc.).
+Plus aucun `<X>Module.php` à la racine de `src/Core/`.
 
 **Inchangé** (cross-cutting infra) : `Encryption`, `Frontend`, `Locale`,
 `Mail`, `Menu`, `Migration`, `Module`, `MountPoint`, `Notification`,

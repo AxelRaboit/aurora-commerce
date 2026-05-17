@@ -37,7 +37,13 @@ sous-modules à l'intérieur**.
 | `Aurora\Core\Service\{Platform,Media,Configuration,General}Context` | `Aurora\Core\{Platform,Media,Configuration,General}\{Same}Context` (à la racine du folder du module) |
 | `Aurora\Module\<X>\Service\<X>Context` (12 modules business) | `Aurora\Module\<X>\<X>Context` (à la racine du folder du module) |
 | `Aurora\Core\Menu\*` | `Aurora\Module\Editorial\Menu\*` (Menu est un sous-module d'Editorial) |
-| `Aurora\Core\MountPoint\*` | `Aurora\Core\Dev\MountPoint\*` (MountPoint est utilisé par les controllers `Dev/`) |
+| `Aurora\Core\MountPoint\*` | `Aurora\Module\Dev\MountPoint\*` |
+| **`Aurora\Core\Platform\*`** | **`Aurora\Module\Platform\*`** (tous les modules Core promus sous src/Module/) |
+| **`Aurora\Core\Configuration\*`** | **`Aurora\Module\Configuration\*`** |
+| **`Aurora\Core\Media\*`** | **`Aurora\Module\Media\*`** |
+| **`Aurora\Core\General\*`** | **`Aurora\Module\General\*`** |
+| **`Aurora\Core\Dev\*`** | **`Aurora\Module\Dev\*`** |
+| **`Aurora\Core\{Platform, Configuration, Media, General, Dev}Module`** | **`Aurora\Module\<X>\<X>Module`** (les classes Module ont suivi leur folder) |
 
 ### Inchangé (cross-cutting infra)
 
