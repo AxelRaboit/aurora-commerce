@@ -45,6 +45,74 @@ sous-modules à l'intérieur**.
 | **`Aurora\Core\Dev\*`** | **`Aurora\Module\Dev\*`** |
 | **`Aurora\Core\{Platform, Configuration, Media, General, Dev}Module`** | **`Aurora\Module\<X>\<X>Module`** (les classes Module ont suivi leur folder) |
 
+### Templates + assets (2e vague de la promotion 0.4)
+
+Les dossiers `templates/Core/backend/<X>/` et `assets/Core/backend/<X>/` ont
+aussi été déplacés vers les modules promus :
+
+| Avant | Après |
+|---|---|
+| `templates/Core/backend/{agencies,auth,services,users}/` | `templates/Module/Platform/backend/<X>/` |
+| `templates/Core/backend/{settings,themes}/` | `templates/Module/Configuration/backend/<X>/` |
+| `templates/Core/backend/media/` | `templates/Module/Media/backend/media/` |
+| `templates/Core/backend/{dashboard,profile}/` | `templates/Module/General/backend/<X>/` |
+| `templates/Core/backend/dev/` | `templates/Module/Dev/backend/` (flattened — plus de `dev/` middle dir) |
+| `assets/Core/backend/<X>/` (mêmes 10) | `assets/Module/<NewModule>/backend/<X>/` (mêmes 10) |
+| `assets/Core/backend/AdministrationApp.vue` | `assets/Module/Dev/backend/AdministrationApp.vue` |
+
+**Restent à `Core/backend/`** : `layout.html.twig`, `base_guest.html.twig`,
+`assets/Core/backend/sidemenu/`, `assets/Core/backend/notifications/`
+(toutes infra cross-cutting).
+
+### Refs côté client à mettre à jour
+
+Pour les overrides Vue/Twig qui réfèrent ces paths :
+
+| Avant (JS imports) | Après |
+|---|---|
+| `@core/backend/agencies/<X>` | `@platform/backend/agencies/<X>` |
+| `@core/backend/auth/<X>` | `@platform/backend/auth/<X>` |
+| `@core/backend/services/<X>` | `@platform/backend/services/<X>` |
+| `@core/backend/users/<X>` | `@platform/backend/users/<X>` |
+| `@core/backend/settings/<X>` | `@configuration/backend/settings/<X>` |
+| `@core/backend/themes/<X>` | `@configuration/backend/themes/<X>` |
+| `@core/backend/media/<X>` | `@media/backend/media/<X>` |
+| `@core/backend/dashboard/<X>` | `@general/backend/dashboard/<X>` |
+| `@core/backend/profile/<X>` | `@general/backend/profile/<X>` |
+| `@core/backend/dev/<X>` | `@dev/backend/<X>` |
+| `@/Core/backend/<X>/<feature>` (variant) | `@/Module/<NewModule>/backend/<X>/<feature>` |
+
+Côté Twig (overrides templates) :
+
+| Avant | Après |
+|---|---|
+| `{% extends '@Core/backend/agencies/...' %}` | `{% extends '@Platform/backend/agencies/...' %}` |
+| `{{ vue_component('core/backend/<X>/...') }}` | `{{ vue_component('<lowercase>/backend/<X>/...') }}` |
+| `templates/Core/backend/<X>/` (overrides locaux) | `templates/Module/<NewModule>/backend/<X>/` |
+
+Snippet sed bulk côté client :
+
+```bash
+grep -rl "@core/backend/\(agencies\|auth\|services\|users\)" assets src 2>/dev/null \
+  | xargs sed -i \
+    -e 's|@core/backend/agencies/|@platform/backend/agencies/|g' \
+    -e 's|@core/backend/auth/|@platform/backend/auth/|g' \
+    -e 's|@core/backend/services/|@platform/backend/services/|g' \
+    -e 's|@core/backend/users/|@platform/backend/users/|g' \
+    -e 's|@core/backend/settings/|@configuration/backend/settings/|g' \
+    -e 's|@core/backend/themes/|@configuration/backend/themes/|g' \
+    -e 's|@core/backend/media/|@media/backend/media/|g' \
+    -e 's|@core/backend/dashboard/|@general/backend/dashboard/|g' \
+    -e 's|@core/backend/profile/|@general/backend/profile/|g' \
+    -e 's|@core/backend/dev/|@dev/backend/|g'
+```
+
+> **Aliases Vite** : 5 nouveaux aliases ont été ajoutés à `aliases.js`
+> côté vendor : `@platform`, `@configuration`, `@media`, `@general`,
+> `@dev`. Côté client, `make aurora-update` re-synchronise
+> `jsconfig.json` automatiquement (`make sync-jsconfig`) — les imports
+> avec les nouveaux aliases marchent immédiatement.
+
 ### Inchangé (cross-cutting infra)
 
 Les dossiers suivants ne sont pas des "sous-modules" mais de

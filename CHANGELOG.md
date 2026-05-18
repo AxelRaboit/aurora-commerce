@@ -40,6 +40,13 @@ de correspondance + le `sed` bulk.
 | `Aurora\Core\Dev\*` | `Aurora\Module\Dev\*` |
 | `Aurora\Core\{Platform,Configuration,Media,General,Dev}Module` | `Aurora\Module\<X>\<X>Module` |
 
+**2e vague — templates + assets** : `templates/Core/backend/<X>/` et
+`assets/Core/backend/<X>/` ont aussi été déplacés vers les modules promus
+(`templates/Module/<NewModule>/backend/<X>/` et idem assets). 5 nouveaux
+aliases Vite : `@platform`, `@configuration`, `@media`, `@general`, `@dev`.
+Voir [MIGRATION_0.4.md](docs/aurora-client/MIGRATION_0.4.md) pour le sed bulk
+côté client.
+
 **Convention unique** : tout module (avec une entrée dans la sidemenu) vit
 sous `src/Module/`. `src/Core/` ne contient plus **que** de l'infrastructure
 cross-cutting (Encryption, Frontend, Locale, Mail, Notification, Module/Contract,
