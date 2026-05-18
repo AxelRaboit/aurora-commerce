@@ -40,7 +40,7 @@ final class ServicesController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        return $this->render('@Core/backend/services/index.html.twig', $this->viewBuilder->indexView());
+        return $this->render('@Platform/backend/services/index.html.twig', $this->viewBuilder->indexView());
     }
 
     #[Route('/selectable', name: '_selectable', methods: [HttpMethodEnum::Get->value])]

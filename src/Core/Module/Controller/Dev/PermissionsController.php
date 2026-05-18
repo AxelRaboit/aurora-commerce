@@ -28,6 +28,6 @@ final class PermissionsController extends AbstractController
             return $this->json($payload);
         }
 
-        return $this->render('@Core/backend/dev/index.html.twig', $this->viewBuilder->indexView($payload));
+        return $this->render('@Dev/backend/index.html.twig', $this->viewBuilder->indexView($payload));
     }
 }

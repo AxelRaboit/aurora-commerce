@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
     buildFolderTree,
     flattenFolders,
-} from "@/Core/backend/media/utils/folderTree.js";
+} from "@/Module/Media/backend/media/utils/folderTree.js";
 
 const folders = [
     { id: 3, parentId: 1, name: "beta", mediaCount: 2 },

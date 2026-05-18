@@ -38,14 +38,14 @@ final class AccessRequestController extends AbstractController
         $accessRequestEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminAccessRequestEnabled->value, true);
 
         if (!$accessRequestEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
-            return $this->render('@Core/backend/auth/access_request.html.twig', $this->viewBuilder->formView($accessRequestEnabled));
+            return $this->render('@Platform/backend/auth/access_request.html.twig', $this->viewBuilder->formView($accessRequestEnabled));
         }
 
         $input = AccessRequestInput::fromRequest($request);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->render('@Core/backend/auth/access_request.html.twig', $this->viewBuilder->formView(true, $errors, $request->request->all()));
+            return $this->render('@Platform/backend/auth/access_request.html.twig', $this->viewBuilder->formView(true, $errors, $request->request->all()));
         }
 
         $this->accessRequestManager->create($input->email, $input->name, $input->message);

@@ -50,7 +50,7 @@ final class UsersController extends AbstractController
             return $this->jsonSuccess($payload);
         }
 
-        return $this->render('@Core/backend/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Dev/backend/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]

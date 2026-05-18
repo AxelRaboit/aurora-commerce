@@ -58,7 +58,7 @@ class MediaController extends AbstractController
         $folderId = $request->query->getInt('folderId') ?: null;
         $search = mb_trim((string) $request->query->get('search', ''));
 
-        return $this->render('@Core/backend/media/index.html.twig', $this->viewBuilder->indexView($folderId, $search));
+        return $this->render('@Media/backend/media/index.html.twig', $this->viewBuilder->indexView($folderId, $search));
     }
 
     #[Route('/{id}/info', name: '_info', methods: [HttpMethodEnum::Get->value])]

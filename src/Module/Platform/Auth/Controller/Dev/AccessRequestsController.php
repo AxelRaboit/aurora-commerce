@@ -45,7 +45,7 @@ final class AccessRequestsController extends AbstractController
             return $this->json($payload);
         }
 
-        return $this->render('@Core/backend/dev/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
+        return $this->render('@Dev/backend/index.html.twig', $this->viewBuilder->indexView($payload, $pagination->search));
     }
 
     #[Route('/{id}/approve', name: '_approve', methods: [HttpMethodEnum::Post->value])]

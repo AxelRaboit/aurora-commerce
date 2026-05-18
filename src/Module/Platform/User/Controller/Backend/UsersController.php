@@ -52,7 +52,7 @@ class UsersController extends AbstractController
     {
         $currentUser = $this->getUser();
 
-        return $this->render('@Core/backend/users/index.html.twig', $this->viewBuilder->indexView(
+        return $this->render('@Platform/backend/users/index.html.twig', $this->viewBuilder->indexView(
             $this->isGranted(UserRoleEnum::Dev->value),
             $currentUser instanceof User ? $currentUser : null,
             $this->isGranted('platform.users.module_access.manage'),

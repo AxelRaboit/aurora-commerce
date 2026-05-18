@@ -1,0 +1,34 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.media'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.sections.media'|trans},
+            {label: 'backend.nav.media'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('media/backend/media/MediaApp', {
+    folders: folders,
+    media: media,
+    currentFolderId: currentFolderId,
+    search: search,
+    uploadPath: path('backend_media_upload'),
+    updatePath: path('backend_media_update', {id: '__id__'}),
+    deletePath: path('backend_media_delete', {id: '__id__'}),
+    movePath: path('backend_media_move', {id: '__id__'}),
+    folderCreatePath: path('backend_media_folder_create'),
+    folderEditPath: path('backend_media_folder_edit', {id: '__id__'}),
+    folderDeletePath: path('backend_media_folder_delete', {id: '__id__'}),
+    reorderPath: path('backend_media_reorder'),
+    bulkDeletePath: path('backend_media_bulk_delete'),
+    listPath: path('backend_media_list'),
+    bulkMovePath: path('backend_media_bulk_move'),
+    cropPath: path('backend_media_crop', {id: '__id__'}),
+    totalStorageBytes: totalStorageBytes,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

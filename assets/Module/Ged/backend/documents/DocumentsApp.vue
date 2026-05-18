@@ -16,7 +16,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
+import MediaPickerModal from "@media/backend/media/MediaPickerModal.vue";
 import AppFileInput from "@/shared/components/form/file/AppFileInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";

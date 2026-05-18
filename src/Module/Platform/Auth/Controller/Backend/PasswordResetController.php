@@ -41,7 +41,7 @@ final class PasswordResetController extends AbstractController
             $status = $this->translator->trans('backend.auth.forgot_password.sent');
         }
 
-        return $this->render('@Core/backend/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
+        return $this->render('@Platform/backend/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
     }
 
     #[Route('/backend/reset-password/{selector}/{token}', name: 'backend_reset_password')]
@@ -73,6 +73,6 @@ final class PasswordResetController extends AbstractController
             }
         }
 
-        return $this->render('@Core/backend/auth/reset_password.html.twig', $this->viewBuilder->resetView($selector, $token, $errors));
+        return $this->render('@Platform/backend/auth/reset_password.html.twig', $this->viewBuilder->resetView($selector, $token, $errors));
     }
 }

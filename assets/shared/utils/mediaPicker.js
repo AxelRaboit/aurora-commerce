@@ -1,6 +1,6 @@
 import { createApp, h, ref } from "vue";
 import { createAppI18n } from "@/i18n.js";
-import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
+import MediaPickerModal from "@media/backend/media/MediaPickerModal.vue";
 
 /**
  * Imperative wrapper around <MediaPickerModal>. Mounts the component on

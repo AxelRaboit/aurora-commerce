@@ -46,7 +46,7 @@ final class InvitationController extends AbstractController
 
             $errors = $this->payloadValidator->errors($input);
             if ([] !== $errors) {
-                return $this->render('@Core/backend/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token, $errors));
+                return $this->render('@Platform/backend/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token, $errors));
             }
 
             $this->userManager->consumeInvitation($user, $input->password);
@@ -58,6 +58,6 @@ final class InvitationController extends AbstractController
             return new RedirectResponse($this->generateUrl('backend_dashboard'));
         }
 
-        return $this->render('@Core/backend/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token));
+        return $this->render('@Platform/backend/auth/invitation_accept.html.twig', $this->viewBuilder->acceptView($user, $selector, $token));
     }
 }

@@ -40,7 +40,7 @@ final class SettingsController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        return $this->render('@Core/backend/settings/index.html.twig', $this->viewBuilder->indexView(
+        return $this->render('@Configuration/backend/settings/index.html.twig', $this->viewBuilder->indexView(
             isDev: $this->isGranted(UserRoleEnum::Dev->value),
         ));
     }

@@ -23,7 +23,7 @@ final class LoginController extends AbstractController
             return $this->redirectToRoute('backend_dashboard');
         }
 
-        return $this->render('@Core/backend/auth/login.html.twig', $this->viewBuilder->loginView(
+        return $this->render('@Platform/backend/auth/login.html.twig', $this->viewBuilder->loginView(
             $authenticationUtils->getLastUsername(),
             $authenticationUtils->getLastAuthenticationError(),
         ));

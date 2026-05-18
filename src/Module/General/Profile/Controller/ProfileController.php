@@ -57,7 +57,7 @@ final class ProfileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        return $this->render('@Core/backend/profile/index.html.twig', $this->viewBuilder->indexView($user));
+        return $this->render('@General/backend/profile/index.html.twig', $this->viewBuilder->indexView($user));
     }
 
     #[Route('/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
@@ -192,7 +192,7 @@ final class ProfileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        return $this->render('@Core/backend/profile/sidemenu.html.twig', [
+        return $this->render('@General/backend/profile/sidemenu.html.twig', [
             'navPreferences' => $this->moduleRegistry->getNavPreferences(),
             'hiddenNavSections' => $user->getHiddenNavSections(),
             'hiddenNavItems' => $user->getHiddenNavItems(),

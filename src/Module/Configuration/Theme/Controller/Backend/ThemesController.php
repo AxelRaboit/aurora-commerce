@@ -40,7 +40,7 @@ final class ThemesController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        return $this->render('@Core/backend/themes/index.html.twig', $this->viewBuilder->indexView());
+        return $this->render('@Configuration/backend/themes/index.html.twig', $this->viewBuilder->indexView());
     }
 
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]

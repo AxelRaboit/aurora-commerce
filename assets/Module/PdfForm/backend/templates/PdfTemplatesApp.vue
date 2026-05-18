@@ -15,7 +15,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import MediaPickerModal from "@core/backend/media/MediaPickerModal.vue";
+import MediaPickerModal from "@media/backend/media/MediaPickerModal.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Pencil, Trash2, Save, FileText, Paperclip, X, ScanSearch, Settings } from "lucide-vue-next";
 

@@ -37,14 +37,14 @@ final class RegisterController extends AbstractController
         $registrationEnabled = $this->settingRepository->getBoolean(ApplicationParameterEnum::AdminRegistrationEnabled->value);
 
         if (!$registrationEnabled || !$request->isMethod(HttpMethodEnum::Post->value)) {
-            return $this->render('@Core/backend/auth/register.html.twig', $this->viewBuilder->registerView($registrationEnabled));
+            return $this->render('@Platform/backend/auth/register.html.twig', $this->viewBuilder->registerView($registrationEnabled));
         }
 
         $input = RegisterInput::fromRequest($request);
 
         $errors = $this->payloadValidator->errors($input);
         if ([] !== $errors) {
-            return $this->render('@Core/backend/auth/register.html.twig', $this->viewBuilder->registerView(true, $errors, $request->request->all()));
+            return $this->render('@Platform/backend/auth/register.html.twig', $this->viewBuilder->registerView(true, $errors, $request->request->all()));
         }
 
         $this->userManager->register($input->name, $input->email, $input->password);
@@ -59,7 +59,7 @@ final class RegisterController extends AbstractController
         $pendingEmail = $request->getSession()->get('_admin_pending_email');
         $resent = $request->query->getBoolean('resent');
 
-        return $this->render('@Core/backend/auth/register_confirm.html.twig', $this->viewBuilder->confirmView(
+        return $this->render('@Platform/backend/auth/register_confirm.html.twig', $this->viewBuilder->confirmView(
             is_string($pendingEmail) ? $pendingEmail : null,
             $resent,
         ));
@@ -81,6 +81,6 @@ final class RegisterController extends AbstractController
     {
         $user = $this->userManager->verifyEmail($token);
 
-        return $this->render('@Core/backend/auth/verify_email.html.twig', $this->viewBuilder->verifyView($user instanceof User));
+        return $this->render('@Platform/backend/auth/verify_email.html.twig', $this->viewBuilder->verifyView($user instanceof User));
     }
 }
