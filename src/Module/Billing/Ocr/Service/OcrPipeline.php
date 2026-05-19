@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Service;
 
-use Aurora\Module\Media\Library\Service\MediaPathResolver;
 use Aurora\Module\Billing\Invoice\Manager\InvoiceManagerInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
@@ -13,6 +12,7 @@ use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
+use Aurora\Module\Media\Library\Service\MediaPathResolver;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 

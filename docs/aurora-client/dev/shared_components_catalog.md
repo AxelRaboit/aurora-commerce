@@ -3,7 +3,7 @@
 > À lire quand vous écrivez un composant Vue côté client et que vous cherchez
 > **le composant Aurora à utiliser** au lieu d'un élément HTML brut. Tous les
 > `App*` recensés ici vivent dans
-> `vendor/axelraboit/aurora/assets/shared/components/` (alias Vite `@shared`).
+> `vendor/axelraboit/aurora/src/Core/Frontend/shared/components/` (alias Vite `@shared`).
 > Ce doc est une **référence** — pour les conventions générales (imports,
 > overrides, directives), voir [assets_vue.md](assets_vue.md).
 >
@@ -839,10 +839,10 @@ Volontairement omis car internes ou trop nichés pour un usage client courant :
 
 - Tous les composants spécifiques à un module (`PostEditor.vue`,
   `MediaPickerModal.vue`, etc.) — voir l'arborescence
-  `assets/Module/<Module>/` et les docs correspondantes.
+  `src/Module/<Module>/assets/` et les docs correspondantes.
 
 Pour la liste complète à un instant T :
 
 ```bash
-ls vendor/axelraboit/aurora/assets/shared/components/*/App*.vue
+ls vendor/axelraboit/aurora/src/Core/Frontend/shared/components/*/App*.vue
 ```

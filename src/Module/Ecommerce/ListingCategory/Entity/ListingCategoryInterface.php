@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingCategory\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ListingCategoryInterface extends TimestampableInterface

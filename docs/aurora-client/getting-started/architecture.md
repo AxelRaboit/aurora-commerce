@@ -40,8 +40,9 @@ aurora-client/
 ```
 aurora-client  ──uses──►  vendor/axelraboit/aurora  (aurora-core)
                                 │
-                                ├── src/              bundle PHP
-                                ├── assets/           composants Vue
+                                ├── src/              bundle PHP + JS/Vue co-localisés
+                                │   ├── Core/Frontend/  cross-cutting JS/Vue/CSS
+                                │   └── Module/<X>/assets/  per-module JS/Vue
                                 ├── templates/        templates Twig
                                 ├── docs/             documentation
                                 └── .claude/memory/   mémoires Claude
@@ -148,5 +149,5 @@ App\Core\Command\DumpJsTranslationsCommand:
 Après avoir modifié un YAML de traduction :
 
 ```bash
-make translation   # régénère assets/locales/generated/*.json + clear cache
+make translation   # régénère src/Core/Frontend/locales/generated/*.json + clear cache
 ```

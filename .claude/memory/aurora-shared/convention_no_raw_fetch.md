@@ -47,4 +47,4 @@ Un `fetch()` brut ignore le loading guard, duplique la gestion d'erreur, et ne p
 - À chaque nouveau composable/vue : chercher `await fetch(` et remplacer
 - Si `useRequest` n'est pas encore importé dans le fichier → l'ajouter
 - Exceptions légitimes : `useFrontendRequest.js` lui-même (c'est le wrapper), `useFormRequest.js` (idem), et les EditorJS blocks (contexte sans composables Vue)
-- Vérification rapide : `grep -rn "await fetch\b" assets/ --include="*.js" --include="*.vue"`
+- Vérification rapide (core) : `grep -rn "await fetch\b" src/ --include="*.js" --include="*.vue"` ; (client) : `grep -rn "await fetch\b" assets/ --include="*.js" --include="*.vue"`

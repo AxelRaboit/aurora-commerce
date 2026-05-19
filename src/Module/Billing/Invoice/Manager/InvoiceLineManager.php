@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

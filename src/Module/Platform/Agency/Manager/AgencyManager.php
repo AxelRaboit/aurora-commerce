@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Agency\Manager;
 
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
 use Aurora\Module\Platform\Agency\Entity\Agency;
 use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

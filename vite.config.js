@@ -12,13 +12,18 @@ import { aliases } from './aliases.js';
 // to an empty placeholder dir so import.meta.glob('@client/...') returns {}.
 const CLIENT_DIR = process.env.AURORA_CLIENT_DIR
     ? path.resolve(process.env.AURORA_CLIENT_DIR)
-    : path.resolve(__dirname, 'assets/.client-fallback');
+    : path.resolve(__dirname, 'src/Core/Frontend/.client-fallback');
 
 export default defineConfig({
     plugins: [
         tailwindcss(),
         vue(),
-        symfonyPlugin({ stimulus: true }),
+        symfonyPlugin({
+            stimulus: {
+                controllersFilePath: './src/Core/Frontend/stimulus.json',
+                controllersDir: './src/Core/Frontend/stimulus',
+            },
+        }),
     ],
     resolve: {
         alias: {
@@ -39,10 +44,10 @@ export default defineConfig({
     build: {
         rolldownOptions: {
             input: {
-                app: './assets/app.js',
-                flash: './assets/flash.js',
-                theme: './assets/theme.js',
-                guest: './assets/guest.js',
+                app: './src/Core/Frontend/app.js',
+                flash: './src/Core/Frontend/flash.js',
+                theme: './src/Core/Frontend/theme.js',
+                guest: './src/Core/Frontend/guest.js',
             },
             output: {
                 manualChunks(id) {

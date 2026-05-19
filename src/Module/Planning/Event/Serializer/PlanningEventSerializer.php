@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Event\Serializer;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(PlanningEventSerializerInterface::class)]

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use PHPUnit\Framework\TestCase;
 
 final class CartTest extends TestCase

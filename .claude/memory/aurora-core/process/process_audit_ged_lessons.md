@@ -38,7 +38,7 @@ L'audit du module GED a identifié 7 violations qui auraient pu passer inaperçu
 
 Avant de commiter un module complet :
 1. `grep -r "new [A-Z]" src/Module/<M>/` — vérifier qu'aucun `new Xxx()` n'échappe aux hooks
-2. `grep -rn "fetch(" assets/Module/<M>/` — vérifier l'absence de fetch bruts
-3. `grep -rn "<button\|<input\|<select" assets/Module/<M>/` — vérifier l'absence d'HTML brut
+2. `grep -rn "fetch(" src/Module/<M>/assets/` — vérifier l'absence de fetch bruts
+3. `grep -rn "<button\|<input\|<select" src/Module/<M>/assets/` — vérifier l'absence d'HTML brut
 4. Vérifier que tous les serializers du module ont une interface
 5. Vérifier la structure YAML des traductions (chemin `backend.modules.*` vs nœud top-level accidentel)

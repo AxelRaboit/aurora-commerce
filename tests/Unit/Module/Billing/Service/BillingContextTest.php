@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Billing\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Billing\BillingContext;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class BillingContextTest extends TestCase

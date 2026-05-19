@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Erp\Product\Dto\ProductInputInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Aurora\Module\Erp\Setting\ErpSettingEnum;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Controller\Backend;
 
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Platform\Auth\Dto\ResetPasswordInput;
 use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
 use Aurora\Module\Platform\Auth\Manager\PasswordResetManagerInterface;
 use Aurora\Module\Platform\Auth\View\PasswordResetViewBuilder;
-use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

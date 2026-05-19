@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Notes\Block\Service;
 
 use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Notes\Block\Service\BlockImageService;
+use Aurora\Module\Platform\User\Entity\User;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;

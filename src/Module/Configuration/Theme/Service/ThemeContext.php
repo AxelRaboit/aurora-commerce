@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Theme\Service;
 
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Configuration\Theme\Entity\ThemeInterface;
 use Aurora\Module\Configuration\Theme\Repository\ThemeRepository;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 
 final class ThemeContext
 {

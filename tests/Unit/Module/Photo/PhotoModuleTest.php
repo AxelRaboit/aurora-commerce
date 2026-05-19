@@ -7,8 +7,8 @@ namespace Aurora\Tests\Unit\Module\Photo;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Photo\PhotoModule;
 use Aurora\Module\Photo\PhotoContext;
+use Aurora\Module\Photo\PhotoModule;
 use PHPUnit\Framework\TestCase;
 
 final class PhotoModuleTest extends TestCase

@@ -231,7 +231,7 @@ sync-params: ## Synchronise application parameters (creates missing, deletes obs
 sync-menus: ## Create missing menus for registered locations (primary, footer, …)
 	$(CONSOLE) aurora:menus:sync
 
-translation: ## Dump Symfony YAML translations to assets/locales/generated/*.json + clear cache so changes show up immediately in dev
+translation: ## Dump Symfony YAML translations to src/Core/Frontend/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
 	$(CONSOLE) cache:clear
 

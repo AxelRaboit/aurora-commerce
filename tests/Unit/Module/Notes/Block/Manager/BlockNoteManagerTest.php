@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Notes\Block\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Notes\Block\Dto\BlockInput;
 use Aurora\Module\Notes\Block\Dto\BlockNoteInput;
 use Aurora\Module\Notes\Block\Entity\BlockNote;
@@ -15,6 +14,7 @@ use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
 use Aurora\Module\Notes\Block\Manager\BlockNoteManager;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
 use Aurora\Module\Notes\Block\Service\BlockImageService;
+use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

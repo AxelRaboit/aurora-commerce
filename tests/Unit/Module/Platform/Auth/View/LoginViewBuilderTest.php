@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Platform\Auth\View;
 
-use Aurora\Module\Platform\Auth\View\LoginViewBuilder;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Platform\Auth\View\LoginViewBuilder;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 

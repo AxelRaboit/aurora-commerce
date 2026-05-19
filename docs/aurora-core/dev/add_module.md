@@ -125,8 +125,8 @@ final class MyModuleController extends AbstractController
   `src/Module/<Module>/templates/`** — vérifié dans `AuroraBundle.php` lignes
   353-382.
 - `vue_component('<module_id_lowercase>/<path>', props)` : le helper Twig
-  résout vers le composant Vue chargé via le glob `assets/Module/**/*.vue`
-  (`assets/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
+  résout vers le composant Vue chargé via le glob `src/Module/*/assets/**/*.vue`
+  (`src/Core/Frontend/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
 
 ### 2.4 Traductions
 
@@ -162,7 +162,7 @@ my_module:
 **Composant principal :**
 
 ```vue
-<!-- assets/Module/MyModule/backend/MyModuleApp.vue -->
+<!-- src/Module/MyModule/assets/backend/MyModuleApp.vue -->
 <script setup>
 // Composables : choisir le bon endroit
 //  - logique réutilisable cross-modules → @shared/composables/
@@ -190,7 +190,7 @@ Vérifié dans `AuroraBundle.php` (Symfony 7) et `config/services.yaml`.
 | Namespace Twig `@MyModule` | glob `src/Module/*` + `templates/Module/MyModule/` | `AuroraBundle.php:353-382` |
 | Paths traductions | glob `src/Module/*/translations/` | `AuroraBundle.php:400-403` |
 | `DumpJsTranslationsCommand` | même glob | idem |
-| Composants Vue | glob `import.meta.glob('./Module/**/*.vue')` + lowercase | `assets/app.js:33,57-65` |
+| Composants Vue | glob `import.meta.glob('./Module/**/*.vue')` + lowercase | `src/Core/Frontend/app.js:33,57-65` |
 
 **Seul wiring manuel restant** : `resolve_target_entities` dans
 `AuroraBundle.php` — uniquement si le module a des entités Doctrine
@@ -479,13 +479,13 @@ Doc référence :
 ## 8. Icônes de navigation
 
 Les icônes nav sont des **chaînes kebab-case** résolues via `ICON_MAP` dans
-`assets/Core/backend/sidemenu/composables/useSidemenuNav.js`. Si l'icône
+`src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`. Si l'icône
 manque → fallback automatique sur `FileText`.
 
 Pour ajouter une nouvelle icône :
 
 ```js
-// assets/Core/backend/sidemenu/composables/useSidemenuNav.js
+// src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js
 import { KeyRound } from 'lucide-vue-next';
 
 const ICON_MAP = {
@@ -519,7 +519,7 @@ togglables** (cas le plus complet) :
 7. [ ] `Controller/Backend/<Name>Controller.php` (type-hint les **interfaces**,
    pas les classes concrètes)
 8. [ ] `templates/Module/<Module>/backend/*.html.twig`
-9. [ ] `assets/Module/<Module>/backend/*.vue` (avec `extraFields` + slots
+9. [ ] `src/Module/<Module>/assets/backend/*.vue` (avec `extraFields` + slots
    scoped pour extensibilité Vue)
 10. [ ] `aliases.js` : `"@<module-kebab>": moduleAlias("<Module>")`
 11. [ ] `src/Module/<Module>/translations/messages.{fr,en}.yaml`

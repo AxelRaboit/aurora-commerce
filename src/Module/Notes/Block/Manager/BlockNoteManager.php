@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Aurora\Module\Notes\Block\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Dto\BlockInput;
 use Aurora\Module\Notes\Block\Dto\BlockNoteInputInterface;
 use Aurora\Module\Notes\Block\Entity\BlockNote;
 use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
 use Aurora\Module\Notes\Block\Service\BlockImageService;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

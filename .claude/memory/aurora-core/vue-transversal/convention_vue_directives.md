@@ -55,7 +55,7 @@ complète si configuré (Volar / Vue Language Features).
 ```bash
 # Trouver tous les @click etc. dans .vue
 grep -rEn '@(click|submit|change|input|keydown|keyup|close|focus|blur|update)' \
-    assets/ --include="*.vue" \
+    src/Core/Frontend/ src/Module/*/assets/ --include="*.vue" \
   | grep -v node_modules | grep -v ".test."
 ```
 

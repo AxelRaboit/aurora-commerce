@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Module\Command;
 
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
+use function dirname;
+use function in_array;
 use function Symfony\Component\String\u;
 
 /**
@@ -34,7 +37,7 @@ use function Symfony\Component\String\u;
  *
  * Auto-detects core vs client context (composer.json name).
  *
- * @see \Aurora\Core\Module\Command\Tests\MakeModuleCommandTest (TODO)
+ * @see MakeModuleCommandTest (TODO)
  */
 #[AsCommand(
     name: 'aurora:make:module',
@@ -50,16 +53,16 @@ final class MakeModuleCommand extends Command
         'Repository', 'EventSubscriber', 'Migration', 'DataFixtures', 'Enum',
     ];
 
-    private string $projectDir;
+    private readonly string $projectDir;
 
-    private string $templateDir;
+    private readonly string $templateDir;
 
-    private Filesystem $fs;
+    private readonly Filesystem $fs;
 
     public function __construct(string $projectDir)
     {
         parent::__construct();
-        $this->projectDir = rtrim($projectDir, '/');
+        $this->projectDir = mb_rtrim($projectDir, '/');
         $this->templateDir = __DIR__.'/templates';
         $this->fs = new Filesystem();
     }
@@ -93,7 +96,7 @@ final class MakeModuleCommand extends Command
         $io->section(sprintf('Detected context : %s', $context));
 
         // 3. Reserved checks
-        if (\in_array($derived['module'], self::RESERVED_NAMES, true)) {
+        if (in_array($derived['module'], self::RESERVED_NAMES, true)) {
             $io->error(sprintf('"%s" is a reserved name (infra folder).', $derived['module']));
 
             return Command::FAILURE;
@@ -131,16 +134,17 @@ final class MakeModuleCommand extends Command
             '{{MODULE_LABEL}}' => $label,
             '{{ICON}}' => $icon,
             '{{PRIORITY}}' => (string) $priority,
-            '{{NAMESPACE}}' => sprintf('%s\\Module\\%s', $context === 'core' ? 'Aurora' : 'App', $derived['module']),
+            '{{NAMESPACE}}' => sprintf('%s\\Module\\%s', 'core' === $context ? 'Aurora' : 'App', $derived['module']),
         ];
 
         // 6. Confirm
         $fileMap = $this->fileMap($derived, $context, $withToggles, $withFrontend, $withSettings);
         $io->section('About to generate');
-        $io->listing(array_map(fn (string $p) => str_replace($this->projectDir.'/', '', $p), array_values($fileMap)));
-        if ($context === 'core') {
+        $io->listing(array_map(fn (string $p): string => str_replace($this->projectDir.'/', '', $p), array_values($fileMap)));
+        if ('core' === $context) {
             $io->writeln('Plus edit: aliases.js (append @'.$derived['kebab'].')');
         }
+
         if (!$io->confirm('Proceed ?', true)) {
             return Command::FAILURE;
         }
@@ -149,13 +153,13 @@ final class MakeModuleCommand extends Command
         $created = [];
         foreach ($fileMap as $template => $target) {
             $rendered = $this->render($template, $vars);
-            $this->fs->mkdir(\dirname($target));
+            $this->fs->mkdir(dirname($target));
             $this->fs->dumpFile($target, $rendered);
             $created[] = str_replace($this->projectDir.'/', '', $target);
         }
 
         // 8. Wire aliases.js (core only)
-        if ($context === 'core') {
+        if ('core' === $context) {
             $this->appendAlias($derived);
             $created[] = 'aliases.js (edited)';
         }
@@ -172,12 +176,13 @@ final class MakeModuleCommand extends Command
 
     private function validateName(string $value): string
     {
-        $value = trim($value);
+        $value = mb_trim($value);
         if ('' === $value) {
-            throw new \RuntimeException('Module name cannot be empty.');
+            throw new RuntimeException('Module name cannot be empty.');
         }
+
         if (!preg_match('/^[A-Z][A-Za-z0-9]+$/', $value)) {
-            throw new \RuntimeException('Module name must be PascalCase ASCII (e.g. Loyalty, WikiNotes).');
+            throw new RuntimeException('Module name must be PascalCase ASCII (e.g. Loyalty, WikiNotes).');
         }
 
         return $value;
@@ -200,9 +205,10 @@ final class MakeModuleCommand extends Command
         if (!is_file($composer)) {
             return 'client';
         }
+
         $data = json_decode((string) file_get_contents($composer), true);
 
-        return (isset($data['name']) && $data['name'] === 'axelraboit/aurora') ? 'core' : 'client';
+        return (isset($data['name']) && 'axelraboit/aurora' === $data['name']) ? 'core' : 'client';
     }
 
     /**
@@ -212,7 +218,12 @@ final class MakeModuleCommand extends Command
      */
     private function fileMap(array $d, string $context, bool $withToggles, bool $withFrontend, bool $withSettings): array
     {
-        $assetsBase = $context === 'core' ? 'assets/Module' : 'assets/client/Module';
+        // Core modules co-locate their Vue assets under src/Module/<X>/assets/.
+        // Client modules still use the assets/client/Module/<X>/ layout (the
+        // client project keeps a dedicated assets/ root for its own code).
+        $appVuePath = 'core' === $context
+            ? sprintf('%s/src/Module/%s/assets/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module'])
+            : sprintf('%s/assets/client/Module/%s/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module']);
 
         // Always — cas 1
         $moduleTemplate = $withToggles
@@ -225,7 +236,7 @@ final class MakeModuleCommand extends Command
             'messages.fr.yaml.tpl' => sprintf('%s/src/Module/%s/translations/messages.fr.yaml', $this->projectDir, $d['module']),
             'messages.en.yaml.tpl' => sprintf('%s/src/Module/%s/translations/messages.en.yaml', $this->projectDir, $d['module']),
             'index.html.twig.tpl' => sprintf('%s/templates/Module/%s/backend/index.html.twig', $this->projectDir, $d['module']),
-            'App.vue.tpl' => sprintf('%s/%s/%s/backend/%sApp.vue', $this->projectDir, $assetsBase, $d['module'], $d['module']),
+            'App.vue.tpl' => $appVuePath,
         ];
 
         // Cas 2
@@ -253,7 +264,7 @@ final class MakeModuleCommand extends Command
     {
         $path = $this->templateDir.'/'.$template;
         if (!is_file($path)) {
-            throw new \RuntimeException(sprintf('Template not found : %s', $path));
+            throw new RuntimeException(sprintf('Template not found : %s', $path));
         }
 
         return strtr((string) file_get_contents($path), $vars);
@@ -266,6 +277,7 @@ final class MakeModuleCommand extends Command
         if (!is_file($aliasesPath)) {
             return;
         }
+
         $content = (string) file_get_contents($aliasesPath);
         $newAlias = sprintf('    "@%s": moduleAlias("%s"),', $d['kebab'], $d['module']);
 
@@ -289,14 +301,14 @@ final class MakeModuleCommand extends Command
         $hints = [];
 
         // Client-only manual wiring
-        if ($context === 'client') {
+        if ('client' === $context) {
             $hints[] = sprintf("Edit config/packages/twig.yaml — add: '%%kernel.project_dir%%/templates/Module/%s': '%s'", $d['module'], $d['module']);
             $hints[] = 'Edit config/services.yaml — add to DumpJsTranslationsCommand $extraSourceDirs:';
             $hints[] = sprintf("  - '%%kernel.project_dir%%/src/Module/%s/translations'", $d['module']);
         }
 
         // Cas 2 — toggles
-        if ($withToggles && $context === 'core') {
+        if ($withToggles && 'core' === $context) {
             $hints[] = sprintf(
                 'Edit src/Module/Configuration/Setting/Enum/ModuleParameterEnum.php — add: case %sBackend = \'modules_%s_backend\';',
                 $d['module'],
@@ -307,20 +319,22 @@ final class MakeModuleCommand extends Command
         }
 
         // Cas 4 — frontend
-        if ($withFrontend && $context === 'core') {
+        if ($withFrontend && 'core' === $context) {
             $hints[] = sprintf(
                 'Edit src/Module/Configuration/Setting/Enum/ModuleParameterEnum.php — add: case %sFrontend = \'modules_%s_frontend\'; (same match-arm completion needed)',
                 $d['module'],
                 $d['snake']
             );
         }
-        if ($withFrontend && $context === 'client' && !$withToggles) {
+
+        if ($withFrontend && 'client' === $context && !$withToggles) {
             $hints[] = sprintf(
                 'FrontendDescriptor references %sContext::FRONTEND_KEY — you need to ADD a Context first (re-run with --with-toggles or write it manually).',
                 $d['module']
             );
         }
-        if ($withFrontend && $context === 'client' && $withToggles) {
+
+        if ($withFrontend && 'client' === $context && $withToggles) {
             $hints[] = sprintf(
                 'Edit src/Module/%s/%sContext.php — add: public const string FRONTEND_KEY = \'app_%s_frontend\';',
                 $d['module'],
@@ -348,12 +362,15 @@ final class MakeModuleCommand extends Command
         if ($withToggles) {
             $cases[] = '2 (toggles + Context)';
         }
+
         if ($withFrontend) {
             $cases[] = '4 (FrontendDescriptor)';
         }
+
         if ($withSettings) {
             $cases[] = '5 (Settings tab provider)';
         }
+
         $io->note(sprintf('Generated cas: %s. Cas 3 (CRUD entity) → see hints above.', implode(', ', $cases)));
     }
 }

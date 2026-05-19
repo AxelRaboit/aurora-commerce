@@ -6,8 +6,8 @@ namespace Aurora\Module\Notes\Block\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Service\BlockImageService;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

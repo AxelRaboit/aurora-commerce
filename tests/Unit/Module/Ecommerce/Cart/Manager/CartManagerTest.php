@@ -6,7 +6,6 @@ namespace Aurora\Tests\Unit\Module\Ecommerce\Cart\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManager;
@@ -14,6 +13,7 @@ use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;

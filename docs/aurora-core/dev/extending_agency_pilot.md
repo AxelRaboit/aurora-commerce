@@ -333,7 +333,7 @@ class AgencySerializer extends AuroraAgencySerializer
 
 ### 5.1 Composant client — chemin et alias
 
-Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/assets/app.js`) :
+Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/src/Core/Frontend/app.js`) :
 
 - `@client/Module/<Name>/**/*.vue` — vraies features client, exposées comme
   `<name>/<rest>` dans `vue_component()` (ex: `tracking/backend/dashboard/...`)
@@ -396,7 +396,7 @@ Aliases utilisés (déclarés dans `vendor/aurora/vite.config.js`) :
 
 | Alias | Pointe vers |
 |---|---|
-| `@core` | `vendor/aurora/assets/Core` |
+| `@core` | `vendor/aurora/src/Core/Frontend` |
 | `@` | `vendor/aurora/assets` (composants `shared/`, etc.) |
 | `@client` | `aurora-client/assets/client` (votre dossier) |
 

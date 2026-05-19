@@ -6,9 +6,9 @@ namespace Aurora\Module\Hr\Employee\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

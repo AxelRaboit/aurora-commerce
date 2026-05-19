@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
@@ -14,6 +12,8 @@ use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\TiersRepository;
 use Aurora\Module\Billing\Ocr\Dto\InvoiceDraft;
 use Aurora\Module\Billing\Setting\BillingSettingEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

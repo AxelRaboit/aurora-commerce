@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Crm\Contact\View;
 
-use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
-use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Aurora\Module\Crm\Contact\View\ContactDetailViewBuilder;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

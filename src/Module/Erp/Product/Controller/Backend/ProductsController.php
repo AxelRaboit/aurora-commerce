@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Controller\Backend;
 
-use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Module\Erp\Product\Dto\ProductInputFactoryInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Manager\ProductManagerInterface;

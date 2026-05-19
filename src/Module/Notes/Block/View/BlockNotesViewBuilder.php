@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Block\View;
 
-use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Core\Support\Num;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
 use Aurora\Module\Notes\Block\Setting\BlockNoteSettingEnum;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class BlockNotesViewBuilder

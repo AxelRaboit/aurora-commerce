@@ -24,6 +24,8 @@
     </head>
     <body class="transition-colors duration-200">
 
+        {{ include('@Shared/components/app_loader.html.twig', {mode: 'guest'}) }}
+
         <div id="guest-toggle"></div>
 
         {% set hero_content %}{% block hero %}{% endblock %}{% endset %}

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
@@ -12,6 +11,7 @@ use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Project\Entity\ProjectInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

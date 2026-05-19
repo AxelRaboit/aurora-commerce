@@ -164,7 +164,7 @@ Tell the user explicitly at the end:
    after the entity is in place; review the generated SQL before applying.
 2. **Vue assets** (`<Plural>App.vue` + `useXxxForm.js`) — the structure
    depends on the actual fields/columns. The user should copy
-   `assets/Core/backend/agencies/` as a template and adapt. Reminder of the
+   `src/Core/Frontend/backend/agencies/` as a template and adapt. Reminder of the
    required surface: prop `extraFields`, slots `extra-headers` /
    `extra-cells` / `extra-form-fields`, composable that accepts an
    `extraFields` option.

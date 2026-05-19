@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Tool\Service;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 
 use function count;
 use function dirname;

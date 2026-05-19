@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Manager;
 
-use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
-use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequestInterface;
-use Aurora\Module\Platform\Auth\Repository\ResetPasswordRequestRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
+use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequestInterface;
+use Aurora\Module\Platform\Auth\Repository\ResetPasswordRequestRepository;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserTypeEnum;
 use Aurora\Module\Platform\User\Repository\UserRepository;

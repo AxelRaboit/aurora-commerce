@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Notes\Block\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Entity\BlockNote;
 use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

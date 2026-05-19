@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Manager;
 
-use Aurora\Module\Platform\Auth\Entity\AccessRequest;
-use Aurora\Module\Platform\Auth\Entity\AccessRequestInterface;
-use Aurora\Module\Platform\Auth\Enum\AccessRequestStatusEnum;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Platform\Auth\Entity\AccessRequest;
+use Aurora\Module\Platform\Auth\Entity\AccessRequestInterface;
+use Aurora\Module\Platform\Auth\Enum\AccessRequestStatusEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\View;
 
-use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
-use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Module\Crm\Contact\Entity\ContactInterface;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**

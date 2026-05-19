@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\General\Search\Service;
 
-use Aurora\Module\General\Search\Service\SearchResultSorter;
 use Aurora\Module\Editorial\Post\Entity\PostInterface;
+use Aurora\Module\General\Search\Service\SearchResultSorter;
 use PHPUnit\Framework\TestCase;
 
 final class SearchResultSorterTest extends TestCase

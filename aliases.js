@@ -4,13 +4,13 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function moduleAlias(name) {
-    return path.resolve(__dirname, `assets/Module/${name}`);
+    return path.resolve(__dirname, `src/Module/${name}/assets`);
 }
 
 export const aliases = {
-    "@": path.resolve(__dirname, "assets"),
-    "@core": path.resolve(__dirname, "assets/Core"),
-    "@shared": path.resolve(__dirname, "assets/shared"),
+    "@": path.resolve(__dirname, "src/Core/Frontend"),
+    "@core": path.resolve(__dirname, "src/Core/Frontend"),
+    "@shared": path.resolve(__dirname, "src/Core/Frontend/shared"),
     "@platform": moduleAlias("Platform"),
     "@configuration": moduleAlias("Configuration"),
     "@media": moduleAlias("Media"),

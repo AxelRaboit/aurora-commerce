@@ -103,7 +103,7 @@ Le composable vit dans `composables/` à côté du SFC, **pas** dans
 modules). Exemple :
 
 ```
-assets/Module/Notes/backend/markdown/
+src/Module/Notes/assets/backend/markdown/
   MarkdownNotesApp.vue
   components/
     NoteTagManagerModal.vue
@@ -114,7 +114,7 @@ assets/Module/Notes/backend/markdown/
 ```
 
 Si plus tard un autre module veut réutiliser → **promote** vers
-`assets/shared/composables/` (voir `useAutoSave`, `useRelativeTime`).
+`src/Core/Frontend/shared/composables/` (voir `useAutoSave`, `useRelativeTime`).
 
 ## Anti-patterns observés
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;

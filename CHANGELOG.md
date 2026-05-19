@@ -7,6 +7,45 @@ projets clients doivent répercuter après avoir lancé `make aurora-update`.
 
 ## [Unreleased]
 
+### ⚠️ Cassant — root `assets/` supprimé, JS/Vue co-localisé sous `src/`
+
+Le dossier `assets/` à la racine du repo a été éliminé. Tout le JS/Vue/CSS
+est désormais co-localisé sous `src/`, en miroir de la structure PHP :
+
+| Avant | Après |
+|---|---|
+| `assets/Module/<X>/...` | `src/Module/<X>/assets/...` |
+| `assets/Core/backend/...` | `src/Core/Frontend/backend/...` |
+| `assets/Core/frontend/...` | `src/Core/Frontend/frontend/...` |
+| `assets/Core/utils/...` | `src/Core/Frontend/utils/...` |
+| `assets/shared/...` | `src/Core/Frontend/shared/...` |
+| `assets/locales/generated/...` | `src/Core/Frontend/locales/generated/...` |
+| `assets/css/...` (sauf modules) | `src/Core/Frontend/css/...` |
+| `assets/css/modules/notes/markdown/preview.css` | `src/Module/Notes/assets/backend/markdown/components/preview.css` |
+| `assets/css/modules/editorial/prose.css` | `src/Module/Editorial/assets/backend/posts/prose.css` |
+| `assets/css/core/sidemenu.css` | `src/Core/Frontend/backend/sidemenu/sidemenu.css` |
+| `assets/controllers/` | `src/Core/Frontend/stimulus/` (renommé pour éviter le clash avec `Controller/` PHP) |
+| `assets/controllers.json` | `src/Core/Frontend/stimulus.json` (override Symfony : `config/packages/stimulus.yaml`) |
+| `assets/tests/` | `src/Core/Frontend/tests/` |
+| `assets/.client-fallback/` | `src/Core/Frontend/.client-fallback/` |
+| `assets/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` | `src/Core/Frontend/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` |
+
+**Aliases Vite inchangés côté API** : `@vault`, `@editorial`, `@platform`,
+`@configuration`, `@media`, `@general`, `@dev` etc. pointent toujours vers
+les bons emplacements (`src/Module/<X>/assets/`). `@core`, `@`, `@shared`
+résolvent sous `src/Core/Frontend/`. Les imports `@/css/...` ont été
+remplacés par des chemins relatifs (`./preview.css`, `./sidemenu.css`)
+car les CSS sont désormais co-localisés avec leur SFC.
+
+**Stimulus** : le folder a été renommé pour éviter la confusion avec les
+controllers PHP. La convention par défaut Symfony (`assets/controllers/`)
+est overridée via `config/packages/stimulus.yaml`.
+
+**Aucune migration Doctrine** ; côté front, rebuild Vite suffit.
+
+Voir [`MIGRATION_0.4.md`](docs/aurora-client/MIGRATION_0.4.md) pour la note
+détaillée côté client (rien ne change pour `aurora-client/assets/client/`).
+
 ### ⚠️ Cassant — namespaces Core déplacés sous leur module parent
 
 Alignement de `src/Core/` sur la convention Vault-style déjà en place

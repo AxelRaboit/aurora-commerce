@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Controller\Backend;
 
-use Aurora\Module\Platform\Auth\Dto\RegisterInput;
-use Aurora\Module\Platform\Auth\View\RegisterViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Platform\Auth\Dto\RegisterInput;
+use Aurora\Module\Platform\Auth\View\RegisterViewBuilder;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Manager\UserManagerInterface;
-use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

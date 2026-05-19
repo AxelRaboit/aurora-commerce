@@ -262,7 +262,7 @@ sync-privileges: ## Purge obsolete privileges from users after module changes
 sync-sequences: ## Resync all PostgreSQL sequences to MAX(id)+1 (run after fixture loads or data imports)
 	$(CONSOLE) aurora:sequences:resync
 
-translation: ## Dump Symfony YAML translations to assets/locales/generated/*.json + clear cache so changes show up immediately in dev
+translation: ## Dump Symfony YAML translations to src/Core/Frontend/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
 	$(CONSOLE) cache:clear
 

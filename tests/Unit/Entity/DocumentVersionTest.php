@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

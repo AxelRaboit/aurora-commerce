@@ -32,7 +32,7 @@ seul : layout, image, badges, lien canonique, fallback de translation
 ## Comment l'appliquer
 
 1. Module qui s'apprête à dupliquer une card dans une 2ᵉ app → extraire dans
-   `assets/Module/<M>/frontend/components/<Module>Card.vue` immédiatement.
+   `src/Module/<M>/assets/frontend/components/<Module>Card.vue` immédiatement.
 2. Toute prop optionnelle (badge, variante "horizontal" / "vertical", taille
    image) → prop avec valeur par défaut, pas une copie du composant.
 3. Lié : [[convention_frontend_rendering]] (passerelle Vue → la card vit en

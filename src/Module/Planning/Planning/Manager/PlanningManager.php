@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Planning\Manager;
 
-use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Planning\Planning\Dto\PlanningInputInterface;
 use Aurora\Module\Planning\Planning\Entity\Planning;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

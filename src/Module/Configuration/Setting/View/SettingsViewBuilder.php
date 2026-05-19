@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\View;
 
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Configuration\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

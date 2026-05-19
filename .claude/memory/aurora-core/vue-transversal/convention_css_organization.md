@@ -7,8 +7,10 @@ metadata:
 
 ## Règle
 
-CSS organisé pour **mirror `assets/`** : `base/`, `shared/`, `core/`,
-`modules/<Name>/`. Documentation complète :
+CSS organisé pour **mirror la structure `src/`** (co-localisée avec le
+PHP depuis 0.5) : `src/Core/Frontend/css/{base,shared,core,modules}/`.
+CSS spécifique à un SFC vit à côté du SFC sous
+`src/Module/<Name>/assets/`. Documentation complète :
 [`docs/aurora-core/dev/css_conventions.md`](../../../../docs/aurora-core/dev/css_conventions.md).
 
 ### Où importer ?
@@ -18,7 +20,7 @@ CSS organisé pour **mirror `assets/`** : `base/`, `shared/`, `core/`,
 | Base / theme (tokens, scrollbar, body) | `base/` | `app.css` |
 | Composant shared global (input, modal, loader) | `shared/` | `app.css` |
 | Core admin (sidemenu, …) | `core/` | le SFC concerné |
-| Module (`assets/Module/<Name>/*`) | `modules/<name>/` | le SFC concerné |
+| Module (`src/Module/<Name>/assets/*`) | `modules/<name>/` | le SFC concerné |
 
 **Critère** : importer dans `app.css` uniquement si vraiment global
 (quasi toutes les pages). Sinon importer dans le SFC qui consomme — Vite
@@ -62,7 +64,7 @@ avant rendu JS).
 ## Comment l'appliquer
 
 1. Nouveau CSS pour une feature → créer
-   `assets/css/modules/<module>/<feature>.css`.
+   `src/Core/Frontend/css/modules/<module>/<feature>.css`.
 2. L'importer **dans le `<script setup>` du SFC** qui le consomme, en
    tête, séparé du JS par une ligne vide.
 3. Si vraiment global (réutilisé partout) → ajouter à `app.css`.

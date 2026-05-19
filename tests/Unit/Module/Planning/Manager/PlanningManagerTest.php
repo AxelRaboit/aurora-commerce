@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Planning\Manager;
 
-use Aurora\Module\Platform\Agency\Entity\Agency;
-use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Repository\UserRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Planning\Planning\Dto\PlanningInputInterface;
 use Aurora\Module\Planning\Planning\Entity\Planning;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;
 use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
 use Aurora\Module\Planning\Planning\Manager\PlanningManager;
+use Aurora\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\MountPoint\Service;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 
 /**
  * Central path-allowlist for every filesystem tool the assistant ships.

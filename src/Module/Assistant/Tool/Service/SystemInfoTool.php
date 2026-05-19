@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Tool\Service;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Throwable;
 
 use function in_array;
@@ -32,12 +32,12 @@ final readonly class SystemInfoTool implements ToolInterface
 {
     /** Closed list of allowed info keys → [binary, args] tuples. */
     private const array ALLOWED = [
-        'php'      => ['php', '--version'],
-        'node'     => ['node', '--version'],
+        'php' => ['php', '--version'],
+        'node' => ['node', '--version'],
         'composer' => ['composer', '--version', '--no-interaction'],
-        'git'      => ['git', '--version'],
-        'ollama'   => ['ollama', '--version'],
-        'os'       => ['uname', '-srm'],
+        'git' => ['git', '--version'],
+        'ollama' => ['ollama', '--version'],
+        'os' => ['uname', '-srm'],
     ];
 
     public function getName(): string
@@ -80,7 +80,7 @@ final readonly class SystemInfoTool implements ToolInterface
 
         if ('all' === $info) {
             $lines = [];
-            foreach (self::ALLOWED as $key => $_) {
+            foreach (array_keys(self::ALLOWED) as $key) {
                 $lines[] = $this->run($key);
             }
 
@@ -98,7 +98,7 @@ final readonly class SystemInfoTool implements ToolInterface
     {
         $cmd = self::ALLOWED[$key];
         $binary = array_shift($cmd);
-        $safeArgs = implode(' ', array_map('escapeshellarg', $cmd));
+        $safeArgs = implode(' ', array_map(escapeshellarg(...), $cmd));
         $fullCmd = escapeshellcmd($binary).' '.$safeArgs.' 2>&1';
 
         try {
@@ -106,7 +106,7 @@ final readonly class SystemInfoTool implements ToolInterface
             $exitCode = 0;
             exec($fullCmd, $output, $exitCode);
 
-            $result = implode(' ', array_map('trim', $output));
+            $result = implode(' ', array_map(trim(...), $output));
             if ('' === $result) {
                 return sprintf('%s: (no output — binary may not be installed)', $key);
             }
@@ -123,7 +123,7 @@ final readonly class SystemInfoTool implements ToolInterface
             return false;
         }
 
-        $disabled = array_map('trim', explode(',', ini_get('disable_functions') ?: ''));
+        $disabled = array_map(trim(...), explode(',', ini_get('disable_functions') ?: ''));
 
         return !in_array('exec', $disabled, true);
     }

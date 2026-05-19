@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Agency\Controller\Backend;
 
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Platform\Agency\Dto\AgencyInputFactoryInterface;
 use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Platform\Agency\Manager\AgencyManagerInterface;
 use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Module\Platform\Agency\Serializer\AgencySerializerInterface;
 use Aurora\Module\Platform\Agency\View\AgenciesViewBuilder;
-use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonRequestTrait;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
-use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

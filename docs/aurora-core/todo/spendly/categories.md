@@ -106,7 +106,7 @@ items qui vont devenir orphelins avant confirmation.
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/category/CategoriesApp.vue` :
+`src/Module/PersonalFinance/assets/backend/category/CategoriesApp.vue` :
 - Filtres : dropdown wallet, search par nom
 - Grille de cards (nom, wallet, usage count via subselect)
 - Modale create/edit (`name` + `wallet`)

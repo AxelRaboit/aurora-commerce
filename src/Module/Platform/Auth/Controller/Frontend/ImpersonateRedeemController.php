@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Controller\Frontend;
 
-use Aurora\Module\Platform\Auth\Service\ImpersonationTokenService;
 use Aurora\Core\Frontend\Service\Router;
+use Aurora\Module\Platform\Auth\Service\ImpersonationTokenService;
 use Aurora\Module\Platform\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

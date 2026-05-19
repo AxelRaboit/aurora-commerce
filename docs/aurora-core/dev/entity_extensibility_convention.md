@@ -362,7 +362,7 @@ propres champs au tableau retourné par `parent::serialize($entity)`.
 
 #### 5.1 Composant Vue principal
 
-`assets/<Module>/backend/<plural>/<Plural>App.vue` doit exposer :
+`src/Module/<Module>/assets/backend/<plural>/<Plural>App.vue` doit exposer :
 
 - **Slots scoped** :
   - `extra-headers` (sans scope) — `<th>` additionnels pour la table
@@ -771,8 +771,8 @@ Pour copier-coller un exemple en bon état, partir de **`Agency`** :
 | Serializer | `src/Core/Agency/Serializer/{AgencySerializerInterface,AgencySerializer}.php` |
 | Repository | `src/Core/Agency/Repository/AgencyRepository.php` |
 | Controller | `src/Core/Agency/Controller/Backend/AgenciesController.php` |
-| Vue main | `assets/Core/backend/agencies/AgenciesApp.vue` |
-| Vue composables | `assets/Core/backend/agencies/composables/useAgenciesForm.js` |
+| Vue main | `src/Core/Frontend/backend/agencies/AgenciesApp.vue` |
+| Vue composables | `src/Core/Frontend/backend/agencies/composables/useAgenciesForm.js` |
 | Twig | `templates/Core/backend/agencies/index.html.twig` |
 
 Toute déviation de ce pattern doit être justifiée (cas spécifique au domaine

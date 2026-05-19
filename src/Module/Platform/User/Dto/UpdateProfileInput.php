@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\User\Dto;
 
-use Aurora\Module\Platform\Auth\Validator\UniqueEmail;
 use Aurora\Core\Support\Str;
+use Aurora\Module\Platform\Auth\Validator\UniqueEmail;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final readonly class UpdateProfileInput

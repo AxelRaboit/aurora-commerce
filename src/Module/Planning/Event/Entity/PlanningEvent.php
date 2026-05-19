@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Event\Entity;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Planning\Event\Repository\PlanningEventRepository;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 

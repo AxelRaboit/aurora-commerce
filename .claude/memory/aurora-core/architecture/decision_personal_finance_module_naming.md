@@ -12,7 +12,7 @@ metadata:
 Le port du projet [Spendly](https://github.com/AxelRaboit/spendly) vers un
 module Aurora se fait sous le nom **`PersonalFinance`** :
 
-- Folder : `src/Module/PersonalFinance/` + `assets/Module/PersonalFinance/`
+- Folder : `src/Module/PersonalFinance/` + `src/Module/PersonalFinance/assets/`
 - Namespace : `Aurora\Core\Module\PersonalFinance\`
 - Entités préfixées : `PersonalFinanceWallet`, `PersonalFinanceTransaction`, `PersonalFinanceCategory`, `PersonalFinanceBudget`, `PersonalFinanceGoal`, `PersonalFinanceRecurringTransaction`, `PersonalFinanceScheduledTransaction`, `PersonalFinanceCategorizationRule`, `PersonalFinanceWalletMember`, `PersonalFinanceWalletInvitation`, `PersonalFinanceBudgetItem`, `PersonalFinanceBudgetPreset`
 - DB tables : `core_personal_finance_*`

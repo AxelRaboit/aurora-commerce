@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Agency\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Platform\Agency\Entity\Agency;
 use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

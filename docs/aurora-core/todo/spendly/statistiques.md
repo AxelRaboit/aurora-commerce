@@ -100,7 +100,7 @@ public function index(Request $request, PersonalFinanceStatisticsService $svc): 
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/statistics/StatisticsApp.vue` :
+`src/Module/PersonalFinance/assets/backend/statistics/StatisticsApp.vue` :
 
 - 2 KPI cards (current month, previous month, % delta)
 - Sélecteur de période (3 / 6 / 12 mois) — pas de date picker custom en

@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Post\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Editorial\Post\Dto\PostInput;
 use Aurora\Module\Editorial\Post\Dto\PostTranslationInput;
 use Aurora\Module\Editorial\Post\Entity\AbstractPost;
@@ -23,6 +21,8 @@ use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Module\Editorial\Post\Service\PostTextExtractor;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;

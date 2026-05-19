@@ -82,7 +82,7 @@ change.
 
 ## Variants disponibles dans AppButton
 
-Source : `assets/shared/components/action/AppButton.vue`.
+Source : `src/Core/Frontend/shared/components/action/AppButton.vue`.
 
 | Variant | Usage type | Style |
 |---|---|---|
@@ -109,7 +109,7 @@ Source : `assets/shared/components/action/AppButton.vue`.
 2. **Refacto d'un module** : audit avec
    ```bash
    grep -rnE 'AppButton variant="(ghost|primary|danger|secondary)"' \
-       assets/Module/<Name>/ | grep -v 'size='
+       src/Module/<Name>/assets/ | grep -v 'size='
    ```
    → ajouter `size="md"` partout.
 3. **Edit/Delete cote-à-cote** en header → vérifier le couple

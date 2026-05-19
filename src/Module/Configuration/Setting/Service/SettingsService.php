@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\Service;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Configuration\Setting\Exception\CascadeViolationException;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 
 /**
  * Orchestrates writes to application parameters. Enforces the module

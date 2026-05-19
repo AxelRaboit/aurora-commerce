@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\Entity;
 
-use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Encryption\Doctrine\EncryptedTextType;
 use Aurora\Core\Timestampable\TimestampableTrait;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;

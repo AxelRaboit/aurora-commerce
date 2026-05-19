@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
 use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequestInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 

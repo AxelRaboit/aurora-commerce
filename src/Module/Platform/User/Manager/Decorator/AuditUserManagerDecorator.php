@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\User\Manager\Decorator;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;

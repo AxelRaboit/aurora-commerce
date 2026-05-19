@@ -36,18 +36,18 @@ templates/
   front/        -- front-end theme templates (kept flat, see §5.3)
   shared/       -- base layout, shared components, emails     (@Shared)
 
-assets/
-  Core/         -- Vue controllers and sub-components for Core domains
-  Module/
-    Editorial/  -- Vue controllers and sub-components for Editorial
-    Crm/        -- Vue controllers and sub-components for CRM
-    Erp/        -- Vue controllers and sub-components for ERP
-    Ged/        -- Vue controllers and sub-components for GED
-    Hr/         -- Vue controllers and sub-components for Hr
-    Planning/   -- Vue controllers and sub-components for Planning
-    Project/    -- Vue controllers and sub-components for Project
+src/Core/Frontend/
+  backend/      -- Vue controllers and sub-components for Core backend areas
+  frontend/    -- Vue controllers and sub-components for the public frontend
   shared/       -- cross-cutting Vue components, composables, utils, enums
-  (root)        -- entrypoints: app.js, flash.js, theme.js, admin/guest/index.js
+  utils/        -- generic JS utilities (enums, helpers)
+  locales/      -- generated translation JSON
+  stimulus/     -- Stimulus controllers (renamed from controllers/)
+  (root)        -- entrypoints: app.js, flash.js, theme.js, admin/guest/i18n.js
+
+src/Module/<Module>/assets/
+  backend/      -- Vue controllers and sub-components for the module backend
+  frontend/    -- Vue controllers for the public frontend (if any)
 ```
 
 ---
@@ -264,29 +264,29 @@ Configured in `config/packages/twig.yaml`. Add one entry per module.
 ### 5.3 Assets / Vue components
 
 ```
-assets/Core/admin/<C>.vue                → vue_component('core/admin/<C>')
-assets/Module/Editorial/admin/<C>.vue    → vue_component('editorial/admin/<C>')
-assets/Module/Crm/admin/<C>.vue          → vue_component('crm/admin/<C>')
+src/Core/Frontend/admin/<C>.vue                → vue_component('core/admin/<C>')
+src/Module/Editorial/assets/admin/<C>.vue    → vue_component('editorial/admin/<C>')
+src/Module/Crm/assets/admin/<C>.vue          → vue_component('crm/admin/<C>')
 ```
 
 Il n'y a pas de dossier `vue/` dans aurora-core — les controllers vivent directement sous
 `admin/`, `front/` etc. Le dossier `vue/` existe uniquement dans campus (projet legacy/V2).
 
-`assets/app.js` merges one glob per module. Add a new glob + key-replace when adding a module.
+`src/Core/Frontend/app.js` merges one glob per module. Add a new glob + key-replace when adding a module.
 
 Vite aliases:
 
 | Alias        | Path                         |
 |--------------|------------------------------|
-| `@`          | `assets/`                    |
-| `@core`      | `assets/Core/`               |
-| `@editorial` | `assets/Module/Editorial/`   |
-| `@crm`       | `assets/Module/Crm/`         |
-| `@erp`       | `assets/Module/Erp/`         |
-| `@ged`       | `assets/Module/Ged/`         |
-| `@hr`        | `assets/Module/Hr/`          |
-| `@planning`  | `assets/Module/Planning/`    |
-| `@shared`    | `assets/shared/`             |
+| `@`          | `src/Core/Frontend/`         |
+| `@core`      | `src/Core/Frontend/`               |
+| `@editorial` | `src/Module/Editorial/assets/`   |
+| `@crm`       | `src/Module/Crm/assets/`         |
+| `@erp`       | `src/Module/Erp/assets/`         |
+| `@ged`       | `src/Module/Ged/assets/`         |
+| `@hr`        | `src/Module/Hr/assets/`          |
+| `@planning`  | `src/Module/Planning/assets/`    |
+| `@shared`    | `src/Core/Frontend/shared/`             |
 
 ### 5.4 Routes
 
@@ -328,7 +328,7 @@ AURORA_CLIENT_DIR=./assets/client pnpm --dir=vendor/aurora run dev
 ```
 
 In `vite.config.js` (aurora-core), `AURORA_CLIENT_DIR` is mapped to the `@client` alias.
-`assets/app.js` scans `@client/Module/**/*.vue` and registers the components with the same
+`src/Core/Frontend/app.js` scans `@client/Module/**/*.vue` and registers the components with the same
 naming convention as first-party modules:
 
 ```
@@ -349,11 +349,11 @@ See the client `Makefile` variables `CLIENT_ASSETS` and `AURORA_ENV` for how thi
 3. Tag it `aurora.module` in `config/services.yaml`
 4. Add Doctrine mapping to `config/packages/doctrine.yaml`
 5. Add Twig namespace to `config/packages/twig.yaml`
-6. Add Vue glob + alias to `assets/app.js` + `vite.config.js` + `vitest.config.js`
+6. Add Vue glob + alias to `src/Core/Frontend/app.js` + `vite.config.js` + `vitest.config.js`
 7. Create templates under `templates/Module/<Name>/admin/`
-8. Create Vue controllers under `assets/Module/<Name>/admin/` (or `front/`), co-localisés avec leurs composables dans `admin/{feature}/composables/`
+8. Create Vue controllers under `src/Module/<Name>/assets/admin/` (or `front/`), co-localisés avec leurs composables dans `admin/{feature}/composables/`
 9. Create `src/Module/<Name>/translations/messages.{fr,en,es,de}.yaml` and register the path in `config/packages/translation.yaml` (`framework.translator.paths`); add to `SOURCE_DIRS` in `DumpJsTranslationsCommand` so the keys also flow to vue-i18n
-10. Add Vue-only labels (form fields, editor blocks…) under `assets/locales/source/{locale}.js`
+10. Add Vue-only labels (form fields, editor blocks…) under `src/Core/Frontend/locales/source/{locale}.js`
 11. Add validator messages to `src/Core/translations/validators.*.yaml` if needed (or to the module's own file)
 12. Generate + run Doctrine migration
 13. **Sequences**: for each new entity, add `#[ORM\GeneratedValue(strategy: 'SEQUENCE')]` + `#[ORM\SequenceGenerator(sequenceName: 'seq_core_{entity}_id')]`; for business sequential references (human-readable `reference` field), add a `SequencePrefixEnum` case + `ApplicationParameterEnum` case (group `sequences`) — `SequenceGenerator` stores counters in `app_sequence_counters` table (rows created automatically on first use, no extra setup); run `make sync-params`
@@ -465,11 +465,11 @@ Symfony's translator merges all paths automatically — keys can share top-level
 Paths are registered in `config/packages/translation.yaml` (`framework.translator.paths`).
 
 **Two consumers**: Twig/PHP (Symfony's translator) and vue-i18n (Vue components). To avoid
-duplicating shared keys, vue-i18n receives a deep-merge of two sources (`assets/i18n.js`):
+duplicating shared keys, vue-i18n receives a deep-merge of two sources (`src/Core/Frontend/i18n.js`):
 
-1. `assets/locales/source/{locale}.js` — manual content for **Vue-only** keys (admin form labels,
+1. `src/Core/Frontend/locales/source/{locale}.js` — manual content for **Vue-only** keys (admin form labels,
    editor block labels, client-side validation messages…). Edit by hand.
-2. `assets/locales/generated/{locale}.json` — generated from the per-module YAMLs via
+2. `src/Core/Frontend/locales/generated/{locale}.json` — generated from the per-module YAMLs via
    `php bin/console app:translations:dump-js`. **Gitignored.** Auto-rebuilt by `pnpm dev` /
    `pnpm build` (npm `predev` / `prebuild` hooks). YAML wins on conflict.
 

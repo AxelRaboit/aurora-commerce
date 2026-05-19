@@ -110,7 +110,7 @@ Refuser le batch entier si > 1000 lignes (sécurité).
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/import/ImportApp.vue` :
+`src/Module/PersonalFinance/assets/backend/import/ImportApp.vue` :
 - **Step 1** :
   - Lien "Télécharger le template"
   - Dropdown wallet cible

@@ -129,7 +129,7 @@ Manager simple :
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/categorization/CategorizationRulesApp.vue` :
+`src/Module/PersonalFinance/assets/backend/categorization/CategorizationRulesApp.vue` :
 - Tableau paginé, colonnes : `pattern`, `category` (dropdown éditable
   inline), `hits` (sortable), action delete
 - Tri par défaut : `hits desc` (règles les plus utilisées en haut)

@@ -110,7 +110,8 @@ In `src/<Module>/<Name>/Serializer/`:
 
 ### Layer 5 — Vue (only if backend CRUD page exists)
 
-In `assets/<Module>/backend/<plural>/`:
+In `src/Module/<Module>/assets/backend/<plural>/`
+(or `src/Core/Frontend/backend/<plural>/` for Core entities):
 
 21. `<Plural>App.vue` exists.
 22. Declares prop `extraFields` (grep for `extraFields`).

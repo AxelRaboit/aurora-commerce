@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Controller\Backend;
 
-use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
-use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
@@ -16,6 +14,8 @@ use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Manager\ContactManagerInterface;
 use Aurora\Module\Crm\Contact\Serializer\ContactSerializerInterface;
 use Aurora\Module\Crm\Contact\View\ContactsViewBuilder;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
+use Aurora\Module\Dev\Audit\Serializer\AuditLogSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

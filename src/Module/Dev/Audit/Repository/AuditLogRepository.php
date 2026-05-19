@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Dev\Audit\Repository;
 
-use Aurora\Module\Dev\Audit\Entity\AuditLog;
-use Aurora\Module\Dev\Audit\Entity\AuditLogInterface;
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\Dev\Audit\Entity\AuditLog;
+use Aurora\Module\Dev\Audit\Entity\AuditLogInterface;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;

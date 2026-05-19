@@ -8,7 +8,7 @@ export default defineConfig({
     test: {
         environment: "jsdom",
         globals: true,
-        include: ["assets/**/*.{test,spec}.{js,ts}"],
+        include: ["src/**/*.{test,spec}.{js,ts}"],
         exclude: ["node_modules", "tests/e2e/**", "dist/**"],
         pool: "threads",
         minThreads: 1,

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\User\Manager\Frontend;
 
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\Auth\Dto\Frontend\RegisterInput;
 use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
 use Aurora\Module\Platform\Auth\Manager\EmailVerificationManagerInterface;
 use Aurora\Module\Platform\Auth\Manager\PasswordResetManagerInterface;
-use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingCategory\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Service\TranslationLocaleSyncerInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ecommerce\ListingCategory\Dto\ListingCategoryInputInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Dto\ListingCategoryTranslationInput;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
@@ -14,6 +13,7 @@ use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslationInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

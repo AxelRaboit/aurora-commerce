@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\ListingTag\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Service\TranslationLocaleSyncerInterface;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagInputInterface;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagTranslationInput;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;

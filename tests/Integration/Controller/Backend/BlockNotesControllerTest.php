@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
+use Aurora\Module\Platform\User\Entity\User;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

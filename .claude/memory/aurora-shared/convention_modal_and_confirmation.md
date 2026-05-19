@@ -123,7 +123,7 @@ Pour un nouveau module avec CRUD :
 5. Clé i18n `backend.<plural>.delete_confirm` avec `{name}`.
 
 ```bash
-# Audit
-grep -rn "confirm(" assets/ --include="*.vue" --include="*.js" \
+# Audit (core : src/, client : assets/)
+grep -rn "confirm(" src/ assets/ --include="*.vue" --include="*.js" \
     | grep -v node_modules | grep -v ".test."
 ```

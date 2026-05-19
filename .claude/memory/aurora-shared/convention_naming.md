@@ -29,7 +29,7 @@ metadata:
 
 ## Anti-patterns
 
-❌ `assets/Module/Crm/backend/contact_tags/` → ✅ `contact-tags/`
+❌ `src/Module/Crm/assets/backend/contact_tags/` → ✅ `contact-tags/`
 ❌ `docs/aurora-client/getting_started/` → ✅ `getting-started/`
 ❌ Mixer kebab et snake dans un même type sur des modules différents
 ❌ URL avec underscore (`/forgot_password`) au lieu de dash (`/forgot-password`)

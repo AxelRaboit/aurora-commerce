@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Sync;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Planning\Event\Enum\PlanningEventStatusEnum;
 use Aurora\Module\Planning\Planning\Entity\PlanningInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 use Symfony\Contracts\EventDispatcher\Event;
 

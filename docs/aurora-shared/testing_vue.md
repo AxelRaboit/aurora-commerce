@@ -9,17 +9,17 @@ Tout fichier `.test.js` vit **à côté de son fichier source**, dans le même d
 C'est intentionnellement différent des tests PHP (centralisés dans `tests/` — voir [testing_php.md](testing_php.md)). Deux écosystèmes, deux conventions établies.
 
 ```
-assets/shared/components/form/
+src/Core/Frontend/shared/components/form/
   AppInput.vue
   AppInput.test.js       ✅ co-localisé
 
-assets/Module/Ged/backend/documents/composables/
+src/Module/Ged/assets/backend/documents/composables/
   useDocumentsForm.js
   useDocumentsForm.test.js  ✅ co-localisé
 ```
 
 **Jamais** dans un dossier `tests/` centralisé.  
-Exception : `assets/tests/helpers/` — utilitaires de test partagés (ex: `createTestI18n.js`).
+Exception : `src/Core/Frontend/tests/helpers/` — utilitaires de test partagés (ex: `createTestI18n.js`).
 
 ---
 
@@ -37,8 +37,8 @@ npx vitest run        # one-shot depuis la racine
 
 Lancer un sous-ensemble :
 ```bash
-npx vitest run assets/shared/components/form
-npx vitest run assets/Module/Ged
+npx vitest run src/Core/Frontend/shared/components/form
+npx vitest run src/Module/Ged/assets
 ```
 
 ---

@@ -53,7 +53,7 @@ Editorial/frontend/
 - **Croissance** : ajouter une variante de page (`category`, `tag`, `show`,
   `edit`) ne pollue pas la racine du module.
 - **Cohérence** : même convention que les controllers et que les sous-dossiers
-  Vue (`assets/Module/<M>/frontend/<feature>/`).
+  Vue (`src/Module/<M>/assets/frontend/<feature>/`).
 
 ## Comment l'appliquer
 

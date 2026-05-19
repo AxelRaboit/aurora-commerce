@@ -20,7 +20,7 @@ useForm.js
 useForm.test.js       ← même dossier
 ```
 
-`assets/tests/helpers/` est la seule exception : test utilities partagées (ex: `createTestI18n.js`).
+`src/Core/Frontend/tests/helpers/` est la seule exception : test utilities partagées (ex: `createTestI18n.js`).
 
 ## Structure d'un test
 
@@ -117,6 +117,6 @@ vi.useRealTimers();
 
 ## Pourquoi
 
-**Why:** Établi lors de l'audit `assets/shared/` (2026-05-14). L'ancien dossier `assets/tests/` centralisé a été migré vers la co-location pour cohérence.
+**Why:** Établi lors de l'audit `src/Core/Frontend/shared/` (2026-05-14). L'ancien dossier `src/Core/Frontend/tests/` centralisé a été migré vers la co-location pour cohérence.
 
 **How to apply:** Quand tu crées ou modifies un composant/composable/util Vue, vérifie si un `.test.js` co-localisé existe. S'il n'existe pas, le créer. 3–5 tests ciblés suffisent.

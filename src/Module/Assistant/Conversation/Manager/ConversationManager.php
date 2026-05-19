@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Conversation\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Conversation\Dto\MessageInputInterface;
 use Aurora\Module\Assistant\Conversation\Entity\Conversation;
 use Aurora\Module\Assistant\Conversation\Entity\ConversationInterface;
@@ -19,6 +17,8 @@ use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\Setting\AssistantSettings;
 use Aurora\Module\Assistant\Tool\Registry\ToolRegistry;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use RuntimeException;

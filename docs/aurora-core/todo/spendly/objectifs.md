@@ -97,7 +97,7 @@ pas ce gating** (cf. README §"exclu"). Si un client veut, il étend
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/goal/GoalsApp.vue` :
+`src/Module/PersonalFinance/assets/backend/goal/GoalsApp.vue` :
 - Grille de cards avec barre de progression colorée (color hex de l'entité)
 - Tri : progression / deadline / amount (composable `usePersonalFinanceGoalSort`)
 - Modale create/edit/deposit (3 actions distinctes — pas une modale

@@ -10,7 +10,6 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Billing\BillingContext;
 
 final readonly class BillingModule implements ModuleInterface, ModuleToggleProviderInterface
 {

@@ -42,7 +42,7 @@ php bin/console doctrine:mapping:info | grep Aurora<Module>
 
 # 3. Vérifier les traductions (si module a un dossier translations/)
 php bin/console app:translations:dump-js
-grep -c "<module>" assets/locales/generated/fr.json
+grep -c "<module>" src/Core/Frontend/locales/generated/fr.json
 
 # 4. Vérifier le namespace Twig (si module a des templates)
 php bin/console debug:twig --filter=<Module>

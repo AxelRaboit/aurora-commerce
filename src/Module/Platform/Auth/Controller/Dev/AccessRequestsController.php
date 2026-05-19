@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Controller\Dev;
 
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Enum\HttpStatusEnum;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Platform\Auth\Entity\AccessRequest;
 use Aurora\Module\Platform\Auth\Manager\AccessRequestManagerInterface;
 use Aurora\Module\Platform\Auth\Repository\AccessRequestRepository;
 use Aurora\Module\Platform\Auth\View\DevAccessRequestsViewBuilder;
-use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Enum\HttpStatusEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Platform\User\Manager\UserManagerInterface;
-use Aurora\Core\Validation\Dto\PaginationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

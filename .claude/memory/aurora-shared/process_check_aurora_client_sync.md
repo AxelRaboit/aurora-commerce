@@ -29,7 +29,7 @@ aurora-client est le **projet de démonstration et template de départ** d'auror
 | Refacto de Manager (changement de signature de hook protected) | Si le client override le hook, sa signature doit suivre |
 | Nouvelle interface / nouveau type-hint exposé | Vérifie que les overrides client typehint l'interface, pas la concrete |
 | Suppression / renommage d'une méthode publique | Breaking change — grep dans aurora-client AVANT de merger |
-| Nouveau composable Vue partagé (`assets/shared/composables/`) | Le client peut bénéficier — chercher si des composables locaux dupliquent la logique |
+| Nouveau composable Vue partagé (`src/Core/Frontend/shared/composables/`) | Le client peut bénéficier — chercher si des composables locaux dupliquent la logique |
 | Nouvelle clé i18n `shared.common.*` ou similar | Le client charge ces clés via vendor — vérifier qu'aucun client-side override de la même clé ne crée de conflit |
 | Nouveau hook d'extension (`#[AsAlias]` exposé) | Documenter dans `docs/aurora-core/dev/extending_*.md` comment le client peut l'utiliser |
 

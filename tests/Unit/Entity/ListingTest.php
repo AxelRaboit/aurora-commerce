@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use PHPUnit\Framework\TestCase;
 
 final class ListingTest extends TestCase

@@ -47,23 +47,23 @@ par Vite et Vitest). Côté client, `make sync-jsconfig` régénère
 
 | Alias | Chemin (côté client : préfixer par `vendor/axelraboit/aurora/`) |
 |---|---|
-| `@` | `assets/` |
-| `@core` | `assets/Core/` |
-| `@shared` | `assets/shared/` |
-| `@editorial` | `assets/Module/Editorial/` |
-| `@crm` | `assets/Module/Crm/` |
-| `@erp` | `assets/Module/Erp/` |
-| `@ecommerce` | `assets/Module/Ecommerce/` |
-| `@photo` | `assets/Module/Photo/` |
-| `@billing` | `assets/Module/Billing/` |
-| `@ged` | `assets/Module/Ged/` |
-| `@hr` | `assets/Module/Hr/` |
-| `@planning` | `assets/Module/Planning/` |
-| `@project` | `assets/Module/Project/` |
-| `@notes` | `assets/Module/Notes/` |
-| `@assistant` | `assets/Module/Assistant/` |
-| `@vault` | `assets/Module/Vault/` |
-| `@password-generator` | `assets/Module/PasswordGenerator/` |
+| `@` | `src/Core/Frontend/` |
+| `@core` | `src/Core/Frontend/` |
+| `@shared` | `src/Core/Frontend/shared/` |
+| `@editorial` | `src/Module/Editorial/assets/` |
+| `@crm` | `src/Module/Crm/assets/` |
+| `@erp` | `src/Module/Erp/assets/` |
+| `@ecommerce` | `src/Module/Ecommerce/assets/` |
+| `@photo` | `src/Module/Photo/assets/` |
+| `@billing` | `src/Module/Billing/assets/` |
+| `@ged` | `src/Module/Ged/assets/` |
+| `@hr` | `src/Module/Hr/assets/` |
+| `@planning` | `src/Module/Planning/assets/` |
+| `@project` | `src/Module/Project/assets/` |
+| `@notes` | `src/Module/Notes/assets/` |
+| `@assistant` | `src/Module/Assistant/assets/` |
+| `@vault` | `src/Module/Vault/assets/` |
+| `@password-generator` | `src/Module/PasswordGenerator/assets/` |
 | `@client` | `assets/client/` (uniquement côté client) |
 
 Quand un module est ajouté côté core, ajouter l'alias dans `aliases.js`
@@ -199,7 +199,7 @@ Pour remplacer un composant Aurora existant, créer un fichier sous
 
 ```
 # Composant Aurora
-vendor/axelraboit/aurora/assets/Core/backend/agencies/AgenciesApp.vue
+vendor/axelraboit/aurora/src/Core/Frontend/backend/agencies/AgenciesApp.vue
                                  ↓
 # Override client
 assets/client/Overrides/backend/agencies/AgenciesApp.vue

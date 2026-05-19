@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Listing\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ListingInterface extends TimestampableInterface

@@ -7,10 +7,10 @@ metadata:
 
 **Règle dure** : à l'intérieur d'aurora-core, un module ne dépend **jamais**
 d'un autre module sibling. Les seules dépendances permises depuis
-`src/Module/X/` ou `assets/Module/X/` sont :
+`src/Module/X/` ou `src/Module/X/assets/` sont :
 
-- `Core` (`src/Core/`, `assets/Core/`, `@core/`)
-- `Shared` (`assets/shared/`, `@shared/`)
+- `Core` (`src/Core/`, `src/Core/Frontend/`, `@core/`)
+- `Shared` (`src/Core/Frontend/shared/`, `@shared/`)
 - ses propres sous-dossiers
 
 Toute dépendance "Editorial → Ecommerce", "Notes → Editorial",
@@ -45,7 +45,7 @@ dans `EditorBlock.vue` (Editorial) — l'extraction de l'éditeur en
 ```bash
 # Cross-module imports JS (devrait être vide hors aurora-client)
 grep -rE "^import .* from ['\"]@(editorial|crm|erp|ecommerce|photo|billing|ged|hr|planning|project|notes|vault|password-generator)/" \
-  assets/Module/ | awk -F'/Module/' '{src=$2; split(src,a,"/"); print a[1] " : " $0}' \
+  src/Module/ | awk -F'/Module/' '{src=$2; split(src,a,"/"); print a[1] " : " $0}' \
   | awk -F: '{src=$1; line=$0; sub(/.*from /, "", line); sub(/^["'"'"']@/, "", line); split(line, b, "/"); tgt=b[1]; if (toupper(substr(tgt,1,1)) substr(tgt,2) != src) print src " -> @" tgt}' | sort -u
 ```
 

@@ -12,8 +12,8 @@ UX distinctes :
 
 | Sous-module | Statut |
 |---|---|
-| Markdown | 🟢 **Terminé** — production-ready. Voir `src/Module/Notes/Markdown/` et `assets/Module/Notes/backend/markdown/`. |
-| Block    | 🟢 **Terminé** — implémentation complète (Entity + Manager + Serializer + Controller + assets EditorJS). Voir `src/Module/Notes/Block/` et `assets/Module/Notes/backend/block/`. |
+| Markdown | 🟢 **Terminé** — production-ready. Voir `src/Module/Notes/Markdown/` et `src/Module/Notes/assets/backend/markdown/`. |
+| Block    | 🟢 **Terminé** — implémentation complète (Entity + Manager + Serializer + Controller + assets EditorJS). Voir `src/Module/Notes/Block/` et `src/Module/Notes/assets/backend/block/`. |
 
 > **Statut global module Notes** : 🟢 Core, plus rien à faire ici. Ce dossier
 > reste utile comme **doc historique d'architecture** (justifications des

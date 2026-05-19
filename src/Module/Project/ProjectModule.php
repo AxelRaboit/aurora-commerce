@@ -10,7 +10,6 @@ use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Project\ProjectContext;
 
 final readonly class ProjectModule implements ModuleInterface, ModuleToggleProviderInterface
 {

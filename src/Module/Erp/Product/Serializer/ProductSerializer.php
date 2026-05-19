@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Serializer;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

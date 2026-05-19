@@ -78,7 +78,8 @@ Cohérence visuelle, dark mode, accessibilité (focus, aria-label), gestion unif
 
 ```bash
 # Audit : trouver les éléments HTML bruts à remplacer
-grep -rEn "<button\b|<input\b|<select\b" assets/ \
+# Côté core : src/ ; côté client : assets/
+grep -rEn "<button\b|<input\b|<select\b" src/ assets/ \
     --include="*.vue" \
   | grep -v ".test." | grep -v "node_modules"
 ```

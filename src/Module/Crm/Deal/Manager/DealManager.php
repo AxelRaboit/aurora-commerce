@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Deal\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
@@ -15,6 +14,7 @@ use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Aurora\Module\Crm\Setting\CrmSettingEnum;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

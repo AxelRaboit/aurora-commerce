@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Billing;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
-use Aurora\Module\Billing\BillingModule;
 use Aurora\Module\Billing\BillingContext;
+use Aurora\Module\Billing\BillingModule;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class BillingModuleTest extends TestCase

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Post\Service;
 
+use Aurora\Module\Editorial\Post\Service\PostAccessService;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
-use Aurora\Module\Editorial\Post\Service\PostAccessService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 

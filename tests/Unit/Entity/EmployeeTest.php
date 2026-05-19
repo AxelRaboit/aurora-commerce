@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
+use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Platform\Agency\Entity\Agency;
 use Aurora\Module\Platform\Service\Entity\Service;
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Hr\Employee\Entity\Employee;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

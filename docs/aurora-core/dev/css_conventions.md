@@ -1,13 +1,14 @@
 # Aurora CSS — organisation & conventions
 
-CSS organisé pour **refléter la structure de `assets/` et `src/`**. Chaque
+CSS organisé pour **refléter la structure de `src/`** (Vue/JS et PHP
+co-localisés depuis 0.5). Chaque
 fichier matche la couche/le module qu'il style, pour qu'on retrouve les
 styles à côté de leur code logique.
 
 ## Structure
 
 ```
-assets/css/
+src/Core/Frontend/css/
 ├── app.css                    # Entry — orchestre les imports GLOBAUX uniquement
 ├── email.css                  # Standalone, mounted by emails only
 │
@@ -17,15 +18,15 @@ assets/css/
 │   ├── theme.css
 │   └── theme-transition.css
 │
-├── shared/                    # Styles pour les composants de assets/shared/
+├── shared/                    # Styles pour les composants de src/Core/Frontend/shared/
 │   ├── input.css              #   (importés dans app.css — utilisés partout)
 │   ├── loader.css
 │   └── modal.css
 │
-├── core/                      # Styles pour assets/Core/*
+├── core/                      # Styles pour src/Core/Frontend/*
 │   └── sidemenu.css           #   (importé par AppSidemenu.vue)
 │
-└── modules/                   # Styles per-module (mirror de assets/Module/<Name>/)
+└── modules/                   # Styles per-module (mirror de src/Module/<Name>/assets/)
     ├── editorial/
     │   ├── editor.css         #   (importés par EditorBlock.vue)
     │   ├── blocks.css         #
@@ -36,7 +37,7 @@ assets/css/
         └── block/             # (à venir — sub-module Block / EditorJS)
 ```
 
-> **Module avec sous-modules** : si `assets/Module/<Name>/` est lui-même
+> **Module avec sous-modules** : si `src/Module/<Name>/assets/` est lui-même
 > compartimenté en sous-modules (cf. `Module/Notes/Markdown/` +
 > `Module/Notes/Block/`), reproduire la subdivision côté CSS :
 > `modules/<name>/<submodule>/<feature>.css`. Le nom de fichier peut
@@ -88,9 +89,9 @@ les styles avant le rendu JS.
 | Type de style | Emplacement | Importé depuis |
 |---|---|---|
 | **Base / theme** (tokens, scrollbar, body) | `base/` | `app.css` |
-| **Composant partagé global** (`assets/shared/`) | `shared/` | `app.css` |
-| **Core admin** (`assets/Core/*`) | `core/` | le SFC concerné |
-| **Module** (`assets/Module/<Name>/*`) | `modules/<name>/` | le SFC concerné |
+| **Composant partagé global** (`src/Core/Frontend/shared/`) | `shared/` | `app.css` |
+| **Core admin** (`src/Core/Frontend/*`) | `core/` | le SFC concerné |
+| **Module** (`src/Module/<Name>/assets/*`) | `modules/<name>/` | le SFC concerné |
 
 ### 2. Inline `<style>` vs fichier externe vs Tailwind
 

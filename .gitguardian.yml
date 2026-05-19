@@ -3,4 +3,4 @@ version: 2
 ignore-known-secrets: true
 
 paths-ignore:
-  - "assets/locales/**"
+  - "src/Core/Frontend/locales/**"

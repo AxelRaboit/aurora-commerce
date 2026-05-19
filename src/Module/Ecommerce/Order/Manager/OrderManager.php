@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Manager\CartManagerInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
@@ -20,6 +19,7 @@ use Aurora\Module\Ecommerce\Order\Service\OrderNotificationService;
 use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\Product;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

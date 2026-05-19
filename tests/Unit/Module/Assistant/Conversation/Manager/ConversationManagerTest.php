@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Assistant\Conversation\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Assistant\Conversation\Dto\MessageInput;
 use Aurora\Module\Assistant\Conversation\Entity\Conversation;
 use Aurora\Module\Assistant\Conversation\Enum\MessageRoleEnum;
@@ -19,6 +15,10 @@ use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\Setting\AssistantSettings;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Module\Assistant\Tool\Registry\ToolRegistry;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;

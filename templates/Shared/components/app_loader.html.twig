@@ -1,6 +1,14 @@
-{# Global loader overlay shown until the first Vue component mounts under
-   <main>. Boot logic: assets/shared/utils/loader.js (imported from app.js).
-   Styles: assets/css/components/loader.css. #}
-<div id="aurora-loader" class="aurora-loader" aria-hidden="true">
+{# Global loader overlay shown until the first Vue component mounts.
+   Boot logic: src/Core/Frontend/shared/utils/loader.js (imported from app.js).
+   Styles: src/Core/Frontend/css/base/loader.css.
+
+   Two modes:
+   - admin (default): waits for vue:mount inside #main-content main AND for
+     the sidemenu (and other useLayoutMount() shell components) to dispatch
+     LayoutMounted. Used by templates/Core/backend/layout.html.twig.
+   - guest: waits only for the first vue:mount anywhere on the page (no
+     sidemenu, no shell layout). Pass {mode: 'guest'} when including. #}
+{% set mode = mode|default('admin') %}
+<div id="aurora-loader" class="aurora-loader" aria-hidden="true"{% if mode == 'guest' %} data-mode="guest"{% endif %}>
     <div class="aurora-loader-spinner"></div>
 </div>

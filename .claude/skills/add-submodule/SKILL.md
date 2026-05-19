@@ -25,7 +25,7 @@ Same detection as `/add-module` (composer.json check). Adapts :
 | Toggle key | `ModuleParameterEnum::<Parent><Sub>` enum case | constant on `<Parent>Context` (`app_<parent>_<sub>`) |
 | Sub-folder | `src/Core/<Parent>/<Sub>/` or `src/Module/<Parent>/<Sub>/` | `src/Module/<Parent>/<Sub>/` (assuming `<Parent>` is a client module — for extending an Aurora module, use `/extend-aurora-entity` instead) |
 | Sequence prefix (if entity) | `seq_core_<sub>_id` | `seq_app_<sub>_id` |
-| Asset path | `assets/Module/<Parent>/backend/<sub>/` or `assets/Core/<parent>/<sub>/` | `assets/client/Module/<Parent>/backend/<sub>/` |
+| Asset path | `src/Module/<Parent>/assets/backend/<sub>/` or `src/Core/Frontend/<parent>/<sub>/` | `assets/client/Module/<Parent>/backend/<sub>/` |
 
 ## Required inputs (ask upfront if missing)
 
@@ -53,7 +53,7 @@ Same detection as `/add-module` (composer.json check). Adapts :
 5. **Permission(s)** — single (`<parent>.<sub>.use`) or granular
    (`view`/`create`/`edit`/`delete`) ? Ask the user.
 6. **Icon** for the NavItem (kebab-case Lucide). Add to `ICON_MAP` in
-   `assets/Core/backend/sidemenu/composables/useSidemenuNav.js` if missing.
+   `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js` if missing.
 7. **Optional inputs** if the sub-module ships an entity :
    - Entity name (PascalCase)
    - Whether to scaffold the entity now (suggest `/add-entity` after)
@@ -197,12 +197,12 @@ src/Module/<Parent>/<Sub>/
 
 templates/Module/<Parent>/backend/<sub_id>/index.html.twig
 
-assets/Module/<Parent>/backend/<sub_id>/<Sub>App.vue       # CORE
+src/Module/<Parent>/assets/backend/<sub_id>/<Sub>App.vue       # CORE
 assets/client/Module/<Parent>/backend/<sub_id>/<Sub>App.vue  # CLIENT
 ```
 
 For Core sub-modules under `src/Core/<Parent>/<Sub>/`, the paths use
-`src/Core/<Parent>/<Sub>/...` and `assets/Core/<parent_lc>/<sub_lc>/...`
+`src/Core/<Parent>/<Sub>/...` and `src/Core/Frontend/<parent_lc>/<sub_lc>/...`
 following the existing Core convention.
 
 **Controller skeleton** :
@@ -259,7 +259,7 @@ sub-module benefits from :
 - Twig namespace `@<Parent>` already mounted (new sub-template resolves
   automatically)
 - Translations glob (depth 1 + 2 since 0.4.0 — cf. AuroraBundle.php)
-- Vue component glob (`assets/Module/**/*.vue` or
+- Vue component glob (`src/Module/*/assets/**/*.vue` or
   `assets/client/Module/**/*.vue` côté client)
 
 ## Post-generation steps

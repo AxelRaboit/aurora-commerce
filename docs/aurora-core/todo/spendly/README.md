@@ -21,7 +21,7 @@ custom, auto-catégorisation par patterns, statistiques, import Excel.
 
 Implications concrètes :
 
-- Folder : `src/Module/PersonalFinance/` et `assets/Module/PersonalFinance/`
+- Folder : `src/Module/PersonalFinance/` et `src/Module/PersonalFinance/assets/`
 - Namespace : `Aurora\Core\Module\PersonalFinance\`
 - Entités préfixées : `PersonalFinanceWallet`, `PersonalFinanceTransaction`,
   `PersonalFinanceCategory`, … (pour éviter collisions avec `EditorialCategory`,
@@ -128,7 +128,7 @@ src/Module/PersonalFinance/
 ### Frontend Vue
 
 ```
-assets/Module/PersonalFinance/backend/
+src/Module/PersonalFinance/assets/backend/
 ├── dashboard/                        # DashboardApp.vue
 ├── overview/                         # OverviewApp.vue
 ├── wallet/
@@ -238,7 +238,7 @@ Notes ?" :
 - ✅ Service métier dédié pour la logique non-CRUD (équivalent
   `MarkdownNoteImageService`)
 - ✅ Voter Symfony pour ownership/sharing
-- ✅ Templates Vue isolés sous `assets/Module/<Module>/`
+- ✅ Templates Vue isolés sous `src/Module/<Module>/assets/`
 - ✅ Composables Vue réutilisables (`useNoteTree.js`, `useNoteDragDrop.js`)
 - ✅ Traductions sous `translations/<module>.<locale>.yaml`
 

@@ -174,7 +174,7 @@ Composables :
 
 Le "transactions" entry de la sidebar Spendly est en réalité un **search
 multi-wallet** (cf. `SearchController` côté Spendly). À porter comme
-`assets/Module/PersonalFinance/backend/transaction/TransactionsSearchApp.vue` :
+`src/Module/PersonalFinance/assets/backend/transaction/TransactionsSearchApp.vue` :
 - Liste paginée toutes wallets accessibles
 - Filtres : wallet, catégorie, type, mois, search description, tags
 - Actions inline : edit, delete (modal de confirmation)

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Crm\Company\Entity\Company;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;

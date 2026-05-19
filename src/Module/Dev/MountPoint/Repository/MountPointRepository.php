@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Dev\MountPoint\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Dev\MountPoint\Entity\MountPoint;
 use Aurora\Module\Dev\MountPoint\Entity\MountPointInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

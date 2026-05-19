@@ -55,7 +55,7 @@ export function useNotifications(paths) {
 - Composable / fonction utilitaire avec état → variable module-level non exportée, sans préfixe.
 
 ```bash
-# Audit
-grep -rEn "class\s+\w+|^\s+_[a-z]" assets/ --include="*.js" --include="*.vue" \
+# Audit (core : src/, client : assets/)
+grep -rEn "class\s+\w+|^\s+_[a-z]" src/ assets/ --include="*.js" --include="*.vue" \
   | grep -v node_modules | grep -v ".test."
 ```

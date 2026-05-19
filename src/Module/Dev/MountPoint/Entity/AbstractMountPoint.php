@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Dev\MountPoint\Entity;
 
-use Aurora\Module\Dev\MountPoint\Enum\MountPointTypeEnum;
 use Aurora\Core\Timestampable\TimestampableTrait;
+use Aurora\Module\Dev\MountPoint\Enum\MountPointTypeEnum;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

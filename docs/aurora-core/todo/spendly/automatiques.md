@@ -123,7 +123,7 @@ peut être annulée ou modifiée à la dernière minute (prime annoncée à
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/recurring/RecurringApp.vue` :
+`src/Module/PersonalFinance/assets/backend/recurring/RecurringApp.vue` :
 - 2 onglets : "Récurrentes" / "Planifiées"
 - Tab Récurrentes : table groupée par wallet, colonnes (description, montant, jour du mois, prochaine date estimée, toggle active)
 - Tab Planifiées : table par date croissante, colonnes (description, montant, date prévue, statut, action "matérialiser")

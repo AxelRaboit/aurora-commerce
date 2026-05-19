@@ -68,7 +68,7 @@ Optimisations :
 
 ### Vue
 
-`assets/Module/PersonalFinance/backend/dashboard/DashboardApp.vue` :
+`src/Module/PersonalFinance/assets/backend/dashboard/DashboardApp.vue` :
 - Grille responsive : 4 KPI cards en haut + sparkline pleine largeur + 3 colonnes (top categories / recent transactions / objectifs+récurrentes+alertes)
 - Charts : Chart.js (déjà dispo dans Aurora — cf. usage Editorial stats)
 - Polling/refresh : pas pour V1, l'utilisateur recharge

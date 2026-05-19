@@ -317,7 +317,7 @@ La prop `:error` attend une **chaîne déjà traduite** (pas une clé).
 ### 6. Pattern complet — composable de création
 
 ```js
-// assets/Module/Foo/backend/composables/useFooCreate.js
+// src/Module/Foo/assets/backend/composables/useFooCreate.js
 
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -368,7 +368,7 @@ export function useFooCreate(createPath, onCreated) {
 ### 7. Pattern complet — composable d'édition
 
 ```js
-// assets/Module/Foo/backend/composables/useFooEdit.js
+// src/Module/Foo/assets/backend/composables/useFooEdit.js
 
 export function useFooEdit(updatePath, onUpdated) {
     const { t } = useI18n();

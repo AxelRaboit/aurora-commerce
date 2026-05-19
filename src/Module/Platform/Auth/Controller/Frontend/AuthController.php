@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Controller\Frontend;
 
-use Aurora\Module\Platform\Auth\Dto\Frontend\RegisterInput;
-use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
-use Aurora\Module\Platform\Auth\View\Frontend\AuthViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Service\Context;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Configuration\Theme\Service\ThemeResolver;
+use Aurora\Module\Platform\Auth\Dto\Frontend\RegisterInput;
+use Aurora\Module\Platform\Auth\Entity\ResetPasswordRequest;
+use Aurora\Module\Platform\Auth\View\Frontend\AuthViewBuilder;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Platform\User\Enum\UserTypeEnum;
 use Aurora\Module\Platform\User\Manager\Frontend\UserManager;
 use Aurora\Module\Platform\User\Repository\UserRepository;
-use Aurora\Core\Validation\Service\PayloadValidator;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;

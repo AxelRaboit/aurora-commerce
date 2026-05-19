@@ -36,7 +36,7 @@ class ConfigurationTab
         public readonly bool $devOnly = false,
         /**
          * Optional name resolved against the Vue-side tab registry
-         * (`assets/Core/backend/settings/tabRegistry.js`). When set, the
+         * (`src/Module/Configuration/assets/backend/settings/tabRegistry.js`). When set, the
          * Settings page renders the matching component instead of the
          * generic field renderer; clients can plug their own components
          * via `registerSettingsTabComponent(name, component)`.

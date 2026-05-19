@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Planning\Planning\Entity;
 
-use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;
 use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface PlanningInterface extends TimestampableInterface

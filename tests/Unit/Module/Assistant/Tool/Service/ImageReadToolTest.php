@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Assistant\Tool\Service;
 
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\MountPoint\Service\MountPointPathGuard;
 use Aurora\Module\Assistant\Tool\Service\ImageReadTool;
 use Aurora\Module\Assistant\Vision\Contract\VisionDescriberInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;

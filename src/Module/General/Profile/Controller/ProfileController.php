@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Module\General\Profile\Controller;
 
-use Aurora\Module\Platform\Auth\Dto\ChangePasswordInput;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Module\Service\ModuleRegistry;
+use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\General\Profile\View\ProfileViewBuilder;
+use Aurora\Module\Platform\Auth\Dto\ChangePasswordInput;
 use Aurora\Module\Platform\User\Dto\MoodInput;
 use Aurora\Module\Platform\User\Dto\UpdateProfileInput;
 use Aurora\Module\Platform\User\Entity\User;
@@ -20,7 +21,6 @@ use Aurora\Module\Platform\User\Manager\UserManagerInterface;
 use Aurora\Module\Platform\User\Manager\UserProfilePhotoManagerInterface;
 use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Platform\User\Service\UserProfilePhotoUrlGenerator;
-use Aurora\Core\Validation\Service\PayloadValidator;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

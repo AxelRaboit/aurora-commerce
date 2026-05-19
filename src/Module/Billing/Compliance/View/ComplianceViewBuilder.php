@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Compliance\View;
 
-use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
 use Aurora\Module\Billing\Compliance\Service\SequenceChecker;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
+use Aurora\Module\Dev\Audit\Repository\AuditLogRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 

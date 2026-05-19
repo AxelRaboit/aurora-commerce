@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\User\Entity;
 
-use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
-use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Platform\User\Enum\UserStatusEnum;
 use Aurora\Module\Platform\User\Enum\UserTypeEnum;

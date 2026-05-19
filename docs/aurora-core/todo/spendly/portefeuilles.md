@@ -203,7 +203,7 @@ une transaction d'ajustement (income ou expense selon le delta).
 
 ## Vue
 
-`assets/Module/PersonalFinance/backend/wallet/` :
+`src/Module/PersonalFinance/assets/backend/wallet/` :
 - `WalletsApp.vue` : grille de cards, drag-drop reorder, modal create/edit, modal members, modal transfer (cf. transactions.md)
 - `simple/SimpleWalletApp.vue` : page d'un wallet en mode Simple — liste transactions du mois, filtres type, search, modal create/edit transaction, modal adjustment
 - `WalletInvitationRespondApp.vue` : page publique (auth requise pour accept) `/wallet-invitations/{token}` → bouton accept/decline

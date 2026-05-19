@@ -302,7 +302,9 @@ patterns, location registries, etc.).
 4. **Si backend CRUD** : 4 fichiers DTO (Input, InputInterface,
    InputFactoryInterface, InputFactory) + Manager (Interface + class non-final
    + AsAlias + hooks) + Serializer (Interface + class non-final + AsAlias) +
-   Controller (type-hint les interfaces) + Vue (extraFields + slots).
+   Controller (type-hint les interfaces) + Vue (extraFields + slots) sous
+   `src/Module/<Module>/assets/backend/` (co-localisé avec les classes PHP du
+   module — plus de root `assets/` depuis 0.5).
 5. Ajouter à la table 2.1 de `entity_extensibility_convention.md` si la
    liste change.
 6. Tests + build verts, commit atomique.

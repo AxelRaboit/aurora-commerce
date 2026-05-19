@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Platform\Agency\Entity\Agency;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Planning\Planning\Entity\Planning;
 use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
+use Aurora\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\User\Entity\User;
 use PHPUnit\Framework\TestCase;
 
 final class PlanningTest extends TestCase

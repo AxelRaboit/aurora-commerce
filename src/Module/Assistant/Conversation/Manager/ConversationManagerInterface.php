@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Conversation\Manager;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Conversation\Dto\MessageInputInterface;
 use Aurora\Module\Assistant\Conversation\Entity\ConversationInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 
 interface ConversationManagerInterface
 {

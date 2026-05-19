@@ -1,13 +1,13 @@
 ---
 name: convention_assets_subfolder_layout
-description: Convention de compartimentage des assets Vue — quand et comment créer des sous-dossiers feature dans assets/Module/<M>/backend/
+description: Convention de compartimentage des assets Vue — quand et comment créer des sous-dossiers feature dans src/Module/<M>/assets/backend/
 metadata:
   type: feedback
 ---
 
 ## Règle
 
-Chaque `assets/Module/<M>/backend/` (et `assets/Core/backend/<section>/`) doit être compartimenté en **sous-dossiers par feature** dès qu'il contient plusieurs features distinctes (≥ 2 App.vue ou ≥ 8 fichiers au total).
+Chaque `src/Module/<M>/assets/backend/` (et `src/Core/Frontend/backend/<section>/`) doit être compartimenté en **sous-dossiers par feature** dès qu'il contient plusieurs features distinctes (≥ 2 App.vue ou ≥ 8 fichiers au total).
 
 ### Structure cible par sous-dossier
 

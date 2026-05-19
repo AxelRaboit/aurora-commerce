@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Entity\PostTranslation;
+use Aurora\Module\Media\Library\Entity\MediaInterface;
 use PHPUnit\Framework\TestCase;
 
 final class PostTranslationTest extends TestCase

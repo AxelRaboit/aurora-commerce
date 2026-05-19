@@ -13,6 +13,55 @@ sous-modules à l'intérieur**.
 > `core_setting`, etc.) gardent le même nom. Seules les classes PHP
 > bougent.
 
+## Assets co-location (root `assets/` supprimé)
+
+**Côté core** (aurora-core) : le dossier `assets/` à la racine du repo a été
+éliminé. Tout le JS/Vue/CSS est désormais co-localisé sous `src/`, en
+miroir de la structure PHP.
+
+| Avant | Après |
+|---|---|
+| `assets/Module/<X>/...` | `src/Module/<X>/assets/...` |
+| `assets/Core/backend/...` | `src/Core/Frontend/backend/...` |
+| `assets/Core/frontend/...` | `src/Core/Frontend/frontend/...` |
+| `assets/Core/utils/...` | `src/Core/Frontend/utils/...` |
+| `assets/shared/...` | `src/Core/Frontend/shared/...` |
+| `assets/locales/generated/...` | `src/Core/Frontend/locales/generated/...` |
+| `assets/css/...` (sauf modules) | `src/Core/Frontend/css/...` |
+| `assets/css/modules/notes/markdown/preview.css` | `src/Module/Notes/assets/backend/markdown/components/preview.css` |
+| `assets/css/modules/editorial/prose.css` | `src/Module/Editorial/assets/backend/posts/prose.css` |
+| `assets/css/core/sidemenu.css` | `src/Core/Frontend/backend/sidemenu/sidemenu.css` |
+| `assets/controllers/` | `src/Core/Frontend/stimulus/` (renommé pour éviter le clash avec `Controller/` PHP) |
+| `assets/controllers.json` | `src/Core/Frontend/stimulus.json` (override Symfony : `config/packages/stimulus.yaml`) |
+| `assets/tests/` | `src/Core/Frontend/tests/` |
+| `assets/.client-fallback/` | `src/Core/Frontend/.client-fallback/` |
+| `assets/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` | `src/Core/Frontend/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` |
+
+- Les **aliases Vite** (`@vault`, `@editorial`, `@platform`, `@configuration`,
+  `@media`, `@general`, `@dev`, …) continuent de fonctionner ; leurs cibles
+  pointent désormais vers `src/Module/<X>/assets/`. `@core`, `@`, `@shared`
+  résolvent sous `src/Core/Frontend/`.
+- Les imports `@/css/...` ont été remplacés par des **chemins relatifs**
+  (`./preview.css`, `./prose.css`, `./sidemenu.css`) puisque les CSS sont
+  désormais co-localisés avec leur SFC.
+- **Stimulus** : le folder a été renommé (`controllers/` → `stimulus/`,
+  `controllers.json` → `stimulus.json`) pour éviter la confusion avec les
+  controllers PHP. La convention par défaut Symfony (`assets/controllers/`)
+  est overridée via `config/packages/stimulus.yaml`.
+- **Translations dump path** : `src/Core/Frontend/locales/generated/`.
+- **Entry points Vite** : `./assets/app.js` → `./src/Core/Frontend/app.js`
+  (et de même pour `flash`, `theme`, `guest`, `i18n`, `stimulus_bootstrap`).
+
+**Côté client** (aurora-client) : **rien ne change**. Votre layout
+`assets/client/Module/<X>/` reste inchangé. Il suffit de pull la dernière
+release composer d'aurora-core et de re-builder :
+
+```bash
+make aurora-update
+pnpm install  # si lock changé
+pnpm run build
+```
+
 ## Table de correspondance
 
 | Avant 0.4.0 | Après 0.4.0 |
@@ -57,12 +106,14 @@ aussi été déplacés vers les modules promus :
 | `templates/Core/backend/media/` | `templates/Module/Media/backend/media/` |
 | `templates/Core/backend/{dashboard,profile}/` | `templates/Module/General/backend/<X>/` |
 | `templates/Core/backend/dev/` | `templates/Module/Dev/backend/` (flattened — plus de `dev/` middle dir) |
-| `assets/Core/backend/<X>/` (mêmes 10) | `assets/Module/<NewModule>/backend/<X>/` (mêmes 10) |
-| `assets/Core/backend/AdministrationApp.vue` | `assets/Module/Dev/backend/AdministrationApp.vue` |
+| `assets/Core/backend/<X>/` (mêmes 10) | `src/Module/<NewModule>/assets/backend/<X>/` (mêmes 10) |
+| `assets/Core/backend/AdministrationApp.vue` | `src/Module/Dev/assets/backend/AdministrationApp.vue` |
 
-**Restent à `Core/backend/`** : `layout.html.twig`, `base_guest.html.twig`,
-`assets/Core/backend/sidemenu/`, `assets/Core/backend/notifications/`
-(toutes infra cross-cutting).
+**Restent à `Core/backend/`** (templates) : `layout.html.twig`,
+`base_guest.html.twig`. Côté assets, l'équivalent sidemenu/notifications a
+été déplacé sous `src/Core/Frontend/backend/sidemenu/` et
+`src/Core/Frontend/backend/notifications/` lors de la suppression du root
+`assets/` (voir section "Assets co-location" plus bas).
 
 ### Refs côté client à mettre à jour
 

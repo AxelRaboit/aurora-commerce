@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\Platform\Auth\Entity\AccessRequest;
 use Aurora\Module\Platform\Auth\Entity\AccessRequestInterface;
 use Aurora\Module\Platform\Auth\Enum\AccessRequestStatusEnum;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
-use Aurora\Core\Repository\Trait\PaginationTrait;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

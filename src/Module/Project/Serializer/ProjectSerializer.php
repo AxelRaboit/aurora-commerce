@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Aurora\Module\Crm\Deal\Entity\DealInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectLabelInterface;
 use Aurora\Module\Project\Repository\ProjectLabelRepository;

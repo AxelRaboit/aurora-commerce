@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Hr\EventSubscriber;
 
+use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
+use Aurora\Module\Hr\Employee\Repository\EmployeeRepository;
+use Aurora\Module\Hr\EventSubscriber\HrEmployeeSyncListener;
 use Aurora\Module\Platform\Agency\Entity\Agency;
 use Aurora\Module\Platform\Service\Entity\Service;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Event\UserAgencyServiceUpdatingEvent;
-use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
-use Aurora\Module\Hr\Employee\Repository\EmployeeRepository;
-use Aurora\Module\Hr\EventSubscriber\HrEmployeeSyncListener;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;

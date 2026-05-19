@@ -6,9 +6,9 @@ namespace Aurora\Module\Ecommerce\Order\View;
 
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Module\Configuration\Theme\Service\ThemeContext;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\Serializer\OrderSerializerInterface;
+use Aurora\Module\Platform\User\Entity\User;
 
 /**
  * Builds the Twig payload for the customer account orders view.

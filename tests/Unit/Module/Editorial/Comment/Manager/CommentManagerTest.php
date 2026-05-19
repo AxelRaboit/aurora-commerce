@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Comment\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Editorial\Comment\Dto\CommentInput;
 use Aurora\Module\Editorial\Comment\Entity\AbstractComment;
 use Aurora\Module\Editorial\Comment\Entity\Comment;

@@ -36,7 +36,7 @@ will produce broken code if wrong.
 
 | Detected | Namespace prefix | Sequence prefix | Asset path | Settings storage |
 |---|---|---|---|---|
-| CORE (business module) | `Aurora\Module\<X>` | `seq_core_<entity>_id` | `assets/Module/<X>/` | `Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum` enum case (since 0.4.0) |
+| CORE (business module) | `Aurora\Module\<X>` | `seq_core_<entity>_id` | `src/Module/<X>/assets/` | `Aurora\Core\Configuration\Setting\Enum\ModuleParameterEnum` enum case (since 0.4.0) |
 | CLIENT | `App\Module\<X>` | `seq_app_<entity>_id` | `assets/client/Module/<X>/` | `<X>Context` constants (`app_<x>_<feature>`) |
 
 ## Required inputs (ask upfront if missing)
@@ -73,7 +73,7 @@ will produce broken code if wrong.
      (and the skill should warn the user that **two files** need editing)
 4. **Icon** for the NavItem — kebab-case Lucide name (`flame`, `key-round`,
    `lightning-bolt`). If the icon isn't already in
-   `assets/Core/backend/sidemenu/composables/useSidemenuNav.js` ICON_MAP,
+   `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js` ICON_MAP,
    the skill must add it (import from `lucide-vue-next` + register).
 5. **Primary permission name** — typically `<module_id>.use`. If the module
    has multiple permissions (view/create/edit/delete), ask.
@@ -88,7 +88,7 @@ src/Module/<Module>/Controller/Backend/<Module>Controller.php
 src/Module/<Module>/translations/messages.fr.yaml
 src/Module/<Module>/translations/messages.en.yaml
 templates/Module/<Module>/backend/index.html.twig
-assets/Module/<Module>/backend/<Module>App.vue
+src/Module/<Module>/assets/backend/<Module>App.vue
 aliases.js                                  # edit: add @<kebab> entry
 ```
 
@@ -368,7 +368,7 @@ CORE benefits from auto-discovery (cf. `AuroraBundle.php`) :
 | Tag `aurora.module` | `_instanceof: ModuleInterface` in `config/services.yaml` |
 | Twig `@<Module>` namespace | glob `templates/Module/<Module>/` |
 | Translations | glob `src/Module/<Module>/translations/` |
-| Vue components | `import.meta.glob('./Module/**/*.vue')` in `assets/app.js` |
+| Vue components | `import.meta.glob('./Module/**/*.vue')` in `src/Core/Frontend/app.js` |
 
 **Only manual wiring** : `aliases.js` (one line to add for the new module).
 

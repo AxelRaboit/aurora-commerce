@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\View\Frontend;
 
-use Aurora\Module\Platform\Auth\Security\Frontend\LoginAuthenticator;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Module\Configuration\Theme\Service\ThemeContext;
+use Aurora\Module\Platform\Auth\Security\Frontend\LoginAuthenticator;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 

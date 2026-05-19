@@ -3,46 +3,51 @@
 ## Règle
 
 ```
-assets/
-├── Core/
-│   ├── backend/
-│   │   ├── <plural>/                       ← un dossier par entité (au pluriel)
-│   │   │   ├── <Plural>App.vue              ← composant principal monté par Stimulus
-│   │   │   ├── <Detail>App.vue              ← optional, page détail
-│   │   │   └── composables/
-│   │   │       ├── use<Plural>Form.js       ← create+edit unifié (option extraFields)
-│   │   │       ├── use<Plural>Delete.js
-│   │   │       ├── use<Plural>List.js
-│   │   │       └── … (autres composables spécifiques)
-│   │   └── …
-│   ├── frontend/                           ← composants frontend public
-│   └── utils/                              ← helpers JS partagés Core
-├── Module/
-│   └── <Module>/
-│       ├── backend/                        ← exclusif contexte admin
-│       │   ├── <Plural>App.vue             ← composant top-level
-│       │   ├── components/                 ← sous-composants backend-only
-│       │   ├── composables/                ← logique métier backend
-│       │   └── utils/                      ← helpers backend-only
-│       ├── frontend/                       ← exclusif contexte public (si applicable)
-│       │   ├── composables/
-│       │   └── …
-│       └── shared/                         ← partagé entre backend ET frontend
-│           ├── components/                 ← composants réutilisés des deux côtés
-│           └── utils/                      ← enums, formatters, helpers cross-context
-└── shared/
-    ├── components/                         ← AppButton, AppInput, AppModal, etc.
-    │   ├── action/
-    │   ├── feedback/
-    │   ├── form/
-    │   ├── nav/
-    │   └── overlay/
-    ├── composables/
-    │   ├── http/                            ← useRequest, etc.
-    │   ├── form/                           ← useForm
-    │   ├── format/                         ← useDateFormat
-    │   └── list/                           ← useListPage, useUrlSearchSync
-    └── utils/                              ← buildPath, httpMethod, validation, …
+src/Core/Frontend/                          ← cross-cutting JS/Vue (depuis 0.5)
+├── backend/
+│   ├── <plural>/                           ← un dossier par entité Core (au pluriel)
+│   │   ├── <Plural>App.vue                  ← composant principal monté par Stimulus
+│   │   ├── <Detail>App.vue                  ← optional, page détail
+│   │   └── composables/
+│   │       ├── use<Plural>Form.js           ← create+edit unifié (option extraFields)
+│   │       ├── use<Plural>Delete.js
+│   │       ├── use<Plural>List.js
+│   │       └── … (autres composables spécifiques)
+│   ├── sidemenu/                           ← composants sidemenu admin
+│   └── notifications/                      ← composants notifications admin
+├── frontend/                               ← composants frontend public
+├── utils/                                  ← helpers JS partagés Core (enums…)
+├── shared/                                 ← composants & composables réutilisables
+│   ├── components/                          ← AppButton, AppInput, AppModal, etc.
+│   │   ├── action/
+│   │   ├── feedback/
+│   │   ├── form/
+│   │   ├── nav/
+│   │   └── overlay/
+│   ├── composables/
+│   │   ├── http/                            ← useRequest, etc.
+│   │   ├── form/                           ← useForm
+│   │   ├── format/                         ← useDateFormat
+│   │   └── list/                           ← useListPage, useUrlSearchSync
+│   └── utils/                              ← buildPath, httpMethod, validation, …
+├── locales/                                ← traductions générées + sources
+├── stimulus/                               ← controllers Stimulus (renommé)
+├── stimulus.json                           ← config Symfony StimulusBridge
+├── css/                                    ← CSS partagé (base/, shared/, core/)
+└── {app,flash,theme,guest,i18n,stimulus_bootstrap}.js  ← entry points
+
+src/Module/<Module>/assets/                ← JS/Vue spécifique au module
+├── backend/                                ← exclusif contexte admin
+│   ├── <Plural>App.vue                     ← composant top-level
+│   ├── components/                         ← sous-composants backend-only
+│   ├── composables/                        ← logique métier backend
+│   └── utils/                              ← helpers backend-only
+├── frontend/                               ← exclusif contexte public (si applicable)
+│   ├── composables/
+│   └── …
+└── shared/                                 ← partagé entre backend ET frontend
+    ├── components/                         ← composants réutilisés des deux côtés
+    └── utils/                              ← enums, formatters, helpers cross-context
 ```
 
 ### Compartimentage en sous-dossiers feature
@@ -109,7 +114,8 @@ et [`client/pattern_extend_vue.md`](client/pattern_extend_vue.md).
 ## Composables JS
 
 ### Localisation
-`assets/<...>/<plural>/composables/use<Plural><Action>.js`.
+`src/Module/<Module>/assets/<scope>/<plural>/composables/use<Plural><Action>.js`
+(ou `src/Core/Frontend/<scope>/<plural>/composables/...` pour les Core).
 
 ### Naming
 - `use<Plural>Form.js` : composable unifié create+edit (le plus courant).
@@ -170,7 +176,7 @@ export function useAgenciesForm(agencyList, createPath, updatePath, options = {}
 ## Stimulus controllers
 
 Le projet utilise Stimulus comme bridge Twig → Vue. Controllers dans
-`assets/controllers/` (un controller par usage : `vue-mount`,
+`src/Core/Frontend/stimulus/` (un controller par usage : `vue-mount`,
 `form-validation`, `notification-bell`, etc.).
 
 Pattern principal : `data-controller="vue-mount" data-vue-mount-component-value="…"`
@@ -205,7 +211,7 @@ npm run build  # Production build
 ```
 
 Côté client, le build est lancé via `pnpm` depuis le dossier aurora-core
-en mode `AURORA_ENV` qui scanne aussi `assets/` du client.
+en mode `AURORA_ENV` qui scanne aussi `assets/client/` du projet client.
 
 Cf `aurora-core/Makefile` (target `build` / `dev`) pour les détails.
 

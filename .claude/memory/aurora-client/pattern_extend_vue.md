@@ -21,7 +21,7 @@ les slots. Mise à jour d'aurora-core = pas de conflit.
 ### 1. Wrapper Vue côté client
 
 ```vue
-<!-- assets/Core/backend/agencies/AppAgenciesApp.vue (côté client) -->
+<!-- src/Core/Frontend/backend/agencies/AppAgenciesApp.vue (côté client) -->
 <script setup>
 import AgenciesApp from '@core/backend/agencies/AgenciesApp.vue';
 import AppInput from '@/shared/components/form/AppInput.vue';

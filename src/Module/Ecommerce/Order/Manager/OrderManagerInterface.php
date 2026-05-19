@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Manager;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 
 interface OrderManagerInterface
 {

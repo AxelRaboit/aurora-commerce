@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\User\View;
 
-use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
-use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
 use Aurora\Core\Module\Service\PermissionRegistry;
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
-use Aurora\Module\Platform\Service\Entity\ServiceInterface;
-use Aurora\Module\Platform\Service\Repository\ServiceRepository;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
+use Aurora\Module\Platform\Service\Entity\ServiceInterface;
+use Aurora\Module\Platform\Service\Repository\ServiceRepository;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Symfony\Contracts\Translation\TranslatorInterface;

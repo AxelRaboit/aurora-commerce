@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\ContactTag\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Crm\ContactTag\Dto\ContactTagInputInterface;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\String\Slugger\SluggerInterface;

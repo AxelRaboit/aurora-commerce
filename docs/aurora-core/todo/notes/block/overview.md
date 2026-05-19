@@ -1,7 +1,7 @@
 # Notes Block (EditorJS) — vue d'ensemble (doc historique)
 
 > 🟢 **Implémenté** — voir `src/Module/Notes/Block/` et
-> `assets/Module/Notes/backend/block/` pour le code de référence.
+> `src/Module/Notes/assets/backend/block/` pour le code de référence.
 > Cette doc est gardée pour **archive d'architecture** : les justifications
 > ci-dessous (entité séparée, choix EditorJS, plugins shortlistés…)
 > documentent les arbitrages pris lors de la conception.

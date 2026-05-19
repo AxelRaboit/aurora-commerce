@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\Service;
 
-use Aurora\Module\Media\Library\Contract\MediaUsageProviderInterface;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Media\Library\Contract\MediaUsageProviderInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Contact\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Company\Repository\CompanyRepository;
@@ -15,6 +14,7 @@ use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Module\Crm\Service\CrmNotificationService;
 use Aurora\Module\Crm\Setting\CrmSettingEnum;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ecommerce\ListingTag\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Core\Locale\Service\TranslationLocaleSyncer;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagInput;
 use Aurora\Module\Ecommerce\ListingTag\Dto\ListingTagTranslationInput;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;

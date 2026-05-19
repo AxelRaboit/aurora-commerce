@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\MountPoint\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Enum\MountPointAccessEnum;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

@@ -64,9 +64,9 @@ n'est pas déclaré via `extraFields` — il ne survivrait pas au reset/edit.
 ## 3. Référence de code dans aurora-core
 
 Le composant exemplaire est
-`assets/Module/Ecommerce/backend/listing_categories/ListingCategoriesApp.vue`
+`src/Module/Ecommerce/assets/backend/listing_categories/ListingCategoriesApp.vue`
 et son composable
-`assets/Module/Ecommerce/backend/listing_categories/composables/useListingCategoriesForm.js`.
+`src/Module/Ecommerce/assets/backend/listing_categories/composables/useListingCategoriesForm.js`.
 
 ### Côté composant (extrait fidèle)
 

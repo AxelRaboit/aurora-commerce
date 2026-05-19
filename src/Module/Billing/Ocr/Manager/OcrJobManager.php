@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
-use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
 use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Manager\TiersManagerInterface;
@@ -20,6 +15,11 @@ use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage;
 use Aurora\Module\Billing\Setting\BillingSettingEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
+use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
+use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

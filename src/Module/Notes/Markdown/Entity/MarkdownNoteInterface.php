@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Markdown\Entity;
 
-use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Core\Timestampable\TimestampableInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\Common\Collections\Collection;
 

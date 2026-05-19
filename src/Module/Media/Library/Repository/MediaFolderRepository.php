@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Media\Library\Repository;
 
+use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\Media\Library\Entity\MediaFolder;
 use Aurora\Module\Media\Library\Entity\MediaFolderInterface;
-use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 

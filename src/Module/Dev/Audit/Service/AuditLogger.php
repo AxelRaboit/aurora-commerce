@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Dev\Audit\Service;
 
-use Aurora\Module\Dev\Audit\Entity\AuditLog;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Entity\AuditLog;
 use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;

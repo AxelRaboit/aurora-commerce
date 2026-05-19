@@ -89,6 +89,7 @@ applique ça uniformément.
   erreur d'accord se voit immédiatement dans l'UI.
 - **Quotes YAML** : utiliser des apostrophes droites `'` (smart quotes
   cassent la lecture YAML dans certains contextes).
-- **Renaming `new:` → `create:`** : toujours grep `assets/` + `templates/`
-  + `src/` pour patcher les consommateurs Vue/Twig/PHP. Une clé renommée
-  sans patch des sites d'appel = label brut affiché.
+- **Renaming `new:` → `create:`** : toujours grep `src/` + `templates/`
+  (le JS/Vue est désormais co-localisé sous `src/` depuis 0.5) pour
+  patcher les consommateurs Vue/Twig/PHP. Une clé renommée sans patch
+  des sites d'appel = label brut affiché.

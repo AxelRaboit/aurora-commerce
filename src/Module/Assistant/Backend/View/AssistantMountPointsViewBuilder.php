@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Backend\View;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\MountPoint\Repository\AssistantMountPointRepository;
 use Aurora\Module\Assistant\MountPoint\Serializer\AssistantMountPointSerializerInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class AssistantMountPointsViewBuilder

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Controller\Backend;
 
-use Aurora\Module\Platform\Auth\View\InvitationViewBuilder;
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\Platform\Auth\View\InvitationViewBuilder;
 use Aurora\Module\Platform\User\Dto\UserSetPasswordInput;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Manager\UserManagerInterface;
-use Aurora\Core\Validation\Service\PayloadValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;

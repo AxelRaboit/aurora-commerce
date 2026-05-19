@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\General\Dashboard\Service;
 
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
-use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
@@ -19,12 +16,15 @@ use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Ecommerce\Listing\Repository\ListingRepository;
 use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Editorial\Comment\Repository\CommentRepository;
+use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
+use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryItemRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
+use Aurora\Module\Platform\User\Repository\UserRepository;
 use DateTimeImmutable;
 use DateTimeInterface;
 

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Media\Library\Manager;
 
+use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Support\Num;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Media\Library\Dto\MediaFolderInputInterface;
 use Aurora\Module\Media\Library\Dto\MediaInputInterface;
@@ -16,11 +21,6 @@ use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use Aurora\Module\Media\Library\Repository\MediaFolderRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Media\Library\Service\ImageVariantGenerator;
-use Aurora\Core\Sequence\SequenceGenerator;
-use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
-use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Core\Support\Num;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

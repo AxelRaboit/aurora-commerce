@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Cart\Serializer;
 
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(CartSerializerInterface::class)]

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Project\Manager;
 
-use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Manager\NotificationManager;
 use Aurora\Core\Notification\Repository\NotificationRepository;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectTaskCommentInput;
 use Aurora\Module\Project\Entity\Project;

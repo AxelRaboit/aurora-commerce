@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\Auth\Entity;
 
-use Aurora\Module\Platform\Auth\Enum\AccessRequestStatusEnum;
 use Aurora\Core\Timestampable\TimestampableTrait;
+use Aurora\Module\Platform\Auth\Enum\AccessRequestStatusEnum;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

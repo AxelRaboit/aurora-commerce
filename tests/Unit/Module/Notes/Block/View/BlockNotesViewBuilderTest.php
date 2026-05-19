@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Notes\Block\View;
 
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Notes\Block\Repository\BlockNoteRepository;
 use Aurora\Module\Notes\Block\Setting\BlockNoteSettingEnum;
 use Aurora\Module\Notes\Block\View\BlockNotesViewBuilder;
+use Aurora\Module\Platform\User\Entity\User;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

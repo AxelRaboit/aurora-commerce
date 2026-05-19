@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Platform\Auth\Manager;
 
-use Aurora\Module\Platform\Auth\Manager\InvitationManager;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
+use Aurora\Module\Platform\Auth\Manager\InvitationManager;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;

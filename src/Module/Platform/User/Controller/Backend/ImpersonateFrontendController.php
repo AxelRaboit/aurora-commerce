@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Platform\User\Controller\Backend;
 
-use Aurora\Module\Platform\Auth\Service\ImpersonationTokenService;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Service\Context;
+use Aurora\Module\Platform\Auth\Service\ImpersonationTokenService;
 use Aurora\Module\Platform\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

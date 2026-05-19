@@ -236,7 +236,7 @@ assets/client/Module/MyModule/backend/MyModuleApp.vue
 
 ⚠️ Notez `assets/client/Module/...` (pas `assets/Module/...`). Le `client/`
 distingue les composants du projet client de ceux du vendor aurora-core,
-chargés depuis `vendor/axelraboit/aurora/assets/Module/`.
+chargés depuis `vendor/axelraboit/aurora/src/Module/<Module>/assets/`.
 
 Utiliser systématiquement les composants `App*` partagés de
 `@shared/components/` plutôt que `<button>` / `<input>` bruts.

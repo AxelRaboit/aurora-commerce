@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Tool\Registry;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 

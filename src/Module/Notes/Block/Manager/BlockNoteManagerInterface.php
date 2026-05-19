@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Notes\Block\Manager;
 
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Notes\Block\Dto\BlockNoteInputInterface;
 use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 
 interface BlockNoteManagerInterface
 {
