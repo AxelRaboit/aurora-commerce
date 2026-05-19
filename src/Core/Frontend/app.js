@@ -34,18 +34,19 @@ const coreModules = import.meta.glob([
 const auroraModules = import.meta.glob("../../Module/*/assets/**/*.vue");
 
 // Optional client extension modules. Resolves via the @client alias which
-// points to AURORA_CLIENT_DIR (or an empty fallback when unset). Components
-// at @client/Module/<Name>/backend/Foo.vue are exposed as ./<name>/backend/Foo.vue
-// so the client can use vue_component('<name>/backend/Foo') in Twig — same
-// convention as aurora's first-party modules.
-const clientModules = import.meta.glob("@client/Module/**/*.vue");
+// points to AURORA_CLIENT_DIR (or an empty fallback when unset). Mirrors
+// aurora-core's own layout: components live under
+// <client>/src/Module/<Name>/assets/backend/Foo.vue and are exposed as
+// ./<name>/backend/Foo.vue so the client uses vue_component('<name>/backend/Foo')
+// in Twig — same convention as aurora's first-party modules.
+const clientModules = import.meta.glob("@client/src/Module/*/assets/**/*.vue");
 
 // Client overrides: wrappers around Aurora's own Vue components, kept apart
 // from feature modules so the prefix doesn't carry a misleading domain
-// meaning. A file at @client/Overrides/backend/agencies/AgenciesApp.vue
+// meaning. A file at @client/src/Overrides/backend/agencies/AgenciesApp.vue
 // is exposed as ./backend/agencies/AgenciesApp.vue and accessible via
 // vue_component('backend/agencies/AgenciesApp') in Twig — no module prefix.
-const clientOverrides = import.meta.glob("@client/Overrides/**/*.vue");
+const clientOverrides = import.meta.glob("@client/src/Overrides/**/*.vue");
 
 const vueContext = {
     // Core: ./backend/Foo.vue → ./core/backend/Foo.vue (./frontend/ likewise)
@@ -64,12 +65,11 @@ const vueContext = {
             return [`./${moduleName.toLowerCase()}/${rest}`, loader];
         }),
     ),
-    // Client modules: extract "<ModuleName>/<rest>.vue" from any key shape and
-    // remap to "./<modulename>/<rest>.vue". Works regardless of how Vite
-    // normalises alias paths in the returned glob keys.
+    // Client modules: extract "<ModuleName>/<rest>.vue" and remap to
+    // "./<modulename>/<rest>.vue". Same convention as aurora's modules.
     ...Object.fromEntries(
         Object.entries(clientModules).map(([key, loader]) => {
-            const match = key.match(/Module\/([^/]+)\/(.*)$/);
+            const match = key.match(/Module\/([^/]+)\/assets\/(.*)$/);
             if (!match) return [key, loader];
             const [, moduleName, rest] = match;
             return [`./${moduleName.toLowerCase()}/${rest}`, loader];

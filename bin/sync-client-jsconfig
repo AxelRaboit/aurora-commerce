@@ -5,8 +5,9 @@
  * Run from the client project root:
  *   node vendor/axelraboit/aurora/bin/sync-client-jsconfig
  *
- * Discovers module aliases dynamically by scanning
- * vendor/aurora/assets/Module/ so new modules are picked up automatically.
+ * Discovers aurora module aliases dynamically by scanning
+ * vendor/aurora/src/Module/<X>/assets/. Client modules are scanned the same
+ * way under <client>/src/Module/<X>/assets/.
  */
 
 const { readdirSync, writeFileSync, existsSync } = require("fs");
@@ -17,39 +18,48 @@ const CLIENT_DIR   = process.cwd();
 const AURORA_VENDOR = "vendor/axelraboit/aurora";
 
 // Without baseUrl, path values must be relative (TS 5.0+ requirement).
+// Aurora 0.5+ : all frontend assets live under src/Core/Frontend/ and
+// src/Module/<X>/assets/ (no more root assets/).
 const paths = {
-    "@/*":       [`./${AURORA_VENDOR}/assets/*`],
-    "@core/*":   [`./${AURORA_VENDOR}/assets/Core/*`],
-    "@shared/*": [`./${AURORA_VENDOR}/assets/shared/*`],
+    "@/*":       [`./${AURORA_VENDOR}/src/Core/Frontend/*`],
+    "@core/*":   [`./${AURORA_VENDOR}/src/Core/Frontend/*`],
+    "@shared/*": [`./${AURORA_VENDOR}/src/Core/Frontend/shared/*`],
     "@client/*": ["./assets/client/*"],
 };
 
-// Dynamic module aliases — one per Module/<Name>/ directory in aurora
-const modulesDir = join(AURORA_DIR, "assets", "Module");
-if (existsSync(modulesDir)) {
-    for (const entry of readdirSync(modulesDir, { withFileTypes: true })) {
+// Dynamic aurora module aliases — one per src/Module/<Name>/assets/ in aurora
+const auroraModulesDir = join(AURORA_DIR, "src", "Module");
+if (existsSync(auroraModulesDir)) {
+    for (const entry of readdirSync(auroraModulesDir, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue;
+        // Only modules that ship a Vue/JS assets/ folder are alias-worthy.
+        if (!existsSync(join(auroraModulesDir, entry.name, "assets"))) continue;
         paths[`@${entry.name.toLowerCase()}/*`] = [
-            `./${AURORA_VENDOR}/assets/Module/${entry.name}/*`,
+            `./${AURORA_VENDOR}/src/Module/${entry.name}/assets/*`,
         ];
     }
 }
 
-// Dynamic client module aliases — one per assets/client/Module/<Name>/ directory
-// Client aliases take precedence over aurora aliases with the same name.
-const clientModulesDir = join(CLIENT_DIR, "assets", "client", "Module");
-if (existsSync(clientModulesDir)) {
-    for (const entry of readdirSync(clientModulesDir, { withFileTypes: true })) {
+// Dynamic client module aliases — one per <client>/src/Module/<Name>/assets/.
+// Client aliases override aurora aliases with the same name.
+const clientSrcModulesDir = join(CLIENT_DIR, "src", "Module");
+if (existsSync(clientSrcModulesDir)) {
+    for (const entry of readdirSync(clientSrcModulesDir, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue;
+        if (!existsSync(join(clientSrcModulesDir, entry.name, "assets"))) continue;
         paths[`@${entry.name.toLowerCase()}/*`] = [
-            `./assets/client/Module/${entry.name}/*`,
+            `./src/Module/${entry.name}/assets/*`,
         ];
     }
 }
 
 const jsconfig = {
     compilerOptions: { paths },
-    include: ["assets/**/*", `${AURORA_VENDOR}/assets/**/*`],
+    include: [
+        "assets/**/*",
+        "src/**/*",
+        `${AURORA_VENDOR}/src/**/*`,
+    ],
 };
 
 const dest = join(CLIENT_DIR, "jsconfig.json");
