@@ -13,12 +13,14 @@ RECTOR        = $(PHP_BIN) $(AURORA)/tools/rector/vendor/bin/rector
 RECTOR_CONFIG = $(if $(wildcard rector.php),rector.php,$(AURORA)/tools/rector/rector.php)
 
 # AURORA_CLIENT_DIR is read by aurora's vite.config.js / app.js to scan this
-# project's custom Vue components. Place client modules in assets/client/Module.
+# project's custom Vue components, Overrides and locales. It points at the
+# client project root since 0.5 — aurora-core scans src/Module/<X>/assets/,
+# src/Overrides/ and src/locales/ via the @client alias (mirrors aurora-core's
+# own co-located layout).
 # NODE_PATH lets Node resolve packages (vue, vue-i18n, …) from aurora's
 # node_modules even when the importing file lives outside vendor/aurora.
-CLIENT_ASSETS = $(CURDIR)/assets/client
 AURORA_NODE   = $(CURDIR)/$(AURORA)/node_modules
-AURORA_ENV    = AURORA_CLIENT_DIR=$(CLIENT_ASSETS) NODE_PATH=$(AURORA_NODE)
+AURORA_ENV    = AURORA_CLIENT_DIR=$(CURDIR) NODE_PATH=$(AURORA_NODE)
 
 # Marker file written by `aurora-update`, read by `pull-update` to refuse
 # the redundant `aurora-update && pull-update` chain (pull-update right

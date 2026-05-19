@@ -5,10 +5,11 @@ set -euo pipefail
 # hooks. When AURORA_CLIENT_DIR is set, we're running inside a client project
 # (pnpm cwd is vendor/aurora) — in that case, run the client's bin/console so
 # the client's services.yaml override (with $extraSourceDirs) is applied.
+# Since aurora 0.5, AURORA_CLIENT_DIR points at the client project root
+# directly (no longer at <client>/assets/client/).
 
 if [ -n "${AURORA_CLIENT_DIR:-}" ]; then
-    CLIENT_ROOT="$(cd "${AURORA_CLIENT_DIR}/../.." && pwd)"
-    exec php "${CLIENT_ROOT}/bin/console" app:translations:dump-js
+    exec php "${AURORA_CLIENT_DIR}/bin/console" app:translations:dump-js
 fi
 
 exec php bin/console app:translations:dump-js
