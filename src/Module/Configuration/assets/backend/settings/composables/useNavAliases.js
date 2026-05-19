@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
@@ -29,8 +29,8 @@ export function useNavAliases({ groups, updatePath }) {
     );
     const expandedSections = reactive(new Set());
 
-    const { loading: sectionsSaving, request: sectionsRequest } = useRequest();
-    const { loading: itemsSaving, request: itemsRequest } = useRequest();
+    const { request } = useRequest();
+    const saving = ref(false);
 
     function toggleSection(sectionId) {
         if (expandedSections.has(sectionId)) {
@@ -44,10 +44,13 @@ export function useNavAliases({ groups, updatePath }) {
         return expandedSections.has(sectionId);
     }
 
+    function sectionDefaultLabel(section) {
+        return t(`backend.nav.sections.${section.id}`);
+    }
+
     function sectionLabel(section) {
         return (
-            sectionAliases[section.id]?.trim() ||
-            t(`backend.nav.sections.${section.id}`)
+            sectionAliases[section.id]?.trim() || sectionDefaultLabel(section)
         );
     }
 
@@ -59,47 +62,70 @@ export function useNavAliases({ groups, updatePath }) {
         delete itemAliases[route];
     }
 
-    function resetAllItems() {
+    function resetSection(sectionId) {
+        delete sectionAliases[sectionId];
+    }
+
+    function resetAll() {
+        Object.keys(sectionAliases).forEach((id) => delete sectionAliases[id]);
         Object.keys(itemAliases).forEach((route) => delete itemAliases[route]);
     }
 
-    async function saveSections() {
-        const data = await sectionsRequest(updatePath, {
-            key: "nav_section_aliases",
-            value: JSON.stringify(sectionAliases),
-        });
-        if (data?.success) {
-            toast.success(t("backend.settings.saved"));
-        }
-    }
+    async function saveAll() {
+        if (saving.value) return;
 
-    async function saveItems() {
-        const cleaned = Object.fromEntries(
+        const cleanedSections = Object.fromEntries(
+            Object.entries(sectionAliases).filter(
+                ([, value]) => typeof value === "string" && value.trim() !== "",
+            ),
+        );
+        const cleanedItems = Object.fromEntries(
             Object.entries(itemAliases).filter(
                 ([, value]) => typeof value === "string" && value.trim() !== "",
             ),
         );
-        const data = await itemsRequest(updatePath, {
-            key: "nav_item_aliases",
-            value: JSON.stringify(cleaned),
-        });
-        if (data?.success) {
-            toast.success(t("backend.settings.saved"));
+
+        saving.value = true;
+        try {
+            const [sectionsRes, itemsRes] = await Promise.all([
+                request(
+                    updatePath,
+                    {
+                        key: "nav_section_aliases",
+                        value: JSON.stringify(cleanedSections),
+                    },
+                    { noGuard: true },
+                ),
+                request(
+                    updatePath,
+                    {
+                        key: "nav_item_aliases",
+                        value: JSON.stringify(cleanedItems),
+                    },
+                    { noGuard: true },
+                ),
+            ]);
+
+            if (sectionsRes?.success && itemsRes?.success) {
+                toast.success(t("backend.settings.saved"));
+            }
+        } finally {
+            saving.value = false;
         }
     }
 
     return {
         sectionAliases,
         itemAliases,
-        sectionsSaving,
-        itemsSaving,
+        saving,
         toggleSection,
         isSectionExpanded,
+        sectionDefaultLabel,
         sectionLabel,
         itemDefaultLabel,
         resetItem,
-        resetAllItems,
-        saveSections,
-        saveItems,
+        resetSection,
+        resetAll,
+        saveAll,
     };
 }

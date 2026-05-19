@@ -37,15 +37,12 @@ backend:
         invalid_hex: 'Invalid hex code. Expected format: #rrggbb.'
     navAliasesEmpty: No navigation sections available.
     navAliases:
-      sectionsTitle: Menu sections
-      sectionsHelp: Rename the headings displayed at the top of each sidemenu group.
-      itemsTitle: Menu items
-      itemsHelp: Rename individual modules. Click a section to expand its items.
+      title: Side menu
+      help: Rename sidemenu group headings and individual modules. Click a section to expand its items.
       itemsEmpty: No items in this section.
       resetItem: Reset
       resetAll: Reset all
-      saveItems: Save items
-      saveSections: Save sections
+      save: Save
     cascadeLocked: 'Enable "{parent}" first to edit this setting.'
     mediaSquareHint: 'Recommended: square image (1:1).'
     modulesIntro: Enable or disable application modules. Changes are saved immediately.

@@ -37,15 +37,12 @@ backend:
         invalid_hex: 'Code hexadécimal invalide. Format attendu : #rrggbb.'
     navAliasesEmpty: Aucune section de navigation disponible.
     navAliases:
-      sectionsTitle: Sections du menu
-      sectionsHelp: 'Renommez les regroupements affichés en en-tête de chaque groupe du menu latéral.'
-      itemsTitle: Items du menu
-      itemsHelp: 'Renommez les modules individuels. Cliquez sur une section pour développer ses items.'
+      title: Menu latéral
+      help: 'Renommez les regroupements et les modules du menu latéral. Cliquez sur une section pour développer ses items.'
       itemsEmpty: Aucun item dans cette section.
       resetItem: Réinitialiser
       resetAll: Tout réinitialiser
-      saveItems: Enregistrer les items
-      saveSections: Enregistrer les sections
+      save: Enregistrer
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: 'Recommandé : image carrée (1:1).'
     modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
