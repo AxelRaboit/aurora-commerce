@@ -161,12 +161,15 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                     <tbody class="divide-y divide-line/40">
                         <tr v-for="user in users" :key="user.id" class="group hover:bg-surface-2/40 transition-colors">
                             <td class="px-4 py-3 text-primary font-medium">
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
                                     <AppAvatar variant="solid" :name="user.name" :photo-url="user.profilePhotoUrl ?? ''" :size="32" />
-                                    <span>
-                                        {{ user.name }}
-                                        <AppBadge v-if="isCurrent(user)" color="accent" class="ml-2">{{ t('backend.users.you') }}</AppBadge>
-                                    </span>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="truncate">{{ user.name }}</span>
+                                            <AppBadge v-if="isCurrent(user)" color="accent">{{ t('backend.users.you') }}</AppBadge>
+                                        </div>
+                                        <p v-if="user.moodMessage" class="text-xs text-muted italic truncate" :title="user.moodMessage">“{{ user.moodMessage }}”</p>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-4 py-3 text-secondary hidden lg:table-cell">{{ user.email }}</td>
