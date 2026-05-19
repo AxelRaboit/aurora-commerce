@@ -195,7 +195,7 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                         <div>
                             <AppTextarea
                                 v-model="moodMessage"
-                                :rows="2"
+                                :rows="6"
                                 :maxlength="moodMessageMaxLength"
                                 :placeholder="t('backend.profile.mood.placeholder')"
                                 :error="moodError"
