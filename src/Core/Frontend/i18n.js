@@ -9,7 +9,9 @@ import enYaml from "@/locales/generated/en.json";
 // Optional client-specific locale sources (e.g. custom module permission names).
 // Resolves via the @client alias; returns {} when AURORA_CLIENT_DIR is unset.
 // Keys use resolved paths, so we match by filename suffix instead of the alias literal.
-const clientLocales = import.meta.glob("@client/src/locales/*.js", { eager: true });
+const clientLocales = import.meta.glob("@client/src/locales/*.js", {
+    eager: true,
+});
 const clientFr =
     Object.entries(clientLocales).find(([k]) => k.endsWith("/fr.js"))?.[1]
         ?.default ?? {};
