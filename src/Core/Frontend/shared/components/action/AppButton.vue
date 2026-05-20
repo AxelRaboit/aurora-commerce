@@ -40,7 +40,11 @@ function onClick(event) {
     const form = scope.querySelector('form');
     if (form) {
         event.preventDefault();
-        form.requestSubmit(button);
+        // `requestSubmit()` without the submitter arg — passing the button
+        // would throw `NotFoundError: not owned by this form element`
+        // precisely because the button lives in a sibling slot
+        // (e.g. AppModal footer), which is the case we're working around.
+        form.requestSubmit();
     }
 }
 
