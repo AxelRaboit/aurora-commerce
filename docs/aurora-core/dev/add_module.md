@@ -31,9 +31,106 @@ commence par le cas 1 — tu pourras ajouter les autres au fur et à mesure.
 
 ---
 
-## 2. Cas 1 — module stateless minimal
+## 2. Scaffolding rapide avec `aurora:make:module`
 
-### 2.1 `<Module>Module.php` — inscription
+**Le chemin recommandé** pour créer un nouveau module. La commande génère
+tout le squelette du **Cas 1 + Cas 2 (toggle backend par défaut)**, et
+peut empiler les cas 4 et 5 via des flags. Le cas 3 (entités CRUD) reste
+manuel — déféré à `/add-entity` ou `bin/console make:entity`.
+
+### 2.1 Utilisation
+
+```bash
+# Module minimal togglable (cas 1 + 2 — défaut)
+php bin/console aurora:make:module Loyalty
+
+# Module avec frontend public (cas 4)
+php bin/console aurora:make:module Loyalty --with-frontend
+
+# Module avec onglet Settings (cas 5)
+php bin/console aurora:make:module Loyalty --with-settings
+
+# Tout combiné
+php bin/console aurora:make:module Loyalty --with-frontend --with-settings
+
+# Module infra-only (always-on, pas de toggle backend) — Dev-style
+php bin/console aurora:make:module DevTools --no-toggle
+```
+
+| Flag | Effet |
+|---|---|
+| _(aucun)_ | Cas 1 + Cas 2 : module togglable depuis l'admin "Modules access" panel |
+| `--no-toggle` | Opt-out du toggle backend ; le module est always-on (réservé aux infras type Dev) |
+| `--with-frontend` | Cas 4 : ajoute `<X>FrontendDescriptor.php` (pages publiques) |
+| `--with-settings` | Cas 5 : ajoute `Setting/<X>SettingEnum.php` + `<X>ConfigurationTabProvider.php` |
+
+La commande **auto-détecte le contexte** (core vs client) en lisant
+`composer.json` (`"name": "axelraboit/aurora"` → core, sinon client).
+
+### 2.2 Fichiers générés (défaut, cas 1 + 2)
+
+```
+src/Module/<Module>/<Module>Module.php          # implements ModuleInterface + ModuleToggleProviderInterface
+src/Module/<Module>/<Module>Context.php          # isBackendEnabled() + BACKEND_KEY (client)
+src/Module/<Module>/Controller/Backend/<Module>Controller.php
+src/Module/<Module>/templates/backend/index.html.twig
+src/Module/<Module>/translations/messages.{fr,en}.yaml
+src/Module/<Module>/assets/backend/<Module>App.vue
+aliases.js                                       # core only : append @<kebab>
+```
+
+Plus, si **client**, trois fichiers de config sont auto-patchés (aurora-core
+ne peut pas auto-découvrir les modules client — son glob ne voit que
+`vendor/.../src/Module/*`) :
+
+```
+config/packages/twig.yaml         # ajout namespace @<Module>
+config/packages/framework.yaml    # ajout path translations pour Symfony Twig |trans
+config/services.yaml              # ajout path translations pour DumpJsTranslationsCommand (vue-i18n)
+```
+
+L'icône du NavItem est **hardcodée à `flame`** (le seul prompt sur l'icône
+serait friction inutile — change la string dans `<Module>Module.php` après
+scaffold si tu veux autre chose, en piochant dans
+`src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js` ICON_MAP).
+
+### 2.3 Prompts interactifs
+
+Si tu lances la commande sans `--no-interaction`, deux confirmations :
+- **Public-facing pages?** → équivalent à `--with-frontend`
+- **Own tab in /backend/settings?** → équivalent à `--with-settings`
+
+Puis trois inputs :
+- **Display label** (défaut = nom du module en PascalCase) — texte libre pour la nav
+- **NavSection priority** (défaut = 60) — plus bas = plus haut dans le sidemenu
+
+### 2.4 Next steps après scaffold
+
+La commande imprime à la fin un récap de commandes à lancer **sans
+quoi le module ne sera pas opérationnel** :
+
+```bash
+# Si cas 2 (défaut) côté core : enregistrer le toggle dans ModuleParameterEnum
+# (voir doc cas 2 plus bas — étape manuelle qu'on n'automatise pas pour PHPStan)
+
+make sf CMD="aurora:application-parameter"   # core only, sync l'enum case en BDD
+make sf CMD="aurora:privileges:sync"         # enregistre la permission <module>.use
+make sf CMD="aurora:menus:sync"              # enregistre le NavItem
+make translation                             # dump JSON traductions pour vue-i18n
+make cc                                      # clear cache (Twig + Symfony)
+```
+
+### 2.5 Quand NE PAS utiliser la commande
+
+- **Entité CRUD** (cas 3) : utiliser `/add-entity` après le scaffold du module
+- **Sous-feature d'un module existant** (Vault.Safe-style) : utiliser `/add-submodule`
+- **Refondre un module existant** : la commande refuse si `src/Module/<X>/` existe déjà ; édition manuelle nécessaire
+
+---
+
+## 3. Cas 1 — module stateless minimal
+
+### 3.1 `<Module>Module.php` — inscription
 
 ```php
 // src/Module/MyModule/MyModuleModule.php
@@ -68,7 +165,7 @@ final readonly class MyModuleModule implements ModuleInterface
 - `getCatalogNavSections()` retourne les nav items **même si le module est
   désactivé** (pour l'affichage du catalogue/picker dans la page Users).
 
-### 2.2 Controller
+### 3.2 Controller
 
 ```php
 // src/Module/MyModule/Controller/Backend/MyModuleController.php
@@ -98,7 +195,7 @@ final class MyModuleController extends AbstractController
 - Permission string = `<module_id>.<action>` (`my_module.use`, `vault.password_generator.use`).
 - Route prefix kebab-case = `/backend/<module-id-en-kebab>`.
 
-### 2.3 Template Twig
+### 3.3 Template Twig
 
 ```twig
 {# src/Module/MyModule/templates/backend/index.html.twig #}
@@ -128,7 +225,7 @@ final class MyModuleController extends AbstractController
   résout vers le composant Vue chargé via le glob `src/Module/*/assets/**/*.vue`
   (`src/Core/Frontend/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
 
-### 2.4 Traductions
+### 3.4 Traductions
 
 ```yaml
 # src/Module/MyModule/translations/messages.fr.yaml
@@ -150,7 +247,7 @@ my_module:
 > traductions de permission vivent dans le **module parent** qui déclare les
 > `NavPermission`.
 
-### 2.5 Composant Vue + alias
+### 3.5 Composant Vue + alias
 
 **Alias dans `aliases.js`** (source unique pour Vite + Vitest) :
 
@@ -179,7 +276,7 @@ const { /* ... */ } = useMyFeature();
 
 ---
 
-## 3. Auto-découverte — zéro wiring manuel
+## 4. Auto-découverte — zéro wiring manuel
 
 Vérifié dans `AuroraBundle.php` (Symfony 7) et `config/services.yaml`.
 
@@ -198,13 +295,13 @@ Vérifié dans `AuroraBundle.php` (Symfony 7) et `config/services.yaml`.
 
 ---
 
-## 4. Cas 2 — module avec sous-features togglables
+## 5. Cas 2 — module avec sous-features togglables
 
 Quand un module a plusieurs sous-features indépendamment activables (Vault =
 Safe + PasswordGenerator, Editorial = blog + pages, …), suivre le pattern
 **`ModuleToggleProviderInterface` + Context class** :
 
-### 4.1 `<Module>Context` — orchestration des feature-flags
+### 5.1 `<Module>Context` — orchestration des feature-flags
 
 Centralise les checks de toggles dans une classe dédiée injectée dans le module
 et tous les services concernés. Permet de garder les `if (! $context->isXEnabled())`
@@ -238,14 +335,14 @@ final readonly class VaultContext
 }
 ```
 
-### 4.2 `ModuleParameterEnum` — déclarer les toggles
+### 5.2 `ModuleParameterEnum` — déclarer les toggles
 
 Ajouter les cases dans `src/Core/Setting/Enum/ModuleParameterEnum.php` :
 - Convention clés : `<module>_<feature>` (pas `_enabled` à la fin —
   cf. [`architecture_module_parameter_enum.md`](../../../.claude/memory/aurora-core/architecture/architecture_module_parameter_enum.md))
 - Définir le parent dans le cascade graph (ex. `VaultSafe.parent = VaultBackend`)
 
-### 4.3 `<Module>Module` avec `ModuleToggleProviderInterface`
+### 5.3 `<Module>Module` avec `ModuleToggleProviderInterface`
 
 ```php
 // src/Module/Vault/VaultModule.php (extrait)
@@ -319,7 +416,7 @@ final readonly class VaultModule implements ModuleInterface, ModuleToggleProvide
 - **Aurora-client peut implémenter `ModuleToggleProviderInterface` sans patch
   sur core** pour brancher ses propres toggles.
 
-### 4.4 Précédent canonique
+### 5.4 Précédent canonique
 
 Voir `src/Module/Vault/VaultModule.php` (en commit courant). Avant la fusion
 PasswordGenerator → Vault (commit `dee99658`), le pattern était documenté via
@@ -328,12 +425,12 @@ utile mais plus représentatif aujourd'hui : **Vault est l'exemple à jour**.
 
 ---
 
-## 5. Cas 3 — module avec entités CRUD
+## 6. Cas 3 — module avec entités CRUD
 
 Pour un module avec persistance Doctrine + UI CRUD, suivre **en plus** des
 cas 1-2 :
 
-### 5.1 Convention extensibilité 5 couches
+### 6.1 Convention extensibilité 5 couches
 
 Tout entité backend CRUD suit le pattern Sylius-style :
 **Entity (Interface + Abstract + concrete non-final) → DTO (Input/Factory) →
@@ -341,7 +438,7 @@ Manager (Interface + hooks `protected`) → Serializer → Vue (`extraFields` + 
 
 Doc canonique : [`entity_extensibility_convention.md`](entity_extensibility_convention.md).
 
-### 5.2 `resolve_target_entities`
+### 6.2 `resolve_target_entities`
 
 Une seule ligne manuelle à ajouter par entité dans
 `AuroraBundle::$resolve_target_entities` (lignes 233-319 environ) :
@@ -358,7 +455,7 @@ Doctrine**, pas aux `new MyEntity()` directs. Pour permettre au client de
 substituer la classe instantiée, exposer un hook `protected createMyEntity(): MyEntityInterface`
 dans le Manager (cf. §3 de la convention extensibilité).
 
-### 5.3 Sequence Postgres
+### 6.3 Sequence Postgres
 
 ```php
 #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
@@ -368,7 +465,7 @@ dans le Manager (cf. §3 de la convention extensibilité).
 Préfixe `seq_core_` **obligatoire** pour éviter les collisions avec des
 entités client homonymes.
 
-### 5.4 Repository
+### 6.4 Repository
 
 ```php
 class MyEntityRepository extends ResolveTargetEntityRepository
@@ -387,7 +484,7 @@ pour la décision "pas d'interface Repository".
 
 ---
 
-## 6. Cas 4 — module avec frontend public
+## 7. Cas 4 — module avec frontend public
 
 Pour un module qui expose des pages publiques (pas que back-office), créer
 **`<Module>FrontendDescriptor.php`** à la racine du module :
@@ -424,7 +521,7 @@ Doc référence :
 
 ---
 
-## 7. Cas 5 — module avec settings (onglet Configuration)
+## 8. Cas 5 — module avec settings (onglet Configuration)
 
 Pour contribuer un onglet à la page admin Settings, implémenter
 **`ConfigurationTabProviderInterface`** :
@@ -476,7 +573,7 @@ Doc référence :
 
 ---
 
-## 8. Icônes de navigation
+## 9. Icônes de navigation
 
 Les icônes nav sont des **chaînes kebab-case** résolues via `ICON_MAP` dans
 `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`. Si l'icône
@@ -500,7 +597,7 @@ Choisir une icône, ajouter l'import + l'entrée `'kebab-name': IconComponent`.
 
 ---
 
-## 9. Checklist récap — nouveau module
+## 10. Checklist récap — nouveau module
 
 Pour un module **avec entités CRUD + frontend + settings + sous-features
 togglables** (cas le plus complet) :
@@ -534,7 +631,7 @@ configuration tab merging, frontend toggle gating, Vue components glob.
 
 ---
 
-## 10. Pièges connus
+## 11. Pièges connus
 
 - **`readonly class`** PHP 8.2+ force tout enfant à être également `readonly` →
   les classes destinées à être étendues (Entity, DTO, Manager, Serializer) ne

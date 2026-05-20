@@ -111,9 +111,107 @@ services:
 
 ---
 
-## 3. Cas 1 — module minimal (stateless)
+## 3. Scaffolding rapide avec `aurora:make:module`
 
-### 3.1 `<Module>Module.php` — squelette minimal
+**Le chemin recommandé** pour créer un nouveau module client. La commande
+détecte automatiquement le contexte (lit `composer.json`) et génère le
+squelette **Cas 1 + Cas 2 (toggle backend par défaut)** avec le namespace
+`App\Module\<X>\`, sequences `seq_app_*`, et les 3 fichiers de config
+auto-patchés.
+
+### 3.1 Utilisation
+
+```bash
+# Module togglable minimal (cas 1 + 2 — défaut)
+php bin/console aurora:make:module Loyalty
+
+# Avec frontend public
+php bin/console aurora:make:module Loyalty --with-frontend
+
+# Avec onglet Settings dans /backend/settings
+php bin/console aurora:make:module Loyalty --with-settings
+
+# Tout combiné
+php bin/console aurora:make:module Loyalty --with-frontend --with-settings
+
+# Module infra-only (toujours actif, pas de toggle backend)
+php bin/console aurora:make:module DevTools --no-toggle
+```
+
+| Flag | Effet |
+|---|---|
+| _(aucun)_ | Cas 1 + Cas 2 : `<X>Module.php` + `<X>Context.php` avec `BACKEND_KEY = 'app_<x>_backend'`, togglable via le panel admin "Modules access" |
+| `--no-toggle` | Opt-out du toggle backend (réservé infra type Dev) |
+| `--with-frontend` | Cas 4 : ajoute `<X>FrontendDescriptor.php` |
+| `--with-settings` | Cas 5 : ajoute `Setting/<X>SettingEnum.php` + `<X>ConfigurationTabProvider.php` |
+
+### 3.2 Fichiers générés (défaut, cas 1 + 2)
+
+```
+src/Module/<Module>/<Module>Module.php           # ModuleInterface + ModuleToggleProviderInterface
+src/Module/<Module>/<Module>Context.php           # BACKEND_KEY + isBackendEnabled()
+src/Module/<Module>/Controller/Backend/<Module>Controller.php
+src/Module/<Module>/templates/backend/index.html.twig
+src/Module/<Module>/translations/messages.{fr,en}.yaml
+src/Module/<Module>/assets/backend/<Module>App.vue
+```
+
+### 3.3 Auto-patches de config (client only)
+
+Le maker patche **3 fichiers de config** parce qu'aurora-core ne peut pas
+auto-découvrir les modules client (son glob ne voit que
+`vendor/.../src/Module/*`) :
+
+| Fichier | Ce que le maker ajoute | À quoi ça sert |
+|---|---|---|
+| `config/packages/twig.yaml` | `'%kernel.project_dir%/src/Module/<X>/templates': '<X>'` sous `twig.paths` | namespace Twig `@<X>` (sans ça : `LoaderError: No registered paths for namespace "<X>"`) |
+| `config/packages/framework.yaml` | `- '%kernel.project_dir%/src/Module/<X>/translations'` sous `framework.translator.paths` | Symfony Translator (utilisé par Twig `\|trans`) — sans ça : `backend.nav.<x>` rendu en clé brute |
+| `config/services.yaml` | même chemin sous `DumpJsTranslationsCommand.$extraSourceDirs` | vue-i18n côté JS (cf. section 2.3) |
+
+> ✓ Ces 3 entrées sont les sections 2.2, 2.3 + un nouveau patch pour Symfony
+> Translator (qui manquait à Tracking jusqu'à 0.5). Les blocs YAML en section
+> 2 restent la **référence canonique** si tu dois reconstituer un projet
+> client sans le maker (e.g. portage manuel).
+
+### 3.4 Prompts interactifs
+
+Sans `--no-interaction`, deux confirms + deux inputs textuels :
+- **Public-facing pages?** → équivalent à `--with-frontend`
+- **Own tab in /backend/settings?** → équivalent à `--with-settings`
+- **Display label** (défaut = nom du module en PascalCase) — texte libre nav
+- **NavSection priority** (défaut = 60) — plus bas = plus haut dans le sidemenu
+
+L'icône du NavItem est **hardcodée à `flame`** (Lucide). Change la string
+dans `<X>Module.php` après scaffold si tu veux autre chose, en piochant
+dans
+`vendor/.../src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`
+ICON_MAP (~33 icônes pré-importées — toute icône hors map → fallback FileText).
+
+### 3.5 Next steps après scaffold
+
+Le maker imprime à la fin un récap de commandes à lancer **sans
+quoi le module ne sera pas opérationnel** :
+
+```bash
+make sf CMD="aurora:privileges:sync"         # enregistre la permission <module>.use
+make sf CMD="aurora:menus:sync"              # enregistre le NavItem
+make translation                             # dump JSON traductions pour vue-i18n
+make cc                                      # clear cache (Twig + Symfony)
+```
+
+### 3.6 Quand NE PAS utiliser la commande
+
+- **Entité CRUD** (cas 3 dans ce doc) : utiliser `/add-entity` après le
+  scaffold initial du module
+- **Sous-feature** d'un module existant : utiliser `/add-submodule`
+- **Refondre un module existant** : la commande refuse si
+  `src/Module/<X>/` existe déjà
+
+---
+
+## 4. Cas 1 — module minimal (stateless)
+
+### 4.1 `<Module>Module.php` — squelette minimal
 
 ```php
 // src/Module/MyModule/MyModuleModule.php
@@ -165,7 +263,7 @@ final readonly class MyModuleModule implements ModuleInterface
 - `NavPermission(string $name)` : la permission string utilisée par
   `#[IsGranted]` côté controller.
 
-### 3.2 Synchroniser permissions + menus
+### 4.2 Synchroniser permissions + menus
 
 Une fois le module créé (ou modifié), synchroniser :
 
@@ -181,7 +279,7 @@ make sf CMD="aurora:menus:sync"
 
 À relancer à chaque ajout/suppression de permission ou de NavItem.
 
-### 3.3 Controller
+### 4.3 Controller
 
 ```php
 // src/Module/MyModule/Controller/Backend/MyModuleController.php
@@ -210,7 +308,7 @@ final class MyModuleController extends AbstractController
 - Route prefix `/backend/<kebab-case>`, name `backend_<snake_case>` (pattern
   identique au core).
 
-### 3.4 Template Twig
+### 4.4 Template Twig
 
 ```twig
 {# src/Module/MyModule/templates/backend/index.html.twig #}
@@ -228,7 +326,7 @@ final class MyModuleController extends AbstractController
 la convention de nommage (`vue_component(<lowercase_module>/<path>)`) est
 identique au core.
 
-### 3.5 Composant Vue
+### 4.5 Composant Vue
 
 ```
 assets/client/Module/MyModule/backend/MyModuleApp.vue
@@ -241,7 +339,7 @@ chargés depuis `vendor/axelraboit/aurora/src/Module/<Module>/assets/`.
 Utiliser systématiquement les composants `App*` partagés de
 `@shared/components/` plutôt que `<button>` / `<input>` bruts.
 
-### 3.6 Traductions
+### 4.6 Traductions
 
 ```yaml
 # src/Module/MyModule/translations/messages.fr.yaml
@@ -267,13 +365,13 @@ make translation
 
 ---
 
-## 4. Cas 2 — module avec toggles + Context class
+## 5. Cas 2 — module avec toggles + Context class
 
 Quand le module a plusieurs sous-features activables séparément (backend on/off,
 frontend on/off, etc.), suivre le pattern **`ModuleToggleProviderInterface`
 + `<Module>Context`**. Référence : `src/Module/Tracking/` dans aurora-client.
 
-### 4.1 `<Module>Context` — façade ModuleAccessChecker
+### 5.1 `<Module>Context` — façade ModuleAccessChecker
 
 ```php
 // src/Module/Tracking/Service/TrackingContext.php
@@ -317,7 +415,7 @@ final readonly class TrackingContext
 - Constantes publiques sur la classe Context pour ré-utiliser depuis
   `getToggles()` et les services consommateurs
 
-### 4.2 `<Module>Module` avec toggles + nav conditionnel
+### 5.2 `<Module>Module` avec toggles + nav conditionnel
 
 ```php
 // src/Module/Tracking/TrackingModule.php
@@ -412,7 +510,7 @@ Doc référence : [`pattern_add_module_toggle.md`](../../../.claude/memory/auror
 
 ---
 
-## 5. Cas 3 — module avec entités CRUD (convention 5 couches)
+## 6. Cas 3 — module avec entités CRUD (convention 5 couches)
 
 Pour la persistance Doctrine + UI CRUD, suivre la **même convention 5
 couches Sylius-style** qu'aurora-core ([§ canonique](../../aurora-core/dev/entity_extensibility_convention.md)) :
@@ -424,7 +522,7 @@ consommateurs), mais doit **garder l'Interface + Factory** parce que c'est
 le bon pattern long terme (préférence "penser long terme" — voir CLAUDE.md
 §3bis).
 
-### 5.1 Entity + Interface
+### 6.1 Entity + Interface
 
 ```php
 // src/Module/Tracking/Project/Entity/ProjectInterface.php
@@ -477,7 +575,7 @@ class Project implements ProjectInterface
 - **`class` non-`final`** : permet l'extension future, même si pas
   immédiatement utilisée.
 
-### 5.2 DTO 5 couches (Interface + Factory + Input)
+### 6.2 DTO 5 couches (Interface + Factory + Input)
 
 ```php
 // src/Module/Tracking/Project/Dto/ProjectInputInterface.php
@@ -547,7 +645,7 @@ d'avoir des props mutables. Préférer `public readonly` par propriété.
 
 Doc référence : [`pattern_extend_dto.md`](../../../.claude/memory/aurora-client/pattern_extend_dto.md).
 
-### 5.3 Manager avec hooks `protected`
+### 6.3 Manager avec hooks `protected`
 
 ```php
 // src/Module/Tracking/Project/Manager/ProjectManagerInterface.php
@@ -643,7 +741,7 @@ class ProjectManager implements ProjectManagerInterface
 - Si tu override `applyInput()` dans un enfant, n'oublie pas
   `parent::applyInput()` (cf. [`pitfall_call_parent_apply_input.md`](../../../.claude/memory/aurora-client/pitfall_call_parent_apply_input.md))
 
-### 5.4 Repository
+### 6.4 Repository
 
 ```php
 // src/Module/Tracking/Project/Repository/ProjectRepository.php
@@ -680,7 +778,7 @@ permettre une éventuelle substitution future.
 
 Doc référence : [`pattern_extend_repository.md`](../../../.claude/memory/aurora-client/pattern_extend_repository.md).
 
-### 5.5 Serializer
+### 6.5 Serializer
 
 ```php
 // src/Module/Tracking/Project/Serializer/ProjectSerializerInterface.php
@@ -715,7 +813,7 @@ class ProjectSerializer implements ProjectSerializerInterface
 }
 ```
 
-### 5.6 Controller
+### 6.6 Controller
 
 ```php
 // src/Module/Tracking/Project/Controller/Backend/ProjectsController.php
@@ -784,7 +882,7 @@ final class ProjectsController extends AbstractController
 - `PaginationRequest` (DTO Aurora) auto-résolu via Symfony ParamConverter
   pour récupérer `page`, `search`, etc. depuis la query string
 
-### 5.7 ViewBuilder (pattern admin)
+### 6.7 ViewBuilder (pattern admin)
 
 `<Module>/<Entity>/View/<Entity>ViewBuilder.php` : helper qui prépare les
 payloads pour les templates index + endpoints list. Découple la logique de
@@ -820,7 +918,7 @@ final readonly class ProjectsViewBuilder
 }
 ```
 
-### 5.8 Migration Doctrine
+### 6.8 Migration Doctrine
 
 ```bash
 make migration && make migrate
@@ -831,7 +929,7 @@ Génère + applique le schéma. Le nom de la table viendra de l'attribut
 
 ---
 
-## 6. Cas 4 — module avec frontend public
+## 7. Cas 4 — module avec frontend public
 
 Si le module expose des pages publiques (pas que back-office), créer
 **`<Module>FrontendDescriptor.php`** à la racine du module. Tagué
@@ -865,7 +963,7 @@ Mémoire référence : [`pattern_frontend_descriptor.md`](../../../.claude/memor
 
 ---
 
-## 7. Cas 5 — module avec settings (onglet Configuration)
+## 8. Cas 5 — module avec settings (onglet Configuration)
 
 Pour contribuer un onglet à la page admin Settings, implémenter
 **`ConfigurationTabProviderInterface`** (pattern identique au core) :
@@ -901,7 +999,7 @@ Mémoire référence : [`pattern_configuration_tab_provider.md`](../../../.claud
 
 ---
 
-## 8. Checklist finale — module complet
+## 9. Checklist finale — module complet
 
 Pour un module client **avec entités CRUD + toggles + frontend public** (cas
 le plus complet, équivalent Tracking) :
@@ -932,7 +1030,7 @@ le plus complet, équivalent Tracking) :
 
 ---
 
-## 9. Pièges connus
+## 10. Pièges connus
 
 - **`_instanceof` ne traverse pas les bundles** : si tu oublies le bloc
   `_instanceof` dans `config/services.yaml` côté client, ton module ne sera
