@@ -109,16 +109,19 @@ src/Module/Tracking/assets/admin/ProjectsApp.vue
 → vue_component('tracking/admin/ProjectsApp')
 ```
 
-Les overrides de composants Aurora vivent sous **`src/Overrides/`** :
+Les overrides de composants Aurora sont **co-localisés** avec l'extension
+PHP sous `src/Module/<AuroraModule>/<Feature>/assets/` :
 
 ```
-src/Overrides/backend/agencies/AgenciesApp.vue
-→ remplace le composant Aurora 'backend/agencies/AgenciesApp' (sans préfixe — shadow direct)
+src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue
+→ remplace le composant Aurora 'platform/backend/agencies/AgenciesApp'
+  (le glob clientModules wins sur auroraModules → shadow direct)
 ```
 
-> Convention complète des 3 buckets (`src/Module/<X>/`, `src/Overrides/`,
-> `src/Module/<X>/` PHP-only) et leur logique de glob :
-> [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
+`src/Overrides/` reste comme escape hatch pour shadow des composants
+non-module (e.g. `src/Core/Frontend/...` d'aurora-core). Convention
+complète + règle des deux mirrors (PHP vs URL) :
+[`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 ---
 

@@ -20,12 +20,14 @@ les slots. Mise à jour d'aurora-core = pas de conflit.
 
 ### 1. Wrapper Vue côté client
 
-Le wrapper vit dans **`src/Overrides/`**, pas dans `src/Module/<X>/assets/`.
-Voir [[convention_overrides_vs_modules]] pour le rationale (glob sans
-préfixe de module pour pouvoir shadow le composant Aurora).
+Le wrapper est **co-localisé avec l'extension PHP** sous
+`src/Module/<AuroraModule>/<Feature>/assets/`. Le glob auto-flatten les
+feature folders, donc la clé exposée matche exactement celle d'Aurora →
+shadow direct, pas de Twig override à écrire. Voir
+[[convention_overrides_vs_modules]] pour la règle des deux mirrors.
 
 ```vue
-<!-- src/Overrides/backend/agencies/AgenciesApp.vue (côté client) -->
+<!-- src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue -->
 <script setup>
 import AuroraAgenciesApp from '@platform/backend/agencies/AgenciesApp.vue';
 import AppInput from '@/shared/components/form/AppInput.vue';
@@ -65,12 +67,14 @@ const extraFields = {
 
 ### 2. Aucun wiring Twig nécessaire
 
-Le glob `@client/src/Overrides/**/*.vue` expose ton wrapper **sans
-préfixe de module** (cf. [[convention_overrides_vs_modules]]). Le
-`vue_component('backend/agencies/AgenciesApp')` appelé par le template
-Aurora `@Platform/backend/agencies/index.html.twig` résout d'abord ton
-wrapper, puis seulement le composant Aurora en fallback. Pas de Twig
-override à écrire.
+Le glob `@client/src/Module/**/assets/**/*.vue` expose ton wrapper sous
+la **même clé** que le composant Aurora original
+(`platform/backend/agencies/AgenciesApp`). Comme `clientModules` est spread
+APRÈS `auroraModules` dans `vueContext` (cf. `src/Core/Frontend/app.js`),
+ton fichier wins. Le template Aurora
+`@Platform/backend/agencies/index.html.twig` qui appelle
+`vue_component('platform/backend/agencies/AgenciesApp', ...)` résout
+directement ton wrapper — zéro override Twig à écrire.
 
 ### 3. Hydratation côté backend
 

@@ -201,7 +201,7 @@ admin et le persister. Il faut **les 5 couches complètes** :
 1. **DTO** : étendre `AgencyInput` + décorer `AgencyInputFactory` avec `#[AsAlias]`
 2. **Manager** : étendre `AgencyManager` + override `createAgency()` (instancier la classe cliente) + `applyInput()` (mapper `$input->code` → `$agency->setCode()`)
 3. **Serializer** : étendre `AgencySerializer` + spread `parent::serialize()` avec `'code'`
-4. **Vue** : wrapper `AgenciesApp.vue` sous `src/Overrides/backend/agencies/` avec `extraFields` + slots `extra-headers` / `extra-cells` / `extra-form-fields`
+4. **Vue** : wrapper `AgenciesApp.vue` **co-localisé** avec l'extension PHP sous `src/Module/Platform/Agency/assets/backend/agencies/` avec `extraFields` + slots `extra-headers` / `extra-cells` / `extra-form-fields`
 
 Snippets complets et patterns d'extension dans
 [`../extending/extend_module.md`](../extending/extend_module.md) (sections §1-5).

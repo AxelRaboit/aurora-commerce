@@ -30,23 +30,37 @@ const coreModules = import.meta.glob([
 ]);
 
 // All first-party module Vue components (backend + frontend) — auto-discovered.
-// Adding a new module under src/Module/<Name>/assets/ requires no change here.
-const auroraModules = import.meta.glob("../../Module/*/assets/**/*.vue");
+// The `**/assets/` pattern accepts any depth of feature folders between
+// Module/<Name>/ and assets/, so e.g. both ./Module/Platform/assets/... AND
+// ./Module/Platform/Agency/assets/... resolve. Feature folders are flattened
+// away in the exposed key (cf. mapping regex below) — the module name is
+// always the FIRST segment under Module/.
+const auroraModules = import.meta.glob("../../Module/**/assets/**/*.vue");
 
 // Optional client extension modules. Resolves via the @client alias which
 // points to AURORA_CLIENT_DIR (or an empty fallback when unset). Mirrors
 // aurora-core's own layout: components live under
-// <client>/src/Module/<Name>/assets/backend/Foo.vue and are exposed as
-// ./<name>/backend/Foo.vue so the client uses vue_component('<name>/backend/Foo')
-// in Twig — same convention as aurora's first-party modules.
-const clientModules = import.meta.glob("@client/src/Module/*/assets/**/*.vue");
+// <client>/src/Module/<Name>/[<FeatureFolders>/]assets/backend/Foo.vue and
+// are exposed as ./<name>/backend/Foo.vue so the client uses
+// vue_component('<name>/backend/Foo') in Twig — same convention as aurora's
+// first-party modules. Co-locating override Vue with the PHP extension
+// (e.g. src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue)
+// shadows aurora's `platform/backend/agencies/AgenciesApp` because clientModules
+// is spread AFTER auroraModules below — same key, client wins.
+const clientModules = import.meta.glob("@client/src/Module/**/assets/**/*.vue");
 
-// Client overrides: wrappers around Aurora's own Vue components, kept apart
-// from feature modules so the prefix doesn't carry a misleading domain
-// meaning. A file at @client/src/Overrides/backend/agencies/AgenciesApp.vue
-// is exposed as ./backend/agencies/AgenciesApp.vue and accessible via
-// vue_component('backend/agencies/AgenciesApp') in Twig — no module prefix.
+// Client overrides — escape hatch for non-module Aurora components (e.g. things
+// living under aurora-core's src/Core/Frontend/ that don't have a module prefix).
+// For Aurora MODULE component overrides, prefer co-locating under
+// src/Module/<Name>/[<FeatureFolders>/]assets/ — that uses clientModules and
+// is co-located with the corresponding PHP extension.
 const clientOverrides = import.meta.glob("@client/src/Overrides/**/*.vue");
+
+// Regex: capture the FIRST segment under Module/ as the module name, skip any
+// number of feature folders, then capture everything after /assets/.
+// Module/Platform/assets/backend/X.vue          → moduleName=Platform, rest=backend/X.vue
+// Module/Platform/Agency/assets/backend/X.vue   → moduleName=Platform, rest=backend/X.vue
+const MODULE_PATH_RE = /Module\/([^/]+)\/(?:[^/]+\/)*assets\/(.*)$/;
 
 const vueContext = {
     // Core: ./backend/Foo.vue → ./core/backend/Foo.vue (./frontend/ likewise)
@@ -56,27 +70,28 @@ const vueContext = {
             loader,
         ]),
     ),
-    // Modules: ../../Module/Hr/assets/backend/Foo.vue → ./hr/backend/Foo.vue
+    // Aurora modules: feature folders (if any) are flattened away.
     ...Object.fromEntries(
         Object.entries(auroraModules).map(([key, loader]) => {
-            const match = key.match(/Module\/([^/]+)\/assets\/(.*)$/);
+            const match = key.match(MODULE_PATH_RE);
             if (!match) return [key, loader];
             const [, moduleName, rest] = match;
             return [`./${moduleName.toLowerCase()}/${rest}`, loader];
         }),
     ),
-    // Client modules: extract "<ModuleName>/<rest>.vue" and remap to
-    // "./<modulename>/<rest>.vue". Same convention as aurora's modules.
+    // Client modules: same mapping. Spread AFTER auroraModules so that a
+    // client file at the same key wins (= shadow Aurora's own component).
     ...Object.fromEntries(
         Object.entries(clientModules).map(([key, loader]) => {
-            const match = key.match(/Module\/([^/]+)\/assets\/(.*)$/);
+            const match = key.match(MODULE_PATH_RE);
             if (!match) return [key, loader];
             const [, moduleName, rest] = match;
             return [`./${moduleName.toLowerCase()}/${rest}`, loader];
         }),
     ),
-    // Client overrides: extract "<rest>.vue" after "Overrides/" and expose
-    // as "./<rest>.vue" with no module prefix.
+    // Client overrides: expose path AFTER `Overrides/` as-is. Useful for
+    // shadowing non-module Aurora components (e.g., put a file at
+    // src/Overrides/core/backend/Foo.vue to shadow `core/backend/Foo`).
     ...Object.fromEntries(
         Object.entries(clientOverrides).map(([key, loader]) => {
             const match = key.match(/Overrides\/(.*)$/);

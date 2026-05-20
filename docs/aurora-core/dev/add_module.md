@@ -233,7 +233,9 @@ final class MyModuleController extends AbstractController
   du module (parallèle à `assets/` et `translations/`). Vérifié dans
   `AuroraBundle.php` (boucle sur `$moduleDirs`).
 - `vue_component('<module_id_lowercase>/<path>', props)` : le helper Twig
-  résout vers le composant Vue chargé via le glob `src/Module/*/assets/**/*.vue`
+  résout vers le composant Vue chargé via le glob `src/Module/**/assets/**/*.vue`
+  (le `**` accepte les feature folders intermédiaires — cf. règle de
+  co-localisation Vue + PHP sous `<Module>/<Feature>/assets/`)
   (`src/Core/Frontend/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
 
 ### 3.4 Traductions

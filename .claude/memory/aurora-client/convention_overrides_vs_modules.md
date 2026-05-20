@@ -1,109 +1,122 @@
 ---
 name: convention-overrides-vs-modules
-description: Where to place client-side Vue files — three buckets under `src/` (Module, Overrides, Module/Platform/<X>/ PHP-only) each with a different glob and Twig exposure. Why the override Vue for Agency lives in src/Overrides/ and not src/Module/Platform/Agency/assets/.
+description: Where to place client-side Vue files — co-location with the PHP extension under `src/Module/<Module>/<Feature>/assets/`. The path "Agency" (PascalCase PHP feature folder) + "agencies/" (kebab plural URL segment) are two mirrors of two different layers, not a duplication.
 metadata:
   type: project
 ---
 
-# Convention : 3 buckets pour le code client sous `src/`
+# Convention : co-localisation Vue + PHP sous `src/Module/<X>/<Feature>/`
 
-Aurora-client expose **trois emplacements distincts** sous `src/`, chacun
-avec son propre rôle, son propre glob Vue, et sa propre convention d'appel
-côté Twig. Le placement n'est pas interchangeable.
+Aurora-client co-localise les **overrides Vue** d'une entité Aurora **dans
+le même dossier** que son extension PHP. Une seule convention, un seul
+endroit pour tout ce qui touche à un feature.
 
-## Les 3 buckets
+## La règle
 
-| Bucket | Contenu | Glob Vue (app.js) | Exposition Twig | Cas d'usage |
-|---|---|---|---|---|
-| **`src/Module/<X>/`** (avec `assets/`) | Module client autonome — son propre domaine, son propre NavItem, ses propres permissions | `@client/src/Module/*/assets/**/*.vue` → `<x>/...` | `vue_component('<x>/backend/Foo')` | Tracking, Loyalty, n'importe quel module créé via `aurora:make:module` |
-| **`src/Overrides/`** | Wrappers autour des composants Vue d'Aurora — shadow direct, **pas** de NavItem | `@client/src/Overrides/**/*.vue` → `<path-sans-prefix>` | `vue_component('backend/Foo')` *sans préfixe module* | Extension visuelle d'une entité Aurora (AgenciesApp wrapper qui passe `extraFields`) |
-| **`src/Module/<X>/` PHP-only** (sans `assets/`) | Extension Doctrine/DI d'une entité Aurora — Sylius layer 1-4 (Entity + DTO + Manager + Serializer) | _(n/a, pas de Vue ici)_ | _(n/a, l'override Vue vit dans `src/Overrides/`)_ | `src/Module/Platform/Agency/{Entity,Dto,Manager,Serializer}/` |
-
-## Pourquoi le split entre Module et Overrides
-
-**Why:** Si on mettait `AgenciesApp.vue` (wrapper qui override Aurora) sous
-`src/Module/Platform/Agency/assets/backend/AgenciesApp.vue`, le glob
-`Module/*/assets/**/*.vue` l'exposerait comme
-`vue_component('platform/backend/agencies/AgenciesApp')`. Mais Aurora rend
-le template `@Platform/backend/agencies/index.html.twig` qui appelle
-`vue_component('backend/agencies/AgenciesApp')` — **sans le préfixe
-`platform/`**. Du coup ton wrapper ne serait jamais résolu à la place du
-composant Aurora — l'override échoue silencieusement.
-
-Le bucket `Overrides/` distinct existe pour cette raison : son glob expose
-les composants **sans préfixe de module**, ce qui permet le shadow direct
-des composants Aurora.
-
-**How to apply:**
-
-- **Tu crées un nouveau module** (admin propre, NavItem, permissions) :
-  `src/Module/<Module>/` avec `assets/backend/<Module>App.vue`. Le maker
-  `aurora:make:module` fait ça automatiquement.
-- **Tu wraps un composant Aurora** (passes `extraFields`, override la table,
-  ajoutes des champs custom au form) : `src/Overrides/backend/<plural>/<Name>App.vue`.
-  Le wrapper Vue importe le composant Aurora via `@core/...` ou `@<module>/...`
-  et le consomme.
-- **Tu étends une entité Aurora** côté serveur (Entity, DTO, Manager,
-  Serializer) : `src/Module/Platform/Agency/...` ou `src/Module/<AuroraModule>/<Entity>/...`.
-  **Pas de dossier `assets/`** dans ce cas — l'override Vue va dans `src/Overrides/`,
-  pas ici.
-
-## Exemple complet : étendre Agency avec un champ `code`
+Pour étendre une entité d'un module Aurora (e.g. Agency dans Platform) :
 
 ```
-src/Module/Platform/Agency/              ← extension serveur (PHP)
-├── Entity/Agency.php                    ← extends AbstractAgency
-├── Dto/AgencyInput.php                  ← extends AgencyInput aurora
-├── Dto/AgencyInputFactory.php           ← #[AsAlias(AgencyInputFactoryInterface)]
-├── Manager/AgencyManager.php            ← override create<X>() + applyInput()
-└── Serializer/AgencySerializer.php      ← override serialize() avec spread parent
-
-src/Overrides/backend/agencies/          ← extension Vue (côté front)
-└── AgenciesApp.vue                       ← wrapper qui passe extraFields + slots scoped
+src/Module/Platform/Agency/             ← tout ce qui concerne Agency vit ici
+├── Entity/Agency.php                   ← extends AbstractAgency
+├── Dto/AgencyInput.php                 ← extends AgencyInput aurora
+├── Dto/AgencyInputFactory.php          ← #[AsAlias(AgencyInputFactoryInterface)]
+├── Manager/AgencyManager.php           ← override create<X>() + applyInput()
+├── Serializer/AgencySerializer.php     ← override serialize() avec spread parent
+└── assets/backend/agencies/AgenciesApp.vue   ← wrapper Vue (extraFields + slots)
 ```
 
-Le wrapper Vue importe le composant Aurora :
+Le glob `@client/src/Module/**/assets/**/*.vue` détecte ce fichier et
+l'expose comme **`platform/backend/agencies/AgenciesApp`** — **même clé**
+que le composant Aurora. Comme `clientModules` est spread après
+`auroraModules` dans `vueContext`, le client win automatiquement → shadow
+direct sans Twig override.
 
-```vue
-<!-- src/Overrides/backend/agencies/AgenciesApp.vue -->
-<script setup>
-import AuroraAgenciesApp from '@platform/backend/agencies/AgenciesApp.vue';
-// (ou @core/backend/agencies/AgenciesApp.vue selon comment Aurora structure)
+## La règle des deux mirrors
 
-const extraFields = {
-    code: { default: '', fromEntity: (a) => a.code ?? '' },
-};
-</script>
+Le path `Platform/Agency/assets/backend/agencies/AgenciesApp.vue` traverse
+**deux layers** différents, séparés par `/assets/` :
 
-<template>
-    <AuroraAgenciesApp v-bind="$attrs" :extra-fields="extraFields">
-        <template #extra-headers>...</template>
-        <template #extra-cells="{ agency }">...</template>
-        <template #extra-form-fields="{ form, errors }">...</template>
-    </AuroraAgenciesApp>
-</template>
+```
+src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue
+            └───────┬──────┘ ▲ └──────────┬──────────┘
+                    │        │            │
+              PHP mirror     │       URL mirror
+        (Aurora\Module\…\Agency)        (/backend/agencies/…)
+                            │
+                       séparateur
 ```
 
-Côté Twig admin, Aurora rend `vue_component('backend/agencies/AgenciesApp', ...)`.
-Sans préfixe, le glob `Overrides/**/*.vue` résout ton wrapper avant le
-composant Aurora — l'override prend.
+- **Avant `/assets/`** → mirror du namespace PHP (Doctrine/Sylius layer).
+  `Platform/Agency/` = `Aurora\Module\Platform\Agency\`. PascalCase singulier,
+  convention PSR-4.
+- **`/assets/`** = séparateur conventionnel "ce qui suit est côté front".
+- **Après `/assets/`** → mirror de l'URL/route (HTTP layer).
+  `backend/agencies/AgenciesApp.vue` = route `/backend/agencies/` + composant
+  SPA. kebab pluriel, convention REST/Symfony.
+
+`Agency/` et `agencies/` ne sont **pas un doublon** — ce sont deux
+abstractions distinctes du même domaine, exprimées chacune dans sa
+convention naturelle. Aurora-core utilise les deux partout (`AgencyManager`
++ `AgenciesController` + route `/backend/agencies/`).
+
+## Pourquoi ce glob fonctionne
+
+Le glob côté `app.js` :
+
+```js
+const auroraModules = import.meta.glob("../../Module/**/assets/**/*.vue");
+const clientModules = import.meta.glob("@client/src/Module/**/assets/**/*.vue");
+
+// Regex de mapping : capture le NOM du module (premier segment après Module/),
+// skip les feature folders intermédiaires, capture ce qui suit /assets/.
+const MODULE_PATH_RE = /Module\/([^/]+)\/(?:[^/]+\/)*assets\/(.*)$/;
+```
+
+Conséquence :
+- Aurora-core : `Module/Platform/assets/backend/agencies/AgenciesApp.vue`
+  → moduleName=Platform, rest=backend/agencies/AgenciesApp.vue
+  → clé `./platform/backend/agencies/AgenciesApp`
+- Aurora-client : `Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue`
+  → moduleName=Platform, rest=backend/agencies/AgenciesApp.vue (feature folder `Agency` ignoré)
+  → clé `./platform/backend/agencies/AgenciesApp`
+- **Même clé** → client wins (spread later) → override sans Twig.
+
+## Quand utiliser quoi
+
+| Cas | Path | Glob |
+|---|---|---|
+| Module client autonome (Tracking, Loyalty, ...) | `src/Module/<Module>/assets/backend/<Module>App.vue` | `clientModules` |
+| Override d'une entité Aurora (Agency, Post, Deal, ...) | `src/Module/<AuroraModule>/<Feature>/assets/backend/<plural>/<Name>App.vue` | `clientModules` (co-localisé avec l'extension PHP) |
+| Extension PHP seule (pas de Vue à override) | `src/Module/<AuroraModule>/<Feature>/` sans `assets/` | _(n/a)_ |
+| Override d'un composant non-module (e.g. dans `src/Core/Frontend/`) | `src/Overrides/<full-path>/<Name>.vue` | `clientOverrides` (escape hatch) |
+
+## `src/Overrides/` reste là, mais en escape hatch
+
+Le bucket `src/Overrides/` continue de fonctionner — son glob `Overrides/**/*.vue`
+expose le path tel quel. Utile pour **shadow des composants non-module**
+d'aurora-core (ceux sous `src/Core/Frontend/backend/...`, exposés sous la clé
+`./core/backend/...`). Pour ces cas-là, mettre le fichier à
+`src/Overrides/core/backend/<X>.vue` shadow directement la clé `./core/backend/<X>`.
+
+**Mais pour les modules Aurora (Platform, Editorial, Crm, ...), préférer
+la co-localisation** — c'est plus propre, plus traçable, et co-loyalty avec
+l'extension PHP.
 
 ## Anti-patterns
 
-- ❌ Mettre `AgenciesApp.vue` override sous `src/Module/Platform/Agency/assets/`
-  → le préfixe `platform/` casse le shadow direct
-- ❌ Mettre un module client autonome sous `src/Overrides/` → l'absence de
-  préfixe brouille le namespace, et le composant sera shadow par un futur
-  changement aurora-core
-- ❌ Confondre `src/Overrides/` avec `templates/Module/<X>/` (legacy
-  layout pre-9d77f67) — `templates/` est pour les **templates Twig**, pas
-  les Vue components
+- ❌ Mettre l'override Vue sous `src/Module/<X>/assets/` quand il existe une
+  extension PHP au niveau `<Feature>/` — le path ne reflète pas la portée
+  réelle de l'override
+- ❌ Override un composant via `src/Overrides/` quand il vit dans un module
+  Aurora (la co-localisation sous `Module/<AuroraModule>/<Feature>/assets/`
+  est plus propre et utilise le même mécanisme `clientModules`)
+- ❌ Confondre le segment **avant** `/assets/` (mirror PHP) avec celui
+  **après** (mirror URL) — ils répondent à deux conventions différentes
 
 ## Source
 
-- `vendor/.../src/Core/Frontend/app.js` — les 3 globs `auroraModules`,
-  `clientModules`, `clientOverrides` (cf. les commentaires au-dessus de
-  chaque glob)
-- `aurora-client` commit `9d77f67` — refactor qui a déplacé
-  `assets/client/Overrides/` (root) vers `src/Overrides/`
-- Lien : [[pattern_extend_vue]] pour le pattern de wrapper Vue lui-même
+- `src/Core/Frontend/app.js` — les 3 globs `auroraModules`, `clientModules`,
+  `clientOverrides` (cf. commentaires + constante `MODULE_PATH_RE`)
+- Aurora-core commit qui a introduit le `**/` dans les globs (cherche
+  "co-localisation PHP+Vue" dans `git log`)
+- Lien : [[pattern_extend_vue]] — pattern wrapper Vue avec `extraFields` + slots

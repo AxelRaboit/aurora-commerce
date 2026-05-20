@@ -28,13 +28,13 @@ Les composants sont enregistrés automatiquement par Aurora selon leur chemin :
 | Fichier | Identifiant vue_component |
 |---|---|
 | `src/Module/Tracking/assets/admin/ProjectsApp.vue` | `tracking/admin/ProjectsApp` |
-| `src/Overrides/backend/agencies/AgenciesApp.vue` | `backend/agencies/AgenciesApp` *(sans préfixe — shadow direct des composants Aurora)* |
+| `src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue` | `platform/backend/agencies/AgenciesApp` *(co-localisé avec l'extension PHP — shadow direct via clientModules)* |
 
 Dans Twig :
 
 ```twig
 {{ vue_component('tracking/admin/ProjectsApp') }}
-{{ vue_component('backend/agencies/AgenciesApp') }}
+{{ vue_component('platform/backend/agencies/AgenciesApp') }}
 ```
 
 > Convention complète des 3 buckets sous `src/` :
@@ -197,20 +197,24 @@ export default {
 
 ## Overrides de composants Aurora
 
-Pour remplacer un composant Aurora existant, créer un fichier sous
-**`src/Overrides/`** en miroir du chemin Aurora :
+Pour remplacer un composant Aurora existant, créer un fichier
+**co-localisé avec l'extension PHP** sous
+`src/Module/<AuroraModule>/<Feature>/assets/` en miroir du chemin Aurora :
 
 ```
-# Composant Aurora (depuis le refactor co-localisé)
+# Composant Aurora
 vendor/axelraboit/aurora/src/Module/Platform/assets/backend/agencies/AgenciesApp.vue
                                  ↓
-# Override client
-src/Overrides/backend/agencies/AgenciesApp.vue
+# Override client (co-localisé avec src/Module/Platform/Agency/ qui contient
+# Entity/, Dto/, Manager/, Serializer/ de l'extension)
+src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue
 ```
 
-Le chemin `vue_component('backend/agencies/AgenciesApp')` reste identique —
-le glob `@client/src/Overrides/**/*.vue` expose ton wrapper **sans préfixe
-de module**, ce qui permet le shadow direct du composant Aurora. Détail :
+Le chemin `vue_component('platform/backend/agencies/AgenciesApp')` reste
+identique — le glob `@client/src/Module/**/assets/**/*.vue` flatten les
+feature folders, donc la clé exposée est la même que celle d'Aurora.
+Comme `clientModules` est spread APRÈS `auroraModules`, ton fichier wins
+automatiquement. Détail (règle des deux mirrors PHP/URL) :
 [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 ---

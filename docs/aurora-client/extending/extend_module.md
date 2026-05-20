@@ -305,15 +305,15 @@ parent + champs custom. C'est la couche la plus simple.
 
 Le composant Aurora `<Plural>App.vue` expose une **prop `extraFields`** + 3
 slots scoped (`extra-headers`, `extra-cells`, `extra-form-fields`). Côté
-client, on ne réécrit pas le composant — on le **wrap** dans
-**`src/Overrides/`** (et non dans `src/Module/<X>/assets/`).
+client, on ne réécrit pas le composant — on le **wrap**, **co-localisé
+avec l'extension PHP** sous `src/Module/<AuroraModule>/<Feature>/assets/`.
 
-> **Pourquoi pas dans le module ?** Le glob `src/Module/*/assets/**/*.vue`
-> expose les composants avec un préfixe (`vue_component('platform/backend/...')`).
-> Mais Aurora rend `vue_component('backend/agencies/AgenciesApp')` **sans
-> préfixe** — si ton wrapper a un préfixe, le shadow échoue silencieusement.
-> Le glob dédié `src/Overrides/**/*.vue` expose sans préfixe ; c'est ce qui
-> permet le shadow direct. Détail :
+> **Comment ça shadow ?** Le glob `src/Module/**/assets/**/*.vue` flatten
+> les feature folders (e.g. `Platform/Agency/assets/...`) → la clé exposée
+> est identique à celle d'Aurora (`platform/backend/agencies/AgenciesApp`).
+> Comme le bloc `clientModules` est spread APRÈS `auroraModules`, ton
+> fichier wins automatiquement — pas de Twig override à écrire. Détail
+> et règle des deux mirrors (PHP vs URL) :
 > [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 Exemple détaillé (slots, composables, gotchas `editForm`) :
@@ -321,7 +321,7 @@ Exemple détaillé (slots, composables, gotchas `editForm`) :
 [`pattern_extend_vue.md`](../../../.claude/memory/aurora-client/pattern_extend_vue.md).
 
 Squelette d'override Vue —
-`src/Overrides/backend/agencies/AgenciesApp.vue` :
+`src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue` :
 
 ```vue
 <script setup>
@@ -621,9 +621,9 @@ suivant (cf. memory
 4. Manager + `#[AsAlias]` sur le manager + override `create<X>()` +
    `applyInput()` (`parent::` !) + `auditPayload()` (spread `parent::` !).
 5. Serializer + `#[AsAlias]` + spread `parent::serialize()`.
-6. Vue : composant override sous `src/Overrides/...` (pas dans
-   `src/Module/<X>/assets/` — cf.
-   [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md))
+6. Vue : composant override **co-localisé** avec l'extension PHP sous
+   `src/Module/<AuroraModule>/<Feature>/assets/backend/<plural>/<Name>App.vue`
+   (cf. [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md))
    avec `extraFields` + 3 slots.
 7. Twig : override sous `src/Core/templates/Core/...` (nouveau) ou
    `templates/Core/...` (legacy backward compat) si besoin.

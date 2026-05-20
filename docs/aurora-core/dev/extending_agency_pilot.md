@@ -29,7 +29,7 @@ Aurora\Module\Platform\Agency\…  →  src/Module/Platform/Agency/…
 | DTO d'entrée | `src/Module/Platform/Agency/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
 | Manager | `src/Module/Platform/Agency/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
 | Serializer | `src/Module/Platform/Agency/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
-| Vue + Twig | `src/Overrides/backend/agencies/AgenciesApp.vue` + `src/Core/templates/Core/backend/agencies/index.html.twig` (ou legacy `templates/Core/backend/agencies/index.html.twig`) | slots scoped + override Twig |
+| Vue | `src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue` (co-localisé avec l'extension PHP — shadow auto via clientModules glob) | slots scoped, pas de Twig override |
 
 ---
 
@@ -335,16 +335,22 @@ class AgencySerializer extends AuroraAgencySerializer
 
 Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/src/Core/Frontend/app.js`) :
 
-- `@client/Module/<Name>/**/*.vue` — vraies features client, exposées comme
-  `<name>/<rest>` dans `vue_component()` (ex: `tracking/backend/dashboard/...`)
-- `@client/src/Overrides/**/*.vue` — wrappers autour des composants Aurora,
-  exposés sans préfixe module : `<rest>` (ex: `backend/agencies/AgenciesApp`)
+- `@client/src/Module/**/assets/**/*.vue` — composants des modules client
+  (vraies features comme Tracking, OU overrides co-localisés avec une
+  extension PHP comme Platform/Agency). Les feature folders entre
+  `Module/<Name>/` et `assets/` sont flatten dans la clé exposée. Exposés
+  comme `<name>/<rest>` (ex: `tracking/backend/dashboard/...` ou
+  `platform/backend/agencies/AgenciesApp` quand on shadow Aurora)
+- `@client/src/Overrides/**/*.vue` — escape hatch pour shadow des
+  composants non-module (e.g. `src/Core/Frontend/...` d'aurora-core).
+  Rare ; préférer la co-localisation sous `Module/<X>/<Feature>/assets/`
+  quand on shadow un composant qui vit dans un module Aurora.
 
-Le wrapper Agency est un **override** (il enveloppe `AuroraAgenciesApp`),
-pas une feature métier — donc il va sous `Overrides/`.
+Le wrapper Agency vit avec l'extension PHP — co-localisation sous
+`src/Module/Platform/Agency/assets/`.
 
 ```vue
-<!-- aurora-client : src/Overrides/backend/agencies/AgenciesApp.vue -->
+<!-- aurora-client : src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue -->
 <script setup>
 import AuroraAgenciesApp from "@core/backend/agencies/AgenciesApp.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -405,49 +411,23 @@ Le composable Aurora `useAgenciesForm(extraFields)` :
 - à l'ouverture en édition : `editForm.code = agency.code`
 - à la soumission : `request(url, { ...editForm })` envoie `name` ET `code`
 
-### 5.2 Override du template Twig
+### 5.2 Aucun override Twig nécessaire
 
-Aurora-core auto-prepend deux paths client devant son propre chemin sous
-le namespace `@Core` : `kernel.project_dir/src/Core/templates/Core/` (nouveau,
-recommandé) **et** `kernel.project_dir/templates/Core/` (legacy backward compat).
-Mettre votre fichier dans l'un ou l'autre suffit à override — pas de config
-Twig supplémentaire.
-
-```twig
-{# aurora-client : src/Core/templates/Core/backend/agencies/index.html.twig
-   (ou — legacy — templates/Core/backend/agencies/index.html.twig) #}
-{% extends '@Core/backend/layout.html.twig' %}
-
-{% block title %}{{ 'backend.nav.agencies'|trans }} - {{ parent() }}{% endblock %}
-
-{% block page_header_slot %}
-    {{ include('@Shared/components/page_header.html.twig', {
-        crumbs: [{label: 'backend.nav.agencies'|trans}],
-    }) }}
-{% endblock %}
-
-{% block body %}
-<div {{ vue_component('backend/agencies/AgenciesApp', {
-    agencies: agencies,
-    createPath: path('backend_agencies_create'),
-    updatePath: path('backend_agencies_update', {id: '__id__'}),
-    deletePath: path('backend_agencies_delete', {id: '__id__'}),
-}) }} class="flex-1 min-w-0"></div>
-{% endblock %}
-```
-
-La seule ligne qui change vs le template Aurora :
-`vue_component('core/backend/agencies/AgenciesApp', …)` →
-`vue_component('backend/agencies/AgenciesApp', …)`.
-
-Le préfixe `core/` (Aurora) tombe car le wrapper est exposé sans préfixe par
-le glob `@client/src/Overrides/**/*.vue`.
+Depuis la co-localisation, **pas besoin d'override Twig**. Le wrapper
+client à `src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue`
+est exposé par le glob `clientModules` sous **la même clé** que le composant
+Aurora (`platform/backend/agencies/AgenciesApp`). Comme `clientModules` est
+spread après `auroraModules` dans `vueContext`, ton fichier wins
+automatiquement — Aurora rend `vue_component('platform/backend/agencies/AgenciesApp', ...)`
+et c'est ton wrapper qui prend.
 
 Vérifier que l'override est bien pris :
 
 ```bash
-php bin/console debug:twig "@Core/backend/agencies/index.html.twig"
-# Matched File doit pointer vers src/Core/templates/Core/backend/agencies/index.html.twig (ou legacy templates/Core/...)
+# Build + recharger la page admin /backend/agencies. Inspecter le DOM :
+# le composant Vue monté devrait avoir tes slots `extra-headers` /
+# `extra-cells` / `extra-form-fields`.
+npm run build
 ```
 
 ---
@@ -476,7 +456,7 @@ make start                 # PHP server + Vite dev server
 | Vue table | Slots `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
 | Vue formulaire | Slot `extra-form-fields` (scoped sur `editForm`, `errors`) | `<template #extra-form-fields="{ editForm, errors }">` |
 | Vue submit | Prop `extraFields` du composable `useAgenciesForm` | `{ <field>: { default, fromEntity } }` |
-| Template Twig | Aurora prepend `kernel.project_dir/src/Core/templates/Core/` (nouveau) + `kernel.project_dir/templates/Core/` (legacy) au namespace `@Core` | Drop file at `src/Core/templates/Core/<path>.html.twig` (ou legacy `templates/Core/<path>.html.twig`) |
+| Template Twig | Auto-prepend des paths client devant les paths bundle pour chaque namespace `@Core` / `@Platform` / etc. | _(pas nécessaire pour l'override Vue de cas pilote — la co-localisation suffit. Utile uniquement si tu veux changer le breadcrumb, le layout, ou les props passées à Vue depuis Twig)_ |
 
 ---
 
