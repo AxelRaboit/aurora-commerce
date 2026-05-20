@@ -171,10 +171,24 @@ final class MakeModuleCommand extends Command
             $created[] = str_replace($this->projectDir.'/', '', $target);
         }
 
-        // 8. Wire aliases.js (core only)
+        // 8. Wire aliases.js (core only) — aurora-client uses
+        // `vendor/.../aliases.js` directly, no per-client alias file.
         if ('core' === $context) {
             $this->appendAlias($derived);
             $created[] = 'aliases.js (edited)';
+        }
+
+        // 8bis. Client-only auto-wiring: aurora-core's AuroraBundle can't
+        // auto-discover client modules (its glob targets vendor/.../src/Module/*),
+        // so we patch the two Symfony config files the client needs.
+        if ('client' === $context) {
+            if ($this->appendTwigPath($derived)) {
+                $created[] = 'config/packages/twig.yaml (edited — added @'.$derived['module'].' namespace)';
+            }
+
+            if ($this->appendTranslationsSourceDir($derived)) {
+                $created[] = 'config/services.yaml (edited — added '.$derived['module'].' translations to DumpJsTranslationsCommand)';
+            }
         }
 
         // 9. Report
@@ -231,12 +245,11 @@ final class MakeModuleCommand extends Command
      */
     private function fileMap(array $d, string $context, bool $withToggle, bool $withFrontend, bool $withSettings): array
     {
-        // Core modules co-locate their Vue assets under src/Module/<X>/assets/.
-        // Client modules still use the assets/client/Module/<X>/ layout (the
-        // client project keeps a dedicated assets/ root for its own code).
-        $appVuePath = 'core' === $context
-            ? sprintf('%s/src/Module/%s/assets/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module'])
-            : sprintf('%s/assets/client/Module/%s/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module']);
+        // Vue assets are co-located under src/Module/<X>/assets/ for both core
+        // AND client (the legacy root `assets/client/Module/<X>/` layout was
+        // dropped in aurora-client commit 9d77f67 — refactor(assets):
+        // co-locate client extensions under src/, drop assets/).
+        $appVuePath = sprintf('%s/src/Module/%s/assets/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module']);
 
         // Module class: togglable variant is the default. Opt out via
         // `--no-toggle` for infra-only modules (Dev-style) — uses the
@@ -308,19 +321,82 @@ final class MakeModuleCommand extends Command
         }
     }
 
+    /**
+     * Add the new module's Twig namespace to `<client>/config/packages/twig.yaml`.
+     * Idempotent: skips if the line is already present. Returns true on
+     * actual write (used for reporting in `Files created`).
+     *
+     * @param array{module: string, snake: string, kebab: string, camel: string} $d
+     */
+    private function appendTwigPath(array $d): bool
+    {
+        $twigYaml = $this->projectDir.'/config/packages/twig.yaml';
+        if (!is_file($twigYaml)) {
+            return false;
+        }
+
+        $content = (string) file_get_contents($twigYaml);
+        $newLine = sprintf("        '%%kernel.project_dir%%/src/Module/%s/templates': '%s'", $d['module'], $d['module']);
+
+        if (str_contains($content, sprintf('/src/Module/%s/templates', $d['module']))) {
+            return false;
+        }
+
+        // Append at the end of the `twig: paths:` block. We anchor on the
+        // last existing path entry (any line under `paths:`) and insert
+        // after it. If no `paths:` block exists, skip — the client config
+        // is too non-standard for safe patching.
+        if (!preg_match('/^twig:\s*\n\s+paths:\s*\n((?:\s{8}.+\n)+)/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
+            return false;
+        }
+
+        $blockEnd = $matches[1][1] + mb_strlen($matches[1][0]);
+        $patched = mb_substr($content, 0, $blockEnd).$newLine."\n".mb_substr($content, $blockEnd);
+        $this->fs->dumpFile($twigYaml, $patched);
+
+        return true;
+    }
+
+    /**
+     * Add the new module's translations dir to the client's
+     * `DumpJsTranslationsCommand.$extraSourceDirs` in `config/services.yaml`.
+     * Idempotent: skips if the path is already present.
+     *
+     * @param array{module: string, snake: string, kebab: string, camel: string} $d
+     */
+    private function appendTranslationsSourceDir(array $d): bool
+    {
+        $servicesYaml = $this->projectDir.'/config/services.yaml';
+        if (!is_file($servicesYaml)) {
+            return false;
+        }
+
+        $content = (string) file_get_contents($servicesYaml);
+        $needle = sprintf('/src/Module/%s/translations', $d['module']);
+        if (str_contains($content, $needle)) {
+            return false;
+        }
+
+        $newLine = sprintf("                - '%%kernel.project_dir%%/src/Module/%s/translations'", $d['module']);
+
+        // Anchor on `$extraSourceDirs:` and append after the last list item.
+        if (!preg_match('/(\$extraSourceDirs:\s*\n(?:\s{16}-\s+.+\n)+)/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
+            return false;
+        }
+
+        $blockEnd = $matches[1][1] + mb_strlen($matches[1][0]);
+        $patched = mb_substr($content, 0, $blockEnd).$newLine."\n".mb_substr($content, $blockEnd);
+        $this->fs->dumpFile($servicesYaml, $patched);
+
+        return true;
+    }
+
     /** @param array{module: string, snake: string, kebab: string, camel: string} $d */
     private function printNextSteps(SymfonyStyle $io, array $d, string $context, bool $withToggle, bool $withFrontend, bool $withSettings): void
     {
         $io->section('Next steps');
 
         $hints = [];
-
-        // Client-only manual wiring
-        if ('client' === $context) {
-            $hints[] = sprintf("Edit config/packages/twig.yaml — add: '%%kernel.project_dir%%/src/Module/%s/templates': '%s'", $d['module'], $d['module']);
-            $hints[] = 'Edit config/services.yaml — add to DumpJsTranslationsCommand $extraSourceDirs:';
-            $hints[] = sprintf("  - '%%kernel.project_dir%%/src/Module/%s/translations'", $d['module']);
-        }
 
         // Backend toggle wiring (core) — always printed unless --no-toggle.
         if ($withToggle && 'core' === $context) {
