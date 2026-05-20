@@ -19,21 +19,28 @@ use function in_array;
 use function Symfony\Component\String\u;
 
 /**
- * Scaffolds a new Aurora module covering the 5 cas types of the
- * convention documented in {@see /docs/aurora-core/dev/add_module.md}.
+ * Scaffolds a new Aurora module following the convention documented in
+ * {@see /docs/aurora-core/dev/add_module.md}.
  *
  *   bin/console aurora:make:module Loyalty
- *   bin/console aurora:make:module Loyalty --with-toggles --with-settings
- *   bin/console aurora:make:module Tracking --with-toggles --with-frontend --with-settings
+ *   bin/console aurora:make:module Loyalty --with-settings
+ *   bin/console aurora:make:module Tracking --with-frontend --with-settings
+ *   bin/console aurora:make:module DevTools --no-toggle           # infra-only
  *
- * Cas covered :
- *   - Cas 1 — stateless minimal (always)
- *   - Cas 2 — toggles + Context        : --with-toggles
- *   - Cas 3 — CRUD entity              : NOT generated here, defer to
- *                                         `/add-entity` skill or
- *                                         `bin/console make:entity`
- *   - Cas 4 — public frontend          : --with-frontend
- *   - Cas 5 — settings tab provider    : --with-settings
+ * Defaults & opt-outs :
+ *   - Module is **toggleable by default** — gets a `<X>Context` with
+ *     `isBackendEnabled()` + implements `ModuleToggleProviderInterface`.
+ *     This matches the convention: every module appears in the admin
+ *     "Modules access" panel with an ON/OFF switch. Pass `--no-toggle`
+ *     for infra-only modules that must always be on (Dev-style).
+ *   - CRUD entity (cas 3 in the convention doc) is NOT generated here —
+ *     defer to `/add-entity` skill or `bin/console make:entity`.
+ *   - Public frontend (cas 4) : opt-in via `--with-frontend`.
+ *   - Settings tab (cas 5) : opt-in via `--with-settings`.
+ *
+ * Sub-features (e.g. Vault = Safe + PasswordGenerator) — beyond the basic
+ * backend toggle — are added separately via the `/add-submodule` skill,
+ * not by this command.
  *
  * Auto-detects core vs client context (composer.json name).
  *
@@ -41,7 +48,7 @@ use function Symfony\Component\String\u;
  */
 #[AsCommand(
     name: 'aurora:make:module',
-    description: 'Scaffold a new Aurora module (5 cas types — flags select the extras).',
+    description: 'Scaffold a new Aurora module (togglable backend by default; --no-toggle / --with-frontend / --with-settings adjust the layers).',
 )]
 final class MakeModuleCommand extends Command
 {
@@ -71,9 +78,9 @@ final class MakeModuleCommand extends Command
     {
         $this
             ->addArgument('name', InputArgument::OPTIONAL, 'Module name in PascalCase (e.g. Loyalty, Tracking, WikiNotes).')
-            ->addOption('with-toggles', null, InputOption::VALUE_NONE, 'Cas 2 — add <X>Context + ModuleToggleProviderInterface (togglable backend).')
-            ->addOption('with-frontend', null, InputOption::VALUE_NONE, 'Cas 4 — add <X>FrontendDescriptor (public-facing module).')
-            ->addOption('with-settings', null, InputOption::VALUE_NONE, 'Cas 5 — add Setting/<X>SettingEnum + ConfigurationTabProvider.')
+            ->addOption('no-toggle', null, InputOption::VALUE_NONE, 'Opt out of the default backend toggle (skip <X>Context + ModuleToggleProviderInterface). Use only for infra-only modules that must always be on (Dev-style).')
+            ->addOption('with-frontend', null, InputOption::VALUE_NONE, 'Add <X>FrontendDescriptor (public-facing module).')
+            ->addOption('with-settings', null, InputOption::VALUE_NONE, 'Add Setting/<X>SettingEnum + ConfigurationTabProvider (own tab in /backend/settings).')
         ;
     }
 
@@ -109,16 +116,22 @@ final class MakeModuleCommand extends Command
             return Command::FAILURE;
         }
 
-        // 4. Cas selection (flags or interactive)
-        $withToggles = (bool) $input->getOption('with-toggles');
+        // 4. Optional layers (flags or interactive). Backend toggle is ON by
+        // default; opt out via --no-toggle for infra-only modules.
+        $withToggle = !(bool) $input->getOption('no-toggle');
         $withFrontend = (bool) $input->getOption('with-frontend');
         $withSettings = (bool) $input->getOption('with-settings');
 
-        if (!$withToggles && !$withFrontend && !$withSettings && $input->isInteractive()) {
-            $io->section('Optional cas types');
-            $withToggles = $io->confirm('Add toggles + Context (cas 2) ?', false);
-            $withFrontend = $io->confirm('Add FrontendDescriptor for a public site (cas 4) ?', false);
-            $withSettings = $io->confirm('Add Settings tab provider (cas 5) ?', false);
+        if (!$withFrontend && !$withSettings && $input->isInteractive()) {
+            $io->section('Optional layers');
+            $withFrontend = $io->confirm(
+                'Module exposes public-facing pages (visitors hit a /something URL, not just /backend)?',
+                false,
+            );
+            $withSettings = $io->confirm(
+                'Module contributes its own tab in /backend/settings (config values, API keys, feature flags edited by admins)?',
+                false,
+            );
         }
 
         // 5. Extra inputs
@@ -138,7 +151,7 @@ final class MakeModuleCommand extends Command
         ];
 
         // 6. Confirm
-        $fileMap = $this->fileMap($derived, $context, $withToggles, $withFrontend, $withSettings);
+        $fileMap = $this->fileMap($derived, $context, $withToggle, $withFrontend, $withSettings);
         $io->section('About to generate');
         $io->listing(array_map(fn (string $p): string => str_replace($this->projectDir.'/', '', $p), array_values($fileMap)));
         if ('core' === $context) {
@@ -169,7 +182,7 @@ final class MakeModuleCommand extends Command
         $io->section('Files created');
         $io->listing($created);
 
-        $this->printNextSteps($io, $derived, $context, $withToggles, $withFrontend, $withSettings);
+        $this->printNextSteps($io, $derived, $context, $withToggle, $withFrontend, $withSettings);
 
         return Command::SUCCESS;
     }
@@ -216,7 +229,7 @@ final class MakeModuleCommand extends Command
      *
      * @return array<string, string> template-name → absolute target path
      */
-    private function fileMap(array $d, string $context, bool $withToggles, bool $withFrontend, bool $withSettings): array
+    private function fileMap(array $d, string $context, bool $withToggle, bool $withFrontend, bool $withSettings): array
     {
         // Core modules co-locate their Vue assets under src/Module/<X>/assets/.
         // Client modules still use the assets/client/Module/<X>/ layout (the
@@ -225,10 +238,12 @@ final class MakeModuleCommand extends Command
             ? sprintf('%s/src/Module/%s/assets/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module'])
             : sprintf('%s/assets/client/Module/%s/backend/%sApp.vue', $this->projectDir, $d['module'], $d['module']);
 
-        // Always — cas 1
-        $moduleTemplate = $withToggles
-            ? sprintf('Module.WithToggles.%s.php.tpl', $context)
-            : 'Module.php.tpl';
+        // Module class: togglable variant is the default. Opt out via
+        // `--no-toggle` for infra-only modules (Dev-style) — uses the
+        // bare Module.NoToggle.php.tpl which has no Context dependency.
+        $moduleTemplate = $withToggle
+            ? sprintf('Module.%s.php.tpl', $context)
+            : 'Module.NoToggle.php.tpl';
 
         $map = [
             $moduleTemplate => sprintf('%s/src/Module/%s/%sModule.php', $this->projectDir, $d['module'], $d['module']),
@@ -239,8 +254,8 @@ final class MakeModuleCommand extends Command
             'App.vue.tpl' => $appVuePath,
         ];
 
-        // Cas 2
-        if ($withToggles) {
+        // <Module>Context — generated by default alongside the togglable Module class.
+        if ($withToggle) {
             $contextTemplate = sprintf('Context.%s.php.tpl', $context);
             $map[$contextTemplate] = sprintf('%s/src/Module/%s/%sContext.php', $this->projectDir, $d['module'], $d['module']);
         }
@@ -294,7 +309,7 @@ final class MakeModuleCommand extends Command
     }
 
     /** @param array{module: string, snake: string, kebab: string, camel: string} $d */
-    private function printNextSteps(SymfonyStyle $io, array $d, string $context, bool $withToggles, bool $withFrontend, bool $withSettings): void
+    private function printNextSteps(SymfonyStyle $io, array $d, string $context, bool $withToggle, bool $withFrontend, bool $withSettings): void
     {
         $io->section('Next steps');
 
@@ -307,8 +322,8 @@ final class MakeModuleCommand extends Command
             $hints[] = sprintf("  - '%%kernel.project_dir%%/src/Module/%s/translations'", $d['module']);
         }
 
-        // Cas 2 — toggles
-        if ($withToggles && 'core' === $context) {
+        // Backend toggle wiring (core) — always printed unless --no-toggle.
+        if ($withToggle && 'core' === $context) {
             $hints[] = sprintf(
                 'Edit src/Module/Configuration/Setting/Enum/ModuleParameterEnum.php — add: case %sBackend = \'modules_%s_backend\';',
                 $d['module'],
@@ -318,7 +333,7 @@ final class MakeModuleCommand extends Command
             $hints[] = 'Then run: make sf CMD="aurora:application-parameter"  # sync the new enum case into core_settings';
         }
 
-        // Cas 4 — frontend
+        // Public frontend wiring (core)
         if ($withFrontend && 'core' === $context) {
             $hints[] = sprintf(
                 'Edit src/Module/Configuration/Setting/Enum/ModuleParameterEnum.php — add: case %sFrontend = \'modules_%s_frontend\'; (same match-arm completion needed)',
@@ -327,14 +342,14 @@ final class MakeModuleCommand extends Command
             );
         }
 
-        if ($withFrontend && 'client' === $context && !$withToggles) {
+        if ($withFrontend && 'client' === $context && !$withToggle) {
             $hints[] = sprintf(
-                'FrontendDescriptor references %sContext::FRONTEND_KEY — you need to ADD a Context first (re-run with --with-toggles or write it manually).',
+                'FrontendDescriptor references %sContext::FRONTEND_KEY — you need a Context first (re-run without --no-toggle, or write it manually).',
                 $d['module']
             );
         }
 
-        if ($withFrontend && 'client' === $context && $withToggles) {
+        if ($withFrontend && 'client' === $context && $withToggle) {
             $hints[] = sprintf(
                 'Edit src/Module/%s/%sContext.php — add: public const string FRONTEND_KEY = \'app_%s_frontend\';',
                 $d['module'],
@@ -349,28 +364,28 @@ final class MakeModuleCommand extends Command
         $hints[] = 'make translation                       # dump JSON translations';
         $hints[] = 'make cc                                # clear cache';
 
-        // Cas 3 hint
+        // CRUD entity hint
         $hints[] = '';
         $hints[] = 'For a CRUD entity inside this module, use:';
         $hints[] = '  • Claude Code skill: /add-entity';
         $hints[] = '  • Or Symfony native:  bin/console make:entity';
 
+        $hints[] = '';
+        $hints[] = 'For an additional togglable sub-feature (e.g. Vault = Safe + PasswordGenerator),';
+        $hints[] = 'use:  Claude Code skill: /add-submodule';
+
         $io->listing($hints);
 
         // Summary of what was wired
-        $cases = ['1 (stateless minimal)'];
-        if ($withToggles) {
-            $cases[] = '2 (toggles + Context)';
-        }
-
+        $layers = $withToggle ? ['Module + Context (togglable backend)'] : ['Module (always-on, --no-toggle)'];
         if ($withFrontend) {
-            $cases[] = '4 (FrontendDescriptor)';
+            $layers[] = 'FrontendDescriptor (public-facing)';
         }
 
         if ($withSettings) {
-            $cases[] = '5 (Settings tab provider)';
+            $layers[] = 'Settings tab provider';
         }
 
-        $io->note(sprintf('Generated cas: %s. Cas 3 (CRUD entity) → see hints above.', implode(', ', $cases)));
+        $io->note(sprintf('Generated layers: %s. CRUD entity → /add-entity. Sub-features → /add-submodule.', implode(' + ', $layers)));
     }
 }

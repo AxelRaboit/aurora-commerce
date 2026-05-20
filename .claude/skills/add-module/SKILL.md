@@ -47,21 +47,25 @@ will produce broken code if wrong.
    - URL prefix (kebab-case for route attributes) : `loyalty`, `wiki-notes`
    - Twig namespace (`@<Module>`) and template path
    - Sequence prefix for any entity later
-2. **Cas types to scaffold** (multi-select, with cas 1 always on) :
-   - **Cas 1 — stateless minimal** : always generated. Just
-     `<Module>Module.php` + Controller + Twig + Vue + translations.
-   - **Cas 2 — toggles + Context** : module has 2+ sub-features that should
-     be enable/disable separately (e.g., Vault.Safe + Vault.PasswordGenerator).
-     Adds `<Module>Context` + `ModuleToggleProviderInterface`. Triggers
-     edits to `ModuleParameterEnum` (core) or just adds constants on
-     Context (client).
-   - **Cas 3 — entity CRUD** : module persists data. The skill **does
-     NOT** generate the entity itself — it points the user to `/add-entity`
-     after the module is in place. (Generating the entity requires field
-     decisions out of this skill's scope.)
-   - **Cas 4 — frontend public** : module exposes public-facing pages.
-     Adds `<Module>FrontendDescriptor.php` implementing `FrontendInterface`.
-   - **Cas 5 — settings (Configuration tab)** : module contributes an
+2. **Layers to scaffold** :
+   - **Always generated** : `<Module>Module.php` + Controller + Twig + Vue + translations.
+   - **Backend toggle (default ON)** : every module is toggleable from the
+     admin "Modules access" panel. Generates `<Module>Context` with
+     `isBackendEnabled()` + implements `ModuleToggleProviderInterface`.
+     Triggers a next-step hint to add `<Module>Backend` case in
+     `ModuleParameterEnum` (core) or use the auto-generated `BACKEND_KEY`
+     constant on the Context (client). **Opt out via `--no-toggle`** only
+     for infra-only modules that must always be on (Dev-style).
+   - **Sub-features beyond backend** (e.g., Vault.Safe + Vault.PasswordGenerator) —
+     NOT scaffolded here. Add them later via the `/add-submodule` skill,
+     which cascades the toggle key correctly.
+   - **CRUD entity** : the skill **does NOT** generate the entity itself —
+     it points the user to `/add-entity` after the module is in place.
+     (Generating the entity requires field decisions out of this skill's scope.)
+   - **Frontend public** (opt-in `--with-frontend`) : module exposes
+     public-facing pages. Adds `<Module>FrontendDescriptor.php`
+     implementing `FrontendInterface`.
+   - **Settings tab** (opt-in `--with-settings`) : module contributes an
      admin Settings tab. Adds `Setting/<Module>ConfigurationTabProvider.php`
      and `Setting/<Module>SettingEnum.php`.
 3. **Nav placement** :
@@ -78,12 +82,13 @@ will produce broken code if wrong.
 5. **Primary permission name** — typically `<module_id>.use`. If the module
    has multiple permissions (view/create/edit/delete), ask.
 
-## What gets generated — Cas 1 (always)
+## What gets generated — default scaffold (togglable backend)
 
 ### CORE context
 
 ```
-src/Module/<Module>/<Module>Module.php
+src/Module/<Module>/<Module>Module.php          # implements ModuleInterface + ModuleToggleProviderInterface
+src/Module/<Module>/<Module>Context.php         # isBackendEnabled()
 src/Module/<Module>/Controller/Backend/<Module>Controller.php
 src/Module/<Module>/translations/messages.fr.yaml
 src/Module/<Module>/translations/messages.en.yaml
@@ -96,6 +101,7 @@ aliases.js                                  # edit: add @<kebab> entry
 
 ```
 src/Module/<Module>/<Module>Module.php
+src/Module/<Module>/<Module>Context.php         # contains BACKEND_KEY const + isBackendEnabled()
 src/Module/<Module>/Controller/Backend/<Module>Controller.php
 src/Module/<Module>/translations/messages.fr.yaml
 src/Module/<Module>/translations/messages.en.yaml
@@ -104,6 +110,11 @@ assets/client/Module/<Module>/backend/<Module>App.vue
 config/packages/twig.yaml                   # edit: add new namespace path
 config/services.yaml                        # edit: add module's translations to $extraSourceDirs of DumpJsTranslationsCommand
 ```
+
+### `--no-toggle` variant (infra-only modules)
+
+Skip `<Module>Context.php`. `<Module>Module.php` implements just `ModuleInterface`
+(no toggle gate). Use only for modules that must always be on (Dev-style infra).
 
 ### Snippets (apply variants per context)
 
@@ -224,15 +235,16 @@ backend:
     title: <Page title>
 ```
 
-## What gets generated — Cas 2 (toggles + Context)
+## Backend toggle — the default
 
-Adds **on top of cas 1** :
+Every module is togglable by default. Beyond the basic `<Module>Module.php`
++ Controller + templates listed above, the default scaffold also generates :
 
 ```
 # CLIENT or business CORE module
 src/Module/<Module>/<Module>Context.php
 
-# Core module
+# Core infra module
 src/Core/<Module>/<Module>Context.php
 ```
 
@@ -240,11 +252,14 @@ src/Core/<Module>/<Module>Context.php
 > à côté des sous-modules. Pas sous `Service/` (Service/ reste pour les
 > vrais services métier comme Crm/Service/CrmNotificationService).
 
-And **edits** `<Module>Module.php` to :
-- implement `ModuleToggleProviderInterface` in addition to `ModuleInterface`
-- inject `<Module>Context $context` via constructor
-- gate `getNavSections()` with `if (!$context->isBackendEnabled()) return [];`
-- add `getToggles(): array` returning at least the backend root toggle
+`<Module>Module.php` automatically :
+- implements `ModuleToggleProviderInterface` in addition to `ModuleInterface`
+- injects `<Module>Context $context` via constructor
+- gates `getNavSections()` with `if (!$context->isBackendEnabled()) return [];`
+- exposes `getToggles(): array` returning at least the backend root toggle
+
+Opt out with `--no-toggle` for infra-only modules — yields a bare
+`<Module>Module.php` implementing just `ModuleInterface`, no Context.
 
 **Context snippet (CLIENT)** :
 
@@ -296,10 +311,10 @@ For each sub-feature beyond the backend root, add **one more** `<KEY>` constant
 > **For adding a sub-feature to an EXISTING module**, use `/add-submodule`
 > instead — it edits the parent module / Context in place.
 
-## What gets generated — Cas 3 (entity CRUD)
+## CRUD entity — handed off to `/add-entity`
 
-Do **NOT** generate entity files here. After cas 1 (+ optionally cas 2) is
-in place, **stop and tell the user** :
+Do **NOT** generate entity files here. After the module scaffold is in
+place, **stop and tell the user** :
 
 > Your module skeleton is ready. To add the first entity with the
 > 5-layer pattern (Interface + Abstract + concrete + DTO + Factory + Manager
@@ -309,7 +324,7 @@ in place, **stop and tell the user** :
 This separation keeps `/add-module` predictable and lets `/add-entity` ask
 its own field-level questions.
 
-## What gets generated — Cas 4 (frontend public)
+## Frontend public — `--with-frontend`
 
 ```
 src/Module/<Module>/<Module>FrontendDescriptor.php
@@ -341,7 +356,7 @@ services.yaml (must already be present client-side — cf. `add_module.md` §2.1
 
 CORE : also add `<Module>Frontend` case to `ModuleParameterEnum`.
 
-## What gets generated — Cas 5 (settings configuration tab)
+## Settings tab — `--with-settings`
 
 ```
 src/Module/<Module>/Setting/<Module>SettingEnum.php
