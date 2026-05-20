@@ -488,7 +488,8 @@ final class MakeModuleCommand extends Command
         // Standard post-gen
         $hints[] = 'make sf CMD="aurora:privileges:sync"  # register the permission';
         $hints[] = 'make sf CMD="aurora:menus:sync"        # register the NavItem';
-        $hints[] = 'make translation                       # dump JSON translations';
+        $hints[] = 'make translation                       # dump JSON translations (regenerates locales/generated/<lang>.json)';
+        $hints[] = 'make build                             # rebuild Vite bundle so vue-i18n picks up the new JSON (skip if dev server is running with HMR)';
         $hints[] = 'make cc                                # clear cache';
 
         // CRUD entity hint
