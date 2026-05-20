@@ -21,7 +21,7 @@ Les deux fonctions retournent `?string` — toujours prévoir un fallback avec
 
 ## Pourquoi
 
-- Avant : `templates/Frontend/themes/default/layout.html.twig` contenait deux
+- Avant : `src/Core/templates/Frontend/themes/default/layout.html.twig` contenait deux
   maps hardcodées (codes → emoji flag + codes → label). Toute évolution
   exigeait d'éditer plusieurs templates et risquait le drift.
 - L'extension centralise les deux maps (`FLAG_CODES`, `NAMES`) dans une seule

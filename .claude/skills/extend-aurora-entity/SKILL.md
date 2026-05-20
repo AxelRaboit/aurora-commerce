@@ -325,11 +325,13 @@ If the controller mounts the Aurora Vue component by name, override the
 Twig template that does the mounting:
 
 ```
+src/Core/templates/Core/backend/agencies/index.html.twig  (new, recommended)
+# or — legacy backward-compat:
 templates/Core/backend/agencies/index.html.twig
 ```
 
 Point the Vue mount to `AppAgenciesApp` instead of `AgenciesApp`. Aurora's
-Twig namespace prepending handles the resolution.
+Twig namespace prepending handles the resolution from either location.
 
 ## Procedure
 

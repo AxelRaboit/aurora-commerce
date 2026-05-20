@@ -195,7 +195,7 @@ src/Module/<Parent>/<Sub>/
 ├── Controller/Backend/<Sub>Controller.php
 └── (Entity/, Dto/, Manager/, Repository/, Serializer/, View/  if CRUD — defer to /add-entity)
 
-templates/Module/<Parent>/backend/<sub_id>/index.html.twig
+src/Module/<Parent>/templates/backend/<sub_id>/index.html.twig
 
 src/Module/<Parent>/assets/backend/<sub_id>/<Sub>App.vue       # CORE
 assets/client/Module/<Parent>/backend/<sub_id>/<Sub>App.vue  # CLIENT

@@ -62,7 +62,7 @@ mkdir -p templates/Frontend/themes/mon-theme/editorial/home
 
 ### Cas 2 — Passerelle d'un module client
 
-Même pattern, dans `templates/Module/<Client>/frontend/…/index.html.twig`. Le
+Même pattern, dans `src/Module/<Client>/templates/frontend/…/index.html.twig` (ou — pour backward compat — `templates/Module/<Client>/frontend/…/index.html.twig`). Le
 controller du client utilise `ViewBuilder::baseView()` (aurora-core) et passe
 les variables habituelles (`context`, `locale`, `alternates`…).
 

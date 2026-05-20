@@ -235,7 +235,7 @@ final class MakeModuleCommand extends Command
             'Controller.php.tpl' => sprintf('%s/src/Module/%s/Controller/Backend/%sController.php', $this->projectDir, $d['module'], $d['module']),
             'messages.fr.yaml.tpl' => sprintf('%s/src/Module/%s/translations/messages.fr.yaml', $this->projectDir, $d['module']),
             'messages.en.yaml.tpl' => sprintf('%s/src/Module/%s/translations/messages.en.yaml', $this->projectDir, $d['module']),
-            'index.html.twig.tpl' => sprintf('%s/templates/Module/%s/backend/index.html.twig', $this->projectDir, $d['module']),
+            'index.html.twig.tpl' => sprintf('%s/src/Module/%s/templates/backend/index.html.twig', $this->projectDir, $d['module']),
             'App.vue.tpl' => $appVuePath,
         ];
 
@@ -302,7 +302,7 @@ final class MakeModuleCommand extends Command
 
         // Client-only manual wiring
         if ('client' === $context) {
-            $hints[] = sprintf("Edit config/packages/twig.yaml — add: '%%kernel.project_dir%%/templates/Module/%s': '%s'", $d['module'], $d['module']);
+            $hints[] = sprintf("Edit config/packages/twig.yaml — add: '%%kernel.project_dir%%/src/Module/%s/templates': '%s'", $d['module'], $d['module']);
             $hints[] = 'Edit config/services.yaml — add to DumpJsTranslationsCommand $extraSourceDirs:';
             $hints[] = sprintf("  - '%%kernel.project_dir%%/src/Module/%s/translations'", $d['module']);
         }

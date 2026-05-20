@@ -2,60 +2,83 @@
 
 ## Règle
 
+Tous les templates Twig vivent sous `src/`, co-localisés avec le code qui
+les consomme. **Aucun template au root `templates/`** sauf l'override
+Symfony obligatoire des bundles tiers (`templates/bundles/TwigBundle/`).
+
+- **Templates propres à un module** → `src/Module/<X>/templates/`
+  (en miroir de `assets/` et `translations/`).
+- **Templates cross-cutting** (Core layout, Shared partials, thèmes
+  frontend) → `src/Core/templates/{Core,Shared,Frontend}/`.
+
 ```
-templates/
+src/Module/<Module>/
+├── templates/
+│   ├── backend/       ← admin pages du module
+│   │   └── <plural>/index.html.twig
+│   ├── frontend/      ← public pages du module (gallery viewer, etc.)
+│   └── email/         ← email templates du module
+├── assets/
+├── translations/
+└── …
+
+src/Core/templates/                 ← templates cross-cutting (infra)
 ├── Core/
-│   ├── backend/       ← admin pages (auth required)
+│   ├── backend/       ← layout admin partagé + base_guest
 │   │   ├── layout.html.twig
-│   │   ├── base_guest.html.twig
-│   │   ├── <plural>/index.html.twig    ← une page par entité (au pluriel)
-│   │   └── …
-│   ├── email/         ← templates email Core
-│   └── frontend/      ← public pages Core
-├── Module/
-│   └── <Module>/
-│       ├── backend/   ← admin pages du module
-│       │   └── <plural>/index.html.twig
-│       ├── frontend/  ← public pages du module (gallery viewer, etc.)
-│       └── email/     ← email templates du module
-├── Frontend/
-│   └── themes/        ← thèmes frontend (le client peut ajouter ses thèmes)
+│   │   └── base_guest.html.twig
+│   └── email/         ← templates email Core (user_role_changed, …)
 ├── Shared/
 │   ├── components/    ← partials Twig réutilisables (boutons, cards, …)
-│   ├── email/         ← layout + partials email
-│   │   ├── layout/
-│   │   └── partials/
-│   └── …
+│   └── email/         ← layout + partials email
+│       ├── layout/
+│       └── partials/
+└── Frontend/
+    └── themes/        ← thèmes frontend (default + custom clients)
+        └── default/
+
+templates/                          ← seul rescapé à la racine
 └── bundles/
     └── TwigBundle/    ← override de templates third-party (error pages, …)
+                         — convention Symfony hardcodée, non déplaçable
 ```
 
 ## Namespaces Twig
 
-| Namespace | Path |
-|---|---|
-| `@Core` | `templates/Core/` |
-| `@Editorial` | `templates/Module/Editorial/` |
-| `@Crm` | `templates/Module/Crm/` |
-| `@Erp` | `templates/Module/Erp/` |
-| `@Project` | `templates/Module/Project/` |
-| `@Photo` | `templates/Module/Photo/` |
-| `@Billing` | `templates/Module/Billing/` |
-| `@Ecommerce` | `templates/Module/Ecommerce/` |
-| `@Ged` | `templates/Module/Ged/` |
-| `@Frontend` | `templates/Frontend/` |
-| `@Shared` | `templates/Shared/` |
+| Namespace | Bundle path | Override client (nouveau) | Override client (legacy) |
+|---|---|---|---|
+| `@Core` | `src/Core/templates/Core/` | `<client>/src/Core/templates/Core/` | `<client>/templates/Core/` |
+| `@Shared` | `src/Core/templates/Shared/` | `<client>/src/Core/templates/Shared/` | `<client>/templates/Shared/` |
+| `@<Module>` | `src/Module/<X>/templates/` | `<client>/src/Module/<X>/templates/` | `<client>/templates/Module/<X>/` |
+| _(null)_ | `src/Core/templates/` + `templates/` | — | — |
+
+Le null namespace couvre les refs sans `@` — typiquement
+`Frontend/themes/default/layout.html.twig` consommé par `ThemeResolver`.
+
+Exemples : `@Editorial` → `src/Module/Editorial/templates/`, `@Crm` →
+`src/Module/Crm/templates/`, etc. — un namespace par dossier sous
+`src/Module/*` avec un sous-dossier `templates/`.
 
 ## Override automatique côté client
 
-Le bundle Aurora prepend `kernel.project_dir/templates/<Namespace>/`
-devant son propre chemin sous chaque namespace. Un override client met
-juste son fichier au chemin miroir → résolu en priorité.
+`AuroraBundle::prependExtension` prepend les paths côté projet client
+devant ses propres paths bundle. Un override client met juste son
+fichier au chemin miroir → résolu en priorité.
 
-Ex: `vendor/axelraboit/aurora/templates/Core/backend/agencies/index.html.twig`
-peut être overridé par `templates/Core/backend/agencies/index.html.twig`
-côté client, et `@Core/backend/agencies/index.html.twig` résoudra le
-fichier client en priorité.
+**Pour `@Core` / `@Shared`** : override via
+`<client>/templates/Core/...` ou `<client>/templates/Shared/...`.
+
+**Pour `@<Module>`** : deux paths d'override reconnus :
+1. **Nouveau** : `<client>/src/Module/<Module>/templates/...` (mirror
+   du layout core).
+2. **Legacy backward compat** : `<client>/templates/Module/<Module>/...`
+   — toujours supporté pour ne pas casser les projets existants.
+
+Ex: `vendor/axelraboit/aurora/src/Module/Platform/templates/backend/agencies/index.html.twig`
+peut être overridé soit par
+`src/Module/Platform/templates/backend/agencies/index.html.twig`
+soit par `templates/Module/Platform/backend/agencies/index.html.twig`
+côté client.
 
 Cf [`client/pattern_override_twig.md`](client/pattern_override_twig.md)
 pour les détails côté client.
@@ -63,8 +86,10 @@ pour les détails côté client.
 ## Système de thèmes frontend
 
 `ThemeResolver::resolve('editorial/post/index')` :
-1. Cherche `templates/Frontend/themes/<slug-actif>/editorial/post/index.html.twig`
-2. Si trouvé → l'utilise. Sinon → fallback sur `default/`
+1. Cherche `<project>/templates/Frontend/themes/<slug-actif>/editorial/post/index.html.twig`
+   (thèmes custom — toujours côté client, c'est de la data utilisateur)
+2. Si trouvé → l'utilise. Sinon → fallback sur `Frontend/themes/default/...` qui
+   résout via le null namespace vers `<bundle>/src/Core/templates/Frontend/themes/default/`
 
 Exemples de chemins résolus :
 - `ecommerce/shop/category` → `themes/<slug>/ecommerce/shop/category.html.twig`
@@ -79,7 +104,10 @@ Le thème actif est lu en BDD (`core_themes WHERE active = true`).
 ```bash
 # 1. Créer le dossier + copier uniquement les templates à modifier
 mkdir -p templates/Frontend/themes/mon-theme/
-cp templates/Frontend/themes/default/layout.html.twig templates/Frontend/themes/mon-theme/
+# Source du default theme :
+#   - aurora-core dev mode : src/Core/templates/Frontend/themes/default/
+#   - aurora-client        : vendor/axelraboit/aurora/src/Core/templates/Frontend/themes/default/
+cp src/Core/templates/Frontend/themes/default/layout.html.twig templates/Frontend/themes/mon-theme/
 
 # 2. Insérer en BDD
 php bin/console dbal:run-sql "INSERT INTO core_themes (id, slug, name, active, config) VALUES (NEXTVAL('seq_core_theme_id'), 'mon-theme', 'Mon Thème', false, '{}')"
@@ -136,7 +164,7 @@ via le helper Twig `vue_component(...)` — **même pattern que le frontend**
 (cf [[convention_frontend_rendering]]). Pattern type :
 
 ```twig
-{# templates/Core/backend/agencies/index.html.twig #}
+{# src/Module/Platform/templates/backend/agencies/index.html.twig #}
 {% extends '@Core/backend/layout.html.twig' %}
 
 {% block title %}{{ 'backend.agencies.title' | trans }}{% endblock %}

@@ -13,7 +13,7 @@ Quand tu crées un **nouveau module** `src/Module/<Module>/`, tout est auto-déc
 | Quoi | Mécanisme | Condition |
 |------|-----------|-----------|
 | Doctrine `mappings` | `glob('src/Module/*')` dans `AuroraBundle::prependExtension()` | dossier existe |
-| Twig namespace `@<Module>` | même glob | `templates/Module/<Module>/` doit exister |
+| Twig namespace `@<Module>` | même glob | `src/Module/<Module>/templates/` doit exister |
 | Symfony Translator paths | même glob | `src/Module/<Module>/translations/` doit exister |
 | DumpJsTranslationsCommand (vue-i18n) | `glob('src/Module/*/translations')` | `translations/` doit exister |
 | `services.yaml` + `app.js` | `_instanceof ModuleInterface` + glob Vite | classe `<Module>Module` implémente `ModuleInterface` |

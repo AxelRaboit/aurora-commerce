@@ -348,15 +348,18 @@ Aucune config nécessaire. Aurora **prepend automatiquement**
 `templates/<Namespace>/` du projet client devant son propre chemin sous
 chaque namespace `@<Namespace>`.
 
-Conséquence : posez votre fichier au **même chemin** que l'original en
-remplaçant `vendor/axelraboit/aurora/templates/` par
-`templates/` côté client :
+Conséquence : posez votre fichier au **même chemin logique** que
+l'original côté client. Deux conventions de chemin sont reconnues :
 
-| Template Aurora (vendor) | Override client |
-|---|---|
-| `@Core/backend/agencies/index.html.twig` | `templates/Core/backend/agencies/index.html.twig` |
-| `@Ecommerce/backend/listings/edit.html.twig` | `templates/Ecommerce/backend/listings/edit.html.twig` |
-| `@Frontend/themes/default/editorial/home.html.twig` | `templates/Frontend/themes/default/editorial/home.html.twig` |
+| Namespace Twig | Override client (nouveau, recommandé) | Override client (legacy backward compat) |
+|---|---|---|
+| `@Core/backend/agencies/index.html.twig` | `src/Core/templates/Core/backend/agencies/index.html.twig` | `templates/Core/backend/agencies/index.html.twig` |
+| `@Ecommerce/backend/listings/edit.html.twig` | `src/Module/Ecommerce/templates/backend/listings/edit.html.twig` | `templates/Module/Ecommerce/backend/listings/edit.html.twig` |
+| `Frontend/themes/default/editorial/home.html.twig` (null namespace, thèmes) | — | `templates/Frontend/themes/default/editorial/home.html.twig` |
+
+> Les thèmes frontend custom restent à la racine client
+> (`<client>/templates/Frontend/themes/<slug>/...`) car ils sont
+> considérés comme de la data utilisateur, pas du code Aurora à étendre.
 
 Pour le frontend (site public), le **ThemeResolver** ajoute encore une
 couche de résolution par slug de thème — voir

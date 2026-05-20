@@ -120,11 +120,19 @@ assets/client/Overrides/backend/agencies/AgenciesApp.vue
 
 ## Chargement des templates
 
-Aurora prepend automatiquement `templates/` du projet client devant ses propres
-templates pour chaque namespace Twig (`@Core`, `@Editorial`, `@Crm`, etc.).
-Un fichier `templates/Core/backend/agencies/index.html.twig` surcharge donc
-`vendor/axelraboit/aurora/templates/Core/backend/agencies/index.html.twig`
-sans aucune configuration supplémentaire.
+Aurora prepend automatiquement les paths côté projet client devant ses
+propres paths pour chaque namespace Twig (`@Core`, `@Shared`, `@Editorial`,
+`@Crm`, etc.). Deux paths d'override sont reconnus :
+
+- **Nouveau** (recommandé, aligné sur la convention core) :
+  `src/Core/templates/Core/backend/agencies/index.html.twig`,
+  `src/Module/<X>/templates/...`, etc.
+- **Legacy** (backward compat) : `templates/Core/backend/agencies/index.html.twig`,
+  `templates/Module/<X>/...`, etc.
+
+L'un ou l'autre surcharge automatiquement
+`vendor/axelraboit/aurora/src/Core/templates/Core/backend/agencies/index.html.twig`
+sans configuration Twig supplémentaire.
 
 ---
 

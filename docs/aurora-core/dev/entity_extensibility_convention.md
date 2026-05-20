@@ -440,10 +440,19 @@ Pour l'état UI / computed / refs, utiliser un `reactive` ou des `ref()`
 #### 5.3 Override Twig automatique
 
 Aucun changement nécessaire côté aurora-core — le bundle prepend
-automatiquement `kernel.project_dir/templates/<Namespace>/` devant son propre
-chemin sous chaque namespace `@<Namespace>`. Le client met simplement son
-override dans `templates/Core/backend/<plural>/index.html.twig` (ou
-`templates/<Module>/...`) et c'est résolu en priorité.
+automatiquement les paths côté projet client devant ses propres paths
+sous chaque namespace. Pour chaque namespace deux paths d'override sont
+reconnus :
+
+- **Nouveau** (recommandé, aligné sur la convention core) :
+  `<client>/src/Core/templates/Core/...`, `<client>/src/Core/templates/Shared/...`,
+  `<client>/src/Module/<X>/templates/...`
+- **Legacy** (backward compat) :
+  `<client>/templates/Core/...`, `<client>/templates/Shared/...`,
+  `<client>/templates/Module/<X>/...`
+
+Le client met simplement son override dans l'un ou l'autre, et c'est
+résolu en priorité.
 
 ### Couche bonus — ResolveTargetEntityRepository
 
@@ -773,7 +782,7 @@ Pour copier-coller un exemple en bon état, partir de **`Agency`** :
 | Controller | `src/Core/Agency/Controller/Backend/AgenciesController.php` |
 | Vue main | `src/Core/Frontend/backend/agencies/AgenciesApp.vue` |
 | Vue composables | `src/Core/Frontend/backend/agencies/composables/useAgenciesForm.js` |
-| Twig | `templates/Core/backend/agencies/index.html.twig` |
+| Twig | `src/Module/Platform/templates/backend/agencies/index.html.twig` (namespace `@Platform`) |
 
 Toute déviation de ce pattern doit être justifiée (cas spécifique au domaine
 de l'entité) et documentée dans cette même convention.

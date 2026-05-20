@@ -234,7 +234,7 @@ Pour ajouter une page admin minimale (sans entité) :
 
 1. Controller `src/Module/Hello/Controller/Backend/HelloController.php` avec
    `#[Route('/backend/hello')]` + `#[IsGranted('hello.use')]`.
-2. Template `templates/Module/Hello/backend/index.html.twig` qui étend
+2. Template `src/Module/Hello/templates/backend/index.html.twig` qui étend
    `@Core/backend/layout.html.twig`.
 3. Permission `hello.use` exposée par un `HelloModule` (cf. add_module.md).
 
@@ -252,7 +252,7 @@ manuellement à la racine du nouveau projet :
 - `src/Module/Tracking/` (module de démo)
 - `src/Entity/Agency.php`, `src/Dto/AgencyInput*.php`, `src/Manager/AgencyManager.php`, `src/Serializer/AgencySerializer.php` (extension showcase)
 - `assets/client/Module/Tracking/` et `assets/client/Overrides/` (Vue showcase)
-- `templates/Module/Tracking/` et `templates/Core/` (Twig showcase)
+- `src/Module/Tracking/templates/` et `templates/Core/` (Twig showcase)
 - `migrations/*.php` (puis `make migrate` pour repartir de la migration aurora-core)
 
 Ensuite : `make fixtures` (ou `migrate` puis seeders du nouveau projet).

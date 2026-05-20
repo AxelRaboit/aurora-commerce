@@ -254,9 +254,9 @@ App\Module\<Name>\<Domain>\<Layer>\<ClassName>      -- e.g. App\Module\Crm\Conta
 
 | Location | Twig namespace | Example |
 |---|---|---|
-| `templates/Core/admin/` | `@Core` | `extends '@Core/admin/layout.html.twig'` |
-| `templates/Module/Editorial/admin/` | `@Editorial` | `include '@Editorial/admin/posts/index.html.twig'` |
-| `templates/Module/Crm/admin/` | `@Crm` | `include '@Crm/admin/contacts/index.html.twig'` |
+| `src/Core/templates/Core/admin/` | `@Core` | `extends '@Core/admin/layout.html.twig'` |
+| `src/Module/Editorial/templates/admin/` | `@Editorial` | `include '@Editorial/admin/posts/index.html.twig'` |
+| `src/Module/Crm/templates/admin/` | `@Crm` | `include '@Crm/admin/contacts/index.html.twig'` |
 | `templates/shared/` | `@Shared` | `include '@Shared/components/icon.html.twig'` |
 
 Configured in `config/packages/twig.yaml`. Add one entry per module.
@@ -350,7 +350,7 @@ See the client `Makefile` variables `CLIENT_ASSETS` and `AURORA_ENV` for how thi
 4. Add Doctrine mapping to `config/packages/doctrine.yaml`
 5. Add Twig namespace to `config/packages/twig.yaml`
 6. Add Vue glob + alias to `src/Core/Frontend/app.js` + `vite.config.js` + `vitest.config.js`
-7. Create templates under `templates/Module/<Name>/admin/`
+7. Create templates under `src/Module/<Name>/templates/admin/` (co-located with the module's PHP code, like `assets/` and `translations/`)
 8. Create Vue controllers under `src/Module/<Name>/assets/admin/` (or `front/`), co-localisés avec leurs composables dans `admin/{feature}/composables/`
 9. Create `src/Module/<Name>/translations/messages.{fr,en,es,de}.yaml` and register the path in `config/packages/translation.yaml` (`framework.translator.paths`); add to `SOURCE_DIRS` in `DumpJsTranslationsCommand` so the keys also flow to vue-i18n
 10. Add Vue-only labels (form fields, editor blocks…) under `src/Core/Frontend/locales/source/{locale}.js`

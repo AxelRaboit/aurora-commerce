@@ -7,6 +7,48 @@ projets clients doivent répercuter après avoir lancé `make aurora-update`.
 
 ## [Unreleased]
 
+### ⚠️ Cassant — root `templates/` éliminé (sauf `bundles/`), tout sous `src/`
+
+Le dossier `templates/` à la racine du bundle est éliminé. Tous les templates
+sont désormais co-localisés sous `src/`, en miroir du refactor `assets/` :
+
+| Avant | Après |
+|---|---|
+| `templates/Module/<X>/` | `src/Module/<X>/templates/` |
+| `templates/Core/` | `src/Core/templates/Core/` |
+| `templates/Shared/` | `src/Core/templates/Shared/` |
+| `templates/Frontend/themes/default/` | `src/Core/templates/Frontend/themes/default/` |
+
+**Seule exception** : `templates/bundles/TwigBundle/` reste à la racine du
+projet — c'est une convention Symfony hardcodée dans `FilesystemLoader` pour
+les overrides de templates de bundles tiers (error pages, …). Non négociable.
+
+**Namespaces Twig inchangés côté API** : `@Editorial`, `@Crm`, `@Platform`,
+`@Core`, `@Shared` etc. continuent de résoudre vers les bons emplacements.
+Aucun `render(…)` ni `include`/`extends` n'est à modifier. Les références
+sans namespace (`Frontend/themes/default/layout.html.twig`) résolvent toujours
+via le null namespace, qui pointe désormais à la fois sur `src/Core/templates/`
+(emplacement des templates bundle) et `templates/` (encore présent pour
+`bundles/TwigBundle/` + overrides client à la racine du projet).
+
+**Côté client** : compatibilité ascendante pour les trois familles.
+Pour `@<Module>`, `@Core`, `@Shared`, `AuroraBundle::prependExtension` reconnaît
+deux paths d'override (le nouveau co-localisé + le legacy top-level) :
+
+| Namespace | Nouveau path client (recommandé) | Legacy path client (backward compat) |
+|---|---|---|
+| `@<Module>` | `<client>/src/Module/<X>/templates/` | `<client>/templates/Module/<X>/` |
+| `@Core` | `<client>/src/Core/templates/Core/` | `<client>/templates/Core/` |
+| `@Shared` | `<client>/src/Core/templates/Shared/` | `<client>/templates/Shared/` |
+
+Pour les thèmes frontend custom : `<client>/templates/Frontend/themes/<slug>/`
+**reste la convention canonique** (les thèmes sont de la data côté client,
+pas du code de module). `ThemeManager.countTemplates()` accepte aussi
+`<client>/src/Core/templates/Frontend/themes/<slug>/` en fallback (pour le
+default theme livré par Aurora en mode core dev).
+
+Aucune migration Doctrine ; clear cache + rebuild suffit.
+
 ### ⚠️ Cassant — root `assets/` supprimé, JS/Vue co-localisé sous `src/`
 
 Le dossier `assets/` à la racine du repo a été éliminé. Tout le JS/Vue/CSS

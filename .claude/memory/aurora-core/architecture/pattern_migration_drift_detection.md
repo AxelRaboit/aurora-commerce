@@ -11,7 +11,7 @@ Aurora détecte automatiquement quand le **dev DB** est en retard sur le code
 (migrations présentes dans `migrations/Version*.php` mais pas exécutées).
 Deux surfaces de détection :
 
-1. **Banner Twig** (`templates/Core/backend/layout.html.twig`) — affiché en
+1. **Banner Twig** (`src/Core/templates/Core/backend/layout.html.twig`) — affiché en
    haut de chaque page admin **uniquement en env dev** quand des migrations
    sont en attente. Mention "X migration(s) en attente sur la base dev" +
    code `make migrate` à exécuter.
@@ -66,7 +66,7 @@ make migrate     # applique toutes les migrations en attente
 
 - Service : `src/Core/Migration/Service/MigrationStatusChecker.php`
 - Twig ext : `src/Core/Twig/MigrationStatusExtension.php`
-- Banner : `templates/Core/backend/layout.html.twig` (autour de la
+- Banner : `src/Core/templates/Core/backend/layout.html.twig` (autour de la
   banner IS_IMPERSONATOR)
 - Makefile target : `migrate-check` (aurora-core + client_template)
 - Translations : `src/Core/Migration/translations/messages.{fr,en}.yaml`

@@ -139,7 +139,7 @@ type-spécifiques (cf. les `--callout-color` de markdown-preview).
 
 ### 6. `email.css`
 
-Standalone — chargé indépendamment par `templates/Shared/email/layout/
+Standalone — chargé indépendamment par `src/Core/templates/Shared/email/layout/
 base.html.twig` via `inline_css()`. **Ne pas** l'importer dans
 `app.css` ni inclure des selectors Tailwind compliqués (les clients
 mail ne supportent que CSS inline limité).

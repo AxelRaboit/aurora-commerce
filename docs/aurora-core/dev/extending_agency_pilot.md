@@ -29,7 +29,7 @@ Aurora\Module\Platform\Agency\…  →  src/Module/Platform/Agency/…
 | DTO d'entrée | `src/Module/Platform/Agency/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
 | Manager | `src/Module/Platform/Agency/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
 | Serializer | `src/Module/Platform/Agency/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
-| Vue + Twig | `assets/client/Overrides/backend/agencies/AgenciesApp.vue` + `templates/Core/backend/agencies/index.html.twig` | slots scoped + override Twig |
+| Vue + Twig | `assets/client/Overrides/backend/agencies/AgenciesApp.vue` + `src/Core/templates/Core/backend/agencies/index.html.twig` (ou legacy `templates/Core/backend/agencies/index.html.twig`) | slots scoped + override Twig |
 
 ---
 
@@ -407,12 +407,15 @@ Le composable Aurora `useAgenciesForm(extraFields)` :
 
 ### 5.2 Override du template Twig
 
-Aurora-core auto-prepend `kernel.project_dir/templates/Core/` devant son propre
-chemin sous le namespace `@Core`. Mettre votre fichier ici suffit à override —
-pas de config Twig supplémentaire.
+Aurora-core auto-prepend deux paths client devant son propre chemin sous
+le namespace `@Core` : `kernel.project_dir/src/Core/templates/Core/` (nouveau,
+recommandé) **et** `kernel.project_dir/templates/Core/` (legacy backward compat).
+Mettre votre fichier dans l'un ou l'autre suffit à override — pas de config
+Twig supplémentaire.
 
 ```twig
-{# aurora-client : templates/Core/backend/agencies/index.html.twig #}
+{# aurora-client : src/Core/templates/Core/backend/agencies/index.html.twig
+   (ou — legacy — templates/Core/backend/agencies/index.html.twig) #}
 {% extends '@Core/backend/layout.html.twig' %}
 
 {% block title %}{{ 'backend.nav.agencies'|trans }} - {{ parent() }}{% endblock %}
@@ -444,7 +447,7 @@ Vérifier que l'override est bien pris :
 
 ```bash
 php bin/console debug:twig "@Core/backend/agencies/index.html.twig"
-# Matched File doit pointer vers templates/Core/backend/agencies/index.html.twig
+# Matched File doit pointer vers src/Core/templates/Core/backend/agencies/index.html.twig (ou legacy templates/Core/...)
 ```
 
 ---
@@ -473,7 +476,7 @@ make start                 # PHP server + Vite dev server
 | Vue table | Slots `extra-headers`, `extra-cells` (scoped sur `agency`) | `<template #extra-cells="{ agency }">` |
 | Vue formulaire | Slot `extra-form-fields` (scoped sur `editForm`, `errors`) | `<template #extra-form-fields="{ editForm, errors }">` |
 | Vue submit | Prop `extraFields` du composable `useAgenciesForm` | `{ <field>: { default, fromEntity } }` |
-| Template Twig | Aurora prepend `kernel.project_dir/templates/Core/` au namespace `@Core` | Drop file at `templates/Core/<path>.html.twig` |
+| Template Twig | Aurora prepend `kernel.project_dir/src/Core/templates/Core/` (nouveau) + `kernel.project_dir/templates/Core/` (legacy) au namespace `@Core` | Drop file at `src/Core/templates/Core/<path>.html.twig` (ou legacy `templates/Core/<path>.html.twig`) |
 
 ---
 

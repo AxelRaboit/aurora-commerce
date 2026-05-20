@@ -83,8 +83,15 @@ class ThemeManager implements ThemeManagerInterface
 
     public function countTemplates(string $slug): int
     {
-        $dir = Path::join($this->projectDir, 'templates/Frontend/themes', $slug);
-        if (!is_dir($dir)) {
+        // Custom themes live at <project>/templates/Frontend/themes/<slug>/;
+        // the bundled 'default' theme ships under src/Core/templates/Frontend/themes/default/.
+        $candidates = [
+            Path::join($this->projectDir, 'templates/Frontend/themes', $slug),
+            Path::join($this->projectDir, 'src/Core/templates/Frontend/themes', $slug),
+        ];
+        $dir = array_find($candidates, fn ($candidate): bool => is_dir($candidate));
+
+        if (null === $dir) {
             return 0;
         }
 

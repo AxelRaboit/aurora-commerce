@@ -344,36 +344,66 @@ class AuroraBundle extends AbstractBundle
             ],
         ]);
 
-        // Client templates take priority over Aurora's. For each Aurora namespace,
-        // we prepend the client's templates/<Namespace> directory if it exists, so
-        // clients can override any Aurora template by mirroring its path under
-        // templates/Core, templates/Module/Editorial, templates/Shared, etc.
+        // Client templates take priority over Aurora's. For each Aurora namespace
+        // we prepend the client-side path(s) first; the bundle path is registered
+        // last as the fallback. Client overrides are recognized in two locations
+        // for each namespace — the new co-located path (mirroring core's layout
+        // since templates were moved under src/) AND the legacy top-level path
+        // (kept for backward compat with existing client projects).
         $projectDir = (string) $builder->getParameter('kernel.project_dir');
-        $moduleNamespacedPaths = [];
-        foreach ($moduleDirs as $moduleDir) {
-            $moduleName = basename($moduleDir);
-            $relative = '/templates/Module/'.$moduleName;
-            if (is_dir($dir.$relative)) {
-                $moduleNamespacedPaths[$moduleName] = $relative;
-            }
-        }
-
-        $namespacedPaths = array_merge(
-            ['Core' => '/templates/Core', 'Shared' => '/templates/Shared'],
-            $moduleNamespacedPaths,
-        );
 
         $twigPaths = [];
-        foreach ($namespacedPaths as $namespace => $relative) {
-            if (is_dir($projectDir.$relative)) {
-                $twigPaths[$projectDir.$relative] = $namespace;
+
+        // 1. Client-side overrides (highest priority — registered first).
+        foreach ($moduleDirs as $moduleDir) {
+            $moduleName = basename($moduleDir);
+            $clientColocated = $projectDir.'/src/Module/'.$moduleName.'/templates';
+            $clientLegacy = $projectDir.'/templates/Module/'.$moduleName;
+            // Don't double-register when $projectDir === $dir (aurora-core dev mode).
+            if ($clientColocated !== $dir.'/src/Module/'.$moduleName.'/templates' && is_dir($clientColocated)) {
+                $twigPaths[$clientColocated] = $moduleName;
+            }
+
+            if (is_dir($clientLegacy)) {
+                $twigPaths[$clientLegacy] = $moduleName;
             }
         }
 
+        if ($projectDir !== $dir) {
+            foreach (['Core', 'Shared'] as $namespace) {
+                $clientColocated = $projectDir.'/src/Core/templates/'.$namespace;
+                $clientLegacy = $projectDir.'/templates/'.$namespace;
+                if (is_dir($clientColocated)) {
+                    $twigPaths[$clientColocated] = $namespace;
+                }
+
+                if (is_dir($clientLegacy)) {
+                    $twigPaths[$clientLegacy] = $namespace;
+                }
+            }
+        }
+
+        // 2. Bundle defaults (lowest priority — registered last).
+        // Null namespace covers both the bundle's src/Core/templates/ (so
+        // relative refs like 'Frontend/themes/default/...' still resolve) and
+        // the legacy <bundle>/templates/ (still hosts templates/bundles/TwigBundle/
+        // for Symfony's third-party override convention).
+        $twigPaths[$dir.'/src/Core/templates'] = null;
         $twigPaths[$dir.'/templates'] = null;
         $twigPaths[$dir.'/src/Core/Frontend/css'] = 'styles';
-        foreach ($namespacedPaths as $namespace => $relative) {
-            $twigPaths[$dir.$relative] = $namespace;
+        foreach (['Core', 'Shared'] as $namespace) {
+            $bundleColocated = $dir.'/src/Core/templates/'.$namespace;
+            if (is_dir($bundleColocated)) {
+                $twigPaths[$bundleColocated] = $namespace;
+            }
+        }
+
+        foreach ($moduleDirs as $moduleDir) {
+            $moduleName = basename($moduleDir);
+            $bundleModuleTemplates = $moduleDir.'/templates';
+            if (is_dir($bundleModuleTemplates)) {
+                $twigPaths[$bundleModuleTemplates] = $moduleName;
+            }
         }
 
         $builder->prependExtensionConfig('twig', [

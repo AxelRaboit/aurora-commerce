@@ -7,9 +7,11 @@ Chaque template frontend est résolu ainsi :
 
 1. Un thème est marqué `active = true` en BDD.
 2. `ThemeResolver::resolve('editorial/home')` cherche d'abord
-   `templates/Frontend/themes/<slug>/editorial/home.html.twig`.
+   `<project>/templates/Frontend/themes/<slug>/editorial/home.html.twig`
+   (les thèmes custom restent côté projet — c'est de la data utilisateur).
 3. S'il existe → ce fichier est utilisé. Sinon → fallback sur
-   `templates/Frontend/themes/default/editorial/home.html.twig`.
+   `Frontend/themes/default/editorial/home.html.twig`, résolu via le null
+   namespace vers le bundle (`vendor/.../src/Core/templates/Frontend/themes/default/`).
 
 Un thème custom n'a donc besoin de ne contenir **que les templates qu'il override**.
 Tout ce qui n'est pas présent dans le thème custom tombe sur `default`.
@@ -19,8 +21,8 @@ Tout ce qui n'est pas présent dans le thème custom tombe sur `default`.
 ## Structure des thèmes
 
 ```
-templates/Frontend/themes/
-  default/                    ← thème de référence livré avec Aurora
+<bundle>/src/Core/templates/Frontend/themes/
+  default/                    ← thème de référence livré avec Aurora (bundle)
     layout.html.twig
     partials/
     auth/
@@ -28,7 +30,9 @@ templates/Frontend/themes/
     ecommerce/
     photo/
     ged/
-  mon-theme/                  ← thème custom (override partiel)
+
+<project>/templates/Frontend/themes/
+  mon-theme/                  ← thème custom client (override partiel)
     layout.html.twig          ← override du layout (nav, footer, head)
     editorial/
       home.html.twig          ← override de la home uniquement

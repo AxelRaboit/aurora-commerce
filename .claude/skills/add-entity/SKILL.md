@@ -169,7 +169,9 @@ Tell the user explicitly at the end:
    `extra-cells` / `extra-form-fields`, composable that accepts an
    `extraFields` option.
 3. **Twig template** — same reason. Reference:
-   `templates/Core/backend/agencies/index.html.twig`.
+   `src/Module/Platform/templates/backend/agencies/index.html.twig`
+   (Agency's namespace is `@Platform`; new entities go under
+   `src/Module/<Module>/templates/backend/<plural>/index.html.twig`).
 4. **ViewBuilder** — the controller imports `<Plural>ViewBuilder` but the
    class itself depends on what data the index view needs.
 5. **Translations** — add the `backend.<plural>.*` keys in

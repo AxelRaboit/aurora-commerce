@@ -83,7 +83,7 @@ services:
 twig:
     paths:
         '%kernel.project_dir%/templates/Core': 'Core'
-        '%kernel.project_dir%/templates/Module/Tracking': 'Tracking'
+        '%kernel.project_dir%/src/Module/Tracking/templates': 'Tracking'
         # ajouter une ligne par module client
 ```
 
@@ -213,7 +213,7 @@ final class MyModuleController extends AbstractController
 ### 3.4 Template Twig
 
 ```twig
-{# templates/Module/MyModule/backend/index.html.twig #}
+{# src/Module/MyModule/templates/backend/index.html.twig #}
 {% extends '@Core/backend/layout.html.twig' %}
 
 {% block title %}{{ 'backend.nav.my_module'|trans }} - {{ parent() }}{% endblock %}
@@ -919,7 +919,7 @@ le plus complet, équivalent Tracking) :
 8. [ ] Serializer : Interface + class + `#[AsAlias]`
 9. [ ] Controller `Backend/` : `final`, type-hint **interfaces**
 10. [ ] `View/<Name>ViewBuilder.php` (helper templates + payloads list)
-11. [ ] Template `templates/Module/<Module>/backend/<entity>/index.html.twig`
+11. [ ] Template `src/Module/<Module>/templates/backend/<entity>/index.html.twig`
 12. [ ] Vue : `assets/client/Module/<Module>/backend/<Name>App.vue`
 13. [ ] Traductions `src/Module/<Module>/translations/messages.{fr,en}.yaml`
 14. [ ] `<Module>FrontendDescriptor.php` (si front public)

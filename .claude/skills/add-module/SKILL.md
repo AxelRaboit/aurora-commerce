@@ -87,7 +87,7 @@ src/Module/<Module>/<Module>Module.php
 src/Module/<Module>/Controller/Backend/<Module>Controller.php
 src/Module/<Module>/translations/messages.fr.yaml
 src/Module/<Module>/translations/messages.en.yaml
-templates/Module/<Module>/backend/index.html.twig
+src/Module/<Module>/templates/backend/index.html.twig
 src/Module/<Module>/assets/backend/<Module>App.vue
 aliases.js                                  # edit: add @<kebab> entry
 ```
@@ -99,7 +99,7 @@ src/Module/<Module>/<Module>Module.php
 src/Module/<Module>/Controller/Backend/<Module>Controller.php
 src/Module/<Module>/translations/messages.fr.yaml
 src/Module/<Module>/translations/messages.en.yaml
-templates/Module/<Module>/backend/index.html.twig
+src/Module/<Module>/templates/backend/index.html.twig
 assets/client/Module/<Module>/backend/<Module>App.vue
 config/packages/twig.yaml                   # edit: add new namespace path
 config/services.yaml                        # edit: add module's translations to $extraSourceDirs of DumpJsTranslationsCommand
@@ -366,7 +366,7 @@ CORE benefits from auto-discovery (cf. `AuroraBundle.php`) :
 |---|---|
 | Symfony service container | `Aurora\: resource: '../src/'` |
 | Tag `aurora.module` | `_instanceof: ModuleInterface` in `config/services.yaml` |
-| Twig `@<Module>` namespace | glob `templates/Module/<Module>/` |
+| Twig `@<Module>` namespace | glob `src/Module/<Module>/templates/` |
 | Translations | glob `src/Module/<Module>/translations/` |
 | Vue components | `import.meta.glob('./Module/**/*.vue')` in `src/Core/Frontend/app.js` |
 
@@ -383,7 +383,7 @@ CLIENT does NOT inherit aurora-core's globs. The skill must edit **3 files**
    ```yaml
    twig:
        paths:
-           '%kernel.project_dir%/templates/Module/<Module>': '<Module>'
+           '%kernel.project_dir%/src/Module/<Module>/templates': '<Module>'
    ```
 3. `config/services.yaml` — append to `DumpJsTranslationsCommand.$extraSourceDirs` :
    ```yaml

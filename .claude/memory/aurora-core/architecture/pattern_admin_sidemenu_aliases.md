@@ -51,8 +51,8 @@ des utilisateurs non-techniques.
   `ApplicationParameterEnum::NavItemAliases` (group `'navigation'`)
 - Twig functions : `SidemenuExtension::getNavSectionAliases()`,
   `getNavItemAliases()`
-- Twig consumers : `templates/Core/backend/layout.html.twig` (sidemenu admin),
-  `templates/Core/backend/profile/sidemenu.html.twig` (preferences page)
+- Twig consumers : `src/Core/templates/Core/backend/layout.html.twig` (sidemenu admin),
+  `src/Module/General/templates/backend/profile/sidemenu.html.twig` (preferences page)
 - Vue composables : `useSidemenuNav.js` (4e param `itemAliases`),
   `useSidemenuPreferences.js` (param `itemAliases` + `resolveItemLabel()`)
 - Settings UI logic : `useNavAliases.js` (composable dédié — la logique

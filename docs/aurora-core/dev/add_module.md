@@ -101,7 +101,7 @@ final class MyModuleController extends AbstractController
 ### 2.3 Template Twig
 
 ```twig
-{# templates/Module/MyModule/backend/index.html.twig #}
+{# src/Module/MyModule/templates/backend/index.html.twig #}
 {% extends '@Core/backend/layout.html.twig' %}
 
 {% block title %}{{ 'backend.nav.my_module'|trans }} - {{ parent() }}{% endblock %}
@@ -121,9 +121,9 @@ final class MyModuleController extends AbstractController
 ```
 
 - Le namespace `@MyModule` est auto-monté par `AuroraBundle` à partir de
-  `templates/Module/<Module>/`. **Templates au top-level, PAS dans
-  `src/Module/<Module>/templates/`** — vérifié dans `AuroraBundle.php` lignes
-  353-382.
+  `src/Module/<Module>/templates/` — templates co-localisés avec le code PHP
+  du module (parallèle à `assets/` et `translations/`). Vérifié dans
+  `AuroraBundle.php` (boucle sur `$moduleDirs`).
 - `vue_component('<module_id_lowercase>/<path>', props)` : le helper Twig
   résout vers le composant Vue chargé via le glob `src/Module/*/assets/**/*.vue`
   (`src/Core/Frontend/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
@@ -187,7 +187,7 @@ Vérifié dans `AuroraBundle.php` (Symfony 7) et `config/services.yaml`.
 |---|---|---|
 | Service Symfony | `Aurora\: resource: '../src/'` | `config/services.yaml:27` |
 | Tag `aurora.module` | `_instanceof: Aurora\Core\Module\Contract\ModuleInterface: tags: [aurora.module]` | `config/services.yaml:30-36` |
-| Namespace Twig `@MyModule` | glob `src/Module/*` + `templates/Module/MyModule/` | `AuroraBundle.php:353-382` |
+| Namespace Twig `@MyModule` | glob `src/Module/*` + `src/Module/MyModule/templates/` | `AuroraBundle.php` (`prependExtension`) |
 | Paths traductions | glob `src/Module/*/translations/` | `AuroraBundle.php:400-403` |
 | `DumpJsTranslationsCommand` | même glob | idem |
 | Composants Vue | glob `import.meta.glob('./Module/**/*.vue')` + lowercase | `src/Core/Frontend/app.js:33,57-65` |
@@ -518,7 +518,7 @@ togglables** (cas le plus complet) :
    cf. [`entity_extensibility_convention.md`](entity_extensibility_convention.md))
 7. [ ] `Controller/Backend/<Name>Controller.php` (type-hint les **interfaces**,
    pas les classes concrètes)
-8. [ ] `templates/Module/<Module>/backend/*.html.twig`
+8. [ ] `src/Module/<Module>/templates/backend/*.html.twig`
 9. [ ] `src/Module/<Module>/assets/backend/*.vue` (avec `extraFields` + slots
    scoped pour extensibilité Vue)
 10. [ ] `aliases.js` : `"@<module-kebab>": moduleAlias("<Module>")`
@@ -550,5 +550,10 @@ configuration tab merging, frontend toggle gating, Vue components glob.
 - **Sub-DTO** (ex. `<Name>TranslationInput` dans `<Name>Input`) : restent
   `final readonly`, **pas instrumentés**. Seul le DTO racine consommé par le
   controller a une factory + interface.
-- **Templates au top-level** : `templates/Module/<Module>/` — **PAS**
-  `src/Module/<Module>/templates/` (l'auto-discovery globe le premier seulement).
+- **Templates co-localisés au module** : `src/Module/<Module>/templates/` —
+  parallèle à `assets/` et `translations/`. L'auto-discovery globe
+  `src/Module/*/templates/` (cf. `AuroraBundle::prependExtension`).
+  Les clients peuvent override soit via le même chemin
+  (`src/Module/<Module>/templates/` côté projet client) soit via le legacy
+  `templates/Module/<Module>/` à la racine du projet client (toujours
+  supporté pour backward compat).

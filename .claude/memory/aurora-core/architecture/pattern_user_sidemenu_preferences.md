@@ -68,7 +68,9 @@ Sert exclusivement à la page de préférences (pour pouvoir un-hide).
 - Vue : `preferences/PreferencesApp.vue` (shell à onglets) +
   `preferences/tabs/SidemenuTab.vue` (1er onglet) +
   `composables/useSidemenuPreferences.js`
-- Twig : `templates/Core/backend/profile/sidemenu.html.twig`
+- Twig : `src/Module/General/templates/backend/profile/sidemenu.html.twig`
+  (le profile vit dans `Module/General` depuis le rollout 0.4 ; le namespace
+  Twig est `@General/backend/profile/sidemenu.html.twig`)
 
 Voir aussi [[pattern_user_scoped_module_access]] pour la couche admin
 (distincte).

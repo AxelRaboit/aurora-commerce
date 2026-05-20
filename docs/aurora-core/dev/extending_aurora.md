@@ -155,24 +155,34 @@ discovered automatically.
 
 ### 5. Twig templates
 
-The client's `templates/` directory is registered in Twig's path. To override
-an Aurora template, mirror its path:
+Aurora ships all its templates co-located under `src/`. To override an
+Aurora template, mirror its logical path in your client project:
 
 ```
-# Aurora template
-vendor/aurora/templates/Core/admin/layout.html.twig
+# Aurora template (bundle side)
+vendor/aurora/src/Core/templates/Core/backend/layout.html.twig
 
-# Client override
-templates/Core/admin/layout.html.twig
+# Client override — two paths are recognized (either works)
+#   1. New (recommended, matches the bundle layout):
+src/Core/templates/Core/backend/layout.html.twig
+#   2. Legacy (kept for backward compat with pre-move client projects):
+templates/Core/backend/layout.html.twig
 ```
 
-To add new templates (not overrides), place them under `templates/Module/<Name>/`
-(if they belong to a feature module) or directly under `templates/`:
+To add new templates (not overrides), place them under
+`src/Module/<Name>/templates/` if they belong to a feature module (co-located
+with the module's PHP code, like `assets/` and `translations/`) or under
+`src/Core/templates/` for cross-cutting templates:
 
 ```twig
-{# templates/Module/Contracts/invoice.html.twig #}
+{# src/Module/Contracts/templates/invoice.html.twig #}
 {% extends '@Core/backend/layout.html.twig' %}
 ```
+
+> Client backward compat: existing client projects that store overrides under
+> `templates/Module/<Name>/` or `templates/Core/`, `templates/Shared/` still
+> resolve — Aurora registers those legacy paths too for any namespace it
+> knows about.
 
 ### 6. Custom entities & migrations
 
