@@ -137,27 +137,12 @@ final class MakeModuleCommand extends Command
         // 5. Extra inputs
         $label = $io->ask('Display label (free text — used in nav + settings)', $derived['module']);
 
-        $validIcons = $this->loadValidIcons();
-        $defaultIcon = in_array('package', $validIcons, true) ? 'package' : ($validIcons[0] ?? 'package');
-        $icon = $io->ask(
-            sprintf('Sidemenu icon (kebab-case Lucide name — must be in ICON_MAP; %d registered)', count($validIcons)),
-            $defaultIcon,
-            function (string $value) use ($validIcons): string {
-                $value = mb_trim($value);
-                if ([] === $validIcons) {
-                    // Couldn't read ICON_MAP — let it pass; the user will fix if needed.
-                    return $value;
-                }
-
-                if (!in_array($value, $validIcons, true)) {
-                    sort($validIcons);
-
-                    throw new RuntimeException(sprintf("Icon \"%s\" is not in ICON_MAP. Pick one of:\n  %s\n(or extend ICON_MAP in src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js first).", $value, implode(', ', $validIcons)));
-                }
-
-                return $value;
-            },
-        );
+        // Icon is hardcoded to `flame` at scaffold time. The user changes it
+        // manually in `<X>Module.php` post-scaffold if they want a different
+        // glyph. Available icons live in
+        // `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`
+        // (ICON_MAP). An icon not in the map renders the FileText fallback.
+        $icon = 'flame';
 
         $priority = (int) $io->ask('NavSection priority (lower = higher in sidemenu)', '60');
 
@@ -345,47 +330,6 @@ final class MakeModuleCommand extends Command
         if (null !== $patched && $patched !== $content) {
             $this->fs->dumpFile($aliasesPath, $patched);
         }
-    }
-
-    /**
-     * Parse the ICON_MAP keys from
-     * `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`
-     * (core repo or vendor copy depending on context). Returns the list of
-     * valid kebab-case icon identifiers, or [] if the file can't be parsed
-     * (we fail open in that case — the user's icon string will be passed
-     * through and they'll see a fallback icon at runtime).
-     *
-     * @return list<string>
-     */
-    private function loadValidIcons(): array
-    {
-        $candidates = [
-            $this->projectDir.'/src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js',
-            $this->projectDir.'/vendor/axelraboit/aurora/src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js',
-        ];
-        $jsPath = array_find($candidates, fn ($candidate): bool => is_file($candidate));
-
-        if (null === $jsPath) {
-            return [];
-        }
-
-        $content = (string) file_get_contents($jsPath);
-        if (!preg_match('/const\s+ICON_MAP\s*=\s*\{([^}]+)\}/s', $content, $blockMatch)) {
-            return [];
-        }
-
-        // Extract each map key. Keys can be quoted ("layout-dashboard") or
-        // bare identifiers (folder). Both forms appear in the same map.
-        $icons = [];
-        if (preg_match_all('/^\s*"([a-z][a-z0-9-]*)"\s*:/m', $blockMatch[1], $quoted)) {
-            $icons = [...$icons, ...$quoted[1]];
-        }
-
-        if (preg_match_all('/^\s*([a-z][a-z0-9-]*)\s*:/m', $blockMatch[1], $bare)) {
-            $icons = [...$icons, ...$bare[1]];
-        }
-
-        return array_values(array_unique($icons));
     }
 
     /**
