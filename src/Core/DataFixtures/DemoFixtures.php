@@ -973,9 +973,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 }
 
                 $fieldsByLabel[$fieldDef['fr']] = $field;
-                if (isset($fieldDef['key'])) {
-                    $fieldsByKey[$fieldDef['key']] = $field;
-                }
+                $fieldsByKey[$fieldDef['key']] = $field;
             }
 
             // Flush to get field IDs — needed for conditions AND submissions
@@ -987,7 +985,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     continue;
                 }
 
-                if (!isset($fieldDef['key'], $fieldsByKey[$fieldDef['key']])) {
+                if (!isset($fieldsByKey[$fieldDef['key']])) {
                     continue;
                 }
 
