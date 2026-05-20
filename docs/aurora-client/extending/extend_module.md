@@ -306,22 +306,30 @@ parent + champs custom. C'est la couche la plus simple.
 Le composant Aurora `<Plural>App.vue` expose une **prop `extraFields`** + 3
 slots scoped (`extra-headers`, `extra-cells`, `extra-form-fields`). Côté
 client, on ne réécrit pas le composant — on le **wrap** dans
-`assets/client/Overrides/`.
+**`src/Overrides/`** (et non dans `src/Module/<X>/assets/`).
+
+> **Pourquoi pas dans le module ?** Le glob `src/Module/*/assets/**/*.vue`
+> expose les composants avec un préfixe (`vue_component('platform/backend/...')`).
+> Mais Aurora rend `vue_component('backend/agencies/AgenciesApp')` **sans
+> préfixe** — si ton wrapper a un préfixe, le shadow échoue silencieusement.
+> Le glob dédié `src/Overrides/**/*.vue` expose sans préfixe ; c'est ce qui
+> permet le shadow direct. Détail :
+> [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 Exemple détaillé (slots, composables, gotchas `editForm`) :
 [`../dev/assets_vue.md`](../dev/assets_vue.md) et la mémoire dédiée
 [`pattern_extend_vue.md`](../../../.claude/memory/aurora-client/pattern_extend_vue.md).
 
 Squelette d'override Vue —
-`assets/client/Overrides/backend/agencies/AgenciesApp.vue` :
+`src/Overrides/backend/agencies/AgenciesApp.vue` :
 
 ```vue
 <script setup>
-import CoreAgenciesApp from '@core/backend/agencies/AgenciesApp.vue';
+import AuroraAgenciesApp from '@platform/backend/agencies/AgenciesApp.vue';
 </script>
 
 <template>
-  <CoreAgenciesApp :extra-fields="{ code: { default: '', fromEntity: (agency) => agency.code ?? '' } }">
+  <AuroraAgenciesApp :extra-fields="{ code: { default: '', fromEntity: (agency) => agency.code ?? '' } }">
     <template #extra-headers>
       <th>{{ $t('core.agencies.code') }}</th>
     </template>
@@ -331,7 +339,7 @@ import CoreAgenciesApp from '@core/backend/agencies/AgenciesApp.vue';
     <template #extra-form-fields="{ editForm, errors }">
       <AppInput v-model="editForm.code" :error="errors.code" :label="$t('core.agencies.code')" />
     </template>
-  </CoreAgenciesApp>
+  </AuroraAgenciesApp>
 </template>
 ```
 
@@ -613,8 +621,10 @@ suivant (cf. memory
 4. Manager + `#[AsAlias]` sur le manager + override `create<X>()` +
    `applyInput()` (`parent::` !) + `auditPayload()` (spread `parent::` !).
 5. Serializer + `#[AsAlias]` + spread `parent::serialize()`.
-6. Vue : composant override sous `assets/client/Overrides/...` avec
-   `extraFields` + 3 slots.
+6. Vue : composant override sous `src/Overrides/...` (pas dans
+   `src/Module/<X>/assets/` — cf.
+   [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md))
+   avec `extraFields` + 3 slots.
 7. Twig : override sous `src/Core/templates/Core/...` (nouveau) ou
    `templates/Core/...` (legacy backward compat) si besoin.
 8. `make cc` (cache:clear, indispensable après `#[AsAlias]`).

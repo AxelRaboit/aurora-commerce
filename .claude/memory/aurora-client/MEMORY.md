@@ -44,6 +44,9 @@ client.
 
 - [convention_module_structure.md](convention_module_structure.md) — tout
   dans `src/Module/` (y compris extensions Aurora), chemin miroir du namespace
+- [convention_overrides_vs_modules.md](convention_overrides_vs_modules.md) —
+  3 buckets sous `src/` (Module / Overrides / Module PHP-only) ; pourquoi
+  l'override Vue d'Agency vit dans `src/Overrides/`, pas dans `src/Module/Platform/Agency/assets/`
 - [convention_table_naming.md](convention_table_naming.md) — préfixer les
   tables `app_` et séquences `seq_app_*` (jamais `core_` ni `client_`)
 

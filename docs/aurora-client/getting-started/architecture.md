@@ -105,16 +105,20 @@ sidemenu admin, le système de permissions et le routing frontend.
 que ses propres modules :
 
 ```
-assets/client/Module/Tracking/admin/ProjectsApp.vue
+src/Module/Tracking/assets/admin/ProjectsApp.vue
 → vue_component('tracking/admin/ProjectsApp')
 ```
 
-Les overrides de composants Aurora vivent sous `assets/client/Overrides/` :
+Les overrides de composants Aurora vivent sous **`src/Overrides/`** :
 
 ```
-assets/client/Overrides/backend/agencies/AgenciesApp.vue
-→ remplace le composant Aurora 'core/backend/agencies/AgenciesApp'
+src/Overrides/backend/agencies/AgenciesApp.vue
+→ remplace le composant Aurora 'backend/agencies/AgenciesApp' (sans préfixe — shadow direct)
 ```
+
+> Convention complète des 3 buckets (`src/Module/<X>/`, `src/Overrides/`,
+> `src/Module/<X>/` PHP-only) et leur logique de glob :
+> [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 ---
 

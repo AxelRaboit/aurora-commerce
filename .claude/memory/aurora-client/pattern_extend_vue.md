@@ -20,10 +20,14 @@ les slots. Mise à jour d'aurora-core = pas de conflit.
 
 ### 1. Wrapper Vue côté client
 
+Le wrapper vit dans **`src/Overrides/`**, pas dans `src/Module/<X>/assets/`.
+Voir [[convention_overrides_vs_modules]] pour le rationale (glob sans
+préfixe de module pour pouvoir shadow le composant Aurora).
+
 ```vue
-<!-- src/Core/Frontend/backend/agencies/AppAgenciesApp.vue (côté client) -->
+<!-- src/Overrides/backend/agencies/AgenciesApp.vue (côté client) -->
 <script setup>
-import AgenciesApp from '@core/backend/agencies/AgenciesApp.vue';
+import AuroraAgenciesApp from '@platform/backend/agencies/AgenciesApp.vue';
 import AppInput from '@/shared/components/form/AppInput.vue';
 
 const extraFields = {
@@ -35,7 +39,7 @@ const extraFields = {
 </script>
 
 <template>
-    <AgenciesApp v-bind="$attrs" :extra-fields="extraFields">
+    <AuroraAgenciesApp v-bind="$attrs" :extra-fields="extraFields">
         <template #extra-headers>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
                 Code
@@ -55,14 +59,18 @@ const extraFields = {
                 :error="errors.code ?? ''"
             />
         </template>
-    </AgenciesApp>
+    </AuroraAgenciesApp>
 </template>
 ```
 
-### 2. Stimulus controller / page Twig pointant vers le wrapper
+### 2. Aucun wiring Twig nécessaire
 
-Côté Twig admin, pointer le mount Vue vers `AppAgenciesApp` au lieu de
-`AgenciesApp` (override Twig automatique via le namespace prepend).
+Le glob `@client/src/Overrides/**/*.vue` expose ton wrapper **sans
+préfixe de module** (cf. [[convention_overrides_vs_modules]]). Le
+`vue_component('backend/agencies/AgenciesApp')` appelé par le template
+Aurora `@Platform/backend/agencies/index.html.twig` résout d'abord ton
+wrapper, puis seulement le composant Aurora en fallback. Pas de Twig
+override à écrire.
 
 ### 3. Hydratation côté backend
 

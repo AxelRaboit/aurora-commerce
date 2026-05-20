@@ -29,7 +29,7 @@ Aurora\Module\Platform\Agency\…  →  src/Module/Platform/Agency/…
 | DTO d'entrée | `src/Module/Platform/Agency/Dto/AgencyInput.php` + `AgencyInputFactory.php` | `extends`, `#[AsAlias]` |
 | Manager | `src/Module/Platform/Agency/Manager/AgencyManager.php` | `extends`, `#[AsAlias]` |
 | Serializer | `src/Module/Platform/Agency/Serializer/AgencySerializer.php` | `extends`, `#[AsAlias]` |
-| Vue + Twig | `assets/client/Overrides/backend/agencies/AgenciesApp.vue` + `src/Core/templates/Core/backend/agencies/index.html.twig` (ou legacy `templates/Core/backend/agencies/index.html.twig`) | slots scoped + override Twig |
+| Vue + Twig | `src/Overrides/backend/agencies/AgenciesApp.vue` + `src/Core/templates/Core/backend/agencies/index.html.twig` (ou legacy `templates/Core/backend/agencies/index.html.twig`) | slots scoped + override Twig |
 
 ---
 
@@ -337,14 +337,14 @@ Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/src/Core/Frontend/ap
 
 - `@client/Module/<Name>/**/*.vue` — vraies features client, exposées comme
   `<name>/<rest>` dans `vue_component()` (ex: `tracking/backend/dashboard/...`)
-- `@client/Overrides/**/*.vue` — wrappers autour des composants Aurora,
+- `@client/src/Overrides/**/*.vue` — wrappers autour des composants Aurora,
   exposés sans préfixe module : `<rest>` (ex: `backend/agencies/AgenciesApp`)
 
 Le wrapper Agency est un **override** (il enveloppe `AuroraAgenciesApp`),
 pas une feature métier — donc il va sous `Overrides/`.
 
 ```vue
-<!-- aurora-client : assets/client/Overrides/backend/agencies/AgenciesApp.vue -->
+<!-- aurora-client : src/Overrides/backend/agencies/AgenciesApp.vue -->
 <script setup>
 import AuroraAgenciesApp from "@core/backend/agencies/AgenciesApp.vue";
 import AppInput from "@/shared/components/form/AppInput.vue";
@@ -441,7 +441,7 @@ La seule ligne qui change vs le template Aurora :
 `vue_component('backend/agencies/AgenciesApp', …)`.
 
 Le préfixe `core/` (Aurora) tombe car le wrapper est exposé sans préfixe par
-le glob `@client/Overrides/**/*.vue`.
+le glob `@client/src/Overrides/**/*.vue`.
 
 Vérifier que l'override est bien pris :
 

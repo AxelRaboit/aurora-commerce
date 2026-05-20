@@ -27,15 +27,18 @@ Les composants sont enregistrés automatiquement par Aurora selon leur chemin :
 
 | Fichier | Identifiant vue_component |
 |---|---|
-| `assets/client/Module/Tracking/admin/ProjectsApp.vue` | `tracking/admin/ProjectsApp` |
-| `assets/client/Overrides/backend/agencies/AgenciesApp.vue` | `core/backend/agencies/AgenciesApp` |
+| `src/Module/Tracking/assets/admin/ProjectsApp.vue` | `tracking/admin/ProjectsApp` |
+| `src/Overrides/backend/agencies/AgenciesApp.vue` | `backend/agencies/AgenciesApp` *(sans préfixe — shadow direct des composants Aurora)* |
 
 Dans Twig :
 
 ```twig
 {{ vue_component('tracking/admin/ProjectsApp') }}
-{{ vue_component('core/backend/agencies/AgenciesApp') }}
+{{ vue_component('backend/agencies/AgenciesApp') }}
 ```
+
+> Convention complète des 3 buckets sous `src/` :
+> [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 ---
 
@@ -195,18 +198,20 @@ export default {
 ## Overrides de composants Aurora
 
 Pour remplacer un composant Aurora existant, créer un fichier sous
-`assets/client/Overrides/` en miroir du chemin Aurora :
+**`src/Overrides/`** en miroir du chemin Aurora :
 
 ```
-# Composant Aurora
-vendor/axelraboit/aurora/src/Core/Frontend/backend/agencies/AgenciesApp.vue
+# Composant Aurora (depuis le refactor co-localisé)
+vendor/axelraboit/aurora/src/Module/Platform/assets/backend/agencies/AgenciesApp.vue
                                  ↓
 # Override client
-assets/client/Overrides/backend/agencies/AgenciesApp.vue
+src/Overrides/backend/agencies/AgenciesApp.vue
 ```
 
-Le chemin `vue_component` reste identique — Aurora choisit automatiquement
-le composant client s'il existe.
+Le chemin `vue_component('backend/agencies/AgenciesApp')` reste identique —
+le glob `@client/src/Overrides/**/*.vue` expose ton wrapper **sans préfixe
+de module**, ce qui permet le shadow direct du composant Aurora. Détail :
+[`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
 ---
 
