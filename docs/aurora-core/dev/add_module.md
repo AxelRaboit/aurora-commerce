@@ -120,11 +120,22 @@ make translation                             # dump JSON traductions pour vue-i1
 make cc                                      # clear cache (Twig + Symfony)
 ```
 
-### 2.5 Quand NE PAS utiliser la commande
+### 2.5 Limites de la commande
 
-- **Entité CRUD** (cas 3) : utiliser `/add-entity` après le scaffold du module
-- **Sous-feature d'un module existant** (Vault.Safe-style) : utiliser `/add-submodule`
-- **Refondre un module existant** : la commande refuse si `src/Module/<X>/` existe déjà ; édition manuelle nécessaire
+- **Refondre un module existant** : la commande refuse si `src/Module/<X>/`
+  existe déjà — édition manuelle nécessaire (ou suppression du module avant
+  de relancer le scaffold).
+
+### 2.6 Étapes complémentaires après scaffold
+
+Le maker ne couvre **que** Cas 1, 2, 4, 5 — pas le contenu métier. Pour
+aller plus loin :
+
+- **Ajouter une entité CRUD** (cas 3) : lancer `/add-entity` (skill Claude
+  Code) en ciblant le module fraîchement scaffolddé.
+- **Ajouter une sous-feature togglable** à un module existant (Vault.Safe +
+  Vault.PasswordGenerator) : lancer `/add-submodule` plutôt que de
+  re-scaffolder.
 
 ---
 
@@ -285,7 +296,7 @@ Vérifié dans `AuroraBundle.php` (Symfony 7) et `config/services.yaml`.
 | Service Symfony | `Aurora\: resource: '../src/'` | `config/services.yaml:27` |
 | Tag `aurora.module` | `_instanceof: Aurora\Core\Module\Contract\ModuleInterface: tags: [aurora.module]` | `config/services.yaml:30-36` |
 | Namespace Twig `@MyModule` | glob `src/Module/*` + `src/Module/MyModule/templates/` | `AuroraBundle.php` (`prependExtension`) |
-| Paths traductions | glob `src/Module/*/translations/` | `AuroraBundle.php:400-403` |
+| Paths traductions | glob `src/Module/*/translations/` | `AuroraBundle.php` (`prependExtension`, bloc `framework.translator.paths`) |
 | `DumpJsTranslationsCommand` | même glob | idem |
 | Composants Vue | glob `import.meta.glob('./Module/**/*.vue')` + lowercase | `src/Core/Frontend/app.js:33,57-65` |
 
@@ -602,10 +613,18 @@ Choisir une icône, ajouter l'import + l'entrée `'kebab-name': IconComponent`.
 Pour un module **avec entités CRUD + frontend + settings + sous-features
 togglables** (cas le plus complet) :
 
-1. [ ] `src/Module/<Module>/<Module>Module.php` (`ModuleInterface` + optionnellement
-   `ModuleToggleProviderInterface`)
-2. [ ] `src/Module/<Module>/Service/<Module>Context.php` (si plusieurs sous-features)
-3. [ ] Ajouter les cases dans `src/Core/Setting/Enum/ModuleParameterEnum.php`
+> **Raccourci** : `php bin/console aurora:make:module <Module>` couvre les
+> étapes 1, 2, 7, 8, 9, 11 (et 12-13 avec `--with-frontend` / `--with-settings`).
+> Cf. section 2 ci-dessus pour les détails. La checklist ci-dessous reste la
+> référence si tu construis à la main ou complètes après scaffold.
+
+1. [ ] `src/Module/<Module>/<Module>Module.php` (`ModuleInterface` +
+   `ModuleToggleProviderInterface` par défaut)
+2. [ ] `src/Module/<Module>/<Module>Context.php` (à la racine du folder
+   du module — pas sous `Service/` depuis 0.4 ; cf.
+   [`pattern_core_submodules_split.md`](../../../.claude/memory/aurora-core/architecture/pattern_core_submodules_split.md))
+3. [ ] Ajouter les cases dans
+   `src/Module/Configuration/Setting/Enum/ModuleParameterEnum.php`
    (avec cascade graph parent/enfant)
 4. [ ] Entités : `Entity/<Name>Interface` + `Abstract<Name>` (MappedSuperclass) +
    `<Name>` non-`final` avec sequence `seq_core_<entity>_id`

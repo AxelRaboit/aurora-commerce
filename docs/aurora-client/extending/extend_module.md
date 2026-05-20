@@ -615,7 +615,8 @@ suivant (cf. memory
 5. Serializer + `#[AsAlias]` + spread `parent::serialize()`.
 6. Vue : composant override sous `assets/client/Overrides/...` avec
    `extraFields` + 3 slots.
-7. Twig : override sous `templates/Core/...` si besoin.
+7. Twig : override sous `src/Core/templates/Core/...` (nouveau) ou
+   `templates/Core/...` (legacy backward compat) si besoin.
 8. `make cc` (cache:clear, indispensable après `#[AsAlias]`).
 9. Test admin : créer une entité, vérifier que le champ persiste, s'audite
    et est sérialisé.

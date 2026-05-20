@@ -199,13 +199,22 @@ make translation                             # dump JSON traductions pour vue-i1
 make cc                                      # clear cache (Twig + Symfony)
 ```
 
-### 3.6 Quand NE PAS utiliser la commande
+### 3.6 Limites de la commande
 
-- **Entité CRUD** (cas 3 dans ce doc) : utiliser `/add-entity` après le
-  scaffold initial du module
-- **Sous-feature** d'un module existant : utiliser `/add-submodule`
 - **Refondre un module existant** : la commande refuse si
-  `src/Module/<X>/` existe déjà
+  `src/Module/<X>/` existe déjà — édition manuelle nécessaire (ou
+  supprimer le module avant de relancer le scaffold).
+
+### 3.7 Étapes complémentaires après scaffold
+
+Le maker ne couvre **que** Cas 1, 2, 4, 5 — pas le contenu métier. Pour
+aller plus loin :
+
+- **Ajouter une entité CRUD** (cas 3 dans ce doc) : lancer `/add-entity`
+  (skill Claude Code) en ciblant le module fraîchement scaffolddé.
+- **Ajouter une sous-feature togglable** à un module existant (pattern
+  Vault.Safe + Vault.PasswordGenerator) : lancer `/add-submodule` plutôt
+  que de re-scaffolder.
 
 ---
 
@@ -329,12 +338,14 @@ identique au core.
 ### 4.5 Composant Vue
 
 ```
-assets/client/Module/MyModule/backend/MyModuleApp.vue
+src/Module/MyModule/assets/backend/MyModuleApp.vue
 ```
 
-⚠️ Notez `assets/client/Module/...` (pas `assets/Module/...`). Le `client/`
-distingue les composants du projet client de ceux du vendor aurora-core,
-chargés depuis `vendor/axelraboit/aurora/src/Module/<Module>/assets/`.
+Le Vue est **co-localisé** avec le code PHP du module sous `src/Module/<X>/assets/`,
+en miroir du layout aurora-core (depuis aurora-client commit `9d77f67` —
+`refactor(assets): co-locate client extensions under src/, drop assets/`).
+Vite résout l'alias `@<kebab>` vers ce dossier via `aliases.js` (vendor) +
+`jsconfig.json` (auto-généré par `make sync-jsconfig`).
 
 Utiliser systématiquement les composants `App*` partagés de
 `@shared/components/` plutôt que `<button>` / `<input>` bruts.
@@ -1004,11 +1015,17 @@ Mémoire référence : [`pattern_configuration_tab_provider.md`](../../../.claud
 Pour un module client **avec entités CRUD + toggles + frontend public** (cas
 le plus complet, équivalent Tracking) :
 
-1. [ ] §2 — `services.yaml` `_instanceof` + `App\Module\` resource, `twig.yaml`
-   path, `DumpJsTranslationsCommand` `$extraSourceDirs` à jour
-2. [ ] `<Module>Module.php` (4 méthodes `ModuleInterface` + optionnellement
-   `ModuleToggleProviderInterface`)
-3. [ ] `Service/<Module>Context.php` (si plusieurs sous-features)
+> **Raccourci** : `php bin/console aurora:make:module <Module> --with-frontend --with-settings`
+> couvre les étapes 2, 3, 11, 12, 13, 14, 15 + auto-patche les 3 fichiers de
+> config de l'étape 1 (twig.yaml + framework.yaml + services.yaml). Cf.
+> section 3 plus haut.
+
+1. [ ] §2 — `services.yaml` `_instanceof` + `App\Module\` resource (one-time
+   per project ; les paths twig/translations sont auto-patchés par le maker)
+2. [ ] `<Module>Module.php` (4 méthodes `ModuleInterface` +
+   `ModuleToggleProviderInterface` par défaut)
+3. [ ] `<Module>Context.php` (à la racine du folder du module — pas sous
+   `Service/` depuis 0.4)
 4. [ ] Entité `Entity/<Name>Interface` + `<Name>` non-final avec sequence
    `seq_app_<module>_<entity>_id`
 5. [ ] DTO 5 couches : Input + Interface + Factory + Interface
@@ -1018,7 +1035,7 @@ le plus complet, équivalent Tracking) :
 9. [ ] Controller `Backend/` : `final`, type-hint **interfaces**
 10. [ ] `View/<Name>ViewBuilder.php` (helper templates + payloads list)
 11. [ ] Template `src/Module/<Module>/templates/backend/<entity>/index.html.twig`
-12. [ ] Vue : `assets/client/Module/<Module>/backend/<Name>App.vue`
+12. [ ] Vue : `src/Module/<Module>/assets/backend/<Name>App.vue` (co-localisé)
 13. [ ] Traductions `src/Module/<Module>/translations/messages.{fr,en}.yaml`
 14. [ ] `<Module>FrontendDescriptor.php` (si front public)
 15. [ ] `Setting/<Module>ConfigurationTabProvider.php` (si settings)
