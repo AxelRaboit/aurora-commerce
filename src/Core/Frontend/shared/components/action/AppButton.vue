@@ -1,7 +1,7 @@
 <script setup>
 import { Loader2 } from "lucide-vue-next";
 
-defineProps({
+const props = defineProps({
     type: { type: String, default: 'button' },
     variant: { type: String, default: 'primary' },
     size: { type: String, default: 'md' },
@@ -15,6 +15,34 @@ defineProps({
      */
     active: { type: Boolean, default: false },
 });
+
+/**
+ * Click handler that fixes the common modal-footer-submit pattern: a
+ * `type="submit"` button placed in `<AppModalFooter>` lives OUTSIDE the
+ * `<form>` it logically belongs to (form sits in the modal's default
+ * slot, footer in `#footer` — they are siblings). Per HTML spec, a
+ * submit button without a form owner does nothing on click. To keep
+ * the natural authoring pattern working, manually call `requestSubmit()`
+ * on the form located in the same modal/dialog scope.
+ *
+ * No-op when the button is already inside a `<form>` (native browser
+ * handling takes over) or when `type !== "submit"`.
+ */
+function onClick(event) {
+    if (props.type !== 'submit') return;
+    if (props.disabled || props.loading) return;
+
+    const button = event.currentTarget;
+    if (button.form) return; // browser will submit natively
+
+    // Look for the closest dialog/modal scope; fall back to document.
+    const scope = button.closest('[role="dialog"]') ?? document;
+    const form = scope.querySelector('form');
+    if (form) {
+        event.preventDefault();
+        form.requestSubmit(button);
+    }
+}
 
 const base = 'inline-flex items-center justify-center gap-2 rounded-lg transition duration-150 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
 
@@ -64,6 +92,7 @@ const sizes = {
         :type="type"
         :disabled="disabled || loading"
         :class="[base, variants[variant] ?? variants.primary, sizes[size] ?? sizes.md, active ? activeStyles[variant] ?? '' : '']"
+        v-on:click="onClick"
     >
         <Loader2 v-if="loading" class="animate-spin h-4 w-4" :stroke-width="2" />
         <slot />
