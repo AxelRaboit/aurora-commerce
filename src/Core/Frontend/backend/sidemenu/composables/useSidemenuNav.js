@@ -34,6 +34,7 @@ import {
     KanbanSquare,
     KeyRound,
     Lock,
+    Flame,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -69,6 +70,7 @@ const ICON_MAP = {
     "kanban-square": KanbanSquare,
     "key-round": KeyRound,
     vault: Lock,
+    flame: Flame,
 };
 
 export function useSidemenuNav(

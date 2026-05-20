@@ -136,7 +136,29 @@ final class MakeModuleCommand extends Command
 
         // 5. Extra inputs
         $label = $io->ask('Display label (free text — used in nav + settings)', $derived['module']);
-        $icon = $io->ask('Sidemenu icon (kebab-case Lucide name, e.g. flame, key-round)', 'flame');
+
+        $validIcons = $this->loadValidIcons();
+        $defaultIcon = in_array('package', $validIcons, true) ? 'package' : ($validIcons[0] ?? 'package');
+        $icon = $io->ask(
+            sprintf('Sidemenu icon (kebab-case Lucide name — must be in ICON_MAP; %d registered)', count($validIcons)),
+            $defaultIcon,
+            function (string $value) use ($validIcons): string {
+                $value = mb_trim($value);
+                if ([] === $validIcons) {
+                    // Couldn't read ICON_MAP — let it pass; the user will fix if needed.
+                    return $value;
+                }
+
+                if (!in_array($value, $validIcons, true)) {
+                    sort($validIcons);
+
+                    throw new RuntimeException(sprintf("Icon \"%s\" is not in ICON_MAP. Pick one of:\n  %s\n(or extend ICON_MAP in src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js first).", $value, implode(', ', $validIcons)));
+                }
+
+                return $value;
+            },
+        );
+
         $priority = (int) $io->ask('NavSection priority (lower = higher in sidemenu)', '60');
 
         $vars = [
@@ -180,10 +202,14 @@ final class MakeModuleCommand extends Command
 
         // 8bis. Client-only auto-wiring: aurora-core's AuroraBundle can't
         // auto-discover client modules (its glob targets vendor/.../src/Module/*),
-        // so we patch the two Symfony config files the client needs.
+        // so we patch the three Symfony config files the client needs.
         if ('client' === $context) {
             if ($this->appendTwigPath($derived)) {
                 $created[] = 'config/packages/twig.yaml (edited — added @'.$derived['module'].' namespace)';
+            }
+
+            if ($this->appendTranslatorPath($derived)) {
+                $created[] = 'config/packages/framework.yaml (edited — added '.$derived['module'].' translations to framework.translator.paths)';
             }
 
             if ($this->appendTranslationsSourceDir($derived)) {
@@ -322,6 +348,47 @@ final class MakeModuleCommand extends Command
     }
 
     /**
+     * Parse the ICON_MAP keys from
+     * `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`
+     * (core repo or vendor copy depending on context). Returns the list of
+     * valid kebab-case icon identifiers, or [] if the file can't be parsed
+     * (we fail open in that case — the user's icon string will be passed
+     * through and they'll see a fallback icon at runtime).
+     *
+     * @return list<string>
+     */
+    private function loadValidIcons(): array
+    {
+        $candidates = [
+            $this->projectDir.'/src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js',
+            $this->projectDir.'/vendor/axelraboit/aurora/src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js',
+        ];
+        $jsPath = array_find($candidates, fn ($candidate): bool => is_file($candidate));
+
+        if (null === $jsPath) {
+            return [];
+        }
+
+        $content = (string) file_get_contents($jsPath);
+        if (!preg_match('/const\s+ICON_MAP\s*=\s*\{([^}]+)\}/s', $content, $blockMatch)) {
+            return [];
+        }
+
+        // Extract each map key. Keys can be quoted ("layout-dashboard") or
+        // bare identifiers (folder). Both forms appear in the same map.
+        $icons = [];
+        if (preg_match_all('/^\s*"([a-z][a-z0-9-]*)"\s*:/m', $blockMatch[1], $quoted)) {
+            $icons = [...$icons, ...$quoted[1]];
+        }
+
+        if (preg_match_all('/^\s*([a-z][a-z0-9-]*)\s*:/m', $blockMatch[1], $bare)) {
+            $icons = [...$icons, ...$bare[1]];
+        }
+
+        return array_values(array_unique($icons));
+    }
+
+    /**
      * Add the new module's Twig namespace to `<client>/config/packages/twig.yaml`.
      * Idempotent: skips if the line is already present. Returns true on
      * actual write (used for reporting in `Files created`).
@@ -353,6 +420,46 @@ final class MakeModuleCommand extends Command
         $blockEnd = $matches[1][1] + mb_strlen($matches[1][0]);
         $patched = mb_substr($content, 0, $blockEnd).$newLine."\n".mb_substr($content, $blockEnd);
         $this->fs->dumpFile($twigYaml, $patched);
+
+        return true;
+    }
+
+    /**
+     * Add the new module's translations dir to `framework.translator.paths`
+     * in `<client>/config/packages/framework.yaml`. This is what makes
+     * Symfony's Translator (used by Twig `|trans`) pick up the new module's
+     * `messages.<locale>.yaml` files. Without it, `{{ 'foo.bar'|trans }}`
+     * renders the key verbatim instead of the translated label.
+     *
+     * Note: AuroraBundle::prependExtension already adds aurora-core's own
+     * module translations via glob, but it can't see client modules. Each
+     * client module must register its path explicitly here.
+     *
+     * @param array{module: string, snake: string, kebab: string, camel: string} $d
+     */
+    private function appendTranslatorPath(array $d): bool
+    {
+        $frameworkYaml = $this->projectDir.'/config/packages/framework.yaml';
+        if (!is_file($frameworkYaml)) {
+            return false;
+        }
+
+        $content = (string) file_get_contents($frameworkYaml);
+        $needle = sprintf('/src/Module/%s/translations', $d['module']);
+        if (str_contains($content, $needle)) {
+            return false;
+        }
+
+        $newLine = sprintf("            - '%%kernel.project_dir%%/src/Module/%s/translations'", $d['module']);
+
+        // Anchor on `translator: paths:` and append after the last list item.
+        if (!preg_match('/(translator:\s*\n\s+paths:\s*\n(?:\s{12}-\s+.+\n)+)/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
+            return false;
+        }
+
+        $blockEnd = $matches[1][1] + mb_strlen($matches[1][0]);
+        $patched = mb_substr($content, 0, $blockEnd).$newLine."\n".mb_substr($content, $blockEnd);
+        $this->fs->dumpFile($frameworkYaml, $patched);
 
         return true;
     }
