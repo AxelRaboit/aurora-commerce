@@ -5,6 +5,13 @@ puis par topic.
 
 ## Index
 
+### Outillage / tooling
+
+- [Commande CLI `aurora:make:entity`](make_entity_cli.md) — pendant de
+  `aurora:make:module` pour scaffold une entité CRUD (5 couches Sylius) ;
+  élimine ~700 lignes de boilerplate identique d'une entité à l'autre.
+  Staged en 3 phases (PHP → Vue → migration auto).
+
 ### Roadmap modules
 
 Liste des modules à venir, classés par priorité et impact.
