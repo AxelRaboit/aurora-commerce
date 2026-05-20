@@ -457,7 +457,7 @@ final class MakeModuleCommand extends Command
                 $d['snake']
             );
             $hints[] = '  ⚠ ModuleParameterEnum has match() expressions — also add an arm in each match (getLabel, getDescription, getDefaultValue, getType, getGroup) for the new case, else PHPStan will complain.';
-            $hints[] = 'Then run: make sf CMD="aurora:application-parameter"  # sync the new enum case into core_settings';
+            $hints[] = '  ↳ once the enum case is in place, the `make module-sync` step below will sync it into core_settings via aurora:application-parameter.';
         }
 
         // Public frontend wiring (core)
@@ -485,12 +485,8 @@ final class MakeModuleCommand extends Command
             );
         }
 
-        // Standard post-gen
-        $hints[] = 'make sf CMD="aurora:privileges:sync"  # register the permission';
-        $hints[] = 'make sf CMD="aurora:menus:sync"        # register the NavItem';
-        $hints[] = 'make translation                       # dump JSON translations (regenerates locales/generated/<lang>.json)';
-        $hints[] = 'make build                             # rebuild Vite bundle so vue-i18n picks up the new JSON (skip if dev server is running with HMR)';
-        $hints[] = 'make cc                                # clear cache';
+        // Standard post-gen — one command runs the 5 sync/build steps in order.
+        $hints[] = 'make module-sync                       # registers permissions + menus + params, dumps JSON translations, rebuilds Vite bundle';
 
         // CRUD entity hint
         $hints[] = '';

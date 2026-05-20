@@ -233,6 +233,16 @@ sync-params: ## Synchronise application parameters (creates missing, deletes obs
 sync-menus: ## Create missing menus for registered locations (primary, footer, …)
 	$(CONSOLE) aurora:menus:sync
 
+sync-privileges: ## Purge obsolete privileges from users after module changes
+	$(CONSOLE) aurora:privileges:sync
+
+module-sync: ## After scaffolding a new module: sync privileges + menus + params, dump JSON translations, rebuild Vite bundle. Run once after `aurora:make:module`.
+	make sync-privileges
+	make sync-menus
+	make sync-params
+	make translation
+	make build
+
 translation: ## Dump Symfony YAML translations to src/Core/Frontend/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
 	$(CONSOLE) cache:clear

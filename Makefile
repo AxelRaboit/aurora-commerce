@@ -262,6 +262,13 @@ sync-privileges: ## Purge obsolete privileges from users after module changes
 sync-sequences: ## Resync all PostgreSQL sequences to MAX(id)+1 (run after fixture loads or data imports)
 	$(CONSOLE) aurora:sequences:resync
 
+module-sync: ## After scaffolding a new module: sync privileges + menus + params, dump JSON translations, rebuild Vite bundle. Run once after `aurora:make:module`.
+	make sync-privileges
+	make sync-menus
+	make sync-params
+	make translation
+	make build
+
 translation: ## Dump Symfony YAML translations to src/Core/Frontend/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
 	$(CONSOLE) cache:clear
