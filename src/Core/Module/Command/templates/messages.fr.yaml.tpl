@@ -14,4 +14,4 @@ backend:
 
 {{MODULE_ID}}:
     title: {{MODULE_LABEL}}
-    subtitle: To do — edit assets/.../{{MODULE}}App.vue
+    subtitle: TODO — edit {{MODULE}}App.vue
