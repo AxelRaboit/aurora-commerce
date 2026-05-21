@@ -19,6 +19,8 @@ backend:
           use: Use Markdown notes
         block:
           use: Use Block notes
+        post_it:
+          use: Use Post-it notes
   nav:
     sections:
       notes: Notes
@@ -26,6 +28,8 @@ backend:
     notes_markdown_description: Obsidian-style Markdown note-taking (wiki-links, graph)
     notes_block: Block notes
     notes_block_description: Notion-style block-based note-taking
+    notes_post_it: Post-it notes
+    notes_post_it_description: Short sticky-note style notes, visual board organization
   audit:
     actions:
       notes_markdown:
@@ -156,6 +160,10 @@ notes:
       delete_failed: Could not delete the note.
       reorder_failed: Could not reorder the notes.
       reorder_cycle: Cannot move a note under one of its own descendants.
+  post_it:
+    title: Post-it notes
+    placeholder: Post-it module under construction. Entity and screens will be scaffolded via /add-entity.
+
   block:
     title: Block notes
     save: Save

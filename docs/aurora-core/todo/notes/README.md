@@ -1,12 +1,13 @@
 # Notes — sous-modules
 
-Le module `src/Module/Notes/` regroupe deux sous-modules de prise de
+Le module `src/Module/Notes/` regroupe trois sous-modules de prise de
 notes, partageant l'infra (arborescence, tags, recherche, images,
-chiffrement, ownership) mais avec deux techniques de stockage et deux
-UX distinctes :
+chiffrement, ownership) mais avec des techniques de stockage et des UX
+distinctes :
 
 - **Markdown** — éditeur texte markdown + wiki-links + graph
 - **Block** — éditeur block-based (JSON typé) via EditorJS
+- **Post-it** — notes courtes type sticky-notes, organisation visuelle
 
 ## État
 
@@ -14,10 +15,7 @@ UX distinctes :
 |---|---|
 | Markdown | 🟢 **Terminé** — production-ready. Voir `src/Module/Notes/Markdown/` et `src/Module/Notes/assets/backend/markdown/`. |
 | Block    | 🟢 **Terminé** — implémentation complète (Entity + Manager + Serializer + Controller + assets EditorJS). Voir `src/Module/Notes/Block/` et `src/Module/Notes/assets/backend/block/`. |
-
-> **Statut global module Notes** : 🟢 Core, plus rien à faire ici. Ce dossier
-> reste utile comme **doc historique d'architecture** (justifications des
-> choix entités séparées, partage encryption/images/tree, etc.).
+| Post-it  | 🟡 **En cours** — squelette scaffoldé (Controller index + template + Vue placeholder + NavItem + permission). Entité + DTO + Manager + Serializer à générer via `/add-entity`. Voir `src/Module/Notes/PostIt/`. |
 
 ## Architecture commune (référence pour le sous-module Block)
 

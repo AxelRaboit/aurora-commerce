@@ -21,6 +21,7 @@ final readonly class NotesModule implements ModuleInterface
         return [
             new NavPermission('notes.markdown.use'),
             new NavPermission('notes.block.use'),
+            new NavPermission('notes.post_it.use'),
         ];
     }
 
@@ -41,6 +42,13 @@ final readonly class NotesModule implements ModuleInterface
                     'layers',
                     requiredPrivilege: 'notes.block.use',
                     descriptionKey: 'backend.nav.notes_block_description',
+                ),
+                new NavItem(
+                    'backend_notes_post_it',
+                    'backend.nav.notes_post_it',
+                    'sticky-note',
+                    requiredPrivilege: 'notes.post_it.use',
+                    descriptionKey: 'backend.nav.notes_post_it_description',
                 ),
             ], priority: 25),
         ];

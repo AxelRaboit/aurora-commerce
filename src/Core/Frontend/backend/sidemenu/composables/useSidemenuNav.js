@@ -35,6 +35,7 @@ import {
     KeyRound,
     Lock,
     Flame,
+    StickyNote,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -71,6 +72,7 @@ const ICON_MAP = {
     "key-round": KeyRound,
     vault: Lock,
     flame: Flame,
+    "sticky-note": StickyNote,
 };
 
 export function useSidemenuNav(

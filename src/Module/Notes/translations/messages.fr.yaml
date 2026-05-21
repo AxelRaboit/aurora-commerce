@@ -19,6 +19,8 @@ backend:
           use: Utiliser les notes Markdown
         block:
           use: Utiliser les notes Block
+        post_it:
+          use: Utiliser les notes Post-it
   nav:
     sections:
       notes: Notes
@@ -26,6 +28,8 @@ backend:
     notes_markdown_description: Prise de notes Markdown façon Obsidian (wiki-links, graphe)
     notes_block: Notes Block
     notes_block_description: Prise de notes par blocs façon Notion
+    notes_post_it: Notes Post-it
+    notes_post_it_description: Notes courtes type post-it, organisation visuelle sur tableau
   audit:
     actions:
       notes_markdown:
@@ -157,6 +161,10 @@ notes:
       delete_failed: Impossible de supprimer la note.
       reorder_failed: Impossible de réordonner les notes.
       reorder_cycle: Impossible de déplacer une note sous l'une de ses sous-notes.
+  post_it:
+    title: Notes Post-it
+    placeholder: Module Post-it en construction. L'entité et les écrans seront ajoutés via /add-entity.
+
   block:
     title: Notes Block
     save: Enregistrer
