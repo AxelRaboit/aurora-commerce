@@ -266,6 +266,108 @@ describe("usePostItNotesPage", () => {
         });
     });
 
+    describe("search / filteredNotes", () => {
+        const fixture = [
+            {
+                id: 1,
+                title: "Shopping",
+                content: "milk and eggs",
+                color: "#FFEB3B",
+            },
+            {
+                id: 2,
+                title: "Ideas",
+                content: "post-it brainstorm",
+                color: "#90CAF9",
+            },
+            { id: 3, title: "TODO", content: "fix the bug", color: "#A5D6A7" },
+            { id: 4, title: null, content: "rent reminder", color: "#FFCC80" },
+        ];
+
+        async function setup() {
+            apiMethods.list.mockResolvedValue(okResponse({ notes: fixture }));
+            const page = usePostItNotesPage(props);
+            await page.loadNotes();
+            return page;
+        }
+
+        it("searchQuery defaults to empty and filters yield the full list", async () => {
+            const { searchQuery, filteredNotes, isFiltering, hasNoMatches } =
+                await setup();
+
+            expect(searchQuery.value).toBe("");
+            expect(filteredNotes.value).toHaveLength(4);
+            expect(isFiltering.value).toBe(false);
+            expect(hasNoMatches.value).toBe(false);
+        });
+
+        it("matches titles case-insensitively", async () => {
+            const { searchQuery, filteredNotes } = await setup();
+
+            searchQuery.value = "shopping";
+
+            expect(filteredNotes.value.map((n) => n.id)).toEqual([1]);
+        });
+
+        it("matches content substrings as well as titles", async () => {
+            const { searchQuery, filteredNotes } = await setup();
+
+            // "bug" lives in the content of note 3 — not in any title.
+            searchQuery.value = "bug";
+
+            expect(filteredNotes.value.map((n) => n.id)).toEqual([3]);
+        });
+
+        it("matches against null titles without crashing", async () => {
+            const { searchQuery, filteredNotes } = await setup();
+
+            // Note 4 has no title — querying its content must still succeed.
+            searchQuery.value = "rent";
+
+            expect(filteredNotes.value.map((n) => n.id)).toEqual([4]);
+        });
+
+        it("trims surrounding whitespace before matching", async () => {
+            const { searchQuery, filteredNotes, isFiltering } = await setup();
+
+            searchQuery.value = "   ";
+
+            // Whitespace-only query is treated as no query at all.
+            expect(isFiltering.value).toBe(false);
+            expect(filteredNotes.value).toHaveLength(4);
+        });
+
+        it("isFiltering flips when the query has at least one non-space char", async () => {
+            const { searchQuery, isFiltering } = await setup();
+
+            searchQuery.value = "x";
+
+            expect(isFiltering.value).toBe(true);
+        });
+
+        it("hasNoMatches becomes true when the query rules out everything", async () => {
+            const { searchQuery, hasNoMatches } = await setup();
+
+            searchQuery.value = "definitely-not-in-any-note";
+
+            expect(hasNoMatches.value).toBe(true);
+        });
+
+        it("hasNoMatches stays false when the underlying list is empty", async () => {
+            // No notes at all → the empty-state UI takes over, not the
+            // no-matches UI. The composable must keep them mutually exclusive.
+            apiMethods.list.mockResolvedValue(okResponse({ notes: [] }));
+            const { searchQuery, hasNoMatches, isEmpty, loadNotes } =
+                usePostItNotesPage(props);
+            await loadNotes();
+
+            searchQuery.value = "anything";
+
+            expect(hasNoMatches.value).toBe(false);
+            expect(isEmpty.value).toBe(true);
+        });
+    });
+
     describe("setColor / togglePalette", () => {
         it("setColor mutates the note color, closes the palette, schedules save", async () => {
             vi.useFakeTimers();

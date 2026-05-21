@@ -176,6 +176,8 @@ notes:
     content_placeholder: Notez ce que vous voulez…
     drag: Glisser pour déplacer
     resize: Glisser pour redimensionner
+    search_placeholder: Rechercher dans les post-it…
+    no_matches: 'Aucun post-it ne correspond à « {query} ».'
     color: Changer la couleur
     delete: Supprimer
     cancel: Annuler

@@ -1,10 +1,12 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Plus, Trash2, GripVertical, Palette, X } from "lucide-vue-next";
+import { Plus, Trash2, GripVertical, Palette, X, SearchX } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import {
@@ -32,6 +34,10 @@ const {
     palettePickerOpenFor,
     pendingDelete,
     deleting,
+    searchQuery,
+    filteredNotes,
+    isFiltering,
+    hasNoMatches,
     createNote,
     scheduleSave,
     persistMove,
@@ -49,15 +55,32 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
 
 <template>
     <div class="p-4 lg:p-6 space-y-4">
-        <div class="flex items-center justify-between">
-            <p class="text-sm text-muted">
+        <AppListToolbar>
+            <AppSearchInput
+                v-model="searchQuery"
+                :placeholder="t('notes.post_it.search_placeholder')"
+            />
+            <template #actions>
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    v-on:click="createNote"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t("notes.post_it.create") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
+
+        <p class="text-sm text-muted">
+            <template v-if="isFiltering">
+                {{ filteredNotes.length }} / {{ notes.length }}
+            </template>
+            <template v-else>
                 {{ notes.length }} {{ notes.length === 1 ? t("notes.post_it.count_one") : t("notes.post_it.count_other") }}
-            </p>
-            <AppButton variant="primary" size="sm" v-on:click="createNote">
-                <Plus class="w-4 h-4" :stroke-width="2.5" />
-                {{ t("notes.post_it.create") }}
-            </AppButton>
-        </div>
+            </template>
+        </p>
 
         <div
             class="post-it-board flex flex-col gap-3 md:block md:relative md:rounded-xl md:border md:border-line md:bg-surface-2/30 md:overflow-auto md:min-h-[70vh] md:gap-0"
@@ -80,8 +103,16 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
                 </AppButton>
             </div>
 
+            <div
+                v-else-if="hasNoMatches"
+                class="py-8 text-center md:absolute md:inset-0 md:py-0 md:flex md:flex-col md:items-center md:justify-center text-muted text-sm flex flex-col items-center gap-2"
+            >
+                <SearchX class="w-8 h-8 text-muted/50" :stroke-width="1.5" />
+                <p>{{ t("notes.post_it.no_matches", { query: searchQuery }) }}</p>
+            </div>
+
             <article
-                v-for="note in notes"
+                v-for="note in filteredNotes"
                 :key="note.id"
                 class="post-it rounded-md shadow-md flex flex-col text-black/85 placeholder:text-black/35 md:absolute"
                 :style="{

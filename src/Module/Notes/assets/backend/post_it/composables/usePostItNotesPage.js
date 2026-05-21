@@ -34,6 +34,7 @@ export function usePostItNotesPage(props) {
     const palettePickerOpenFor = ref(null);
     const pendingDelete = ref(null);
     const deleting = ref(false);
+    const searchQuery = ref("");
 
     const saveTimers = new Map();
 
@@ -147,6 +148,30 @@ export function usePostItNotesPage(props) {
 
     const isEmpty = computed(() => !loading.value && notes.value.length === 0);
 
+    /**
+     * Notes filtered by the live search query — matches title or content
+     * via case-insensitive substring. An empty query passes everything
+     * through unchanged so consumers can always render this collection.
+     */
+    const filteredNotes = computed(() => {
+        const q = searchQuery.value.trim().toLowerCase();
+        if ("" === q) return notes.value;
+        return notes.value.filter((note) => {
+            const title = (note.title ?? "").toLowerCase();
+            const content = (note.content ?? "").toLowerCase();
+            return title.includes(q) || content.includes(q);
+        });
+    });
+
+    const isFiltering = computed(() => searchQuery.value.trim() !== "");
+
+    const hasNoMatches = computed(
+        () =>
+            !loading.value &&
+            notes.value.length > 0 &&
+            filteredNotes.value.length === 0,
+    );
+
     onMounted(loadNotes);
 
     return {
@@ -156,6 +181,10 @@ export function usePostItNotesPage(props) {
         palettePickerOpenFor,
         pendingDelete,
         deleting,
+        searchQuery,
+        filteredNotes,
+        isFiltering,
+        hasNoMatches,
         loadNotes,
         createNote,
         scheduleSave,

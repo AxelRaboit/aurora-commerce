@@ -175,6 +175,8 @@ notes:
     content_placeholder: Jot down anything…
     drag: Drag to move
     resize: Drag to resize
+    search_placeholder: Search post-its…
+    no_matches: 'No post-it matches "{query}".'
     color: Change color
     delete: Delete
     cancel: Cancel
