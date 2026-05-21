@@ -156,6 +156,7 @@ export function usePostItNotesPage(props) {
         palettePickerOpenFor,
         pendingDelete,
         deleting,
+        loadNotes,
         createNote,
         scheduleSave,
         persistMove,
