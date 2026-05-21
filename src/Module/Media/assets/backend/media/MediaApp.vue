@@ -492,18 +492,18 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                     </td>
                                     <td class="px-3 py-2">
                                         <div class="flex items-center gap-2">
-                                            <AppImage
-                                                v-if="item.isImage"
-                                                :src="item.thumbnailUrl ?? item.url"
-                                                :alt="item.alt ?? ''"
-                                                object-fit="cover"
-                                                rounded="rounded"
-                                                class="w-8 h-8 shrink-0"
-                                            />
-                                            <div v-else-if="item.isPdf" class="w-8 h-8 shrink-0 flex items-center justify-center bg-red-500/10 rounded">
+                                            <div v-if="item.isImage" class="w-10 h-10 shrink-0">
+                                                <AppImage
+                                                    :src="item.thumbnailUrl ?? item.url"
+                                                    :alt="item.alt ?? ''"
+                                                    object-fit="cover"
+                                                    rounded="rounded"
+                                                />
+                                            </div>
+                                            <div v-else-if="item.isPdf" class="w-10 h-10 shrink-0 flex items-center justify-center bg-red-500/10 rounded">
                                                 <FileText class="w-4 h-4 text-red-400" :stroke-width="1.5" />
                                             </div>
-                                            <div v-else class="w-8 h-8 shrink-0 flex items-center justify-center bg-surface-2 rounded">
+                                            <div v-else class="w-10 h-10 shrink-0 flex items-center justify-center bg-surface-2 rounded">
                                                 <Film class="w-4 h-4 text-muted" :stroke-width="1.5" />
                                             </div>
                                             <div class="min-w-0">
