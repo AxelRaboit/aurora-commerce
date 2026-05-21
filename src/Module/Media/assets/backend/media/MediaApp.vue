@@ -372,7 +372,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <template v-else>
                     <div v-if="childFolders.length && !searchQuery" class="space-y-2">
                         <p class="text-xs text-muted uppercase tracking-wide px-1">{{ t("backend.media.subfolders") }}</p>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                             <button
                                 v-for="folder in childFolders"
                                 :key="`folder-${folder.id}`"
@@ -392,7 +392,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
 
                     <p v-if="displayedMedia.length && childFolders.length && !searchQuery" class="text-xs text-muted uppercase tracking-wide px-1 mt-4">{{ t("backend.media.files") }}</p>
 
-                    <div v-if="displayedMedia.length && viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                    <div v-if="displayedMedia.length && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                         <div
                             v-for="item in displayedMedia"
                             :key="item.id"
