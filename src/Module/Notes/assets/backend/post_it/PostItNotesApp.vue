@@ -55,6 +55,15 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
 
 <template>
     <div class="p-4 lg:p-6 space-y-4">
+        <p class="text-sm text-muted">
+            <template v-if="isFiltering">
+                {{ filteredNotes.length }} / {{ notes.length }}
+            </template>
+            <template v-else>
+                {{ notes.length }} {{ notes.length === 1 ? t("notes.post_it.count_one") : t("notes.post_it.count_other") }}
+            </template>
+        </p>
+
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchQuery"
@@ -72,15 +81,6 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
                 </AppButton>
             </template>
         </AppListToolbar>
-
-        <p class="text-sm text-muted">
-            <template v-if="isFiltering">
-                {{ filteredNotes.length }} / {{ notes.length }}
-            </template>
-            <template v-else>
-                {{ notes.length }} {{ notes.length === 1 ? t("notes.post_it.count_one") : t("notes.post_it.count_other") }}
-            </template>
-        </p>
 
         <div
             class="post-it-board flex flex-col gap-3 md:block md:relative md:rounded-xl md:border md:border-line md:bg-surface-2/30 md:overflow-auto md:min-h-[70vh] md:gap-0"
