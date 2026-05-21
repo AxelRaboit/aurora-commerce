@@ -11,7 +11,6 @@ import List from "@editorjs/list";
 import Quote from "@editorjs/quote";
 import Code from "@editorjs/code";
 import Delimiter from "@editorjs/delimiter";
-import Checklist from "@editorjs/checklist";
 import Table from "@editorjs/table";
 import Embed from "@editorjs/embed";
 import Image from "@editorjs/image";
@@ -172,15 +171,11 @@ onMounted(async () => {
                 inlineToolbar: true,
             },
 
-            // Listes
+            // Listes (unordered, ordered, checklist — fournis par @editorjs/list v2)
             list: {
                 class: List,
                 inlineToolbar: true,
                 config: { defaultStyle: "unordered" },
-            },
-            checklist: {
-                class: Checklist,
-                inlineToolbar: true,
             },
 
             // Médias

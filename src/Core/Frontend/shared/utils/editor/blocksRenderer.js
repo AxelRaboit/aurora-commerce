@@ -27,8 +27,27 @@ function renderBlock(block) {
         }
 
         case "list": {
-            const tag = block.data?.style === "ordered" ? "ol" : "ul";
-            const items = (block.data?.items ?? [])
+            const style = block.data?.style;
+            const rawItems = block.data?.items ?? [];
+            if (style === "checklist") {
+                const items = rawItems
+                    .map((item) => {
+                        const text =
+                            typeof item === "string"
+                                ? item
+                                : (item?.content ?? "");
+                        const checked =
+                            item?.meta?.checked ?? item?.checked ?? false;
+                        return `<li class="checklist-item${checked ? " checked" : ""}">
+                    <span class="check">${checked ? "✓" : "○"}</span>
+                    <span>${text}</span>
+                </li>`;
+                    })
+                    .join("");
+                return `<ul class="checklist">${items}</ul>`;
+            }
+            const tag = style === "ordered" ? "ol" : "ul";
+            const items = rawItems
                 .map(
                     (item) =>
                         `<li>${typeof item === "string" ? item : (item?.content ?? "")}</li>`,
@@ -37,6 +56,8 @@ function renderBlock(block) {
             return `<${tag}>${items}</${tag}>`;
         }
 
+        // Legacy: blocks saved with the standalone @editorjs/checklist package
+        // before it was unified into @editorjs/list v2.
         case "checklist": {
             const items = (block.data?.items ?? [])
                 .map(
