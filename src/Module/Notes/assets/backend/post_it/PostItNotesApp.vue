@@ -60,14 +60,19 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
         </div>
 
         <div
-            class="post-it-board relative rounded-xl border border-line bg-surface-2/30 overflow-auto"
-            style="min-height: 70vh;"
+            class="post-it-board flex flex-col gap-3 md:block md:relative md:rounded-xl md:border md:border-line md:bg-surface-2/30 md:overflow-auto md:min-h-[70vh] md:gap-0"
         >
-            <div v-if="loading" class="absolute inset-0 flex items-center justify-center text-muted text-sm">
+            <div
+                v-if="loading"
+                class="py-8 text-center md:absolute md:inset-0 md:py-0 md:flex md:items-center md:justify-center text-muted text-sm"
+            >
                 {{ t("notes.post_it.loading") }}
             </div>
 
-            <div v-else-if="isEmpty" class="absolute inset-0 flex flex-col items-center justify-center text-muted text-sm gap-2">
+            <div
+                v-else-if="isEmpty"
+                class="py-8 text-center md:absolute md:inset-0 md:py-0 md:flex md:flex-col md:items-center md:justify-center text-muted text-sm flex flex-col items-center gap-2"
+            >
                 <p>{{ t("notes.post_it.empty") }}</p>
                 <AppButton variant="dashed" size="sm" v-on:click="createNote">
                     <Plus class="w-3.5 h-3.5" :stroke-width="2.5" />
@@ -78,7 +83,7 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
             <article
                 v-for="note in notes"
                 :key="note.id"
-                class="post-it absolute rounded-md shadow-md flex flex-col text-black/85 placeholder:text-black/35"
+                class="post-it rounded-md shadow-md flex flex-col text-black/85 placeholder:text-black/35 md:absolute"
                 :style="{
                     left: `${note.positionX}px`,
                     top: `${note.positionY}px`,
@@ -91,11 +96,14 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
                     <AppIconButton
                         color="on-light"
                         :title="t('notes.post_it.drag')"
-                        class="cursor-grab touch-none"
+                        class="hidden md:flex cursor-grab touch-none"
                         v-on:pointerdown="startDrag($event, note)"
                     >
                         <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
                     </AppIconButton>
+                    <span class="md:hidden" />
+                    <!-- empty spacer keeps the right-side group right-aligned via justify-between on mobile too -->
+
 
                     <div class="flex items-center gap-0.5">
                         <div class="relative">
@@ -150,7 +158,7 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
                 />
 
                 <div
-                    class="post-it-resize-handle absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize touch-none"
+                    class="post-it-resize-handle hidden md:block absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize touch-none"
                     :title="t('notes.post_it.resize')"
                     v-on:pointerdown="startResize($event, note)"
                 />
@@ -209,5 +217,21 @@ const { startResize } = usePostItResize({ onResizeCommit: persistResize });
         transparent 80%
     );
     border-bottom-right-radius: 0.375rem;
+}
+
+/* Mobile: kill the inline absolute positioning and fixed dimensions, stack
+   the post-its as full-width cards. Override via !important because the
+   inline `style` attribute carries higher CSS specificity than utilities.
+   Above `md` the inline coordinates take effect and the free-form board is
+   restored. */
+@media (max-width: 767.98px) {
+    .post-it {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 180px;
+    }
 }
 </style>
