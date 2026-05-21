@@ -191,7 +191,7 @@ export function useSidemenuNav(
         }
         return item.activeColor === "rose"
             ? "text-muted group-hover:text-rose-400 transition-colors"
-            : "text-muted";
+            : "text-muted group-hover:text-accent-400 transition-colors";
     }
 
     onMounted(() => {
