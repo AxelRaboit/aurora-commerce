@@ -121,6 +121,8 @@ use Aurora\Module\Notes\Block\Entity\BlockNote;
 use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
+use Aurora\Module\Notes\PostIt\Entity\PostItNote;
+use Aurora\Module\Notes\PostIt\Entity\PostItNoteInterface;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
 use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocumentInterface;
 use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplate;
@@ -313,6 +315,7 @@ class AuroraBundle extends AbstractBundle
                     MountPointInterface::class => MountPoint::class,
                     MarkdownNoteInterface::class => MarkdownNote::class,
                     BlockNoteInterface::class => BlockNote::class,
+                    PostItNoteInterface::class => PostItNote::class,
                     ConversationInterface::class => Conversation::class,
                     MessageInterface::class => Message::class,
                     AssistantMountPointInterface::class => AssistantMountPoint::class,
