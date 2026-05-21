@@ -12,5 +12,12 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('notes/backend/post_it/PostItNotesApp', {}) }} class="flex-1 min-w-0"></div>
+<div {{ vue_component('notes/backend/post_it/PostItNotesApp', {
+    listPath: listPath,
+    createPath: createPath,
+    updatePath: updatePath,
+    movePath: movePath,
+    resizePath: resizePath,
+    deletePath: deletePath,
+}) }} class="flex-1 min-w-0"></div>
 {% endblock %}

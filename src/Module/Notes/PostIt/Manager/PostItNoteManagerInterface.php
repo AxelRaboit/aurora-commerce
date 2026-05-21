@@ -21,4 +21,10 @@ interface PostItNoteManagerInterface
      * applyInput path to avoid touching encrypted columns on every drag.
      */
     public function move(PostItNoteInterface $note, int $positionX, int $positionY): void;
+
+    /**
+     * Update only the size of a note (resize handle drag). Same rationale
+     * as {@see self::move()} — skips encrypted columns on every frame.
+     */
+    public function resize(PostItNoteInterface $note, int $width, int $height): void;
 }

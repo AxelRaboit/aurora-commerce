@@ -163,7 +163,22 @@ notes:
       reorder_cycle: Impossible de déplacer une note sous l'une de ses sous-notes.
   post_it:
     title: Notes Post-it
-    placeholder: Module Post-it en construction. L'entité et les écrans seront ajoutés via /add-entity.
+    create: Nouveau post-it
+    create_first: Créer mon premier post-it
+    loading: Chargement…
+    empty: Aucun post-it pour le moment.
+    count_one: post-it
+    count_other: post-it
+    title_placeholder: Titre…
+    content_placeholder: Notez ce que vous voulez…
+    drag: Glisser pour déplacer
+    resize: Glisser pour redimensionner
+    color: Changer la couleur
+    delete: Supprimer
+    cancel: Annuler
+    confirm_delete: Supprimer définitivement ce post-it ?
+    errors:
+      invalid_color: Couleur invalide (attendu hex à 6 caractères, ex : #FFEB3B).
 
   block:
     title: Notes Block

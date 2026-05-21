@@ -13,6 +13,15 @@ const props = defineProps({
     error: { type: String, default: '' },
     required: { type: Boolean, default: false },
     toggleable: { type: Boolean, default: false },
+    /**
+     * Visual flavor. `default` ships the full form-field chrome (border,
+     * surface background, label slot, error message). `ghost` strips
+     * everything to a transparent, label-less input that inherits its
+     * parent's text color — for inline editing inside cards, post-its,
+     * editable table cells, etc. The consumer is expected to size /
+     * decorate it via the merged `class` attribute.
+     */
+    variant: { type: String, default: 'default' }, // default | ghost
 });
 
 defineEmits(['update:modelValue']);
@@ -34,7 +43,18 @@ defineExpose({
 </script>
 
 <template>
-    <div class="flex flex-col gap-1.5">
+    <input
+        v-if="variant === 'ghost'"
+        ref="inputEl"
+        :type="inputType"
+        :name="name || undefined"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :required="required"
+        class="block w-full bg-transparent border-0 focus:outline-none focus:ring-0 text-inherit"
+        v-on:input="$emit('update:modelValue', $event.target.value)"
+    >
+    <div v-else class="flex flex-col gap-1.5">
         <AppFieldLabel :label="label" :required="required" />
         <div class="relative">
             <div v-if="$slots.prefix" class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted">

@@ -13,13 +13,30 @@ defineProps({
     rows: { type: Number, default: 3 },
     mono: { type: Boolean, default: false },
     maxlength: { type: Number, default: null },
+    /**
+     * Visual flavor — same semantics as {@link AppInput.vue}. `ghost`
+     * yields a transparent, label-less textarea that inherits the
+     * parent's text color (useful for inline editing inside cards,
+     * post-its, editable rows…). Sizing / decoration is the consumer's
+     * job via the merged `class` attribute.
+     */
+    variant: { type: String, default: 'default' }, // default | ghost
 });
 
 defineEmits(['update:modelValue']);
 </script>
 
 <template>
-    <div class="flex flex-col gap-1.5">
+    <textarea
+        v-if="variant === 'ghost'"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :rows="rows"
+        :maxlength="maxlength"
+        class="block w-full bg-transparent border-0 focus:outline-none focus:ring-0 text-inherit resize-none"
+        v-on:input="$emit('update:modelValue', $event.target.value)"
+    />
+    <div v-else class="flex flex-col gap-1.5">
         <AppFieldLabel :label="label" :required="required" />
         <textarea
             :value="modelValue"

@@ -15,6 +15,11 @@ const colors = {
     rose:    { text: "text-secondary hover:text-rose-400",    bg: "hover:bg-rose-500/10" },
     emerald: { text: "text-secondary hover:text-emerald-400", bg: "hover:bg-emerald-500/10" },
     amber:   { text: "text-secondary hover:text-amber-400",   bg: "hover:bg-surface-2" },
+    // For use on bright, non-Aurora surfaces (post-it sticky notes, light
+    // overlays, custom-colored cards). Aurora tokens (text-secondary etc.)
+    // assume a dark surface and become invisible on bright backgrounds —
+    // this variant ships a dark-on-light palette tuned for that case.
+    "on-light": { text: "text-black/50 hover:text-black/80",  bg: "hover:bg-black/10" },
 };
 
 const sizes = {

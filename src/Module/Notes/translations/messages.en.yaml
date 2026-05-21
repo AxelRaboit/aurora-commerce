@@ -162,7 +162,22 @@ notes:
       reorder_cycle: Cannot move a note under one of its own descendants.
   post_it:
     title: Post-it notes
-    placeholder: Post-it module under construction. Entity and screens will be scaffolded via /add-entity.
+    create: New post-it
+    create_first: Create my first post-it
+    loading: Loading…
+    empty: No post-it yet.
+    count_one: post-it
+    count_other: post-its
+    title_placeholder: Title…
+    content_placeholder: Jot down anything…
+    drag: Drag to move
+    resize: Drag to resize
+    color: Change color
+    delete: Delete
+    cancel: Cancel
+    confirm_delete: Permanently delete this post-it?
+    errors:
+      invalid_color: Invalid color (expected 6-char hex, e.g. #FFEB3B).
 
   block:
     title: Block notes

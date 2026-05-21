@@ -39,4 +39,12 @@ interface PostItNoteInterface extends TimestampableInterface
     public function getPositionY(): int;
 
     public function setPositionY(int $positionY): static;
+
+    public function getWidth(): int;
+
+    public function setWidth(int $width): static;
+
+    public function getHeight(): int;
+
+    public function setHeight(int $height): static;
 }

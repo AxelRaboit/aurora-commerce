@@ -13,6 +13,7 @@ use Aurora\Module\Notes\PostIt\Entity\PostItNoteInterface;
 use Aurora\Module\Notes\PostIt\Manager\PostItNoteManagerInterface;
 use Aurora\Module\Notes\PostIt\Repository\PostItNoteRepository;
 use Aurora\Module\Notes\PostIt\Serializer\PostItNoteSerializerInterface;
+use Aurora\Module\Notes\PostIt\View\PostItNotesViewBuilder;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,12 +35,13 @@ final class PostItNotesController extends AbstractController
         private readonly PostItNoteRepository $repository,
         private readonly PostItNoteInputFactoryInterface $inputFactory,
         private readonly PayloadValidator $payloadValidator,
+        private readonly PostItNotesViewBuilder $viewBuilder,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        return $this->render('@Notes/backend/post_it/index.html.twig');
+        return $this->render('@Notes/backend/post_it/index.html.twig', $this->viewBuilder->indexView());
     }
 
     #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
@@ -74,7 +76,7 @@ final class PostItNotesController extends AbstractController
         return $this->jsonSuccess(['note' => $this->serializer->serialize($note)]);
     }
 
-    #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Post->value])]
+    #[Route('/{id}/update', name: '_update', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     public function update(int $id, Request $request): JsonResponse
     {
         /** @var CoreUserInterface $user */
@@ -97,7 +99,7 @@ final class PostItNotesController extends AbstractController
         return $this->jsonSuccess(['note' => $this->serializer->serialize($note)]);
     }
 
-    #[Route('/{id}/move', name: '_move', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Post->value])]
+    #[Route('/{id}/move', name: '_move', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     public function move(int $id, Request $request): JsonResponse
     {
         /** @var CoreUserInterface $user */
@@ -117,7 +119,27 @@ final class PostItNotesController extends AbstractController
         return $this->jsonSuccess(['note' => $this->serializer->serialize($note)]);
     }
 
-    #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Post->value])]
+    #[Route('/{id}/resize', name: '_resize', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
+    public function resize(int $id, Request $request): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $note = $this->repository->findOneByUserAndId($user, $id);
+        if (!$note instanceof PostItNoteInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $data = $this->decodeJson($request);
+        $width = isset($data['width']) ? (int) $data['width'] : $note->getWidth();
+        $height = isset($data['height']) ? (int) $data['height'] : $note->getHeight();
+
+        $this->manager->resize($note, $width, $height);
+
+        return $this->jsonSuccess(['note' => $this->serializer->serialize($note)]);
+    }
+
+    #[Route('/{id}/delete', name: '_delete', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
     public function delete(int $id): JsonResponse
     {
         /** @var CoreUserInterface $user */

@@ -58,6 +58,14 @@ class PostItNoteManager implements PostItNoteManagerInterface
         $this->entityManager->flush();
     }
 
+    public function resize(PostItNoteInterface $note, int $width, int $height): void
+    {
+        $note->setWidth(max(120, $width));
+        $note->setHeight(max(80, $height));
+
+        $this->entityManager->flush();
+    }
+
     protected function createNote(): PostItNoteInterface
     {
         return new PostItNote();

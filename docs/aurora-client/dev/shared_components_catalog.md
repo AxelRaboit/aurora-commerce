@@ -55,7 +55,7 @@ sombres, voir `AppOverlayIconButton`.
 
 | Prop | Type | Défaut | Description |
 |---|---|---|---|
-| `color` | `String` | `"default"` | `default` `sky` `accent` `rose` `emerald` `amber`. |
+| `color` | `String` | `"default"` | `default` `sky` `accent` `rose` `emerald` `amber` `on-light` (à utiliser sur fonds clairs custom — post-it, cards colorées : injecte `text-black/50 hover:text-black/80 hover:bg-black/10`). |
 | `size` | `String` | `"md"` | `md` (p-1.5) ou `compact` (24×24). |
 | `title` | `String` | `null` | Tooltip natif (`title` attribut). |
 | `ariaLabel` | `String` | `null` | Étiquette a11y (fallback sur `title`). |
@@ -165,6 +165,7 @@ Champ texte. Gère password toggle, focus/select expose, error message sous le c
 | `error` | `String` | `""` | Message d'erreur affiché sous le champ. |
 | `required` | `Boolean` | `false` | Étoile rouge sur le label. |
 | `toggleable` | `Boolean` | `false` | Bouton œil pour révéler un password. |
+| `variant` | `String` | `"default"` | `default` (chrome form complet) ou `ghost` (rendu direct sans wrapper/label/bordure, `bg-transparent` + `text-inherit` — pour l'édition inline dans des cards / post-it / tableaux). Le sizing / decoration est fourni par le consumer via `class`. |
 
 **Emits** : `update:modelValue`.
 **Expose** : `focus()`, `select()`, `blur()`.
@@ -190,6 +191,7 @@ Champ texte. Gère password toggle, focus/select expose, error message sous le c
 | `rows` | `Number` | `3` |
 | `mono` | `Boolean` | `false` (font monospace) |
 | `maxlength` | `Number` | `null` |
+| `variant` | `String` | `"default"` | Même sémantique que `AppInput` — `ghost` retire le chrome de formulaire et hérite de la couleur du parent. |
 
 ```vue
 <AppTextarea v-model="form.description" :rows="5" :error="errors.description" />

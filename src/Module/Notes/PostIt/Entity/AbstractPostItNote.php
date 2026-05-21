@@ -51,6 +51,12 @@ abstract class AbstractPostItNote implements PostItNoteInterface
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
     protected int $positionY = 0;
 
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 220])]
+    protected int $width = 220;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 220])]
+    protected int $height = 220;
+
     public function getUser(): CoreUserInterface
     {
         return $this->user;
@@ -131,6 +137,30 @@ abstract class AbstractPostItNote implements PostItNoteInterface
     public function setPositionY(int $positionY): static
     {
         $this->positionY = $positionY;
+
+        return $this;
+    }
+
+    public function getWidth(): int
+    {
+        return $this->width;
+    }
+
+    public function setWidth(int $width): static
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getHeight(): int
+    {
+        return $this->height;
+    }
+
+    public function setHeight(int $height): static
+    {
+        $this->height = $height;
 
         return $this;
     }

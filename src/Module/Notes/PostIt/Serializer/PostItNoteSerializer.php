@@ -20,6 +20,8 @@ class PostItNoteSerializer implements PostItNoteSerializerInterface
             'color' => $note->getColor(),
             'positionX' => $note->getPositionX(),
             'positionY' => $note->getPositionY(),
+            'width' => $note->getWidth(),
+            'height' => $note->getHeight(),
             'createdAt' => $note->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $note->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];
