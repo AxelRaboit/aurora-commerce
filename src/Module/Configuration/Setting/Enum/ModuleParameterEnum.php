@@ -27,6 +27,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case HrBackend = 'modules_hr_backend';
     case VaultBackend = 'modules_vault_backend';
     case PdfFormBackend = 'modules_pdfform_backend';
+    case NotesBackend = 'modules_notes_backend';
 
     // Top-level modules — frontend (public site)
     case EcommerceFrontend = 'modules_ecommerce_frontend';
@@ -101,6 +102,11 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case PdfFormTemplates = 'modules_pdfform_templates';
     case PdfFormDocuments = 'modules_pdfform_documents';
 
+    // Sub-modules — Notes
+    case NotesMarkdown = 'modules_notes_markdown';
+    case NotesBlock = 'modules_notes_block';
+    case NotesPostIt = 'modules_notes_post_it';
+
     public function getKey(): string
     {
         return $this->value;
@@ -164,6 +170,10 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectProjects => 'backend.nav.projects',
             self::VaultSafe => 'backend.nav.vault',
             self::VaultPasswordGenerator => 'backend.nav.password_generator',
+            self::NotesBackend => 'backend.modules.notes_backend',
+            self::NotesMarkdown => 'backend.nav.notes_markdown',
+            self::NotesBlock => 'backend.nav.notes_block',
+            self::NotesPostIt => 'backend.nav.notes_post_it',
         };
     }
 
@@ -225,6 +235,10 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectProjects => 'backend.nav.projects_description',
             self::VaultSafe => 'backend.nav.vault_description',
             self::VaultPasswordGenerator => 'backend.nav.password_generator_description',
+            self::NotesBackend => 'backend.modules.notes_backend_description',
+            self::NotesMarkdown => 'backend.nav.notes_markdown_description',
+            self::NotesBlock => 'backend.nav.notes_block_description',
+            self::NotesPostIt => 'backend.nav.notes_post_it_description',
         };
     }
 
@@ -269,6 +283,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectProjects => self::ProjectBackend,
             self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
             self::PdfFormTemplates, self::PdfFormDocuments => self::PdfFormBackend,
+            self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
             default => null,
         };
     }
@@ -337,6 +352,10 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::VaultPasswordGenerator => self::VaultBackend->value,
             self::PdfFormTemplates => self::PdfFormBackend->value,
             self::PdfFormDocuments => self::PdfFormBackend->value,
+            // Notes sub-modules
+            self::NotesMarkdown => self::NotesBackend->value,
+            self::NotesBlock => self::NotesBackend->value,
+            self::NotesPostIt => self::NotesBackend->value,
             default => null,
         };
     }
@@ -400,6 +419,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::HrBackend => 'hr',
             self::VaultBackend => 'vault',
             self::PdfFormBackend => 'pdfform',
+            self::NotesBackend => 'notes',
             default => null,
         };
     }

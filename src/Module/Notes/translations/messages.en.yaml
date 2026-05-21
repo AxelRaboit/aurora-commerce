@@ -21,6 +21,9 @@ backend:
           use: Use Block notes
         post_it:
           use: Use Post-it notes
+  modules:
+    notes_backend: Notes
+    notes_backend_description: Enables note-taking (Markdown, Block, Post-it).
   nav:
     sections:
       notes: Notes
