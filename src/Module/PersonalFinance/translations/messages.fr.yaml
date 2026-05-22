@@ -30,7 +30,8 @@ personal_finance:
     title: Mes portefeuilles
     empty: Aucun portefeuille pour l'instant. Créez votre premier portefeuille ci-dessus.
     create_form_title: Créer un portefeuille
-    confirm_delete: Supprimer ce portefeuille ? Cette action est irréversible.
+    delete_confirm: 'Supprimer le portefeuille « {name} » ? Toutes les transactions, catégories et membres associés seront supprimés. Cette action est irréversible.'
+    deleted: Portefeuille supprimé.
     fields:
       name: Nom
       start_balance: Balance initiale
@@ -65,7 +66,8 @@ personal_finance:
     no_wallet: Créez d'abord un portefeuille pour pouvoir gérer des catégories.
     wallet: Portefeuille
     new_name: Nom de la catégorie
-    confirm_delete: Supprimer cette catégorie ? Les transactions associées deviendront non catégorisées.
+    delete_confirm: 'Supprimer la catégorie « {name} » ? Les transactions associées deviendront non catégorisées.'
+    deleted: Catégorie supprimée.
     actions:
       create: Ajouter
       delete: Supprimer
@@ -76,7 +78,8 @@ personal_finance:
     empty: Aucune transaction pour ce portefeuille.
     no_wallet: Créez d'abord un portefeuille pour pouvoir enregistrer des transactions.
     uncategorized: Sans catégorie
-    confirm_delete: Supprimer cette transaction ? Cette action est irréversible.
+    delete_confirm: 'Supprimer la transaction {name} ? Cette action est irréversible.'
+    deleted: Transaction supprimée.
     fields:
       wallet: Portefeuille
       type: Type

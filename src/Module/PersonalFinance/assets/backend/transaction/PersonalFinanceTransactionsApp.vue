@@ -1,7 +1,13 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { Trash2, X } from "lucide-vue-next";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -39,6 +45,17 @@ const currentCategories = computed(() =>
     selectedWalletId.value
         ? props.categoriesByWallet[String(selectedWalletId.value)] ?? []
         : [],
+);
+
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
+    props.deleteTransactionPath,
+    (id) => {
+        const key = String(selectedWalletId.value);
+        transactionsByWallet.value[key] = (transactionsByWallet.value[key] ?? []).filter(
+            (tx) => tx.id !== id,
+        );
+    },
+    "personal_finance.transactions.deleted",
 );
 
 async function request(method, url, body = null) {
@@ -86,18 +103,6 @@ async function onCreate() {
     }
 }
 
-async function onDelete(transaction) {
-    if (!confirm(t("personal_finance.transactions.confirm_delete"))) return;
-    const url = props.deleteTransactionPath.replace("__id__", String(transaction.id));
-    const res = await request(HttpMethod.Post, url);
-    if (res.ok) {
-        const key = String(selectedWalletId.value);
-        transactionsByWallet.value[key] = (transactionsByWallet.value[key] ?? []).filter(
-            (tx) => tx.id !== transaction.id,
-        );
-    }
-}
-
 function formatType(type) {
     return t(`personal_finance.transactions.types.${type}`);
 }
@@ -105,6 +110,11 @@ function formatType(type) {
 function formatAmount(transaction) {
     const sign = transaction.type === "income" ? "+" : "-";
     return `${sign}${transaction.amount}`;
+}
+
+function describePending(tx) {
+    if (!tx) return "";
+    return `${tx.date} · ${formatType(tx.type)} ${formatAmount(tx)}`;
 }
 </script>
 
@@ -185,9 +195,9 @@ function formatAmount(transaction) {
                             <td class="py-2 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
                             <td class="py-2">{{ tx.description }}</td>
                             <td class="py-2 text-right">
-                                <button class="text-rose-400 hover:text-rose-300 text-xs" v-on:click="onDelete(tx)">
-                                    {{ t("personal_finance.transactions.actions.delete") }}
-                                </button>
+                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tx)">
+                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
                             </td>
                         </tr>
                     </tbody>
@@ -195,5 +205,30 @@ function formatAmount(transaction) {
                 <p v-else class="text-muted text-sm">{{ t("personal_finance.transactions.empty") }}</p>
             </section>
         </template>
+
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
+            <p class="text-sm text-primary">
+                {{ t("personal_finance.transactions.delete_confirm", { name: describePending(pendingDelete) }) }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
     </div>
 </template>

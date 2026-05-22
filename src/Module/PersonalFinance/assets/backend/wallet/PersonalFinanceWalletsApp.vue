@@ -1,6 +1,12 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { Trash2, X } from "lucide-vue-next";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { usePersonalFinanceWalletsApi } from "./composables/usePersonalFinanceWalletsApi.js";
 
 const props = defineProps({
@@ -13,12 +19,20 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const { wallets, isSubmitting, errors, createWallet, deleteWallet } =
+const { wallets, isSubmitting, errors, createWallet } =
     usePersonalFinanceWalletsApi(props.wallets, {
         createWalletPath: props.createWalletPath,
         updateWalletPath: props.updateWalletPath,
         deleteWalletPath: props.deleteWalletPath,
     });
+
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
+    props.deleteWalletPath,
+    (id) => {
+        wallets.value = wallets.value.filter((w) => w.id !== id);
+    },
+    "personal_finance.wallets.deleted",
+);
 
 const form = ref({
     name: "",
@@ -33,11 +47,6 @@ async function onSubmit() {
     } catch {
         // errors surfaced via composable
     }
-}
-
-async function onDelete(id) {
-    if (!confirm(t("personal_finance.wallets.confirm_delete"))) return;
-    await deleteWallet(id);
 }
 
 function formatMode(mode) {
@@ -81,13 +90,8 @@ function formatMode(mode) {
                 </div>
                 <div class="flex flex-col">
                     <label class="text-xs text-muted">{{ t("personal_finance.wallets.fields.mode") }}</label>
-                    <select
-                        v-model="form.mode"
-                        class="bg-surface border border-line rounded px-2 py-1 text-sm"
-                    >
-                        <option v-for="m in modes" :key="m" :value="m">
-                            {{ formatMode(m) }}
-                        </option>
+                    <select v-model="form.mode" class="bg-surface border border-line rounded px-2 py-1 text-sm">
+                        <option v-for="m in modes" :key="m" :value="m">{{ formatMode(m) }}</option>
                     </select>
                 </div>
                 <button
@@ -118,19 +122,39 @@ function formatMode(mode) {
                         <td class="py-2">{{ formatMode(w.mode) }}</td>
                         <td class="py-2 font-mono">{{ w.startBalance }}</td>
                         <td class="py-2 text-right">
-                            <button
-                                class="text-rose-400 hover:text-rose-300 text-xs"
-                                v-on:click="onDelete(w.id)"
-                            >
-                                {{ t("personal_finance.wallets.actions.delete") }}
-                            </button>
+                            <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)">
+                                <Trash2 class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <p v-else class="text-muted text-sm">
-                {{ t("personal_finance.wallets.empty") }}
-            </p>
+            <p v-else class="text-muted text-sm">{{ t("personal_finance.wallets.empty") }}</p>
         </section>
+
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
+            <p class="text-sm text-primary">
+                {{ t("personal_finance.wallets.delete_confirm", { name: pendingDelete?.name ?? "" }) }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
     </div>
 </template>

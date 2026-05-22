@@ -1,9 +1,19 @@
 ---
 name: convention_modal_and_confirmation
-description: AppModal API + confirmation de suppression via modale — jamais confirm() natif
+description: 'CRITIQUE — avant d''écrire un delete dans un Vue : JAMAIS `confirm()` natif. TOUJOURS AppModal + useDelete composable. Erreur récurrente Claude (fix Sep 2025, fix Mai 2026 sur PersonalFinance) — lire AVANT toute action delete/destructive en Vue.'
 metadata:
   type: feedback
 ---
+
+> ⛔ **STOP — Si tu es sur le point de taper `confirm(`, `alert(`, ou `prompt(`
+> dans un fichier Vue/JS Aurora, RELIS cette mémoire d'abord.**
+>
+> Erreur **récurrente** : Claude utilise `confirm()` natif par défaut pour les
+> deletes, alors qu'Aurora a un pattern `AppModal + useDelete` documenté
+> depuis longtemps. Refixé en mai 2026 sur les 3 Vue du module
+> PersonalFinance (wallets, categories, transactions). Si tu lis ça en
+> écrivant un nouveau CRUD, applique le pattern directement — n'attends pas
+> que l'utilisateur te le signale.
 
 ## Règle
 

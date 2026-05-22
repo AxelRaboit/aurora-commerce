@@ -1,7 +1,13 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { Trash2, X } from "lucide-vue-next";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useDelete } from "@/shared/composables/form/useDelete.js";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -23,6 +29,17 @@ const currentCategories = computed(() =>
     selectedWalletId.value
         ? categoriesByWallet.value[String(selectedWalletId.value)] ?? []
         : [],
+);
+
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
+    props.deleteCategoryPath,
+    (id) => {
+        const key = String(selectedWalletId.value);
+        categoriesByWallet.value[key] = (categoriesByWallet.value[key] ?? []).filter(
+            (c) => c.id !== id,
+        );
+    },
+    "personal_finance.categories.deleted",
 );
 
 async function request(method, url, body = null) {
@@ -62,18 +79,6 @@ async function onCreate() {
         isSubmitting.value = false;
     }
 }
-
-async function onDelete(category) {
-    if (!confirm(t("personal_finance.categories.confirm_delete"))) return;
-    const url = props.deleteCategoryPath.replace("__id__", String(category.id));
-    const res = await request(HttpMethod.Post, url);
-    if (res.ok) {
-        const key = String(selectedWalletId.value);
-        categoriesByWallet.value[key] = (categoriesByWallet.value[key] ?? []).filter(
-            (c) => c.id !== category.id,
-        );
-    }
-}
 </script>
 
 <template>
@@ -91,13 +96,8 @@ async function onDelete(category) {
                 <div class="flex flex-wrap items-end gap-3">
                     <div class="flex flex-col">
                         <label class="text-xs text-muted">{{ t("personal_finance.categories.wallet") }}</label>
-                        <select
-                            v-model="selectedWalletId"
-                            class="bg-surface border border-line rounded px-2 py-1 text-sm"
-                        >
-                            <option v-for="w in wallets" :key="w.id" :value="w.id">
-                                {{ w.name }}
-                            </option>
+                        <select v-model="selectedWalletId" class="bg-surface border border-line rounded px-2 py-1 text-sm">
+                            <option v-for="w in wallets" :key="w.id" :value="w.id">{{ w.name }}</option>
                         </select>
                     </div>
                     <div class="flex flex-col">
@@ -123,24 +123,40 @@ async function onDelete(category) {
 
             <section>
                 <ul v-if="currentCategories.length" class="space-y-1">
-                    <li
-                        v-for="c in currentCategories"
-                        :key="c.id"
-                        class="flex items-center justify-between border-b border-line/40 py-2"
-                    >
+                    <li v-for="c in currentCategories" :key="c.id" class="flex items-center justify-between border-b border-line/40 py-2">
                         <span class="text-sm">{{ c.name }}</span>
-                        <button
-                            class="text-rose-400 hover:text-rose-300 text-xs"
-                            v-on:click="onDelete(c)"
-                        >
-                            {{ t("personal_finance.categories.actions.delete") }}
-                        </button>
+                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(c)">
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
                     </li>
                 </ul>
-                <p v-else class="text-muted text-sm">
-                    {{ t("personal_finance.categories.empty") }}
-                </p>
+                <p v-else class="text-muted text-sm">{{ t("personal_finance.categories.empty") }}</p>
             </section>
         </template>
+
+        <AppModal
+            :show="!!pendingDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDelete = null"
+        >
+            <p class="text-sm text-primary">
+                {{ t("personal_finance.categories.delete_confirm", { name: pendingDelete?.name ?? "" }) }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
     </div>
 </template>
