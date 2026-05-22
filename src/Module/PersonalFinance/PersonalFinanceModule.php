@@ -25,6 +25,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
         return [
             new NavPermission('personal_finance.wallets.use'),
             new NavPermission('personal_finance.categories.use'),
+            new NavPermission('personal_finance.transactions.use'),
         ];
     }
 
@@ -56,6 +57,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
+        if ($this->personalFinanceContext->isTransactionsEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_transactions',
+                'backend.nav.personal_finance_transactions',
+                'receipt',
+                requiredPrivilege: 'personal_finance.transactions.use',
+                descriptionKey: 'backend.nav.personal_finance_transactions_description',
+            );
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -81,6 +92,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     requiredPrivilege: 'personal_finance.categories.use',
                     descriptionKey: 'backend.nav.personal_finance_categories_description',
                 ),
+                new NavItem(
+                    'backend_personal_finance_transactions',
+                    'backend.nav.personal_finance_transactions',
+                    'receipt',
+                    requiredPrivilege: 'personal_finance.transactions.use',
+                    descriptionKey: 'backend.nav.personal_finance_transactions_description',
+                ),
             ], priority: 25),
         ];
     }
@@ -91,6 +109,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceBackend->toToggle(),
             ModuleParameterEnum::PersonalFinanceWallets->toToggle(),
             ModuleParameterEnum::PersonalFinanceCategories->toToggle(),
+            ModuleParameterEnum::PersonalFinanceTransactions->toToggle(),
         ];
     }
 }

@@ -6,6 +6,8 @@ backend:
           use: Manage own wallets
         categories:
           use: Manage categories
+        transactions:
+          use: Manage transactions
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -16,6 +18,8 @@ backend:
     personal_finance_wallets_description: Manage your wallets (checking accounts, savings, cash) and their initial balance.
     personal_finance_categories: Categories
     personal_finance_categories_description: 'Per-wallet transaction taxonomy (Groceries, Leisure, Salary…).'
+    personal_finance_transactions: Transactions
+    personal_finance_transactions_description: 'Wallet income and expenses, dated and categorized.'
   parameters:
     personal_finance_default_currency:
       label: Default currency
@@ -67,3 +71,26 @@ personal_finance:
       delete: Delete
     errors:
       name_required: Category name is required.
+  transactions:
+    title: Transactions
+    empty: No transaction for this wallet yet.
+    no_wallet: Create a wallet first to record transactions.
+    uncategorized: Uncategorized
+    confirm_delete: Delete this transaction? This action is irreversible.
+    fields:
+      wallet: Wallet
+      type: Type
+      amount: Amount
+      date: Date
+      category: Category
+      description: Description
+    types:
+      income: Income
+      expense: Expense
+    actions:
+      create: Add
+      delete: Delete
+    errors:
+      amount_required: Amount is required.
+      amount_format: 'Invalid format. Example: 1234.56 (always positive)'
+      date_required: Date is required.

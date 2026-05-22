@@ -111,6 +111,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     // Sub-modules — PersonalFinance
     case PersonalFinanceWallets = 'modules_personal_finance_wallets';
     case PersonalFinanceCategories = 'modules_personal_finance_categories';
+    case PersonalFinanceTransactions = 'modules_personal_finance_transactions';
 
     public function getKey(): string
     {
@@ -182,6 +183,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend',
             self::PersonalFinanceWallets => 'backend.nav.personal_finance_wallets',
             self::PersonalFinanceCategories => 'backend.nav.personal_finance_categories',
+            self::PersonalFinanceTransactions => 'backend.nav.personal_finance_transactions',
         };
     }
 
@@ -250,6 +252,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend_description',
             self::PersonalFinanceWallets => 'backend.nav.personal_finance_wallets_description',
             self::PersonalFinanceCategories => 'backend.nav.personal_finance_categories_description',
+            self::PersonalFinanceTransactions => 'backend.nav.personal_finance_transactions_description',
         };
     }
 
@@ -295,7 +298,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
             self::PdfFormTemplates, self::PdfFormDocuments => self::PdfFormBackend,
             self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
-            self::PersonalFinanceWallets, self::PersonalFinanceCategories => self::PersonalFinanceBackend,
+            self::PersonalFinanceWallets, self::PersonalFinanceCategories, self::PersonalFinanceTransactions => self::PersonalFinanceBackend,
             default => null,
         };
     }
@@ -371,6 +374,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // PersonalFinance sub-modules
             self::PersonalFinanceWallets => self::PersonalFinanceBackend->value,
             self::PersonalFinanceCategories => self::PersonalFinanceWallets->value,
+            self::PersonalFinanceTransactions => self::PersonalFinanceWallets->value,
             default => null,
         };
     }

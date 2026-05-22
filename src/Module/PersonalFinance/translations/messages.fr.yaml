@@ -6,6 +6,8 @@ backend:
           use: Gérer ses portefeuilles
         categories:
           use: Gérer les catégories
+        transactions:
+          use: Gérer les transactions
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -16,6 +18,8 @@ backend:
     personal_finance_wallets_description: Gérez vos portefeuilles (comptes courants, livrets, cash) et leur balance initiale.
     personal_finance_categories: Catégories
     personal_finance_categories_description: 'Taxonomie des transactions par portefeuille (Courses, Loisirs, Salaire…).'
+    personal_finance_transactions: Transactions
+    personal_finance_transactions_description: 'Revenus et dépenses du portefeuille, datés et catégorisés.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -67,3 +71,26 @@ personal_finance:
       delete: Supprimer
     errors:
       name_required: Le nom de la catégorie est requis.
+  transactions:
+    title: Transactions
+    empty: Aucune transaction pour ce portefeuille.
+    no_wallet: Créez d'abord un portefeuille pour pouvoir enregistrer des transactions.
+    uncategorized: Sans catégorie
+    confirm_delete: Supprimer cette transaction ? Cette action est irréversible.
+    fields:
+      wallet: Portefeuille
+      type: Type
+      amount: Montant
+      date: Date
+      category: Catégorie
+      description: Description
+    types:
+      income: Revenu
+      expense: Dépense
+    actions:
+      create: Ajouter
+      delete: Supprimer
+    errors:
+      amount_required: Le montant est requis.
+      amount_format: 'Format invalide. Exemple : 1234.56 (toujours positif)'
+      date_required: La date est requise.

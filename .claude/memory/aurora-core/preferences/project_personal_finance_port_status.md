@@ -20,20 +20,23 @@ jour à la fin de chaque session.
 | 2b | WalletMember + Voter `PersonalFinanceWalletVoter` (5 attrs) + auto-create owner Member | `b1f86a99` | 🟢 |
 | 2c | WalletInvitation + member management (updateRole, removeMember) + 2 Controllers (invitations, members) | `4ec2de2b` | 🟢 |
 | 3 | Category (5-layer) + `SystemCategoryKeyEnum` + sub-feature `PersonalFinanceCategories` | `e44f366d` | 🟢 |
+| 4a | Transaction (5-layer, sans Splits/Attachments/Transfer) + Enum Income/Expense + sub-feature `PersonalFinanceTransactions` | (TBC) | 🟢 |
 
 ## Sessions à venir
 
 | # | Session | Bloque ? | Prérequis |
 |---|---|---|---|
 | 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
-| 4 | Transaction + TransferService atomique | **critique** — cœur applicatif, débloque tout le reste | 3 (Category) |
-| 5 | WalletBalanceService (currentBalance, monthlyBalance, rollingStartBalance) + BalanceAdjustmentService | non | **4** (somme transactions) |
-| 6 | Budget + BudgetItem + BudgetPreset + carry-over service | non | 4 |
-| 7 | Goal + EventSubscriber qui sync `savedAmount` depuis transactions | non | 4 |
-| 8 | RecurringTransaction + ScheduledTransaction + commande cron `personal-finance:recurring:generate` | non | 4 |
-| 9 | CategorizationRule + Learn/Suggest services | non | 4 |
+| 4b | TransferService atomique (2 transactions liées par transferId UUID) + endpoint dédié + `getOrCreateSystem` pour `transfer_income`/`transfer_expense_X` | non | 4a |
+| 4c | TransactionSplit (N tx liées par splitId) — optionnel V2 | non | 4a |
+| 4d | Transaction attachments (1 fichier par tx, route `/uploads/personal-finance/transactions/`) | non | 4a |
+| 5 | WalletBalanceService (currentBalance, monthlyBalance, rollingStartBalance) + BalanceAdjustmentService | non | **4a** (somme transactions) |
+| 6 | Budget + BudgetItem + BudgetPreset + carry-over service | non | 4a |
+| 7 | Goal + EventSubscriber qui sync `savedAmount` depuis transactions | non | 4a |
+| 8 | RecurringTransaction + ScheduledTransaction + commande cron `personal-finance:recurring:generate` | non | 4a |
+| 9 | CategorizationRule + Learn/Suggest services + `afterSave` hook standardisé dans la convention | non | 4a |
 | 10 | Dashboard + Overview + Statistics services (agrégations) | non | toutes les précédentes (data) |
-| 11 | Import Excel (2 steps : upload → preview → process) | non | 4 |
+| 11 | Import Excel (2 steps : upload → preview → process) | non | 4a |
 
 ## Why
 
