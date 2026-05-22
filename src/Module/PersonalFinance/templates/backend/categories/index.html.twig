@@ -14,7 +14,10 @@
 {% block body %}
 <div {{ vue_component('personalfinance/backend/category/PersonalFinanceCategoriesApp', {
     wallets: wallets,
-    categoriesByWallet: categoriesByWallet,
+    selectedWalletId: selectedWalletId,
+    categories: categories,
+    search: search,
+    listPath: listPath,
     createCategoryPath: createCategoryPath,
     updateCategoryPath: updateCategoryPath,
     deleteCategoryPath: deleteCategoryPath,

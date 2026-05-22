@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, Tags } from "lucide-vue-next";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -9,6 +10,8 @@ import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useCategoriesCreate } from "./composables/useCategoriesCreate.js";
@@ -16,7 +19,10 @@ import { useCategoriesEdit } from "./composables/useCategoriesEdit.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
-    categoriesByWallet: { type: Object, required: true },
+    selectedWalletId: { type: Number, default: null },
+    categories: { type: Object, default: () => ({}) },
+    search: { type: String, default: "" },
+    listPath: { type: String, required: true },
     createCategoryPath: { type: String, required: true },
     updateCategoryPath: { type: String, required: true },
     deleteCategoryPath: { type: String, required: true },
@@ -26,48 +32,38 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const selectedWalletId = ref(props.wallets[0]?.id ?? null);
-const categoriesByWallet = ref({ ...props.categoriesByWallet });
-const searchInput = ref("");
+const selectedWalletId = ref(props.selectedWalletId ?? props.wallets[0]?.id ?? null);
+
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+    props.listPath,
+    {
+        initialSearch: props.search,
+        initialData: props.categories,
+        extraParams: () => ({ walletId: selectedWalletId.value }),
+    },
+);
+
+watch(selectedWalletId, () => reset());
 
 const walletOptions = computed(() =>
     props.wallets.map((w) => ({ value: w.id, label: w.name })),
 );
 
-const currentCategories = computed(() => {
-    if (!selectedWalletId.value) return [];
-    const list = categoriesByWallet.value[String(selectedWalletId.value)] ?? [];
-    const q = searchInput.value.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((c) => c.name.toLowerCase().includes(q));
-});
-
 const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useCategoriesCreate(
     props.createCategoryPath,
-    (created, walletId) => {
-        const key = String(walletId);
-        categoriesByWallet.value[key] = [...(categoriesByWallet.value[key] ?? []), created];
-    },
+    () => reset(),
     { extraFields: props.extraFields },
 );
 
 const { showEdit, editingCategory, editForm, editErrors, editLoading, openEdit, submitEdit } = useCategoriesEdit(
     props.updateCategoryPath,
-    (updated) => {
-        const key = String(updated.walletId);
-        const list = categoriesByWallet.value[key] ?? [];
-        const idx = list.findIndex((c) => c.id === updated.id);
-        if (idx !== -1) categoriesByWallet.value[key] = [...list.slice(0, idx), updated, ...list.slice(idx + 1)];
-    },
+    () => reset(),
     { extraFields: props.extraFields },
 );
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteCategoryPath,
-    (id) => {
-        const key = String(selectedWalletId.value);
-        categoriesByWallet.value[key] = (categoriesByWallet.value[key] ?? []).filter((c) => c.id !== id);
-    },
+    () => reset(),
     "personal_finance.categories.deleted",
 );
 </script>
@@ -75,7 +71,11 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput v-model="searchInput" :placeholder="t('personal_finance.categories.search_placeholder')" />
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('personal_finance.categories.search_placeholder')"
+                v-on:search="onSearch"
+            />
             <template #actions>
                 <AppButton
                     variant="primary"
@@ -104,33 +104,38 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 />
             </div>
 
-            <div class="bg-surface border border-line rounded-lg overflow-hidden">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-surface-2/50 border-b border-line/40">
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.categories.fields.name") }}</th>
-                            <slot name="extra-headers" />
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-line/40">
-                        <tr v-for="c in currentCategories" :key="c.id" class="group hover:bg-surface-2/40 transition-colors">
-                            <td class="px-6 py-3"><span class="font-medium text-primary">{{ c.name }}</span></td>
-                            <slot name="extra-cells" :category="c" />
-                            <td class="px-6 py-3">
-                                <div class="flex items-center justify-end gap-0.5">
-                                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(c)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                    <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(c)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="!currentCategories.length">
-                            <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
-                                {{ t("personal_finance.categories.empty") }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="relative space-y-4">
+                <div class="bg-surface border border-line rounded-lg overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-surface-2/50 border-b border-line/40">
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.categories.fields.name") }}</th>
+                                <slot name="extra-headers" />
+                                <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line/40">
+                            <tr v-for="c in items" :key="c.id" class="group hover:bg-surface-2/40 transition-colors">
+                                <td class="px-6 py-3"><span class="font-medium text-primary">{{ c.name }}</span></td>
+                                <slot name="extra-cells" :category="c" />
+                                <td class="px-6 py-3">
+                                    <div class="flex items-center justify-end gap-0.5">
+                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(c)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(c)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="!items?.length">
+                                <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
+                                    {{ t("personal_finance.categories.empty") }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+                <AppLoader :active="loading" />
             </div>
         </template>
 

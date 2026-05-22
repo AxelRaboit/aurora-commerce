@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Category\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\PersonalFinance\Category\Dto\PersonalFinanceCategoryInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
@@ -44,12 +45,36 @@ final class PersonalFinanceCategoriesController extends AbstractController
     ) {}
 
     #[Route('/categories', name: '_categories', methods: [HttpMethodEnum::Get->value])]
-    public function index(): Response
+    public function index(Request $request, PaginationRequest $pagination): Response
     {
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
+        $walletId = $request->query->getInt('walletId') ?: null;
 
-        return $this->render('@PersonalFinance/backend/categories/index.html.twig', $this->viewBuilder->indexView($user));
+        return $this->render(
+            '@PersonalFinance/backend/categories/index.html.twig',
+            $this->viewBuilder->indexView($user, $pagination, $walletId),
+        );
+    }
+
+    #[Route('/categories/list', name: '_categories_list', methods: [HttpMethodEnum::Get->value])]
+    public function list(Request $request, PaginationRequest $pagination): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+        $walletId = $request->query->getInt('walletId') ?: null;
+        if (null === $walletId) {
+            return $this->json(['success' => true, 'items' => [], 'page' => 1, 'totalPages' => 1, 'total' => 0]);
+        }
+
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $wallet);
+
+        return $this->json($this->viewBuilder->buildListPayload($wallet, $pagination));
     }
 
     #[Route('/wallets/{walletId}/categories/create', name: '_wallets_categories_create', methods: [HttpMethodEnum::Post->value])]

@@ -12,10 +12,13 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('personal-finance/backend/transaction/PersonalFinanceTransactionsApp', {
+<div {{ vue_component('personalfinance/backend/transaction/PersonalFinanceTransactionsApp', {
     wallets: wallets,
     categoriesByWallet: categoriesByWallet,
-    transactionsByWallet: transactionsByWallet,
+    selectedWalletId: selectedWalletId,
+    transactions: transactions,
+    search: search,
+    listPath: listPath,
     types: types,
     createTransactionPath: createTransactionPath,
     updateTransactionPath: updateTransactionPath,

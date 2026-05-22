@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, Receipt } from "lucide-vue-next";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -10,6 +11,8 @@ import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useTransactionsCreate } from "./composables/useTransactionsCreate.js";
@@ -18,7 +21,10 @@ import { useTransactionsEdit } from "./composables/useTransactionsEdit.js";
 const props = defineProps({
     wallets: { type: Array, required: true },
     categoriesByWallet: { type: Object, required: true },
-    transactionsByWallet: { type: Object, required: true },
+    selectedWalletId: { type: Number, default: null },
+    transactions: { type: Object, default: () => ({}) },
+    search: { type: String, default: "" },
+    listPath: { type: String, required: true },
     types: { type: Array, required: true },
     createTransactionPath: { type: String, required: true },
     updateTransactionPath: { type: String, required: true },
@@ -29,9 +35,18 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const selectedWalletId = ref(props.wallets[0]?.id ?? null);
-const transactionsByWallet = ref({ ...props.transactionsByWallet });
-const searchInput = ref("");
+const selectedWalletId = ref(props.selectedWalletId ?? props.wallets[0]?.id ?? null);
+
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+    props.listPath,
+    {
+        initialSearch: props.search,
+        initialData: props.transactions,
+        extraParams: () => ({ walletId: selectedWalletId.value }),
+    },
+);
+
+watch(selectedWalletId, () => reset());
 
 const walletOptions = computed(() =>
     props.wallets.map((w) => ({ value: w.id, label: w.name })),
@@ -40,17 +55,6 @@ const walletOptions = computed(() =>
 const typeOptions = computed(() =>
     props.types.map((ty) => ({ value: ty, label: t(`personal_finance.transactions.types.${ty}`) })),
 );
-
-const currentTransactions = computed(() => {
-    if (!selectedWalletId.value) return [];
-    const list = transactionsByWallet.value[String(selectedWalletId.value)] ?? [];
-    const q = searchInput.value.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((tx) =>
-        (tx.description ?? "").toLowerCase().includes(q)
-        || (tx.categoryName ?? "").toLowerCase().includes(q),
-    );
-});
 
 const currentCategoryOptions = computed(() => {
     if (!selectedWalletId.value) return [{ value: null, label: t("personal_finance.transactions.uncategorized") }];
@@ -63,30 +67,19 @@ const currentCategoryOptions = computed(() => {
 
 const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useTransactionsCreate(
     props.createTransactionPath,
-    (created, walletId) => {
-        const key = String(walletId);
-        transactionsByWallet.value[key] = [created, ...(transactionsByWallet.value[key] ?? [])];
-    },
+    () => reset(),
     { extraFields: props.extraFields },
 );
 
 const { showEdit, editingTransaction, editForm, editErrors, editLoading, openEdit, submitEdit } = useTransactionsEdit(
     props.updateTransactionPath,
-    (updated) => {
-        const key = String(updated.walletId);
-        const list = transactionsByWallet.value[key] ?? [];
-        const idx = list.findIndex((tx) => tx.id === updated.id);
-        if (idx !== -1) transactionsByWallet.value[key] = [...list.slice(0, idx), updated, ...list.slice(idx + 1)];
-    },
+    () => reset(),
     { extraFields: props.extraFields },
 );
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteTransactionPath,
-    (id) => {
-        const key = String(selectedWalletId.value);
-        transactionsByWallet.value[key] = (transactionsByWallet.value[key] ?? []).filter((tx) => tx.id !== id);
-    },
+    () => reset(),
     "personal_finance.transactions.deleted",
 );
 
@@ -108,7 +101,11 @@ function describeTx(tx) {
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput v-model="searchInput" :placeholder="t('personal_finance.transactions.search_placeholder')" />
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('personal_finance.transactions.search_placeholder')"
+                v-on:search="onSearch"
+            />
             <template #actions>
                 <AppButton
                     variant="primary"
@@ -137,41 +134,46 @@ function describeTx(tx) {
                 />
             </div>
 
-            <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-surface-2/50 border-b border-line/40">
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.date") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.type") }}</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.amount") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.category") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.description") }}</th>
-                            <slot name="extra-headers" />
-                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-line/40">
-                        <tr v-for="tx in currentTransactions" :key="tx.id" class="group hover:bg-surface-2/40 transition-colors">
-                            <td class="px-6 py-3 font-mono text-xs">{{ tx.date }}</td>
-                            <td class="px-6 py-3">{{ formatType(tx.type) }}</td>
-                            <td class="px-6 py-3 text-right font-mono" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</td>
-                            <td class="px-6 py-3 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
-                            <td class="px-6 py-3">{{ tx.description }}</td>
-                            <slot name="extra-cells" :transaction="tx" />
-                            <td class="px-6 py-3">
-                                <div class="flex items-center justify-end gap-0.5">
-                                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                    <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="!currentTransactions.length">
-                            <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
-                                {{ t("personal_finance.transactions.empty") }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="relative space-y-4">
+                <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-surface-2/50 border-b border-line/40">
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.date") }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.type") }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.amount") }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.category") }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.description") }}</th>
+                                <slot name="extra-headers" />
+                                <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line/40">
+                            <tr v-for="tx in items" :key="tx.id" class="group hover:bg-surface-2/40 transition-colors">
+                                <td class="px-6 py-3 font-mono text-xs">{{ tx.date }}</td>
+                                <td class="px-6 py-3">{{ formatType(tx.type) }}</td>
+                                <td class="px-6 py-3 text-right font-mono" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</td>
+                                <td class="px-6 py-3 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
+                                <td class="px-6 py-3">{{ tx.description }}</td>
+                                <slot name="extra-cells" :transaction="tx" />
+                                <td class="px-6 py-3">
+                                    <div class="flex items-center justify-end gap-0.5">
+                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="!items?.length">
+                                <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
+                                    {{ t("personal_finance.transactions.empty") }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
+                <AppLoader :active="loading" />
             </div>
         </template>
 
