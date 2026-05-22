@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\PersonalFinance;
+
+use Aurora\Core\Module\Service\ModuleAccessChecker;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+
+final readonly class PersonalFinanceContext
+{
+    public function __construct(private ModuleAccessChecker $moduleAccessChecker) {}
+
+    public function isBackendEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceBackend);
+    }
+}

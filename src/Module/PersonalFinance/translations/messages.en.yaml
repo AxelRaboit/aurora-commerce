@@ -1,0 +1,11 @@
+backend:
+  modules:
+    personal_finance_backend: Personal Finance
+    personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
+  nav:
+    sections:
+      personal_finance: Personal Finance
+  parameters:
+    personal_finance_default_currency:
+      label: Default currency
+      description: ISO 4217 code (e.g. EUR, USD, CHF) used by default for new wallets and transactions.

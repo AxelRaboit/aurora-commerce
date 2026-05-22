@@ -28,6 +28,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case VaultBackend = 'modules_vault_backend';
     case PdfFormBackend = 'modules_pdfform_backend';
     case NotesBackend = 'modules_notes_backend';
+    case PersonalFinanceBackend = 'modules_personal_finance_backend';
 
     // Top-level modules — frontend (public site)
     case EcommerceFrontend = 'modules_ecommerce_frontend';
@@ -174,6 +175,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesMarkdown => 'backend.nav.notes_markdown',
             self::NotesBlock => 'backend.nav.notes_block',
             self::NotesPostIt => 'backend.nav.notes_post_it',
+            self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend',
         };
     }
 
@@ -239,6 +241,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesMarkdown => 'backend.nav.notes_markdown_description',
             self::NotesBlock => 'backend.nav.notes_block_description',
             self::NotesPostIt => 'backend.nav.notes_post_it_description',
+            self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend_description',
         };
     }
 
@@ -420,6 +423,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::VaultBackend => 'vault',
             self::PdfFormBackend => 'pdfform',
             self::NotesBackend => 'notes',
+            self::PersonalFinanceBackend => 'personal_finance',
             default => null,
         };
     }

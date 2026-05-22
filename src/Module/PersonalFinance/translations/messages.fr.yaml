@@ -1,0 +1,11 @@
+backend:
+  modules:
+    personal_finance_backend: Finance personnelle
+    personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
+  nav:
+    sections:
+      personal_finance: Finance perso
+  parameters:
+    personal_finance_default_currency:
+      label: Devise par défaut
+      description: Code ISO 4217 (ex. EUR, USD, CHF) utilisé par défaut pour les nouveaux portefeuilles et transactions.
