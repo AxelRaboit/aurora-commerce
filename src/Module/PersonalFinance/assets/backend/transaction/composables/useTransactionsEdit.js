@@ -5,12 +5,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 
-/**
- * @param {object} extraFields - client-extension fields, `{ key: { default: value } }`.
- *   When opening edit on an existing wallet, the previously-stored custom
- *   value is read from the serialized payload (falling back to `default`).
- */
-export function useWalletsEdit(
+export function useTransactionsEdit(
     updatePath,
     onUpdated,
     { extraFields = {} } = {},
@@ -28,56 +23,60 @@ export function useWalletsEdit(
     }
 
     const showEdit = ref(false);
-    const editingWallet = ref(null);
+    const editingTransaction = ref(null);
     const editForm = ref({
-        name: "",
-        startBalance: "0.00",
-        mode: "budget",
-        showOnDashboard: true,
-        position: 0,
+        type: "expense",
+        amount: "",
+        date: "",
+        description: "",
+        categoryId: null,
         ...pickExtras({}),
     });
     const editErrors = ref({});
     const editLoading = ref(false);
 
-    function openEdit(wallet) {
-        editingWallet.value = wallet;
+    function openEdit(transaction) {
+        editingTransaction.value = transaction;
         editForm.value = {
-            name: wallet.name,
-            startBalance: wallet.startBalance,
-            mode: wallet.mode,
-            showOnDashboard: wallet.showOnDashboard ?? true,
-            position: wallet.position ?? 0,
-            ...pickExtras(wallet),
+            type: transaction.type,
+            amount: transaction.amount,
+            date: transaction.date,
+            description: transaction.description ?? "",
+            categoryId: transaction.categoryId ?? null,
+            ...pickExtras(transaction),
         };
         editErrors.value = {};
         showEdit.value = true;
     }
 
     async function submitEdit() {
-        if (!editingWallet.value || editLoading.value) return;
+        if (!editingTransaction.value || editLoading.value) return;
         editLoading.value = true;
         editErrors.value = {};
-        editForm.value.startBalance = evaluateAmount(
-            editForm.value.startBalance,
-        );
+        editForm.value.amount = evaluateAmount(editForm.value.amount);
         try {
-            const url = buildPath(updatePath, { id: editingWallet.value.id });
+            const url = buildPath(updatePath, {
+                id: editingTransaction.value.id,
+            });
             const response = await fetch(url, {
                 method: HttpMethod.Post,
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(editForm.value),
+                body: JSON.stringify({
+                    ...editForm.value,
+                    description: editForm.value.description || null,
+                    categoryId: editForm.value.categoryId || null,
+                }),
             });
             const payload = await response.json().catch(() => ({}));
             if (!response.ok || payload?.success === false) {
                 editErrors.value = payload?.errors ?? {};
                 return;
             }
-            onUpdated(payload.wallet);
-            toast.success(t("personal_finance.wallets.updated"));
+            onUpdated(payload.transaction);
+            toast.success(t("personal_finance.transactions.updated"));
             showEdit.value = false;
         } catch {
             toast.error(t("shared.common.error"));
@@ -88,7 +87,7 @@ export function useWalletsEdit(
 
     return {
         showEdit,
-        editingWallet,
+        editingTransaction,
         editForm,
         editErrors,
         editLoading,

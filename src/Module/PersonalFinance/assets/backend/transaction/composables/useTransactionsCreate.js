@@ -4,12 +4,8 @@ import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 
-/**
- * @param {object} extraFields - client-extension fields, `{ key: { default: value } }`.
- *   Each key seeds an empty form entry and is spread into the POST body so
- *   the client's overridden DTO + Input factory can hydrate the entity.
- */
-function emptyWalletForm(extraFields = {}) {
+function emptyTransactionForm(extraFields = {}) {
+    const today = new Date().toISOString().slice(0, 10);
     const extras = Object.fromEntries(
         Object.keys(extraFields).map((k) => [
             k,
@@ -17,20 +13,16 @@ function emptyWalletForm(extraFields = {}) {
         ]),
     );
     return {
-        name: "",
-        startBalance: "0.00",
-        mode: "budget",
-        showOnDashboard: true,
-        position: 0,
+        type: "expense",
+        amount: "",
+        date: today,
+        description: "",
+        categoryId: null,
         ...extras,
     };
 }
 
-/**
- * Wallet create flow. Pass `extraFields` to allow client extensions to add
- * custom inputs (cf. `entity_extensibility_convention.md` layer 5).
- */
-export function useWalletsCreate(
+export function useTransactionsCreate(
     createPath,
     onCreated,
     { extraFields = {} } = {},
@@ -38,39 +30,47 @@ export function useWalletsCreate(
     const { t } = useI18n();
 
     const showCreate = ref(false);
-    const createForm = ref(emptyWalletForm(extraFields));
+    const createForm = ref(emptyTransactionForm(extraFields));
     const createErrors = ref({});
     const createLoading = ref(false);
+    const targetWalletId = ref(null);
 
-    function openCreate() {
-        createForm.value = emptyWalletForm(extraFields);
+    function openCreate(walletId) {
+        targetWalletId.value = walletId;
+        createForm.value = emptyTransactionForm(extraFields);
         createErrors.value = {};
         showCreate.value = true;
     }
 
     async function submitCreate() {
-        if (createLoading.value) return;
+        if (createLoading.value || !targetWalletId.value) return;
         createLoading.value = true;
         createErrors.value = {};
-        createForm.value.startBalance = evaluateAmount(
-            createForm.value.startBalance,
-        );
+        createForm.value.amount = evaluateAmount(createForm.value.amount);
         try {
-            const response = await fetch(createPath, {
+            const url = createPath.replace(
+                "__walletId__",
+                String(targetWalletId.value),
+            );
+            const response = await fetch(url, {
                 method: HttpMethod.Post,
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(createForm.value),
+                body: JSON.stringify({
+                    ...createForm.value,
+                    description: createForm.value.description || null,
+                    categoryId: createForm.value.categoryId || null,
+                }),
             });
             const payload = await response.json().catch(() => ({}));
             if (!response.ok || payload?.success === false) {
                 createErrors.value = payload?.errors ?? {};
                 return;
             }
-            onCreated(payload.wallet);
-            toast.success(t("personal_finance.wallets.created"));
+            onCreated(payload.transaction, targetWalletId.value);
+            toast.success(t("personal_finance.transactions.created"));
             showCreate.value = false;
         } catch {
             toast.error(t("shared.common.error"));
@@ -86,5 +86,6 @@ export function useWalletsCreate(
         createLoading,
         openCreate,
         submitCreate,
+        targetWalletId,
     };
 }

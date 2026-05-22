@@ -21,6 +21,14 @@ const props = defineProps({
     createWalletPath: { type: String, required: true },
     updateWalletPath: { type: String, required: true },
     deleteWalletPath: { type: String, required: true },
+    /**
+     * Client-extension hook — see `entity_extensibility_convention.md` §"Couche 5".
+     * Each entry seeds the form with a default value AND is spread into the
+     * create/update payload so the client's overridden DTO + Input factory
+     * can hydrate the entity. Combine with the `extra-headers`, `extra-cells`
+     * and `extra-form-fields` slots to render custom UI.
+     */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -48,6 +56,7 @@ function formatMode(mode) {
 const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useWalletsCreate(
     props.createWalletPath,
     (created) => { wallets.value = [...wallets.value, created]; },
+    { extraFields: props.extraFields },
 );
 
 const { showEdit, editingWallet, editForm, editErrors, editLoading, openEdit, submitEdit } = useWalletsEdit(
@@ -56,6 +65,7 @@ const { showEdit, editingWallet, editForm, editErrors, editLoading, openEdit, su
         const idx = wallets.value.findIndex((w) => w.id === updated.id);
         if (idx !== -1) wallets.value[idx] = updated;
     },
+    { extraFields: props.extraFields },
 );
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
@@ -87,6 +97,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </div>
                         <p class="text-sm font-mono shrink-0">{{ w.startBalance }}</p>
                     </div>
+                    <slot name="extra-cells" :wallet="w" />
                     <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(w)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -101,6 +112,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.wallets.fields.name") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.wallets.fields.mode") }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.wallets.fields.start_balance") }}</th>
+                            <slot name="extra-headers" />
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
                     </thead>
@@ -109,6 +121,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <td class="px-6 py-3"><span class="font-medium text-primary">{{ w.name }}</span></td>
                             <td class="px-6 py-3 text-secondary">{{ formatMode(w.mode) }}</td>
                             <td class="px-6 py-3 text-right font-mono text-primary">{{ w.startBalance }}</td>
+                            <slot name="extra-cells" :wallet="w" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(w)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
@@ -117,7 +130,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             </td>
                         </tr>
                         <tr v-if="!filteredWallets.length">
-                            <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">
+                            <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
                                 {{ wallets.length ? t("personal_finance.wallets.no_match") : t("personal_finance.wallets.empty") }}
                             </td>
                         </tr>
@@ -154,6 +167,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     :allow-empty="false"
                     required
                 />
+                <slot name="extra-form-fields" :form="createForm" :errors="createErrors" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -202,6 +216,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     :allow-empty="false"
                     required
                 />
+                <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :wallet="editingWallet" />
             </form>
             <template #footer>
                 <AppModalFooter>

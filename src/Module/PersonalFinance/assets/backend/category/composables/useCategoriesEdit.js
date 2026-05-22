@@ -3,14 +3,8 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 
-/**
- * @param {object} extraFields - client-extension fields, `{ key: { default: value } }`.
- *   When opening edit on an existing wallet, the previously-stored custom
- *   value is read from the serialized payload (falling back to `default`).
- */
-export function useWalletsEdit(
+export function useCategoriesEdit(
     updatePath,
     onUpdated,
     { extraFields = {} } = {},
@@ -28,41 +22,24 @@ export function useWalletsEdit(
     }
 
     const showEdit = ref(false);
-    const editingWallet = ref(null);
-    const editForm = ref({
-        name: "",
-        startBalance: "0.00",
-        mode: "budget",
-        showOnDashboard: true,
-        position: 0,
-        ...pickExtras({}),
-    });
+    const editingCategory = ref(null);
+    const editForm = ref({ name: "", ...pickExtras({}) });
     const editErrors = ref({});
     const editLoading = ref(false);
 
-    function openEdit(wallet) {
-        editingWallet.value = wallet;
-        editForm.value = {
-            name: wallet.name,
-            startBalance: wallet.startBalance,
-            mode: wallet.mode,
-            showOnDashboard: wallet.showOnDashboard ?? true,
-            position: wallet.position ?? 0,
-            ...pickExtras(wallet),
-        };
+    function openEdit(category) {
+        editingCategory.value = category;
+        editForm.value = { name: category.name, ...pickExtras(category) };
         editErrors.value = {};
         showEdit.value = true;
     }
 
     async function submitEdit() {
-        if (!editingWallet.value || editLoading.value) return;
+        if (!editingCategory.value || editLoading.value) return;
         editLoading.value = true;
         editErrors.value = {};
-        editForm.value.startBalance = evaluateAmount(
-            editForm.value.startBalance,
-        );
         try {
-            const url = buildPath(updatePath, { id: editingWallet.value.id });
+            const url = buildPath(updatePath, { id: editingCategory.value.id });
             const response = await fetch(url, {
                 method: HttpMethod.Post,
                 headers: {
@@ -76,8 +53,8 @@ export function useWalletsEdit(
                 editErrors.value = payload?.errors ?? {};
                 return;
             }
-            onUpdated(payload.wallet);
-            toast.success(t("personal_finance.wallets.updated"));
+            onUpdated(payload.category);
+            toast.success(t("personal_finance.categories.updated"));
             showEdit.value = false;
         } catch {
             toast.error(t("shared.common.error"));
@@ -88,7 +65,7 @@ export function useWalletsEdit(
 
     return {
         showEdit,
-        editingWallet,
+        editingCategory,
         editForm,
         editErrors,
         editLoading,

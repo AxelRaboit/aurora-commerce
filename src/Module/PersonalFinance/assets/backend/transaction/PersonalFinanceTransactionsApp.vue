@@ -1,13 +1,19 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { Trash2, X } from "lucide-vue-next";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { Plus, Pencil, Trash2, Save, X, Receipt } from "lucide-vue-next";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import { useTransactionsCreate } from "./composables/useTransactionsCreate.js";
+import { useTransactionsEdit } from "./composables/useTransactionsEdit.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -17,91 +23,72 @@ const props = defineProps({
     createTransactionPath: { type: String, required: true },
     updateTransactionPath: { type: String, required: true },
     deleteTransactionPath: { type: String, required: true },
+    /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
 
 const selectedWalletId = ref(props.wallets[0]?.id ?? null);
 const transactionsByWallet = ref({ ...props.transactionsByWallet });
-const isSubmitting = ref(false);
-const errors = ref({});
+const searchInput = ref("");
 
-const today = new Date().toISOString().slice(0, 10);
-const form = ref({
-    type: "expense",
-    amount: "",
-    date: today,
-    description: "",
-    categoryId: null,
-});
-
-const currentTransactions = computed(() =>
-    selectedWalletId.value
-        ? transactionsByWallet.value[String(selectedWalletId.value)] ?? []
-        : [],
+const walletOptions = computed(() =>
+    props.wallets.map((w) => ({ value: w.id, label: w.name })),
 );
 
-const currentCategories = computed(() =>
-    selectedWalletId.value
-        ? props.categoriesByWallet[String(selectedWalletId.value)] ?? []
-        : [],
+const typeOptions = computed(() =>
+    props.types.map((ty) => ({ value: ty, label: t(`personal_finance.transactions.types.${ty}`) })),
+);
+
+const currentTransactions = computed(() => {
+    if (!selectedWalletId.value) return [];
+    const list = transactionsByWallet.value[String(selectedWalletId.value)] ?? [];
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((tx) =>
+        (tx.description ?? "").toLowerCase().includes(q)
+        || (tx.categoryName ?? "").toLowerCase().includes(q),
+    );
+});
+
+const currentCategoryOptions = computed(() => {
+    if (!selectedWalletId.value) return [{ value: null, label: t("personal_finance.transactions.uncategorized") }];
+    const list = props.categoriesByWallet[String(selectedWalletId.value)] ?? [];
+    return [
+        { value: null, label: t("personal_finance.transactions.uncategorized") },
+        ...list.map((c) => ({ value: c.id, label: c.name })),
+    ];
+});
+
+const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useTransactionsCreate(
+    props.createTransactionPath,
+    (created, walletId) => {
+        const key = String(walletId);
+        transactionsByWallet.value[key] = [created, ...(transactionsByWallet.value[key] ?? [])];
+    },
+    { extraFields: props.extraFields },
+);
+
+const { showEdit, editingTransaction, editForm, editErrors, editLoading, openEdit, submitEdit } = useTransactionsEdit(
+    props.updateTransactionPath,
+    (updated) => {
+        const key = String(updated.walletId);
+        const list = transactionsByWallet.value[key] ?? [];
+        const idx = list.findIndex((tx) => tx.id === updated.id);
+        if (idx !== -1) transactionsByWallet.value[key] = [...list.slice(0, idx), updated, ...list.slice(idx + 1)];
+    },
+    { extraFields: props.extraFields },
 );
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteTransactionPath,
     (id) => {
         const key = String(selectedWalletId.value);
-        transactionsByWallet.value[key] = (transactionsByWallet.value[key] ?? []).filter(
-            (tx) => tx.id !== id,
-        );
+        transactionsByWallet.value[key] = (transactionsByWallet.value[key] ?? []).filter((tx) => tx.id !== id);
     },
     "personal_finance.transactions.deleted",
 );
-
-async function request(method, url, body = null) {
-    const options = { method, headers: { Accept: "application/json" } };
-    if (body !== null) {
-        options.headers["Content-Type"] = "application/json";
-        options.body = JSON.stringify(body);
-    }
-    const response = await fetch(url, options);
-    const payload = await response.json().catch(() => ({}));
-    return {
-        ok: response.ok && payload.success !== false,
-        status: response.status,
-        payload,
-    };
-}
-
-async function onCreate() {
-    if (!selectedWalletId.value) return;
-    isSubmitting.value = true;
-    errors.value = {};
-    try {
-        const url = props.createTransactionPath.replace(
-            "__walletId__",
-            String(selectedWalletId.value),
-        );
-        const res = await request(HttpMethod.Post, url, {
-            type: form.value.type,
-            amount: form.value.amount,
-            date: form.value.date,
-            description: form.value.description || null,
-            categoryId: form.value.categoryId || null,
-        });
-        if (!res.ok) {
-            errors.value = res.payload?.errors ?? {};
-            return;
-        }
-        const key = String(selectedWalletId.value);
-        const list = transactionsByWallet.value[key] ?? [];
-        transactionsByWallet.value[key] = [res.payload.transaction, ...list];
-        form.value.amount = "";
-        form.value.description = "";
-    } finally {
-        isSubmitting.value = false;
-    }
-}
 
 function formatType(type) {
     return t(`personal_finance.transactions.types.${type}`);
@@ -112,99 +99,204 @@ function formatAmount(transaction) {
     return `${sign}${transaction.amount}`;
 }
 
-function describePending(tx) {
+function describeTx(tx) {
     if (!tx) return "";
     return `${tx.date} · ${formatType(tx.type)} ${formatAmount(tx)}`;
 }
 </script>
 
 <template>
-    <div class="p-6 space-y-6">
-        <header class="flex items-center justify-between">
-            <h1 class="text-xl font-semibold">{{ t("personal_finance.transactions.title") }}</h1>
-        </header>
+    <div class="space-y-4">
+        <AppListToolbar>
+            <AppSearchInput v-model="searchInput" :placeholder="t('personal_finance.transactions.search_placeholder')" />
+            <template #actions>
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :disabled="!selectedWalletId"
+                    v-on:click="openCreate(selectedWalletId)"
+                >
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t("personal_finance.transactions.add") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
-        <section v-if="!wallets.length" class="text-muted text-sm">
+        <section v-if="!wallets.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
             {{ t("personal_finance.transactions.no_wallet") }}
         </section>
 
         <template v-else>
-            <section class="bg-surface-2/30 border border-line rounded-lg p-4">
-                <div class="flex flex-wrap items-end gap-3">
-                    <div class="flex flex-col">
-                        <label class="text-xs text-muted">{{ t("personal_finance.transactions.fields.wallet") }}</label>
-                        <select v-model="selectedWalletId" class="bg-surface border border-line rounded px-2 py-1 text-sm">
-                            <option v-for="w in wallets" :key="w.id" :value="w.id">{{ w.name }}</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-xs text-muted">{{ t("personal_finance.transactions.fields.type") }}</label>
-                        <select v-model="form.type" class="bg-surface border border-line rounded px-2 py-1 text-sm">
-                            <option v-for="ty in types" :key="ty" :value="ty">{{ formatType(ty) }}</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-xs text-muted">{{ t("personal_finance.transactions.fields.amount") }}</label>
-                        <input
-                            v-model="form.amount"
-                            type="text"
-                            inputmode="decimal"
-                            pattern="\d{1,8}(\.\d{1,2})?"
-                            class="bg-surface border border-line rounded px-2 py-1 text-sm w-28"
-                        >
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-xs text-muted">{{ t("personal_finance.transactions.fields.date") }}</label>
-                        <input v-model="form.date" type="date" class="bg-surface border border-line rounded px-2 py-1 text-sm">
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-xs text-muted">{{ t("personal_finance.transactions.fields.category") }}</label>
-                        <select v-model="form.categoryId" class="bg-surface border border-line rounded px-2 py-1 text-sm">
-                            <option :value="null">{{ t("personal_finance.transactions.uncategorized") }}</option>
-                            <option v-for="c in currentCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col grow min-w-[12rem]">
-                        <label class="text-xs text-muted">{{ t("personal_finance.transactions.fields.description") }}</label>
-                        <input v-model="form.description" type="text" maxlength="255" class="bg-surface border border-line rounded px-2 py-1 text-sm">
-                    </div>
-                    <button :disabled="isSubmitting || !form.amount" class="bg-accent-600 hover:bg-accent-500 disabled:opacity-50 text-white text-sm px-3 py-1.5 rounded" v-on:click="onCreate">
-                        {{ t("personal_finance.transactions.actions.create") }}
-                    </button>
-                </div>
-                <p v-for="(msgs, field) in errors" :key="field" class="text-xs text-rose-400 mt-2">{{ field }}: {{ msgs[0] }}</p>
-            </section>
+            <div class="bg-surface border border-line rounded-lg p-4">
+                <AppMultiselect
+                    v-model="selectedWalletId"
+                    :label="t('personal_finance.transactions.fields.wallet')"
+                    :options="walletOptions"
+                    :allow-empty="false"
+                />
+            </div>
 
-            <section>
-                <table v-if="currentTransactions.length" class="w-full text-sm">
-                    <thead class="text-left text-muted border-b border-line">
-                        <tr>
-                            <th class="py-2">{{ t("personal_finance.transactions.fields.date") }}</th>
-                            <th class="py-2">{{ t("personal_finance.transactions.fields.type") }}</th>
-                            <th class="py-2">{{ t("personal_finance.transactions.fields.amount") }}</th>
-                            <th class="py-2">{{ t("personal_finance.transactions.fields.category") }}</th>
-                            <th class="py-2">{{ t("personal_finance.transactions.fields.description") }}</th>
-                            <th class="py-2" />
+            <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.date") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.type") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.amount") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.category") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.transactions.fields.description") }}</th>
+                            <slot name="extra-headers" />
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr v-for="tx in currentTransactions" :key="tx.id" class="border-b border-line/40">
-                            <td class="py-2 font-mono text-xs">{{ tx.date }}</td>
-                            <td class="py-2">{{ formatType(tx.type) }}</td>
-                            <td class="py-2 font-mono" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</td>
-                            <td class="py-2 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
-                            <td class="py-2">{{ tx.description }}</td>
-                            <td class="py-2 text-right">
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tx)">
-                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="tx in currentTransactions" :key="tx.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3 font-mono text-xs">{{ tx.date }}</td>
+                            <td class="px-6 py-3">{{ formatType(tx.type) }}</td>
+                            <td class="px-6 py-3 text-right font-mono" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</td>
+                            <td class="px-6 py-3 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
+                            <td class="px-6 py-3">{{ tx.description }}</td>
+                            <slot name="extra-cells" :transaction="tx" />
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!currentTransactions.length">
+                            <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
+                                {{ t("personal_finance.transactions.empty") }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <p v-else class="text-muted text-sm">{{ t("personal_finance.transactions.empty") }}</p>
-            </section>
+            </div>
         </template>
+
+        <AppModal
+            :show="showCreate"
+            :title="t('personal_finance.transactions.create_form_title')"
+            :icon="Receipt"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitCreate">
+                <AppMultiselect
+                    v-model="createForm.type"
+                    :label="t('personal_finance.transactions.fields.type')"
+                    :options="typeOptions"
+                    :allow-empty="false"
+                    required
+                />
+                <AppAmountInput
+                    v-model="createForm.amount"
+                    :label="t('personal_finance.transactions.fields.amount')"
+                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
+                    :error="createErrors.amount"
+                    required
+                />
+                <AppInput
+                    v-model="createForm.date"
+                    :label="t('personal_finance.transactions.fields.date')"
+                    type="date"
+                    :error="createErrors.date"
+                    required
+                />
+                <AppMultiselect
+                    v-model="createForm.categoryId"
+                    :label="t('personal_finance.transactions.fields.category')"
+                    :options="currentCategoryOptions"
+                    :allow-empty="true"
+                />
+                <AppInput
+                    v-model="createForm.description"
+                    :label="t('personal_finance.transactions.fields.description')"
+                    :error="createErrors.description"
+                />
+                <slot name="extra-form-fields" :form="createForm" :errors="createErrors" />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="createLoading"
+                        v-on:click="submitCreate"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal
+            :show="showEdit"
+            :title="t('personal_finance.transactions.edit', { name: describeTx(editingTransaction) })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitEdit">
+                <AppMultiselect
+                    v-model="editForm.type"
+                    :label="t('personal_finance.transactions.fields.type')"
+                    :options="typeOptions"
+                    :allow-empty="false"
+                    required
+                />
+                <AppAmountInput
+                    v-model="editForm.amount"
+                    :label="t('personal_finance.transactions.fields.amount')"
+                    :error="editErrors.amount"
+                    required
+                />
+                <AppInput
+                    v-model="editForm.date"
+                    :label="t('personal_finance.transactions.fields.date')"
+                    type="date"
+                    :error="editErrors.date"
+                    required
+                />
+                <AppMultiselect
+                    v-model="editForm.categoryId"
+                    :label="t('personal_finance.transactions.fields.category')"
+                    :options="currentCategoryOptions"
+                    :allow-empty="true"
+                />
+                <AppInput
+                    v-model="editForm.description"
+                    :label="t('personal_finance.transactions.fields.description')"
+                    :error="editErrors.description"
+                />
+                <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :transaction="editingTransaction" />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="editLoading"
+                        v-on:click="submitEdit"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
 
         <AppModal
             :show="!!pendingDelete"
@@ -215,7 +307,7 @@ function describePending(tx) {
             v-on:close="pendingDelete = null"
         >
             <p class="text-sm text-primary">
-                {{ t("personal_finance.transactions.delete_confirm", { name: describePending(pendingDelete) }) }}
+                {{ t("personal_finance.transactions.delete_confirm", { name: describeTx(pendingDelete) }) }}
             </p>
             <template #footer>
                 <AppModalFooter>

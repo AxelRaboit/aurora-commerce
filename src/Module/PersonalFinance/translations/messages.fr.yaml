@@ -73,8 +73,18 @@ personal_finance:
     no_wallet: Créez d'abord un portefeuille pour pouvoir gérer des catégories.
     wallet: Portefeuille
     new_name: Nom de la catégorie
+    add: Nouvelle catégorie
+    edit: 'Modifier « {name} »'
+    search_placeholder: Rechercher une catégorie…
+    create_form_title: Créer une catégorie
     delete_confirm: 'Supprimer la catégorie « {name} » ? Les transactions associées deviendront non catégorisées.'
     deleted: Catégorie supprimée.
+    created: Catégorie créée.
+    updated: Catégorie mise à jour.
+    fields:
+      name: Nom
+    placeholders:
+      name: 'ex. Courses'
     actions:
       create: Ajouter
       delete: Supprimer
@@ -85,8 +95,16 @@ personal_finance:
     empty: Aucune transaction pour ce portefeuille.
     no_wallet: Créez d'abord un portefeuille pour pouvoir enregistrer des transactions.
     uncategorized: Sans catégorie
+    add: Nouvelle transaction
+    edit: 'Modifier {name}'
+    search_placeholder: Rechercher une transaction…
+    create_form_title: Enregistrer une transaction
     delete_confirm: 'Supprimer la transaction {name} ? Cette action est irréversible.'
     deleted: Transaction supprimée.
+    created: Transaction enregistrée.
+    updated: Transaction mise à jour.
+    placeholders:
+      amount: '0.00 — astuce : 100+50 sera calculé'
     fields:
       wallet: Portefeuille
       type: Type

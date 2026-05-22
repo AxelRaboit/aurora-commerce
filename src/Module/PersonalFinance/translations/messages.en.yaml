@@ -73,8 +73,18 @@ personal_finance:
     no_wallet: Create a wallet first to manage categories.
     wallet: Wallet
     new_name: Category name
+    add: New category
+    edit: 'Edit "{name}"'
+    search_placeholder: Search a category…
+    create_form_title: Create a category
     delete_confirm: 'Delete category "{name}"? Associated transactions will become uncategorized.'
     deleted: Category deleted.
+    created: Category created.
+    updated: Category updated.
+    fields:
+      name: Name
+    placeholders:
+      name: 'e.g. Groceries'
     actions:
       create: Add
       delete: Delete
@@ -85,8 +95,16 @@ personal_finance:
     empty: No transaction for this wallet yet.
     no_wallet: Create a wallet first to record transactions.
     uncategorized: Uncategorized
+    add: New transaction
+    edit: 'Edit {name}'
+    search_placeholder: Search a transaction…
+    create_form_title: Record a transaction
     delete_confirm: 'Delete transaction {name}? This action is irreversible.'
     deleted: Transaction deleted.
+    created: Transaction recorded.
+    updated: Transaction updated.
+    placeholders:
+      amount: '0.00 — tip: 100+50 will be evaluated'
     fields:
       wallet: Wallet
       type: Type
