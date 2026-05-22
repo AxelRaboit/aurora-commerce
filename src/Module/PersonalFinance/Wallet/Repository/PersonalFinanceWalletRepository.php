@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Wallet\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
+use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
@@ -14,9 +15,40 @@ use Doctrine\Persistence\ManagerRegistry;
 /** @extends ResolveTargetEntityRepository<PersonalFinanceWalletInterface> */
 class PersonalFinanceWalletRepository extends ResolveTargetEntityRepository
 {
+    use PaginationTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PersonalFinanceWallet::class, PersonalFinanceWalletInterface::class);
+    }
+
+    /**
+     * Paginated list of wallets the user is a member of.
+     *
+     * @return array{items: list<PersonalFinanceWalletInterface>, total: int, page: int, totalPages: int}
+     */
+    public function findPaginatedAccessibleByUser(CoreUserInterface $user, int $page, int $limit = 20, ?string $search = null): array
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->innerJoin('w.members', 'm')
+            ->where('m.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('w.position', Order::Ascending->value)
+            ->addOrderBy('w.name', Order::Ascending->value);
+
+        $countQb = $this->createQueryBuilder('w')
+            ->select('COUNT(DISTINCT w.id)')
+            ->innerJoin('w.members', 'm')
+            ->where('m.user = :user')
+            ->setParameter('user', $user);
+
+        if (null !== $search && '' !== $search) {
+            $pattern = '%'.mb_strtolower($search).'%';
+            $qb->andWhere('LOWER(w.name) LIKE :search')->setParameter('search', $pattern);
+            $countQb->andWhere('LOWER(w.name) LIKE :search')->setParameter('search', $pattern);
+        }
+
+        return $this->paginate($qb, $countQb, $page, $limit);
     }
 
     /**

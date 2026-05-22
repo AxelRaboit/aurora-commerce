@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, Wallet } from "lucide-vue-next";
+import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -10,40 +11,31 @@ import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
+import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useWalletsCreate } from "./composables/useWalletsCreate.js";
 import { useWalletsEdit } from "./composables/useWalletsEdit.js";
 
 const props = defineProps({
-    wallets: { type: Array, required: true },
+    wallets: { type: Object, default: () => ({}) },
     modes: { type: Array, required: true },
+    search: { type: String, default: "" },
+    listPath: { type: String, required: true },
     createWalletPath: { type: String, required: true },
     updateWalletPath: { type: String, required: true },
     deleteWalletPath: { type: String, required: true },
-    /**
-     * Client-extension hook — see `entity_extensibility_convention.md` §"Couche 5".
-     * Each entry seeds the form with a default value AND is spread into the
-     * create/update payload so the client's overridden DTO + Input factory
-     * can hydrate the entity. Combine with the `extra-headers`, `extra-cells`
-     * and `extra-form-fields` slots to render custom UI.
-     */
+    /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
 
-const wallets = ref([...props.wallets]);
-const searchInput = ref("");
-
-const filteredWallets = computed(() => {
-    const q = searchInput.value.trim().toLowerCase();
-    if (!q) return wallets.value;
-    return wallets.value.filter((w) =>
-        w.name.toLowerCase().includes(q)
-        || t(`personal_finance.wallets.modes.${w.mode}`).toLowerCase().includes(q),
-    );
-});
+const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
+    props.listPath,
+    { initialSearch: props.search, initialData: props.wallets },
+);
 
 const modeOptions = computed(() =>
     props.modes.map((m) => ({ value: m, label: t(`personal_finance.wallets.modes.${m}`) })),
@@ -55,22 +47,19 @@ function formatMode(mode) {
 
 const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useWalletsCreate(
     props.createWalletPath,
-    (created) => { wallets.value = [...wallets.value, created]; },
+    () => reset(),
     { extraFields: props.extraFields },
 );
 
 const { showEdit, editingWallet, editForm, editErrors, editLoading, openEdit, submitEdit } = useWalletsEdit(
     props.updateWalletPath,
-    (updated) => {
-        const idx = wallets.value.findIndex((w) => w.id === updated.id);
-        if (idx !== -1) wallets.value[idx] = updated;
-    },
+    () => reset(),
     { extraFields: props.extraFields },
 );
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteWalletPath,
-    (id) => { wallets.value = wallets.value.filter((w) => w.id !== id); },
+    () => reset(),
     "personal_finance.wallets.deleted",
 );
 </script>
@@ -78,7 +67,11 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput v-model="searchInput" :placeholder="t('personal_finance.wallets.search_placeholder')" />
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('personal_finance.wallets.search_placeholder')"
+                v-on:search="onSearch"
+            />
             <template #actions>
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
@@ -87,9 +80,9 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </template>
         </AppListToolbar>
 
-        <div class="space-y-4">
+        <div class="relative space-y-4">
             <div class="sm:hidden space-y-3">
-                <div v-for="w in filteredWallets" :key="w.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                <div v-for="w in items" :key="w.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-medium text-primary">{{ w.name }}</p>
@@ -117,7 +110,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line/40">
-                        <tr v-for="w in filteredWallets" :key="w.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <tr v-for="w in items" :key="w.id" class="group hover:bg-surface-2/40 transition-colors">
                             <td class="px-6 py-3"><span class="font-medium text-primary">{{ w.name }}</span></td>
                             <td class="px-6 py-3 text-secondary">{{ formatMode(w.mode) }}</td>
                             <td class="px-6 py-3 text-right font-mono text-primary">{{ w.startBalance }}</td>
@@ -129,14 +122,17 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="!filteredWallets.length">
+                        <tr v-if="!items?.length">
                             <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
-                                {{ wallets.length ? t("personal_finance.wallets.no_match") : t("personal_finance.wallets.empty") }}
+                                {{ t("personal_finance.wallets.empty") }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppLoader :active="loading" />
         </div>
 
         <AppModal

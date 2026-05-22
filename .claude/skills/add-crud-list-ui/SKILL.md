@@ -22,6 +22,11 @@ output: a thin SFC + two composables (`use<Plural>Create.js`,
 >    co-located in the feature folder. The SFC only owns template +
 >    UI-only refs (search input, modal toggles when not already managed
 >    by the composable).
+>
+> **Server-side pagination is the DEFAULT.** Use `useListPage` + a backend
+> `/list` JSON endpoint + `AppPagination` + `AppLoader`. Local filtering
+> via a computed (which was a temporary fallback) is allowed only when
+> the list is bounded by design (e.g. a small in-memory pick-list).
 
 ## File layout (mandatory)
 
@@ -288,9 +293,7 @@ Don't add `actions.delete` / `actions.create` under `<base>` — use
 - **Heavy form (>6 fields, multi-tab)** : extract `use<Plural>Create.js` +
   `use<Plural>Edit.js` composables (cf. `CompaniesApp` for the canonical
   pattern). Otherwise inline is fine.
-- **Server-side pagination + search** : swap the local `items` + filter for
-  `useListPage` (cf. `CompaniesApp`). Requires a backend `listPath` JSON
-  endpoint returning `{items, page, totalPages, search}`.
+- (~~Server-side pagination~~ — promoted to default, see "What gets generated".)
 - **Show/Detail page link** : add `<AppIconButton color="sky"
   :href="buildPath(showPath, { id: i.id })"><Eye/></AppIconButton>` before
   edit/delete (eye icon).

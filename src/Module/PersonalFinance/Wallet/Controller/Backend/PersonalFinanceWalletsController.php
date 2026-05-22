@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
@@ -40,12 +41,21 @@ final class PersonalFinanceWalletsController extends AbstractController
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
-    public function index(): Response
+    public function index(PaginationRequest $pagination): Response
     {
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        return $this->render('@PersonalFinance/backend/wallets/index.html.twig', $this->viewBuilder->indexView($user));
+        return $this->render('@PersonalFinance/backend/wallets/index.html.twig', $this->viewBuilder->indexView($user, $pagination));
+    }
+
+    #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
+    public function list(PaginationRequest $pagination): JsonResponse
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        return $this->json($this->viewBuilder->buildListPayload($user, $pagination));
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
