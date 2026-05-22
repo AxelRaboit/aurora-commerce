@@ -7,6 +7,7 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
@@ -214,10 +215,10 @@ function formatMode(mode) {
                     :error="createErrors.name"
                     required
                 />
-                <AppInput
+                <AppAmountInput
                     v-model="createForm.startBalance"
                     :label="t('personal_finance.wallets.fields.start_balance')"
-                    placeholder="0.00"
+                    :placeholder="t('personal_finance.wallets.placeholders.start_balance')"
                     :error="createErrors.startBalance"
                 />
                 <AppMultiselect
@@ -262,9 +263,10 @@ function formatMode(mode) {
                     :error="editErrors.name"
                     required
                 />
-                <AppInput
+                <AppAmountInput
                     v-model="editForm.startBalance"
                     :label="t('personal_finance.wallets.fields.start_balance')"
+                    :placeholder="t('personal_finance.wallets.placeholders.start_balance')"
                     :error="editErrors.startBalance"
                 />
                 <AppMultiselect

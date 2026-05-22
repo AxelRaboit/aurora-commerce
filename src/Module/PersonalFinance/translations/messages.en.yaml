@@ -42,6 +42,7 @@ personal_finance:
       mode: Mode
     placeholders:
       name: 'e.g. Checking account'
+      start_balance: '0.00 — tip: 100+50 will be evaluated'
     actions:
       create: Create
       delete: Delete

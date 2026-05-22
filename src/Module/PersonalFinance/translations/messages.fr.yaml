@@ -42,6 +42,7 @@ personal_finance:
       mode: Mode
     placeholders:
       name: 'ex. Compte courant'
+      start_balance: '0.00 — astuce : 100+50 sera calculé'
     actions:
       create: Créer
       delete: Supprimer
