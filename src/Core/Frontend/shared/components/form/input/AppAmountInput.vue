@@ -3,22 +3,22 @@
  * AppAmountInput — decimal amount input with optional arithmetic evaluation
  * on blur. Type "100+50" then leave the field → value becomes "150.00".
  *
- * Inspired by the Spendly UX: type math expressions (with +, -, *, /, parens)
- * to combine amounts without leaving the keyboard.
+ * Inspired by Spendly's UX: type math expressions (+, -, *, /, parens) to
+ * combine amounts without leaving the keyboard.
  *
- * Behavior:
- * - Allowed input chars: digits, `.`, operators `+ - * /`, parens, spaces.
- *   Other chars are stripped silently as the user types.
- * - On blur, if the value contains an operator, it is evaluated in a
- *   sandboxed Function() with the sanitized expression. On success, the
- *   result is formatted to fixed decimals (default 2) and emitted.
- * - Negative or non-finite results are rejected (raw value kept).
- * - Empty or plain numeric input is left untouched.
+ * Allowed input chars: digits, `.`, operators `+ - * /`, parens, spaces.
+ * Other chars are stripped silently. The actual evaluation lives in the
+ * shared utility `evaluateAmount.js` so callers (parent SFC) can also
+ * normalize the value before submit — useful when the user clicks the
+ * submit button without blurring the field first.
  *
- * Pass-through of label, error, required, placeholder to AppInput.
+ * Defines `evaluate()` via defineExpose so a parent can force evaluation
+ * imperatively (e.g. `inputRef.value?.evaluate()` right before submit).
  */
 import { ref, watch } from "vue";
-import AppInput from "@/shared/components/form/input/AppInput.vue";
+import { useI18n } from "vue-i18n";
+import AppFieldLabel from "@/shared/components/form/AppFieldLabel.vue";
+import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 
 const props = defineProps({
     modelValue: { type: String, default: "" },
@@ -32,6 +32,8 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
+const { t } = useI18n();
+
 const local = ref(String(props.modelValue ?? ""));
 
 watch(
@@ -42,58 +44,40 @@ watch(
     },
 );
 
-function sanitize(s) {
-    return s.replace(/[^0-9.+\-*/()\s]/g, "");
-}
-
-function onInput(value) {
-    const cleaned = sanitize(value);
+function onInput(event) {
+    const cleaned = event.target.value.replace(/[^0-9.+\-*/()\s]/g, "");
     local.value = cleaned;
     emit("update:modelValue", cleaned);
 }
 
-function onBlur() {
-    const cleaned = sanitize(local.value).trim();
-    if (cleaned === "") return;
-
-    // No operator → already a plain number, just normalize formatting if it's parseable.
-    if (!/[+\-*/]/.test(cleaned.slice(1))) {
-        const n = Number(cleaned);
-        if (Number.isFinite(n)) {
-            const formatted = n.toFixed(props.decimals);
-            if (formatted !== local.value) {
-                local.value = formatted;
-                emit("update:modelValue", formatted);
-            }
-        }
-        return;
-    }
-
-    // Has an operator → evaluate.
-    try {
-         
-        const result = new Function(`"use strict"; return (${cleaned});`)();
-        if (typeof result !== "number" || !Number.isFinite(result)) return;
-        if (!props.allowNegative && result < 0) return;
-        const formatted = result.toFixed(props.decimals);
+function evaluate() {
+    const formatted = evaluateAmount(local.value, {
+        decimals: props.decimals,
+        allowNegative: props.allowNegative,
+    });
+    if (formatted !== local.value) {
         local.value = formatted;
         emit("update:modelValue", formatted);
-    } catch {
-        // Invalid expression — keep raw, the validator on submit will surface the error.
     }
 }
+
+defineExpose({ evaluate });
 </script>
 
 <template>
-    <AppInput
-        :model-value="local"
-        :label="label"
-        :placeholder="placeholder"
-        :error="error"
-        :required="required"
-        type="text"
-        inputmode="decimal"
-        v-on:update:model-value="onInput"
-        v-on:blur="onBlur"
-    />
+    <div class="flex flex-col gap-1.5">
+        <AppFieldLabel :label="label" :required="required" />
+        <input
+            :value="local"
+            :placeholder="placeholder"
+            :required="required"
+            type="text"
+            inputmode="decimal"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition"
+            :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-500': error }"
+            v-on:input="onInput"
+            v-on:blur="evaluate"
+        >
+        <p v-if="error" class="text-xs text-red-500">{{ t(error, error) }}</p>
+    </div>
 </template>

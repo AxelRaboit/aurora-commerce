@@ -32,6 +32,8 @@ personal_finance:
     create_form_title: Créer un portefeuille
     delete_confirm: 'Supprimer le portefeuille « {name} » ? Toutes les transactions, catégories et membres associés seront supprimés. Cette action est irréversible.'
     deleted: Portefeuille supprimé.
+    created: Portefeuille créé.
+    updated: Portefeuille mis à jour.
     add: Nouveau portefeuille
     edit: 'Modifier « {name} »'
     search_placeholder: Rechercher un portefeuille…

@@ -2,8 +2,6 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, Wallet } from "lucide-vue-next";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -14,6 +12,8 @@ import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import { useWalletsCreate } from "./composables/useWalletsCreate.js";
+import { useWalletsEdit } from "./composables/useWalletsEdit.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -41,106 +41,34 @@ const modeOptions = computed(() =>
     props.modes.map((m) => ({ value: m, label: t(`personal_finance.wallets.modes.${m}`) })),
 );
 
-function emptyForm() {
-    return { name: "", startBalance: "0.00", mode: "budget", showOnDashboard: true, position: 0 };
-}
-
-const showCreate = ref(false);
-const createForm = ref(emptyForm());
-const createErrors = ref({});
-const createLoading = ref(false);
-
-const showEdit = ref(false);
-const editingWallet = ref(null);
-const editForm = ref(emptyForm());
-const editErrors = ref({});
-const editLoading = ref(false);
-
-async function request(method, url, body = null) {
-    const options = { method, headers: { Accept: "application/json" } };
-    if (body !== null) {
-        options.headers["Content-Type"] = "application/json";
-        options.body = JSON.stringify(body);
-    }
-    const response = await fetch(url, options);
-    const payload = await response.json().catch(() => ({}));
-    return { ok: response.ok && payload.success !== false, payload };
-}
-
-function openCreate() {
-    createForm.value = emptyForm();
-    createErrors.value = {};
-    showCreate.value = true;
-}
-
-async function submitCreate() {
-    createLoading.value = true;
-    createErrors.value = {};
-    try {
-        const res = await request(HttpMethod.Post, props.createWalletPath, createForm.value);
-        if (!res.ok) {
-            createErrors.value = res.payload?.errors ?? {};
-            return;
-        }
-        wallets.value = [...wallets.value, res.payload.wallet];
-        showCreate.value = false;
-    } finally {
-        createLoading.value = false;
-    }
-}
-
-function openEdit(wallet) {
-    editingWallet.value = wallet;
-    editForm.value = {
-        name: wallet.name,
-        startBalance: wallet.startBalance,
-        mode: wallet.mode,
-        showOnDashboard: wallet.showOnDashboard ?? true,
-        position: wallet.position ?? 0,
-    };
-    editErrors.value = {};
-    showEdit.value = true;
-}
-
-async function submitEdit() {
-    if (!editingWallet.value) return;
-    editLoading.value = true;
-    editErrors.value = {};
-    try {
-        const url = buildPath(props.updateWalletPath, { id: editingWallet.value.id });
-        const res = await request(HttpMethod.Post, url, editForm.value);
-        if (!res.ok) {
-            editErrors.value = res.payload?.errors ?? {};
-            return;
-        }
-        const idx = wallets.value.findIndex((w) => w.id === editingWallet.value.id);
-        if (idx !== -1) wallets.value[idx] = res.payload.wallet;
-        showEdit.value = false;
-    } finally {
-        editLoading.value = false;
-    }
-}
-
-const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
-    props.deleteWalletPath,
-    (id) => {
-        wallets.value = wallets.value.filter((w) => w.id !== id);
-    },
-    "personal_finance.wallets.deleted",
-);
-
 function formatMode(mode) {
     return t(`personal_finance.wallets.modes.${mode}`);
 }
+
+const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useWalletsCreate(
+    props.createWalletPath,
+    (created) => { wallets.value = [...wallets.value, created]; },
+);
+
+const { showEdit, editingWallet, editForm, editErrors, editLoading, openEdit, submitEdit } = useWalletsEdit(
+    props.updateWalletPath,
+    (updated) => {
+        const idx = wallets.value.findIndex((w) => w.id === updated.id);
+        if (idx !== -1) wallets.value[idx] = updated;
+    },
+);
+
+const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
+    props.deleteWalletPath,
+    (id) => { wallets.value = wallets.value.filter((w) => w.id !== id); },
+    "personal_finance.wallets.deleted",
+);
 </script>
 
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput
-                v-model="searchInput"
-                :placeholder="t('personal_finance.wallets.search_placeholder')"
-            />
+            <AppSearchInput v-model="searchInput" :placeholder="t('personal_finance.wallets.search_placeholder')" />
             <template #actions>
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
@@ -178,9 +106,7 @@ function formatMode(mode) {
                     </thead>
                     <tbody class="divide-y divide-line/40">
                         <tr v-for="w in filteredWallets" :key="w.id" class="group hover:bg-surface-2/40 transition-colors">
-                            <td class="px-6 py-3">
-                                <span class="font-medium text-primary">{{ w.name }}</span>
-                            </td>
+                            <td class="px-6 py-3"><span class="font-medium text-primary">{{ w.name }}</span></td>
                             <td class="px-6 py-3 text-secondary">{{ formatMode(w.mode) }}</td>
                             <td class="px-6 py-3 text-right font-mono text-primary">{{ w.startBalance }}</td>
                             <td class="px-6 py-3">

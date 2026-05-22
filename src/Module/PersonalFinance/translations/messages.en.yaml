@@ -32,6 +32,8 @@ personal_finance:
     create_form_title: Create a wallet
     delete_confirm: 'Delete wallet "{name}"? All associated transactions, categories and members will be removed. This action is irreversible.'
     deleted: Wallet deleted.
+    created: Wallet created.
+    updated: Wallet updated.
     add: New wallet
     edit: 'Edit "{name}"'
     search_placeholder: Search a wallet…
