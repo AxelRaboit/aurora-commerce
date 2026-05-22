@@ -15,7 +15,7 @@ distinctes :
 |---|---|
 | Markdown | 🟢 **Terminé** — production-ready. Voir `src/Module/Notes/Markdown/` et `src/Module/Notes/assets/backend/markdown/`. |
 | Block    | 🟢 **Terminé** — implémentation complète (Entity + Manager + Serializer + Controller + assets EditorJS). Voir `src/Module/Notes/Block/` et `src/Module/Notes/assets/backend/block/`. |
-| Post-it  | 🟡 **En cours** — squelette scaffoldé (Controller index + template + Vue placeholder + NavItem + permission). Entité + DTO + Manager + Serializer à générer via `/add-entity`. Voir `src/Module/Notes/PostIt/`. |
+| Post-it  | 🟢 **Terminé** — implémentation complète (Entity + DTO + Manager + Serializer + Controller + Vue + 4 composables avec tests : drag-drop, resize, API, page). Voir `src/Module/Notes/PostIt/` et `src/Module/Notes/assets/backend/post_it/`. |
 
 ## Architecture commune (référence pour le sous-module Block)
 
