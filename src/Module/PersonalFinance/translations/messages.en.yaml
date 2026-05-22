@@ -4,6 +4,8 @@ backend:
       personal_finance:
         wallets:
           use: Manage own wallets
+        categories:
+          use: Manage categories
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -12,6 +14,8 @@ backend:
       personal_finance: Personal Finance
     personal_finance_wallets: Wallets
     personal_finance_wallets_description: Manage your wallets (checking accounts, savings, cash) and their initial balance.
+    personal_finance_categories: Categories
+    personal_finance_categories_description: 'Per-wallet transaction taxonomy (Groceries, Leisure, Salary…).'
   parameters:
     personal_finance_default_currency:
       label: Default currency
@@ -51,3 +55,15 @@ personal_finance:
       invitation_token_invalid: Invalid, expired or already-used invitation token.
       invitation_already_pending: An invitation is already pending for this email.
       invitation_owner_role_forbidden: 'Owner role cannot be assigned via invitation — use ownership transfer instead.'
+  categories:
+    title: Categories
+    empty: No category for this wallet yet.
+    no_wallet: Create a wallet first to manage categories.
+    wallet: Wallet
+    new_name: Category name
+    confirm_delete: Delete this category? Associated transactions will become uncategorized.
+    actions:
+      create: Add
+      delete: Delete
+    errors:
+      name_required: Category name is required.

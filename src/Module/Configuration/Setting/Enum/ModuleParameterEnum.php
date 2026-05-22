@@ -110,6 +110,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
 
     // Sub-modules — PersonalFinance
     case PersonalFinanceWallets = 'modules_personal_finance_wallets';
+    case PersonalFinanceCategories = 'modules_personal_finance_categories';
 
     public function getKey(): string
     {
@@ -180,6 +181,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesPostIt => 'backend.nav.notes_post_it',
             self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend',
             self::PersonalFinanceWallets => 'backend.nav.personal_finance_wallets',
+            self::PersonalFinanceCategories => 'backend.nav.personal_finance_categories',
         };
     }
 
@@ -247,6 +249,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesPostIt => 'backend.nav.notes_post_it_description',
             self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend_description',
             self::PersonalFinanceWallets => 'backend.nav.personal_finance_wallets_description',
+            self::PersonalFinanceCategories => 'backend.nav.personal_finance_categories_description',
         };
     }
 
@@ -292,7 +295,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
             self::PdfFormTemplates, self::PdfFormDocuments => self::PdfFormBackend,
             self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
-            self::PersonalFinanceWallets => self::PersonalFinanceBackend,
+            self::PersonalFinanceWallets, self::PersonalFinanceCategories => self::PersonalFinanceBackend,
             default => null,
         };
     }
@@ -367,6 +370,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesPostIt => self::NotesBackend->value,
             // PersonalFinance sub-modules
             self::PersonalFinanceWallets => self::PersonalFinanceBackend->value,
+            self::PersonalFinanceCategories => self::PersonalFinanceWallets->value,
             default => null,
         };
     }

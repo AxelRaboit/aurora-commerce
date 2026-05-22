@@ -4,6 +4,8 @@ backend:
       personal_finance:
         wallets:
           use: Gérer ses portefeuilles
+        categories:
+          use: Gérer les catégories
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -12,6 +14,8 @@ backend:
       personal_finance: Finance perso
     personal_finance_wallets: Portefeuilles
     personal_finance_wallets_description: Gérez vos portefeuilles (comptes courants, livrets, cash) et leur balance initiale.
+    personal_finance_categories: Catégories
+    personal_finance_categories_description: 'Taxonomie des transactions par portefeuille (Courses, Loisirs, Salaire…).'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -51,3 +55,15 @@ personal_finance:
       invitation_token_invalid: Lien d'invitation invalide, expiré ou déjà utilisé.
       invitation_already_pending: Une invitation est déjà en cours pour cet email.
       invitation_owner_role_forbidden: 'Le rôle Propriétaire ne peut pas être attribué via invitation — utiliser le transfert d''ownership.'
+  categories:
+    title: Catégories
+    empty: Aucune catégorie pour ce portefeuille.
+    no_wallet: Créez d'abord un portefeuille pour pouvoir gérer des catégories.
+    wallet: Portefeuille
+    new_name: Nom de la catégorie
+    confirm_delete: Supprimer cette catégorie ? Les transactions associées deviendront non catégorisées.
+    actions:
+      create: Ajouter
+      delete: Supprimer
+    errors:
+      name_required: Le nom de la catégorie est requis.
