@@ -9,7 +9,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
-import AppSelect from "@/shared/components/form/select/AppSelect.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
@@ -41,7 +41,7 @@ const modeOptions = computed(() =>
 );
 
 function emptyForm() {
-    return { name: "", startBalance: "0.00", mode: "simple", showOnDashboard: true, position: 0 };
+    return { name: "", startBalance: "0.00", mode: "budget", showOnDashboard: true, position: 0 };
 }
 
 const showCreate = ref(false);
@@ -220,10 +220,11 @@ function formatMode(mode) {
                     placeholder="0.00"
                     :error="createErrors.startBalance"
                 />
-                <AppSelect
+                <AppMultiselect
                     v-model="createForm.mode"
                     :label="t('personal_finance.wallets.fields.mode')"
                     :options="modeOptions"
+                    :allow-empty="false"
                     required
                 />
             </form>
@@ -266,10 +267,11 @@ function formatMode(mode) {
                     :label="t('personal_finance.wallets.fields.start_balance')"
                     :error="editErrors.startBalance"
                 />
-                <AppSelect
+                <AppMultiselect
                     v-model="editForm.mode"
                     :label="t('personal_finance.wallets.fields.mode')"
                     :options="modeOptions"
+                    :allow-empty="false"
                     required
                 />
             </form>
