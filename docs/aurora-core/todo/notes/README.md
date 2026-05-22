@@ -20,7 +20,8 @@ distinctes :
 ## Architecture commune (référence pour le sous-module Block)
 
 - **Entités séparées** `MarkdownNote` / `BlockNote` (pas de
-  discriminator) — justification dans [`block/overview.md`](block/overview.md).
+  discriminator) — justifié par le storage différent (JSON typé EditorJS
+  vs markdown texte) et l'absence de wiki-links/graph côté Block.
   Si plus tard une vue unifiée "toutes mes notes" devient utile,
   extraire les champs communs (`tags`, `user`, `parent`, `position`)
   dans une abstract partagée.
