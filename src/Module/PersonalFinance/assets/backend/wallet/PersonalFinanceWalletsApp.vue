@@ -131,7 +131,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 </table>
             </div>
 
-            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:go-to-page="goToPage" />
+            <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
             <AppLoader :active="loading" />
         </div>
 
