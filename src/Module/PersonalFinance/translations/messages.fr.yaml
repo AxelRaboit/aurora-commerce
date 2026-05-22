@@ -39,7 +39,15 @@ personal_finance:
       owner: Propriétaire
       editor: Éditeur
       viewer: Lecteur
+    invitations:
+      pending: En attente
+      expired: Expirée
+      accepted: Acceptée
+      declined: Refusée
     errors:
       name_required: Le nom du portefeuille est requis.
       start_balance_required: La balance initiale est requise.
       start_balance_format: 'Format invalide. Exemple : 1234.56'
+      invitation_token_invalid: Lien d'invitation invalide, expiré ou déjà utilisé.
+      invitation_already_pending: Une invitation est déjà en cours pour cet email.
+      invitation_owner_role_forbidden: 'Le rôle Propriétaire ne peut pas être attribué via invitation — utiliser le transfert d''ownership.'

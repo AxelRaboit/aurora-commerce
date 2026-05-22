@@ -1,0 +1,94 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aurora\Module\PersonalFinance\Wallet\Controller\Backend;
+
+use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Frontend\Controller\JsonRequestTrait;
+use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
+use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletMemberManagerInterface;
+use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletMemberRepository;
+use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
+use Aurora\Module\PersonalFinance\Wallet\Security\PersonalFinanceWalletVoter;
+use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletMemberSerializerInterface;
+use DomainException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[Route('/backend/personal-finance/wallets/{walletId}/members', name: 'backend_personal_finance_wallets_members')]
+#[IsGranted('personal_finance.wallets.use')]
+final class PersonalFinanceWalletMembersController extends AbstractController
+{
+    use JsonRequestTrait;
+    use JsonResponseTrait;
+
+    public function __construct(
+        private readonly PersonalFinanceWalletRepository $walletRepository,
+        private readonly PersonalFinanceWalletMemberRepository $memberRepository,
+        private readonly PersonalFinanceWalletMemberManagerInterface $memberManager,
+        private readonly PersonalFinanceWalletMemberSerializerInterface $memberSerializer,
+    ) {}
+
+    #[Route('/{memberId}/update-role', name: '_update_role', methods: [HttpMethodEnum::Post->value])]
+    public function updateRole(int $walletId, int $memberId, Request $request): JsonResponse
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::MANAGE_MEMBERS, $wallet);
+
+        $member = $this->memberRepository->find($memberId);
+        if (!$member instanceof PersonalFinanceWalletMemberInterface
+            || $member->getWallet()->getId() !== $wallet->getId()) {
+            return $this->jsonNotFound();
+        }
+
+        $data = $this->decodeJson($request);
+        $role = PersonalFinanceWalletRoleEnum::tryFrom((string) ($data['role'] ?? ''));
+        if (null === $role) {
+            return $this->jsonInvalidInput(['role' => ['Invalid role value.']]);
+        }
+
+        try {
+            $this->memberManager->updateRole($member, $role);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['role' => [$domainException->getMessage()]]);
+        }
+
+        return $this->jsonSuccess(['member' => $this->memberSerializer->serialize($member)]);
+    }
+
+    #[Route('/{memberId}/remove', name: '_remove', methods: [HttpMethodEnum::Post->value])]
+    public function remove(int $walletId, int $memberId): JsonResponse
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::MANAGE_MEMBERS, $wallet);
+
+        $member = $this->memberRepository->find($memberId);
+        if (!$member instanceof PersonalFinanceWalletMemberInterface
+            || $member->getWallet()->getId() !== $wallet->getId()) {
+            return $this->jsonNotFound();
+        }
+
+        try {
+            $this->memberManager->removeMember($member);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['member' => [$domainException->getMessage()]]);
+        }
+
+        return $this->jsonSuccess();
+    }
+}

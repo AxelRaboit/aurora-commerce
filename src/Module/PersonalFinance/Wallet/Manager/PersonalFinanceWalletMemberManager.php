@@ -11,6 +11,7 @@ use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInter
 use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(PersonalFinanceWalletMemberManagerInterface::class)]
@@ -44,6 +45,31 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
         $this->entityManager->flush();
     }
 
+    public function updateRole(PersonalFinanceWalletMemberInterface $member, PersonalFinanceWalletRoleEnum $newRole): void
+    {
+        if (PersonalFinanceWalletRoleEnum::Owner === $member->getRole()) {
+            throw new DomainException('Cannot change the Owner role directly. Use transferOwnership instead.');
+        }
+
+        if (PersonalFinanceWalletRoleEnum::Owner === $newRole) {
+            throw new DomainException('Cannot promote to Owner via updateRole. Use transferOwnership instead.');
+        }
+
+        $member->setRole($newRole);
+        $this->entityManager->flush();
+
+        $this->auditUpdated($member);
+    }
+
+    public function removeMember(PersonalFinanceWalletMemberInterface $member): void
+    {
+        if (PersonalFinanceWalletRoleEnum::Owner === $member->getRole()) {
+            throw new DomainException('Cannot remove the Owner. Transfer ownership before removing.');
+        }
+
+        $this->delete($member);
+    }
+
     protected function createMember(): PersonalFinanceWalletMemberInterface
     {
         return new PersonalFinanceWalletMember();
@@ -52,6 +78,11 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
     protected function auditCreated(PersonalFinanceWalletMemberInterface $member): void
     {
         $this->auditLogger->log('personal_finance', 'wallet_member.created', 'PersonalFinanceWalletMember', $member->getId(), $this->auditPayload($member));
+    }
+
+    protected function auditUpdated(PersonalFinanceWalletMemberInterface $member): void
+    {
+        $this->auditLogger->log('personal_finance', 'wallet_member.updated', 'PersonalFinanceWalletMember', $member->getId(), $this->auditPayload($member));
     }
 
     protected function auditDeleted(PersonalFinanceWalletMemberInterface $member): void

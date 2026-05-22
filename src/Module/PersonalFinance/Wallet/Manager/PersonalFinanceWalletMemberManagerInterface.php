@@ -14,4 +14,8 @@ interface PersonalFinanceWalletMemberManagerInterface
     public function create(PersonalFinanceWalletInterface $wallet, CoreUserInterface $user, PersonalFinanceWalletRoleEnum $role): PersonalFinanceWalletMemberInterface;
 
     public function delete(PersonalFinanceWalletMemberInterface $member): void;
+
+    public function updateRole(PersonalFinanceWalletMemberInterface $member, PersonalFinanceWalletRoleEnum $newRole): void;
+
+    public function removeMember(PersonalFinanceWalletMemberInterface $member): void;
 }

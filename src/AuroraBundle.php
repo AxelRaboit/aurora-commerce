@@ -131,6 +131,8 @@ use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateField;
 use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitation;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMember;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
@@ -325,6 +327,7 @@ class AuroraBundle extends AbstractBundle
                     AssistantMountPointInterface::class => AssistantMountPoint::class,
                     PersonalFinanceWalletInterface::class => PersonalFinanceWallet::class,
                     PersonalFinanceWalletMemberInterface::class => PersonalFinanceWalletMember::class,
+                    PersonalFinanceWalletInvitationInterface::class => PersonalFinanceWalletInvitation::class,
                 ],
                 'mappings' => array_merge(
                     [
