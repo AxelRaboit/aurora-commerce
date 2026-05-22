@@ -6,6 +6,9 @@ namespace Aurora\Module\PersonalFinance;
 
 use Aurora\Core\Module\Contract\ModuleInterface;
 use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Nav\NavItem;
+use Aurora\Core\Module\Nav\NavPermission;
+use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final readonly class PersonalFinanceModule implements ModuleInterface, ModuleToggleProviderInterface
@@ -19,7 +22,9 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
 
     public function getPermissions(): array
     {
-        return [];
+        return [
+            new NavPermission('personal_finance.wallets.use'),
+        ];
     }
 
     public function getNavSections(): array
@@ -28,18 +33,45 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             return [];
         }
 
-        return [];
+        $items = [];
+
+        if ($this->personalFinanceContext->isWalletsEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_wallets',
+                'backend.nav.personal_finance_wallets',
+                'wallet',
+                requiredPrivilege: 'personal_finance.wallets.use',
+                descriptionKey: 'backend.nav.personal_finance_wallets_description',
+            );
+        }
+
+        if ([] === $items) {
+            return [];
+        }
+
+        return [new NavSection('personal_finance', $items, priority: 25)];
     }
 
     public function getCatalogNavSections(): array
     {
-        return [];
+        return [
+            new NavSection('personal_finance', [
+                new NavItem(
+                    'backend_personal_finance_wallets',
+                    'backend.nav.personal_finance_wallets',
+                    'wallet',
+                    requiredPrivilege: 'personal_finance.wallets.use',
+                    descriptionKey: 'backend.nav.personal_finance_wallets_description',
+                ),
+            ], priority: 25),
+        ];
     }
 
     public function getToggles(): array
     {
         return [
             ModuleParameterEnum::PersonalFinanceBackend->toToggle(),
+            ModuleParameterEnum::PersonalFinanceWallets->toToggle(),
         ];
     }
 }

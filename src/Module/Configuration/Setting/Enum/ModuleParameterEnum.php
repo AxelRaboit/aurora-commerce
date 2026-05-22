@@ -108,6 +108,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case NotesBlock = 'modules_notes_block';
     case NotesPostIt = 'modules_notes_post_it';
 
+    // Sub-modules — PersonalFinance
+    case PersonalFinanceWallets = 'modules_personal_finance_wallets';
+
     public function getKey(): string
     {
         return $this->value;
@@ -176,6 +179,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesBlock => 'backend.nav.notes_block',
             self::NotesPostIt => 'backend.nav.notes_post_it',
             self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend',
+            self::PersonalFinanceWallets => 'backend.nav.personal_finance_wallets',
         };
     }
 
@@ -242,6 +246,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesBlock => 'backend.nav.notes_block_description',
             self::NotesPostIt => 'backend.nav.notes_post_it_description',
             self::PersonalFinanceBackend => 'backend.modules.personal_finance_backend_description',
+            self::PersonalFinanceWallets => 'backend.nav.personal_finance_wallets_description',
         };
     }
 
@@ -287,6 +292,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
             self::PdfFormTemplates, self::PdfFormDocuments => self::PdfFormBackend,
             self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
+            self::PersonalFinanceWallets => self::PersonalFinanceBackend,
             default => null,
         };
     }
@@ -359,6 +365,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::NotesMarkdown => self::NotesBackend->value,
             self::NotesBlock => self::NotesBackend->value,
             self::NotesPostIt => self::NotesBackend->value,
+            // PersonalFinance sub-modules
+            self::PersonalFinanceWallets => self::PersonalFinanceBackend->value,
             default => null,
         };
     }

@@ -1,0 +1,22 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.personal_finance_wallets'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.sections.personal_finance'|trans},
+            {label: 'backend.nav.personal_finance_wallets'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('personal-finance/backend/wallet/PersonalFinanceWalletsApp', {
+    wallets: wallets,
+    modes: modes,
+    createWalletPath: createWalletPath,
+    updateWalletPath: updateWalletPath,
+    deleteWalletPath: deleteWalletPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

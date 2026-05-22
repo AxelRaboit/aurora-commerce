@@ -1,11 +1,41 @@
 backend:
+  permissions:
+    names:
+      personal_finance:
+        wallets:
+          use: Manage own wallets
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
   nav:
     sections:
       personal_finance: Personal Finance
+    personal_finance_wallets: Wallets
+    personal_finance_wallets_description: Manage your wallets (checking accounts, savings, cash) and their initial balance.
   parameters:
     personal_finance_default_currency:
       label: Default currency
       description: ISO 4217 code (e.g. EUR, USD, CHF) used by default for new wallets and transactions.
+
+personal_finance:
+  wallets:
+    title: My wallets
+    empty: No wallet yet. Create your first one above.
+    create_form_title: Create a wallet
+    confirm_delete: Delete this wallet? This action is irreversible.
+    fields:
+      name: Name
+      start_balance: Initial balance
+      mode: Mode
+    placeholders:
+      name: 'e.g. Checking account'
+    actions:
+      create: Create
+      delete: Delete
+    modes:
+      budget: Budget (detailed monthly tracking)
+      simple: Simple (ledger only)
+    errors:
+      name_required: Wallet name is required.
+      start_balance_required: Initial balance is required.
+      start_balance_format: 'Invalid format. Example: 1234.56'

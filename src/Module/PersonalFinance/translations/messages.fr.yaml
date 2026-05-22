@@ -1,11 +1,41 @@
 backend:
+  permissions:
+    names:
+      personal_finance:
+        wallets:
+          use: Gérer ses portefeuilles
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
   nav:
     sections:
       personal_finance: Finance perso
+    personal_finance_wallets: Portefeuilles
+    personal_finance_wallets_description: Gérez vos portefeuilles (comptes courants, livrets, cash) et leur balance initiale.
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
       description: Code ISO 4217 (ex. EUR, USD, CHF) utilisé par défaut pour les nouveaux portefeuilles et transactions.
+
+personal_finance:
+  wallets:
+    title: Mes portefeuilles
+    empty: Aucun portefeuille pour l'instant. Créez votre premier portefeuille ci-dessus.
+    create_form_title: Créer un portefeuille
+    confirm_delete: Supprimer ce portefeuille ? Cette action est irréversible.
+    fields:
+      name: Nom
+      start_balance: Balance initiale
+      mode: Mode
+    placeholders:
+      name: 'ex. Compte courant'
+    actions:
+      create: Créer
+      delete: Supprimer
+    modes:
+      budget: Budget (suivi mensuel détaillé)
+      simple: Simple (ledger seul)
+    errors:
+      name_required: Le nom du portefeuille est requis.
+      start_balance_required: La balance initiale est requise.
+      start_balance_format: 'Format invalide. Exemple : 1234.56'

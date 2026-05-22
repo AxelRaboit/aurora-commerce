@@ -36,6 +36,7 @@ import {
     Lock,
     Flame,
     StickyNote,
+    Wallet,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -73,6 +74,7 @@ const ICON_MAP = {
     vault: Lock,
     flame: Flame,
     "sticky-note": StickyNote,
+    wallet: Wallet,
 };
 
 export function useSidemenuNav(
