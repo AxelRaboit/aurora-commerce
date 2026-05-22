@@ -6,7 +6,9 @@ namespace Aurora\Module\PersonalFinance\Wallet\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletModeEnum;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Doctrine\Common\Collections\Collection;
 
 interface PersonalFinanceWalletInterface extends TimestampableInterface
 {
@@ -39,4 +41,11 @@ interface PersonalFinanceWalletInterface extends TimestampableInterface
     public function isBudgetMode(): bool;
 
     public function isSimpleMode(): bool;
+
+    /** @return Collection<int, PersonalFinanceWalletMemberInterface> */
+    public function getMembers(): Collection;
+
+    public function roleFor(CoreUserInterface $user): ?PersonalFinanceWalletRoleEnum;
+
+    public function isShared(): bool;
 }

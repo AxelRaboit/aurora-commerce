@@ -35,6 +35,10 @@ personal_finance:
     modes:
       budget: Budget (suivi mensuel détaillé)
       simple: Simple (ledger seul)
+    roles:
+      owner: Propriétaire
+      editor: Éditeur
+      viewer: Lecteur
     errors:
       name_required: Le nom du portefeuille est requis.
       start_balance_required: La balance initiale est requise.

@@ -45,4 +45,21 @@ class PersonalFinanceWalletRepository extends ResolveTargetEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * Returns all wallets the user can access (any role: Owner, Editor, Viewer).
+     *
+     * @return list<PersonalFinanceWalletInterface>
+     */
+    public function findAccessibleByUser(CoreUserInterface $user): array
+    {
+        return $this->createQueryBuilder('w')
+            ->innerJoin('w.members', 'm')
+            ->where('m.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('w.position', Order::Ascending->value)
+            ->addOrderBy('w.name', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
 }

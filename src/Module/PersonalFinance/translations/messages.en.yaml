@@ -35,6 +35,10 @@ personal_finance:
     modes:
       budget: Budget (detailed monthly tracking)
       simple: Simple (ledger only)
+    roles:
+      owner: Owner
+      editor: Editor
+      viewer: Viewer
     errors:
       name_required: Wallet name is required.
       start_balance_required: Initial balance is required.

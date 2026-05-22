@@ -8,6 +8,8 @@ use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInputInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -18,6 +20,7 @@ class PersonalFinanceWalletManager implements PersonalFinanceWalletManagerInterf
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly AuditLogger $auditLogger,
+        protected readonly PersonalFinanceWalletMemberManagerInterface $personalFinanceWalletMemberManager,
     ) {}
 
     public function create(CoreUserInterface $owner, PersonalFinanceWalletInputInterface $input): PersonalFinanceWalletInterface
@@ -28,6 +31,8 @@ class PersonalFinanceWalletManager implements PersonalFinanceWalletManagerInterf
 
         $this->entityManager->persist($wallet);
         $this->entityManager->flush();
+
+        $this->createOwnerMembership($wallet, $owner);
 
         $this->auditCreated($wallet);
 
@@ -53,6 +58,11 @@ class PersonalFinanceWalletManager implements PersonalFinanceWalletManagerInterf
     protected function createWallet(): PersonalFinanceWalletInterface
     {
         return new PersonalFinanceWallet();
+    }
+
+    protected function createOwnerMembership(PersonalFinanceWalletInterface $wallet, CoreUserInterface $owner): PersonalFinanceWalletMemberInterface
+    {
+        return $this->personalFinanceWalletMemberManager->create($wallet, $owner, PersonalFinanceWalletRoleEnum::Owner);
     }
 
     protected function applyInput(PersonalFinanceWalletInterface $wallet, PersonalFinanceWalletInputInterface $input): void

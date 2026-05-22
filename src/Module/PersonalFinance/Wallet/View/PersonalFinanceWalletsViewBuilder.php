@@ -21,7 +21,7 @@ final readonly class PersonalFinanceWalletsViewBuilder
     /** @return array<string, mixed> */
     public function indexView(CoreUserInterface $user): array
     {
-        $wallets = $this->personalFinanceWalletRepository->findByOwner($user);
+        $wallets = $this->personalFinanceWalletRepository->findAccessibleByUser($user);
 
         return [
             'wallets' => array_map($this->personalFinanceWalletSerializer->serialize(...), $wallets),

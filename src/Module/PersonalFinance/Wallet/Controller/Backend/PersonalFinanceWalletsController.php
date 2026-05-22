@@ -12,6 +12,7 @@ use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInputFactoryIn
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletManagerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
+use Aurora\Module\PersonalFinance\Wallet\Security\PersonalFinanceWalletVoter;
 use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletSerializerInterface;
 use Aurora\Module\PersonalFinance\Wallet\View\PersonalFinanceWalletsViewBuilder;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
@@ -68,13 +69,12 @@ final class PersonalFinanceWalletsController extends AbstractController
     #[Route('/{id}/update', name: '_update', methods: [HttpMethodEnum::Post->value])]
     public function update(int $id, Request $request): JsonResponse
     {
-        /** @var CoreUserInterface $user */
-        $user = $this->getUser();
-
-        $wallet = $this->personalFinanceWalletRepository->findOneByOwnerAndId($user, $id);
+        $wallet = $this->personalFinanceWalletRepository->find($id);
         if (!$wallet instanceof PersonalFinanceWalletInterface) {
             return $this->jsonNotFound();
         }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT, $wallet);
 
         $input = $this->personalFinanceWalletInputFactory->fromArray($this->decodeJson($request));
 
@@ -91,13 +91,12 @@ final class PersonalFinanceWalletsController extends AbstractController
     #[Route('/{id}/delete', name: '_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(int $id): JsonResponse
     {
-        /** @var CoreUserInterface $user */
-        $user = $this->getUser();
-
-        $wallet = $this->personalFinanceWalletRepository->findOneByOwnerAndId($user, $id);
+        $wallet = $this->personalFinanceWalletRepository->find($id);
         if (!$wallet instanceof PersonalFinanceWalletInterface) {
             return $this->jsonNotFound();
         }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::DELETE, $wallet);
 
         $this->personalFinanceWalletManager->delete($wallet);
 
