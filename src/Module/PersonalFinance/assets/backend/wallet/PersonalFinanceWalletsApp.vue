@@ -1,13 +1,17 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { Trash2, X } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Wallet } from "lucide-vue-next";
+import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSelect from "@/shared/components/form/select/AppSelect.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { usePersonalFinanceWalletsApi } from "./composables/usePersonalFinanceWalletsApi.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -19,12 +23,91 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const { wallets, isSubmitting, errors, createWallet } =
-    usePersonalFinanceWalletsApi(props.wallets, {
-        createWalletPath: props.createWalletPath,
-        updateWalletPath: props.updateWalletPath,
-        deleteWalletPath: props.deleteWalletPath,
-    });
+const wallets = ref([...props.wallets]);
+
+const modeOptions = computed(() =>
+    props.modes.map((m) => ({ value: m, label: t(`personal_finance.wallets.modes.${m}`) })),
+);
+
+function emptyForm() {
+    return { name: "", startBalance: "0.00", mode: "simple", showOnDashboard: true, position: 0 };
+}
+
+const showCreate = ref(false);
+const createForm = ref(emptyForm());
+const createErrors = ref({});
+const createLoading = ref(false);
+
+const showEdit = ref(false);
+const editingWallet = ref(null);
+const editForm = ref(emptyForm());
+const editErrors = ref({});
+const editLoading = ref(false);
+
+async function request(method, url, body = null) {
+    const options = { method, headers: { Accept: "application/json" } };
+    if (body !== null) {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(body);
+    }
+    const response = await fetch(url, options);
+    const payload = await response.json().catch(() => ({}));
+    return { ok: response.ok && payload.success !== false, payload };
+}
+
+function openCreate() {
+    createForm.value = emptyForm();
+    createErrors.value = {};
+    showCreate.value = true;
+}
+
+async function submitCreate() {
+    createLoading.value = true;
+    createErrors.value = {};
+    try {
+        const res = await request(HttpMethod.Post, props.createWalletPath, createForm.value);
+        if (!res.ok) {
+            createErrors.value = res.payload?.errors ?? {};
+            return;
+        }
+        wallets.value = [...wallets.value, res.payload.wallet];
+        showCreate.value = false;
+    } finally {
+        createLoading.value = false;
+    }
+}
+
+function openEdit(wallet) {
+    editingWallet.value = wallet;
+    editForm.value = {
+        name: wallet.name,
+        startBalance: wallet.startBalance,
+        mode: wallet.mode,
+        showOnDashboard: wallet.showOnDashboard ?? true,
+        position: wallet.position ?? 0,
+    };
+    editErrors.value = {};
+    showEdit.value = true;
+}
+
+async function submitEdit() {
+    if (!editingWallet.value) return;
+    editLoading.value = true;
+    editErrors.value = {};
+    try {
+        const url = buildPath(props.updateWalletPath, { id: editingWallet.value.id });
+        const res = await request(HttpMethod.Post, url, editForm.value);
+        if (!res.ok) {
+            editErrors.value = res.payload?.errors ?? {};
+            return;
+        }
+        const idx = wallets.value.findIndex((w) => w.id === editingWallet.value.id);
+        if (idx !== -1) wallets.value[idx] = res.payload.wallet;
+        showEdit.value = false;
+    } finally {
+        editLoading.value = false;
+    }
+}
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteWalletPath,
@@ -34,103 +117,164 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     "personal_finance.wallets.deleted",
 );
 
-const form = ref({
-    name: "",
-    startBalance: "0.00",
-    mode: "simple",
-});
-
-async function onSubmit() {
-    try {
-        await createWallet({ ...form.value });
-        form.value = { name: "", startBalance: "0.00", mode: "simple" };
-    } catch {
-        // errors surfaced via composable
-    }
-}
-
 function formatMode(mode) {
     return t(`personal_finance.wallets.modes.${mode}`);
 }
 </script>
 
 <template>
-    <div class="p-6 space-y-6">
-        <header class="flex items-center justify-between">
-            <h1 class="text-xl font-semibold">
-                {{ t("personal_finance.wallets.title") }}
-            </h1>
-        </header>
+    <div class="space-y-4">
+        <AppListToolbar>
+            <template #actions>
+                <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t("personal_finance.wallets.add") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
-        <section class="bg-surface-2/30 border border-line rounded-lg p-4">
-            <h2 class="text-sm font-medium text-muted mb-3">
-                {{ t("personal_finance.wallets.create_form_title") }}
-            </h2>
-            <form class="flex flex-wrap items-end gap-3" v-on:submit.prevent="onSubmit">
-                <div class="flex flex-col">
-                    <label class="text-xs text-muted">{{ t("personal_finance.wallets.fields.name") }}</label>
-                    <input
-                        v-model="form.name"
-                        type="text"
-                        maxlength="120"
-                        class="bg-surface border border-line rounded px-2 py-1 text-sm"
-                        :placeholder="t('personal_finance.wallets.placeholders.name')"
-                        required
-                    >
+        <div class="space-y-4">
+            <div class="sm:hidden space-y-3">
+                <div v-for="w in wallets" :key="w.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary">{{ w.name }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ formatMode(w.mode) }}</p>
+                        </div>
+                        <p class="text-sm font-mono shrink-0">{{ w.startBalance }}</p>
+                    </div>
+                    <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(w)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <label class="text-xs text-muted">{{ t("personal_finance.wallets.fields.start_balance") }}</label>
-                    <input
-                        v-model="form.startBalance"
-                        type="text"
-                        inputmode="decimal"
-                        pattern="-?\d{1,8}(\.\d{1,2})?"
-                        class="bg-surface border border-line rounded px-2 py-1 text-sm w-28"
-                    >
-                </div>
-                <div class="flex flex-col">
-                    <label class="text-xs text-muted">{{ t("personal_finance.wallets.fields.mode") }}</label>
-                    <select v-model="form.mode" class="bg-surface border border-line rounded px-2 py-1 text-sm">
-                        <option v-for="m in modes" :key="m" :value="m">{{ formatMode(m) }}</option>
-                    </select>
-                </div>
-                <button
-                    type="submit"
-                    :disabled="isSubmitting"
-                    class="bg-accent-600 hover:bg-accent-500 disabled:opacity-50 text-white text-sm px-3 py-1.5 rounded"
-                >
-                    {{ t("personal_finance.wallets.actions.create") }}
-                </button>
+            </div>
+
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.wallets.fields.name") }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.wallets.fields.mode") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.wallets.fields.start_balance") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/40">
+                        <tr v-for="w in wallets" :key="w.id" class="group hover:bg-surface-2/40 transition-colors">
+                            <td class="px-6 py-3">
+                                <span class="font-medium text-primary">{{ w.name }}</span>
+                            </td>
+                            <td class="px-6 py-3 text-secondary">{{ formatMode(w.mode) }}</td>
+                            <td class="px-6 py-3 text-right font-mono text-primary">{{ w.startBalance }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(w)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                    <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="!wallets.length">
+                            <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t("personal_finance.wallets.empty") }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <AppModal
+            :show="showCreate"
+            :title="t('personal_finance.wallets.create_form_title')"
+            :icon="Wallet"
+            :closeable="false"
+            v-on:close="showCreate = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitCreate">
+                <AppInput
+                    v-model="createForm.name"
+                    :label="t('personal_finance.wallets.fields.name')"
+                    :placeholder="t('personal_finance.wallets.placeholders.name')"
+                    :error="createErrors.name"
+                    required
+                />
+                <AppInput
+                    v-model="createForm.startBalance"
+                    :label="t('personal_finance.wallets.fields.start_balance')"
+                    placeholder="0.00"
+                    :error="createErrors.startBalance"
+                />
+                <AppSelect
+                    v-model="createForm.mode"
+                    :label="t('personal_finance.wallets.fields.mode')"
+                    :options="modeOptions"
+                    required
+                />
             </form>
-            <p v-if="errors.name" class="text-xs text-rose-400 mt-2">{{ errors.name[0] }}</p>
-            <p v-if="errors.startBalance" class="text-xs text-rose-400 mt-2">{{ errors.startBalance[0] }}</p>
-        </section>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="createLoading"
+                        v-on:click="submitCreate"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
 
-        <section>
-            <table v-if="wallets.length" class="w-full text-sm">
-                <thead class="text-left text-muted border-b border-line">
-                    <tr>
-                        <th class="py-2">{{ t("personal_finance.wallets.fields.name") }}</th>
-                        <th class="py-2">{{ t("personal_finance.wallets.fields.mode") }}</th>
-                        <th class="py-2">{{ t("personal_finance.wallets.fields.start_balance") }}</th>
-                        <th class="py-2" />
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="w in wallets" :key="w.id" class="border-b border-line/40">
-                        <td class="py-2">{{ w.name }}</td>
-                        <td class="py-2">{{ formatMode(w.mode) }}</td>
-                        <td class="py-2 font-mono">{{ w.startBalance }}</td>
-                        <td class="py-2 text-right">
-                            <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)">
-                                <Trash2 class="w-4 h-4" :stroke-width="2" />
-                            </AppIconButton>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <p v-else class="text-muted text-sm">{{ t("personal_finance.wallets.empty") }}</p>
-        </section>
+        <AppModal
+            :show="showEdit"
+            :title="t('personal_finance.wallets.edit', { name: editingWallet?.name ?? '' })"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="showEdit = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitEdit">
+                <AppInput
+                    v-model="editForm.name"
+                    :label="t('personal_finance.wallets.fields.name')"
+                    :error="editErrors.name"
+                    required
+                />
+                <AppInput
+                    v-model="editForm.startBalance"
+                    :label="t('personal_finance.wallets.fields.start_balance')"
+                    :error="editErrors.startBalance"
+                />
+                <AppSelect
+                    v-model="editForm.mode"
+                    :label="t('personal_finance.wallets.fields.mode')"
+                    :options="modeOptions"
+                    required
+                />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="editLoading"
+                        v-on:click="submitEdit"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
 
         <AppModal
             :show="!!pendingDelete"
