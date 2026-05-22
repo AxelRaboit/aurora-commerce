@@ -50,20 +50,25 @@ avec un tableau ET un formulaire de création/édition dédié ?*
   admin) → seul le niveau 1 (entité substituable via `resolve_target_entities`)
   est requis
 
-### 2.1 Entités à instrumenter (~26)
+### 2.1 Entités à instrumenter (43)
 
 | Module | Entités |
 |---|---|
 | Core | `Agency`, `Media`, `MediaFolder`, `Menu`, `MountPoint`, `Service`, `Theme`, `User` |
 | Editorial | `Comment`, `Form`, `Post`, `PostType`, `Taxonomy` |
-| Crm | `Company`, `Contact`, `Deal` |
+| Crm | `Company`, `Contact`, `ContactTag`, `Deal` |
 | Erp | `Product` |
-| Ecommerce | `Listing`, `Order` |
+| Ecommerce | `Listing`, `ListingCategory`, `ListingTag`, `Order` |
 | Photo | `Gallery` |
 | Billing | `Invoice`, `Tiers`, `OcrJob` |
-| Ged | `Document`, `DocumentCategory` |
+| Ged | `Document`, `DocumentCategory`, `DocumentFolder`, `DocumentTag` |
 | Project | `Project`, `ProjectTask` |
 | Planning | `Planning`, `PlanningEvent` |
+| Hr | `Employee` |
+| Notes | `BlockNote`, `MarkdownNote`, `PostItNote` |
+| Vault | `VaultEntry`, `VaultFolder` |
+| PdfForm | `PdfDocument`, `PdfTemplate` |
+| Assistant | `AssistantMountPoint` |
 
 **Exclues du Core** (CRUD admin absent ou hors-scope) :
 - `Locale` : pas de page admin, géré via fixtures + `LocaleEnum`
@@ -73,16 +78,16 @@ avec un tableau ET un formulaire de création/édition dédié ?*
 
 Pour ces 3 entités, **seule la couche 1 est requise** — déjà en place.
 
-### 2.2 Entités à exclure (≈ 30)
+### 2.2 Entités à exclure (≈ 40)
 
 | Catégorie | Entités |
 |---|---|
 | Translations (gérées via parent) | toutes les `*Translation` |
-| Items / lignes inline | `CartItem`, `OrderLine`, `InvoiceLine`, `FormField`, `PostTypeField`, `ProjectTaskItem`, `ProjectTaskComment`, `ProjectTaskTimeEntry`, `GalleryItem`, `GalleryItemComment`, `GalleryPick`, `GalleryFinalization`, `GalleryInvite`, `CommentReaction` |
-| Audit / historique auto-générés | `AuditLog`, `PostRevision`, `PostSlugHistory`, `FormSubmission` |
+| Items / lignes inline | `CartItem`, `OrderLine`, `InvoiceLine`, `FormField`, `PostTypeField`, `ProjectTaskItem`, `ProjectTaskComment`, `ProjectTaskTimeEntry`, `ProjectTaskAttachment`, `GalleryItem`, `GalleryItemComment`, `GalleryPick`, `GalleryFinalization`, `GalleryInvite`, `CommentReaction` |
+| Audit / historique auto-générés | `AuditLog`, `PostRevision`, `PostSlugHistory`, `FormSubmission`, `DocumentVersion` |
 | Auth tunnel sans page admin | `AccessRequest`, `ResetPasswordRequest` |
 | Configs gérées inline dans le parent | `MenuItem`, `TaxonomyTerm`, `ProjectColumn`, `ProjectLabel`, `ProjectSprint`, `ProjectSavedView` |
-| Sessions runtime (pas de page admin) | `Cart` |
+| Sessions runtime (pas de page admin) | `Cart`, `Conversation`, `Message`, `VaultUserConfig` |
 
 Pour ces entités, **seul le niveau 1 est requis** : pattern
 `Interface + AbstractX + concrete` + `resolve_target_entities`.
@@ -97,7 +102,7 @@ ci-dessous. Ne pas en oublier une.
 
 ### Couche 1 — Entité Doctrine
 
-**Toujours** (déjà appliqué sur les 62 entités Aurora) :
+**Toujours** (déjà appliqué sur les 86 entités Aurora) :
 
 ```
 Aurora\<Module>\<Feature>\Entity\
@@ -774,14 +779,14 @@ Pour copier-coller un exemple en bon état, partir de **`Agency`** :
 
 | Couche | Fichiers de référence |
 |---|---|
-| Entity | `src/Core/Agency/Entity/{AgencyInterface,AbstractAgency,Agency}.php` |
-| DTO | `src/Core/Agency/Dto/{AgencyInputInterface,AgencyInput,AgencyInputFactoryInterface,AgencyInputFactory}.php` |
-| Manager | `src/Core/Agency/Manager/{AgencyManagerInterface,AgencyManager}.php` |
-| Serializer | `src/Core/Agency/Serializer/{AgencySerializerInterface,AgencySerializer}.php` |
-| Repository | `src/Core/Agency/Repository/AgencyRepository.php` |
-| Controller | `src/Core/Agency/Controller/Backend/AgenciesController.php` |
-| Vue main | `src/Core/Frontend/backend/agencies/AgenciesApp.vue` |
-| Vue composables | `src/Core/Frontend/backend/agencies/composables/useAgenciesForm.js` |
+| Entity | `src/Module/Platform/Agency/Entity/{AgencyInterface,AbstractAgency,Agency}.php` |
+| DTO | `src/Module/Platform/Agency/Dto/{AgencyInputInterface,AgencyInput,AgencyInputFactoryInterface,AgencyInputFactory}.php` |
+| Manager | `src/Module/Platform/Agency/Manager/{AgencyManagerInterface,AgencyManager}.php` |
+| Serializer | `src/Module/Platform/Agency/Serializer/{AgencySerializerInterface,AgencySerializer}.php` |
+| Repository | `src/Module/Platform/Agency/Repository/AgencyRepository.php` |
+| Controller | `src/Module/Platform/Agency/Controller/Backend/AgenciesController.php` |
+| Vue main | `src/Module/Platform/assets/backend/agencies/AgenciesApp.vue` |
+| Vue composables | `src/Module/Platform/assets/backend/agencies/composables/useAgenciesForm.js` |
 | Twig | `src/Module/Platform/templates/backend/agencies/index.html.twig` (namespace `@Platform`) |
 
 Toute déviation de ce pattern doit être justifiée (cas spécifique au domaine

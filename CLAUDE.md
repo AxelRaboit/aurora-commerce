@@ -281,7 +281,7 @@ Mémoire shared (distribuée aux clients) :
 
 ## 7. État du rollout d'extensibilité
 
-✅ **24/24 entités instrumentées** (rollout terminé).
+✅ **43/43 entités CRUD instrumentées** (rollout terminé).
 - Commits : `git log --oneline --grep="instrument"` pour la liste
 
 Plus aucune entité ne devrait avoir un Manager `final readonly` ou un dossier
