@@ -8,6 +8,7 @@ import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppSelect from "@/shared/components/form/select/AppSelect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
@@ -24,6 +25,16 @@ const props = defineProps({
 const { t } = useI18n();
 
 const wallets = ref([...props.wallets]);
+const searchInput = ref("");
+
+const filteredWallets = computed(() => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) return wallets.value;
+    return wallets.value.filter((w) =>
+        w.name.toLowerCase().includes(q)
+        || t(`personal_finance.wallets.modes.${w.mode}`).toLowerCase().includes(q),
+    );
+});
 
 const modeOptions = computed(() =>
     props.modes.map((m) => ({ value: m, label: t(`personal_finance.wallets.modes.${m}`) })),
@@ -125,6 +136,10 @@ function formatMode(mode) {
 <template>
     <div class="space-y-4">
         <AppListToolbar>
+            <AppSearchInput
+                v-model="searchInput"
+                :placeholder="t('personal_finance.wallets.search_placeholder')"
+            />
             <template #actions>
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
@@ -135,7 +150,7 @@ function formatMode(mode) {
 
         <div class="space-y-4">
             <div class="sm:hidden space-y-3">
-                <div v-for="w in wallets" :key="w.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                <div v-for="w in filteredWallets" :key="w.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-medium text-primary">{{ w.name }}</p>
@@ -161,7 +176,7 @@ function formatMode(mode) {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line/40">
-                        <tr v-for="w in wallets" :key="w.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <tr v-for="w in filteredWallets" :key="w.id" class="group hover:bg-surface-2/40 transition-colors">
                             <td class="px-6 py-3">
                                 <span class="font-medium text-primary">{{ w.name }}</span>
                             </td>
@@ -174,8 +189,10 @@ function formatMode(mode) {
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="!wallets.length">
-                            <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">{{ t("personal_finance.wallets.empty") }}</td>
+                        <tr v-if="!filteredWallets.length">
+                            <td :colspan="4" class="px-6 py-8 text-center text-sm text-muted">
+                                {{ wallets.length ? t("personal_finance.wallets.no_match") : t("personal_finance.wallets.empty") }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

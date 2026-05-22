@@ -34,6 +34,8 @@ personal_finance:
     deleted: Wallet deleted.
     add: New wallet
     edit: 'Edit "{name}"'
+    search_placeholder: Search a wallet…
+    no_match: No wallet matches your search.
     fields:
       name: Name
       start_balance: Initial balance

@@ -34,6 +34,8 @@ personal_finance:
     deleted: Portefeuille supprimé.
     add: Nouveau portefeuille
     edit: 'Modifier « {name} »'
+    search_placeholder: Rechercher un portefeuille…
+    no_match: Aucun portefeuille ne correspond à votre recherche.
     fields:
       name: Nom
       start_balance: Balance initiale
