@@ -6,15 +6,35 @@ scope: core-and-client
 
 # add-crud-list-ui
 
-Generate the Vue 3 SFC for a backend CRUD list page that follows the
-canonical Aurora pattern (see `CompaniesApp.vue`, `TiersApp.vue`,
-`PersonalFinanceWalletsApp.vue` for live references). Produces a single
-`<Plural>App.vue` file — no separate composables unless the form is large
-enough to warrant `use<Plural>Create.js` + `use<Plural>Edit.js`.
+Generate a backend CRUD list page that follows the canonical Aurora
+pattern (see `CompaniesApp.vue`, `TiersApp.vue`,
+`PersonalFinanceWalletsApp.vue` for live references). Produces a 3-file
+output: a thin SFC + two composables (`use<Plural>Create.js`,
+`use<Plural>Edit.js`).
 
-> ⛔ **Before generating, RELOAD memory `convention_modal_and_confirmation.md`** —
-> `confirm()` natif est INTERDIT pour les deletes. Toujours `AppModal` +
-> `useDelete`.
+> ⛔ **Before generating, RELOAD these two memories**:
+>
+> 1. `convention_modal_and_confirmation.md` — `confirm()` natif est
+>    INTERDIT. Always `AppModal` + `useDelete` shared composable for
+>    deletes.
+> 2. `convention_sfc_thin_presentation.md` — NO business logic inside
+>    the `.vue`. Every CRUD flow goes into `composables/use<Plural><Action>.js`
+>    co-located in the feature folder. The SFC only owns template +
+>    UI-only refs (search input, modal toggles when not already managed
+>    by the composable).
+
+## File layout (mandatory)
+
+```
+assets/backend/<folder>/
+├── <Plural>App.vue                   # template + thin glue
+└── composables/
+    ├── use<Plural>Create.js          # showCreate + createForm + createErrors + createLoading + openCreate + submitCreate
+    └── use<Plural>Edit.js            # showEdit + editingItem + editForm + editErrors + editLoading + openEdit + submitEdit
+```
+
+Skip splitting ONLY when create/edit are literally one-field one-line
+forms with no validation. Otherwise extract from the start.
 
 ## Required inputs
 
