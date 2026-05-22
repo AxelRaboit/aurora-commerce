@@ -38,6 +38,32 @@ jour à la fin de chaque session.
 | 10 | Dashboard + Overview + Statistics services (agrégations) | non | toutes les précédentes (data) |
 | 11 | Import Excel (2 steps : upload → preview → process) | non | 4a |
 
+## Dette technique frontend identifiée par audit 2026-05-22
+
+Backend PHP **100% conforme** à la convention 5-layer Sylius-style.
+Frontend Vue a **3 dettes connues** à résorber avant stabilisation
+publique du module :
+
+1. **[HIGH] Slots scoped manquants** sur `PersonalFinanceWalletsApp.vue`,
+   `PersonalFinanceCategoriesApp.vue`, `PersonalFinanceTransactionsApp.vue` :
+   ajouter `<slot name="extra-headers">`, `<slot name="extra-cells"
+   :item="…">`, `<slot name="extra-form-fields" :form="…">`. Sans ces
+   slots, un client aurora-client ne peut pas ajouter de colonne/champ
+   custom à la liste/au formulaire sans forker la Vue (cf.
+   `entity_extensibility_convention.md` §"Couche 5").
+2. **[HIGH] Prop `extraFields` manquante** sur les apps + composables
+   create/edit. Le composable Aurora canonique accepte
+   `useXxxEdit(path, onUpdated, { extraFields: { custom: { default: ... } } })`
+   pour merger des champs supplémentaires côté DTO submit.
+3. **[MEDIUM] Categories + Transactions toujours au quick-scaffold inline** :
+   contrairement à Wallets qui est passé au pattern Aurora (composables
+   `useWalletsCreate.js` / `useWalletsEdit.js` co-localisés), Categories
+   et Transactions ont leur logique métier inline dans la SFC. Violation
+   de [[convention_sfc_thin_presentation]]. À refactor : extraire en
+   `composables/useCategoriesCreate.js` + `useCategoriesEdit.js` (idem
+   Transactions). Le skill `add-crud-list-ui` documente exactement le
+   pattern à appliquer.
+
 ## Why
 
 Le scope total est ~50+ fichiers par sub-module donc impossible en une
