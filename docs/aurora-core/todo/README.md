@@ -32,13 +32,6 @@ sont importants ; stock avancé est optionnel.
 - [Moyens de paiement](ecommerce/paiement.md) — abstraction PaymentMethod, config backend
 - [Stock avancé](ecommerce/stock.md) — par variante, mouvements, multi-entrepôt
 
-### Notes — module implémenté (doc historique)
-
-🟢 Module `src/Module/Notes/` complet — Markdown + Block tous deux en
-production. Le sous-dossier [`notes/`](notes/README.md) reste comme **doc
-historique d'architecture** (choix entités séparées, partage
-encryption/images/tree, port d'Onyx). Plus rien à implémenter ici.
-
 ### PersonalFinance (Spendly) — nouveau module
 
 Module `src/Module/PersonalFinance/` à créer, port du projet Spendly (Laravel) — gestion
