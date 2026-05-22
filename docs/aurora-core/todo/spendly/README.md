@@ -1,5 +1,14 @@
 # PersonalFinance — nouveau module Aurora
 
+> 📍 **Si tu reprends ce port (IA ou humain) — lis d'abord
+> `.claude/memory/aurora-core/preferences/project_personal_finance_port_status.md`.**
+> Tu y trouveras le tableau des sessions complétées (avec SHA de commits)
+> et celui des sessions à venir avec leurs prérequis. Le prochain item
+> conseillé est **Session 4b — TransferService atomique**. Le module est
+> à **100% conforme aux conventions Aurora** au 2026-05-22 ; aucune
+> dette technique restante sur ce qui est implémenté. Pour scaffolder
+> une nouvelle liste CRUD, utilise le skill `/add-crud-list-ui`.
+
 Port du projet [`Spendly`](https://github.com/AxelRaboit/spendly) (Laravel 13 +
 Vue 3 + Inertia) vers un module Aurora Symfony, sur le même modèle que
 le port `Onyx → Notes` (cf. [`../notes/README.md`](../notes/README.md)).
