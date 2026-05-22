@@ -20,7 +20,7 @@ jour à la fin de chaque session.
 | 2b | WalletMember + Voter `PersonalFinanceWalletVoter` (5 attrs) + auto-create owner Member | `b1f86a99` | 🟢 |
 | 2c | WalletInvitation + member management (updateRole, removeMember) + 2 Controllers (invitations, members) | `4ec2de2b` | 🟢 |
 | 3 | Category (5-layer) + `SystemCategoryKeyEnum` + sub-feature `PersonalFinanceCategories` | `e44f366d` | 🟢 |
-| 4a | Transaction (5-layer, sans Splits/Attachments/Transfer) + Enum Income/Expense + sub-feature `PersonalFinanceTransactions` | (TBC) | 🟢 |
+| 4a | Transaction (5-layer, sans Splits/Attachments/Transfer) + Enum Income/Expense + sub-feature `PersonalFinanceTransactions` | `f667ba1b` | 🟢 |
 
 ## Sessions à venir
 
