@@ -73,6 +73,35 @@ protected function createUser(): UserInterface
 }
 ```
 
+## Variante 2 : Manager sans DTO racine (domain-primitives)
+
+**Différente** de la variante User-style : un Manager dont les opérations
+publiques **ne prennent pas de DTO** parce qu'elles travaillent sur des
+primitives domaine (enum, entités déjà existantes, valeurs simples).
+Pas de `applyInput()` requis, parce qu'il n'y a **aucun Input** à
+appliquer.
+
+Critère unique : **la signature publique ne contient pas de `<Name>InputInterface`**.
+
+Exemples dans aurora-core :
+- ✅ `BudgetManager` → `ensureForMonth(user, wallet, month)`, `updateNotes(budget, ?string)`,
+  `lastRolloverCount()`, `delete(budget)` — pas de DTO, juste user / wallet /
+  date / nullable string.
+- ✅ `WalletMemberManager` → `create(wallet, user, role)`,
+  `updateRole(member, newRole)`, `removeMember(member)` — primitives
+  uniquement (wallet, user, role enum).
+
+Garde-fou : si un controller commence à parser un payload riche pour
+construire des arguments multiples passés à `Manager::doX($a, $b, $c, $d, …)`,
+c'est probablement le moment d'introduire un `<X>Input` DTO + factory +
+hook `applyInput()`. Tant qu'on reste sur 2-3 primitives simples, la
+variante "no DTO root" est légitime.
+
+Différence avec la variante User-style : pas besoin des 3 critères
+(≥6 méthodes, security distincte par op, etc.) — juste « pas de DTO
+en signature ». Souvent vrai pour des Managers gateways (member
+attach/detach, balance lifecycle, etc.).
+
 ## Variante 1bis : composables Vue séparés
 
 User et Theme ont **deux** composables Vue (`useUsersInvite` +

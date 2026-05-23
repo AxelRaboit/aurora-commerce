@@ -41,13 +41,13 @@ backend:
     personal_finance_budget_presets: Mois types
     personal_finance_budget_presets_description: 'Modèles de mois réutilisables. Capture la structure d''un mois et l''applique à un autre mois (vacances, mois calme, retour aux études…).'
     personal_finance_import: Import Excel
-    personal_finance_import_description: 'Importe en lot un historique de transactions depuis un fichier Excel (template fourni). Validation ligne par ligne, catégories absentes créées automatiquement.'
+    personal_finance_import_description: 'Import en lot d''un historique de transactions depuis un fichier Excel (template fourni). Validation ligne par ligne, catégories absentes créées automatiquement.'
     personal_finance_goals: Objectifs
     personal_finance_goals_description: 'Objectifs d''épargne avec suivi de progression. Liés à une catégorie = auto-synchronisé depuis les transactions.'
     personal_finance_recurring: Automatiques
     personal_finance_recurring_description: 'Transactions récurrentes (chaque mois à un jour fixe) et planifiées (one-off futur).'
     personal_finance_categorization: Auto-catégorisation
-    personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement quand tu catégorises une transaction.'
+    personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement à chaque catégorisation de transaction.'
     personal_finance_overview: Vue globale
     personal_finance_overview_description: 'Synthèse cross-portefeuilles : solde total cumulé, flux mensuel agrégé, breakdown par portefeuille et par catégorie, transactions récentes toutes wallets confondues.'
     personal_finance_statistics: Statistiques
@@ -285,7 +285,7 @@ personal_finance:
   budget:
     title: Budget mensuel
     help: 'Le budget mensuel définit les montants prévus par catégorie. Une comparaison automatique entre le prévu et le réel est calculée à partir des transactions du mois. Sur chaque ligne, un bouton ouvre la liste filtrée des transactions associées.'
-    no_wallet: Crée d'abord un portefeuille pour pouvoir bâtir un budget.
+    no_wallet: Un portefeuille est nécessaire avant de pouvoir bâtir un budget.
     no_category: Sans catégorie
     export_xlsx: Exporter Excel
     add_item: Ajouter une ligne
@@ -391,10 +391,10 @@ personal_finance:
     apply_help: 'Cible le mois sur lequel appliquer ce modèle. En mode « Ajouter », les lignes du modèle s''ajoutent aux lignes existantes. En mode « Remplacer », les lignes du mois ciblé sont effacées avant insertion.'
     save_from_month: Enregistrer ce mois comme mois type
     saved_from_month: Mois type créé à partir du mois courant.
-    no_wallet: Crée d'abord un portefeuille pour pouvoir créer un mois type.
-    empty: Aucun mois type pour ce portefeuille. Utilise le bouton ci-dessus, ou enregistre un mois déjà saisi depuis la page Budget.
+    no_wallet: Un portefeuille est nécessaire avant de pouvoir créer un mois type.
+    empty: Aucun mois type pour ce portefeuille. Cliquer sur le bouton ci-dessus, ou enregistrer un mois déjà saisi depuis la page Budget.
     items_title: Lignes du mois type
-    no_items: 'Aucune ligne dans ce modèle. Utilise « Ajouter une ligne » pour en créer une.'
+    no_items: 'Aucune ligne dans ce modèle. Cliquer sur « Ajouter une ligne » pour en créer une.'
     summary: '1 ligne | {count} lignes'
     created: Mois type créé.
     updated: Mois type mis à jour.
@@ -420,8 +420,8 @@ personal_finance:
       name_required: Le nom du mois type est requis.
   import:
     title: Import Excel
-    help: 'Importe en lot des transactions à partir d''un fichier Excel. Télécharge le template ci-dessous, remplis-le (Date / Type / Montant / Catégorie / Description / Tags), puis ré-uploade-le. La validation se fait ligne par ligne — les lignes invalides sont signalées et ignorées au moment du traitement. Les catégories absentes du portefeuille sélectionné sont créées automatiquement (signalées dans l''aperçu).'
-    no_wallet: Crée d'abord un portefeuille pour pouvoir importer des transactions.
+    help: 'Import en lot de transactions à partir d''un fichier Excel. Télécharger le template ci-dessous, le remplir (Date / Type / Montant / Catégorie / Description / Tags), puis le téléverser. La validation se fait ligne par ligne — les lignes invalides sont signalées et ignorées au moment du traitement. Les catégories absentes du portefeuille sélectionné sont créées automatiquement (signalées dans l''aperçu).'
+    no_wallet: Un portefeuille est nécessaire avant de pouvoir importer des transactions.
     step_upload: Téléversement
     step_preview: Aperçu
     step_done: Terminé
@@ -450,17 +450,17 @@ personal_finance:
       description: Description
       status: État
     errors:
-      file_required: Sélectionne un fichier Excel à téléverser.
-      wallet_required: Sélectionne un portefeuille cible.
+      file_required: Sélectionner un fichier Excel à téléverser.
+      wallet_required: Sélectionner un portefeuille cible.
       rows_required: Aucune ligne à importer.
   categorization:
     title: Auto-catégorisation
     help: 'L''auto-catégorisation apprend à classer les transactions à partir de leur description : chaque fois qu''une transaction est enregistrée avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Cette page permet de corriger une mauvaise association ou de supprimer une règle obsolète.'
-    empty: Aucune règle pour le moment. Catégorise quelques transactions pour que le système apprenne.
+    empty: Aucune règle pour le moment. Catégoriser quelques transactions pour que le système apprenne.
     search_placeholder: Rechercher un pattern ou une catégorie…
     deleted: Règle supprimée.
     updated: Règle mise à jour.
-    delete_confirm: 'Supprimer la règle pour "{pattern}" ? Tu peux la recréer en re-catégorisant une transaction avec cette description.'
+    delete_confirm: 'Supprimer la règle pour "{pattern}" ? La règle peut être recréée en re-catégorisant une transaction avec cette description.'
     fields:
       pattern: Pattern (description normalisée)
       category: Catégorie
@@ -475,7 +475,7 @@ personal_finance:
     tabs:
       recurring: Récurrentes
       scheduled: Planifiées
-    empty_recurring: Aucune transaction récurrente. Ajoute-en une pour ne plus saisir tes charges fixes chaque mois.
+    empty_recurring: Aucune transaction récurrente. En ajouter une pour ne plus avoir à saisir les charges fixes chaque mois.
     empty_scheduled: Aucune transaction planifiée. Ajoute-en une pour anticiper un revenu ou une dépense future.
     help_recurring: Les transactions récurrentes se répètent chaque mois à un jour fixe (ex. loyer, abonnement). Elles sont générées automatiquement le jour spécifié.
     help_scheduled: Les transactions planifiées sont des transactions ponctuelles futures à anticiper (ex. impôts, cadeau). Leur matérialisation se fait manuellement quand elles surviennent.
@@ -535,7 +535,7 @@ personal_finance:
     help: 'Les objectifs d''épargne suivent une cagnotte (vacances, projet immobilier, achat important…). Lorsqu''un objectif est lié à une catégorie, les transactions de cette catégorie sont additionnées automatiquement comme avancement. À défaut, les dépôts se font manuellement via le bouton dédié.'
     add: Nouvel objectif
     edit: Modifier l'objectif
-    empty: Aucun objectif pour le moment. Crée ton premier objectif d'épargne pour suivre ta progression.
+    empty: Aucun objectif pour le moment. Créer un premier objectif d'épargne pour suivre la progression.
     created: Objectif créé.
     updated: Objectif mis à jour.
     deleted: Objectif supprimé.
@@ -580,7 +580,7 @@ personal_finance:
   balance_adjustment:
     title: Ajuster le solde
     open: Ajuster
-    hint: Saisis le solde réel ; une transaction d'ajustement sera créée pour compenser l'écart.
+    hint: Saisir le solde réel ; une transaction d'ajustement sera créée pour compenser l'écart.
     submit: Ajuster
     success: Solde ajusté.
     fields:
