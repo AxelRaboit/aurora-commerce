@@ -204,7 +204,7 @@ personal_finance:
       description: Shared description
       part_category: Category
       part_amount: Amount
-      part_description: Description (optional)
+      part_description: Description
     errors:
       min_parts: A split requires at least 2 lines.
       date_required: Date is required.
@@ -328,7 +328,7 @@ personal_finance:
     status_pending: Pending
     fields:
       wallet: Wallet
-      category: Category (optional)
+      category: Category
       type: Type
       amount: Amount
       description: Description
@@ -377,7 +377,7 @@ personal_finance:
     fields:
       name: Goal name
       target: Target amount
-      wallet: Wallet (optional)
+      wallet: Wallet
       category: Category (enables auto-sync)
       deadline: Deadline
       color: Color
@@ -406,7 +406,7 @@ personal_finance:
     fields:
       new_balance: Real balance
       date: Date
-      description: Description (optional)
+      description: Description
     placeholders:
       new_balance: '0.00'
       description: e.g. bank statement correction…

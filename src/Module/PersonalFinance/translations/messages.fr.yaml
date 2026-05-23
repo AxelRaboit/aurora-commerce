@@ -204,7 +204,7 @@ personal_finance:
       description: Description partagée
       part_category: Catégorie
       part_amount: Montant
-      part_description: Description (optionnel)
+      part_description: Description
     errors:
       min_parts: Une décomposition nécessite au moins 2 lignes.
       date_required: La date est requise.
@@ -328,7 +328,7 @@ personal_finance:
     status_pending: En attente
     fields:
       wallet: Portefeuille
-      category: Catégorie (optionnel)
+      category: Catégorie
       type: Type
       amount: Montant
       description: Description
@@ -377,7 +377,7 @@ personal_finance:
     fields:
       name: Nom de l'objectif
       target: Montant cible
-      wallet: Portefeuille (optionnel)
+      wallet: Portefeuille
       category: Catégorie (active l'auto-sync)
       deadline: Deadline
       color: Couleur
@@ -406,7 +406,7 @@ personal_finance:
     fields:
       new_balance: Solde réel
       date: Date
-      description: Description (optionnel)
+      description: Description
     placeholders:
       new_balance: '0.00'
       description: Ex. correction relevé bancaire…

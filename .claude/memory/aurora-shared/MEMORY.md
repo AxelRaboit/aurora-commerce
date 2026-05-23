@@ -48,7 +48,8 @@ Distribué via composer : les clients lisent ces mémoires depuis
 
 - [convention_form_components.md](convention_form_components.md) — toujours
   `App*` (AppButton, AppInput, AppSelect…) — jamais `<button>` / `<input>` bruts ;
-  placeholder obligatoire ; AppDatePicker pour dates
+  asterisk = required (jamais « (optionnel) » dans un label) ; placeholder
+  obligatoire ; AppDatePicker pour dates ; DTO ↔ UI required miroir ; `:error` bindé
 - [convention_vue_directives.md](convention_vue_directives.md) — toujours
   `v-on:` (forme longue) pour les events, jamais `@` ; `:` reste OK pour v-bind
 - [convention_mobile_card_layout.md](convention_mobile_card_layout.md) — toute
