@@ -18,6 +18,8 @@ backend:
           use: Gérer les règles d'auto-catégorisation
         dashboard:
           use: Voir le tableau de bord finance perso
+        overview:
+          use: Voir la vue globale cross-portefeuilles
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -40,6 +42,8 @@ backend:
     personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement quand tu catégorises une transaction.'
     personal_finance_dashboard: Tableau de bord
     personal_finance_dashboard_description: 'Vue d''ensemble : KPIs du mois, sparkline 30 jours, top catégories, soldes pinés, dernières transactions, alertes budget.'
+    personal_finance_overview: Vue globale
+    personal_finance_overview_description: 'Synthèse cross-portefeuilles : solde total cumulé, flux mensuel agrégé, breakdown par portefeuille et par catégorie, transactions récentes toutes wallets confondues.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -342,6 +346,22 @@ personal_finance:
       income_month: Revenus du mois
       net_month: Net du mois
       total_balance: Solde total
+  overview:
+    title: Vue globale
+    subtitle: 'Synthèse cross-portefeuilles pour {month}.'
+    help: 'Vue agrégée de tous les portefeuilles accessibles : solde total, flux mensuel cumulé, breakdown par portefeuille et par catégorie, transactions récentes. Différent du tableau de bord qui se concentre sur les portefeuilles épinglés.'
+    wallets_breakdown: Répartition par portefeuille
+    category_breakdown: Top catégories de dépenses
+    recent_transactions: Dernières transactions
+    no_wallets: Aucun portefeuille accessible.
+    no_data_yet: Pas encore de données.
+    wallet_link_title: 'Voir les transactions de {name}'
+    kpi:
+      wallet_count: Portefeuilles
+      total_balance: Solde total
+      month_income: Revenus du mois
+      month_expense: Dépenses du mois
+      month_net: Net du mois
   categorization:
     title: Auto-catégorisation
     help: 'L''auto-catégorisation apprend à classer les transactions à partir de leur description : chaque fois qu''une transaction est enregistrée avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Cette page permet de corriger une mauvaise association ou de supprimer une règle obsolète.'

@@ -31,6 +31,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.recurring.use'),
             new NavPermission('personal_finance.categorization.use'),
             new NavPermission('personal_finance.dashboard.use'),
+            new NavPermission('personal_finance.overview.use'),
         ];
     }
 
@@ -49,6 +50,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                 'layout-dashboard',
                 requiredPrivilege: 'personal_finance.dashboard.use',
                 descriptionKey: 'backend.nav.personal_finance_dashboard_description',
+            );
+        }
+
+        if ($this->personalFinanceContext->isOverviewEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_overview',
+                'backend.nav.personal_finance_overview',
+                'globe-2',
+                requiredPrivilege: 'personal_finance.overview.use',
+                descriptionKey: 'backend.nav.personal_finance_overview_description',
             );
         }
 
@@ -141,6 +152,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     descriptionKey: 'backend.nav.personal_finance_dashboard_description',
                 ),
                 new NavItem(
+                    'backend_personal_finance_overview',
+                    'backend.nav.personal_finance_overview',
+                    'globe-2',
+                    requiredPrivilege: 'personal_finance.overview.use',
+                    descriptionKey: 'backend.nav.personal_finance_overview_description',
+                ),
+                new NavItem(
                     'backend_personal_finance_wallets',
                     'backend.nav.personal_finance_wallets',
                     'wallet',
@@ -164,7 +182,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                 new NavItem(
                     'backend_personal_finance_budgets',
                     'backend.nav.personal_finance_budgets',
-                    'scale',
+                    'pie-chart',
                     requiredPrivilege: 'personal_finance.budgets.use',
                     descriptionKey: 'backend.nav.personal_finance_budgets_description',
                 ),
@@ -178,7 +196,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                 new NavItem(
                     'backend_personal_finance_recurring',
                     'backend.nav.personal_finance_recurring',
-                    'rotate-cw',
+                    'repeat',
                     requiredPrivilege: 'personal_finance.recurring.use',
                     descriptionKey: 'backend.nav.personal_finance_recurring_description',
                 ),
@@ -205,6 +223,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceRecurring->toToggle(),
             ModuleParameterEnum::PersonalFinanceCategorization->toToggle(),
             ModuleParameterEnum::PersonalFinanceDashboard->toToggle(),
+            ModuleParameterEnum::PersonalFinanceOverview->toToggle(),
         ];
     }
 }

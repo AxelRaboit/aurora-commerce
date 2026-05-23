@@ -11,6 +11,8 @@ use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionI
 use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMember;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
@@ -105,6 +107,17 @@ abstract class PersonalFinanceTestCase extends IntegrationTestCase
         $wallet->setStartBalance($startBalance);
 
         $this->entityManager->persist($wallet);
+        $this->entityManager->flush();
+
+        // Mirror what WalletManager::create does — auto-attach the
+        // creator as the Owner member. Without this row, repository
+        // finders like findAccessibleByUser (which joins on members)
+        // return empty and bypass the test's intent.
+        $member = new PersonalFinanceWalletMember();
+        $member->setWallet($wallet);
+        $member->setUser($user);
+        $member->setRole(PersonalFinanceWalletRoleEnum::Owner);
+        $this->entityManager->persist($member);
         $this->entityManager->flush();
 
         return $wallet;

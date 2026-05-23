@@ -18,6 +18,8 @@ backend:
           use: Manage auto-categorization rules
         dashboard:
           use: View the personal finance dashboard
+        overview:
+          use: View the cross-wallet global overview
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -40,6 +42,8 @@ backend:
     personal_finance_categorization_description: 'Description → category rules learnt automatically every time you categorise a transaction.'
     personal_finance_dashboard: Dashboard
     personal_finance_dashboard_description: 'At-a-glance overview: month KPIs, 30-day sparkline, top categories, pinned balances, recent transactions, budget alerts.'
+    personal_finance_overview: Global overview
+    personal_finance_overview_description: 'Cross-wallet summary: cumulative balance, monthly aggregated flow, per-wallet and per-category breakdowns, recent transactions across every wallet.'
   parameters:
     personal_finance_default_currency:
       label: Default currency
@@ -342,6 +346,22 @@ personal_finance:
       income_month: Month income
       net_month: Month net
       total_balance: Total balance
+  overview:
+    title: Global overview
+    subtitle: 'Cross-wallet summary for {month}.'
+    help: 'Aggregated view across every accessible wallet : total balance, cumulative monthly flow, per-wallet and per-category breakdowns, recent transactions. Different from the Dashboard which focuses on pinned wallets.'
+    wallets_breakdown: Wallets breakdown
+    category_breakdown: Top spending categories
+    recent_transactions: Recent transactions
+    no_wallets: No wallet accessible.
+    no_data_yet: No data yet.
+    wallet_link_title: 'View transactions for {name}'
+    kpi:
+      wallet_count: Wallets
+      total_balance: Total balance
+      month_income: Month income
+      month_expense: Month expenses
+      month_net: Month net
   categorization:
     title: Auto-categorization
     help: 'Auto-categorisation learns to classify transactions from their description: every time a transaction is saved with a category, a "description → category" rule is created or strengthened. This page lets a misclassification be fixed or an obsolete rule deleted.'

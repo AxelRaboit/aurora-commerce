@@ -42,6 +42,7 @@ import {
     Repeat,
     Sparkles,
     Scale,
+    Globe2,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -85,6 +86,7 @@ const ICON_MAP = {
     repeat: Repeat,
     sparkles: Sparkles,
     scale: Scale,
+    "globe-2": Globe2,
 };
 
 export function useSidemenuNav(
