@@ -56,11 +56,27 @@ export function useDateFormat() {
         }).format(new Date(isoString));
     }
 
+    /**
+     * Month + year, capitalised first letter — "Mai 2026" / "May 2026".
+     * Accepts either a full ISO string or a "YYYY-MM" prefix (handy for
+     * month-pickers / budget switchers that store the month as a key).
+     */
+    function formatMonthYear(input, placeholder = "—") {
+        if (!input) return placeholder;
+        const iso = /^\d{4}-\d{2}$/.test(input) ? `${input}-01` : input;
+        const raw = new Intl.DateTimeFormat(locale.value, {
+            month: "long",
+            year: "numeric",
+        }).format(new Date(iso));
+        return raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+
     return {
         formatDate,
         formatDateShort,
         formatDateTime,
         formatDateNumeric,
         formatDateTimeNumeric,
+        formatMonthYear,
     };
 }

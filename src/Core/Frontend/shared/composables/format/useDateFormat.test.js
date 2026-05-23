@@ -46,4 +46,26 @@ describe("useDateFormat", () => {
         expect(result).toContain("2024");
         expect(result).toContain("15");
     });
+
+    it("formatMonthYear accepts a YYYY-MM prefix (FR)", () => {
+        const { formatMonthYear } = mountWithComposable("fr");
+        expect(formatMonthYear("2026-05")).toBe("Mai 2026");
+    });
+
+    it("formatMonthYear accepts a YYYY-MM prefix (EN)", () => {
+        const { formatMonthYear } = mountWithComposable("en");
+        expect(formatMonthYear("2026-05")).toBe("May 2026");
+    });
+
+    it("formatMonthYear accepts a full ISO string", () => {
+        const { formatMonthYear } = mountWithComposable("fr");
+        expect(formatMonthYear("2026-12-31T00:00:00Z")).toBe("Décembre 2026");
+    });
+
+    it("formatMonthYear returns placeholder for null/empty", () => {
+        const { formatMonthYear } = mountWithComposable("fr");
+        expect(formatMonthYear(null)).toBe("—");
+        expect(formatMonthYear("")).toBe("—");
+        expect(formatMonthYear(null, "N/A")).toBe("N/A");
+    });
 });

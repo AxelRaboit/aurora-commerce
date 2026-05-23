@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -43,6 +44,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { formatMonthYear } = useDateFormat();
 
 const selectedWalletId = ref(props.selectedWalletId ?? props.wallets[0]?.id ?? null);
 const currentMonth = ref(props.month ?? new Date().toISOString().slice(0, 7));
@@ -151,7 +153,7 @@ function diffClass(item) {
         <AppListToolbar>
             <div class="flex items-center gap-3">
                 <AppButton variant="ghost" size="sm" v-on:click="shiftMonth(-1)">←</AppButton>
-                <span class="font-mono text-sm text-primary">{{ currentMonth }}</span>
+                <span class="text-sm text-primary font-medium tabular-nums min-w-[8rem] text-center">{{ formatMonthYear(currentMonth) }}</span>
                 <AppButton variant="ghost" size="sm" v-on:click="shiftMonth(1)">→</AppButton>
             </div>
             <template #actions>
