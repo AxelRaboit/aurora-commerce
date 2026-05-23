@@ -8,6 +8,7 @@ import {
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
 
 const props = defineProps({
@@ -47,7 +48,7 @@ async function saveTpl() {
         editingTpl.value = false;
         toast.success(t("welding.editor.template_updated"));
     } else if (data.errors) {
-        tplErrors.value = data.errors;
+        tplErrors.value = translateServerErrors(t, data.errors);
     }
 }
 
@@ -124,7 +125,7 @@ async function saveStep() {
         stepModalOpen.value = false;
         toast.success(t(editingStep.value ? "welding.editor.step_updated" : "welding.editor.step_added"));
     } else if (data.errors) {
-        stepErrors.value = data.errors;
+        stepErrors.value = translateServerErrors(t, data.errors);
     }
 }
 

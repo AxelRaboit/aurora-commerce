@@ -6,6 +6,7 @@ import { ScrollText, Plus, Pencil, Send, Archive, Copy, Trash2 } from "lucide-vu
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
 
 const props = defineProps({
@@ -38,7 +39,7 @@ async function submitCreate() {
         window.location.href = `/backend/welding/workflow-templates/${data.workflowTemplate.id}/editor`;
         return;
     }
-    if (data.errors) formErrors.value = data.errors;
+    if (data.errors) formErrors.value = translateServerErrors(t, data.errors);
 }
 
 function updateLocal(updated) {
