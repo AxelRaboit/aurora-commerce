@@ -19,6 +19,27 @@ class PersonalFinanceBudgetRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, PersonalFinanceBudget::class, PersonalFinanceBudgetInterface::class);
     }
 
+    /**
+     * Most-recent month for which a Budget row exists on the wallet —
+     * used by the month-reset service to extend a cascade past today
+     * when the user has planned budgets in the future.
+     */
+    public function findLatestMonth(PersonalFinanceWalletInterface $wallet): ?DateTimeImmutable
+    {
+        $result = $this->createQueryBuilder('b')
+            ->select('MAX(b.month) AS maxMonth')
+            ->where('b.wallet = :wallet')
+            ->setParameter('wallet', $wallet)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if (null === $result) {
+            return null;
+        }
+
+        return $result instanceof DateTimeImmutable ? $result : new DateTimeImmutable((string) $result);
+    }
+
     public function findByWalletAndMonth(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $month): ?PersonalFinanceBudgetInterface
     {
         $firstDay = $month->modify('first day of this month')->setTime(0, 0);

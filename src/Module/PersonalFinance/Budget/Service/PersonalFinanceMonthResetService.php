@@ -47,7 +47,7 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
         bool $clearBudget,
     ): PersonalFinanceMonthResetReport {
         $start = $fromMonth->modify('first day of this month')->setTime(0, 0);
-        $end = $this->resolveEndMonth($start, $cascade);
+        $end = $this->resolveEndMonth($wallet, $start, $cascade);
 
         $totalDeleted = 0;
         $budgetClearedAny = false;
@@ -81,18 +81,43 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
     }
 
     /**
-     * Caps the cascade at the current month — the policy lives here so
-     * callers don't have to repeat it. Single-month resets resolve to
-     * `$start` regardless of how far back it is.
+     * Cascade resolves to the latest month with data on the wallet
+     * (transaction OR planned budget), with the current month as a
+     * floor. That way the user can stand on any month — past, current
+     * or future — and have "cascader" wipe everything from there to
+     * the last data point. Empty cascade (no future data) still
+     * processes the starting month itself.
+     *
+     * Was previously capped at today's month to protect scheduled
+     * future tx, but that made cascading from a future month a no-op
+     * which surprised users — explicit cascade from a future month
+     * IS the opt-in to wipe forward.
      */
-    protected function resolveEndMonth(DateTimeImmutable $start, bool $cascade): DateTimeImmutable
+    protected function resolveEndMonth(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $start, bool $cascade): DateTimeImmutable
     {
         if (!$cascade) {
             return $start;
         }
-        $today = new DateTimeImmutable('first day of this month')->setTime(0, 0);
 
-        return $today < $start ? $start : $today;
+        $candidates = [new DateTimeImmutable('first day of this month')->setTime(0, 0)];
+
+        $latestTx = $this->transactionRepository->findLatestDate($wallet);
+        if (null !== $latestTx) {
+            $candidates[] = $latestTx->modify('first day of this month')->setTime(0, 0);
+        }
+        $latestBudget = $this->budgetRepository->findLatestMonth($wallet);
+        if (null !== $latestBudget) {
+            $candidates[] = $latestBudget;
+        }
+
+        $end = $start;
+        foreach ($candidates as $candidate) {
+            if ($candidate > $end) {
+                $end = $candidate;
+            }
+        }
+
+        return $end;
     }
 
     /** @return array{0: int, 1: bool} `[deletedCount, budgetClearedThisMonth]` */

@@ -92,6 +92,27 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Latest transaction date on the wallet, regardless of type. Used
+     * by the month-reset service to compute the upper bound of a
+     * cascade reset — going past this date never has anything to do.
+     */
+    public function findLatestDate(PersonalFinanceWalletInterface $wallet): ?DateTimeImmutable
+    {
+        $result = $this->createQueryBuilder('t')
+            ->select('MAX(t.date) AS maxDate')
+            ->where('t.wallet = :wallet')
+            ->setParameter('wallet', $wallet)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if (null === $result) {
+            return null;
+        }
+
+        return $result instanceof DateTimeImmutable ? $result : new DateTimeImmutable((string) $result);
+    }
+
+    /**
      * Full (unpaginated) list of transactions for a wallet, applying the
      * same search + tag filters as findPaginatedByWallet. Used by the
      * XLSX exporter so the file reflects exactly what the user is

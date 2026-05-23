@@ -303,9 +303,9 @@ personal_finance:
     reset_button: Reset the month
     reset_title: Reset the month
     reset_confirm: 'Delete every transaction for {month}? Transfers and splits are cleaned up on both sides. This action is irreversible.'
-    reset_confirm_cascade: 'Delete every transaction from {from} to {to} ({count} months)? Transfers and splits are cleaned up on both sides. This action is irreversible.'
-    reset_cascade: Cascade onto every following month (up to and including the current month)
-    reset_help: Other months are not affected. Future-dated transactions (beyond the current month) are preserved. Balances recompute automatically.
+    reset_confirm_cascade: 'Delete every transaction from {from} onwards (subsequent months included)? The cleanup runs until the last data point on this wallet. Transfers and splits are cleaned up on both sides. This action is irreversible.'
+    reset_cascade: Cascade onto every following month (up to the last data point)
+    reset_help: Other wallets are not affected. Balances recompute automatically from the remaining transactions.
     reset_clear_budget: Also wipe the planned budget lines
     reset_confirm_button: Reset
     reset_done: '{count} transactions deleted | 1 transaction deleted | {count} transactions deleted'

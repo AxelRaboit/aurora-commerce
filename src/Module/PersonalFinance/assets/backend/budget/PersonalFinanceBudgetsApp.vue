@@ -194,8 +194,6 @@ const {
     clearBudget: resetClearBudget,
     cascade: resetCascade,
     loading: resetLoading,
-    cascadeEndMonth: resetCascadeEndMonth,
-    cascadePreviewCount: resetCascadePreviewCount,
     open: openReset,
     confirm: confirmReset,
 } = useBudgetMonthReset({
@@ -645,7 +643,7 @@ const {
             <div class="space-y-4">
                 <p class="text-sm text-primary">
                     <template v-if="resetCascade">
-                        {{ t("personal_finance.budget.reset_confirm_cascade", { from: formatMonthYear(currentMonth), to: formatMonthYear(resetCascadeEndMonth), count: resetCascadePreviewCount }) }}
+                        {{ t("personal_finance.budget.reset_confirm_cascade", { from: formatMonthYear(currentMonth) }) }}
                     </template>
                     <template v-else>
                         {{ t("personal_finance.budget.reset_confirm", { month: formatMonthYear(currentMonth) }) }}
