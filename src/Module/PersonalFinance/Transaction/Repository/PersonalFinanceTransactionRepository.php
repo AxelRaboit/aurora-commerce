@@ -72,6 +72,25 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Returns the transactions sharing the given transferId. Expected
+     * count is exactly 2 (one Expense on the source wallet, one Income
+     * on the target wallet). Returning an empty list indicates either a
+     * missing or partially-deleted transfer — callers should handle that
+     * as an invariant violation.
+     *
+     * @return list<PersonalFinanceTransactionInterface>
+     */
+    public function findByTransferId(string $transferId): array
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.transferId = :transferId')
+            ->setParameter('transferId', $transferId)
+            ->orderBy('t.type', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return list<PersonalFinanceTransactionInterface>
      */
     public function findByWalletAndMonth(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $month): array

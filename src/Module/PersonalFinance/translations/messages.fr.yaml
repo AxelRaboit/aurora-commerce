@@ -122,3 +122,26 @@ personal_finance:
       amount_required: Le montant est requis.
       amount_format: 'Format invalide. Exemple : 1234.56 (toujours positif)'
       date_required: La date est requise.
+  transfers:
+    title: Virements
+    add: Nouveau virement
+    edit: Modifier le virement
+    delete_confirm: 'Supprimer ce virement ? Les deux transactions liées seront supprimées.'
+    deleted: Virement supprimé.
+    created: Virement enregistré.
+    updated: Virement mis à jour.
+    default_description: 'Virement de {from} vers {to}'
+    fields:
+      from_wallet: Portefeuille source
+      to_wallet: Portefeuille cible
+      amount: Montant
+      date: Date
+      description: Description
+    errors:
+      from_wallet_required: Le portefeuille source est requis.
+      to_wallet_required: Le portefeuille cible est requis.
+      same_wallet: Le portefeuille source et le portefeuille cible doivent être différents.
+      amount_required: Le montant est requis.
+      amount_format: 'Format invalide. Exemple : 1234.56 (toujours positif)'
+      amount_positive: Le montant doit être strictement positif.
+      date_required: La date est requise.

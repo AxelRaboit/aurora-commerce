@@ -11,7 +11,7 @@ Suivi rolling de l'avancement du module `src/Module/PersonalFinance/`
 (port de [Spendly](https://github.com/AxelRaboit/spendly)). À mettre à
 jour à la fin de chaque session.
 
-## Sessions complétées (au 2026-05-22)
+## Sessions complétées (au 2026-05-23)
 
 | # | Session | Commit | Statut |
 |---|---|---|---|
@@ -21,13 +21,14 @@ jour à la fin de chaque session.
 | 2c | WalletInvitation + member management (updateRole, removeMember) + 2 Controllers (invitations, members) | `4ec2de2b` | 🟢 |
 | 3 | Category (5-layer) + `SystemCategoryKeyEnum` + sub-feature `PersonalFinanceCategories` | `e44f366d` | 🟢 |
 | 4a | Transaction (5-layer, sans Splits/Attachments/Transfer) + Enum Income/Expense + sub-feature `PersonalFinanceTransactions` | `f667ba1b` | 🟢 |
+| 4b | TransferService atomique (2 transactions liées par `transferId` UUID v7) + `PersonalFinanceTransferInput` DTO + `PersonalFinanceTransfersController` (create/update/delete) + guard `ensureNotTransferLeg` sur le Manager + `findByTransferId` repo | _(à committer)_ | 🟢 |
 
 ## Sessions à venir
 
 | # | Session | Bloque ? | Prérequis |
 |---|---|---|---|
 | 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
-| 4b | TransferService atomique (2 transactions liées par transferId UUID) + endpoint dédié + `getOrCreateSystem` pour `transfer_income`/`transfer_expense_X` | non | 4a |
+| 4b-UI | Modal Transfer côté Vue (form 2-wallets) — reste à brancher dans `PersonalFinanceTransactionsApp.vue` ou app dédiée | non — backend prêt | 4b |
 | 4c | TransactionSplit (N tx liées par splitId) — optionnel V2 | non | 4a |
 | 4d | Transaction attachments (1 fichier par tx, route `/uploads/personal-finance/transactions/`) | non | 4a |
 | 5 | WalletBalanceService (currentBalance, monthlyBalance, rollingStartBalance) + BalanceAdjustmentService | non | **4a** (somme transactions) |
@@ -38,7 +39,7 @@ jour à la fin de chaque session.
 | 10 | Dashboard + Overview + Statistics services (agrégations) | non | toutes les précédentes (data) |
 | 11 | Import Excel (2 steps : upload → preview → process) | non | 4a |
 
-## État de conformité au 2026-05-22 (post-audit)
+## État de conformité au 2026-05-23 (post-audit)
 
 Backend PHP **100% conforme** à la convention 5-layer Sylius-style.
 Frontend Vue post-audit :
@@ -86,3 +87,7 @@ laisser de code half-baked.
 6. **Voir [[decision-personal-finance-system-categories-lazy]]** pour la
    création lazy des catégories système (utilisée par TransferService et
    BalanceAdjustmentService).
+7. **Voir [[decision-personal-finance-transfer-legs-guard]]** pour la règle
+   "transactions avec `transferId` non-éditables via le Manager" — toute
+   nouvelle UI/endpoint qui édite une `PersonalFinanceTransaction` doit
+   filtrer ou rediriger les transferts.

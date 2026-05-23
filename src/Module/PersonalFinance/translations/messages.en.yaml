@@ -122,3 +122,26 @@ personal_finance:
       amount_required: Amount is required.
       amount_format: 'Invalid format. Example: 1234.56 (always positive)'
       date_required: Date is required.
+  transfers:
+    title: Transfers
+    add: New transfer
+    edit: Edit transfer
+    delete_confirm: 'Delete this transfer? Both linked transactions will be removed.'
+    deleted: Transfer deleted.
+    created: Transfer recorded.
+    updated: Transfer updated.
+    default_description: 'Transfer from {from} to {to}'
+    fields:
+      from_wallet: From wallet
+      to_wallet: To wallet
+      amount: Amount
+      date: Date
+      description: Description
+    errors:
+      from_wallet_required: Source wallet is required.
+      to_wallet_required: Target wallet is required.
+      same_wallet: Source and target wallets must differ.
+      amount_required: Amount is required.
+      amount_format: 'Invalid format. Example: 1234.56 (always positive)'
+      amount_positive: Amount must be strictly positive.
+      date_required: Date is required.

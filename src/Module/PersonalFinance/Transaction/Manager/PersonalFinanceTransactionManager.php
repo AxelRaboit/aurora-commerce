@@ -13,6 +13,7 @@ use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionI
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(PersonalFinanceTransactionManagerInterface::class)]
@@ -41,6 +42,8 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
 
     public function update(PersonalFinanceTransactionInterface $transaction, PersonalFinanceTransactionInputInterface $input): void
     {
+        $this->ensureNotTransferLeg($transaction, 'update');
+
         $this->applyInput($transaction, $input);
         $this->entityManager->flush();
 
@@ -49,10 +52,25 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
 
     public function delete(PersonalFinanceTransactionInterface $transaction): void
     {
+        $this->ensureNotTransferLeg($transaction, 'delete');
+
         $this->auditDeleted($transaction);
 
         $this->entityManager->remove($transaction);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Transfer legs (transactions with transferId) must be edited or
+     * deleted via PersonalFinanceTransferService to keep both halves in
+     * sync. Direct mutation through the standard CRUD path would leave
+     * the transfer in an inconsistent 1-leg state.
+     */
+    protected function ensureNotTransferLeg(PersonalFinanceTransactionInterface $transaction, string $action): void
+    {
+        if (null !== $transaction->getTransferId()) {
+            throw new DomainException(sprintf('Cannot %s a transfer transaction directly. Use PersonalFinanceTransferService instead.', $action));
+        }
     }
 
     protected function createTransaction(): PersonalFinanceTransactionInterface
