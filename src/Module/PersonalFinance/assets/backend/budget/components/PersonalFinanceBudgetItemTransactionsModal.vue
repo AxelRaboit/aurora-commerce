@@ -8,6 +8,7 @@ import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { useInfiniteScroll } from "@/shared/composables/scroll/useInfiniteScroll.js";
 import PersonalFinanceTransactionEditModal from "../../transaction/components/PersonalFinanceTransactionEditModal.vue";
 import { useBudgetItemTransactions } from "../composables/useBudgetItemTransactions.js";
 
@@ -36,12 +37,15 @@ const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
 
 const editModalRef = ref(null);
+const sentinelRef = ref(null);
 
 const {
     show,
     currentItem,
     transactions,
     loading,
+    hasMore,
+    loadMore,
     pendingDelete,
     deleteLoading,
     open,
@@ -50,6 +54,8 @@ const {
     confirmDelete,
     doDelete,
 } = useBudgetItemTransactions(props.itemTransactionsPath, props.deleteTransactionPath);
+
+useInfiniteScroll(sentinelRef, loadMore, { enabled: () => show.value && hasMore.value });
 
 function isTransferLeg(tx) {
     return !!tx?.transferId;
@@ -126,7 +132,12 @@ defineExpose({ open });
                 </li>
             </ul>
 
-            <AppLoader :active="loading" />
+            <div v-if="hasMore || (loading && transactions.length)" ref="sentinelRef" class="py-3 text-center text-xs text-muted">
+                <span v-if="loading">{{ t("personal_finance.budget.transactions_modal_loading_more") }}</span>
+                <span v-else>&nbsp;</span>
+            </div>
+
+            <AppLoader :active="loading && !transactions.length" />
         </div>
 
         <template #footer>

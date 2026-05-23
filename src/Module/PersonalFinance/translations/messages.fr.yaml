@@ -227,6 +227,7 @@ personal_finance:
     list_transactions_disabled: Aucune catégorie associée à cette ligne — impossible de filtrer
     transactions_modal_title: 'Transactions — {name}'
     transactions_modal_empty: Aucune transaction trouvée pour cette catégorie sur le mois.
+    transactions_modal_loading_more: Chargement…
     sections:
       income: Revenus
       savings: Épargne

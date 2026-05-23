@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Budget\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\PersonalFinance\Budget\Dto\PersonalFinanceBudgetItemInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
@@ -135,13 +136,13 @@ final class PersonalFinanceBudgetsController extends AbstractController
     }
 
     /**
-     * Drill-down: returns every transaction that belongs to a budget
-     * item's category over the item's budgeted month. Used by the
-     * Budgets page to let the user audit / edit / delete the actuals
-     * that feed a given line.
+     * Drill-down: paginated list of transactions that belong to a
+     * budget item's category over the item's budgeted month. Used by
+     * the Budgets page to let the user audit / edit / delete the
+     * actuals that feed a given line — feeds an infinite-scroll list.
      */
     #[Route('/budget/items/{id}/transactions', name: '_budget_items_transactions', methods: [HttpMethodEnum::Get->value])]
-    public function itemTransactions(int $id): JsonResponse
+    public function itemTransactions(int $id, PaginationRequest $pagination): JsonResponse
     {
         $item = $this->itemRepository->find($id);
         if (!$item instanceof PersonalFinanceBudgetItemInterface) {
@@ -152,13 +153,20 @@ final class PersonalFinanceBudgetsController extends AbstractController
 
         $category = $item->getCategory();
         if (null === $category) {
-            return $this->jsonSuccess(['transactions' => []]);
+            return $this->jsonSuccess(['items' => [], 'page' => 1, 'totalPages' => 1, 'total' => 0]);
         }
 
-        $transactions = $this->transactionRepository->findByCategoryAndMonth($category, $item->getBudget()->getMonth());
+        $result = $this->transactionRepository->findPaginatedByCategoryAndMonth(
+            $category,
+            $item->getBudget()->getMonth(),
+            $pagination->page,
+        );
 
         return $this->jsonSuccess([
-            'transactions' => array_map($this->transactionSerializer->serialize(...), $transactions),
+            'items' => array_map($this->transactionSerializer->serialize(...), $result['items']),
+            'page' => $result['page'],
+            'totalPages' => $result['totalPages'],
+            'total' => $result['total'],
         ]);
     }
 

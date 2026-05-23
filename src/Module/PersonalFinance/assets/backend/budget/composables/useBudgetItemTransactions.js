@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
@@ -12,8 +12,12 @@ import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
  * notifies the budget page so it refreshes its actuals / diff /
  * progress.
  *
- * @param {string} itemTransactionsPath - GET URL with `__id__` placeholder
- * @param {string} deleteTransactionPath - POST URL with `__id__` placeholder
+ * The list is paginated server-side and accumulated locally — pair
+ * with `useInfiniteScroll` to drive `loadMore` from a sentinel
+ * scrolling into view.
+ *
+ * @param {string} itemTransactionsPath - GET URL with `__id__` placeholder. Endpoint returns `{ items, page, totalPages, total }`.
+ * @param {string} deleteTransactionPath - POST URL with `__id__` placeholder.
  */
 export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactionPath) {
     const { t } = useI18n();
@@ -23,21 +27,36 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
     const show = ref(false);
     const currentItem = ref(null);
     const transactions = ref([]);
+    const page = ref(1);
+    const totalPages = ref(1);
     const pendingDelete = ref(null);
+
+    const hasMore = computed(() => page.value < totalPages.value);
+
+    async function fetchPage(targetPage) {
+        if (!currentItem.value?.id) return;
+        const url = `${buildPath(itemTransactionsPath, { id: currentItem.value.id })}?page=${targetPage}`;
+        const payload = await list.request(url, null, HttpMethod.Get);
+        if (!payload || payload.success === false) return;
+        const incoming = payload.items ?? [];
+        if (targetPage === 1) {
+            transactions.value = incoming;
+        } else {
+            transactions.value.push(...incoming);
+        }
+        page.value = payload.page ?? targetPage;
+        totalPages.value = payload.totalPages ?? 1;
+    }
 
     async function open(item) {
         currentItem.value = item;
         transactions.value = [];
+        page.value = 1;
+        totalPages.value = 1;
+        pendingDelete.value = null;
         show.value = true;
         if (!item?.id) return;
-        const payload = await list.request(
-            buildPath(itemTransactionsPath, { id: item.id }),
-            null,
-            HttpMethod.Get,
-        );
-        if (payload && payload.success !== false) {
-            transactions.value = payload.transactions ?? [];
-        }
+        await fetchPage(1);
     }
 
     function close() {
@@ -45,6 +64,13 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
         currentItem.value = null;
         transactions.value = [];
         pendingDelete.value = null;
+        page.value = 1;
+        totalPages.value = 1;
+    }
+
+    async function loadMore() {
+        if (!hasMore.value || list.loading.value) return;
+        await fetchPage(page.value + 1);
     }
 
     function applyUpdated(updated) {
@@ -73,6 +99,8 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
         currentItem,
         transactions,
         loading: list.loading,
+        hasMore,
+        loadMore,
         pendingDelete,
         deleteLoading: del.loading,
         open,

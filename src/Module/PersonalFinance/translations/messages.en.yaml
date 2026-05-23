@@ -227,6 +227,7 @@ personal_finance:
     list_transactions_disabled: No category linked to this line — cannot filter
     transactions_modal_title: 'Transactions — {name}'
     transactions_modal_empty: No transactions found for this category in the budgeted month.
+    transactions_modal_loading_more: Loading…
     sections:
       income: Income
       savings: Savings

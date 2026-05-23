@@ -2749,6 +2749,38 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             }
         }
 
+        // High-volume Restaurant entries — fill the current month so the
+        // Budgets drill-down ("Dépenses > Restaurant") demos the infinite
+        // scroll right after `make demo`. Deterministic, spread across
+        // the month.
+        $restaurantSamples = [
+            ['12.50', 'Café du coin'], ['18.00', 'McDonalds'], ['22.50', 'Burger King'], ['9.80', 'Boulangerie'],
+            ['15.30', 'Sandwich shop'], ['28.50', 'Pizzeria Mario'], ['45.00', 'Sushi Yama'], ['16.20', 'Pizzeria'],
+            ['8.50', 'Café'], ['32.00', 'Brasserie'], ['52.00', 'Le Bistrot'], ['11.00', 'Croissanterie'],
+            ['19.50', 'Five Guys'], ['24.00', 'Subway'], ['38.50', 'Le P\'tit Resto'], ['14.00', 'KFC'],
+            ['6.50', 'Café'], ['42.30', 'Pizzeria Roma'], ['27.80', 'Tacos King'], ['55.00', 'Restaurant gastronomique'],
+        ];
+        $monthStart = $today->modify('first day of this month');
+        $monthEnd = $today->modify('first day of next month');
+        $dayInMonth = (int) $monthEnd->modify('-1 day')->format('d');
+        for ($i = 0; $i < 80; ++$i) {
+            $sample = $restaurantSamples[$i % count($restaurantSamples)];
+            $day = (($i * 7) % $dayInMonth) + 1; // spread deterministically
+            $date = $monthStart->modify(sprintf('+%d days', $day - 1));
+            if ($date >= $monthEnd) {
+                continue;
+            }
+            $tx = new $txClass();
+            $tx->setUser($owner)
+               ->setWallet($cc)
+               ->setCategory($ccCats['Restaurant'])
+               ->setType(PersonalFinanceTransactionTypeEnum::Expense)
+               ->setAmount($sample[0])
+               ->setDate($date)
+               ->setDescription($sample[1]);
+            $em->persist($tx);
+        }
+
         // A few cash transactions
         $cash = $wallets['Cash'];
         $txDefs[] = ['wallet' => $cash, 'cat' => $categories['Cash']['Cash divers'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '15.00', 'date' => $today->modify('-12 days'), 'desc' => 'Boulangerie'];
