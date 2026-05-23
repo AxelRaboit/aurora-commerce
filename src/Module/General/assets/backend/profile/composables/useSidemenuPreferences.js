@@ -117,6 +117,17 @@ export function useSidemenuPreferences({
         return sectionColors.value[sectionId] ?? null;
     }
 
+    /**
+     * Defer a full reload so the success toast has time to surface
+     * before the page flashes. The sidemenu itself is a separate Vue
+     * mount point fed by props from layout.html.twig — reloading is
+     * the cleanest way to pick up the new colours / hides without
+     * cross-app reactive plumbing.
+     */
+    function reloadAfterToast() {
+        setTimeout(() => window.location.reload(), 700);
+    }
+
     async function save() {
         const data = await saveRequest(savePath, {
             hiddenNavSections: [...hiddenSections.value],
@@ -129,6 +140,7 @@ export function useSidemenuPreferences({
             hiddenItems.value = new Set(data.hiddenNavItems ?? []);
             sectionColors.value = { ...(data.navSectionColors ?? {}) };
             toast.success(t("backend.profile.sidemenu.saved"));
+            reloadAfterToast();
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -142,6 +154,7 @@ export function useSidemenuPreferences({
             hiddenItems.value = new Set();
             sectionColors.value = {};
             toast.success(t("backend.profile.sidemenu.reset_done"));
+            reloadAfterToast();
         }
     }
 
