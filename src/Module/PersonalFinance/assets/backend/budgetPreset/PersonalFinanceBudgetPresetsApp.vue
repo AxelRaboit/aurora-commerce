@@ -126,13 +126,7 @@ function summarizeItems(preset) {
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppMultiselect
-                v-model="selectedWalletId"
-                :label="t('personal_finance.budget_presets.wallet_selector')"
-                :options="walletOptions"
-                :allow-empty="false"
-                class="w-full"
-            />
+            <span />
             <template #actions>
                 <AppButton
                     variant="primary"
@@ -155,7 +149,18 @@ function summarizeItems(preset) {
             {{ t("personal_finance.budget_presets.no_wallet") }}
         </section>
 
-        <section v-else-if="!presets.length" class="bg-surface border border-line rounded-lg p-8 text-center">
+        <template v-else>
+            <div class="bg-surface border border-line rounded-lg p-4">
+                <AppMultiselect
+                    v-model="selectedWalletId"
+                    :label="t('personal_finance.budget_presets.wallet_selector')"
+                    :options="walletOptions"
+                    :allow-empty="false"
+                />
+            </div>
+        </template>
+
+        <section v-if="wallets.length && !presets.length" class="bg-surface border border-line rounded-lg p-8 text-center">
             <ClipboardList class="w-10 h-10 mx-auto text-muted/60 mb-3" :stroke-width="1.5" />
             <p class="text-sm text-muted">{{ t("personal_finance.budget_presets.empty") }}</p>
         </section>
