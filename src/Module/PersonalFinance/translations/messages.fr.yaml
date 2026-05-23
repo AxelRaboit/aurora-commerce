@@ -552,6 +552,7 @@ personal_finance:
     no_category_link: Pas d'auto-sync (manuel)
     auto_tracked_from: 'Auto-synchronisé depuis : {category}'
     auto_tracked_hint: Tant que cette catégorie est liée, le solde épargné est recalculé à chaque transaction.
+    category_role_hint: 'Lier une catégorie active l''auto-synchronisation : le mode de suivi apparaît juste en dessous. Sans catégorie, l''objectif reste manuel — solde mis à jour via le bouton « Déposer ».'
     tracking_modes:
       income_only: Revenus uniquement
       expense_only: Dépenses uniquement

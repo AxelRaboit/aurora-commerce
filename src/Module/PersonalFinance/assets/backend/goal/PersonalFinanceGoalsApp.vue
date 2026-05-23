@@ -227,12 +227,15 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     :options="walletOptions"
                     :allow-empty="true"
                 />
-                <AppMultiselect
-                    v-model="form.categoryId"
-                    :label="t('personal_finance.goals.fields.category')"
-                    :options="categoryOptionsForForm"
-                    :allow-empty="true"
-                />
+                <div>
+                    <AppMultiselect
+                        v-model="form.categoryId"
+                        :label="t('personal_finance.goals.fields.category')"
+                        :options="categoryOptionsForForm"
+                        :allow-empty="true"
+                    />
+                    <p class="text-xs text-muted mt-1.5">{{ t("personal_finance.goals.category_role_hint") }}</p>
+                </div>
                 <template v-if="form.categoryId">
                     <AppMultiselect
                         v-model="form.trackingMode"
