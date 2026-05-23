@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { Paintbrush, X } from "lucide-vue-next";
+import { X } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -65,6 +65,5 @@ function clear() {
         >
             <X class="w-3.5 h-3.5" :stroke-width="2.5" />
         </button>
-        <Paintbrush v-if="!modelValue" class="w-3.5 h-3.5 text-muted ml-1" :stroke-width="2" />
     </div>
 </template>
