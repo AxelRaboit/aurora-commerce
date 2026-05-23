@@ -133,6 +133,8 @@ use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
+use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRule;
+use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategory;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoal;
@@ -349,6 +351,7 @@ class AuroraBundle extends AbstractBundle
                     PersonalFinanceGoalInterface::class => PersonalFinanceGoal::class,
                     PersonalFinanceRecurringTransactionInterface::class => PersonalFinanceRecurringTransaction::class,
                     PersonalFinanceScheduledTransactionInterface::class => PersonalFinanceScheduledTransaction::class,
+                    PersonalFinanceCategorizationRuleInterface::class => PersonalFinanceCategorizationRule::class,
                 ],
                 'mappings' => array_merge(
                     [

@@ -29,6 +29,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.budgets.use'),
             new NavPermission('personal_finance.goals.use'),
             new NavPermission('personal_finance.recurring.use'),
+            new NavPermission('personal_finance.categorization.use'),
         ];
     }
 
@@ -100,6 +101,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
+        if ($this->personalFinanceContext->isCategorizationEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_categorization_rules',
+                'backend.nav.personal_finance_categorization',
+                'sparkles',
+                requiredPrivilege: 'personal_finance.categorization.use',
+                descriptionKey: 'backend.nav.personal_finance_categorization_description',
+            );
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -153,6 +164,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     requiredPrivilege: 'personal_finance.recurring.use',
                     descriptionKey: 'backend.nav.personal_finance_recurring_description',
                 ),
+                new NavItem(
+                    'backend_personal_finance_categorization_rules',
+                    'backend.nav.personal_finance_categorization',
+                    'sparkles',
+                    requiredPrivilege: 'personal_finance.categorization.use',
+                    descriptionKey: 'backend.nav.personal_finance_categorization_description',
+                ),
             ], priority: 25),
         ];
     }
@@ -167,6 +185,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceBudgets->toToggle(),
             ModuleParameterEnum::PersonalFinanceGoals->toToggle(),
             ModuleParameterEnum::PersonalFinanceRecurring->toToggle(),
+            ModuleParameterEnum::PersonalFinanceCategorization->toToggle(),
         ];
     }
 }

@@ -14,6 +14,8 @@ backend:
           use: Gérer les objectifs d'épargne
         recurring:
           use: Gérer les transactions récurrentes et planifiées
+        categorization:
+          use: Gérer les règles d'auto-catégorisation
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -32,6 +34,8 @@ backend:
     personal_finance_goals_description: 'Objectifs d''épargne avec suivi de progression. Liés à une catégorie = auto-synchronisé depuis les transactions.'
     personal_finance_recurring: Automatiques
     personal_finance_recurring_description: 'Transactions récurrentes (chaque mois à un jour fixe) et planifiées (one-off futur).'
+    personal_finance_categorization: Auto-catégorisation
+    personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement quand tu catégorises une transaction.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -233,6 +237,23 @@ personal_finance:
       planned_required: Le montant planifié est requis.
       planned_format: 'Format invalide. Exemple : 1234.56'
       carried_format: 'Format invalide. Exemple : 1234.56 ou -1234.56'
+  categorization:
+    title: Auto-catégorisation
+    intro: Les règles sont apprises automatiquement à chaque transaction catégorisée. Tu peux corriger une catégorie ou supprimer une règle obsolète ici.
+    empty: Aucune règle pour le moment. Catégorise quelques transactions pour que le système apprenne.
+    search_placeholder: Rechercher un pattern ou une catégorie…
+    deleted: Règle supprimée.
+    updated: Règle mise à jour.
+    delete_confirm: 'Supprimer la règle pour "{pattern}" ? Tu peux la recréer en re-catégorisant une transaction avec cette description.'
+    fields:
+      pattern: Pattern (description normalisée)
+      category: Catégorie
+      hits: Utilisations
+      wallet: Portefeuille
+    errors:
+      category_required: La catégorie est requise.
+      category_not_found: Catégorie introuvable.
+      category_system: Impossible d'utiliser une catégorie système.
   recurring:
     title: Automatiques
     tabs:

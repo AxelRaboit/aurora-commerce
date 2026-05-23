@@ -14,6 +14,8 @@ backend:
           use: Manage savings goals
         recurring:
           use: Manage recurring and scheduled transactions
+        categorization:
+          use: Manage auto-categorization rules
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -32,6 +34,8 @@ backend:
     personal_finance_goals_description: 'Savings goals with progress tracking. Linking a category enables automatic sync from transactions.'
     personal_finance_recurring: Automations
     personal_finance_recurring_description: 'Recurring transactions (monthly on a fixed day) and scheduled one-offs.'
+    personal_finance_categorization: Auto-categorization
+    personal_finance_categorization_description: 'Description → category rules learnt automatically every time you categorise a transaction.'
   parameters:
     personal_finance_default_currency:
       label: Default currency
@@ -233,6 +237,23 @@ personal_finance:
       planned_required: Planned amount is required.
       planned_format: 'Invalid format. Example: 1234.56'
       carried_format: 'Invalid format. Example: 1234.56 or -1234.56'
+  categorization:
+    title: Auto-categorization
+    intro: Rules are learnt automatically every time you save a categorised transaction. Fix a category here, or delete an obsolete rule.
+    empty: No rules yet. Categorise a few transactions so the system can learn.
+    search_placeholder: Search by pattern or category…
+    deleted: Rule deleted.
+    updated: Rule updated.
+    delete_confirm: 'Delete the rule for "{pattern}"? You can recreate it by re-categorising a transaction with that description.'
+    fields:
+      pattern: Pattern (normalised description)
+      category: Category
+      hits: Hits
+      wallet: Wallet
+    errors:
+      category_required: Category is required.
+      category_not_found: Category not found.
+      category_system: Cannot use a system category.
   recurring:
     title: Automations
     tabs:
