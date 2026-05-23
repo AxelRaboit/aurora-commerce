@@ -14,6 +14,7 @@ use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionI
 use Aurora\Module\PersonalFinance\Transaction\Manager\PersonalFinanceTransactionManagerInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransactionSerializerInterface;
+use Aurora\Module\PersonalFinance\Transaction\Service\PersonalFinanceTransactionXlsxExporter;
 use Aurora\Module\PersonalFinance\Transaction\View\PersonalFinanceTransactionsViewBuilder;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
@@ -41,6 +42,7 @@ final class PersonalFinanceTransactionsController extends AbstractController
         private readonly PersonalFinanceWalletRepository $walletRepository,
         private readonly PayloadValidator $payloadValidator,
         private readonly PersonalFinanceTransactionsViewBuilder $viewBuilder,
+        private readonly PersonalFinanceTransactionXlsxExporter $xlsxExporter,
     ) {}
 
     #[Route('/transactions', name: '_transactions', methods: [HttpMethodEnum::Get->value])]
@@ -74,6 +76,24 @@ final class PersonalFinanceTransactionsController extends AbstractController
         $tag = mb_trim((string) $request->query->get('tag', '')) ?: null;
 
         return $this->json($this->viewBuilder->buildListPayload($wallet, $pagination, $tag));
+    }
+
+    #[Route('/wallets/{walletId}/transactions/export', name: '_wallets_transactions_export', methods: [HttpMethodEnum::Get->value])]
+    public function export(int $walletId, Request $request): Response
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $wallet);
+
+        $search = mb_trim((string) $request->query->get('search', '')) ?: null;
+        $tag = mb_trim((string) $request->query->get('tag', '')) ?: null;
+
+        $transactions = $this->transactionRepository->findAllByWalletFiltered($wallet, $search, $tag);
+
+        return $this->xlsxExporter->buildResponse($wallet, $transactions);
     }
 
     #[Route('/wallets/{walletId}/transactions/create', name: '_wallets_transactions_create', methods: [HttpMethodEnum::Post->value])]

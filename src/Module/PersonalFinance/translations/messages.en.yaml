@@ -177,6 +177,7 @@ personal_finance:
     uncategorized: Uncategorized
     add: New transaction
     edit: 'Edit {name}'
+    export_xlsx: Export to Excel
     search_placeholder: Search a transaction…
     create_form_title: Record a transaction
     delete_confirm: 'Delete transaction {name}? This action is irreversible.'
@@ -278,6 +279,7 @@ personal_finance:
     help: 'The monthly budget defines planned amounts per category. A planned-vs-actual comparison is computed automatically from the month''s transactions. Each row exposes a button that opens the filtered list of transactions feeding it.'
     no_wallet: Create a wallet first to start budgeting.
     no_category: No category
+    export_xlsx: Export to Excel
     add_item: Add a line
     edit_item: Edit line
     empty_section: No lines in this section yet.

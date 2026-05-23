@@ -177,6 +177,7 @@ personal_finance:
     uncategorized: Sans catégorie
     add: Nouvelle transaction
     edit: 'Modifier {name}'
+    export_xlsx: Exporter Excel
     search_placeholder: Rechercher une transaction…
     create_form_title: Enregistrer une transaction
     delete_confirm: 'Supprimer la transaction {name} ? Cette action est irréversible.'
@@ -278,6 +279,7 @@ personal_finance:
     help: 'Le budget mensuel définit les montants prévus par catégorie. Une comparaison automatique entre le prévu et le réel est calculée à partir des transactions du mois. Sur chaque ligne, un bouton ouvre la liste filtrée des transactions associées.'
     no_wallet: Crée d'abord un portefeuille pour pouvoir bâtir un budget.
     no_category: Sans catégorie
+    export_xlsx: Exporter Excel
     add_item: Ajouter une ligne
     edit_item: Modifier la ligne
     empty_section: Aucune ligne dans cette section.

@@ -62,6 +62,7 @@ final readonly class PersonalFinanceTransactionsViewBuilder
             'search' => $pagination->search ?? '',
             'types' => PersonalFinanceTransactionTypeEnum::values(),
             'listPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_list'),
+            'exportPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_transactions_export', ['walletId' => '__walletId__']),
             'createTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_transactions_create', ['walletId' => '__walletId__']),
             'updateTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_update', ['id' => '__id__']),
             'deleteTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_delete', ['id' => '__id__']),

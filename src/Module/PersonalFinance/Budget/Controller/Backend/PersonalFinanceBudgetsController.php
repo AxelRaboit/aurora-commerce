@@ -13,8 +13,10 @@ use Aurora\Module\PersonalFinance\Budget\Dto\PersonalFinanceBudgetItemInputFacto
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
 use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetItemManagerInterface;
 use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetManagerInterface;
+use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
+use Aurora\Module\PersonalFinance\Budget\Service\PersonalFinanceBudgetXlsxExporter;
 use Aurora\Module\PersonalFinance\Budget\View\PersonalFinanceBudgetViewBuilder;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransactionSerializerInterface;
@@ -49,6 +51,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         private readonly PersonalFinanceTransactionRepository $transactionRepository,
         private readonly PersonalFinanceTransactionSerializerInterface $transactionSerializer,
         private readonly PayloadValidator $payloadValidator,
+        private readonly PersonalFinanceBudgetXlsxExporter $xlsxExporter,
     ) {}
 
     #[Route('/budgets', name: '_budgets', methods: [HttpMethodEnum::Get->value])]
@@ -82,6 +85,45 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
 
         return $this->json($this->viewBuilder->buildShowPayload($budget));
+    }
+
+    #[Route('/wallets/{walletId}/budget/export', name: '_wallets_budget_export', methods: [HttpMethodEnum::Get->value])]
+    public function export(int $walletId, Request $request): Response
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $wallet);
+
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $month = $this->resolveMonth($request->query->get('month'));
+        $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
+
+        $end = $month->modify('first day of next month');
+        $actuals = $this->transactionRepository->actualsByCategoryForMonth($wallet, $month, $end);
+        $items = $this->itemRepository->findByBudget($budget);
+
+        $sections = [];
+        foreach (PersonalFinanceBudgetSectionEnum::cases() as $sectionCase) {
+            $sections[$sectionCase->value] = ['planned' => '0.00', 'expected' => '0.00', 'actual' => '0.00', 'items' => []];
+        }
+        foreach ($items as $item) {
+            $categoryId = $item->getCategory()?->getId();
+            $actual = null === $categoryId ? '0.00' : ($actuals[$categoryId] ?? '0.00');
+            $bucket = &$sections[$item->getSection()->value];
+            $bucket['planned'] = bcadd($bucket['planned'], $item->getPlannedAmount(), 2);
+            $expected = bcadd($item->getPlannedAmount(), $item->getCarriedOver(), 2);
+            $bucket['expected'] = bcadd($bucket['expected'], $expected, 2);
+            $bucket['actual'] = bcadd($bucket['actual'], $actual, 2);
+            $bucket['items'][] = $item;
+            unset($bucket);
+        }
+
+        return $this->xlsxExporter->buildResponse($wallet, $budget, $sections, $actuals);
     }
 
     #[Route('/wallets/{walletId}/budget/items/create', name: '_wallets_budget_items_create', methods: [HttpMethodEnum::Post->value])]

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, Scale, Wallet } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, Scale, Wallet, FileDown } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -34,6 +34,7 @@ const props = defineProps({
     transactions: { type: Object, default: () => ({}) },
     search: { type: String, default: "" },
     listPath: { type: String, required: true },
+    exportPath: { type: String, required: true },
     types: { type: Array, required: true },
     createTransactionPath: { type: String, required: true },
     updateTransactionPath: { type: String, required: true },
@@ -232,6 +233,20 @@ function describeTx(tx) {
     if (!tx) return "";
     return `${formatDateShort(tx.date)} · ${formatType(tx.type)} ${formatAmount(tx)}`;
 }
+
+/**
+ * Open the XLSX export endpoint with the current filters. Bypasses
+ * the SPA-router by triggering a real navigation — the streamed
+ * response has `Content-Disposition: attachment`, so the browser
+ * downloads the file rather than rendering it.
+ */
+function exportXlsx() {
+    if (!selectedWalletId.value) return;
+    const url = new URL(props.exportPath.replace("__walletId__", selectedWalletId.value), window.location.origin);
+    if (searchInput.value) url.searchParams.set("search", searchInput.value);
+    if (activeTag.value) url.searchParams.set("tag", activeTag.value);
+    window.location.assign(url.toString());
+}
 </script>
 
 <template>
@@ -244,6 +259,16 @@ function describeTx(tx) {
             />
             <template #actions>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <AppButton
+                        variant="ghost"
+                        size="md"
+                        :disabled="!selectedWalletId"
+                        :title="t('personal_finance.transactions.export_xlsx')"
+                        v-on:click="exportXlsx"
+                    >
+                        <FileDown class="w-4 h-4" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ t("personal_finance.transactions.export_xlsx") }}</span>
+                    </AppButton>
                     <AppButton
                         variant="ghost"
                         size="md"

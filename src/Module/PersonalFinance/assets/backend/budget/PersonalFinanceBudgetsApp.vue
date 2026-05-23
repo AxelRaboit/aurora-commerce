@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock, FileDown } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -31,6 +31,7 @@ const props = defineProps({
     types: { type: Array, default: () => [] },
     budgetPayload: { type: Object, default: () => ({ budget: null, sections: {}, balance: { current: "0.00", month: "0.00", rollingStart: "0.00" } }) },
     showBudgetPath: { type: String, required: true },
+    exportBudgetPath: { type: String, required: true },
     createItemPath: { type: String, required: true },
     updateItemPath: { type: String, required: true },
     deleteItemPath: { type: String, required: true },
@@ -146,6 +147,18 @@ function totalsLine(summary) {
     });
 }
 
+/**
+ * Trigger an XLSX download for the currently-displayed budget month.
+ * Real navigation lets the browser handle `Content-Disposition:
+ * attachment` rather than the SPA router.
+ */
+function exportBudgetXlsx() {
+    if (!selectedWalletId.value) return;
+    const url = new URL(props.exportBudgetPath.replace("__walletId__", selectedWalletId.value), window.location.origin);
+    if (currentMonth.value) url.searchParams.set("month", currentMonth.value);
+    window.location.assign(url.toString());
+}
+
 </script>
 
 <template>
@@ -161,10 +174,22 @@ function totalsLine(summary) {
                 </AppIconButton>
             </div>
             <template #actions>
-                <AppButton variant="ghost" size="md" :loading="loading" v-on:click="refresh(selectedWalletId, currentMonth)">
-                    <RefreshCw class="w-4 h-4" :stroke-width="2" />
-                    {{ t("shared.common.refresh") }}
-                </AppButton>
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <AppButton
+                        variant="ghost"
+                        size="md"
+                        :disabled="!selectedWalletId"
+                        :title="t('personal_finance.budget.export_xlsx')"
+                        v-on:click="exportBudgetXlsx"
+                    >
+                        <FileDown class="w-4 h-4" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ t("personal_finance.budget.export_xlsx") }}</span>
+                    </AppButton>
+                    <AppButton variant="ghost" size="md" :loading="loading" v-on:click="refresh(selectedWalletId, currentMonth)">
+                        <RefreshCw class="w-4 h-4" :stroke-width="2" />
+                        {{ t("shared.common.refresh") }}
+                    </AppButton>
+                </div>
             </template>
         </AppListToolbar>
 

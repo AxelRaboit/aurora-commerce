@@ -70,6 +70,7 @@ final readonly class PersonalFinanceBudgetViewBuilder
             'types' => PersonalFinanceTransactionTypeEnum::values(),
             'budgetPayload' => $payload,
             'showBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_show', ['walletId' => '__walletId__']),
+            'exportBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_export', ['walletId' => '__walletId__']),
             'createItemPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_items_create', ['walletId' => '__walletId__']),
             'updateItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_update', ['id' => '__id__']),
             'deleteItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_delete', ['id' => '__id__']),

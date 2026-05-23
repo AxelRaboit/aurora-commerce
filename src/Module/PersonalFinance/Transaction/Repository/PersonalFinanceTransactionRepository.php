@@ -92,6 +92,41 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Full (unpaginated) list of transactions for a wallet, applying the
+     * same search + tag filters as findPaginatedByWallet. Used by the
+     * XLSX exporter so the file reflects exactly what the user is
+     * currently looking at. Memory-bound by design — large wallets stream
+     * in worst-case ~5–10k rows; PhpSpreadsheet's writer keeps memory low.
+     *
+     * @return list<PersonalFinanceTransactionInterface>
+     */
+    public function findAllByWalletFiltered(PersonalFinanceWalletInterface $wallet, ?string $search = null, ?string $tag = null): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->leftJoin('t.category', 'c')
+            ->addSelect('c')
+            ->where('t.wallet = :wallet')
+            ->setParameter('wallet', $wallet)
+            ->orderBy('t.date', Order::Descending->value)
+            ->addOrderBy('t.id', Order::Descending->value);
+
+        if (null !== $search && '' !== $search) {
+            $pattern = '%'.mb_strtolower($search).'%';
+            $qb->andWhere('LOWER(t.description) LIKE :search OR LOWER(c.name) LIKE :search')->setParameter('search', $pattern);
+        }
+
+        if (null !== $tag && '' !== $tag) {
+            $ids = $this->idsTaggedWith($wallet, $tag);
+            if ([] === $ids) {
+                return [];
+            }
+            $qb->andWhere('t.id IN (:tagIds)')->setParameter('tagIds', $ids);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @return list<PersonalFinanceTransactionInterface>
      */
     public function findByWallet(PersonalFinanceWalletInterface $wallet, int $limit = 200): array

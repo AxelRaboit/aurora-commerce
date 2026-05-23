@@ -85,6 +85,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | v2-4  | Vue Globale (Overview) : sub-feature `Overview/` + service d'agrégation cross-wallet + page Vue + nav + toggle + permission | (lot v2-4) | 🟢 |
 | v2-4-merge | Fusion Dashboard → Overview : suppression du sous-module Dashboard (Service + Controller + Vue + composable + Twig + nav + permission + toggle), absorption des blocs uniques (sparkline / goals / upcoming / budget alerts) dans Overview, redirect URL 301 conservé via `config/routes.yaml` | (lot v2-4-merge) | 🟢 |
 | v2-5  | Statistics page : sub-feature `Statistics/` + `StatisticsService` (monthlyFlow / categoryTrend / yoyComparison) + Vue inline-SVG bar chart + small-multi lines + period switcher 3/6/12 + nav + toggle + permission | (lot v2-5) | 🟢 |
+| v2-7  | Export Excel : `PersonalFinanceTransactionXlsxExporter` (PhpSpreadsheet, signed Amount) + repo finder `findAllByWalletFiltered` + endpoint `GET /wallets/{id}/transactions/export?search=&tag=` ; `PersonalFinanceBudgetXlsxExporter` (Items + Summary sheets) + endpoint `GET /wallets/{id}/budget/export?month=` ; bouton FileDown dans toolbars Transactions + Budget ; i18n FR/EN ; 2 nouveaux tests intégration (12 assertions) | (lot v2-7) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
@@ -115,7 +116,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | # | Session | Effort | Pourquoi |
 |---|---|---|---|
 | ~~v2-6~~ | ~~Tags UI~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
-| **v2-7** | **Export PDF/Excel** des transactions + budget : bouton download dans la toolbar, génération côté serveur (PhpSpreadsheet déjà installable, Dompdf déjà dans Aurora) | M | Archivage, déclarations fiscales, transition vers comptable |
+| ~~v2-7~~ | ~~Export PDF/Excel~~ | ~~M~~ | ✅ **livré** (Excel only — PDF reporté à un v2-7B si demande utilisateur, Dompdf non installé) |
 
 ### 🔵 Hors scope V2 (idées sans décision)
 
@@ -136,8 +137,8 @@ et valeur immédiate :
 3. ~~v2-1A Auto-rollover~~ ✅ **livré**
 4. ~~v2-4 Overview~~ ✅ **livré**
 5. ~~v2-5 Statistics~~ ✅ **livré** (heatmap reportée)
-6. **v2-7 Export** (M) — feature transverse, peut se faire à n'importe quel moment (prochain)
-7. **v2-1B BudgetPreset standalone** (M) — rebascule entre profils (utile si Phase A ne suffit pas en pratique)
+6. ~~v2-7 Export~~ ✅ **livré** (Excel only, PDF reporté en v2-7B éventuel)
+7. **v2-1B BudgetPreset standalone** (M) — rebascule entre profils (utile si Phase A ne suffit pas en pratique — **prochain**)
 8. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée
 
 ## Comment l'appliquer
