@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Welding\Controller\Backend;
+namespace Aurora\Module\Welding\Workflow\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
@@ -17,14 +17,13 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * Lightweight option endpoints for the Welding pickers (start workflow modal,
- * template editor PDF attachments). Each endpoint is gated by a Welding
- * permission so the welding user doesn't need to inherit hr/pdfform read
- * permissions to populate a dropdown.
+ * Lightweight option endpoints for the Welding pickers (start-workflow modal,
+ * template-editor PDF attachments). Gated by welding.workflows.view so welder
+ * roles don't need to inherit hr/pdfform read permissions for dropdowns.
  */
 #[Route('/backend/welding/options', name: 'backend_welding_options')]
 #[IsGranted('welding.workflows.view')]
-final class WeldingOptionsController extends AbstractController
+final class WorkflowOptionsController extends AbstractController
 {
     use JsonResponseTrait;
 

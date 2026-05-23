@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use Twig\Environment as TwigEnvironment;
 
@@ -26,15 +27,16 @@ use Twig\Environment as TwigEnvironment;
  * be blocked by a transient SMTP error. Failures are auditable via the
  * domain audit logger (separate from this notifier).
  */
-final readonly class WeldingStepNotifier
+class WeldingStepNotifier
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private TwigEnvironment $twig,
-        private UrlGeneratorInterface $urlGenerator,
-        private SettingRepository $settingRepository,
+        protected readonly MailerInterface $mailer,
+        protected readonly TwigEnvironment $twig,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly SettingRepository $settingRepository,
+        protected readonly TranslatorInterface $translator,
         #[Autowire('%app.mailer_from%')]
-        private string $mailerFrom,
+        protected readonly string $mailerFrom,
     ) {}
 
     public function notifyAwaitingValidation(WorkflowStepInterface $step): void
@@ -84,9 +86,10 @@ final readonly class WeldingStepNotifier
 
     private function buildSubject(WorkflowInterface $workflow, WorkflowStepInterface $step, string $siteName): string
     {
-        $ref = $workflow->getReference() ?? '#'.($workflow->getId() ?? '?');
-        $title = $step->getStepTemplate()?->getTitle() ?? '';
-
-        return sprintf('[%s] %s — étape à valider : %s', $siteName, $ref, $title);
+        return $this->translator->trans('welding.email.step_awaiting_validation.subject', [
+            'siteName' => $siteName,
+            'reference' => $workflow->getReference() ?? '#'.($workflow->getId() ?? '?'),
+            'title' => $step->getStepTemplate()?->getTitle() ?? '',
+        ]);
     }
 }

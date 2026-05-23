@@ -20,6 +20,7 @@ import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 const props = defineProps({
     workflow: { type: Object, required: true },
     steps: { type: Array, default: () => [] },
+    pdfContextType: { type: String, default: "welding_step" },
 });
 
 const { t } = useI18n();
@@ -156,7 +157,7 @@ async function archiveWorkflow() {
 function openPdfFiller(step, pdfTemplate) {
     const url = new URL("/backend/pdfform/documents", window.location.origin);
     url.searchParams.set("templateId", String(pdfTemplate.pdfTemplateId));
-    url.searchParams.set("contextType", "welding_step");
+    url.searchParams.set("contextType", props.pdfContextType);
     url.searchParams.set("contextId", String(step.id));
     url.searchParams.set("returnTo", window.location.pathname);
     window.open(url.toString(), "_blank");

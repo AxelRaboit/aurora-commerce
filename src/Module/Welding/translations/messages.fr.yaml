@@ -72,6 +72,7 @@ welding:
       title_required: Le titre de l'étape est obligatoire
       title_too_long: Le titre ne peut pas dépasser 200 caractères
       position_invalid: La position doit être un entier positif ou zéro
+      ordered_ids_required: Liste d'identifiants d'étapes manquante
   workflow_step_pdf_templates:
     errors:
       step_required: L'étape de rattachement est obligatoire
@@ -159,7 +160,20 @@ welding:
     field_pdf_template: PDF template
     field_required: Obligatoire
     no_pdfs_for_step: Aucun PDF attaché à cette étape.
+    reorder_failed: Réordonnancement échoué. État restauré.
   validator_role_inspector: Inspecteur
   validator_role_quality_assurance: Assurance qualité
   validator_role_supervisor: Superviseur
   validator_role_customer: Client
+  email:
+    step_awaiting_validation:
+      subject: "[{siteName}] {reference} — étape à valider : {title}"
+      title: "Étape à valider — {reference}"
+      intro: "Un soudeur a soumis une étape qui requiert votre validation sur le workflow <strong>{title}</strong> (v{version})."
+      label_reference: Référence
+      label_step: Étape
+      label_expected_role: Rôle attendu
+      label_submitted_by: Soumis par
+      label_submitted_at: Soumis le
+      cta_open: Ouvrir le workflow
+      footer: "Email envoyé automatiquement par {siteName}."

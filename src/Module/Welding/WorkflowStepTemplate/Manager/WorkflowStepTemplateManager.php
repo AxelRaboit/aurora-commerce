@@ -8,6 +8,7 @@ use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Welding\WorkflowStepTemplate\Dto\WorkflowStepTemplateInputInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplateInterface;
+use Aurora\Module\Welding\WorkflowStepTemplate\Repository\WorkflowStepTemplateRepository;
 use Aurora\Module\Welding\WorkflowTemplate\Repository\WorkflowTemplateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
@@ -19,6 +20,7 @@ class WorkflowStepTemplateManager implements WorkflowStepTemplateManagerInterfac
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly WorkflowTemplateRepository $workflowTemplateRepository,
+        protected readonly WorkflowStepTemplateRepository $stepRepository,
         protected readonly AuditLogger $auditLogger,
     ) {}
 
@@ -49,6 +51,35 @@ class WorkflowStepTemplateManager implements WorkflowStepTemplateManagerInterfac
 
         $this->entityManager->remove($step);
         $this->entityManager->flush();
+    }
+
+    public function reorder(array $orderedStepIds): void
+    {
+        if ([] === $orderedStepIds) {
+            return;
+        }
+
+        $this->entityManager->wrapInTransaction(function () use ($orderedStepIds): void {
+            $steps = $this->stepRepository->findBy(['id' => $orderedStepIds]);
+            $stepsById = [];
+            foreach ($steps as $step) {
+                $stepsById[$step->getId()] = $step;
+            }
+
+            foreach ($orderedStepIds as $position => $stepId) {
+                $step = $stepsById[$stepId] ?? null;
+                if (null === $step) {
+                    throw new RuntimeException(sprintf('WorkflowStepTemplate #%d not found', $stepId));
+                }
+                $step->setPosition($position);
+            }
+
+            $this->entityManager->flush();
+        });
+
+        $this->auditLogger->log('welding', 'workflow_step_template.reordered', 'WorkflowStepTemplate', null, [
+            'orderedStepIds' => $orderedStepIds,
+        ]);
     }
 
     protected function createWorkflowStepTemplate(): WorkflowStepTemplateInterface

@@ -72,6 +72,7 @@ welding:
       title_required: Step title is required
       title_too_long: Title cannot exceed 200 characters
       position_invalid: Position must be a non-negative integer
+      ordered_ids_required: Missing list of step ids
   workflow_step_pdf_templates:
     errors:
       step_required: Parent step is required
@@ -159,7 +160,20 @@ welding:
     field_pdf_template: PDF template
     field_required: Required
     no_pdfs_for_step: No PDF attached to this step.
+    reorder_failed: Reorder failed. Previous state restored.
   validator_role_inspector: Inspector
   validator_role_quality_assurance: Quality assurance
   validator_role_supervisor: Supervisor
   validator_role_customer: Customer
+  email:
+    step_awaiting_validation:
+      subject: "[{siteName}] {reference} — step to validate: {title}"
+      title: "Step to validate — {reference}"
+      intro: "A welder has submitted a step requiring your validation on workflow <strong>{title}</strong> (v{version})."
+      label_reference: Reference
+      label_step: Step
+      label_expected_role: Expected role
+      label_submitted_by: Submitted by
+      label_submitted_at: Submitted at
+      cta_open: Open the workflow
+      footer: "Automated email sent by {siteName}."

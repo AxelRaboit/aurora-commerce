@@ -124,6 +124,12 @@ class WorkflowManager implements WorkflowManagerInterface
         return new WorkflowStep();
     }
 
+    /**
+     * Hydrates the fields that may be set on BOTH create and update. The
+     * template + reference are create-only (set inline in create()) and are
+     * intentionally NOT touched here, so a client overriding applyInput()
+     * for extra fields never accidentally rewrites the immutable identity.
+     */
     protected function applyInput(WorkflowInterface $workflow, WorkflowInputInterface $input): void
     {
         if (null !== $input->getAssigneeId()) {

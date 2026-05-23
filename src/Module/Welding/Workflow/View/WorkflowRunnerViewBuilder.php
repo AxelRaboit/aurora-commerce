@@ -32,6 +32,7 @@ class WorkflowRunnerViewBuilder
                 fn (WorkflowStepInterface $step): array => $this->serializeStepWithPdfs($step),
                 $workflow->getSteps()->toArray(),
             ),
+            'pdfContextType' => self::PDF_CONTEXT_TYPE,
         ];
     }
 

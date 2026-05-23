@@ -14,4 +14,13 @@ interface WorkflowStepTemplateManagerInterface
     public function update(WorkflowStepTemplateInterface $step, WorkflowStepTemplateInputInterface $input): void;
 
     public function delete(WorkflowStepTemplateInterface $step): void;
+
+    /**
+     * Re-assigns positions for the given step ids in the order provided. Atomic:
+     * either every step is renumbered or nothing changes. Step ids not in the
+     * list are left untouched.
+     *
+     * @param int[] $orderedStepIds step ids in the order they should appear (0-indexed positions)
+     */
+    public function reorder(array $orderedStepIds): void;
 }

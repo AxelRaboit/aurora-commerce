@@ -139,22 +139,21 @@ async function moveStep(step, delta) {
     const idx = steps.value.findIndex((s) => s.id === step.id);
     const target = idx + delta;
     if (target < 0 || target >= steps.value.length) return;
-    const a = steps.value[idx];
-    const b = steps.value[target];
-    await Promise.all([
-        request(`/backend/welding/workflow-step-templates/${a.id}/edit`, {
-            workflowTemplateId: tpl.value.id, position: b.position, title: a.title,
-            description: a.description, requiresValidation: a.requiresValidation,
-            validatorRole: a.validatorRole,
-        }),
-        request(`/backend/welding/workflow-step-templates/${b.id}/edit`, {
-            workflowTemplateId: tpl.value.id, position: a.position, title: b.title,
-            description: b.description, requiresValidation: b.requiresValidation,
-            validatorRole: b.validatorRole,
-        }),
-    ]);
-    a.position = [b.position, b.position = a.position][0];
-    steps.value.sort((x, y) => x.position - y.position);
+
+    // Optimistic local swap; revert on failure
+    const previous = steps.value.map((s) => ({ ...s }));
+    const reordered = [...steps.value];
+    [reordered[idx], reordered[target]] = [reordered[target], reordered[idx]];
+    reordered.forEach((s, i) => (s.position = i));
+    steps.value = reordered;
+
+    const data = await request("/backend/welding/workflow-step-templates/reorder", {
+        orderedStepIds: reordered.map((s) => s.id),
+    });
+    if (!data?.success) {
+        steps.value = previous;
+        toast.error(t("welding.editor.reorder_failed"));
+    }
 }
 
 // ── Add PDF to step ───────────────────────────────────────────────────────

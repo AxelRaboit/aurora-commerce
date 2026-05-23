@@ -72,4 +72,19 @@ class WorkflowStepTemplatesController extends AbstractController
 
         return $this->jsonSuccess();
     }
+
+    #[Route('/reorder', name: '_reorder', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('welding.workflow_templates.edit')]
+    public function reorder(Request $request): JsonResponse
+    {
+        $payload = $this->decodeJson($request);
+        $orderedStepIds = array_values(array_filter(array_map('intval', $payload['orderedStepIds'] ?? []), static fn (int $id): bool => $id > 0));
+        if ([] === $orderedStepIds) {
+            return $this->jsonInvalidInput(['orderedStepIds' => 'backend.welding.workflow_step_templates.errors.ordered_ids_required']);
+        }
+
+        $this->manager->reorder($orderedStepIds);
+
+        return $this->jsonSuccess();
+    }
 }
