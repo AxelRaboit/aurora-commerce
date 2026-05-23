@@ -286,6 +286,8 @@ welding:
     requires_validation: Requires validation
     field_step_title: Step title
     field_validator_role: Validator role
+    field_validator_role_placeholder: Pick a role
+    field_pdf_template_placeholder: Pick a PDF template
     required_pdfs: Required PDFs
     add_pdf: Add a PDF
     pdf_added: PDF added

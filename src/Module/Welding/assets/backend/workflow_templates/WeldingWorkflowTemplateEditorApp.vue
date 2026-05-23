@@ -6,7 +6,12 @@ import {
     ScrollText, Plus, Pencil, Trash2, FileText, X, ArrowUp, ArrowDown, Send, Archive,
 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
+import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
@@ -74,6 +79,13 @@ const editingStep = ref(null);
 const stepForm = ref({});
 const stepErrors = ref({});
 
+const validatorRoleOptions = computed(() => [
+    { value: "inspector", label: t("welding.validator_role_inspector") },
+    { value: "quality_assurance", label: t("welding.validator_role_quality_assurance") },
+    { value: "supervisor", label: t("welding.validator_role_supervisor") },
+    { value: "customer", label: t("welding.validator_role_customer") },
+]);
+
 function openStepCreate() {
     editingStep.value = null;
     stepForm.value = {
@@ -129,12 +141,20 @@ async function saveStep() {
     }
 }
 
-async function deleteStep(step) {
-    if (!confirm(t("welding.editor.confirm_delete_step"))) return;
+const pendingStepDelete = ref(null);
+
+function confirmStepDelete(step) {
+    pendingStepDelete.value = step;
+}
+
+async function doDeleteStep() {
+    if (!pendingStepDelete.value) return;
+    const step = pendingStepDelete.value;
     const data = await request(`/backend/welding/workflow-step-templates/${step.id}/delete`, {});
     if (data?.success) {
         steps.value = steps.value.filter((s) => s.id !== step.id);
         toast.success(t("welding.editor.step_deleted"));
+        pendingStepDelete.value = null;
     }
 }
 
@@ -305,7 +325,7 @@ async function removePdf(step, entry) {
                                 size="sm"
                                 :aria-label="t('welding.editor.delete_step')"
                                 :disabled="requestLoading"
-                                v-on:click="deleteStep(step)"
+                                v-on:click="confirmStepDelete(step)"
                             >
                                 <Trash2 class="w-3.5 h-3.5 text-rose-500" :stroke-width="2" />
                             </AppButton>
@@ -384,20 +404,18 @@ async function removePdf(step, entry) {
                     <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflow_templates.field_description") }}</label>
                     <textarea v-model="stepForm.description" rows="2" class="w-full rounded border border-line bg-surface p-2 text-sm"></textarea>
                 </div>
-                <label class="flex items-center gap-2 text-sm">
-                    <input type="checkbox" v-model="stepForm.requiresValidation" />
-                    {{ t("welding.editor.requires_validation") }}
-                </label>
-                <div v-if="stepForm.requiresValidation">
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.editor.field_validator_role") }} *</label>
-                    <select v-model="stepForm.validatorRole" class="w-full rounded border border-line bg-surface p-2 text-sm">
-                        <option value="">—</option>
-                        <option value="inspector">{{ t("welding.validator_role_inspector") }}</option>
-                        <option value="quality_assurance">{{ t("welding.validator_role_quality_assurance") }}</option>
-                        <option value="supervisor">{{ t("welding.validator_role_supervisor") }}</option>
-                        <option value="customer">{{ t("welding.validator_role_customer") }}</option>
-                    </select>
-                </div>
+                <AppCheckbox
+                    v-model="stepForm.requiresValidation"
+                    :label="t('welding.editor.requires_validation')"
+                />
+                <AppMultiselect
+                    v-if="stepForm.requiresValidation"
+                    v-model="stepForm.validatorRole"
+                    :options="validatorRoleOptions"
+                    :label="t('welding.editor.field_validator_role')"
+                    :placeholder="t('welding.editor.field_validator_role_placeholder')"
+                    required
+                />
             </div>
             <template #footer>
                 <AppButton variant="ghost" v-on:click="stepModalOpen = false">{{ t("welding.runner.cancel") }}</AppButton>
@@ -406,23 +424,40 @@ async function removePdf(step, entry) {
         </AppModal>
 
         <!-- Add PDF modal -->
-        <AppModal :show="pdfModalStep !== null" :title="t('welding.editor.add_pdf')" v-on:close="pdfModalStep = null">
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.editor.field_pdf_template") }} *</label>
-                    <select v-model="pdfForm.pdfTemplateId" class="w-full rounded border border-line bg-surface p-2 text-sm">
-                        <option value="">—</option>
-                        <option v-for="opt in pdfTemplateOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
-                </div>
-                <label class="flex items-center gap-2 text-sm">
-                    <input type="checkbox" v-model="pdfForm.required" />
-                    {{ t("welding.editor.field_required") }}
-                </label>
+        <AppModal :show="pdfModalStep !== null" :title="t('welding.editor.add_pdf')" :icon="FileText" v-on:close="pdfModalStep = null">
+            <div class="space-y-4">
+                <AppMultiselect
+                    v-model="pdfForm.pdfTemplateId"
+                    :options="pdfTemplateOptions"
+                    :label="t('welding.editor.field_pdf_template')"
+                    :placeholder="t('welding.editor.field_pdf_template_placeholder')"
+                    required
+                />
+                <AppCheckbox
+                    v-model="pdfForm.required"
+                    :label="t('welding.editor.field_required')"
+                />
             </div>
             <template #footer>
                 <AppButton variant="ghost" v-on:click="pdfModalStep = null">{{ t("welding.runner.cancel") }}</AppButton>
                 <AppButton variant="primary" v-on:click="savePdf">{{ t("welding.runner.confirm") }}</AppButton>
+            </template>
+        </AppModal>
+
+        <!-- Delete step confirmation -->
+        <AppModal
+            :show="pendingStepDelete !== null"
+            max-width="md"
+            :title="t('welding.editor.delete_step')"
+            :icon="Trash2"
+            v-on:close="pendingStepDelete = null"
+        >
+            <p class="text-sm text-secondary">{{ t("welding.editor.confirm_delete_step") }}</p>
+            <template #footer>
+                <AppButton variant="ghost" v-on:click="pendingStepDelete = null">{{ t("welding.runner.cancel") }}</AppButton>
+                <AppButton variant="danger" :loading="requestLoading" :disabled="requestLoading" v-on:click="doDeleteStep">
+                    {{ t("welding.workflow_templates.confirm_delete_button") }}
+                </AppButton>
             </template>
         </AppModal>
     </div>
