@@ -32,6 +32,8 @@ const props = defineProps({
     updateScheduledPath: { type: String, required: true },
     materializeScheduledPath: { type: String, required: true },
     deleteScheduledPath: { type: String, required: true },
+    /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -185,6 +187,7 @@ function signedAmount(row) {
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.amount") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.day_of_month") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.next_expected", { date: '' }) }}</th>
+                            <slot name="extra-headers" :tab="'recurring'" />
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
                     </thead>
@@ -201,6 +204,7 @@ function signedAmount(row) {
                                 <span v-if="rec.nextExpectedDate" class="font-mono">{{ rec.nextExpectedDate }}</span>
                                 <span v-else class="text-muted">—</span>
                             </td>
+                            <slot name="extra-cells" :tab="'recurring'" :item="rec" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppIconButton :color="rec.active ? 'amber' : 'emerald'" :title="rec.active ? t('personal_finance.recurring.toggle_disable') : t('personal_finance.recurring.toggle_enable')" v-on:click="toggleRec(rec)">
@@ -231,6 +235,7 @@ function signedAmount(row) {
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.amount") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.scheduled_date") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.status") }}</th>
+                            <slot name="extra-headers" :tab="'scheduled'" />
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
                     </thead>
@@ -253,6 +258,7 @@ function signedAmount(row) {
                                     {{ t("personal_finance.recurring.status_pending") }}
                                 </span>
                             </td>
+                            <slot name="extra-cells" :tab="'scheduled'" :item="sched" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppButton v-if="!sched.generated" variant="ghost" size="sm" v-on:click="materialize(sched)">
@@ -281,6 +287,7 @@ function signedAmount(row) {
                     <AppInput v-model.number="recForm.dayOfMonth" type="number" min="1" max="28" :label="t('personal_finance.recurring.fields.day_of_month')" :error="recErrors.dayOfMonth" required />
                     <p class="text-xs text-muted mt-1">{{ t("personal_finance.recurring.fields.day_of_month_hint") }}</p>
                 </div>
+                <slot name="extra-form-fields" :form="recForm" :errors="recErrors" :editing="recEditing" :tab="'recurring'" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -305,6 +312,7 @@ function signedAmount(row) {
                 <AppMultiselect v-model="schedForm.categoryId" :label="t('personal_finance.recurring.fields.category')" :options="categoryOptionsForWallet(schedForm.walletId)" :allow-empty="true" />
                 <AppDatePicker v-model="schedForm.scheduledDate" :label="t('personal_finance.recurring.fields.scheduled_date')" :placeholder="t('personal_finance.transactions.placeholders.date')" :error="schedErrors.scheduledDate" required />
                 <AppInput v-model="schedForm.description" :label="t('personal_finance.recurring.fields.description')" />
+                <slot name="extra-form-fields" :form="schedForm" :errors="schedErrors" :editing="schedEditing" :tab="'scheduled'" />
             </form>
             <template #footer>
                 <AppModalFooter>

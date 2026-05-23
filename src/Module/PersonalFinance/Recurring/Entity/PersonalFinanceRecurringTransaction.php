@@ -8,7 +8,7 @@ use Aurora\Module\PersonalFinance\Recurring\Repository\PersonalFinanceRecurringT
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersonalFinanceRecurringTransactionRepository::class)]
-#[ORM\Table(name: 'core_personal_finance_recurring_tx')]
+#[ORM\Table(name: 'core_personal_finance_recurring_transaction')]
 #[ORM\Index(name: 'idx_pf_recurring_user', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_pf_recurring_wallet', columns: ['wallet_id'])]
 #[ORM\Index(name: 'idx_pf_recurring_active_day', columns: ['active', 'day_of_month'])]
@@ -16,7 +16,7 @@ class PersonalFinanceRecurringTransaction extends AbstractPersonalFinanceRecurri
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_core_personal_finance_recurring_tx_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_personal_finance_recurring_transaction_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

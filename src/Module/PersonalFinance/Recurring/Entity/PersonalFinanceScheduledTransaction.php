@@ -8,7 +8,7 @@ use Aurora\Module\PersonalFinance\Recurring\Repository\PersonalFinanceScheduledT
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersonalFinanceScheduledTransactionRepository::class)]
-#[ORM\Table(name: 'core_personal_finance_scheduled_tx')]
+#[ORM\Table(name: 'core_personal_finance_scheduled_transaction')]
 #[ORM\Index(name: 'idx_pf_scheduled_user', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_pf_scheduled_wallet', columns: ['wallet_id'])]
 #[ORM\Index(name: 'idx_pf_scheduled_date', columns: ['scheduled_date'])]
@@ -16,7 +16,7 @@ class PersonalFinanceScheduledTransaction extends AbstractPersonalFinanceSchedul
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_core_personal_finance_scheduled_tx_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_personal_finance_scheduled_transaction_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 

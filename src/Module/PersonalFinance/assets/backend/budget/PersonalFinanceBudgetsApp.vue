@@ -185,10 +185,13 @@ function diffClass(item) {
                             </h3>
                             <p class="text-xs text-muted">{{ totalsLine(sectionSummaries[section] ?? { expected: '0.00', actual: '0.00' }) }}</p>
                         </div>
-                        <AppButton variant="ghost" size="sm" v-on:click="onCreate(section)">
-                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("personal_finance.budget.add_item") }}
-                        </AppButton>
+                        <div class="flex items-center gap-2">
+                            <slot name="extra-headers" :section="section" />
+                            <AppButton variant="ghost" size="sm" v-on:click="onCreate(section)">
+                                <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                                {{ t("personal_finance.budget.add_item") }}
+                            </AppButton>
+                        </div>
                     </header>
 
                     <ul v-if="(sectionSummaries[section]?.items ?? []).length" class="divide-y divide-line/40">
@@ -213,6 +216,7 @@ function diffClass(item) {
                                 </div>
                             </div>
                             <span class="font-mono text-sm w-20 text-right" :class="diffClass(item)">{{ item.diff ?? '0.00' }}</span>
+                            <slot name="extra-cells" :item="item" />
                             <div class="flex items-center gap-0.5">
                                 <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="onEdit(item)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
@@ -282,6 +286,7 @@ function diffClass(item) {
                     v-model="itemForm.repeatNextMonth"
                     :label="t('personal_finance.budget.fields.repeat_next_month')"
                 />
+                <slot name="extra-form-fields" :form="itemForm" :errors="itemErrors" :editing="itemEditing" />
             </form>
             <template #footer>
                 <AppModalFooter>

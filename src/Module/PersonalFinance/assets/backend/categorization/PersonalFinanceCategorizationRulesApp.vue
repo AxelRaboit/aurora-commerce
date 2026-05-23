@@ -24,6 +24,8 @@ const props = defineProps({
     listPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -100,6 +102,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.categorization.fields.category") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.categorization.fields.wallet") }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.categorization.fields.hits") }}</th>
+                            <slot name="extra-headers" />
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
                     </thead>
@@ -116,6 +119,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             </td>
                             <td class="px-6 py-3 text-muted text-xs">{{ rule.walletName }}</td>
                             <td class="px-6 py-3 text-right font-mono">{{ rule.hits }}</td>
+                            <slot name="extra-cells" :rule="rule" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
                                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(rule)">

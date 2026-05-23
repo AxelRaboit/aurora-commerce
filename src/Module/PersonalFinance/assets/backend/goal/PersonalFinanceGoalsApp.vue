@@ -24,6 +24,8 @@ const props = defineProps({
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     depositPath: { type: String, required: true },
+    /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
+    extraFields: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -136,6 +138,7 @@ function monthlyContribution(goal) {
                 class="w-full sm:w-64"
             />
             <template #actions>
+                <slot name="extra-headers" />
                 <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t("personal_finance.goals.add") }}
@@ -194,6 +197,8 @@ function monthlyContribution(goal) {
                         {{ t("personal_finance.goals.fields.wallet") }}: {{ goal.walletName }}
                     </div>
                 </dl>
+
+                <slot name="extra-cells" :goal="goal" />
 
                 <footer class="pt-1 border-t border-line/40">
                     <AppButton
@@ -255,6 +260,7 @@ function monthlyContribution(goal) {
                     v-model="form.color"
                     :label="t('personal_finance.goals.fields.color')"
                 />
+                <slot name="extra-form-fields" :form="form" :errors="formErrors" :editing="formEditing" />
             </form>
             <template #footer>
                 <AppModalFooter>

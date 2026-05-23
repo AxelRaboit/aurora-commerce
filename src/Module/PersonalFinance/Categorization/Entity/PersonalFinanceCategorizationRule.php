@@ -16,7 +16,7 @@ class PersonalFinanceCategorizationRule extends AbstractPersonalFinanceCategoriz
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-    #[ORM\SequenceGenerator(sequenceName: 'seq_core_personal_finance_categ_rule_id', allocationSize: 1)]
+    #[ORM\SequenceGenerator(sequenceName: 'seq_core_personal_finance_categorization_rule_id', allocationSize: 1)]
     #[ORM\Column]
     protected ?int $id = null;
 
