@@ -92,6 +92,42 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Returns the absolute spending/income per category for the wallet
+     * within [from, to). Used by the Budget UI to show "actual vs
+     * planned" per BudgetItem. Excludes transfer legs (transferId !=
+     * null) since transfers shouldn't count as budget consumption.
+     *
+     * Categories with zero activity are NOT in the result — the caller
+     * should fall back to '0.00' for missing keys.
+     *
+     * @return array<int, string> Map of categoryId → decimal sum (bcmath string)
+     */
+    public function actualsByCategoryForMonth(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $rows = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.category) AS categoryId', 'SUM(t.amount) AS total')
+            ->where('t.wallet = :wallet')
+            ->andWhere('t.category IS NOT NULL')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallet', $wallet)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('t.category')
+            ->getQuery()
+            ->getResult();
+
+        $actuals = [];
+        foreach ($rows as $row) {
+            $categoryId = (int) $row['categoryId'];
+            $actuals[$categoryId] = bcadd('0', (string) $row['total'], 2);
+        }
+
+        return $actuals;
+    }
+
+    /**
      * Returns every transaction sharing the given splitId. Order is
      * insertion order (by id) to keep the UI display stable.
      *

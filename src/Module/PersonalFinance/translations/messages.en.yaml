@@ -8,6 +8,8 @@ backend:
           use: Manage categories
         transactions:
           use: Manage transactions
+        budgets:
+          use: Manage monthly budgets
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -20,6 +22,8 @@ backend:
     personal_finance_categories_description: 'Per-wallet transaction taxonomy (Groceries, Leisure, Salary…).'
     personal_finance_transactions: Transactions
     personal_finance_transactions_description: 'Wallet income and expenses, dated and categorized.'
+    personal_finance_budgets: Budgets
+    personal_finance_budgets_description: 'Monthly budget per wallet: sections, planned vs actual lines, carry-over.'
   parameters:
     personal_finance_default_currency:
       label: Default currency

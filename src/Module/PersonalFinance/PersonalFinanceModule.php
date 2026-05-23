@@ -26,6 +26,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.wallets.use'),
             new NavPermission('personal_finance.categories.use'),
             new NavPermission('personal_finance.transactions.use'),
+            new NavPermission('personal_finance.budgets.use'),
         ];
     }
 
@@ -66,6 +67,11 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                 descriptionKey: 'backend.nav.personal_finance_transactions_description',
             );
         }
+
+        // Budgets nav item is registered by Session 6b (UI) once the
+        // index route exists. The permission + toggle stay registered
+        // here so the API endpoints (`/wallets/{id}/budget*`) remain
+        // gated when used from the Transactions page meanwhile.
 
         if ([] === $items) {
             return [];
@@ -110,6 +116,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceWallets->toToggle(),
             ModuleParameterEnum::PersonalFinanceCategories->toToggle(),
             ModuleParameterEnum::PersonalFinanceTransactions->toToggle(),
+            ModuleParameterEnum::PersonalFinanceBudgets->toToggle(),
         ];
     }
 }

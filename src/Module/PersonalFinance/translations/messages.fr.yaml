@@ -8,6 +8,8 @@ backend:
           use: Gérer les catégories
         transactions:
           use: Gérer les transactions
+        budgets:
+          use: Gérer les budgets mensuels
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -20,6 +22,8 @@ backend:
     personal_finance_categories_description: 'Taxonomie des transactions par portefeuille (Courses, Loisirs, Salaire…).'
     personal_finance_transactions: Transactions
     personal_finance_transactions_description: 'Revenus et dépenses du portefeuille, datés et catégorisés.'
+    personal_finance_budgets: Budgets
+    personal_finance_budgets_description: 'Budget mensuel par portefeuille : sections, lignes planifiées vs réelles, report.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
