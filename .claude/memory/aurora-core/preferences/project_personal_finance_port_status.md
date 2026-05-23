@@ -75,13 +75,33 @@ jour à la fin de chaque session.
 7 sessions identifiées. Aucune n'est bloquante pour les autres — l'ordre
 ci-dessous reflète **valeur utilisateur** / effort.
 
+### V2 — Sessions complétées
+
+| # | Session | Commit | Statut |
+|---|---|---|---|
+| v2-3 | UI Members modal + email integration + public acceptance page | (lot v2-3) | 🟢 |
+
+**v2-3 livré** :
+- Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
+- `WalletMemberSerializer` enrichi (`userName` + `userEmail` pour la modal)
+- `PersonalFinanceWalletInvitationNotificationService` (Notification/, readonly non-final, hook overridable) — `MailService` + UrlGenerator
+- `PersonalFinanceWalletInvitationManager.send/resend` déclenchent le mail post-persist + audit
+- `Controller/Public/PersonalFinanceWalletInvitationAcceptController` : 3 routes publiques (show GET + accept POST + decline POST) sous `IS_AUTHENTICATED_FULLY` (token = authz)
+- Vue `PersonalFinanceWalletMembersModal` + composable `useWalletMembers` (3 sections : actifs / pending / invite-form)
+- Bouton `Users` (sky) sur chaque card wallet ouvre la modal
+- Twig public `@PersonalFinance/public/wallet_invitation_accept.html.twig` (5 states : invalid / pending / accepted / declined / expired)
+- Email template `@PersonalFinance/email/wallet_invitation.html.twig` extend shared base layout
+- 30+ clés i18n FR + EN (members.* / invitations.* / mail.invitation.*)
+- 7 nouveaux tests `PersonalFinanceWalletInvitationManagerTest` (send/accept/decline/resend lifecycle + reject Owner + dup pending)
+- **Suite PF : 65 tests / 187 assertions verts**
+
 ### 🟢 Backlog cartographié (5 sessions)
 
 | # | Session | Effort | Pourquoi |
 |---|---|---|---|
 | **v2-1** (6c) | **BudgetPreset + auto-rollover** : entité template user-level + service qui copie les items `repeatNextMonth=true` au début du mois suivant. Modale "appliquer un preset" au create d'un nouveau budget mensuel | M | Évite la re-saisie manuelle chaque mois — feedback récurrent de tout user Spendly |
 | **v2-2** (11) | **Import Excel** : 2-step upload → preview → process. Service `PersonalFinanceImportService` (parse via PhpSpreadsheet ou ext locale) + template Excel téléchargeable + DTO de validation. Mapping flexible (date / montant / catégorie / description / tags) | L | Onboarding utilisateurs qui ont déjà un historique ailleurs (banque, autre app) |
-| **v2-3** (2c-2) | **UI Members modal** + page publique acceptation invitation + email integration (Mailer + Twig template). Backend invitations déjà 100% prêt depuis V1 — seule l'UI manque | S | Débloque le multi-utilisateur (couple partage budget) — backend bossé, UI rapide |
+| ~~v2-3~~ | ~~UI Members modal + email + public page~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
 | **v2-4** | **Vue Globale (Overview)** multi-wallets agrégée : `PersonalFinanceOverviewService` somme cross-wallet + Vue dédiée. Différent du Dashboard qui est centré KPIs du mois | M | Utilisateurs avec 3+ wallets : voir le big picture |
 | **v2-5** | **Statistics page** : analyses temporelles (3/6/12 mois), heatmap dépenses, comparaison année-N vs N-1, breakdown par catégorie. Inline SVG chart lib-free comme le Dashboard | M | Power users qui veulent challenger leurs habitudes |
 
@@ -106,8 +126,8 @@ ci-dessous reflète **valeur utilisateur** / effort.
 Si aucun item n'est prioritaire produit, attaquer par effort croissant
 et valeur immédiate :
 
-1. **v2-3 UI Members** (S) — backend prêt, débloque multi-user
-2. **v2-6 Tags UI** (S) — backend prêt, quick win UX
+1. ~~v2-3 UI Members~~ ✅ **livré**
+2. **v2-6 Tags UI** (S) — backend prêt, quick win UX (prochain)
 3. **v2-1 BudgetPreset** (M) — feature à forte demande, scope auto-suffisant
 4. **v2-4 Overview** (M) — bénéficie de la maturité Budget/Goal
 5. **v2-5 Statistics** (M) — vient après Overview, même pattern d'agrégation
