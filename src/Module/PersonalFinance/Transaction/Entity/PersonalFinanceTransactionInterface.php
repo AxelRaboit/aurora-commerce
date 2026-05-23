@@ -61,6 +61,12 @@ interface PersonalFinanceTransactionInterface extends TimestampableInterface
 
     public function setAttachmentPath(?string $attachmentPath): static;
 
+    public function getAttachmentOriginalName(): ?string;
+
+    public function setAttachmentOriginalName(?string $attachmentOriginalName): static;
+
+    public function hasAttachment(): bool;
+
     public function isIncome(): bool;
 
     public function isExpense(): bool;

@@ -126,6 +126,16 @@ personal_finance:
       amount_required: Amount is required.
       amount_format: 'Invalid format. Example: 1234.56 (always positive)'
       date_required: Date is required.
+    attachment:
+      label: Receipt
+      add: Attach a file
+      remove: Remove receipt
+      download: Download
+      hint: 'PDF, JPEG, PNG or WebP — 5 MB max.'
+      uploaded: Receipt added.
+      removed: Receipt removed.
+      errors:
+        missing: No file received.
   transfers:
     title: Transfers
     add: New transfer

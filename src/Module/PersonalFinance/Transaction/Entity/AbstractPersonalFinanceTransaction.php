@@ -56,6 +56,9 @@ abstract class AbstractPersonalFinanceTransaction implements PersonalFinanceTran
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $attachmentPath = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $attachmentOriginalName = null;
+
     public function getUser(): CoreUserInterface
     {
         return $this->user;
@@ -188,6 +191,23 @@ abstract class AbstractPersonalFinanceTransaction implements PersonalFinanceTran
         $this->attachmentPath = $attachmentPath;
 
         return $this;
+    }
+
+    public function getAttachmentOriginalName(): ?string
+    {
+        return $this->attachmentOriginalName;
+    }
+
+    public function setAttachmentOriginalName(?string $attachmentOriginalName): static
+    {
+        $this->attachmentOriginalName = $attachmentOriginalName;
+
+        return $this;
+    }
+
+    public function hasAttachment(): bool
+    {
+        return null !== $this->attachmentPath;
     }
 
     public function isIncome(): bool

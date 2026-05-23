@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Transaction\Manager;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
+use Aurora\Module\PersonalFinance\Transaction\Attachment\Service\PersonalFinanceTransactionAttachmentServiceInterface;
 use Aurora\Module\PersonalFinance\Transaction\Dto\PersonalFinanceTransactionInputInterface;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
@@ -23,6 +24,7 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
         protected readonly EntityManagerInterface $entityManager,
         protected readonly AuditLogger $auditLogger,
         protected readonly PersonalFinanceCategoryRepository $categoryRepository,
+        protected readonly PersonalFinanceTransactionAttachmentServiceInterface $attachmentService,
     ) {}
 
     public function create(CoreUserInterface $user, PersonalFinanceWalletInterface $wallet, PersonalFinanceTransactionInputInterface $input): PersonalFinanceTransactionInterface
@@ -56,8 +58,15 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
 
         $this->auditDeleted($transaction);
 
+        $transactionId = $transaction->getId();
+        $hadAttachment = $transaction->hasAttachment();
+
         $this->entityManager->remove($transaction);
         $this->entityManager->flush();
+
+        if ($hadAttachment && null !== $transactionId) {
+            $this->attachmentService->purgeDirectory($transactionId);
+        }
     }
 
     /**

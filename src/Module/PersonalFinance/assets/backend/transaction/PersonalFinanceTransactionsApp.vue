@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, FileDown, Upload } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -22,6 +22,7 @@ import { useTransfersForm } from "./composables/useTransfersForm.js";
 import { useTransfersDelete } from "./composables/useTransfersDelete.js";
 import { useSplitsCreate } from "./composables/useSplitsCreate.js";
 import { useSplitsDelete } from "./composables/useSplitsDelete.js";
+import { useTransactionAttachment } from "./composables/useTransactionAttachment.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -40,6 +41,9 @@ const props = defineProps({
     showTransferPath: { type: String, required: true },
     createSplitPath: { type: String, required: true },
     deleteSplitPath: { type: String, required: true },
+    uploadAttachmentPath: { type: String, required: true },
+    deleteAttachmentPath: { type: String, required: true },
+    serveAttachmentPath: { type: String, required: true },
     /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
@@ -131,6 +135,35 @@ const splitTotal = computed(() => {
     }
     return total.toFixed(2);
 });
+
+const { loading: attachmentLoading, upload: uploadAttachment, remove: removeAttachment, serveUrl: attachmentServeUrl } =
+    useTransactionAttachment(
+        props.uploadAttachmentPath,
+        props.deleteAttachmentPath,
+        props.serveAttachmentPath,
+        (updatedTransaction) => {
+            if (updatedTransaction && editingTransaction.value && updatedTransaction.id === editingTransaction.value.id) {
+                editingTransaction.value = updatedTransaction;
+            }
+            reset();
+        },
+    );
+
+const attachmentInput = ref(null);
+
+function onAttachmentPick(event) {
+    const file = event.target.files?.[0];
+    if (file && editingTransaction.value?.id) {
+        uploadAttachment(editingTransaction.value.id, file);
+    }
+    event.target.value = "";
+}
+
+function onAttachmentRemove() {
+    if (editingTransaction.value?.id) {
+        removeAttachment(editingTransaction.value.id);
+    }
+}
 
 const {
     show: showSplit,
@@ -272,7 +305,12 @@ function describeTx(tx) {
                                 <td class="px-6 py-3">{{ formatType(tx.type) }}</td>
                                 <td class="px-6 py-3 text-right font-mono" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</td>
                                 <td class="px-6 py-3 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
-                                <td class="px-6 py-3">{{ tx.description }}</td>
+                                <td class="px-6 py-3">
+                                    <div class="flex items-center gap-1.5">
+                                        <Paperclip v-if="tx.hasAttachment" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                                        <span>{{ tx.description }}</span>
+                                    </div>
+                                </td>
                                 <slot name="extra-cells" :transaction="tx" />
                                 <td class="px-6 py-3">
                                     <div class="flex items-center justify-end gap-0.5">
@@ -404,6 +442,51 @@ function describeTx(tx) {
                     :error="editErrors.description"
                 />
                 <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :transaction="editingTransaction" />
+
+                <div v-if="editingTransaction" class="border-t border-line pt-4 space-y-2">
+                    <label class="text-xs font-medium uppercase tracking-wider text-muted">
+                        {{ t("personal_finance.transactions.attachment.label") }}
+                    </label>
+                    <div v-if="editingTransaction.hasAttachment" class="flex items-center justify-between gap-3 bg-surface-2/40 border border-line rounded-md px-3 py-2">
+                        <a
+                            :href="attachmentServeUrl(editingTransaction.id)"
+                            target="_blank"
+                            rel="noopener"
+                            class="inline-flex items-center gap-2 text-sm text-accent hover:underline truncate"
+                        >
+                            <FileDown class="w-4 h-4" :stroke-width="2" />
+                            <span class="truncate">{{ editingTransaction.attachmentOriginalName ?? t('personal_finance.transactions.attachment.download') }}</span>
+                        </a>
+                        <AppIconButton
+                            color="rose"
+                            :title="t('personal_finance.transactions.attachment.remove')"
+                            :disabled="attachmentLoading"
+                            v-on:click="onAttachmentRemove"
+                        >
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
+                    <div v-else class="flex items-center gap-2">
+                        <AppButton
+                            variant="ghost"
+                            size="sm"
+                            type="button"
+                            :loading="attachmentLoading"
+                            v-on:click="attachmentInput?.click()"
+                        >
+                            <Upload class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("personal_finance.transactions.attachment.add") }}
+                        </AppButton>
+                        <span class="text-xs text-muted">{{ t("personal_finance.transactions.attachment.hint") }}</span>
+                    </div>
+                    <input
+                        ref="attachmentInput"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,application/pdf"
+                        class="hidden"
+                        v-on:change="onAttachmentPick"
+                    />
+                </div>
             </form>
             <template #footer>
                 <AppModalFooter>

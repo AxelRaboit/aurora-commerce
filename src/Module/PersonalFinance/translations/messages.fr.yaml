@@ -126,6 +126,16 @@ personal_finance:
       amount_required: Le montant est requis.
       amount_format: 'Format invalide. Exemple : 1234.56 (toujours positif)'
       date_required: La date est requise.
+    attachment:
+      label: Justificatif
+      add: Joindre un fichier
+      remove: Retirer le justificatif
+      download: Télécharger
+      hint: 'PDF, JPEG, PNG ou WebP — 5 Mo max.'
+      uploaded: Justificatif ajouté.
+      removed: Justificatif retiré.
+      errors:
+        missing: Aucun fichier reçu.
   transfers:
     title: Virements
     add: Nouveau virement

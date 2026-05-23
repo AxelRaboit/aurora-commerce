@@ -28,6 +28,8 @@ class PersonalFinanceTransactionSerializer implements PersonalFinanceTransaction
             'transferId' => $transaction->getTransferId(),
             'splitId' => $transaction->getSplitId(),
             'attachmentPath' => $transaction->getAttachmentPath(),
+            'attachmentOriginalName' => $transaction->getAttachmentOriginalName(),
+            'hasAttachment' => $transaction->hasAttachment(),
             'createdAt' => $transaction->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $transaction->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];
