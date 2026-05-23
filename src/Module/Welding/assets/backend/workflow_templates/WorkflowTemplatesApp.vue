@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { ScrollText, Plus, Pencil, Send, Archive, Copy, Trash2 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
@@ -15,8 +17,18 @@ const props = defineProps({
 
 const { t } = useI18n();
 const items = ref([...props.workflowTemplates]);
+const query = ref("");
 
 const { BADGE: STATUS_BADGE } = useTemplateStatus();
+
+const filteredItems = computed(() => {
+    const q = query.value.trim().toLowerCase();
+    if (!q) return items.value;
+    return items.value.filter((tpl) =>
+        (tpl.title ?? "").toLowerCase().includes(q)
+        || (tpl.applicableTo ?? "").toLowerCase().includes(q),
+    );
+});
 
 const createOpen = ref(false);
 const form = ref({ title: "", description: "", applicableTo: "" });
@@ -90,28 +102,38 @@ async function doDelete() {
 
 <template>
     <div class="p-4 sm:p-6 space-y-6">
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div class="flex items-center gap-3">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
-                    <ScrollText class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
-                </div>
-                <div>
-                    <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflow_templates.title") }}</h1>
-                    <p class="text-sm text-secondary">{{ t("welding.workflow_templates.subtitle") }}</p>
-                </div>
+        <div class="flex items-center gap-3">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
+                <ScrollText class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
             </div>
-            <AppButton variant="primary" v-on:click="openCreate">
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("welding.workflow_templates.new") }}
-            </AppButton>
+            <div>
+                <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflow_templates.title") }}</h1>
+                <p class="text-sm text-secondary">{{ t("welding.workflow_templates.subtitle") }}</p>
+            </div>
         </div>
+
+        <AppListToolbar>
+            <AppSearchInput
+                v-model="query"
+                :placeholder="t('welding.workflow_templates.search_placeholder')"
+            />
+            <template #actions>
+                <AppButton variant="primary" v-on:click="openCreate">
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t("welding.workflow_templates.new") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div v-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
             {{ t("welding.workflow_templates.empty") }}
         </div>
+        <div v-else-if="filteredItems.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
+            {{ t("welding.workflow_templates.search_no_match") }}
+        </div>
         <ul v-else class="space-y-2">
             <li
-                v-for="template in items"
+                v-for="template in filteredItems"
                 :key="template.id"
                 class="rounded-lg border border-line bg-surface p-4 flex flex-wrap items-center gap-4"
             >

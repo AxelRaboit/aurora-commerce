@@ -42,6 +42,8 @@ welding:
     title: Modèles de workflow
     subtitle: Modèles de procédure de soudure réglementée
     empty: Aucun modèle de workflow pour l'instant. Créez-en un pour démarrer.
+    search_placeholder: Rechercher un modèle (titre, portée)…
+    search_no_match: Aucun modèle ne correspond à votre recherche.
     steps: étape(s)
     status_draft: Brouillon
     status_published: Publié
@@ -84,6 +86,8 @@ welding:
     title: Workflows
     subtitle: Workflows de soudure en cours et terminés
     empty: Aucun workflow démarré pour l'instant.
+    search_placeholder: Rechercher (référence, modèle, soudeur)…
+    search_no_match: Aucun workflow ne correspond à votre recherche.
     no_assignee: Pas de soudeur assigné
     no_assignee_option: Aucun
     status_draft: Brouillon

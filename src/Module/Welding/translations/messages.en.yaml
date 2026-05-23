@@ -42,6 +42,8 @@ welding:
     title: Workflow templates
     subtitle: Regulated welding procedure templates
     empty: No workflow template yet. Create one to get started.
+    search_placeholder: Search a template (title, scope)…
+    search_no_match: No template matches your search.
     steps: step(s)
     status_draft: Draft
     status_published: Published
@@ -84,6 +86,8 @@ welding:
     title: Workflows
     subtitle: Ongoing and completed welding workflows
     empty: No workflow started yet.
+    search_placeholder: Search (reference, template, welder)…
+    search_no_match: No workflow matches your search.
     no_assignee: No welder assigned
     no_assignee_option: None
     new: New workflow

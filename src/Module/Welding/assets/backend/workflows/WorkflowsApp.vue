@@ -5,6 +5,8 @@ import { toast } from "vue-sonner";
 import { ClipboardCheck, Plus } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { useWorkflowStatus } from "@welding/backend/composables/useWeldingStatus.js";
 
@@ -14,12 +16,23 @@ const props = defineProps({
 
 const { t } = useI18n();
 const items = ref([...props.workflows]);
+const query = ref("");
 
 const { ORDER: STATUS_ORDER, COLOR: STATUS_COLOR } = useWorkflowStatus();
 
+const filteredItems = computed(() => {
+    const q = query.value.trim().toLowerCase();
+    if (!q) return items.value;
+    return items.value.filter((w) =>
+        (w.reference ?? "").toLowerCase().includes(q)
+        || (w.templateTitle ?? "").toLowerCase().includes(q)
+        || (w.assigneeName ?? "").toLowerCase().includes(q),
+    );
+});
+
 const groupedByStatus = computed(() => {
     const groups = {};
-    for (const w of items.value) (groups[w.status] ??= []).push(w);
+    for (const w of filteredItems.value) (groups[w.status] ??= []).push(w);
     return groups;
 });
 
@@ -78,24 +91,34 @@ async function submitStart() {
 
 <template>
     <div class="p-4 sm:p-6 space-y-6">
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div class="flex items-center gap-3">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
-                    <ClipboardCheck class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
-                </div>
-                <div>
-                    <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflows.title") }}</h1>
-                    <p class="text-sm text-secondary">{{ t("welding.workflows.subtitle") }}</p>
-                </div>
+        <div class="flex items-center gap-3">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
+                <ClipboardCheck class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
             </div>
-            <AppButton variant="primary" v-on:click="openStart">
-                <Plus class="w-4 h-4" :stroke-width="2" />
-                {{ t("welding.workflows.new") }}
-            </AppButton>
+            <div>
+                <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflows.title") }}</h1>
+                <p class="text-sm text-secondary">{{ t("welding.workflows.subtitle") }}</p>
+            </div>
         </div>
+
+        <AppListToolbar>
+            <AppSearchInput
+                v-model="query"
+                :placeholder="t('welding.workflows.search_placeholder')"
+            />
+            <template #actions>
+                <AppButton variant="primary" v-on:click="openStart">
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t("welding.workflows.new") }}
+                </AppButton>
+            </template>
+        </AppListToolbar>
 
         <div v-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
             {{ t("welding.workflows.empty") }}
+        </div>
+        <div v-else-if="filteredItems.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
+            {{ t("welding.workflows.search_no_match") }}
         </div>
         <div v-else class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <section v-for="status in STATUS_ORDER" :key="status">
