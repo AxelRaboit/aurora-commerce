@@ -14,6 +14,7 @@ use Aurora\Module\Welding\Workflow\Entity\WorkflowInterface;
 use Aurora\Module\Welding\Workflow\Manager\WorkflowManagerInterface;
 use Aurora\Module\Welding\Workflow\Repository\WorkflowRepository;
 use Aurora\Module\Welding\Workflow\Serializer\WorkflowSerializerInterface;
+use Aurora\Module\Welding\Workflow\View\WorkflowRunnerViewBuilder;
 use Aurora\Module\Welding\Workflow\View\WorkflowsViewBuilder;
 use Aurora\Module\Welding\WorkflowStep\Serializer\WorkflowStepSerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +36,7 @@ class WorkflowsController extends AbstractController
         protected readonly WorkflowSerializerInterface $serializer,
         protected readonly WorkflowStepSerializerInterface $stepSerializer,
         protected readonly WorkflowsViewBuilder $viewBuilder,
+        protected readonly WorkflowRunnerViewBuilder $runnerViewBuilder,
         protected readonly WorkflowManagerInterface $manager,
         protected readonly WorkflowInputFactoryInterface $inputFactory,
         protected readonly PayloadValidator $payloadValidator,
@@ -44,6 +46,12 @@ class WorkflowsController extends AbstractController
     public function index(): Response
     {
         return $this->render('@Welding/backend/workflows/index.html.twig', $this->viewBuilder->indexView());
+    }
+
+    #[Route('/{id}/runner', name: '_runner', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Get->value])]
+    public function runner(WorkflowInterface $workflow): Response
+    {
+        return $this->render('@Welding/backend/workflows/runner.html.twig', $this->runnerViewBuilder->runnerView($workflow));
     }
 
     #[Route('/{id}', name: '_show', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Get->value])]

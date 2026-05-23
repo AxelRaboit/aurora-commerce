@@ -21,6 +21,21 @@ class PdfDocumentRepository extends ResolveTargetEntityRepository
         parent::__construct($registry, PdfDocument::class, PdfDocumentInterface::class);
     }
 
+    /** @return PdfDocumentInterface[] */
+    public function findByContext(string $contextType, int $contextId): array
+    {
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.template', 't')
+            ->addSelect('t')
+            ->andWhere('d.contextType = :contextType')
+            ->andWhere('d.contextId = :contextId')
+            ->setParameter('contextType', $contextType)
+            ->setParameter('contextId', $contextId)
+            ->orderBy('d.createdAt', Order::Descending->value)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findPaginated(int $page, int $limit = 20, ?string $search = null, ?int $templateId = null): array
     {
         $qb = $this->createQueryBuilder('d')

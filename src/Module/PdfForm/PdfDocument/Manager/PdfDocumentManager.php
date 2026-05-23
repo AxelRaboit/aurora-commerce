@@ -46,6 +46,8 @@ class PdfDocumentManager implements PdfDocumentManagerInterface
         $document->setTemplate($template);
         $document->setLabel($input->getLabel());
         $document->setFieldValues($input->getFieldValues());
+        $document->setContextType($input->getContextType());
+        $document->setContextId($input->getContextId());
 
         if (null !== $template && null !== $template->getFile() && $this->pdfManipulator->isAvailable()) {
             $absoluteTemplatePath = Path::join($this->uploadDir, $template->getFile()->getPath());

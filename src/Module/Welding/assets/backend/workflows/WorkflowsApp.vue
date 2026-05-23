@@ -63,21 +63,25 @@ const STATUS_COLOR = {
                         <li
                             v-for="workflow in groupedByStatus[status]"
                             :key="workflow.id"
-                            class="rounded-lg border border-line bg-surface p-3 space-y-1"
                         >
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="font-mono text-xs text-secondary">{{ workflow.reference }}</span>
-                                <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_COLOR[workflow.status]]">
-                                    {{ t("welding.workflows.status_" + workflow.status) }}
-                                </span>
-                            </div>
-                            <div class="text-sm font-medium text-primary truncate">
-                                {{ workflow.templateTitle || "—" }}
-                                <span class="text-xs text-muted">v{{ workflow.templateVersion }}</span>
-                            </div>
-                            <div class="text-xs text-secondary truncate">
-                                {{ workflow.assigneeName || t("welding.workflows.no_assignee") }}
-                            </div>
+                            <a
+                                :href="`/backend/welding/workflows/${workflow.id}/runner`"
+                                class="block rounded-lg border border-line bg-surface p-3 space-y-1 hover:border-accent-300 transition-colors"
+                            >
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-mono text-xs text-secondary">{{ workflow.reference }}</span>
+                                    <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_COLOR[workflow.status]]">
+                                        {{ t("welding.workflows.status_" + workflow.status) }}
+                                    </span>
+                                </div>
+                                <div class="text-sm font-medium text-primary truncate">
+                                    {{ workflow.templateTitle || "—" }}
+                                    <span class="text-xs text-muted">v{{ workflow.templateVersion }}</span>
+                                </div>
+                                <div class="text-xs text-secondary truncate">
+                                    {{ workflow.assigneeName || t("welding.workflows.no_assignee") }}
+                                </div>
+                            </a>
                         </li>
                     </ul>
                 </div>

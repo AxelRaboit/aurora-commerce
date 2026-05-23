@@ -81,6 +81,35 @@ welding:
     errors:
       decision_invalid: Decision must be 'validate' or 'reject'
       unauthenticated: Unauthenticated user
+  runner:
+    start_workflow: Start workflow
+    started: Workflow started
+    start_to_see_steps: Start the workflow to generate steps from the template
+    reject_workflow: Reject workflow
+    reject_workflow_warning: Rejection is irreversible and terminal. The welder will have to start a new workflow to resume.
+    rejection_reason: Rejection reason
+    rejection_reason_placeholder: Describe precisely the reason for rejection (non-conformity, procedure issue…)
+    confirm_reject: Confirm rejection
+    workflow_rejected: Workflow rejected
+    archive_workflow: Archive workflow
+    workflow_archived: Workflow archived
+    requires_validation_by: Validation required by
+    previous_rejection: Previous rejection
+    validation_comment: Validator comment
+    required_pdfs: Required PDF documents
+    fill_pdf: Fill
+    add_pdf_document: Add another
+    submit_step: Submit this step
+    step_submitted: Step submitted
+    validate_step: Validate this step
+    step_validated: Step validated
+    step_rejected_by_validator: Step returned to welder
+    decision_validate: Validate
+    decision_reject: Reject
+    comment: Comment
+    comment_placeholder: Optional — details on the decision
+    cancel: Cancel
+    confirm: Confirm
   validator_role_inspector: Inspector
   validator_role_quality_assurance: Quality assurance
   validator_role_supervisor: Supervisor

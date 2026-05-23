@@ -1,0 +1,20 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ workflow.reference }} - {{ 'backend.nav.welding_workflows'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.sections.welding'|trans},
+            {label: 'backend.nav.welding_workflows'|trans, href: path('backend_welding_workflows')},
+            {label: workflow.reference},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('welding/backend/workflows/WorkflowRunnerApp', {
+    workflow: workflow,
+    steps: steps,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}
