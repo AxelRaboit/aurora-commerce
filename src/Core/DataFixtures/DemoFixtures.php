@@ -102,6 +102,7 @@ use Aurora\Module\Platform\Service\Entity\Service;
 use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
+use Aurora\Module\Platform\User\Enum\UserTypeEnum;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
 use Aurora\Module\Project\Entity\ProjectLabel;
@@ -2646,7 +2647,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         /** @var class-string<PersonalFinanceCategorizationRule> $ruleClass */
         $ruleClass = $em->getClassMetadata(PersonalFinanceCategorizationRuleInterface::class)->getName();
 
-        $owner = $users[0];
+        // Prefer the backend dev@aurora.app account (created by AppFixtures)
+        // so demoers land on the seeded data right after `make demo`.
+        $owner = $em->getRepository(User::class)->findOneBy([
+            'email' => 'dev@aurora.app',
+            'type' => UserTypeEnum::Backend,
+        ]) ?? $users[0];
         $today = new DateTimeImmutable('today');
 
         // ── Wallets (+ Owner membership for the Voter to grant access) ────────
