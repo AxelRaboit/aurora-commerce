@@ -45,3 +45,4 @@
 - [pitfall_yaml_duplicate_keys.md](pitfall_yaml_duplicate_keys.md) — clé YAML dupliquée : silencieuse PHP, fatale pour DumpJsTranslations + build Vue
 - [pitfall_route_gate_priority.md](pitfall_route_gate_priority.md) — `*RouteGateSubscriber` priorité < 8 obligatoire, convention : priorité 0
 - [pitfall_decorator_signature_drift.md](pitfall_decorator_signature_drift.md) — étendre un Manager sans sync interface + decorators → PHP drop silencieusement les args en trop
+- [pitfall_pdflib_remove_field.md](pitfall_pdflib_remove_field.md) — pdf-lib 1.17.1 `form.removeField()` laisse les widgets merged attachés → flatten() crash sur Sig sans /AP/N → cleanup manuel `page.Annots` + `acroForm.Fields`
