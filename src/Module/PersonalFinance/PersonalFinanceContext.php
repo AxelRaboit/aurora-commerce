@@ -60,4 +60,9 @@ final readonly class PersonalFinanceContext
     {
         return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceStatistics);
     }
+
+    public function isBudgetPresetsEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceBudgetPresets);
+    }
 }

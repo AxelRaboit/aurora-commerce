@@ -133,6 +133,10 @@ use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPreset;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetItem;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetItemInterface;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRule;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategory;
@@ -348,6 +352,8 @@ class AuroraBundle extends AbstractBundle
                     PersonalFinanceTransactionInterface::class => PersonalFinanceTransaction::class,
                     PersonalFinanceBudgetInterface::class => PersonalFinanceBudget::class,
                     PersonalFinanceBudgetItemInterface::class => PersonalFinanceBudgetItem::class,
+                    PersonalFinanceBudgetPresetInterface::class => PersonalFinanceBudgetPreset::class,
+                    PersonalFinanceBudgetPresetItemInterface::class => PersonalFinanceBudgetPresetItem::class,
                     PersonalFinanceGoalInterface::class => PersonalFinanceGoal::class,
                     PersonalFinanceRecurringTransactionInterface::class => PersonalFinanceRecurringTransaction::class,
                     PersonalFinanceScheduledTransactionInterface::class => PersonalFinanceScheduledTransaction::class,

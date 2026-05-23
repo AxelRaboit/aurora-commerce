@@ -20,6 +20,8 @@ backend:
           use: Voir la vue globale cross-portefeuilles
         statistics:
           use: Voir les statistiques d'évolution temporelle
+        budget_presets:
+          use: Gérer les mois types réutilisables
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -34,6 +36,8 @@ backend:
     personal_finance_transactions_description: 'Revenus et dépenses du portefeuille, datés et catégorisés.'
     personal_finance_budgets: Budgets
     personal_finance_budgets_description: 'Budget mensuel par portefeuille : sections, lignes planifiées vs réelles, report.'
+    personal_finance_budget_presets: Mois types
+    personal_finance_budget_presets_description: 'Modèles de mois réutilisables. Capture la structure d''un mois et l''applique à un autre mois (vacances, mois calme, retour aux études…).'
     personal_finance_goals: Objectifs
     personal_finance_goals_description: 'Objectifs d''épargne avec suivi de progression. Liés à une catégorie = auto-synchronisé depuis les transactions.'
     personal_finance_recurring: Automatiques
@@ -362,6 +366,45 @@ personal_finance:
       yoy_income: Revenus du mois
       yoy_expense: Dépenses du mois
       yoy_net: Net du mois
+  budget_presets:
+    title: Mois types
+    help: 'Un mois type est un modèle de budget réutilisable. Capture les lignes d''un mois (« Mois standard », « Vacances », « Études ») puis applique-le à n''importe quel mois pour gagner du temps. Les catégories du mois type doivent appartenir au portefeuille sélectionné.'
+    wallet_selector: Portefeuille
+    add: Nouveau mois type
+    create: Créer un mois type
+    edit: Modifier le mois type
+    apply: Appliquer
+    apply_title: 'Appliquer « {name} »'
+    apply_help: 'Cible le mois sur lequel appliquer ce modèle. En mode « Ajouter », les lignes du modèle s''ajoutent aux lignes existantes. En mode « Remplacer », les lignes du mois ciblé sont effacées avant insertion.'
+    save_from_month: Enregistrer ce mois comme mois type
+    saved_from_month: Mois type créé à partir du mois courant.
+    no_wallet: Crée d''abord un portefeuille pour pouvoir créer un mois type.
+    empty: Aucun mois type pour ce portefeuille. Utilise le bouton ci-dessus, ou enregistre un mois déjà saisi depuis la page Budget.
+    items_title: Lignes du mois type
+    no_items: 'Aucune ligne dans ce modèle. Utilise « Ajouter une ligne » pour en créer une.'
+    summary: '{count, plural, one {1 ligne} other {# lignes}}'
+    created: Mois type créé.
+    updated: Mois type mis à jour.
+    deleted: Mois type supprimé.
+    applied: '{count, plural, one {1 ligne appliquée au mois} other {# lignes appliquées au mois}}'
+    delete_confirm: 'Supprimer le mois type « {name} » ? Cette action est irréversible.'
+    fields:
+      name: Nom
+      description: Description
+      month: Mois cible
+      mode: Mode
+    placeholders:
+      name: 'Mois standard, Mois vacances…'
+      description: 'À quoi sert ce modèle ?'
+      name_for_saved: 'Mois standard'
+    modes:
+      append: Ajouter au mois existant
+      replace: Remplacer le mois
+    mode_descriptions:
+      append: 'Les lignes du modèle s''ajoutent à celles déjà présentes sur le mois ciblé.'
+      replace: 'Les lignes actuelles du mois ciblé sont supprimées avant d''insérer celles du modèle.'
+    errors:
+      name_required: Le nom du mois type est requis.
   categorization:
     title: Auto-catégorisation
     help: 'L''auto-catégorisation apprend à classer les transactions à partir de leur description : chaque fois qu''une transaction est enregistrée avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Cette page permet de corriger une mauvaise association ou de supprimer une règle obsolète.'

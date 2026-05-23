@@ -20,6 +20,8 @@ backend:
           use: View the cross-wallet global overview
         statistics:
           use: View time-series statistics
+        budget_presets:
+          use: Manage reusable month templates
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -34,6 +36,8 @@ backend:
     personal_finance_transactions_description: 'Wallet income and expenses, dated and categorized.'
     personal_finance_budgets: Budgets
     personal_finance_budgets_description: 'Monthly budget per wallet: sections, planned vs actual lines, carry-over.'
+    personal_finance_budget_presets: Month templates
+    personal_finance_budget_presets_description: 'Reusable month templates. Capture an existing month''s structure and apply it to another month (holidays, slow month, back to school…).'
     personal_finance_goals: Goals
     personal_finance_goals_description: 'Savings goals with progress tracking. Linking a category enables automatic sync from transactions.'
     personal_finance_recurring: Automations
@@ -362,6 +366,45 @@ personal_finance:
       yoy_income: Month income
       yoy_expense: Month expense
       yoy_net: Month net
+  budget_presets:
+    title: Month templates
+    help: 'A month template is a reusable budget model. Capture a month''s lines ("Standard month", "Holidays", "Studies") and apply the template to any other month to save time. Template categories must belong to the selected wallet.'
+    wallet_selector: Wallet
+    add: New month template
+    create: Create a month template
+    edit: Edit the month template
+    apply: Apply
+    apply_title: 'Apply "{name}"'
+    apply_help: 'Pick the target month. "Append" mode adds the template''s lines on top of existing ones. "Replace" mode clears the target month''s lines before insertion.'
+    save_from_month: Save this month as a template
+    saved_from_month: Month template created from the current month.
+    no_wallet: Create a wallet first to design a month template.
+    empty: No month templates for this wallet yet. Use the button above, or save an already-filled month from the Budget page.
+    items_title: Template lines
+    no_items: 'No line in this template. Use "Add a line" to create one.'
+    summary: '{count, plural, one {1 line} other {# lines}}'
+    created: Month template created.
+    updated: Month template updated.
+    deleted: Month template deleted.
+    applied: '{count, plural, one {1 line applied to month} other {# lines applied to month}}'
+    delete_confirm: 'Delete the month template "{name}"? This action is irreversible.'
+    fields:
+      name: Name
+      description: Description
+      month: Target month
+      mode: Mode
+    placeholders:
+      name: 'Standard month, Holidays month…'
+      description: 'What is this template for?'
+      name_for_saved: 'Standard month'
+    modes:
+      append: Append to existing month
+      replace: Replace the month
+    mode_descriptions:
+      append: 'Template lines are added on top of any line already present in the target month.'
+      replace: 'Existing lines in the target month are deleted before the template''s lines are inserted.'
+    errors:
+      name_required: The month template name is required.
   categorization:
     title: Auto-categorization
     help: 'Auto-categorisation learns to classify transactions from their description: every time a transaction is saved with a category, a "description → category" rule is created or strengthened. This page lets a misclassification be fixed or an obsolete rule deleted.'

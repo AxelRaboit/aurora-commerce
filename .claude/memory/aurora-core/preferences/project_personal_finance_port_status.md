@@ -86,6 +86,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | v2-4-merge | Fusion Dashboard → Overview : suppression du sous-module Dashboard (Service + Controller + Vue + composable + Twig + nav + permission + toggle), absorption des blocs uniques (sparkline / goals / upcoming / budget alerts) dans Overview, redirect URL 301 conservé via `config/routes.yaml` | (lot v2-4-merge) | 🟢 |
 | v2-5  | Statistics page : sub-feature `Statistics/` + `StatisticsService` (monthlyFlow / categoryTrend / yoyComparison) + Vue inline-SVG bar chart + small-multi lines + period switcher 3/6/12 + nav + toggle + permission | (lot v2-5) | 🟢 |
 | v2-7  | Export Excel : `PersonalFinanceTransactionXlsxExporter` (PhpSpreadsheet, signed Amount) + repo finder `findAllByWalletFiltered` + endpoint `GET /wallets/{id}/transactions/export?search=&tag=` ; `PersonalFinanceBudgetXlsxExporter` (Items + Summary sheets) + endpoint `GET /wallets/{id}/budget/export?month=` ; bouton FileDown dans toolbars Transactions + Budget ; i18n FR/EN ; 2 nouveaux tests intégration (12 assertions) | (lot v2-7) | 🟢 |
+| v2-1B | BudgetPreset standalone : entités `PersonalFinanceBudgetPreset` + `PersonalFinanceBudgetPresetItem` (5-layer complet : Interface + Abstract + concrete non-final + Repo + DTO + Manager hooks `protected` + Serializer + AsAlias) + Controller CRUD + `apply` (append/replace mode) + `save-from-month` ; sub-feature toggle `PersonalFinanceBudgetPresets` + privilege `personal_finance.budget_presets.use` ; nav item "Mois types" (clipboard-list) ; nouvelle page Vue `PersonalFinanceBudgetPresetsApp` (CRUD + modale apply mode pill) ; hooks dans Budget page (boutons "Enregistrer en mois type" + "Appliquer un mois type" + 2 modales) via `useBudgetPresetHooks` ; i18n FR/EN complète (privileges + nav + UI + plural ICU pour `applied`) ; 4 nouveaux tests intégration (createPersistsItemsInPositionOrder, applyAppend, applyReplace, createFromBudget) | (lot v2-1B) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
@@ -105,7 +106,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 
 | # | Session | Effort | Pourquoi |
 |---|---|---|---|
-| **v2-1B** | **BudgetPreset standalone** (Phase B de l'item v2-1) : entité template user-level + CRUD + apply-to-month. La Phase A (auto-rollover) est déjà livrée — Phase B couvre les bascules vers un autre profil de dépenses (ex. "Budget vacances" appliqué juste au mois de juillet). | M | Permet de créer un "Mois type" réutilisable indépendamment du dernier budget enregistré. |
+| ~~v2-1B~~ | ~~BudgetPreset standalone~~ | ~~M~~ | ✅ **livré** — wallet-scoped, mode append/replace au choix UI. Voir bloc ci-dessus |
 | **v2-2** (11) | **Import Excel** : 2-step upload → preview → process. Service `PersonalFinanceImportService` (parse via PhpSpreadsheet ou ext locale) + template Excel téléchargeable + DTO de validation. Mapping flexible (date / montant / catégorie / description / tags) | L | Onboarding utilisateurs qui ont déjà un historique ailleurs (banque, autre app) |
 | ~~v2-3~~ | ~~UI Members modal + email + public page~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
 | ~~v2-4~~ | ~~Vue Globale (Overview) multi-wallets~~ | ~~M~~ | ✅ **livré** — voir bloc ci-dessus |
@@ -138,8 +139,8 @@ et valeur immédiate :
 4. ~~v2-4 Overview~~ ✅ **livré**
 5. ~~v2-5 Statistics~~ ✅ **livré** (heatmap reportée)
 6. ~~v2-7 Export~~ ✅ **livré** (Excel only, PDF reporté en v2-7B éventuel)
-7. **v2-1B BudgetPreset standalone** (M) — rebascule entre profils (utile si Phase A ne suffit pas en pratique — **prochain**)
-8. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée
+7. ~~v2-1B BudgetPreset standalone~~ ✅ **livré** (wallet-scoped + append/replace au choix UI)
+8. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée (prochain et dernier de la V2)
 
 ## Comment l'appliquer
 

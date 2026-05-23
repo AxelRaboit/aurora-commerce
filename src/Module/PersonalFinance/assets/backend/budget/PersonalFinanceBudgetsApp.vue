@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock, FileDown } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock, FileDown, ClipboardList, Play, Bookmark } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -16,11 +16,13 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import PersonalFinanceTransactionCreateModal from "../transaction/components/PersonalFinanceTransactionCreateModal.vue";
 import PersonalFinanceBudgetItemTransactionsModal from "./components/PersonalFinanceBudgetItemTransactionsModal.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import { useBudgetData } from "./composables/useBudgetData.js";
 import { useBudgetItemsForm } from "./composables/useBudgetItemsForm.js";
 import { useBudgetQuickAdd } from "./composables/useBudgetQuickAdd.js";
 import { useBudgetSectionTheme } from "./composables/useBudgetSectionTheme.js";
 import { useBudgetProgress } from "./composables/useBudgetProgress.js";
+import { useBudgetPresetHooks } from "./composables/useBudgetPresetHooks.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -32,6 +34,9 @@ const props = defineProps({
     budgetPayload: { type: Object, default: () => ({ budget: null, sections: {}, balance: { current: "0.00", month: "0.00", rollingStart: "0.00" } }) },
     showBudgetPath: { type: String, required: true },
     exportBudgetPath: { type: String, required: true },
+    savePresetPath: { type: String, default: null },
+    listPresetsPath: { type: String, default: null },
+    applyPresetPath: { type: String, default: null },
     createItemPath: { type: String, required: true },
     updateItemPath: { type: String, required: true },
     deleteItemPath: { type: String, required: true },
@@ -159,6 +164,29 @@ function exportBudgetXlsx() {
     window.location.assign(url.toString());
 }
 
+const presetsEnabled = computed(() => !!props.savePresetPath && !!props.listPresetsPath && !!props.applyPresetPath);
+
+const {
+    showSave: showSavePreset,
+    saveForm: presetSaveForm,
+    saveErrors: presetSaveErrors,
+    openSave: openSavePreset,
+    submitSave: submitSavePreset,
+    showApply: showApplyPreset,
+    presetList,
+    selectedPresetId: applyPresetId,
+    applyMode: applyPresetMode,
+    applyErrors: applyPresetErrors,
+    openApply: openApplyPreset,
+    submitApply: submitApplyPreset,
+    loading: presetLoading,
+} = useBudgetPresetHooks({
+    savePresetPath: props.savePresetPath,
+    listPresetsPath: props.listPresetsPath,
+    applyPresetPath: props.applyPresetPath,
+    onApplied: () => refresh(selectedWalletId.value, currentMonth.value),
+});
+
 </script>
 
 <template>
@@ -175,6 +203,28 @@ function exportBudgetXlsx() {
             </div>
             <template #actions>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <AppButton
+                        v-if="presetsEnabled"
+                        variant="ghost"
+                        size="md"
+                        :disabled="!selectedWalletId"
+                        :title="t('personal_finance.budget_presets.apply')"
+                        v-on:click="openApplyPreset(selectedWalletId)"
+                    >
+                        <Play class="w-4 h-4" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ t("personal_finance.budget_presets.apply") }}</span>
+                    </AppButton>
+                    <AppButton
+                        v-if="presetsEnabled"
+                        variant="ghost"
+                        size="md"
+                        :disabled="!selectedWalletId"
+                        :title="t('personal_finance.budget_presets.save_from_month')"
+                        v-on:click="openSavePreset"
+                    >
+                        <Bookmark class="w-4 h-4" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ t("personal_finance.budget_presets.save_from_month") }}</span>
+                    </AppButton>
                     <AppButton
                         variant="ghost"
                         size="md"
@@ -449,6 +499,112 @@ function exportBudgetXlsx() {
                     <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Save current month as a preset -->
+        <AppModal
+            v-if="presetsEnabled"
+            :show="showSavePreset"
+            :title="t('personal_finance.budget_presets.save_from_month')"
+            :icon="Bookmark"
+            :closeable="false"
+            max-width="md"
+            v-on:close="showSavePreset = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitSavePreset(selectedWalletId, currentMonth)">
+                <AppInput
+                    v-model="presetSaveForm.name"
+                    :label="`${t('personal_finance.budget_presets.fields.name')} *`"
+                    :placeholder="t('personal_finance.budget_presets.placeholders.name_for_saved')"
+                    :error="presetSaveErrors.name"
+                />
+                <AppInput
+                    v-model="presetSaveForm.description"
+                    :label="t('personal_finance.budget_presets.fields.description')"
+                    :placeholder="t('personal_finance.budget_presets.placeholders.description')"
+                    :error="presetSaveErrors.description"
+                />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showSavePreset = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="presetLoading" v-on:click="submitSavePreset(selectedWalletId, currentMonth)">
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Apply a preset to the current month -->
+        <AppModal
+            v-if="presetsEnabled"
+            :show="showApplyPreset"
+            :title="t('personal_finance.budget_presets.apply')"
+            :icon="Play"
+            :closeable="false"
+            max-width="md"
+            v-on:close="showApplyPreset = false"
+        >
+            <div class="space-y-4">
+                <p v-if="!presetList.length" class="text-sm text-muted">
+                    {{ t("personal_finance.budget_presets.empty") }}
+                </p>
+                <template v-else>
+                    <p class="text-sm text-muted">{{ t("personal_finance.budget_presets.apply_help") }}</p>
+                    <ul class="space-y-1.5 max-h-64 overflow-y-auto">
+                        <li
+                            v-for="preset in presetList"
+                            :key="preset.id"
+                            class="flex items-start gap-3 p-2 rounded-md cursor-pointer transition-colors"
+                            :class="applyPresetId === preset.id ? 'bg-accent-500/10 border border-accent-500/30' : 'border border-transparent hover:bg-surface-2'"
+                            v-on:click="applyPresetId = preset.id"
+                        >
+                            <ClipboardList class="w-4 h-4 mt-0.5 text-muted shrink-0" :stroke-width="2" />
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm text-primary truncate">{{ preset.name }}</p>
+                                <p v-if="preset.description" class="text-xs text-muted line-clamp-1">{{ preset.description }}</p>
+                                <p class="text-xs text-muted">{{ t("personal_finance.budget_presets.summary", { count: preset.itemCount ?? 0 }) }}</p>
+                            </div>
+                        </li>
+                    </ul>
+                    <p v-if="applyPresetErrors.preset" class="text-xs text-rose-400">{{ applyPresetErrors.preset }}</p>
+
+                    <div class="border-t border-line pt-3">
+                        <label class="block text-xs uppercase tracking-wider text-muted mb-2">{{ t("personal_finance.budget_presets.fields.mode") }}</label>
+                        <div class="flex items-center gap-2">
+                            <AppTab variant="pill" size="sm" :active="applyPresetMode === 'append'" v-on:click="applyPresetMode = 'append'">
+                                {{ t("personal_finance.budget_presets.modes.append") }}
+                            </AppTab>
+                            <AppTab variant="pill" size="sm" :active="applyPresetMode === 'replace'" v-on:click="applyPresetMode = 'replace'">
+                                {{ t("personal_finance.budget_presets.modes.replace") }}
+                            </AppTab>
+                        </div>
+                        <p class="text-xs text-muted mt-2">{{ t(`personal_finance.budget_presets.mode_descriptions.${applyPresetMode}`) }}</p>
+                    </div>
+                </template>
+            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showApplyPreset = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        :disabled="!presetList.length || !applyPresetId"
+                        :loading="presetLoading"
+                        v-on:click="submitApplyPreset(currentMonth)"
+                    >
+                        <Play class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("personal_finance.budget_presets.apply") }}
                     </AppButton>
                 </AppModalFooter>
             </template>

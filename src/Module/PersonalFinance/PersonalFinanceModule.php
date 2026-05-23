@@ -32,6 +32,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.categorization.use'),
             new NavPermission('personal_finance.overview.use'),
             new NavPermission('personal_finance.statistics.use'),
+            new NavPermission('personal_finance.budget_presets.use'),
         ];
     }
 
@@ -90,6 +91,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                 'pie-chart',
                 requiredPrivilege: 'personal_finance.budgets.use',
                 descriptionKey: 'backend.nav.personal_finance_budgets_description',
+            );
+        }
+
+        if ($this->personalFinanceContext->isBudgetPresetsEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_budget_presets',
+                'backend.nav.personal_finance_budget_presets',
+                'clipboard-list',
+                requiredPrivilege: 'personal_finance.budget_presets.use',
+                descriptionKey: 'backend.nav.personal_finance_budget_presets_description',
             );
         }
 
@@ -180,6 +191,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     descriptionKey: 'backend.nav.personal_finance_budgets_description',
                 ),
                 new NavItem(
+                    'backend_personal_finance_budget_presets',
+                    'backend.nav.personal_finance_budget_presets',
+                    'clipboard-list',
+                    requiredPrivilege: 'personal_finance.budget_presets.use',
+                    descriptionKey: 'backend.nav.personal_finance_budget_presets_description',
+                ),
+                new NavItem(
                     'backend_personal_finance_goals',
                     'backend.nav.personal_finance_goals',
                     'target',
@@ -224,6 +242,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceCategorization->toToggle(),
             ModuleParameterEnum::PersonalFinanceOverview->toToggle(),
             ModuleParameterEnum::PersonalFinanceStatistics->toToggle(),
+            ModuleParameterEnum::PersonalFinanceBudgetPresets->toToggle(),
         ];
     }
 }
