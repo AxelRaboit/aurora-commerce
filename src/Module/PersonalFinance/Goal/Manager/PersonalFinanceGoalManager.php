@@ -99,11 +99,9 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
         // trackingMode picks which tx type contributes:
         // - IncomeOnly  → only income tx in the category
         // - ExpenseOnly → only expense tx
-        // - AbsoluteSum → no type filter (both directions add)
         $typeFilter = match ($goal->getTrackingMode()) {
             PersonalFinanceGoalTrackingModeEnum::IncomeOnly => PersonalFinanceTransactionTypeEnum::Income,
             PersonalFinanceGoalTrackingModeEnum::ExpenseOnly => PersonalFinanceTransactionTypeEnum::Expense,
-            PersonalFinanceGoalTrackingModeEnum::AbsoluteSum => null,
         };
 
         $total = $this->transactionRepository->sumByCategoryForUser(

@@ -23,7 +23,7 @@ const props = defineProps({
     goals: { type: Array, required: true },
     wallets: { type: Array, required: true },
     categoriesByWallet: { type: Object, required: true },
-    trackingModes: { type: Array, default: () => ["income_only", "expense_only", "absolute_sum"] },
+    trackingModes: { type: Array, default: () => ["income_only", "expense_only"] },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },

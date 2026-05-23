@@ -555,11 +555,9 @@ personal_finance:
     tracking_modes:
       income_only: Revenus uniquement
       expense_only: Dépenses uniquement
-      absolute_sum: Total (revenus + dépenses)
     tracking_mode_hints:
       income_only: 'Mode épargne : seules les transactions de type « revenu » dans cette catégorie ajoutent au montant épargné.'
       expense_only: 'Mode budget consommé : seules les transactions de type « dépense » dans cette catégorie remplissent l''objectif.'
-      absolute_sum: 'Mode total absolu : toutes les transactions de cette catégorie (revenus et dépenses) ajoutent leur montant. Comportement historique conservé pour les anciens objectifs.'
     monthly_contribution: '{amount} / mois pour atteindre la deadline'
     sort:
       deadline: Trier par deadline

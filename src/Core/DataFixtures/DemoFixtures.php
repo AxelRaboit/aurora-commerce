@@ -2986,9 +2986,9 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         // populated even before the user makes their first edit.
         $goalDefs = [
             // Manual savings — no category, deposits via the "Déposer" button
-            ['name' => 'Vacances d\'été',     'target' => '1500.00',  'saved' => '600.00',  'deadlineMonths' => 6,    'color' => '#f59e0b', 'wallet' => $livret, 'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::AbsoluteSum],
-            ['name' => 'Apport immobilier',   'target' => '15000.00', 'saved' => '4500.00', 'deadlineMonths' => 18,   'color' => '#6366f1', 'wallet' => $livret, 'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::AbsoluteSum],
-            ['name' => 'Permis de conduire',  'target' => '1200.00',  'saved' => '1200.00', 'deadlineMonths' => null, 'color' => '#10b981', 'wallet' => null,    'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::AbsoluteSum],
+            ['name' => 'Vacances d\'été',     'target' => '1500.00',  'saved' => '600.00',  'deadlineMonths' => 6,    'color' => '#f59e0b', 'wallet' => $livret, 'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
+            ['name' => 'Apport immobilier',   'target' => '15000.00', 'saved' => '4500.00', 'deadlineMonths' => 18,   'color' => '#6366f1', 'wallet' => $livret, 'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
+            ['name' => 'Permis de conduire',  'target' => '1200.00',  'saved' => '1200.00', 'deadlineMonths' => null, 'color' => '#10b981', 'wallet' => null,    'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
 
             // ExpenseOnly — "plafond" goals. Target sized for the 4-month seed
             // history so the demo cards show a realistic in-progress state

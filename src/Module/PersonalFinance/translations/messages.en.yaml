@@ -555,11 +555,9 @@ personal_finance:
     tracking_modes:
       income_only: Income only
       expense_only: Expenses only
-      absolute_sum: Total (income + expenses)
     tracking_mode_hints:
       income_only: 'Savings mode: only income transactions in this category add to the saved amount.'
       expense_only: 'Budget-consumed mode: only expense transactions in this category fill the goal.'
-      absolute_sum: 'Absolute total: every transaction in this category (income and expense alike) adds its amount. Legacy behaviour preserved for older goals.'
     monthly_contribution: '{amount} / month to hit the deadline'
     sort:
       deadline: Sort by deadline

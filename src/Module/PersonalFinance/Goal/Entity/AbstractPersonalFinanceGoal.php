@@ -49,9 +49,8 @@ abstract class AbstractPersonalFinanceGoal implements PersonalFinanceGoalInterfa
     /**
      * Drives how the auto-sync subscriber sums transactions onto
      * `savedAmount`. Ignored when `category` is null (manual deposit
-     * mode). Defaults to `ExpenseOnly` for new goals; pre-existing
-     * rows are backfilled to `AbsoluteSum` by the migration so their
-     * saved amount doesn't shift silently.
+     * mode). Defaults to `ExpenseOnly` — the most common case
+     * ("budget consumed" goals).
      */
     #[ORM\Column(length: 16, enumType: PersonalFinanceGoalTrackingModeEnum::class, options: ['default' => 'expense_only'])]
     protected PersonalFinanceGoalTrackingModeEnum $trackingMode = PersonalFinanceGoalTrackingModeEnum::ExpenseOnly;

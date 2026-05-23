@@ -15,15 +15,16 @@ namespace Aurora\Module\PersonalFinance\Goal\Enum;
  * - `ExpenseOnly`: only expense transactions add. Natural fit for
  *   budget-consumed goals ("Loisirs ce mois") — every expense fills
  *   the bar toward the target.
- * - `AbsoluteSum`: both income and expense contribute as |amount|
- *   (Spendly-compatible legacy). Kept for backwards compatibility on
- *   existing goals — rarely the right choice for new ones.
+ *
+ * An earlier `AbsoluteSum` variant (sum both directions, Spendly legacy)
+ * was dropped because it almost always surprised users — a refund tagged
+ * in an expense category would silently inflate the goal. The 2-case
+ * enum forces an explicit semantic at creation.
  */
 enum PersonalFinanceGoalTrackingModeEnum: string
 {
     case IncomeOnly = 'income_only';
     case ExpenseOnly = 'expense_only';
-    case AbsoluteSum = 'absolute_sum';
 
     /** @return list<string> */
     public static function values(): array

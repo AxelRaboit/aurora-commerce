@@ -306,8 +306,9 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
      *
      * - `$wallet` (optional): scope the sum to that single wallet.
      * - `$type` (optional): filter to a specific transaction type. Null
-     *   means "both types add" — the Spendly-compatible "AbsoluteSum"
-     *   semantic, kept for backwards compat.
+     *   means "both types are summed" — used by analytics / volume
+     *   reporting. Goals always pass a concrete type, picked by the
+     *   `trackingMode`.
      *
      * Used by PersonalFinanceGoalManager::recomputeSavedAmount; the
      * goal's `wallet` + `trackingMode` drive the filters.
