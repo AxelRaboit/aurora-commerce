@@ -1,12 +1,10 @@
 <script setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { Trash2, X, Sparkles } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useCategorizationRuleUpdate } from "./composables/useCategorizationRuleUpdate.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
@@ -48,26 +46,7 @@ const allCategoryOptions = computed(() => {
     return opts;
 });
 
-async function setCategory(rule, newCategoryId) {
-    if (!newCategoryId || newCategoryId === rule.categoryId) return;
-    try {
-        const url = buildPath(props.updatePath, { id: rule.id });
-        const response = await fetch(url, {
-            method: HttpMethod.Post,
-            headers: { Accept: "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({ categoryId: newCategoryId }),
-        });
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok || payload?.success === false) {
-            toast.error(t("shared.common.error"));
-            return;
-        }
-        toast.success(t("personal_finance.categorization.updated"));
-        reload();
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
+const { setCategory } = useCategorizationRuleUpdate(props.updatePath, () => reload());
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deletePath,

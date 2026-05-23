@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { RefreshCw, TrendingUp, TrendingDown, Wallet, Target, RotateCw, Clock, AlertTriangle } from "lucide-vue-next";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import { useDashboardData } from "./composables/useDashboardData.js";
+import { buildSparklinePath, deltaClass, formatDelta, signedAmount } from "./composables/dashboardFormatters.js";
 
 const props = defineProps({
     snapshot: { type: Object, required: true },
@@ -13,62 +13,9 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const snap = ref(props.snapshot);
-const loading = ref(false);
+const { snapshot: snap, loading, refresh } = useDashboardData(props.refreshPath, props.snapshot);
 
-async function refresh() {
-    if (loading.value) return;
-    loading.value = true;
-    try {
-        const response = await fetch(props.refreshPath, {
-            method: HttpMethod.Get,
-            headers: { Accept: "application/json" },
-        });
-        const payload = await response.json().catch(() => ({}));
-        if (response.ok && payload?.success !== false && payload.snapshot) {
-            snap.value = payload.snapshot;
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    } finally {
-        loading.value = false;
-    }
-}
-
-const sparklinePath = computed(() => {
-    const pts = snap.value.sparkline ?? [];
-    if (pts.length === 0) return "";
-    const values = pts.map((p) => parseFloat(p.expense));
-    const max = Math.max(1, ...values);
-    const w = 200;
-    const h = 40;
-    const step = w / Math.max(1, values.length - 1);
-    return values
-        .map((v, i) => {
-            const x = (i * step).toFixed(2);
-            const y = (h - (v / max) * h).toFixed(2);
-            return `${0 === i ? "M" : "L"}${x},${y}`;
-        })
-        .join(" ");
-});
-
-function deltaClass(delta, expenseIsBad = true) {
-    if (delta === null || delta === undefined) return "text-muted";
-    if (delta === 0) return "text-muted";
-    if (expenseIsBad) return delta > 0 ? "text-rose-400" : "text-emerald-400";
-    return delta > 0 ? "text-emerald-400" : "text-rose-400";
-}
-
-function formatDelta(delta) {
-    if (delta === null || delta === undefined) return "—";
-    const sign = delta > 0 ? "+" : "";
-    return `${sign}${delta}%`;
-}
-
-function signedAmount(tx) {
-    const sign = tx.type === "income" ? "+" : "-";
-    return `${sign}${tx.amount}`;
-}
+const sparklinePath = computed(() => buildSparklinePath(snap.value.sparkline ?? []));
 </script>
 
 <template>

@@ -1,10 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { Plus, Pencil, Trash2, Save, X, RotateCw, Play, Pause, CheckCircle2, Clock } from "lucide-vue-next";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
-import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -17,6 +14,8 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useRecurringForm } from "./composables/useRecurringForm.js";
 import { useScheduledForm } from "./composables/useScheduledForm.js";
+import { useRecurringToggle } from "./composables/useRecurringToggle.js";
+import { useScheduledMaterialize } from "./composables/useScheduledMaterialize.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -101,32 +100,8 @@ const { pendingDelete: pendingDeleteSched, loading: deleteSchedLoading, confirm:
     "personal_finance.recurring.deleted_scheduled",
 );
 
-async function toggleRec(rec) {
-    try {
-        const url = buildPath(props.toggleRecurringPath, { id: rec.id });
-        const response = await fetch(url, { method: HttpMethod.Post });
-        const payload = await response.json().catch(() => ({}));
-        if (response.ok && payload?.success !== false && payload.recurring) {
-            refreshRecurring(payload.recurring);
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
-
-async function materialize(sched) {
-    try {
-        const url = buildPath(props.materializeScheduledPath, { id: sched.id });
-        const response = await fetch(url, { method: HttpMethod.Post });
-        const payload = await response.json().catch(() => ({}));
-        if (response.ok && payload?.success !== false && payload.scheduled) {
-            refreshScheduled(payload.scheduled);
-            toast.success(t("personal_finance.recurring.materialized"));
-        }
-    } catch {
-        toast.error(t("shared.common.error"));
-    }
-}
+const { toggle: toggleRec } = useRecurringToggle(props.toggleRecurringPath, refreshRecurring);
+const { materialize } = useScheduledMaterialize(props.materializeScheduledPath, refreshScheduled);
 
 function formatType(type) {
     return t(`personal_finance.transactions.types.${type}`);

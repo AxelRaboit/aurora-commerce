@@ -15,6 +15,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useGoalsForm } from "./composables/useGoalsForm.js";
 import { useGoalDeposit } from "./composables/useGoalDeposit.js";
+import { useGoalsSort, monthlyContribution } from "./composables/useGoalsSort.js";
 
 const props = defineProps({
     goals: { type: Array, required: true },
@@ -31,24 +32,7 @@ const props = defineProps({
 const { t } = useI18n();
 
 const goals = ref([...props.goals]);
-const sortBy = ref("deadline");
-
-const sortedGoals = computed(() => {
-    const out = [...goals.value];
-    if (sortBy.value === "progress") {
-        out.sort((a, b) => b.progress - a.progress);
-    } else if (sortBy.value === "amount") {
-        out.sort((a, b) => parseFloat(b.targetAmount) - parseFloat(a.targetAmount));
-    } else {
-        out.sort((a, b) => {
-            if (!a.deadline && !b.deadline) return 0;
-            if (!a.deadline) return 1;
-            if (!b.deadline) return -1;
-            return a.deadline.localeCompare(b.deadline);
-        });
-    }
-    return out;
-});
+const { sortBy, sortOptions, sortedGoals } = useGoalsSort(goals);
 
 const walletOptions = computed(() => [
     { value: null, label: t("personal_finance.goals.no_wallet_link") },
@@ -65,12 +49,6 @@ const categoryOptionsForForm = computed(() => {
     }
     return opts;
 });
-
-const sortOptions = computed(() => [
-    { value: "deadline", label: t("personal_finance.goals.sort.deadline") },
-    { value: "progress", label: t("personal_finance.goals.sort.progress") },
-    { value: "amount", label: t("personal_finance.goals.sort.amount") },
-]);
 
 function refreshGoal(updated) {
     if (!updated) return;
@@ -111,21 +89,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     "personal_finance.goals.deleted",
 );
 
-function monthsRemaining(deadline) {
-    if (!deadline) return null;
-    const now = new Date();
-    const target = new Date(deadline);
-    const months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
-    return months;
-}
-
-function monthlyContribution(goal) {
-    const months = monthsRemaining(goal.deadline);
-    if (months === null || months <= 0) return null;
-    const remaining = parseFloat(goal.remainingAmount);
-    if (remaining <= 0) return "0.00";
-    return (remaining / months).toFixed(2);
-}
 </script>
 
 <template>
