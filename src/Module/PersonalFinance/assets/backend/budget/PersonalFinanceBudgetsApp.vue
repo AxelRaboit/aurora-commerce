@@ -209,7 +209,7 @@ const {
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center justify-center sm:justify-start gap-2">
                 <AppIconButton :title="t('shared.common.previous')" v-on:click="shiftMonth(-1)">
                     <ChevronLeft class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
@@ -225,42 +225,38 @@ const {
                         variant="ghost"
                         size="md"
                         :disabled="!selectedWalletId"
-                        :title="t('personal_finance.budget_presets.apply')"
                         v-on:click="openApplyPreset(selectedWalletId)"
                     >
                         <Play class="w-4 h-4" :stroke-width="2" />
-                        <span class="hidden sm:inline">{{ t("personal_finance.budget_presets.apply") }}</span>
+                        {{ t("personal_finance.budget_presets.apply") }}
                     </AppButton>
                     <AppButton
                         v-if="presetsEnabled"
                         variant="ghost"
                         size="md"
                         :disabled="!selectedWalletId"
-                        :title="t('personal_finance.budget_presets.save_from_month')"
                         v-on:click="openSavePreset"
                     >
                         <Bookmark class="w-4 h-4" :stroke-width="2" />
-                        <span class="hidden sm:inline">{{ t("personal_finance.budget_presets.save_from_month") }}</span>
+                        {{ t("personal_finance.budget_presets.save_from_month") }}
                     </AppButton>
                     <AppButton
                         variant="ghost"
                         size="md"
                         :disabled="!selectedWalletId"
-                        :title="t('personal_finance.budget.export_xlsx')"
                         v-on:click="exportBudgetXlsx"
                     >
                         <FileDown class="w-4 h-4" :stroke-width="2" />
-                        <span class="hidden sm:inline">{{ t("personal_finance.budget.export_xlsx") }}</span>
+                        {{ t("personal_finance.budget.export_xlsx") }}
                     </AppButton>
                     <AppButton
                         variant="danger"
                         size="md"
                         :disabled="!selectedWalletId"
-                        :title="t('personal_finance.budget.reset_button')"
                         v-on:click="openReset"
                     >
                         <RotateCcw class="w-4 h-4" :stroke-width="2" />
-                        <span class="hidden sm:inline">{{ t("personal_finance.budget.reset_button") }}</span>
+                        {{ t("personal_finance.budget.reset_button") }}
                     </AppButton>
                     <AppButton variant="ghost" size="md" :loading="loading" v-on:click="refresh(selectedWalletId, currentMonth)">
                         <RefreshCw class="w-4 h-4" :stroke-width="2" />
