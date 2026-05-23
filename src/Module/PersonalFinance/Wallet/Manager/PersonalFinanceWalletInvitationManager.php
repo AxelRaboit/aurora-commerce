@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\Manager;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInvitationInputInterface;
+use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletMemberInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitation;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
@@ -31,6 +32,7 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
         protected readonly PersonalFinanceWalletInvitationRepository $invitationRepository,
         protected readonly PersonalFinanceWalletMemberRepository $memberRepository,
         protected readonly PersonalFinanceWalletMemberManagerInterface $memberManager,
+        protected readonly PersonalFinanceWalletMemberInputFactoryInterface $memberInputFactory,
         protected readonly PersonalFinanceWalletInvitationNotificationService $notification,
     ) {}
 
@@ -86,7 +88,11 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
             return $alreadyMember;
         }
 
-        $member = $this->memberManager->create($invitation->getWallet(), $accepter, $invitation->getRole());
+        $member = $this->memberManager->create(
+            $invitation->getWallet(),
+            $accepter,
+            $this->memberInputFactory->fromRole($invitation->getRole()),
+        );
 
         $invitation->setAcceptedAt(new DateTimeImmutable());
         $this->entityManager->flush();

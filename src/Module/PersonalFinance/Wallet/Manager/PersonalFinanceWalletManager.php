@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInputInterface;
+use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletMemberInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
@@ -21,6 +22,7 @@ class PersonalFinanceWalletManager implements PersonalFinanceWalletManagerInterf
         protected readonly EntityManagerInterface $entityManager,
         protected readonly AuditLogger $auditLogger,
         protected readonly PersonalFinanceWalletMemberManagerInterface $personalFinanceWalletMemberManager,
+        protected readonly PersonalFinanceWalletMemberInputFactoryInterface $personalFinanceWalletMemberInputFactory,
     ) {}
 
     public function create(CoreUserInterface $owner, PersonalFinanceWalletInputInterface $input): PersonalFinanceWalletInterface
@@ -62,7 +64,9 @@ class PersonalFinanceWalletManager implements PersonalFinanceWalletManagerInterf
 
     protected function createOwnerMembership(PersonalFinanceWalletInterface $wallet, CoreUserInterface $owner): PersonalFinanceWalletMemberInterface
     {
-        return $this->personalFinanceWalletMemberManager->create($wallet, $owner, PersonalFinanceWalletRoleEnum::Owner);
+        $input = $this->personalFinanceWalletMemberInputFactory->fromRole(PersonalFinanceWalletRoleEnum::Owner);
+
+        return $this->personalFinanceWalletMemberManager->create($wallet, $owner, $input);
     }
 
     protected function applyInput(PersonalFinanceWalletInterface $wallet, PersonalFinanceWalletInputInterface $input): void

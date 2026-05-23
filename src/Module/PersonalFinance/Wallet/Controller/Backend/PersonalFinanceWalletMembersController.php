@@ -7,9 +7,10 @@ namespace Aurora\Module\PersonalFinance\Wallet\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletMemberInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
-use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletMemberManagerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletInvitationRepository;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletMemberRepository;
@@ -36,8 +37,10 @@ final class PersonalFinanceWalletMembersController extends AbstractController
         private readonly PersonalFinanceWalletMemberRepository $memberRepository,
         private readonly PersonalFinanceWalletInvitationRepository $invitationRepository,
         private readonly PersonalFinanceWalletMemberManagerInterface $memberManager,
+        private readonly PersonalFinanceWalletMemberInputFactoryInterface $memberInputFactory,
         private readonly PersonalFinanceWalletMemberSerializerInterface $memberSerializer,
         private readonly PersonalFinanceWalletInvitationSerializerInterface $invitationSerializer,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     /**
@@ -76,14 +79,15 @@ final class PersonalFinanceWalletMembersController extends AbstractController
             return $this->jsonNotFound();
         }
 
-        $data = $this->decodeJson($request);
-        $role = PersonalFinanceWalletRoleEnum::tryFrom((string) ($data['role'] ?? ''));
-        if (null === $role) {
-            return $this->jsonInvalidInput(['role' => ['Invalid role value.']]);
+        $input = $this->memberInputFactory->fromArray($this->decodeJson($request));
+
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
-            $this->memberManager->updateRole($member, $role);
+            $this->memberManager->update($member, $input);
         } catch (DomainException $domainException) {
             return $this->jsonInvalidInput(['role' => [$domainException->getMessage()]]);
         }

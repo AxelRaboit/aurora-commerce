@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Wallet\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletMemberInputInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMember;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
@@ -22,12 +23,15 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
         protected readonly AuditLogger $auditLogger,
     ) {}
 
-    public function create(PersonalFinanceWalletInterface $wallet, CoreUserInterface $user, PersonalFinanceWalletRoleEnum $role): PersonalFinanceWalletMemberInterface
-    {
+    public function create(
+        PersonalFinanceWalletInterface $wallet,
+        CoreUserInterface $user,
+        PersonalFinanceWalletMemberInputInterface $input,
+    ): PersonalFinanceWalletMemberInterface {
         $member = $this->createMember();
         $member->setWallet($wallet);
         $member->setUser($user);
-        $member->setRole($role);
+        $this->applyInput($member, $input);
 
         $this->entityManager->persist($member);
         $this->entityManager->flush();
@@ -35,6 +39,27 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
         $this->auditCreated($member);
 
         return $member;
+    }
+
+    public function update(
+        PersonalFinanceWalletMemberInterface $member,
+        PersonalFinanceWalletMemberInputInterface $input,
+    ): void {
+        // Owner role is managed by the dedicated transferOwnership flow —
+        // any attempt to add it or remove it via the regular update path
+        // is rejected up-front (rather than from applyInput) so the guard
+        // is visible at the call site.
+        if (PersonalFinanceWalletRoleEnum::Owner === $member->getRole()) {
+            throw new DomainException('Cannot change the Owner role directly. Use transferOwnership instead.');
+        }
+        if (PersonalFinanceWalletRoleEnum::Owner === $input->getRole()) {
+            throw new DomainException('Cannot promote to Owner via update. Use transferOwnership instead.');
+        }
+
+        $this->applyInput($member, $input);
+        $this->entityManager->flush();
+
+        $this->auditUpdated($member);
     }
 
     public function delete(PersonalFinanceWalletMemberInterface $member): void
@@ -45,22 +70,6 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
         $this->entityManager->flush();
     }
 
-    public function updateRole(PersonalFinanceWalletMemberInterface $member, PersonalFinanceWalletRoleEnum $newRole): void
-    {
-        if (PersonalFinanceWalletRoleEnum::Owner === $member->getRole()) {
-            throw new DomainException('Cannot change the Owner role directly. Use transferOwnership instead.');
-        }
-
-        if (PersonalFinanceWalletRoleEnum::Owner === $newRole) {
-            throw new DomainException('Cannot promote to Owner via updateRole. Use transferOwnership instead.');
-        }
-
-        $member->setRole($newRole);
-        $this->entityManager->flush();
-
-        $this->auditUpdated($member);
-    }
-
     public function removeMember(PersonalFinanceWalletMemberInterface $member): void
     {
         if (PersonalFinanceWalletRoleEnum::Owner === $member->getRole()) {
@@ -68,6 +77,13 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
         }
 
         $this->delete($member);
+    }
+
+    protected function applyInput(
+        PersonalFinanceWalletMemberInterface $member,
+        PersonalFinanceWalletMemberInputInterface $input,
+    ): void {
+        $member->setRole($input->getRole());
     }
 
     protected function createMember(): PersonalFinanceWalletMemberInterface
