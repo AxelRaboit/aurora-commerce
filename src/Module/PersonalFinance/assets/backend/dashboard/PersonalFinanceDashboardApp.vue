@@ -5,18 +5,26 @@ import { RefreshCw, TrendingUp, TrendingDown, Wallet, Target, RotateCw, Clock, A
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
+import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { useDashboardData } from "./composables/useDashboardData.js";
 import { buildSparklinePath, deltaClass, formatDelta, signedAmount } from "./composables/dashboardFormatters.js";
 
 const props = defineProps({
     snapshot: { type: Object, required: true },
     refreshPath: { type: String, required: true },
+    walletTransactionsPath: { type: String, required: true },
 });
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 const { snapshot: snap, loading, refresh } = useDashboardData(props.refreshPath, props.snapshot);
 
 const sparklinePath = computed(() => buildSparklinePath(snap.value.sparkline ?? []));
+
+function walletUrl(walletId) {
+    return buildPath(props.walletTransactionsPath, { walletId });
+}
 </script>
 
 <template>
@@ -108,10 +116,16 @@ const sparklinePath = computed(() => buildSparklinePath(snap.value.sparkline ?? 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <section class="bg-surface border border-line rounded-lg p-4">
                 <h3 class="text-sm font-medium uppercase tracking-wider text-muted mb-3">{{ t("personal_finance.dashboard.pinned_wallets") }}</h3>
-                <ul v-if="snap.pinnedWallets.length" class="space-y-2">
-                    <li v-for="w in snap.pinnedWallets" :key="w.id" class="flex items-center justify-between text-sm">
-                        <span class="text-primary">{{ w.name }}</span>
-                        <span class="font-mono" :class="parseFloat(w.balance) >= 0 ? 'text-emerald-400' : 'text-rose-400'">{{ w.balance }}</span>
+                <ul v-if="snap.pinnedWallets.length" class="space-y-1">
+                    <li v-for="w in snap.pinnedWallets" :key="w.id">
+                        <a
+                            :href="walletUrl(w.id)"
+                            class="group flex items-center justify-between text-sm px-2 py-1.5 -mx-2 rounded hover:bg-surface-2 transition-colors"
+                            :title="t('personal_finance.dashboard.pinned_wallet_link_title', { name: w.name })"
+                        >
+                            <span class="text-primary group-hover:text-accent-400 transition-colors">{{ w.name }}</span>
+                            <span class="font-mono" :class="parseFloat(w.balance) >= 0 ? 'text-emerald-400' : 'text-rose-400'">{{ w.balance }}</span>
+                        </a>
                     </li>
                 </ul>
                 <p v-else class="text-sm text-muted">{{ t("personal_finance.dashboard.no_pinned_wallets") }}</p>
@@ -123,7 +137,7 @@ const sparklinePath = computed(() => buildSparklinePath(snap.value.sparkline ?? 
                     <li v-for="tx in snap.recentTransactions" :key="tx.id" class="py-2 flex items-center justify-between text-sm">
                         <div class="min-w-0">
                             <p class="text-primary truncate">{{ tx.description ?? t("personal_finance.transactions.uncategorized") }}</p>
-                            <p class="text-xs text-muted">{{ tx.date }} · {{ tx.walletName }} · {{ tx.categoryName ?? '—' }}</p>
+                            <p class="text-xs text-muted">{{ formatDateShort(tx.date) }} · {{ tx.walletName }} · {{ tx.categoryName ?? '—' }}</p>
                         </div>
                         <span class="font-mono ml-3" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ signedAmount(tx) }}</span>
                     </li>
@@ -180,7 +194,7 @@ const sparklinePath = computed(() => buildSparklinePath(snap.value.sparkline ?? 
                     <li v-for="s in snap.upcomingScheduled" :key="s.id" class="flex items-center justify-between">
                         <div class="min-w-0">
                             <p class="text-primary truncate">{{ s.description ?? '—' }}</p>
-                            <p class="text-xs text-muted font-mono">{{ s.scheduledDate }} · {{ s.walletName }}</p>
+                            <p class="text-xs text-muted">{{ formatDateShort(s.scheduledDate) }} · {{ s.walletName }}</p>
                         </div>
                         <span class="font-mono ml-2" :class="s.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ s.amount }}</span>
                     </li>

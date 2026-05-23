@@ -316,6 +316,7 @@ personal_finance:
     title: Tableau de bord
     subtitle: Vue d'ensemble en un coup d'œil de ta finance perso ce mois-ci.
     help: 'Synthèse mensuelle des portefeuilles épinglés : indicateurs revenus / dépenses, sparkline 30 jours, top catégories, transactions récentes et alertes budget. Les portefeuilles affichés sont ceux marqués comme épinglés depuis la page Portefeuilles.'
+    pinned_wallet_link_title: 'Voir les transactions de {name}'
     vs_previous_month: vs. mois précédent
     income_minus_expense: Revenus − Dépenses
     across_wallets: 'sur {count} portefeuille(s)'

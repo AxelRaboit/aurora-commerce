@@ -180,7 +180,7 @@ defineExpose({ open });
         :icon="Trash2"
         v-on:close="pendingDelete = null"
     >
-        <p class="text-sm text-primary">{{ t("personal_finance.transactions.delete_confirm", { name: pendingDelete ? `${pendingDelete.date} · ${signedAmount(pendingDelete)}` : '' }) }}</p>
+        <p class="text-sm text-primary">{{ t("personal_finance.transactions.delete_confirm", { name: pendingDelete ? `${formatDateShort(pendingDelete.date)} · ${signedAmount(pendingDelete)}` : '' }) }}</p>
         <template #footer>
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">

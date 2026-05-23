@@ -10,6 +10,7 @@ import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useTransactionsEdit } from "../composables/useTransactionsEdit.js";
 import { useTransactionAttachment } from "../composables/useTransactionAttachment.js";
 
@@ -33,6 +34,7 @@ const props = defineProps({
 const emit = defineEmits(["updated", "attachment-changed"]);
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 
 const {
     showEdit,
@@ -94,7 +96,7 @@ const categoryOptions = computed(() => {
 function describeTx(tx) {
     if (!tx) return "";
     const sign = tx.type === "income" ? "+" : "-";
-    return `${tx.date} · ${sign}${tx.amount}`;
+    return `${formatDateShort(tx.date)} · ${sign}${tx.amount}`;
 }
 
 defineExpose({ open: openEdit });

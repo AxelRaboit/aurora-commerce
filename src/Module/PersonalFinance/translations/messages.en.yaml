@@ -316,6 +316,7 @@ personal_finance:
     title: Dashboard
     subtitle: Personal finance overview at a glance for this month.
     help: 'Monthly summary of pinned wallets: income / expense KPIs, 30-day sparkline, top categories, recent transactions and budget alerts. Wallets are pinned or unpinned from the Wallets page.'
+    pinned_wallet_link_title: 'View transactions for {name}'
     vs_previous_month: vs. previous month
     income_minus_expense: Income − Expense
     across_wallets: 'across {count} wallet(s)'

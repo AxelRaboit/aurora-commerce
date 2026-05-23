@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, Target, PiggyBank, Zap } from "lucide-vue-next";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -31,6 +32,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 
 const goals = ref([...props.goals]);
 const { sortBy, sortOptions, sortedGoals } = useGoalsSort(goals);
@@ -152,7 +154,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <dl class="text-xs text-muted space-y-0.5">
                     <div v-if="goal.deadline">
                         <span class="font-medium">{{ t("personal_finance.goals.fields.deadline") }}:</span>
-                        {{ goal.deadline }}
+                        {{ formatDateShort(goal.deadline) }}
                         <span v-if="monthlyContribution(goal)" class="ml-1 text-accent">
                             → {{ t("personal_finance.goals.monthly_contribution", { amount: monthlyContribution(goal) }) }}
                         </span>

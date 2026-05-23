@@ -35,6 +35,7 @@ final class PersonalFinanceDashboardController extends AbstractController
         return $this->render('@PersonalFinance/backend/dashboard/index.html.twig', [
             'snapshot' => $this->dashboardService->snapshot($user),
             'refreshPath' => $this->urlGenerator->generate('backend_personal_finance_dashboard_refresh'),
+            'walletTransactionsPath' => $this->urlGenerator->generate('backend_personal_finance_transactions', ['walletId' => '__walletId__']),
         ]);
     }
 

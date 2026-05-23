@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, Scale, Wallet } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -55,6 +56,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 
 const selectedWalletId = ref(props.selectedWalletId ?? props.wallets[0]?.id ?? null);
 
@@ -217,7 +219,7 @@ function formatAmount(transaction) {
 
 function describeTx(tx) {
     if (!tx) return "";
-    return `${tx.date} · ${formatType(tx.type)} ${formatAmount(tx)}`;
+    return `${formatDateShort(tx.date)} · ${formatType(tx.type)} ${formatAmount(tx)}`;
 }
 </script>
 
@@ -319,7 +321,7 @@ function describeTx(tx) {
                                     <Receipt v-else class="w-3.5 h-3.5 text-accent-400 shrink-0" :stroke-width="2" :title="t('personal_finance.transactions.leg_badge_title')" />
                                     <span>{{ tx.description ?? t("personal_finance.transactions.uncategorized") }}</span>
                                 </p>
-                                <p class="text-xs text-muted mt-0.5 font-mono">{{ tx.date }} · {{ formatType(tx.type) }}</p>
+                                <p class="text-xs text-muted mt-0.5">{{ formatDateShort(tx.date) }} · {{ formatType(tx.type) }}</p>
                                 <p v-if="tx.categoryName" class="text-xs text-muted">{{ tx.categoryName }}</p>
                             </div>
                             <p class="font-mono text-sm shrink-0" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</p>
@@ -347,7 +349,7 @@ function describeTx(tx) {
                         </thead>
                         <tbody class="divide-y divide-line/40">
                             <tr v-for="tx in items" :key="tx.id" class="group hover:bg-surface-2/40 transition-colors">
-                                <td class="px-6 py-3 font-mono text-xs">{{ tx.date }}</td>
+                                <td class="px-6 py-3 text-xs whitespace-nowrap">{{ formatDateShort(tx.date) }}</td>
                                 <td class="px-6 py-3">{{ formatType(tx.type) }}</td>
                                 <td class="px-6 py-3 text-right font-mono" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</td>
                                 <td class="px-6 py-3 text-muted">{{ tx.categoryName ?? t("personal_finance.transactions.uncategorized") }}</td>
