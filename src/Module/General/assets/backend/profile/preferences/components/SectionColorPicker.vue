@@ -45,19 +45,19 @@ function clear() {
 </script>
 
 <template>
-    <div class="flex items-center gap-1.5">
+    <div class="flex flex-wrap items-center gap-1.5">
         <button
             v-for="colour in PALETTE"
             :key="colour.name"
             type="button"
-            class="w-5 h-5 rounded ring-offset-1 ring-offset-surface transition-all hover:scale-110"
-            :class="[colour.swatch, modelValue === colour.name ? 'ring-2 ring-primary' : 'opacity-70 hover:opacity-100']"
+            class="w-6 h-6 rounded ring-offset-2 ring-offset-surface transition-all hover:scale-110 shrink-0"
+            :class="[colour.swatch, modelValue === colour.name ? 'ring-2 ring-white scale-110' : 'opacity-60 hover:opacity-100']"
             :title="colour.name"
             v-on:click="pick(colour.name)"
         />
         <button
             type="button"
-            class="ml-1 p-1 rounded text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+            class="ml-1 p-1 rounded text-muted hover:text-primary hover:bg-surface-2 transition-colors shrink-0"
             :title="t('backend.profile.sidemenu.color_reset')"
             :disabled="!modelValue"
             :class="{ 'opacity-30 cursor-not-allowed': !modelValue }"

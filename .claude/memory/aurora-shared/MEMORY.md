@@ -64,6 +64,10 @@ Distribué via composer : les clients lisent ces mémoires depuis
   `useForm` + `required()` de validators + `:error` sur chaque AppInput validé
 - [convention_app_loader.md](convention_app_loader.md) — toute liste paginée =
   `<div class="relative space-y-N">` + `<AppLoader :active="loading" />`
+- [pattern_cross_mount_state_sync.md](pattern_cross_mount_state_sync.md) —
+  synchroniser deux mounts Vue indépendants sans reload : CustomEvent
+  global + composable qui wrap la prop dans un ref + event listener.
+  Anti-pattern : `window.location.reload()` après save.
 
 ## HTTP / fetch
 

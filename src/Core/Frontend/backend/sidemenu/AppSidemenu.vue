@@ -11,6 +11,7 @@ import { useBackendSearch } from "@core/backend/sidemenu/composables/useBackendS
 import { useSidemenuCollapse } from "@core/backend/sidemenu/composables/useSidemenuCollapse.js";
 import { useSidemenuNav } from "@core/backend/sidemenu/composables/useSidemenuNav.js";
 import { useSidemenuSectionTheme } from "@core/backend/sidemenu/composables/useSidemenuSectionTheme.js";
+import { useSidemenuLiveColors } from "@core/backend/sidemenu/composables/useSidemenuLiveColors.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -59,6 +60,7 @@ const props = defineProps({
 
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
+const { liveSectionColors } = useSidemenuLiveColors(props.navSectionColors);
 const { collapse, expand, mobileOpen, openMobile, closeMobile } = useSidemenuCollapse();
 
 const { dragging: sidemenuDragging, startResize: startSidemenuResize, reset: resetSidemenuWidth } = useResizable({
@@ -79,9 +81,9 @@ const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
     isActive, isActiveExact, itemIsActive, itemClasses, iconClasses,
-} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases, props.navItemAliases, props.navSectionColors);
+} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases, props.navItemAliases, liveSectionColors);
 
-const { headerClasses: sectionHeaderClasses, labelClasses: sectionLabelClasses } = useSidemenuSectionTheme(props.navSectionColors);
+const { headerClasses: sectionHeaderClasses, labelClasses: sectionLabelClasses } = useSidemenuSectionTheme(liveSectionColors);
 
 const SECTION_CONFIG = {
     recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },

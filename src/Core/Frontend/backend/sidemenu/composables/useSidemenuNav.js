@@ -102,7 +102,8 @@ export function useSidemenuNav(
     sectionColorOverrides = {},
 ) {
     const { t } = useI18n();
-    const { itemClasses: themeItemClasses, iconClasses: themeIconClasses } = useSidemenuSectionTheme(sectionColorOverrides);
+    const { itemClasses: themeItemClasses, iconClasses: themeIconClasses } =
+        useSidemenuSectionTheme(sectionColorOverrides);
 
     const {
         isExpanded: isGroupExpanded,

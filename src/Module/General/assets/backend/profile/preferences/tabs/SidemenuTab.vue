@@ -42,10 +42,11 @@ const totalCustomisations = computed(() => prefs.hiddenCount.value + prefs.custo
             <p class="text-sm text-secondary min-w-0">
                 {{ t('backend.profile.sidemenu.subtitle') }}
             </p>
-            <div class="flex items-center gap-2 sm:shrink-0 flex-wrap">
+            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:shrink-0">
                 <AppButton
                     variant="ghost"
                     size="md"
+                    class="w-full sm:w-auto"
                     :loading="prefs.resetting.value"
                     :disabled="totalCustomisations === 0"
                     v-on:click="prefs.reset"
@@ -56,6 +57,7 @@ const totalCustomisations = computed(() => prefs.hiddenCount.value + prefs.custo
                 <AppButton
                     variant="primary"
                     size="md"
+                    class="w-full sm:w-auto"
                     :loading="prefs.saving.value"
                     v-on:click="prefs.save"
                 >

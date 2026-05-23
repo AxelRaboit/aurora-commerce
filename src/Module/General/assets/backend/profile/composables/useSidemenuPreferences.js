@@ -2,6 +2,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { SIDEMENU_PREFS_EVENT } from "@core/backend/sidemenu/composables/useSidemenuLiveColors.js";
 
 function collectItemKeys(items, out) {
     for (const item of items ?? []) {
@@ -118,14 +119,18 @@ export function useSidemenuPreferences({
     }
 
     /**
-     * Defer a full reload so the success toast has time to surface
-     * before the page flashes. The sidemenu itself is a separate Vue
-     * mount point fed by props from layout.html.twig — reloading is
-     * the cleanest way to pick up the new colours / hides without
-     * cross-app reactive plumbing.
+     * Broadcasts the new prefs so the sidemenu — which lives in a
+     * separate Vue mount point fed by Twig props — can update its
+     * colour overrides without a page reload. Hidden sections/items
+     * are server-filtered on the next navigation, so we only push the
+     * colour map live; the rest naturally syncs on next request.
      */
-    function reloadAfterToast() {
-        setTimeout(() => window.location.reload(), 700);
+    function broadcastPrefs(navSectionColors) {
+        window.dispatchEvent(
+            new CustomEvent(SIDEMENU_PREFS_EVENT, {
+                detail: { navSectionColors: { ...navSectionColors } },
+            }),
+        );
     }
 
     async function save() {
@@ -136,11 +141,15 @@ export function useSidemenuPreferences({
         });
         if (!data) return;
         if (data.success) {
+            const normalisedColors =
+                data.navSectionColors && !Array.isArray(data.navSectionColors)
+                    ? data.navSectionColors
+                    : {};
             hiddenSections.value = new Set(data.hiddenNavSections ?? []);
             hiddenItems.value = new Set(data.hiddenNavItems ?? []);
-            sectionColors.value = { ...(data.navSectionColors ?? {}) };
+            sectionColors.value = { ...normalisedColors };
+            broadcastPrefs(normalisedColors);
             toast.success(t("backend.profile.sidemenu.saved"));
-            reloadAfterToast();
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -153,8 +162,8 @@ export function useSidemenuPreferences({
             hiddenSections.value = new Set();
             hiddenItems.value = new Set();
             sectionColors.value = {};
+            broadcastPrefs({});
             toast.success(t("backend.profile.sidemenu.reset_done"));
-            reloadAfterToast();
         }
     }
 
