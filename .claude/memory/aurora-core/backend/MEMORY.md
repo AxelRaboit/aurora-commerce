@@ -44,3 +44,4 @@
 - [pitfall_sequence_generator_naming.md](pitfall_sequence_generator_naming.md) — `app_seq_*` = séquences métier, `seq_core_*_id` = PKs Doctrine
 - [pitfall_yaml_duplicate_keys.md](pitfall_yaml_duplicate_keys.md) — clé YAML dupliquée : silencieuse PHP, fatale pour DumpJsTranslations + build Vue
 - [pitfall_route_gate_priority.md](pitfall_route_gate_priority.md) — `*RouteGateSubscriber` priorité < 8 obligatoire, convention : priorité 0
+- [pitfall_decorator_signature_drift.md](pitfall_decorator_signature_drift.md) — étendre un Manager sans sync interface + decorators → PHP drop silencieusement les args en trop

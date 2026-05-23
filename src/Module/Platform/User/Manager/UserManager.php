@@ -277,7 +277,7 @@ class UserManager implements UserManagerInterface
     /**
      * @param list<string>          $hiddenNavSections
      * @param list<string>          $hiddenNavItems
-     * @param array<string, string> $navSectionColors map of sectionId → Tailwind palette name
+     * @param array<string, string> $navSectionColors  map of sectionId → Tailwind palette name
      */
     public function updateSidemenuPreferences(
         User $user,
@@ -290,19 +290,24 @@ class UserManager implements UserManagerInterface
         $user->setHiddenNavSections(array_values(array_intersect($hiddenNavSections, $validSectionIds)));
         $user->setHiddenNavItems(array_values(array_intersect($hiddenNavItems, $validItemKeys)));
 
-        // Filter the colour map to known sectionIds + non-empty string values.
-        // We don't validate the colour names themselves — the front falls back
-        // to the default palette when a name isn't in its registry.
+        // Filter the colour map to known sectionIds + non-empty values. The
+        // controller already enforces `array<string, string>` (cf. signature
+        // contract) so we only check emptiness + unknown ids here. Colour
+        // names themselves aren't validated — the front falls back to the
+        // default palette when a name isn't in its registry.
         $cleanColors = [];
         foreach ($navSectionColors as $sectionId => $colorName) {
-            if (!is_string($sectionId) || !is_string($colorName) || '' === $colorName) {
+            if ('' === $colorName) {
                 continue;
             }
+
             if (!in_array($sectionId, $validSectionIds, true)) {
                 continue;
             }
+
             $cleanColors[$sectionId] = $colorName;
         }
+
         $user->setNavSectionColors($cleanColors);
 
         $this->entityManager->flush();

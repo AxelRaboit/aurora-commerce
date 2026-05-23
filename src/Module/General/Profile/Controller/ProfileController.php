@@ -219,11 +219,18 @@ final class ProfileController extends AbstractController
             ]);
         }
 
+        $cleanColors = [];
+        foreach ($sectionColors as $sectionId => $colorName) {
+            if (is_string($sectionId) && is_string($colorName)) {
+                $cleanColors[$sectionId] = $colorName;
+            }
+        }
+
         $this->userManager->updateSidemenuPreferences(
             $user,
             array_values(array_filter($hiddenSections, is_string(...))),
             array_values(array_filter($hiddenItems, is_string(...))),
-            $sectionColors,
+            $cleanColors,
         );
 
         return $this->jsonSuccess([

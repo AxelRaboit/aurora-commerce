@@ -185,13 +185,18 @@ final readonly class AuditUserManagerDecorator implements UserManagerInterface
         ]);
     }
 
-    public function updateSidemenuPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void
-    {
-        $this->inner->updateSidemenuPreferences($user, $hiddenNavSections, $hiddenNavItems);
+    public function updateSidemenuPreferences(
+        User $user,
+        array $hiddenNavSections,
+        array $hiddenNavItems,
+        array $navSectionColors = [],
+    ): void {
+        $this->inner->updateSidemenuPreferences($user, $hiddenNavSections, $hiddenNavItems, $navSectionColors);
 
         $this->auditLogger->log('core', 'user.sidemenu_preferences_updated', 'User', $user->getId(), [
             'hiddenNavSections' => $user->getHiddenNavSections(),
             'hiddenNavItems' => $user->getHiddenNavItems(),
+            'navSectionColors' => $user->getNavSectionColors(),
         ]);
     }
 

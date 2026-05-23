@@ -55,15 +55,22 @@ interface UserManagerInterface
     public function updateDisabledModules(User $user, array $disabledModules, ?User $actor = null): void;
 
     /**
-     * Replaces the user's personal sidemenu visibility preferences. Each list is
-     * sanitized against the user's current resolved nav catalog: unknown / privilege-
-     * filtered entries are silently dropped. This is a user-initiated action — the
-     * target user is always the actor themselves (no rank check).
+     * Replaces the user's personal sidemenu visibility + colouring preferences.
+     * Each list is sanitized against the user's current resolved nav catalog:
+     * unknown / privilege-filtered entries are silently dropped. This is a
+     * user-initiated action — the target user is always the actor themselves
+     * (no rank check).
      *
-     * @param list<string> $hiddenNavSections NavSection.id values to hide
-     * @param list<string> $hiddenNavItems    NavItem.route values to hide
+     * @param list<string>          $hiddenNavSections NavSection.id values to hide
+     * @param list<string>          $hiddenNavItems    NavItem.route values to hide
+     * @param array<string, string> $navSectionColors  map of NavSection.id → Tailwind palette name
      */
-    public function updateSidemenuPreferences(User $user, array $hiddenNavSections, array $hiddenNavItems): void;
+    public function updateSidemenuPreferences(
+        User $user,
+        array $hiddenNavSections,
+        array $hiddenNavItems,
+        array $navSectionColors = [],
+    ): void;
 
     public function resetSidemenuPreferences(User $user): void;
 
