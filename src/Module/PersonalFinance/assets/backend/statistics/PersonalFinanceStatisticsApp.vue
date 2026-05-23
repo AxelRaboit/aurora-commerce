@@ -102,8 +102,8 @@ const yoy = computed(() => snap.value.yoyComparison ?? {});
                 </div>
             </div>
 
-            <div v-if="snap.monthlyFlow.length">
-                <svg viewBox="0 0 600 180" preserveAspectRatio="none" class="w-full h-48">
+            <div v-if="snap.monthlyFlow.length" class="max-w-3xl mx-auto">
+                <svg viewBox="0 0 600 200" class="w-full h-auto">
                     <rect
                         v-for="(bar, i) in monthlyChart.bars"
                         :key="`b-${i}`"
@@ -111,16 +111,17 @@ const yoy = computed(() => snap.value.yoyComparison ?? {});
                         :y="bar.y"
                         :width="bar.width"
                         :height="bar.height"
+                        rx="2"
                         :class="bar.kind === 'income' ? 'fill-emerald-400' : 'fill-rose-400'"
                     />
                     <text
                         v-for="(label, i) in monthlyChart.labels"
                         :key="`l-${i}`"
                         :x="label.x"
-                        y="178"
+                        y="195"
                         text-anchor="middle"
-                        class="fill-muted text-xs font-mono"
-                        style="font-size: 9px;"
+                        class="fill-muted font-mono"
+                        style="font-size: 10px;"
                     >{{ label.label }}</text>
                 </svg>
             </div>
