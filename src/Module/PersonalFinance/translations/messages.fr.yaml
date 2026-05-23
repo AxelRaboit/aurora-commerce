@@ -46,6 +46,16 @@ backend:
       description: Code ISO 4217 (ex. EUR, USD, CHF) utilisé par défaut pour les nouveaux portefeuilles et transactions.
 
 personal_finance:
+  mail:
+    invitation:
+      subject: 'Invitation à rejoindre le portefeuille {walletName}'
+      title: 'Invitation au portefeuille {walletName}'
+      heading: Vous êtes invité à rejoindre un portefeuille
+      intro: '{inviterName} vous invite à rejoindre le portefeuille « {walletName} » en tant que {role}.'
+      expiry: 'Cette invitation expire le {date}.'
+      cta: Accepter l'invitation
+      fallback_link: 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :'
+      ignore_notice: Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet email.
   wallets:
     title: Mes portefeuilles
     help: 'Un portefeuille représente un compte (courant, livret, cash…). La balance initiale sert de point de départ ; les soldes courants sont ensuite calculés automatiquement à partir des transactions enregistrées.'
@@ -81,6 +91,46 @@ personal_finance:
       expired: Expirée
       accepted: Acceptée
       declined: Refusée
+      page_title: Invitation à un portefeuille
+      pending_title: Vous avez reçu une invitation
+      pending_body: '{inviterName} vous invite à rejoindre le portefeuille « {walletName} » en tant que {role}.'
+      accept_action: Accepter l'invitation
+      decline_action: Refuser
+      already_accepted_title: Invitation déjà acceptée
+      already_accepted_body: 'Cette invitation au portefeuille « {walletName} » a déjà été acceptée.'
+      already_declined_title: Invitation déjà refusée
+      already_declined_body: Cette invitation a déjà été refusée.
+      expired_title: Invitation expirée
+      expired_body: Cette invitation a dépassé sa date de validité. Demandez à l'expéditeur de vous en envoyer une nouvelle.
+      invalid_title: Invitation introuvable
+      go_to_wallets: Voir mes portefeuilles
+      accepted_toast: Invitation acceptée — vous avez maintenant accès au portefeuille.
+      declined_toast: Invitation refusée.
+    members:
+      modal_title: 'Membres — {name}'
+      section_members: Membres actifs
+      section_invitations: Invitations en attente
+      section_invite: Inviter une personne
+      invite_help: 'L''invitation envoie un email avec un lien sécurisé. Le destinataire devra créer un compte ou se connecter pour l''accepter. L''invitation expire après 14 jours.'
+      empty_members: Aucun membre pour le moment.
+      empty_invitations: Aucune invitation en attente.
+      send_invitation: Envoyer l'invitation
+      invitation_expires: 'Expire le {date}'
+      invitation_resend: Renvoyer l'invitation
+      invitation_revoke: Annuler l'invitation
+      invitation_sent: Invitation envoyée.
+      invitation_resent: Invitation renvoyée.
+      invitation_revoked: Invitation annulée.
+      role_updated: Rôle mis à jour.
+      removed: Membre retiré.
+      remove: Retirer du portefeuille
+      remove_confirm: 'Retirer {name} du portefeuille ? Cette personne perdra immédiatement l''accès aux transactions et au budget.'
+      manage: Gérer les membres
+      fields:
+        email: Email
+        role: Rôle
+      placeholders:
+        email: 'personne@example.com'
     errors:
       name_required: Le nom du portefeuille est requis.
       start_balance_required: La balance initiale est requise.

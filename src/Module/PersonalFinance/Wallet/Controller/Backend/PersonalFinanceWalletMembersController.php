@@ -11,9 +11,11 @@ use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
 use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletMemberManagerInterface;
+use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletInvitationRepository;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletMemberRepository;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
 use Aurora\Module\PersonalFinance\Wallet\Security\PersonalFinanceWalletVoter;
+use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletInvitationSerializerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletMemberSerializerInterface;
 use DomainException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,9 +34,31 @@ final class PersonalFinanceWalletMembersController extends AbstractController
     public function __construct(
         private readonly PersonalFinanceWalletRepository $walletRepository,
         private readonly PersonalFinanceWalletMemberRepository $memberRepository,
+        private readonly PersonalFinanceWalletInvitationRepository $invitationRepository,
         private readonly PersonalFinanceWalletMemberManagerInterface $memberManager,
         private readonly PersonalFinanceWalletMemberSerializerInterface $memberSerializer,
+        private readonly PersonalFinanceWalletInvitationSerializerInterface $invitationSerializer,
     ) {}
+
+    /**
+     * Drill-down for the Members modal — returns both the active
+     * membership list and the pending invitations in a single round trip.
+     */
+    #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
+    public function list(int $walletId): JsonResponse
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::MANAGE_MEMBERS, $wallet);
+
+        return $this->jsonSuccess([
+            'members' => array_map($this->memberSerializer->serialize(...), $this->memberRepository->findByWallet($wallet)),
+            'invitations' => array_map($this->invitationSerializer->serialize(...), $this->invitationRepository->findPendingByWallet($wallet)),
+        ]);
+    }
 
     #[Route('/{memberId}/update-role', name: '_update_role', methods: [HttpMethodEnum::Post->value])]
     public function updateRole(int $walletId, int $memberId, Request $request): JsonResponse

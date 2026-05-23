@@ -46,6 +46,16 @@ backend:
       description: ISO 4217 code (e.g. EUR, USD, CHF) used by default for new wallets and transactions.
 
 personal_finance:
+  mail:
+    invitation:
+      subject: 'Invitation to join the wallet {walletName}'
+      title: 'Wallet invitation — {walletName}'
+      heading: You have been invited to join a wallet
+      intro: '{inviterName} invites you to join the wallet "{walletName}" as a {role}.'
+      expiry: 'This invitation expires on {date}.'
+      cta: Accept invitation
+      fallback_link: 'If the button does not work, copy this link in your browser:'
+      ignore_notice: If you were not expecting this invitation, you can safely ignore this email.
   wallets:
     title: My wallets
     help: 'A wallet represents an account (checking, savings, cash…). The starting balance defines the baseline; running balances are then derived automatically from the recorded transactions.'
@@ -81,6 +91,46 @@ personal_finance:
       expired: Expired
       accepted: Accepted
       declined: Declined
+      page_title: Wallet invitation
+      pending_title: You received an invitation
+      pending_body: '{inviterName} invites you to join the wallet "{walletName}" as a {role}.'
+      accept_action: Accept invitation
+      decline_action: Decline
+      already_accepted_title: Invitation already accepted
+      already_accepted_body: 'This invitation to the wallet "{walletName}" has already been accepted.'
+      already_declined_title: Invitation already declined
+      already_declined_body: This invitation has already been declined.
+      expired_title: Invitation expired
+      expired_body: This invitation is past its expiry date. Ask the sender to issue a new one.
+      invalid_title: Invitation not found
+      go_to_wallets: Go to my wallets
+      accepted_toast: Invitation accepted — you now have access to the wallet.
+      declined_toast: Invitation declined.
+    members:
+      modal_title: 'Members — {name}'
+      section_members: Active members
+      section_invitations: Pending invitations
+      section_invite: Invite someone
+      invite_help: 'An invitation email with a secure link will be sent. The recipient needs an account (or will create one) to accept. Invitations expire after 14 days.'
+      empty_members: No member yet.
+      empty_invitations: No pending invitation.
+      send_invitation: Send invitation
+      invitation_expires: 'Expires on {date}'
+      invitation_resend: Resend invitation
+      invitation_revoke: Revoke invitation
+      invitation_sent: Invitation sent.
+      invitation_resent: Invitation resent.
+      invitation_revoked: Invitation revoked.
+      role_updated: Role updated.
+      removed: Member removed.
+      remove: Remove from wallet
+      remove_confirm: 'Remove {name} from the wallet? Access to transactions and budget will be revoked immediately.'
+      manage: Manage members
+      fields:
+        email: Email
+        role: Role
+      placeholders:
+        email: 'person@example.com'
     errors:
       name_required: Wallet name is required.
       start_balance_required: Initial balance is required.

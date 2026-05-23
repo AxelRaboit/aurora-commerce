@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\View;
 
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletModeEnum;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
 use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletSerializerInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
@@ -26,10 +27,17 @@ final readonly class PersonalFinanceWalletsViewBuilder
             'wallets' => $this->buildListPayload($user, $pagination),
             'search' => $pagination->search ?? '',
             'modes' => PersonalFinanceWalletModeEnum::values(),
+            'roles' => array_map(static fn (PersonalFinanceWalletRoleEnum $role): string => $role->value, PersonalFinanceWalletRoleEnum::invitable()),
             'listPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_list'),
             'createWalletPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_create'),
             'updateWalletPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_update', ['id' => '__id__']),
             'deleteWalletPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_delete', ['id' => '__id__']),
+            'membersListPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_members', ['walletId' => '__walletId__']),
+            'updateMemberRolePath' => $this->urlGenerator->generate('backend_personal_finance_wallets_members_update_role', ['walletId' => '__walletId__', 'memberId' => '__memberId__']),
+            'removeMemberPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_members_remove', ['walletId' => '__walletId__', 'memberId' => '__memberId__']),
+            'sendInvitationPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_invitations_send', ['walletId' => '__walletId__']),
+            'revokeInvitationPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_invitations_revoke', ['walletId' => '__walletId__', 'invitationId' => '__invitationId__']),
+            'resendInvitationPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_invitations_resend', ['walletId' => '__walletId__', 'invitationId' => '__invitationId__']),
         ];
     }
 

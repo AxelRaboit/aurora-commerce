@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Wallet } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Wallet, Users } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -16,17 +16,25 @@ import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import PersonalFinanceWalletMembersModal from "./components/PersonalFinanceWalletMembersModal.vue";
 import { useWalletsCreate } from "./composables/useWalletsCreate.js";
 import { useWalletsEdit } from "./composables/useWalletsEdit.js";
 
 const props = defineProps({
     wallets: { type: Object, default: () => ({}) },
     modes: { type: Array, required: true },
+    roles: { type: Array, default: () => [] },
     search: { type: String, default: "" },
     listPath: { type: String, required: true },
     createWalletPath: { type: String, required: true },
     updateWalletPath: { type: String, required: true },
     deleteWalletPath: { type: String, required: true },
+    membersListPath: { type: String, required: true },
+    updateMemberRolePath: { type: String, required: true },
+    removeMemberPath: { type: String, required: true },
+    sendInvitationPath: { type: String, required: true },
+    revokeInvitationPath: { type: String, required: true },
+    resendInvitationPath: { type: String, required: true },
     /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
@@ -44,6 +52,12 @@ const modeOptions = computed(() =>
 
 function formatMode(mode) {
     return t(`personal_finance.wallets.modes.${mode}`);
+}
+
+const membersModalRef = ref(null);
+
+function openMembers(wallet) {
+    membersModalRef.value?.open(wallet);
 }
 
 const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useWalletsCreate(
@@ -97,6 +111,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </div>
                     <slot name="extra-cells" :wallet="w" />
                     <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                        <AppIconButton color="sky" :title="t('personal_finance.wallets.members.manage')" v-on:click="openMembers(w)"><Users class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(w)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
@@ -122,6 +137,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <slot name="extra-cells" :wallet="w" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
+                                    <AppIconButton color="sky" :title="t('personal_finance.wallets.members.manage')" v-on:click="openMembers(w)"><Users class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(w)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(w)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 </div>
@@ -263,5 +279,16 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 </AppModalFooter>
             </template>
         </AppModal>
+
+        <PersonalFinanceWalletMembersModal
+            ref="membersModalRef"
+            :members-list-path="membersListPath"
+            :update-member-role-path="updateMemberRolePath"
+            :remove-member-path="removeMemberPath"
+            :send-invitation-path="sendInvitationPath"
+            :revoke-invitation-path="revokeInvitationPath"
+            :resend-invitation-path="resendInvitationPath"
+            :roles="roles"
+        />
     </div>
 </template>

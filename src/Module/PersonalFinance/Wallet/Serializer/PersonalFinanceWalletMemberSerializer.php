@@ -14,10 +14,14 @@ class PersonalFinanceWalletMemberSerializer implements PersonalFinanceWalletMemb
     /** @return array<string, mixed> */
     public function serialize(PersonalFinanceWalletMemberInterface $member): array
     {
+        $user = $member->getUser();
+
         return [
             'id' => $member->getId(),
             'walletId' => $member->getWallet()->getId(),
-            'userId' => $member->getUser()->getId(),
+            'userId' => $user->getId(),
+            'userName' => $user->getName(),
+            'userEmail' => $user->getEmail(),
             'role' => $member->getRole()->value,
             'createdAt' => $member->getCreatedAt()->format(DateTimeInterface::ATOM),
         ];

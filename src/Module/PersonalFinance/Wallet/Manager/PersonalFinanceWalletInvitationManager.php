@@ -11,6 +11,7 @@ use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitation;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
 use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
+use Aurora\Module\PersonalFinance\Wallet\Notification\PersonalFinanceWalletInvitationNotificationService;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletInvitationRepository;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletMemberRepository;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
@@ -30,6 +31,7 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
         protected readonly PersonalFinanceWalletInvitationRepository $invitationRepository,
         protected readonly PersonalFinanceWalletMemberRepository $memberRepository,
         protected readonly PersonalFinanceWalletMemberManagerInterface $memberManager,
+        protected readonly PersonalFinanceWalletInvitationNotificationService $notification,
     ) {}
 
     public function send(
@@ -58,6 +60,7 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
         $this->entityManager->flush();
 
         $this->auditCreated($invitation);
+        $this->notification->notifyInvited($invitation);
 
         return $invitation;
     }
@@ -132,6 +135,7 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
         $this->entityManager->flush();
 
         $this->auditResent($invitation);
+        $this->notification->notifyInvited($invitation);
     }
 
     protected function createInvitation(): PersonalFinanceWalletInvitationInterface

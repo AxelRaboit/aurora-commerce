@@ -15,10 +15,17 @@
 <div {{ vue_component('personalfinance/backend/wallet/PersonalFinanceWalletsApp', {
     wallets: wallets,
     modes: modes,
+    roles: roles,
     search: search,
     listPath: listPath,
     createWalletPath: createWalletPath,
     updateWalletPath: updateWalletPath,
     deleteWalletPath: deleteWalletPath,
+    membersListPath: membersListPath,
+    updateMemberRolePath: updateMemberRolePath,
+    removeMemberPath: removeMemberPath,
+    sendInvitationPath: sendInvitationPath,
+    revokeInvitationPath: revokeInvitationPath,
+    resendInvitationPath: resendInvitationPath,
 }) }} class="flex-1 min-w-0"></div>
 {% endblock %}
