@@ -83,6 +83,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | v2-6 | Tags UI : input + display pills + click-to-filter + backend JSONB filter | (lot v2-6) | 🟢 |
 | v2-1A | Budget auto-rollover : `repeatNextMonth` items copiés mois N → N+1 via `BudgetRolloverService` + toast UI | (lot v2-1A) | 🟢 |
 | v2-4  | Vue Globale (Overview) : sub-feature `Overview/` + service d'agrégation cross-wallet + page Vue + nav + toggle + permission | (lot v2-4) | 🟢 |
+| v2-4-merge | Fusion Dashboard → Overview : suppression du sous-module Dashboard (Service + Controller + Vue + composable + Twig + nav + permission + toggle), absorption des blocs uniques (sparkline / goals / upcoming / budget alerts) dans Overview, redirect URL 301 conservé via `config/routes.yaml` | (lot v2-4-merge) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)

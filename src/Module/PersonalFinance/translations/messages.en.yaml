@@ -16,8 +16,6 @@ backend:
           use: Manage recurring and scheduled transactions
         categorization:
           use: Manage auto-categorization rules
-        dashboard:
-          use: View the personal finance dashboard
         overview:
           use: View the cross-wallet global overview
   modules:
@@ -40,8 +38,6 @@ backend:
     personal_finance_recurring_description: 'Recurring transactions (monthly on a fixed day) and scheduled one-offs.'
     personal_finance_categorization: Auto-categorization
     personal_finance_categorization_description: 'Description → category rules learnt automatically every time you categorise a transaction.'
-    personal_finance_dashboard: Dashboard
-    personal_finance_dashboard_description: 'At-a-glance overview: month KPIs, 30-day sparkline, top categories, pinned balances, recent transactions, budget alerts.'
     personal_finance_overview: Global overview
     personal_finance_overview_description: 'Cross-wallet summary: cumulative balance, monthly aggregated flow, per-wallet and per-category breakdowns, recent transactions across every wallet.'
   parameters:
@@ -321,38 +317,21 @@ personal_finance:
       planned_required: Planned amount is required.
       planned_format: 'Invalid format. Example: 1234.56'
       carried_format: 'Invalid format. Example: 1234.56 or -1234.56'
-  dashboard:
-    title: Dashboard
-    subtitle: Personal finance overview at a glance for this month.
-    help: 'Monthly summary of pinned wallets: income / expense KPIs, 30-day sparkline, top categories, recent transactions and budget alerts. Wallets are pinned or unpinned from the Wallets page.'
-    pinned_wallet_link_title: 'View transactions for {name}'
-    vs_previous_month: vs. previous month
-    income_minus_expense: Income − Expense
-    across_wallets: 'across {count} wallet(s)'
-    spending_30d: 30-day spending
-    top_categories: Top categories this month
-    pinned_wallets: Pinned wallets
-    no_pinned_wallets: No pinned wallets. Toggle "Show on dashboard" while editing a wallet.
-    recent_transactions: Recent transactions
-    goals: Goals
-    goals_active_total: active / total
-    upcoming_recurring: Upcoming recurring
-    upcoming_scheduled: Upcoming scheduled
-    day_of_month: 'On day {day}'
-    budget_alerts: Budget alerts
-    no_data_yet: No data yet.
-    kpi:
-      expense_month: Month expenses
-      income_month: Month income
-      net_month: Month net
-      total_balance: Total balance
   overview:
     title: Global overview
     subtitle: 'Cross-wallet summary for {month}.'
-    help: 'Aggregated view across every accessible wallet : total balance, cumulative monthly flow, per-wallet and per-category breakdowns, recent transactions. Different from the Dashboard which focuses on pinned wallets.'
+    help: 'Aggregated view across every accessible wallet : monthly KPIs, 30-day sparkline, per-wallet and per-category breakdowns, savings goals, upcoming recurring and scheduled transactions, budget alerts. The full personal-finance picture on a single page.'
     wallets_breakdown: Wallets breakdown
     category_breakdown: Top spending categories
     recent_transactions: Recent transactions
+    spending_30d: 30-day spending
+    goals: Savings goals
+    goals_active_total: active / total
+    upcoming_recurring: Upcoming recurring
+    upcoming_scheduled: Upcoming scheduled
+    budget_alerts: Budget alerts
+    day_of_month: 'On day {day}'
+    vs_previous_month: vs. previous month
     no_wallets: No wallet accessible.
     no_data_yet: No data yet.
     wallet_link_title: 'View transactions for {name}'

@@ -30,7 +30,6 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.goals.use'),
             new NavPermission('personal_finance.recurring.use'),
             new NavPermission('personal_finance.categorization.use'),
-            new NavPermission('personal_finance.dashboard.use'),
             new NavPermission('personal_finance.overview.use'),
         ];
     }
@@ -42,16 +41,6 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
         }
 
         $items = [];
-
-        if ($this->personalFinanceContext->isDashboardEnabled()) {
-            $items[] = new NavItem(
-                'backend_personal_finance_dashboard',
-                'backend.nav.personal_finance_dashboard',
-                'layout-dashboard',
-                requiredPrivilege: 'personal_finance.dashboard.use',
-                descriptionKey: 'backend.nav.personal_finance_dashboard_description',
-            );
-        }
 
         if ($this->personalFinanceContext->isOverviewEnabled()) {
             $items[] = new NavItem(
@@ -145,13 +134,6 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
         return [
             new NavSection('personal_finance', [
                 new NavItem(
-                    'backend_personal_finance_dashboard',
-                    'backend.nav.personal_finance_dashboard',
-                    'layout-dashboard',
-                    requiredPrivilege: 'personal_finance.dashboard.use',
-                    descriptionKey: 'backend.nav.personal_finance_dashboard_description',
-                ),
-                new NavItem(
                     'backend_personal_finance_overview',
                     'backend.nav.personal_finance_overview',
                     'globe-2',
@@ -222,7 +204,6 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceGoals->toToggle(),
             ModuleParameterEnum::PersonalFinanceRecurring->toToggle(),
             ModuleParameterEnum::PersonalFinanceCategorization->toToggle(),
-            ModuleParameterEnum::PersonalFinanceDashboard->toToggle(),
             ModuleParameterEnum::PersonalFinanceOverview->toToggle(),
         ];
     }

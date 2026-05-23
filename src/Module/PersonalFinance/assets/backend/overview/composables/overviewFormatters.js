@@ -1,5 +1,5 @@
 /**
- * Pure presentation helpers for the dashboard. No state, no side
+ * Pure presentation helpers for the Overview page. No state, no side
  * effects — extracted so the SFC stays declarative and these can be
  * unit-tested in isolation.
  */

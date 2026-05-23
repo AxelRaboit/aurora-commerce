@@ -16,3 +16,12 @@ dev_root:
     defaults:
         route: dev_dashboard
         permanent: true
+
+# URL backward-compat after the PF Dashboard → Overview merge (2026-05).
+# Existing bookmarks of /backend/personal-finance/dashboard keep working.
+backend_personal_finance_dashboard:
+    path: /backend/personal-finance/dashboard
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    defaults:
+        route: backend_personal_finance_overview
+        permanent: true

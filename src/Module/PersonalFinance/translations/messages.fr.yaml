@@ -16,8 +16,6 @@ backend:
           use: Gérer les transactions récurrentes et planifiées
         categorization:
           use: Gérer les règles d'auto-catégorisation
-        dashboard:
-          use: Voir le tableau de bord finance perso
         overview:
           use: Voir la vue globale cross-portefeuilles
   modules:
@@ -40,8 +38,6 @@ backend:
     personal_finance_recurring_description: 'Transactions récurrentes (chaque mois à un jour fixe) et planifiées (one-off futur).'
     personal_finance_categorization: Auto-catégorisation
     personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement quand tu catégorises une transaction.'
-    personal_finance_dashboard: Tableau de bord
-    personal_finance_dashboard_description: 'Vue d''ensemble : KPIs du mois, sparkline 30 jours, top catégories, soldes pinés, dernières transactions, alertes budget.'
     personal_finance_overview: Vue globale
     personal_finance_overview_description: 'Synthèse cross-portefeuilles : solde total cumulé, flux mensuel agrégé, breakdown par portefeuille et par catégorie, transactions récentes toutes wallets confondues.'
   parameters:
@@ -321,38 +317,21 @@ personal_finance:
       planned_required: Le montant planifié est requis.
       planned_format: 'Format invalide. Exemple : 1234.56'
       carried_format: 'Format invalide. Exemple : 1234.56 ou -1234.56'
-  dashboard:
-    title: Tableau de bord
-    subtitle: Vue d'ensemble en un coup d'œil de ta finance perso ce mois-ci.
-    help: 'Synthèse mensuelle des portefeuilles épinglés : indicateurs revenus / dépenses, sparkline 30 jours, top catégories, transactions récentes et alertes budget. Les portefeuilles affichés sont ceux marqués comme épinglés depuis la page Portefeuilles.'
-    pinned_wallet_link_title: 'Voir les transactions de {name}'
-    vs_previous_month: vs. mois précédent
-    income_minus_expense: Revenus − Dépenses
-    across_wallets: 'sur {count} portefeuille(s)'
-    spending_30d: Dépenses sur 30 jours
-    top_categories: Top catégories du mois
-    pinned_wallets: Portefeuilles épinglés
-    no_pinned_wallets: Aucun portefeuille épinglé. Active "Afficher sur le tableau de bord" dans l'édition d'un portefeuille.
-    recent_transactions: Dernières transactions
-    goals: Objectifs
-    goals_active_total: actifs / total
-    upcoming_recurring: Récurrentes à venir
-    upcoming_scheduled: Planifiées à venir
-    day_of_month: 'Le {day} du mois'
-    budget_alerts: Alertes budget
-    no_data_yet: Pas encore de données.
-    kpi:
-      expense_month: Dépenses du mois
-      income_month: Revenus du mois
-      net_month: Net du mois
-      total_balance: Solde total
   overview:
     title: Vue globale
     subtitle: 'Synthèse cross-portefeuilles pour {month}.'
-    help: 'Vue agrégée de tous les portefeuilles accessibles : solde total, flux mensuel cumulé, breakdown par portefeuille et par catégorie, transactions récentes. Différent du tableau de bord qui se concentre sur les portefeuilles épinglés.'
+    help: 'Vue agrégée de tous les portefeuilles accessibles : indicateurs du mois, sparkline 30 jours, breakdown par portefeuille et par catégorie, objectifs d''épargne, transactions récurrentes et planifiées à venir, alertes budget. Le bilan complet de la finance personnelle en une seule page.'
     wallets_breakdown: Répartition par portefeuille
     category_breakdown: Top catégories de dépenses
     recent_transactions: Dernières transactions
+    spending_30d: Dépenses 30 jours
+    goals: Objectifs d'épargne
+    goals_active_total: actifs / total
+    upcoming_recurring: Récurrentes à venir
+    upcoming_scheduled: Planifiées à venir
+    budget_alerts: Alertes budget
+    day_of_month: 'Le {day} du mois'
+    vs_previous_month: vs. mois précédent
     no_wallets: Aucun portefeuille accessible.
     no_data_yet: Pas encore de données.
     wallet_link_title: 'Voir les transactions de {name}'
