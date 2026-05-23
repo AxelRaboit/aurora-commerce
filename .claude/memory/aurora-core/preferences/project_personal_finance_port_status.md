@@ -1,6 +1,6 @@
 ---
 name: project-personal-finance-port-status
-description: État du port Spendly → PersonalFinance — sessions complétées + ordre des sessions à venir avec dépendances bloquantes
+description: État du port Spendly → PersonalFinance — V1 scellée (port complet + audit + tests + polish UX), V2 backlog priorisé
 metadata:
   type: project
 ---
@@ -11,86 +11,118 @@ Suivi rolling de l'avancement du module `src/Module/PersonalFinance/`
 (port de [Spendly](https://github.com/AxelRaboit/spendly)). À mettre à
 jour à la fin de chaque session.
 
-## Sessions complétées (au 2026-05-23)
+## V1 — Scellée le 2026-05-23
 
-| # | Session | Commit | Statut |
+🟢 **Module 100% conforme aux conventions Aurora, prêt pour utilisateurs réels.**
+
+### Sessions de port (1 → 10) — fait
+
+| # | Session | Commit |
+|---|---|---|
+| 1 | Fondations module + Context + settings + ModuleParameterEnum | `4968d108` |
+| 2a | Wallet entity 5-layer + sub-feature | `4a3318ff` |
+| 2b | WalletMember + Voter (5 attrs) + auto-create owner Member | `b1f86a99` |
+| 2c | WalletInvitation + member management Controllers | `4ec2de2b` |
+| 3 | Category 5-layer + SystemCategoryKeyEnum | `e44f366d` |
+| 4a | Transaction 5-layer (sans Splits/Attachments/Transfer) | `f667ba1b` |
+| 4b | TransferService atomique (2 tx liées par transferId UUID v7) | `dce46700` |
+| 4b-UI | Modale Transfer Vue + composables `useTransfersForm` / `useTransfersDelete` | `598d8418` |
+| 4c | SplitService (N tx liées par splitId) + UI modale dynamique N rows | (inclus 4c batch) |
+| 4d | Attachments transactions (1 fichier, PDF+raster, 5 Mo) | (inclus 4d batch) |
+| 5 | WalletBalanceService + BalanceAdjustmentService + UI soldes | `73480834` |
+| 6a | Budget + BudgetItem entities 5-layer + Manager.ensureForMonth lazy | `d49767e4` |
+| 6b | Page Vue `PersonalFinanceBudgetsApp` + ViewBuilder | `b4892526` |
+| 7a | Goal entity + Manager + `PersonalFinanceGoalSyncSubscriber` + 2 events | `aeac5162` |
+| 7b | Page Vue `PersonalFinanceGoalsApp` (cards + progress + 3 modales) | `56ad3b02` |
+| 8 | Recurring + Scheduled entities + cron command + Vue 2-tabs | `77f3620d` |
+| 9 | CategorizationRule + LearnService + SuggestService + Subscriber | `3262f160` |
+| 10 | PersonalFinanceDashboardService + Vue page + inline SVG sparkline | (commit batch) |
+
+### Post-port (audit + polish + tests) — fait
+
+| Lot | Commit | Contenu |
+|---|---|---|
+| Demo fixtures | `7dc973a2`, `701a68ef` | Données seed sur `dev@aurora.app` |
+| Recurring polish | `79acbe30` | Format date, header colonne propre |
+| Transaction polish | `628c6a93`, `ba8bf601`, `f38ebc7f` | Badges transfer/split/plain |
+| Budgets — quick-add | `5b2f38fd` | Bouton Receipt sur chaque ligne → modal pré-remplie |
+| Budgets — drill-down | `febb4089`, `b8867246`, `47d4b63b` | Modal liste transactions par item + infinite scroll + search |
+| Bills → FixedCharges rename | `2391259c` | Enum + migration + i18n FR/EN |
+| Help banners | `8918304f`, `677b95df` | AppMessage sur chaque page (8 pages) |
+| Tone convention | `1102473c` | Réécriture impersonnelle + memory `convention_ui_copy_tone` |
+| Recurring confirmation modals | `fd0291c5`, `ff5ad9c4` | Matérialiser + Mettre en pause |
+| Switcher mois Budget | `fcfff510` | YYYY-MM → "Mai 2026" via `formatMonthYear` |
+| Budget visual pass | `4c7a2385`, `406046d5`, `4d7f6b08` | Couleurs sections, icônes, progress, mobile parity, overrun, badges |
+| Sidebar icons | `893205d5` | Fix fallback FileText + meilleurs choix |
+| **Audit punch-list (6 items)** | `4e11e5ee`, `c979f02d` | Goal hook rename, extraFields 5 composables, DTOs WalletInvitation + CategorizationRule, decoupling Media, AppTab |
+| Form labels | `c2c9e127` | Drop "(optionnel)" + extension `convention_form_components` |
+| **Test coverage critique** | `845acdb2` | 11 fichiers, 65 tests, 180 assertions (TransferService, SplitService, GoalSyncSubscriber, LearnService, WalletBalanceService, BalanceAdjustmentService, Recurring/Scheduled managers, repo finders, PatternNormalizer) |
+
+### Tests
+
+- **2832 tests / 10801 assertions / 0 fail** (PHPUnit)
+- **65 tests PF dédiés** (sur les 2832 totaux)
+- 9 tests vitest `useDateFormat` (incl. `formatMonthYear`)
+
+### Conventions ajoutées par la V1
+
+- `convention_form_components` (étendue : asterisk = required, DTO ↔ UI miroir, `:error` bindé, placeholder obligatoire, dates AppDatePicker)
+- `convention_ui_copy_tone` (nouvelle : impersonnel, pas de nom de marque, pas d'emojis dans le copy)
+- `convention_multi_button_toolbar` (nouvelle : 2+ boutons `#actions` = wrapper `flex flex-col sm:flex-row`)
+
+## V2 — Backlog priorisé
+
+7 sessions identifiées. Aucune n'est bloquante pour les autres — l'ordre
+ci-dessous reflète **valeur utilisateur** / effort.
+
+### 🟢 Backlog cartographié (5 sessions)
+
+| # | Session | Effort | Pourquoi |
 |---|---|---|---|
-| 1 | Fondations module (`PersonalFinanceModule`, Context, settings tab, ModuleParameterEnum::PersonalFinanceBackend) | `4968d108` | 🟢 |
-| 2a | Wallet entity (5-layer) + sub-feature `PersonalFinanceWallets` + Controller/Twig/Vue placeholder | `4a3318ff` | 🟢 |
-| 2b | WalletMember + Voter `PersonalFinanceWalletVoter` (5 attrs) + auto-create owner Member | `b1f86a99` | 🟢 |
-| 2c | WalletInvitation + member management (updateRole, removeMember) + 2 Controllers (invitations, members) | `4ec2de2b` | 🟢 |
-| 3 | Category (5-layer) + `SystemCategoryKeyEnum` + sub-feature `PersonalFinanceCategories` | `e44f366d` | 🟢 |
-| 4a | Transaction (5-layer, sans Splits/Attachments/Transfer) + Enum Income/Expense + sub-feature `PersonalFinanceTransactions` | `f667ba1b` | 🟢 |
-| 4b | TransferService atomique (2 transactions liées par `transferId` UUID v7) + `PersonalFinanceTransferInput` DTO + `PersonalFinanceTransfersController` (create/update/delete) + guard `ensureNotTransferLeg` sur le Manager + `findByTransferId` repo | `dce46700` | 🟢 |
-| 4b-UI | Modale Transfer Vue intégrée dans `PersonalFinanceTransactionsApp` (toolbar 2 boutons, composables `useTransfersForm` + `useTransfersDelete`, endpoint `/transfers/{id}/show`) | `598d8418` | 🟢 |
-| 4c | TransactionSplit (N tx liées par `splitId` UUID v7) + `PersonalFinanceSplitInput` + `PersonalFinanceSplitService` + Controller + Manager guard généralisé en `ensureMutableLeg` + UI modale dynamique N rows | _(à committer)_ | 🟢 |
-| 4d | Attachments (1 fichier/tx, PDF+raster, 5 Mo, var/uploads/personal-finance/transactions/{id}/) + colonne `attachment_original_name` (migration `Version20260523000000`) + Service + Controller (upload/delete/serve) + UI section dans la modale edit | _(à committer)_ | 🟢 |
-| 5 | WalletBalanceService (`currentBalance` / `monthlyBalance` / `rollingStartBalance` en bcmath) + `BalanceAdjustmentService` (lazy `BalanceAdjustment` system category) + DTO + Controller + UI barre de soldes + modale Ajuster dans `PersonalFinanceTransactionsApp` | `73480834` | 🟢 |
-| 6a | Budget + BudgetItem entities (5-layer) + `BudgetSectionEnum` + Manager.ensureForMonth lazy + ViewBuilder + 4 endpoints + migration `Version20260523120000` + cascade `PersonalFinanceBudgets` toggle | `d49767e4` | 🟢 |
-| 6b | Page Vue `PersonalFinanceBudgetsApp` (mois nav + sections + items inline avec progress + modale create/edit) + Twig + NavItem + composables `useBudgetData`/`useBudgetItemsForm` + translations | `b4892526` | 🟢 |
-| 7a | Goal entity + Manager User-style (create/update/deposit/delete/recomputeSavedAmount) + 2 events + `PersonalFinanceGoalSyncSubscriber` (dispatch depuis Manager + SplitService) + migration `Version20260523180000` + partial unique (user_id, category_id) | `aeac5162` | 🟢 |
-| 7b | Page Vue `PersonalFinanceGoalsApp` (cards grid avec progress + color + monthly contribution + tri) + 3 modales (create/edit/deposit) + Twig + NavItem + ViewBuilder + translations | `56ad3b02` | 🟢 |
-| 8 | Recurring + Scheduled entities (5-layer chacune) + Manager hooks (`generateIfDue`, `materialize`, `toggle`) + commande `personal-finance:recurring:generate` (idempotente, --dry-run, --date) + Controller (8 endpoints) + Vue 2-tabs (`PersonalFinanceRecurringApp`) + migration `Version20260524000000` + CHECK constraint day_of_month 1-28 | `77f3620d` | 🟢 |
-| 9 | CategorizationRule entity + `PatternNormalizer` (iconv ASCII//TRANSLIT) + `LearnService` + `SuggestService` (single + bulk) + `PersonalFinanceCategorizationLearnSubscriber` (listens to `TransactionSavedEvent`) + Manager + Controller + Vue page avec inline category dropdown + partial unique (user_id, pattern) | `3262f160` | 🟢 |
-| 10 | `PersonalFinanceDashboardService` (KPI mois ± delta % + sparkline 30j + top catégories + pinned wallets + recent tx + goals snapshot + upcoming recurring/scheduled + budget alerts) + `Dashboard/Controller` (index + /refresh JSON) + Vue page `PersonalFinanceDashboardApp` (inline SVG sparkline, no chart lib) + NavItem en premier dans la section | _(à committer)_ | 🟢 |
+| **v2-1** (6c) | **BudgetPreset + auto-rollover** : entité template user-level + service qui copie les items `repeatNextMonth=true` au début du mois suivant. Modale "appliquer un preset" au create d'un nouveau budget mensuel | M | Évite la re-saisie manuelle chaque mois — feedback récurrent de tout user Spendly |
+| **v2-2** (11) | **Import Excel** : 2-step upload → preview → process. Service `PersonalFinanceImportService` (parse via PhpSpreadsheet ou ext locale) + template Excel téléchargeable + DTO de validation. Mapping flexible (date / montant / catégorie / description / tags) | L | Onboarding utilisateurs qui ont déjà un historique ailleurs (banque, autre app) |
+| **v2-3** (2c-2) | **UI Members modal** + page publique acceptation invitation + email integration (Mailer + Twig template). Backend invitations déjà 100% prêt depuis V1 — seule l'UI manque | S | Débloque le multi-utilisateur (couple partage budget) — backend bossé, UI rapide |
+| **v2-4** | **Vue Globale (Overview)** multi-wallets agrégée : `PersonalFinanceOverviewService` somme cross-wallet + Vue dédiée. Différent du Dashboard qui est centré KPIs du mois | M | Utilisateurs avec 3+ wallets : voir le big picture |
+| **v2-5** | **Statistics page** : analyses temporelles (3/6/12 mois), heatmap dépenses, comparaison année-N vs N-1, breakdown par catégorie. Inline SVG chart lib-free comme le Dashboard | M | Power users qui veulent challenger leurs habitudes |
 
-## Sessions à venir
+### 🟢 Quick-wins (2 sessions)
 
-| # | Session | Bloque ? | Prérequis |
+| # | Session | Effort | Pourquoi |
 |---|---|---|---|
-| 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
-| 6c | BudgetPreset (template user-level) + service auto-rollover next month (copy items repeat=true) | non — V2 | 6a |
-| 11 | Import Excel (2 steps : upload → preview → process) | non | 4a |
+| **v2-6** | **Tags UI** : la colonne `tags` (jsonb) existe déjà sur `PersonalFinanceTransaction` mais aucune UI ne l'utilise. Ajouter un `AppTagInput` dans la modale create/edit + filter par tag dans la liste | S | Backend 100% prêt — gros levier UX pour 1 session |
+| **v2-7** | **Export PDF/Excel** des transactions + budget : bouton download dans la toolbar, génération côté serveur (PhpSpreadsheet déjà installable, Dompdf déjà dans Aurora) | M | Archivage, déclarations fiscales, transition vers comptable |
 
-## État de conformité au 2026-05-23 (post-audit)
+### 🔵 Hors scope V2 (idées sans décision)
 
-Backend PHP **100% conforme** à la convention 5-layer Sylius-style.
-Frontend Vue post-audit :
+- **Open Banking sync** (PSD2 / Bridge / Powens) — gros chantier 2-3 semaines, sécurité critique
+- **Sous-catégories hiérarchiques** (Alimentation > Courses > Bio) — refacto Category + impact auto-cat + budget + dashboard
+- **Multi-devise par wallet** (actuellement EUR global) — refacto Decimal handling
+- **Budget annuel** (en complément du mensuel) — nouvelle entité, nouvelle page
+- **Récurrences flexibles** (hebdo, annuel, quinzaine) — actuellement mensuel jour 1-28 uniquement
+- **Notification d'alerte budget** (email/push quand actual > expected × threshold)
 
-✅ **Résolu** :
-- Slots `extra-headers` / `extra-cells` / `extra-form-fields` sur les 3 apps
-- Prop `extraFields` propagée aux composables sur les 3 apps
-- Composables `useXxxCreate` + `useXxxEdit` extraits pour Wallets,
-  Categories ET Transactions (SFC thin partout)
-- **Pagination serveur** + AppPagination + AppLoader sur Wallets
-  (`useListPage` + backend `/list` JSON + `findPaginatedAccessibleByUser`
-  dans le repo, pattern CompaniesApp)
+## Ordre recommandé pour V2
 
-⚠️ **Dette restante** :
-- **[HIGH] Pagination serveur manquante sur Categories + Transactions** :
-  les 2 apps utilisent encore un filter client-side `currentCategories`
-  / `currentTransactions` au lieu de `useListPage`. À refactor sur le
-  même modèle que Wallets : repo `findPaginated*`, ViewBuilder
-  `buildListPayload(PaginationRequest)`, Controller endpoint `/list`,
-  Vue `useListPage` + `AppPagination` + `AppLoader`. Le skill
-  `add-crud-list-ui` documente le pattern.
+Si aucun item n'est prioritaire produit, attaquer par effort croissant
+et valeur immédiate :
 
-## Why
+1. **v2-3 UI Members** (S) — backend prêt, débloque multi-user
+2. **v2-6 Tags UI** (S) — backend prêt, quick win UX
+3. **v2-1 BudgetPreset** (M) — feature à forte demande, scope auto-suffisant
+4. **v2-4 Overview** (M) — bénéficie de la maturité Budget/Goal
+5. **v2-5 Statistics** (M) — vient après Overview, même pattern d'agrégation
+6. **v2-7 Export** (M) — feature transverse, peut se faire à n'importe quel moment
+7. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée
 
-Le scope total est ~50+ fichiers par sub-module donc impossible en une
-seule session. Le découpage en sessions atomiques (1 commit = 1 livrable
-cohérent) permet de faire des pauses propres entre dev sessions sans
-laisser de code half-baked.
+## Comment l'appliquer
 
-## How to apply
-
-1. **Prochaine session** (par défaut) : Session 4 — Transaction. C'est le
-   prérequis critique pour 5, 6, 7, 8, 9, 11. Lire d'abord
-   `docs/aurora-core/todo/spendly/transactions.md`.
-2. **Si besoin de finir Wallet d'abord** : Session 2c-2 (UI Members) est
-   safe à insérer entre 3 et 4 mais n'est pas un blocker.
-3. **Toujours updater ce fichier en fin de session** : ajouter une ligne
-   dans la table "Sessions complétées" avec le sha du commit, et
-   éventuellement retirer la session correspondante de "à venir".
-4. **Migrations à appliquer après pull** : voir `migrations/Version*.php`
-   créées dans chaque commit. La règle reste `make migrate` après pull.
-5. **Voir [[decision-personal-finance-wallet-voter-reuse]]** pour le
-   pattern Voter à utiliser dans Transaction et tous les sub-modules
-   ultérieurs.
-6. **Voir [[decision-personal-finance-system-categories-lazy]]** pour la
-   création lazy des catégories système (utilisée par TransferService et
-   BalanceAdjustmentService).
-7. **Voir [[decision-personal-finance-transfer-legs-guard]]** pour la règle
-   "transactions avec `transferId` non-éditables via le Manager" — toute
-   nouvelle UI/endpoint qui édite une `PersonalFinanceTransaction` doit
-   filtrer ou rediriger les transferts.
+- À chaque session V2 terminée : ajouter une ligne dans une nouvelle
+  table "V2 — Sessions complétées" + cocher l'item correspondant dans
+  le backlog.
+- Toujours commit atomique par session.
+- Update le status à la fin de chaque session pour qu'une nouvelle
+  conversation reprenne le contexte sans lire le code.
+- Voir [[decision-personal-finance-wallet-voter-reuse]],
+  [[decision-personal-finance-system-categories-lazy]],
+  [[decision-personal-finance-transfer-legs-guard]] pour les décisions
+  d'archi V1 à respecter.
