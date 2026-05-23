@@ -283,6 +283,7 @@ personal_finance:
     updated: Line updated.
     totals_line: '{actual} / {planned} spent'
     carried_label: 'carried: {amount}'
+    rolled_over_toast: '{count, plural, one {1 line rolled over from the previous month} other {# lines rolled over from the previous month}}'
     overrun_warning: Planned budget exceeded
     section_progress_title: Overall section progress
     empty_section_cta: Add the first line

@@ -26,4 +26,12 @@ interface PersonalFinanceBudgetManagerInterface
     public function updateNotes(PersonalFinanceBudgetInterface $budget, ?string $notes): void;
 
     public function delete(PersonalFinanceBudgetInterface $budget): void;
+
+    /**
+     * Number of items the last `ensureForMonth` call copied from the
+     * previous month via the auto-rollover service. Zero when the
+     * budget already existed (no creation, no rollover) or when no
+     * previous month had repeat-flagged items.
+     */
+    public function lastRolloverCount(): int;
 }

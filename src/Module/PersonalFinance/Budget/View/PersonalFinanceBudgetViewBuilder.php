@@ -118,6 +118,7 @@ final readonly class PersonalFinanceBudgetViewBuilder
             'budget' => $this->budgetSerializer->serialize($budget),
             'sections' => $serializedBySection,
             'balance' => $this->balanceService->snapshot($wallet, $month),
+            'rolledOver' => $this->budgetManager->lastRolloverCount(),
         ];
     }
 
