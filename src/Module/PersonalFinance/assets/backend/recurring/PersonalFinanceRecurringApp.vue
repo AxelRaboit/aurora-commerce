@@ -104,7 +104,12 @@ const { pendingDelete: pendingDeleteSched, loading: deleteSchedLoading, confirm:
     "personal_finance.recurring.deleted_scheduled",
 );
 
-const { toggle: toggleRec } = useRecurringToggle(props.toggleRecurringPath, refreshRecurring);
+const {
+    pendingPause,
+    loading: toggleLoading,
+    confirm: confirmToggleRec,
+    submit: doPauseRec,
+} = useRecurringToggle(props.toggleRecurringPath, refreshRecurring);
 const {
     pendingMaterialize,
     loading: materializeLoading,
@@ -170,7 +175,7 @@ function signedAmount(row) {
                     </div>
                     <slot name="extra-cells" :tab="'recurring'" :item="rec" />
                     <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
-                        <AppIconButton :color="rec.active ? 'amber' : 'emerald'" :title="rec.active ? t('personal_finance.recurring.toggle_disable') : t('personal_finance.recurring.toggle_enable')" v-on:click="toggleRec(rec)">
+                        <AppIconButton :color="rec.active ? 'amber' : 'emerald'" :title="rec.active ? t('personal_finance.recurring.toggle_disable') : t('personal_finance.recurring.toggle_enable')" v-on:click="confirmToggleRec(rec)">
                             <Pause v-if="rec.active" class="w-4 h-4" :stroke-width="2" />
                             <Play v-else class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
@@ -209,7 +214,7 @@ function signedAmount(row) {
                             <slot name="extra-cells" :tab="'recurring'" :item="rec" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
-                                    <AppIconButton :color="rec.active ? 'amber' : 'emerald'" :title="rec.active ? t('personal_finance.recurring.toggle_disable') : t('personal_finance.recurring.toggle_enable')" v-on:click="toggleRec(rec)">
+                                    <AppIconButton :color="rec.active ? 'amber' : 'emerald'" :title="rec.active ? t('personal_finance.recurring.toggle_disable') : t('personal_finance.recurring.toggle_enable')" v-on:click="confirmToggleRec(rec)">
                                         <Pause v-if="rec.active" class="w-4 h-4" :stroke-width="2" />
                                         <Play v-else class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
@@ -393,6 +398,22 @@ function signedAmount(row) {
                     <AppButton variant="danger" size="md" :loading="deleteSchedLoading" v-on:click="doDeleteSched">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal :show="!!pendingPause" max-width="sm" :closeable="false" :title="t('personal_finance.recurring.toggle_disable')" :icon="Pause" v-on:close="pendingPause = null">
+            <p class="text-sm text-primary">{{ t("personal_finance.recurring.toggle_pause_confirm") }}</p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingPause = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="toggleLoading" v-on:click="doPauseRec">
+                        <Pause class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("personal_finance.recurring.toggle_disable") }}
                     </AppButton>
                 </AppModalFooter>
             </template>

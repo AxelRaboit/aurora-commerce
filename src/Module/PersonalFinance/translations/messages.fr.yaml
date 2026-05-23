@@ -327,6 +327,9 @@ personal_finance:
     materialize_confirm: 'Matérialiser cette transaction planifiée ? Une transaction sera créée dans le portefeuille avec la date prévue. Cette action est irréversible.'
     toggle_enable: Activer
     toggle_disable: Mettre en pause
+    toggle_pause_confirm: 'Mettre cette règle récurrente en pause ? Aucune transaction ne sera générée tant que la règle reste inactive. Elle peut être réactivée à tout moment.'
+    toggle_paused: Règle mise en pause.
+    toggle_resumed: Règle réactivée.
     next_expected: 'Prochaine : {date}'
     last_generated: 'Dernière génération : {date}'
     never_generated: Jamais générée

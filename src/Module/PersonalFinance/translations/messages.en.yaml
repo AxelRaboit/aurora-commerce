@@ -327,6 +327,9 @@ personal_finance:
     materialize_confirm: 'Materialise this scheduled transaction? A transaction will be created in the wallet with the scheduled date. This action cannot be undone.'
     toggle_enable: Enable
     toggle_disable: Pause
+    toggle_pause_confirm: 'Pause this recurring rule? No transaction will be generated while the rule stays inactive. It can be resumed at any time.'
+    toggle_paused: Rule paused.
+    toggle_resumed: Rule resumed.
     next_expected: 'Next: {date}'
     last_generated: 'Last generated: {date}'
     never_generated: Never generated
