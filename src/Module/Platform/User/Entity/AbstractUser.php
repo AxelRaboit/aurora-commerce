@@ -64,6 +64,18 @@ abstract class AbstractUser implements CoreUserInterface
     #[Groups(['user:read'])]
     protected array $hiddenNavItems = [];
 
+    /**
+     * Per-section colour overrides for the sidemenu — `{sectionId: colorName}`
+     * (e.g. `{"personal_finance": "emerald", "editorial": "rose"}`). Unknown
+     * sections fall back to the default palette defined in
+     * `useSidemenuSectionTheme`. User-managed via /backend/profile/sidemenu.
+     *
+     * @var array<string, string>
+     */
+    #[ORM\Column(type: 'json', options: ['default' => '{}'])]
+    #[Groups(['user:read'])]
+    protected array $navSectionColors = [];
+
     #[ORM\Column]
     protected string $password;
 
@@ -400,6 +412,20 @@ abstract class AbstractUser implements CoreUserInterface
     public function setHiddenNavItems(array $hiddenNavItems): static
     {
         $this->hiddenNavItems = array_values(array_unique($hiddenNavItems));
+
+        return $this;
+    }
+
+    /** @return array<string, string> */
+    public function getNavSectionColors(): array
+    {
+        return $this->navSectionColors;
+    }
+
+    /** @param array<string, string> $navSectionColors */
+    public function setNavSectionColors(array $navSectionColors): static
+    {
+        $this->navSectionColors = $navSectionColors;
 
         return $this;
     }

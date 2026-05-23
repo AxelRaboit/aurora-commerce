@@ -77,8 +77,19 @@ function makeTheme(c) {
     /* eslint-enable indent */
 }
 
-export function useSidemenuSectionTheme() {
+/**
+ * @param {Record<string, string>} [overrides] Optional map of sectionId →
+ *   palette name (`emerald`, `rose`, …). Overrides win over the built-in
+ *   `SECTION_THEMES` so an admin / per-user customisation can swap the
+ *   default palette without forking this file.
+ */
+export function useSidemenuSectionTheme(overrides = {}) {
     function resolve(sectionId) {
+        const overrideColor = overrides[sectionId];
+        if (typeof overrideColor === "string" && overrideColor.length > 0) {
+            return makeTheme(overrideColor);
+        }
+
         return SECTION_THEMES[sectionId] ?? FALLBACK_THEME;
     }
 

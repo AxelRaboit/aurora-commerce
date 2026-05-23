@@ -41,6 +41,7 @@
         navSections: sidemenu_nav_sections(),
         navSectionAliases: nav_section_aliases(),
         navItemAliases: nav_item_aliases(),
+        navSectionColors: app.user.navSectionColors|default({}),
         userName: app.user.name,
         userEmail: app.user.email,
         userPhotoUrl: aurora_profile_photo_url(app.user) ?? '',

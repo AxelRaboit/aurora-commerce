@@ -16,6 +16,7 @@ export function useSidemenuPreferences({
     itemAliases,
     initialHiddenSections,
     initialHiddenItems,
+    initialSectionColors,
     savePath,
     resetPath,
 }) {
@@ -23,6 +24,7 @@ export function useSidemenuPreferences({
 
     const hiddenSections = ref(new Set(initialHiddenSections ?? []));
     const hiddenItems = ref(new Set(initialHiddenItems ?? []));
+    const sectionColors = ref({ ...(initialSectionColors ?? {}) });
     const search = ref("");
 
     const { loading: saving, request: saveRequest } = useRequest();
@@ -97,15 +99,35 @@ export function useSidemenuPreferences({
         hiddenItems.value = next;
     }
 
+    function setSectionColor(sectionId, colorName) {
+        const next = { ...sectionColors.value };
+        if (colorName) {
+            next[sectionId] = colorName;
+        } else {
+            delete next[sectionId];
+        }
+        sectionColors.value = next;
+    }
+
+    function clearSectionColor(sectionId) {
+        setSectionColor(sectionId, null);
+    }
+
+    function getSectionColor(sectionId) {
+        return sectionColors.value[sectionId] ?? null;
+    }
+
     async function save() {
         const data = await saveRequest(savePath, {
             hiddenNavSections: [...hiddenSections.value],
             hiddenNavItems: [...hiddenItems.value],
+            navSectionColors: sectionColors.value,
         });
         if (!data) return;
         if (data.success) {
             hiddenSections.value = new Set(data.hiddenNavSections ?? []);
             hiddenItems.value = new Set(data.hiddenNavItems ?? []);
+            sectionColors.value = { ...(data.navSectionColors ?? {}) };
             toast.success(t("backend.profile.sidemenu.saved"));
         } else {
             toast.error(t("shared.common.error"));
@@ -118,12 +140,17 @@ export function useSidemenuPreferences({
         if (data.success) {
             hiddenSections.value = new Set();
             hiddenItems.value = new Set();
+            sectionColors.value = {};
             toast.success(t("backend.profile.sidemenu.reset_done"));
         }
     }
 
     const hiddenCount = computed(
         () => hiddenSections.value.size + hiddenItems.value.size,
+    );
+
+    const customColorCount = computed(
+        () => Object.keys(sectionColors.value).length,
     );
 
     return {
@@ -134,6 +161,11 @@ export function useSidemenuPreferences({
         hiddenSections,
         hiddenItems,
         hiddenCount,
+        sectionColors,
+        customColorCount,
+        getSectionColor,
+        setSectionColor,
+        clearSectionColor,
         isSectionHidden,
         isItemHidden,
         toggleSection,

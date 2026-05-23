@@ -62,7 +62,7 @@ backend:
         sidemenu: Sidemenu
     sidemenu:
       title: Sidemenu preferences
-      subtitle: Hide the sections or modules you don't use to declutter your sidemenu. Pages stay reachable by direct URL.
+      subtitle: Customise the nav — hide sections or modules you don't use, or recolour a section to spot it faster. Pages stay reachable by direct URL.
       section_hint: Turn off the toggle to hide the whole section, or adjust module by module.
       hide_all: Hide all
       show_all: Show all
@@ -73,6 +73,8 @@ backend:
       empty: No sections available.
       empty_search: No matches for this search.
       search_placeholder: Search a section or module…
+      color_label: Colour
+      color_reset: Reset to default colour
     danger:
       title: Danger zone
       description: Deleting your account is irreversible. All your data will be permanently erased.

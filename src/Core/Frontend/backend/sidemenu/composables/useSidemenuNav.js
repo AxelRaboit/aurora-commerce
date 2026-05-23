@@ -99,9 +99,10 @@ export function useSidemenuNav(
     activeRoute,
     sectionAliases = {},
     itemAliases = {},
+    sectionColorOverrides = {},
 ) {
     const { t } = useI18n();
-    const { itemClasses: themeItemClasses, iconClasses: themeIconClasses } = useSidemenuSectionTheme();
+    const { itemClasses: themeItemClasses, iconClasses: themeIconClasses } = useSidemenuSectionTheme(sectionColorOverrides);
 
     const {
         isExpanded: isGroupExpanded,

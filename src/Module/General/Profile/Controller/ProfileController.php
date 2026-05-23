@@ -196,6 +196,7 @@ final class ProfileController extends AbstractController
             'navPreferences' => $this->moduleRegistry->getNavPreferences(),
             'hiddenNavSections' => $user->getHiddenNavSections(),
             'hiddenNavItems' => $user->getHiddenNavItems(),
+            'navSectionColors' => $user->getNavSectionColors(),
         ]);
     }
 
@@ -208,11 +209,13 @@ final class ProfileController extends AbstractController
 
         $hiddenSections = $data['hiddenNavSections'] ?? [];
         $hiddenItems = $data['hiddenNavItems'] ?? [];
+        $sectionColors = $data['navSectionColors'] ?? [];
 
-        if (!is_array($hiddenSections) || !is_array($hiddenItems)) {
+        if (!is_array($hiddenSections) || !is_array($hiddenItems) || !is_array($sectionColors)) {
             return $this->jsonInvalidInput([
                 'hiddenNavSections' => 'Invalid format',
                 'hiddenNavItems' => 'Invalid format',
+                'navSectionColors' => 'Invalid format',
             ]);
         }
 
@@ -220,11 +223,13 @@ final class ProfileController extends AbstractController
             $user,
             array_values(array_filter($hiddenSections, is_string(...))),
             array_values(array_filter($hiddenItems, is_string(...))),
+            $sectionColors,
         );
 
         return $this->jsonSuccess([
             'hiddenNavSections' => $user->getHiddenNavSections(),
             'hiddenNavItems' => $user->getHiddenNavItems(),
+            'navSectionColors' => $user->getNavSectionColors(),
         ]);
     }
 

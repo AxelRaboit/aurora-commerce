@@ -62,8 +62,8 @@ backend:
         sidemenu: Menu latéral
     sidemenu:
       title: Préférences du menu latéral
-      subtitle: Cachez les sections ou modules que vous n'utilisez pas pour épurer votre navigation. Les pages restent accessibles par URL directe.
-      section_hint: Désactivez le bouton pour cacher toute la section, ou ajustez module par module.
+      subtitle: Personnaliser la navigation — cacher les sections ou modules non utilisés, ou changer la couleur d'une section pour mieux la repérer. Les pages restent accessibles par URL directe.
+      section_hint: Désactiver le bouton pour cacher toute la section, ou ajuster module par module.
       hide_all: Tout cacher
       show_all: Tout afficher
       save: Enregistrer
@@ -73,6 +73,8 @@ backend:
       empty: Aucune section disponible.
       empty_search: Aucun résultat pour cette recherche.
       search_placeholder: Rechercher une section ou un module…
+      color_label: Couleur
+      color_reset: Réinitialiser à la couleur par défaut
     danger:
       title: Zone de danger
       description: La suppression de votre compte est irréversible. Toutes vos données seront définitivement effacées.

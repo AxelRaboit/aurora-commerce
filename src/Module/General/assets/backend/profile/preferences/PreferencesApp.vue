@@ -14,6 +14,7 @@ const props = defineProps({
     itemAliases: { type: Object, default: () => ({}) },
     hiddenNavSections: { type: Array, default: () => [] },
     hiddenNavItems: { type: Array, default: () => [] },
+    navSectionColors: { type: Object, default: () => ({}) },
     savePath: { type: String, required: true },
     resetPath: { type: String, required: true },
 });
@@ -30,6 +31,7 @@ const TABS = [
             itemAliases: props.itemAliases,
             hiddenNavSections: props.hiddenNavSections,
             hiddenNavItems: props.hiddenNavItems,
+            navSectionColors: props.navSectionColors,
             savePath: props.savePath,
             resetPath: props.resetPath,
         }),

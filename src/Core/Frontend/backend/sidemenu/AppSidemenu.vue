@@ -53,6 +53,8 @@ const props = defineProps({
     notificationsDeleteAllPath: { type: String, default: "" },
     navSectionAliases: { type: Object, default: () => ({}) },
     navItemAliases: { type: Object, default: () => ({}) },
+    /** Per-section colour overrides — `{sectionId: colorName}`. */
+    navSectionColors: { type: Object, default: () => ({}) },
 });
 
 const { t } = useI18n();
@@ -77,9 +79,9 @@ const {
     dashboardPath, groupedSections, navItems, navFilter, displayedSections,
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
     isActive, isActiveExact, itemIsActive, itemClasses, iconClasses,
-} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases, props.navItemAliases);
+} = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases, props.navItemAliases, props.navSectionColors);
 
-const { headerClasses: sectionHeaderClasses, labelClasses: sectionLabelClasses } = useSidemenuSectionTheme();
+const { headerClasses: sectionHeaderClasses, labelClasses: sectionLabelClasses } = useSidemenuSectionTheme(props.navSectionColors);
 
 const SECTION_CONFIG = {
     recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },

@@ -126,6 +126,12 @@ interface CoreUserInterface extends UserInterface, PasswordAuthenticatedUserInte
     /** @param list<string> $hiddenNavItems */
     public function setHiddenNavItems(array $hiddenNavItems): static;
 
+    /** @return array<string, string> Per-section colour overrides (sectionId → palette name) */
+    public function getNavSectionColors(): array;
+
+    /** @param array<string, string> $navSectionColors */
+    public function setNavSectionColors(array $navSectionColors): static;
+
     public function getAgency(): ?AgencyInterface;
 
     public function setAgency(?AgencyInterface $agency): static;
