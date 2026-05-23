@@ -29,13 +29,16 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
     const transactions = ref([]);
     const page = ref(1);
     const totalPages = ref(1);
+    const search = ref("");
     const pendingDelete = ref(null);
 
     const hasMore = computed(() => page.value < totalPages.value);
 
     async function fetchPage(targetPage) {
         if (!currentItem.value?.id) return;
-        const url = `${buildPath(itemTransactionsPath, { id: currentItem.value.id })}?page=${targetPage}`;
+        const params = new URLSearchParams({ page: String(targetPage) });
+        if (search.value) params.set("search", search.value);
+        const url = `${buildPath(itemTransactionsPath, { id: currentItem.value.id })}?${params}`;
         const payload = await list.request(url, null, HttpMethod.Get);
         if (!payload || payload.success === false) return;
         const incoming = payload.items ?? [];
@@ -53,6 +56,7 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
         transactions.value = [];
         page.value = 1;
         totalPages.value = 1;
+        search.value = "";
         pendingDelete.value = null;
         show.value = true;
         if (!item?.id) return;
@@ -66,11 +70,26 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
         pendingDelete.value = null;
         page.value = 1;
         totalPages.value = 1;
+        search.value = "";
     }
 
     async function loadMore() {
         if (!hasMore.value || list.loading.value) return;
         await fetchPage(page.value + 1);
+    }
+
+    /**
+     * Apply a new search term and re-fetch from page 1 — keeps the
+     * sentinel-driven pagination consistent. Debouncing happens at the
+     * AppSearchInput level, so this is called only when the term has
+     * actually settled.
+     */
+    async function applySearch(value) {
+        search.value = value ?? "";
+        page.value = 1;
+        totalPages.value = 1;
+        transactions.value = [];
+        await fetchPage(1);
     }
 
     function applyUpdated(updated) {
@@ -101,6 +120,8 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
         loading: list.loading,
         hasMore,
         loadMore,
+        search,
+        applySearch,
         pendingDelete,
         deleteLoading: del.loading,
         open,

@@ -160,6 +160,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
             $category,
             $item->getBudget()->getMonth(),
             $pagination->page,
+            search: $pagination->search,
         );
 
         return $this->jsonSuccess([

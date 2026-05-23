@@ -7,6 +7,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useInfiniteScroll } from "@/shared/composables/scroll/useInfiniteScroll.js";
 import PersonalFinanceTransactionEditModal from "../../transaction/components/PersonalFinanceTransactionEditModal.vue";
@@ -46,6 +47,8 @@ const {
     loading,
     hasMore,
     loadMore,
+    search,
+    applySearch,
     pendingDelete,
     deleteLoading,
     open,
@@ -105,8 +108,14 @@ defineExpose({ open });
         v-on:close="close"
     >
         <div class="relative space-y-3">
+            <AppSearchInput
+                v-model="search"
+                :placeholder="t('personal_finance.budget.transactions_modal_search_placeholder')"
+                v-on:search="applySearch"
+            />
+
             <p v-if="!transactions.length && !loading" class="bg-surface-2/40 border border-line rounded-md px-3 py-4 text-sm text-muted text-center">
-                {{ t("personal_finance.budget.transactions_modal_empty") }}
+                {{ search ? t("personal_finance.budget.transactions_modal_empty_filtered") : t("personal_finance.budget.transactions_modal_empty") }}
             </p>
 
             <ul v-if="transactions.length" class="divide-y divide-line/40 border border-line rounded-md overflow-hidden">

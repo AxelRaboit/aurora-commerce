@@ -324,11 +324,12 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     /**
      * Paginated transactions in a single category over a given month —
      * used by the Budgets page to drill down from a budget item into
-     * its actuals (with infinite scroll on the front end).
+     * its actuals (with infinite scroll on the front end). Optional
+     * search filter matches the transaction description (case-insensitive).
      *
      * @return array{items: list<PersonalFinanceTransactionInterface>, total: int, page: int, totalPages: int}
      */
-    public function findPaginatedByCategoryAndMonth(PersonalFinanceCategoryInterface $category, DateTimeImmutable $month, int $page, int $limit = 20): array
+    public function findPaginatedByCategoryAndMonth(PersonalFinanceCategoryInterface $category, DateTimeImmutable $month, int $page, int $limit = 20, ?string $search = null): array
     {
         $start = $month->modify('first day of this month')->setTime(0, 0);
         $end = $month->modify('first day of next month')->setTime(0, 0);
@@ -353,6 +354,12 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             ->setParameter('category', $category)
             ->setParameter('start', $start)
             ->setParameter('end', $end);
+
+        if (null !== $search && '' !== $search) {
+            $pattern = '%'.mb_strtolower($search).'%';
+            $qb->andWhere('LOWER(t.description) LIKE :search')->setParameter('search', $pattern);
+            $countQb->andWhere('LOWER(t.description) LIKE :search')->setParameter('search', $pattern);
+        }
 
         return $this->paginate($qb, $countQb, $page, $limit);
     }
