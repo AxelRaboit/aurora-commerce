@@ -10,6 +10,8 @@ backend:
           use: Gérer les transactions
         budgets:
           use: Gérer les budgets mensuels
+        goals:
+          use: Gérer les objectifs d'épargne
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -24,6 +26,8 @@ backend:
     personal_finance_transactions_description: 'Revenus et dépenses du portefeuille, datés et catégorisés.'
     personal_finance_budgets: Budgets
     personal_finance_budgets_description: 'Budget mensuel par portefeuille : sections, lignes planifiées vs réelles, report.'
+    personal_finance_goals: Objectifs
+    personal_finance_goals_description: 'Objectifs d''épargne avec suivi de progression. Liés à une catégorie = auto-synchronisé depuis les transactions.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut

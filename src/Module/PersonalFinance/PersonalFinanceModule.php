@@ -27,6 +27,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.categories.use'),
             new NavPermission('personal_finance.transactions.use'),
             new NavPermission('personal_finance.budgets.use'),
+            new NavPermission('personal_finance.goals.use'),
         ];
     }
 
@@ -129,6 +130,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceCategories->toToggle(),
             ModuleParameterEnum::PersonalFinanceTransactions->toToggle(),
             ModuleParameterEnum::PersonalFinanceBudgets->toToggle(),
+            ModuleParameterEnum::PersonalFinanceGoals->toToggle(),
         ];
     }
 }

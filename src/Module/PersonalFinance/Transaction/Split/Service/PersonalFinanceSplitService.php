@@ -9,6 +9,8 @@ use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterfa
 use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
+use Aurora\Module\PersonalFinance\Transaction\Event\PersonalFinanceTransactionDeletedEvent;
+use Aurora\Module\PersonalFinance\Transaction\Event\PersonalFinanceTransactionSavedEvent;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Transaction\Split\Dto\PersonalFinanceSplitInputInterface;
 use Aurora\Module\PersonalFinance\Transaction\Split\Dto\PersonalFinanceSplitPart;
@@ -16,6 +18,7 @@ use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DomainException;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Uid\Uuid;
 
@@ -27,6 +30,7 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
         protected readonly AuditLogger $auditLogger,
         protected readonly PersonalFinanceCategoryRepository $categoryRepository,
         protected readonly PersonalFinanceTransactionRepository $transactionRepository,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function create(
@@ -55,6 +59,10 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
             $this->auditCreated($splitId, $wallet, $created);
         });
 
+        foreach ($created as $leg) {
+            $this->eventDispatcher->dispatch(new PersonalFinanceTransactionSavedEvent($leg, isNew: true));
+        }
+
         return $splitId;
     }
 
@@ -65,6 +73,15 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
             throw new DomainException(sprintf('Split %s not found.', $splitId));
         }
 
+        $snapshots = array_map(
+            static fn (PersonalFinanceTransactionInterface $tx): array => [
+                'user' => $tx->getUser(),
+                'categoryId' => $tx->getCategory()?->getId(),
+                'walletId' => (int) $tx->getWallet()->getId(),
+            ],
+            $transactions,
+        );
+
         $this->entityManager->wrapInTransaction(function () use ($splitId, $transactions): void {
             $this->auditDeleted($splitId, $transactions);
 
@@ -73,6 +90,10 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
             }
             $this->entityManager->flush();
         });
+
+        foreach ($snapshots as $snap) {
+            $this->eventDispatcher->dispatch(new PersonalFinanceTransactionDeletedEvent($snap['user'], $snap['categoryId'], $snap['walletId']));
+        }
     }
 
     /**

@@ -11,10 +11,13 @@ use Aurora\Module\PersonalFinance\Transaction\Attachment\Service\PersonalFinance
 use Aurora\Module\PersonalFinance\Transaction\Dto\PersonalFinanceTransactionInputInterface;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
+use Aurora\Module\PersonalFinance\Transaction\Event\PersonalFinanceTransactionDeletedEvent;
+use Aurora\Module\PersonalFinance\Transaction\Event\PersonalFinanceTransactionSavedEvent;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(PersonalFinanceTransactionManagerInterface::class)]
@@ -25,6 +28,7 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
         protected readonly AuditLogger $auditLogger,
         protected readonly PersonalFinanceCategoryRepository $categoryRepository,
         protected readonly PersonalFinanceTransactionAttachmentServiceInterface $attachmentService,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function create(CoreUserInterface $user, PersonalFinanceWalletInterface $wallet, PersonalFinanceTransactionInputInterface $input): PersonalFinanceTransactionInterface
@@ -38,6 +42,7 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
         $this->entityManager->flush();
 
         $this->auditCreated($transaction);
+        $this->eventDispatcher->dispatch(new PersonalFinanceTransactionSavedEvent($transaction, isNew: true));
 
         return $transaction;
     }
@@ -46,10 +51,13 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
     {
         $this->ensureMutableLeg($transaction, 'update');
 
+        $previousCategoryId = $transaction->getCategory()?->getId();
+
         $this->applyInput($transaction, $input);
         $this->entityManager->flush();
 
         $this->auditUpdated($transaction);
+        $this->eventDispatcher->dispatch(new PersonalFinanceTransactionSavedEvent($transaction, isNew: false, previousCategoryId: $previousCategoryId));
     }
 
     public function delete(PersonalFinanceTransactionInterface $transaction): void
@@ -60,6 +68,9 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
 
         $transactionId = $transaction->getId();
         $hadAttachment = $transaction->hasAttachment();
+        $user = $transaction->getUser();
+        $categoryId = $transaction->getCategory()?->getId();
+        $walletId = (int) $transaction->getWallet()->getId();
 
         $this->entityManager->remove($transaction);
         $this->entityManager->flush();
@@ -67,6 +78,8 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
         if ($hadAttachment && null !== $transactionId) {
             $this->attachmentService->purgeDirectory($transactionId);
         }
+
+        $this->eventDispatcher->dispatch(new PersonalFinanceTransactionDeletedEvent($user, $categoryId, $walletId));
     }
 
     /**

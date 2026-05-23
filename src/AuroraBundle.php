@@ -135,6 +135,8 @@ use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategory;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
+use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoal;
+use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
@@ -340,6 +342,7 @@ class AuroraBundle extends AbstractBundle
                     PersonalFinanceTransactionInterface::class => PersonalFinanceTransaction::class,
                     PersonalFinanceBudgetInterface::class => PersonalFinanceBudget::class,
                     PersonalFinanceBudgetItemInterface::class => PersonalFinanceBudgetItem::class,
+                    PersonalFinanceGoalInterface::class => PersonalFinanceGoal::class,
                 ],
                 'mappings' => array_merge(
                     [

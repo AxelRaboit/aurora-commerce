@@ -6,10 +6,12 @@ namespace Aurora\Module\PersonalFinance\Transaction\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
@@ -89,6 +91,29 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             ->orderBy('t.type', Order::Ascending->value)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Sums |amount| of every transaction belonging to the user in the
+     * given category, ignoring type sign (Spendly-compatible: both
+     * income and expense add up — the user decides the semantic).
+     * Transfer legs are excluded.
+     *
+     * Used by PersonalFinanceGoalManager::recomputeSavedAmount.
+     */
+    public function sumByCategoryForUser(CoreUserInterface $user, PersonalFinanceCategoryInterface $category): string
+    {
+        $total = $this->createQueryBuilder('t')
+            ->select('SUM(t.amount) AS total')
+            ->where('t.user = :user')
+            ->andWhere('t.category = :category')
+            ->andWhere('t.transferId IS NULL')
+            ->setParameter('user', $user)
+            ->setParameter('category', $category)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return bcadd('0', (string) ($total ?? '0'), 2);
     }
 
     /**
