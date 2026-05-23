@@ -304,7 +304,7 @@ personal_finance:
     reset_title: Réinitialiser le mois
     reset_confirm: 'Supprimer toutes les transactions de {month} ? Les virements et splits associés seront nettoyés des deux côtés. Cette action est irréversible.'
     reset_confirm_cascade: 'Supprimer toutes les transactions de {from} à {to} ({count} mois) ? Les virements et splits associés seront nettoyés des deux côtés. Cette action est irréversible.'
-    reset_cascade: Cascader sur tous les mois suivants (jusqu''au mois courant inclus)
+    reset_cascade: Cascader sur tous les mois suivants (jusqu'au mois courant inclus)
     reset_help: Les autres mois ne sont pas affectés. Les transactions futures (au-delà du mois courant) sont préservées. Les soldes se recalculent automatiquement.
     reset_clear_budget: Vider aussi les lignes prévues du budget
     reset_confirm_button: Réinitialiser
