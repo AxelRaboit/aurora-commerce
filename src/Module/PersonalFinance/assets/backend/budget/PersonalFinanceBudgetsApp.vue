@@ -19,6 +19,7 @@ import PersonalFinanceBudgetItemTransactionsModal from "./components/PersonalFin
 import { useBudgetData } from "./composables/useBudgetData.js";
 import { useBudgetItemsForm } from "./composables/useBudgetItemsForm.js";
 import { useBudgetQuickAdd } from "./composables/useBudgetQuickAdd.js";
+import { useBudgetSectionTheme } from "./composables/useBudgetSectionTheme.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -103,6 +104,7 @@ const {
 });
 
 const { createModalRef, onQuickAdd } = useBudgetQuickAdd({ selectedWalletId, currentMonth });
+const { headerClasses: sectionHeaderClasses, titleClasses: sectionTitleClasses } = useBudgetSectionTheme();
 const listModalRef = ref(null);
 
 function onListTransactions(item) {
@@ -205,9 +207,9 @@ function diffClass(item) {
                     :key="section"
                     class="bg-surface border border-line rounded-lg overflow-hidden"
                 >
-                    <header class="px-4 py-3 flex items-center justify-between border-b border-line bg-surface-2/40">
+                    <header class="px-4 py-3 flex items-center justify-between border-b border-line" :class="sectionHeaderClasses(section)">
                         <div>
-                            <h3 class="text-sm font-medium uppercase tracking-wider text-primary">
+                            <h3 class="text-sm font-medium uppercase tracking-wider" :class="sectionTitleClasses(section)">
                                 {{ t(`personal_finance.budget.sections.${section}`) }}
                             </h3>
                             <p class="text-xs text-muted">{{ totalsLine(sectionSummaries[section] ?? { expected: '0.00', actual: '0.00' }) }}</p>
