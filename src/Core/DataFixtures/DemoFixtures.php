@@ -78,6 +78,8 @@ use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategory;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoal;
 use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
+use Aurora\Module\PersonalFinance\Goal\Manager\PersonalFinanceGoalManagerInterface;
 use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceRecurringTransaction;
 use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceRecurringTransactionInterface;
 use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceScheduledTransaction;
@@ -144,6 +146,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         private readonly string $uploadDir,
         private readonly Filesystem $fs = new Filesystem(),
         protected readonly ?MediaUrlGenerator $mediaUrlGenerator = null,
+        private readonly ?PersonalFinanceGoalManagerInterface $goalManager = null,
     ) {}
 
     public static function getGroups(): array
@@ -2936,13 +2939,28 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             }
         }
 
-        // ── Goals — 3 with various progress, deadline, color ─────────────────
+        // ── Goals — manual + auto-tracked variants (each tracking mode covered) ──
+        // The `saved` field on auto-tracked goals is just a seed value; the
+        // GoalSyncSubscriber will recompute it the moment any tx touches the
+        // linked category. Numbers below are picked so the demo cards look
+        // populated even before the user makes their first edit.
         $goalDefs = [
-            ['name' => 'Vacances d\'été',     'target' => '1500.00', 'saved' => '600.00',   'deadlineMonths' => 6,  'color' => '#f59e0b', 'wallet' => $livret, 'category' => null],
-            ['name' => 'Apport immobilier',   'target' => '15000.00', 'saved' => '4500.00', 'deadlineMonths' => 18, 'color' => '#6366f1', 'wallet' => $livret, 'category' => null],
-            ['name' => 'Permis de conduire',  'target' => '1200.00', 'saved' => '1200.00',  'deadlineMonths' => null, 'color' => '#10b981', 'wallet' => null,   'category' => null],
+            // Manual savings — no category, deposits via the "Déposer" button
+            ['name' => 'Vacances d\'été',     'target' => '1500.00',  'saved' => '600.00',  'deadlineMonths' => 6,    'color' => '#f59e0b', 'wallet' => $livret, 'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::AbsoluteSum],
+            ['name' => 'Apport immobilier',   'target' => '15000.00', 'saved' => '4500.00', 'deadlineMonths' => 18,   'color' => '#6366f1', 'wallet' => $livret, 'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::AbsoluteSum],
+            ['name' => 'Permis de conduire',  'target' => '1200.00',  'saved' => '1200.00', 'deadlineMonths' => null, 'color' => '#10b981', 'wallet' => null,    'category' => null,                'mode' => PersonalFinanceGoalTrackingModeEnum::AbsoluteSum],
+
+            // ExpenseOnly — "plafond" goals. Target sized for the 4-month seed
+            // history so the demo cards show a realistic in-progress state
+            // (~80% completed) rather than visually "blown".
+            ['name' => 'Plafond Restaurant',  'target' => '2500.00',  'saved' => '0.00',    'deadlineMonths' => null, 'color' => '#ef4444', 'wallet' => $cc,     'category' => $ccCats['Restaurant'], 'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
+            ['name' => 'Plafond Loisirs',     'target' => '600.00',   'saved' => '0.00',    'deadlineMonths' => null, 'color' => '#a855f7', 'wallet' => $cc,     'category' => $ccCats['Loisirs'],    'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
+
+            // IncomeOnly — savings goals tied to a steady income stream.
+            ['name' => 'Salaire cumulé',      'target' => '33600.00', 'saved' => '0.00',    'deadlineMonths' => 12,   'color' => '#22c55e', 'wallet' => $cc,     'category' => $ccCats['Salaire'],    'mode' => PersonalFinanceGoalTrackingModeEnum::IncomeOnly],
         ];
 
+        $autoTrackedGoals = [];
         foreach ($goalDefs as $def) {
             $goal = new $goalClass();
             $goal->setUser($owner)
@@ -2951,11 +2969,27 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                  ->setSavedAmount($def['saved'])
                  ->setWallet($def['wallet'])
                  ->setCategory($def['category'])
-                 ->setColor($def['color']);
+                 ->setColor($def['color'])
+                 ->setTrackingMode($def['mode']);
             if (null !== $def['deadlineMonths']) {
                 $goal->setDeadline($today->modify('+'.$def['deadlineMonths'].' months'));
             }
             $em->persist($goal);
+
+            if (null !== $def['category']) {
+                $autoTrackedGoals[] = $goal;
+            }
+        }
+        $em->flush();
+
+        // Trigger the sync subscriber once so the auto-tracked goals
+        // pick up the seeded transaction history right away (the cards
+        // would otherwise show "0.00" until the user touches a tx).
+        $goalManager = $this->goalManager ?? null;
+        if (null !== $goalManager) {
+            foreach ($autoTrackedGoals as $goal) {
+                $goalManager->recomputeSavedAmount($goal);
+            }
         }
 
         // ── Recurring rules ───────────────────────────────────────────────────
