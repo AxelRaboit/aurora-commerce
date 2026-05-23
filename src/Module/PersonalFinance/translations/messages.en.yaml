@@ -22,6 +22,8 @@ backend:
           use: View time-series statistics
         budget_presets:
           use: Manage reusable month templates
+        import:
+          use: Import transactions from an Excel file
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -38,6 +40,8 @@ backend:
     personal_finance_budgets_description: 'Monthly budget per wallet: sections, planned vs actual lines, carry-over.'
     personal_finance_budget_presets: Month templates
     personal_finance_budget_presets_description: 'Reusable month templates. Capture an existing month''s structure and apply it to another month (holidays, slow month, back to school…).'
+    personal_finance_import: Excel import
+    personal_finance_import_description: 'Bulk-import a transaction history from an Excel file (template provided). Per-row validation, missing categories are created automatically.'
     personal_finance_goals: Goals
     personal_finance_goals_description: 'Savings goals with progress tracking. Linking a category enables automatic sync from transactions.'
     personal_finance_recurring: Automations
@@ -405,6 +409,41 @@ personal_finance:
       replace: 'Existing lines in the target month are deleted before the template''s lines are inserted.'
     errors:
       name_required: The month template name is required.
+  import:
+    title: Excel import
+    help: 'Bulk-import transactions from an Excel file. Download the template below, fill it in (Date / Type / Amount / Category / Description / Tags), and upload it back. Validation runs per-row — invalid rows are flagged and skipped at processing time. Categories that don''t exist on the target wallet are created automatically (signalled in the preview).'
+    no_wallet: Create a wallet first to import transactions.
+    step_upload: Upload
+    step_preview: Preview
+    step_done: Done
+    download_template: Download the template
+    pick_file: Pick a file
+    no_file: No file selected.
+    preview_button: Preview import
+    confirm_button: '{count, plural, one {Import 1 transaction} other {Import # transactions}}'
+    completed: '{count, plural, one {1 transaction imported} other {# transactions imported}}'
+    reset: Start over
+    new_import: New import
+    valid_rows: Valid rows
+    invalid_rows: Invalid rows
+    new_categories: Categories to create
+    new_categories_list: 'New categories: {list}'
+    done_summary: '{created} transactions created, {skipped} skipped.'
+    status_valid: OK
+    fields:
+      wallet: Target wallet
+      file: Excel file
+    columns:
+      date: Date
+      type: Type
+      amount: Amount
+      category: Category
+      description: Description
+      status: Status
+    errors:
+      file_required: Pick an Excel file to upload.
+      wallet_required: Pick a target wallet.
+      rows_required: No row to import.
   categorization:
     title: Auto-categorization
     help: 'Auto-categorisation learns to classify transactions from their description: every time a transaction is saved with a category, a "description → category" rule is created or strengthened. This page lets a misclassification be fixed or an obsolete rule deleted.'

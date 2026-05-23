@@ -44,6 +44,7 @@ import {
     Scale,
     Globe2,
     BarChart3,
+    Upload,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -89,6 +90,7 @@ const ICON_MAP = {
     scale: Scale,
     "globe-2": Globe2,
     "bar-chart-3": BarChart3,
+    upload: Upload,
 };
 
 export function useSidemenuNav(

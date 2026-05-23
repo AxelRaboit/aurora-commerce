@@ -22,6 +22,8 @@ backend:
           use: Voir les statistiques d'évolution temporelle
         budget_presets:
           use: Gérer les mois types réutilisables
+        import:
+          use: Importer des transactions depuis un fichier Excel
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -38,6 +40,8 @@ backend:
     personal_finance_budgets_description: 'Budget mensuel par portefeuille : sections, lignes planifiées vs réelles, report.'
     personal_finance_budget_presets: Mois types
     personal_finance_budget_presets_description: 'Modèles de mois réutilisables. Capture la structure d''un mois et l''applique à un autre mois (vacances, mois calme, retour aux études…).'
+    personal_finance_import: Import Excel
+    personal_finance_import_description: 'Importe en lot un historique de transactions depuis un fichier Excel (template fourni). Validation ligne par ligne, catégories absentes créées automatiquement.'
     personal_finance_goals: Objectifs
     personal_finance_goals_description: 'Objectifs d''épargne avec suivi de progression. Liés à une catégorie = auto-synchronisé depuis les transactions.'
     personal_finance_recurring: Automatiques
@@ -405,6 +409,41 @@ personal_finance:
       replace: 'Les lignes actuelles du mois ciblé sont supprimées avant d''insérer celles du modèle.'
     errors:
       name_required: Le nom du mois type est requis.
+  import:
+    title: Import Excel
+    help: 'Importe en lot des transactions à partir d''un fichier Excel. Télécharge le template ci-dessous, remplis-le (Date / Type / Montant / Catégorie / Description / Tags), puis ré-uploade-le. La validation se fait ligne par ligne — les lignes invalides sont signalées et ignorées au moment du traitement. Les catégories absentes du portefeuille sélectionné sont créées automatiquement (signalées dans l''aperçu).'
+    no_wallet: Crée d''abord un portefeuille pour pouvoir importer des transactions.
+    step_upload: Téléversement
+    step_preview: Aperçu
+    step_done: Terminé
+    download_template: Télécharger le template
+    pick_file: Choisir un fichier
+    no_file: Aucun fichier sélectionné.
+    preview_button: Aperçu de l''import
+    confirm_button: '{count, plural, one {Importer 1 transaction} other {Importer # transactions}}'
+    completed: '{count, plural, one {1 transaction importée} other {# transactions importées}}'
+    reset: Recommencer
+    new_import: Nouvel import
+    valid_rows: Lignes valides
+    invalid_rows: Lignes invalides
+    new_categories: Catégories à créer
+    new_categories_list: 'Nouvelles catégories : {list}'
+    done_summary: '{created} transactions créées, {skipped} ignorées.'
+    status_valid: OK
+    fields:
+      wallet: Portefeuille cible
+      file: Fichier Excel
+    columns:
+      date: Date
+      type: Type
+      amount: Montant
+      category: Catégorie
+      description: Description
+      status: État
+    errors:
+      file_required: Sélectionne un fichier Excel à téléverser.
+      wallet_required: Sélectionne un portefeuille cible.
+      rows_required: Aucune ligne à importer.
   categorization:
     title: Auto-catégorisation
     help: 'L''auto-catégorisation apprend à classer les transactions à partir de leur description : chaque fois qu''une transaction est enregistrée avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Cette page permet de corriger une mauvaise association ou de supprimer une règle obsolète.'

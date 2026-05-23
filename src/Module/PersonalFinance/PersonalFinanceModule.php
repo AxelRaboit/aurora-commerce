@@ -33,6 +33,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.overview.use'),
             new NavPermission('personal_finance.statistics.use'),
             new NavPermission('personal_finance.budget_presets.use'),
+            new NavPermission('personal_finance.import.use'),
         ];
     }
 
@@ -144,6 +145,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
+        if ($this->personalFinanceContext->isImportEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_import',
+                'backend.nav.personal_finance_import',
+                'upload',
+                requiredPrivilege: 'personal_finance.import.use',
+                descriptionKey: 'backend.nav.personal_finance_import_description',
+            );
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -225,6 +236,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     requiredPrivilege: 'personal_finance.statistics.use',
                     descriptionKey: 'backend.nav.personal_finance_statistics_description',
                 ),
+                new NavItem(
+                    'backend_personal_finance_import',
+                    'backend.nav.personal_finance_import',
+                    'upload',
+                    requiredPrivilege: 'personal_finance.import.use',
+                    descriptionKey: 'backend.nav.personal_finance_import_description',
+                ),
             ], priority: 25),
         ];
     }
@@ -243,6 +261,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceOverview->toToggle(),
             ModuleParameterEnum::PersonalFinanceStatistics->toToggle(),
             ModuleParameterEnum::PersonalFinanceBudgetPresets->toToggle(),
+            ModuleParameterEnum::PersonalFinanceImport->toToggle(),
         ];
     }
 }

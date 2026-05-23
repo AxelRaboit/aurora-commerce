@@ -87,6 +87,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | v2-5  | Statistics page : sub-feature `Statistics/` + `StatisticsService` (monthlyFlow / categoryTrend / yoyComparison) + Vue inline-SVG bar chart + small-multi lines + period switcher 3/6/12 + nav + toggle + permission | (lot v2-5) | 🟢 |
 | v2-7  | Export Excel : `PersonalFinanceTransactionXlsxExporter` (PhpSpreadsheet, signed Amount) + repo finder `findAllByWalletFiltered` + endpoint `GET /wallets/{id}/transactions/export?search=&tag=` ; `PersonalFinanceBudgetXlsxExporter` (Items + Summary sheets) + endpoint `GET /wallets/{id}/budget/export?month=` ; bouton FileDown dans toolbars Transactions + Budget ; i18n FR/EN ; 2 nouveaux tests intégration (12 assertions) | (lot v2-7) | 🟢 |
 | v2-1B | BudgetPreset standalone : entités `PersonalFinanceBudgetPreset` + `PersonalFinanceBudgetPresetItem` (5-layer complet : Interface + Abstract + concrete non-final + Repo + DTO + Manager hooks `protected` + Serializer + AsAlias) + Controller CRUD + `apply` (append/replace mode) + `save-from-month` ; sub-feature toggle `PersonalFinanceBudgetPresets` + privilege `personal_finance.budget_presets.use` ; nav item "Mois types" (clipboard-list) ; nouvelle page Vue `PersonalFinanceBudgetPresetsApp` (CRUD + modale apply mode pill) ; hooks dans Budget page (boutons "Enregistrer en mois type" + "Appliquer un mois type" + 2 modales) via `useBudgetPresetHooks` ; i18n FR/EN complète (privileges + nav + UI + plural ICU pour `applied`) ; 4 nouveaux tests intégration (createPersistsItemsInPositionOrder, applyAppend, applyReplace, createFromBudget) | (lot v2-1B) | 🟢 |
+| v2-2  | Import Excel : sub-feature `Import/` (Dto + Service + Controller + ViewBuilder) ; `PersonalFinanceImportService` parse XLSX (PhpSpreadsheet, header strict 6 colonnes, max 5000 lignes, validation per-row, parsing Excel-date + locale comma decimal), création auto des catégories absentes au commit ; Controller 4 endpoints (`index` page + `template` DL + `wallets/{id}/preview` upload + `wallets/{id}/process` confirm) ; sub-feature toggle `PersonalFinanceImport` + privilege `personal_finance.import.use` + nav item "Import Excel" (upload icon) ; Vue page 3-step (upload → preview avec tableau + highlight erreurs + warning nouvelles cat → report) ; composable `useImportFlow` ; i18n FR/EN avec plural ICU sur `completed`/`confirm_button` ; 5 nouveaux tests intégration (header rejection, valid+invalid mix, process+auto-create, empty preview, template content). Amounts normalisés via `bcadd('0', x, 2)` pour rester cohérent avec la colonne decimal(10,2) | (lot v2-2) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
@@ -107,6 +108,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | # | Session | Effort | Pourquoi |
 |---|---|---|---|
 | ~~v2-1B~~ | ~~BudgetPreset standalone~~ | ~~M~~ | ✅ **livré** — wallet-scoped, mode append/replace au choix UI. Voir bloc ci-dessus |
+| ~~v2-2~~  | ~~Import Excel~~ | ~~L~~ | ✅ **livré** — header strict, 5000 lignes max, catégories auto-créées, preview 3-step. Voir bloc ci-dessus |
 | **v2-2** (11) | **Import Excel** : 2-step upload → preview → process. Service `PersonalFinanceImportService` (parse via PhpSpreadsheet ou ext locale) + template Excel téléchargeable + DTO de validation. Mapping flexible (date / montant / catégorie / description / tags) | L | Onboarding utilisateurs qui ont déjà un historique ailleurs (banque, autre app) |
 | ~~v2-3~~ | ~~UI Members modal + email + public page~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
 | ~~v2-4~~ | ~~Vue Globale (Overview) multi-wallets~~ | ~~M~~ | ✅ **livré** — voir bloc ci-dessus |
@@ -140,7 +142,9 @@ et valeur immédiate :
 5. ~~v2-5 Statistics~~ ✅ **livré** (heatmap reportée)
 6. ~~v2-7 Export~~ ✅ **livré** (Excel only, PDF reporté en v2-7B éventuel)
 7. ~~v2-1B BudgetPreset standalone~~ ✅ **livré** (wallet-scoped + append/replace au choix UI)
-8. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée (prochain et dernier de la V2)
+8. ~~v2-2 Import Excel~~ ✅ **livré** (header strict + auto-create cat + preview 3-step)
+
+🟢 **V2 entièrement bouclée** (8/8 sessions). Le module PersonalFinance est complet pour la roadmap initiale. Items reportés à un v3 éventuel : Open Banking sync, sous-catégories hiérarchiques, multi-devise par wallet, budget annuel, récurrences flexibles, notifications budget, heatmap statistique (v2-5B), Export PDF (v2-7B si demandé).
 
 ## Comment l'appliquer
 
