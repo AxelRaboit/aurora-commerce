@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -20,6 +20,8 @@ import { useTransactionsCreate } from "./composables/useTransactionsCreate.js";
 import { useTransactionsEdit } from "./composables/useTransactionsEdit.js";
 import { useTransfersForm } from "./composables/useTransfersForm.js";
 import { useTransfersDelete } from "./composables/useTransfersDelete.js";
+import { useSplitsCreate } from "./composables/useSplitsCreate.js";
+import { useSplitsDelete } from "./composables/useSplitsDelete.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -36,6 +38,8 @@ const props = defineProps({
     updateTransferPath: { type: String, required: true },
     deleteTransferPath: { type: String, required: true },
     showTransferPath: { type: String, required: true },
+    createSplitPath: { type: String, required: true },
+    deleteSplitPath: { type: String, required: true },
     /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
@@ -119,13 +123,47 @@ const toWalletOptionsForTransfer = computed(() =>
         .map((w) => ({ value: w.id, label: w.name })),
 );
 
+const splitTotal = computed(() => {
+    let total = 0;
+    for (const part of splitForm.value.parts) {
+        const n = parseFloat(part.amount);
+        if (!isNaN(n)) total += n;
+    }
+    return total.toFixed(2);
+});
+
+const {
+    show: showSplit,
+    form: splitForm,
+    errors: splitErrors,
+    loading: splitLoading,
+    open: openSplitCreate,
+    addPart: addSplitPart,
+    removePart: removeSplitPart,
+    submit: submitSplit,
+} = useSplitsCreate(props.createSplitPath, () => reset());
+
+const {
+    pendingDelete: pendingSplitDelete,
+    loading: splitDeleteLoading,
+    confirm: confirmSplitDelete,
+    submit: doSplitDelete,
+} = useSplitsDelete(props.deleteSplitPath, () => reset());
+
 function isTransferLeg(tx) {
     return !!tx?.transferId;
+}
+
+function isSplitLeg(tx) {
+    return !!tx?.splitId;
 }
 
 function onEditRow(tx) {
     if (isTransferLeg(tx)) {
         openTransferEdit(tx.transferId);
+        return;
+    }
+    if (isSplitLeg(tx)) {
         return;
     }
     openEdit(tx);
@@ -134,6 +172,10 @@ function onEditRow(tx) {
 function onDeleteRow(tx) {
     if (isTransferLeg(tx)) {
         confirmTransferDelete({ transferId: tx.transferId, date: tx.date, amount: tx.amount });
+        return;
+    }
+    if (isSplitLeg(tx)) {
+        confirmSplitDelete({ splitId: tx.splitId });
         return;
     }
     confirmDelete(tx);
@@ -163,6 +205,16 @@ function describeTx(tx) {
                 v-on:search="onSearch"
             />
             <template #actions>
+                <AppButton
+                    variant="ghost"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :disabled="!selectedWalletId || currentCategoryOptions.length <= 1"
+                    v-on:click="openSplitCreate(selectedWalletId)"
+                >
+                    <SplitIcon class="w-4 h-4" :stroke-width="2" />
+                    {{ t("personal_finance.splits.add") }}
+                </AppButton>
                 <AppButton
                     variant="secondary"
                     size="md"
@@ -224,7 +276,7 @@ function describeTx(tx) {
                                 <slot name="extra-cells" :transaction="tx" />
                                 <td class="px-6 py-3">
                                     <div class="flex items-center justify-end gap-0.5">
-                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="onEditRow(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton v-if="!isSplitLeg(tx)" color="accent" :title="t('shared.common.edit')" v-on:click="onEditRow(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="onDeleteRow(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     </div>
                                 </td>
@@ -485,6 +537,130 @@ function describeTx(tx) {
                         {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="danger" size="md" :loading="transferDeleteLoading" v-on:click="doTransferDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal
+            :show="showSplit"
+            :title="t('personal_finance.splits.add')"
+            :icon="SplitIcon"
+            :closeable="false"
+            v-on:close="showSplit = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitSplit">
+                <AppMultiselect
+                    v-model="splitForm.type"
+                    :label="t('personal_finance.splits.fields.type')"
+                    :placeholder="t('personal_finance.transactions.placeholders.type')"
+                    :options="typeOptions"
+                    :allow-empty="false"
+                    required
+                />
+                <AppDatePicker
+                    v-model="splitForm.date"
+                    :label="t('personal_finance.splits.fields.date')"
+                    :placeholder="t('personal_finance.transactions.placeholders.date')"
+                    :error="splitErrors.date"
+                    required
+                />
+                <AppInput
+                    v-model="splitForm.description"
+                    :label="t('personal_finance.splits.fields.description')"
+                    :placeholder="t('personal_finance.transactions.placeholders.description')"
+                />
+
+                <div class="space-y-3">
+                    <div
+                        v-for="(part, idx) in splitForm.parts"
+                        :key="idx"
+                        class="border border-line rounded-md p-3 space-y-2 bg-surface-2/30"
+                    >
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium uppercase tracking-wider text-muted">#{{ idx + 1 }}</span>
+                            <AppIconButton
+                                v-if="splitForm.parts.length > 2"
+                                color="rose"
+                                :title="t('personal_finance.splits.remove_part')"
+                                v-on:click="removeSplitPart(idx)"
+                            >
+                                <Trash2 class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <AppMultiselect
+                                v-model="part.categoryId"
+                                :label="t('personal_finance.splits.fields.part_category')"
+                                :placeholder="t('personal_finance.transactions.placeholders.category')"
+                                :options="currentCategoryOptions"
+                                :allow-empty="false"
+                                required
+                            />
+                            <AppAmountInput
+                                v-model="part.amount"
+                                :label="t('personal_finance.splits.fields.part_amount')"
+                                :placeholder="t('personal_finance.transactions.placeholders.amount')"
+                                required
+                            />
+                        </div>
+                        <AppInput
+                            v-model="part.description"
+                            :label="t('personal_finance.splits.fields.part_description')"
+                            :placeholder="t('personal_finance.transactions.placeholders.description')"
+                        />
+                    </div>
+
+                    <AppButton variant="ghost" size="sm" type="button" v-on:click="addSplitPart">
+                        <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("personal_finance.splits.add_part") }}
+                    </AppButton>
+
+                    <p class="text-sm text-muted">
+                        {{ t("personal_finance.splits.total", { total: splitTotal }) }}
+                    </p>
+                </div>
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showSplit = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="splitLoading"
+                        v-on:click="submitSplit"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal
+            :show="!!pendingSplitDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingSplitDelete = null"
+        >
+            <p class="text-sm text-primary">
+                {{ t("personal_finance.splits.delete_confirm") }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingSplitDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="splitDeleteLoading" v-on:click="doSplitDelete">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>

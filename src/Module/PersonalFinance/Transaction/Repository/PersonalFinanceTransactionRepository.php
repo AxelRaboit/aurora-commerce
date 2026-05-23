@@ -91,6 +91,22 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Returns every transaction sharing the given splitId. Order is
+     * insertion order (by id) to keep the UI display stable.
+     *
+     * @return list<PersonalFinanceTransactionInterface>
+     */
+    public function findBySplitId(string $splitId): array
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.splitId = :splitId')
+            ->setParameter('splitId', $splitId)
+            ->orderBy('t.id', Order::Ascending->value)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @return list<PersonalFinanceTransactionInterface>
      */
     public function findByWalletAndMonth(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $month): array

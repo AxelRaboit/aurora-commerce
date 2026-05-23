@@ -153,3 +153,26 @@ personal_finance:
       amount_format: 'Format invalide. Exemple : 1234.56 (toujours positif)'
       amount_positive: Le montant doit être strictement positif.
       date_required: La date est requise.
+  splits:
+    title: Décompositions
+    add: Diviser une dépense
+    delete_confirm: 'Supprimer cette décomposition ? Toutes les lignes liées seront supprimées.'
+    deleted: Décomposition supprimée.
+    created: Décomposition enregistrée.
+    add_part: Ajouter une ligne
+    remove_part: Retirer cette ligne
+    total: 'Total : {total}'
+    fields:
+      type: Type
+      date: Date
+      description: Description partagée
+      part_category: Catégorie
+      part_amount: Montant
+      part_description: Description (optionnel)
+    errors:
+      min_parts: Une décomposition nécessite au moins 2 lignes.
+      date_required: La date est requise.
+      category_required: La catégorie est requise pour chaque ligne.
+      amount_required: Le montant est requis pour chaque ligne.
+      amount_format: 'Format invalide pour la ligne. Exemple : 1234.56'
+      amount_positive: Le montant de chaque ligne doit être strictement positif.

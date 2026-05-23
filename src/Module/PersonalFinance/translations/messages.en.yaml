@@ -153,3 +153,26 @@ personal_finance:
       amount_format: 'Invalid format. Example: 1234.56 (always positive)'
       amount_positive: Amount must be strictly positive.
       date_required: Date is required.
+  splits:
+    title: Splits
+    add: Split an expense
+    delete_confirm: 'Delete this split? All linked lines will be removed.'
+    deleted: Split deleted.
+    created: Split recorded.
+    add_part: Add a line
+    remove_part: Remove this line
+    total: 'Total: {total}'
+    fields:
+      type: Type
+      date: Date
+      description: Shared description
+      part_category: Category
+      part_amount: Amount
+      part_description: Description (optional)
+    errors:
+      min_parts: A split requires at least 2 lines.
+      date_required: Date is required.
+      category_required: Category is required for each line.
+      amount_required: Amount is required for each line.
+      amount_format: 'Invalid amount format on a line. Example: 1234.56'
+      amount_positive: Each line amount must be strictly positive.

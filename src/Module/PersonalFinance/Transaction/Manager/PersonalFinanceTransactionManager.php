@@ -42,7 +42,7 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
 
     public function update(PersonalFinanceTransactionInterface $transaction, PersonalFinanceTransactionInputInterface $input): void
     {
-        $this->ensureNotTransferLeg($transaction, 'update');
+        $this->ensureMutableLeg($transaction, 'update');
 
         $this->applyInput($transaction, $input);
         $this->entityManager->flush();
@@ -52,7 +52,7 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
 
     public function delete(PersonalFinanceTransactionInterface $transaction): void
     {
-        $this->ensureNotTransferLeg($transaction, 'delete');
+        $this->ensureMutableLeg($transaction, 'delete');
 
         $this->auditDeleted($transaction);
 
@@ -61,15 +61,18 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
     }
 
     /**
-     * Transfer legs (transactions with transferId) must be edited or
-     * deleted via PersonalFinanceTransferService to keep both halves in
-     * sync. Direct mutation through the standard CRUD path would leave
-     * the transfer in an inconsistent 1-leg state.
+     * Transactions belonging to a transfer (`transferId`) or a split
+     * (`splitId`) must be edited/deleted via their respective services
+     * to keep grouped legs in sync. Direct mutation through the standard
+     * CRUD path would leave the group in an inconsistent state.
      */
-    protected function ensureNotTransferLeg(PersonalFinanceTransactionInterface $transaction, string $action): void
+    protected function ensureMutableLeg(PersonalFinanceTransactionInterface $transaction, string $action): void
     {
         if (null !== $transaction->getTransferId()) {
             throw new DomainException(sprintf('Cannot %s a transfer transaction directly. Use PersonalFinanceTransferService instead.', $action));
+        }
+        if (null !== $transaction->getSplitId()) {
+            throw new DomainException(sprintf('Cannot %s a split transaction directly. Use PersonalFinanceSplitService instead.', $action));
         }
     }
 
