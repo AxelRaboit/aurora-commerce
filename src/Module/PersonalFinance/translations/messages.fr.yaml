@@ -324,6 +324,7 @@ personal_finance:
     materialize: Matérialiser
     materialized: Transaction matérialisée — visible dans Transactions.
     materialize_disabled: Déjà matérialisée
+    materialize_confirm: 'Matérialiser cette transaction planifiée ? Une transaction sera créée dans le portefeuille avec la date prévue. Cette action est irréversible.'
     toggle_enable: Activer
     toggle_disable: Mettre en pause
     next_expected: 'Prochaine : {date}'

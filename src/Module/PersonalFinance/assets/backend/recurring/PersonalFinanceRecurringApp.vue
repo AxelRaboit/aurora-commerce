@@ -105,7 +105,12 @@ const { pendingDelete: pendingDeleteSched, loading: deleteSchedLoading, confirm:
 );
 
 const { toggle: toggleRec } = useRecurringToggle(props.toggleRecurringPath, refreshRecurring);
-const { materialize } = useScheduledMaterialize(props.materializeScheduledPath, refreshScheduled);
+const {
+    pendingMaterialize,
+    loading: materializeLoading,
+    confirm: confirmMaterialize,
+    submit: doMaterialize,
+} = useScheduledMaterialize(props.materializeScheduledPath, refreshScheduled);
 
 function formatType(type) {
     return t(`personal_finance.transactions.types.${type}`);
@@ -250,10 +255,9 @@ function signedAmount(row) {
                     </div>
                     <slot name="extra-cells" :tab="'scheduled'" :item="sched" />
                     <div class="flex items-center justify-end gap-2 pt-2 border-t border-line">
-                        <AppButton v-if="!sched.generated" variant="ghost" size="sm" v-on:click="materialize(sched)">
-                            <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("personal_finance.recurring.materialize") }}
-                        </AppButton>
+                        <AppIconButton v-if="!sched.generated" color="emerald" :title="t('personal_finance.recurring.materialize')" v-on:click="confirmMaterialize(sched)">
+                            <CheckCircle2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
                         <AppIconButton v-if="!sched.generated" color="accent" :title="t('shared.common.edit')" v-on:click="openSchedEdit(sched)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteSched(sched)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
@@ -295,10 +299,9 @@ function signedAmount(row) {
                             <slot name="extra-cells" :tab="'scheduled'" :item="sched" />
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-0.5">
-                                    <AppButton v-if="!sched.generated" variant="ghost" size="sm" v-on:click="materialize(sched)">
-                                        <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />
-                                        {{ t("personal_finance.recurring.materialize") }}
-                                    </AppButton>
+                                    <AppIconButton v-if="!sched.generated" color="emerald" :title="t('personal_finance.recurring.materialize')" v-on:click="confirmMaterialize(sched)">
+                                        <CheckCircle2 class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
                                     <AppIconButton v-if="!sched.generated" color="accent" :title="t('shared.common.edit')" v-on:click="openSchedEdit(sched)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteSched(sched)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 </div>
@@ -390,6 +393,22 @@ function signedAmount(row) {
                     <AppButton variant="danger" size="md" :loading="deleteSchedLoading" v-on:click="doDeleteSched">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal :show="!!pendingMaterialize" max-width="sm" :closeable="false" :title="t('personal_finance.recurring.materialize')" :icon="CheckCircle2" v-on:close="pendingMaterialize = null">
+            <p class="text-sm text-primary">{{ t("personal_finance.recurring.materialize_confirm") }}</p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingMaterialize = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="materializeLoading" v-on:click="doMaterialize">
+                        <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("personal_finance.recurring.materialize") }}
                     </AppButton>
                 </AppModalFooter>
             </template>
