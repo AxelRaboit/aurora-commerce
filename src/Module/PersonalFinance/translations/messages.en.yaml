@@ -229,6 +229,9 @@ personal_finance:
     updated: Line updated.
     totals_line: '{actual} / {planned} spent'
     carried_label: 'carried: {amount}'
+    overrun_warning: Planned budget exceeded
+    section_progress_title: Overall section progress
+    empty_section_cta: Add the first line
     quick_add_transaction: Add a transaction on this line
     list_transactions: View linked transactions
     list_transactions_disabled: No category linked to this line — cannot filter

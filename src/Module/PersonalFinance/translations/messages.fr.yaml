@@ -229,6 +229,9 @@ personal_finance:
     updated: Ligne mise à jour.
     totals_line: '{actual} / {planned} dépensé'
     carried_label: 'reporté : {amount}'
+    overrun_warning: Dépassement du budget prévu
+    section_progress_title: Progression globale de la section
+    empty_section_cta: Ajouter la première ligne
     quick_add_transaction: Ajouter une transaction sur cette ligne
     list_transactions: Voir les transactions associées
     list_transactions_disabled: Aucune catégorie associée à cette ligne — impossible de filtrer

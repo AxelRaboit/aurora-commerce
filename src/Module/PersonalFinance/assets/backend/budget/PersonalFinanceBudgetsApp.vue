@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -20,6 +20,7 @@ import { useBudgetData } from "./composables/useBudgetData.js";
 import { useBudgetItemsForm } from "./composables/useBudgetItemsForm.js";
 import { useBudgetQuickAdd } from "./composables/useBudgetQuickAdd.js";
 import { useBudgetSectionTheme } from "./composables/useBudgetSectionTheme.js";
+import { useBudgetProgress } from "./composables/useBudgetProgress.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -104,7 +105,17 @@ const {
 });
 
 const { createModalRef, onQuickAdd } = useBudgetQuickAdd({ selectedWalletId, currentMonth });
-const { headerClasses: sectionHeaderClasses, titleClasses: sectionTitleClasses } = useBudgetSectionTheme();
+const {
+    headerClasses: sectionHeaderClasses,
+    titleClasses: sectionTitleClasses,
+    barClass: sectionBarClass,
+    icon: sectionIcon,
+} = useBudgetSectionTheme();
+const { progressPct, isOverrun, diffPillClasses } = useBudgetProgress();
+
+function sectionSummary(section) {
+    return sectionSummaries.value[section] ?? { expected: "0.00", actual: "0.00", items: [] };
+}
 const listModalRef = ref(null);
 
 function onListTransactions(item) {
@@ -135,28 +146,19 @@ function totalsLine(summary) {
     });
 }
 
-function progressPct(item) {
-    const expected = parseFloat(item.expected);
-    const actual = parseFloat(item.actual ?? "0");
-    if (!expected || expected <= 0) return 0;
-    return Math.min(100, Math.round((actual / expected) * 100));
-}
-
-function diffClass(item) {
-    const diff = parseFloat(item.diff ?? "0");
-    if (diff > 0) return "text-emerald-400";
-    if (diff < 0) return "text-rose-400";
-    return "text-muted";
-}
 </script>
 
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <div class="flex items-center gap-3">
-                <AppButton variant="ghost" size="sm" v-on:click="shiftMonth(-1)">←</AppButton>
-                <span class="text-sm text-primary font-medium tabular-nums min-w-[8rem] text-center">{{ formatMonthYear(currentMonth) }}</span>
-                <AppButton variant="ghost" size="sm" v-on:click="shiftMonth(1)">→</AppButton>
+            <div class="flex items-center gap-2">
+                <AppIconButton :title="t('shared.common.previous')" v-on:click="shiftMonth(-1)">
+                    <ChevronLeft class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+                <span class="text-sm text-primary font-medium tabular-nums min-w-[9rem] text-center">{{ formatMonthYear(currentMonth) }}</span>
+                <AppIconButton :title="t('shared.common.next')" v-on:click="shiftMonth(1)">
+                    <ChevronRight class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
             </div>
             <template #actions>
                 <AppButton variant="ghost" size="md" :loading="loading" v-on:click="refresh(selectedWalletId, currentMonth)">
@@ -184,19 +186,28 @@ function diffClass(item) {
                 />
 
                 <div v-if="selectedWalletId" class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-line pt-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-wider text-muted">{{ t("personal_finance.balance.current") }}</p>
-                        <p class="font-mono text-lg" :class="parseFloat(payload.balance.current) >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                    <div class="bg-surface-2/40 border border-line rounded-md p-3">
+                        <div class="flex items-center gap-2 text-xs uppercase tracking-wider text-muted">
+                            <Wallet class="w-3.5 h-3.5" :stroke-width="2" />
+                            <span>{{ t("personal_finance.balance.current") }}</span>
+                        </div>
+                        <p class="font-mono text-lg mt-1" :class="parseFloat(payload.balance.current) >= 0 ? 'text-emerald-400' : 'text-rose-400'">
                             {{ payload.balance.current }}
                         </p>
                     </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-wider text-muted">{{ t("personal_finance.balance.month") }}</p>
-                        <p class="font-mono text-lg text-primary">{{ payload.balance.month }}</p>
+                    <div class="bg-surface-2/40 border border-line rounded-md p-3">
+                        <div class="flex items-center gap-2 text-xs uppercase tracking-wider text-muted">
+                            <TrendingUp class="w-3.5 h-3.5" :stroke-width="2" />
+                            <span>{{ t("personal_finance.balance.month") }}</span>
+                        </div>
+                        <p class="font-mono text-lg text-primary mt-1">{{ payload.balance.month }}</p>
                     </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-wider text-muted">{{ t("personal_finance.balance.rolling_start") }}</p>
-                        <p class="font-mono text-lg text-primary">{{ payload.balance.rollingStart }}</p>
+                    <div class="bg-surface-2/40 border border-line rounded-md p-3">
+                        <div class="flex items-center gap-2 text-xs uppercase tracking-wider text-muted">
+                            <Clock class="w-3.5 h-3.5" :stroke-width="2" />
+                            <span>{{ t("personal_finance.balance.rolling_start") }}</span>
+                        </div>
+                        <p class="font-mono text-lg text-primary mt-1">{{ payload.balance.rollingStart }}</p>
                     </div>
                 </div>
             </div>
@@ -207,14 +218,25 @@ function diffClass(item) {
                     :key="section"
                     class="bg-surface border border-line rounded-lg overflow-hidden"
                 >
-                    <header class="px-4 py-3 flex items-center justify-between border-b border-line" :class="sectionHeaderClasses(section)">
-                        <div>
-                            <h3 class="text-sm font-medium uppercase tracking-wider" :class="sectionTitleClasses(section)">
-                                {{ t(`personal_finance.budget.sections.${section}`) }}
+                    <header class="px-4 py-3 flex items-center justify-between gap-4 border-b border-line" :class="sectionHeaderClasses(section)">
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-sm font-medium uppercase tracking-wider flex items-center gap-2" :class="sectionTitleClasses(section)">
+                                <component :is="sectionIcon(section)" class="w-4 h-4 shrink-0" :stroke-width="2" />
+                                <span class="truncate">{{ t(`personal_finance.budget.sections.${section}`) }}</span>
                             </h3>
-                            <p class="text-xs text-muted">{{ totalsLine(sectionSummaries[section] ?? { expected: '0.00', actual: '0.00' }) }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ totalsLine(sectionSummary(section)) }}</p>
+                            <div
+                                class="hidden sm:block w-full h-1 bg-line/50 rounded mt-2 overflow-hidden"
+                                :title="t('personal_finance.budget.section_progress_title')"
+                            >
+                                <div
+                                    class="h-full transition-all"
+                                    :class="isOverrun(sectionSummary(section)) ? 'bg-rose-500' : sectionBarClass(section)"
+                                    :style="{ width: progressPct(sectionSummary(section)) + '%' }"
+                                ></div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 shrink-0">
                             <slot name="extra-headers" :section="section" />
                             <AppButton variant="ghost" size="sm" v-on:click="onCreate(section)">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
@@ -223,53 +245,71 @@ function diffClass(item) {
                         </div>
                     </header>
 
-                    <ul v-if="(sectionSummaries[section]?.items ?? []).length" class="divide-y divide-line/40">
+                    <ul v-if="sectionSummary(section).items.length" class="divide-y divide-line/40">
                         <li
-                            v-for="item in sectionSummaries[section].items"
+                            v-for="item in sectionSummary(section).items"
                             :key="item.id"
-                            class="px-4 py-3 flex items-center gap-3"
+                            class="px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-3"
                         >
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-primary truncate">{{ item.label }}</p>
-                                <p class="text-xs text-muted">
+                                <div class="text-xs text-muted flex items-center gap-2 flex-wrap mt-0.5">
                                     <span v-if="item.categoryName">{{ item.categoryName }}</span>
-                                    <span v-if="parseFloat(item.carriedOver) !== 0" class="ml-2">
+                                    <span v-if="parseFloat(item.carriedOver) !== 0" class="px-1.5 py-0.5 bg-amber-500/15 text-amber-400 rounded text-xs">
                                         {{ t("personal_finance.budget.carried_label", { amount: item.carriedOver }) }}
                                     </span>
-                                </p>
-                            </div>
-                            <div class="hidden sm:flex flex-col items-end w-32">
-                                <span class="font-mono text-sm text-primary">{{ item.actual ?? '0.00' }} / {{ item.expected }}</span>
-                                <div class="w-full h-1 bg-line/50 rounded mt-1 overflow-hidden">
-                                    <div class="h-full bg-accent-500" :style="{ width: progressPct(item) + '%' }"></div>
                                 </div>
                             </div>
-                            <span class="font-mono text-sm w-20 text-right" :class="diffClass(item)">{{ item.diff ?? '0.00' }}</span>
-                            <slot name="extra-cells" :item="item" />
-                            <div class="flex items-center gap-0.5">
-                                <AppIconButton color="emerald" :title="t('personal_finance.budget.quick_add_transaction')" v-on:click="onQuickAdd(item, section)">
-                                    <Receipt class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton
-                                    color="sky"
-                                    :title="item.categoryId ? t('personal_finance.budget.list_transactions') : t('personal_finance.budget.list_transactions_disabled')"
-                                    :disabled="!item.categoryId"
-                                    v-on:click="onListTransactions(item)"
-                                >
-                                    <List class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="onEdit(item)">
-                                    <Pencil class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
-                                <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(item)">
-                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
-                                </AppIconButton>
+                            <div class="flex flex-col items-stretch sm:items-end w-full sm:w-32">
+                                <div class="flex items-center justify-between sm:justify-end gap-1.5">
+                                    <AlertTriangle
+                                        v-if="isOverrun(item)"
+                                        class="w-3.5 h-3.5 text-rose-400 shrink-0"
+                                        :stroke-width="2"
+                                        :title="t('personal_finance.budget.overrun_warning')"
+                                    />
+                                    <span class="font-mono text-sm text-primary">{{ item.actual ?? '0.00' }} / {{ item.expected }}</span>
+                                </div>
+                                <div class="w-full h-1 bg-line/50 rounded mt-1 overflow-hidden">
+                                    <div
+                                        class="h-full transition-all"
+                                        :class="isOverrun(item) ? 'bg-rose-500' : sectionBarClass(section)"
+                                        :style="{ width: progressPct(item) + '%' }"
+                                    ></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-0.5">
+                                <span class="font-mono text-xs px-2 py-0.5 rounded-full" :class="diffPillClasses(item)">{{ item.diff ?? '0.00' }}</span>
+                                <slot name="extra-cells" :item="item" />
+                                <div class="flex items-center gap-0.5">
+                                    <AppIconButton color="emerald" :title="t('personal_finance.budget.quick_add_transaction')" v-on:click="onQuickAdd(item, section)">
+                                        <Receipt class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton
+                                        color="sky"
+                                        :title="item.categoryId ? t('personal_finance.budget.list_transactions') : t('personal_finance.budget.list_transactions_disabled')"
+                                        :disabled="!item.categoryId"
+                                        v-on:click="onListTransactions(item)"
+                                    >
+                                        <List class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="onEdit(item)">
+                                        <Pencil class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(item)">
+                                        <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                    </AppIconButton>
+                                </div>
                             </div>
                         </li>
                     </ul>
-                    <p v-else class="px-4 py-6 text-center text-sm text-muted">
-                        {{ t("personal_finance.budget.empty_section") }}
-                    </p>
+                    <div v-else class="px-4 py-8 text-center">
+                        <p class="text-sm text-muted mb-3">{{ t("personal_finance.budget.empty_section") }}</p>
+                        <AppButton variant="ghost" size="sm" v-on:click="onCreate(section)">
+                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("personal_finance.budget.empty_section_cta") }}
+                        </AppButton>
+                    </div>
                 </section>
                 <AppLoader :active="loading" />
             </div>

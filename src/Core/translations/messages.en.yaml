@@ -27,6 +27,7 @@ shared:
     saved: Saved.
     deleted: Deleted.
     refresh: Refresh
+    previous: Previous
     autosave:
       pending: Unsaved changes
       saving: Saving…

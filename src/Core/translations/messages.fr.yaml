@@ -27,6 +27,7 @@ shared:
     saved: Enregistré.
     deleted: Supprimé.
     refresh: Actualiser
+    previous: Précédent
     autosave:
       pending: Modifications non enregistrées
       saving: Enregistrement…
