@@ -56,7 +56,9 @@ welding:
     archived: Template archived
     clone: Clone (new version)
     cloned: New version created
+    delete: Delete template
     confirm_delete: Delete this template permanently?
+    confirm_delete_button: Delete
     deleted: Template deleted
     field_title: Title
     field_description: Description
@@ -145,6 +147,10 @@ welding:
     steps: Steps
     add_step: Add a step
     edit_step: Edit step
+    delete_step: Delete step
+    move_step_up: Move up
+    move_step_down: Move down
+    remove_pdf: Remove this PDF
     step_added: Step added
     step_updated: Step updated
     step_deleted: Step deleted

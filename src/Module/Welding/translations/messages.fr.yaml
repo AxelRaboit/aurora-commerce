@@ -56,7 +56,9 @@ welding:
     archived: Modèle archivé
     clone: Cloner (nouvelle version)
     cloned: Nouvelle version créée
+    delete: Supprimer le modèle
     confirm_delete: Supprimer définitivement ce modèle ?
+    confirm_delete_button: Supprimer
     deleted: Modèle supprimé
     field_title: Titre
     field_description: Description
@@ -145,6 +147,10 @@ welding:
     steps: Étapes
     add_step: Ajouter une étape
     edit_step: Modifier l'étape
+    delete_step: Supprimer l'étape
+    move_step_up: Déplacer vers le haut
+    move_step_down: Déplacer vers le bas
+    remove_pdf: Retirer ce PDF
     step_added: Étape ajoutée
     step_updated: Étape mise à jour
     step_deleted: Étape supprimée

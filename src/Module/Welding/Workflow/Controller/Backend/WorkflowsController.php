@@ -54,6 +54,12 @@ class WorkflowsController extends AbstractController
         return $this->render('@Welding/backend/workflows/runner.html.twig', $this->runnerViewBuilder->runnerView($workflow));
     }
 
+    #[Route('/{id}/state', name: '_state', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Get->value])]
+    public function state(WorkflowInterface $workflow): JsonResponse
+    {
+        return $this->jsonSuccess($this->runnerViewBuilder->runnerView($workflow));
+    }
+
     #[Route('/{id}', name: '_show', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Get->value])]
     public function show(WorkflowInterface $workflow): JsonResponse
     {

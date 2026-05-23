@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import {
@@ -8,6 +8,7 @@ import {
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
 
 const props = defineProps({
     workflowTemplate: { type: Object, required: true },
@@ -20,7 +21,8 @@ const steps = ref(props.steps.map((s) => ({ ...s, pdfTemplates: [...s.pdfTemplat
 
 const editable = computed(() => tpl.value.status === "draft");
 
-const { request } = useRequest();
+const { BADGE: STATUS_BADGE } = useTemplateStatus();
+const { loading: requestLoading, request } = useRequest();
 
 // ── Template header edit ──────────────────────────────────────────────────
 const editingTpl = ref(false);
@@ -199,15 +201,10 @@ async function removePdf(step, entry) {
     }
 }
 
-const STATUS_BADGE = {
-    draft: "bg-gray-100 text-gray-700",
-    published: "bg-emerald-100 text-emerald-700",
-    archived: "bg-zinc-100 text-zinc-600",
-};
 </script>
 
 <template>
-    <div class="p-6 space-y-6 max-w-4xl mx-auto">
+    <div class="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
         <!-- Header -->
         <div class="rounded-xl border border-line bg-surface p-5 space-y-2">
             <div class="flex items-start justify-between gap-4 flex-wrap">
@@ -276,17 +273,40 @@ const STATUS_BADGE = {
                             <p v-if="step.description" class="text-sm text-secondary whitespace-pre-line mt-1">{{ step.description }}</p>
                         </div>
                         <div v-if="editable" class="flex gap-1">
-                            <AppButton variant="ghost" size="sm" :disabled="idx === 0" v-on:click="moveStep(step, -1)">
-                                <ArrowUp class="w-3.5 h-3.5" />
+                            <AppButton
+                                variant="ghost"
+                                size="sm"
+                                :disabled="idx === 0 || requestLoading"
+                                :aria-label="t('welding.editor.move_step_up')"
+                                v-on:click="moveStep(step, -1)"
+                            >
+                                <ArrowUp class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppButton>
-                            <AppButton variant="ghost" size="sm" :disabled="idx === steps.length - 1" v-on:click="moveStep(step, 1)">
-                                <ArrowDown class="w-3.5 h-3.5" />
+                            <AppButton
+                                variant="ghost"
+                                size="sm"
+                                :disabled="idx === steps.length - 1 || requestLoading"
+                                :aria-label="t('welding.editor.move_step_down')"
+                                v-on:click="moveStep(step, 1)"
+                            >
+                                <ArrowDown class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppButton>
-                            <AppButton variant="ghost" size="sm" v-on:click="openStepEdit(step)">
-                                <Pencil class="w-3.5 h-3.5" />
+                            <AppButton
+                                variant="ghost"
+                                size="sm"
+                                :aria-label="t('welding.editor.edit_step')"
+                                v-on:click="openStepEdit(step)"
+                            >
+                                <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
                             </AppButton>
-                            <AppButton variant="ghost" size="sm" v-on:click="deleteStep(step)">
-                                <Trash2 class="w-3.5 h-3.5 text-rose-500" />
+                            <AppButton
+                                variant="ghost"
+                                size="sm"
+                                :aria-label="t('welding.editor.delete_step')"
+                                :disabled="requestLoading"
+                                v-on:click="deleteStep(step)"
+                            >
+                                <Trash2 class="w-3.5 h-3.5 text-rose-500" :stroke-width="2" />
                             </AppButton>
                         </div>
                     </div>
@@ -306,12 +326,19 @@ const STATUS_BADGE = {
                                 class="flex items-center justify-between gap-2 bg-surface-2 rounded p-2 text-sm"
                             >
                                 <div class="flex items-center gap-2 min-w-0">
-                                    <FileText class="w-4 h-4 text-secondary flex-shrink-0" :stroke-width="1.5" />
+                                    <FileText class="w-4 h-4 text-secondary shrink-0" :stroke-width="1.5" />
                                     <span class="truncate">{{ entry.pdfTemplateName }}</span>
-                                    <span v-if="entry.required" class="text-xs text-rose-500">*</span>
+                                    <span v-if="entry.required" class="text-xs text-rose-500" :aria-label="t('welding.editor.field_required')">*</span>
                                 </div>
-                                <AppButton v-if="editable" variant="ghost" size="sm" v-on:click="removePdf(step, entry)">
-                                    <X class="w-3.5 h-3.5" />
+                                <AppButton
+                                    v-if="editable"
+                                    variant="ghost"
+                                    size="sm"
+                                    :aria-label="t('welding.editor.remove_pdf')"
+                                    :disabled="requestLoading"
+                                    v-on:click="removePdf(step, entry)"
+                                >
+                                    <X class="w-3.5 h-3.5" :stroke-width="2" />
                                 </AppButton>
                             </li>
                         </ul>
