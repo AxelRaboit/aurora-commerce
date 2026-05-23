@@ -8,6 +8,7 @@ use Aurora\Core\Scheduler\Message\CleanTempFilesMessage;
 use Aurora\Module\Billing\Ocr\Message\RecoverStuckOcrJobsMessage;
 use Aurora\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
 use Aurora\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;
+use Aurora\Module\PersonalFinance\Recurring\Message\GeneratePersonalFinanceRecurringTransactionsMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -37,6 +38,9 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             )
             ->add(
                 RecurringMessage::cron('30 * * * *', new RecoverStuckOcrJobsMessage()),
+            )
+            ->add(
+                RecurringMessage::cron('0 3 * * *', new GeneratePersonalFinanceRecurringTransactionsMessage()),
             );
     }
 }
