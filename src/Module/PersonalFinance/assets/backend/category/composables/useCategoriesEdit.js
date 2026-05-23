@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useCategoriesEdit(
     updatePath,
@@ -10,6 +10,7 @@ export function useCategoriesEdit(
     { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
+    const { loading: editLoading, request } = useRequest();
     const extraKeys = Object.keys(extraFields);
 
     function pickExtras(source) {
@@ -25,7 +26,6 @@ export function useCategoriesEdit(
     const editingCategory = ref(null);
     const editForm = ref({ name: "", ...pickExtras({}) });
     const editErrors = ref({});
-    const editLoading = ref(false);
 
     function openEdit(category) {
         editingCategory.value = category;
@@ -35,32 +35,17 @@ export function useCategoriesEdit(
     }
 
     async function submitEdit() {
-        if (!editingCategory.value || editLoading.value) return;
-        editLoading.value = true;
+        if (!editingCategory.value) return;
         editErrors.value = {};
-        try {
-            const url = buildPath(updatePath, { id: editingCategory.value.id });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(editForm.value),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                editErrors.value = payload?.errors ?? {};
-                return;
-            }
-            onUpdated(payload.category);
-            toast.success(t("personal_finance.categories.updated"));
-            showEdit.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            editLoading.value = false;
+        const payload = await request(buildPath(updatePath, { id: editingCategory.value.id }), editForm.value);
+        if (!payload) return;
+        if (payload.success === false) {
+            editErrors.value = payload.errors ?? {};
+            return;
         }
+        onUpdated(payload.category);
+        toast.success(t("personal_finance.categories.updated"));
+        showEdit.value = false;
     }
 
     return {

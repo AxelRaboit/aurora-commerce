@@ -1,9 +1,9 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * @param {object} extraFields - client-extension fields, `{ key: { default: value } }`.
@@ -16,6 +16,7 @@ export function useWalletsEdit(
     { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
+    const { loading: editLoading, request } = useRequest();
     const extraKeys = Object.keys(extraFields);
 
     function pickExtras(source) {
@@ -38,7 +39,6 @@ export function useWalletsEdit(
         ...pickExtras({}),
     });
     const editErrors = ref({});
-    const editLoading = ref(false);
 
     function openEdit(wallet) {
         editingWallet.value = wallet;
@@ -55,35 +55,18 @@ export function useWalletsEdit(
     }
 
     async function submitEdit() {
-        if (!editingWallet.value || editLoading.value) return;
-        editLoading.value = true;
+        if (!editingWallet.value) return;
         editErrors.value = {};
-        editForm.value.startBalance = evaluateAmount(
-            editForm.value.startBalance,
-        );
-        try {
-            const url = buildPath(updatePath, { id: editingWallet.value.id });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(editForm.value),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                editErrors.value = payload?.errors ?? {};
-                return;
-            }
-            onUpdated(payload.wallet);
-            toast.success(t("personal_finance.wallets.updated"));
-            showEdit.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            editLoading.value = false;
+        editForm.value.startBalance = evaluateAmount(editForm.value.startBalance);
+        const payload = await request(buildPath(updatePath, { id: editingWallet.value.id }), editForm.value);
+        if (!payload) return;
+        if (payload.success === false) {
+            editErrors.value = payload.errors ?? {};
+            return;
         }
+        onUpdated(payload.wallet);
+        toast.success(t("personal_finance.wallets.updated"));
+        showEdit.value = false;
     }
 
     return {

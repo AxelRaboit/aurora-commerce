@@ -105,7 +105,22 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             </div>
 
             <div class="relative space-y-4">
-                <div class="bg-surface border border-line rounded-lg overflow-hidden">
+                <div v-if="!items?.length" class="bg-surface border border-line rounded-lg p-6 text-center text-sm text-muted">
+                    {{ t("personal_finance.categories.empty") }}
+                </div>
+
+                <div v-else class="sm:hidden space-y-3">
+                    <div v-for="c in items" :key="c.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                        <p class="font-medium text-primary truncate">{{ c.name }}</p>
+                        <slot name="extra-cells" :category="c" />
+                        <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                            <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(c)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(c)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="items?.length" class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-surface-2/50 border-b border-line/40">
@@ -123,11 +138,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                                         <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(c)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(c)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr v-if="!items?.length">
-                                <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
-                                    {{ t("personal_finance.categories.empty") }}
                                 </td>
                             </tr>
                         </tbody>

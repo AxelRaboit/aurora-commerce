@@ -267,36 +267,35 @@ function describeTx(tx) {
                 v-on:search="onSearch"
             />
             <template #actions>
-                <AppButton
-                    variant="ghost"
-                    size="md"
-                    class="w-full sm:w-auto"
-                    :disabled="!selectedWalletId || currentCategoryOptions.length <= 1"
-                    v-on:click="openSplitCreate(selectedWalletId)"
-                >
-                    <SplitIcon class="w-4 h-4" :stroke-width="2" />
-                    {{ t("personal_finance.splits.add") }}
-                </AppButton>
-                <AppButton
-                    variant="secondary"
-                    size="md"
-                    class="w-full sm:w-auto"
-                    :disabled="wallets.length < 2"
-                    v-on:click="openTransferCreate(selectedWalletId)"
-                >
-                    <ArrowRightLeft class="w-4 h-4" :stroke-width="2" />
-                    {{ t("personal_finance.transfers.add") }}
-                </AppButton>
-                <AppButton
-                    variant="primary"
-                    size="md"
-                    class="w-full sm:w-auto"
-                    :disabled="!selectedWalletId"
-                    v-on:click="openCreate(selectedWalletId)"
-                >
-                    <Plus class="w-4 h-4" :stroke-width="2" />
-                    {{ t("personal_finance.transactions.add") }}
-                </AppButton>
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <AppButton
+                        variant="ghost"
+                        size="md"
+                        :disabled="!selectedWalletId || currentCategoryOptions.length <= 1"
+                        v-on:click="openSplitCreate(selectedWalletId)"
+                    >
+                        <SplitIcon class="w-4 h-4" :stroke-width="2" />
+                        {{ t("personal_finance.splits.add") }}
+                    </AppButton>
+                    <AppButton
+                        variant="secondary"
+                        size="md"
+                        :disabled="wallets.length < 2"
+                        v-on:click="openTransferCreate(selectedWalletId)"
+                    >
+                        <ArrowRightLeft class="w-4 h-4" :stroke-width="2" />
+                        {{ t("personal_finance.transfers.add") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        :disabled="!selectedWalletId"
+                        v-on:click="openCreate(selectedWalletId)"
+                    >
+                        <Plus class="w-4 h-4" :stroke-width="2" />
+                        {{ t("personal_finance.transactions.add") }}
+                    </AppButton>
+                </div>
             </template>
         </AppListToolbar>
 
@@ -338,7 +337,32 @@ function describeTx(tx) {
             </div>
 
             <div class="relative space-y-4">
-                <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+                <div v-if="!items?.length" class="bg-surface border border-line rounded-lg p-6 text-center text-sm text-muted">
+                    {{ t("personal_finance.transactions.empty") }}
+                </div>
+
+                <div v-else class="sm:hidden space-y-3">
+                    <div v-for="tx in items" :key="tx.id" class="bg-surface border border-line rounded-lg p-4 space-y-2">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="font-medium text-primary truncate flex items-center gap-1.5">
+                                    <Paperclip v-if="tx.hasAttachment" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
+                                    <span>{{ tx.description ?? t("personal_finance.transactions.uncategorized") }}</span>
+                                </p>
+                                <p class="text-xs text-muted mt-0.5 font-mono">{{ tx.date }} · {{ formatType(tx.type) }}</p>
+                                <p v-if="tx.categoryName" class="text-xs text-muted">{{ tx.categoryName }}</p>
+                            </div>
+                            <p class="font-mono text-sm shrink-0" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</p>
+                        </div>
+                        <slot name="extra-cells" :transaction="tx" />
+                        <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                            <AppIconButton v-if="!isSplitLeg(tx)" color="accent" :title="t('shared.common.edit')" v-on:click="onEditRow(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                            <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="onDeleteRow(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="items?.length" class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-surface-2/50 border-b border-line/40">
@@ -369,11 +393,6 @@ function describeTx(tx) {
                                         <AppIconButton v-if="!isSplitLeg(tx)" color="accent" :title="t('shared.common.edit')" v-on:click="onEditRow(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                         <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="onDeleteRow(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr v-if="!items?.length">
-                                <td :colspan="100" class="px-6 py-8 text-center text-sm text-muted">
-                                    {{ t("personal_finance.transactions.empty") }}
                                 </td>
                             </tr>
                         </tbody>

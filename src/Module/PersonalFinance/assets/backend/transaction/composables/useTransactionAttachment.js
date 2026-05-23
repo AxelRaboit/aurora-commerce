@@ -1,8 +1,7 @@
-import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Attachment ops (upload + delete) on an existing transaction. The
@@ -12,54 +11,29 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
  */
 export function useTransactionAttachment(uploadPath, deletePath, serveBaseUrl, onChanged) {
     const { t } = useI18n();
-    const loading = ref(false);
+    const { loading, request } = useRequest();
 
     async function upload(transactionId, file) {
-        if (!file || loading.value) return null;
-        loading.value = true;
+        if (!file) return null;
         const formData = new FormData();
         formData.append("file", file);
-        try {
-            const url = buildPath(uploadPath, { id: transactionId });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                body: formData,
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                const message = payload?.errors?.file ?? "shared.common.error";
-                toast.error(t(message));
-                return null;
-            }
-            toast.success(t("personal_finance.transactions.attachment.uploaded"));
-            onChanged?.(payload.transaction);
-            return payload.transaction ?? null;
-        } catch {
-            toast.error(t("shared.common.error"));
+        const payload = await request(buildPath(uploadPath, { id: transactionId }), null, { rawBody: formData });
+        if (!payload) return null;
+        if (payload.success === false) {
+            const message = payload.errors?.file ?? "shared.common.error";
+            toast.error(t(message));
             return null;
-        } finally {
-            loading.value = false;
         }
+        toast.success(t("personal_finance.transactions.attachment.uploaded"));
+        onChanged?.(payload.transaction);
+        return payload.transaction ?? null;
     }
 
     async function remove(transactionId) {
-        if (loading.value) return;
-        loading.value = true;
-        try {
-            const url = buildPath(deletePath, { id: transactionId });
-            const response = await fetch(url, { method: HttpMethod.Post });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            toast.success(t("personal_finance.transactions.attachment.removed"));
-            onChanged?.(payload.transaction);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
-        }
+        const payload = await request(buildPath(deletePath, { id: transactionId }));
+        if (!payload || payload.success === false) return;
+        toast.success(t("personal_finance.transactions.attachment.removed"));
+        onChanged?.(payload.transaction);
     }
 
     function serveUrl(transactionId) {

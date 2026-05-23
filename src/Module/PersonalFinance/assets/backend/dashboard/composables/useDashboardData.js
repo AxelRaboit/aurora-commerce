@@ -1,7 +1,6 @@
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Owns the dashboard snapshot ref and the /refresh fetch. Initialised
@@ -10,26 +9,13 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
  * the KPI tiles).
  */
 export function useDashboardData(refreshPath, initialSnapshot) {
-    const { t } = useI18n();
     const snapshot = ref(initialSnapshot);
-    const loading = ref(false);
+    const { loading, request } = useRequest();
 
     async function refresh() {
-        if (loading.value) return;
-        loading.value = true;
-        try {
-            const response = await fetch(refreshPath, {
-                method: HttpMethod.Get,
-                headers: { Accept: "application/json" },
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (response.ok && payload?.success !== false && payload.snapshot) {
-                snapshot.value = payload.snapshot;
-            }
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+        const payload = await request(refreshPath, null, HttpMethod.Get);
+        if (payload && payload.success !== false && payload.snapshot) {
+            snapshot.value = payload.snapshot;
         }
     }
 

@@ -1,8 +1,5 @@
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * Flip a recurring rule's `active` flag. When activating a rule whose
@@ -11,26 +8,12 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
  * the up-to-date rule (with bumped lastGeneratedAt).
  */
 export function useRecurringToggle(togglePath, onToggled) {
-    const { t } = useI18n();
-    const loading = ref(false);
+    const { loading, request } = useRequest();
 
     async function toggle(rec) {
-        if (loading.value) return;
-        loading.value = true;
-        try {
-            const url = buildPath(togglePath, { id: rec.id });
-            const response = await fetch(url, { method: HttpMethod.Post });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false || !payload.recurring) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            onToggled?.(payload.recurring);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
-        }
+        const payload = await request(buildPath(togglePath, { id: rec.id }));
+        if (!payload || payload.success === false || !payload.recurring) return;
+        onToggled?.(payload.recurring);
     }
 
     return { loading, toggle };

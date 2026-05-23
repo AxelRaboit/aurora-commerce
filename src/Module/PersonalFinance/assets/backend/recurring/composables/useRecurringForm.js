@@ -1,9 +1,9 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyForm() {
     return {
@@ -19,13 +19,13 @@ function emptyForm() {
 
 export function useRecurringForm(createPath, updatePath, onSaved) {
     const { t } = useI18n();
+    const { loading, request } = useRequest();
 
     const show = ref(false);
     const isEditing = ref(false);
     const editingId = ref(null);
     const form = ref(emptyForm());
     const errors = ref({});
-    const loading = ref(false);
 
     function openCreate() {
         isEditing.value = false;
@@ -52,36 +52,23 @@ export function useRecurringForm(createPath, updatePath, onSaved) {
     }
 
     async function submit() {
-        if (loading.value) return;
-        loading.value = true;
         errors.value = {};
         form.value.amount = evaluateAmount(form.value.amount);
 
         const url = isEditing.value ? buildPath(updatePath, { id: editingId.value }) : createPath;
-
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: { Accept: "application/json", "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...form.value,
-                    description: form.value.description || null,
-                    categoryId: form.value.categoryId || null,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                errors.value = payload?.errors ?? {};
-                return;
-            }
-            toast.success(t(isEditing.value ? "personal_finance.recurring.updated_recurring" : "personal_finance.recurring.created_recurring"));
-            show.value = false;
-            onSaved?.(payload.recurring);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+        const payload = await request(url, {
+            ...form.value,
+            description: form.value.description || null,
+            categoryId: form.value.categoryId || null,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            errors.value = payload.errors ?? {};
+            return;
         }
+        toast.success(t(isEditing.value ? "personal_finance.recurring.updated_recurring" : "personal_finance.recurring.created_recurring"));
+        show.value = false;
+        onSaved?.(payload.recurring);
     }
 
     return { show, isEditing, form, errors, loading, openCreate, openEdit, submit };

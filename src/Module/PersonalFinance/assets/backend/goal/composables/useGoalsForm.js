@@ -1,9 +1,9 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyGoalForm() {
     return {
@@ -23,13 +23,13 @@ function emptyGoalForm() {
  */
 export function useGoalsForm(createPath, updatePath, onSaved) {
     const { t } = useI18n();
+    const { loading, request } = useRequest();
 
     const show = ref(false);
     const isEditing = ref(false);
     const editingId = ref(null);
     const form = ref(emptyGoalForm());
     const errors = ref({});
-    const loading = ref(false);
 
     function openCreate() {
         isEditing.value = false;
@@ -55,50 +55,26 @@ export function useGoalsForm(createPath, updatePath, onSaved) {
     }
 
     async function submit() {
-        if (loading.value) return;
-        loading.value = true;
         errors.value = {};
         form.value.targetAmount = evaluateAmount(form.value.targetAmount);
 
-        const url = isEditing.value
-            ? buildPath(updatePath, { id: editingId.value })
-            : createPath;
-
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: form.value.name,
-                    targetAmount: form.value.targetAmount,
-                    walletId: form.value.walletId || null,
-                    categoryId: form.value.categoryId || null,
-                    deadline: form.value.deadline || null,
-                    color: form.value.color || null,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                errors.value = payload?.errors ?? {};
-                return;
-            }
-            toast.success(
-                t(
-                    isEditing.value
-                        ? "personal_finance.goals.updated"
-                        : "personal_finance.goals.created",
-                ),
-            );
-            show.value = false;
-            onSaved?.(payload.goal);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+        const url = isEditing.value ? buildPath(updatePath, { id: editingId.value }) : createPath;
+        const payload = await request(url, {
+            name: form.value.name,
+            targetAmount: form.value.targetAmount,
+            walletId: form.value.walletId || null,
+            categoryId: form.value.categoryId || null,
+            deadline: form.value.deadline || null,
+            color: form.value.color || null,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            errors.value = payload.errors ?? {};
+            return;
         }
+        toast.success(t(isEditing.value ? "personal_finance.goals.updated" : "personal_finance.goals.created"));
+        show.value = false;
+        onSaved?.(payload.goal);
     }
 
     return { show, isEditing, form, errors, loading, openCreate, openEdit, submit };

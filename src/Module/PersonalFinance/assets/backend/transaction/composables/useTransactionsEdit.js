@@ -1,9 +1,9 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 export function useTransactionsEdit(
     updatePath,
@@ -11,6 +11,7 @@ export function useTransactionsEdit(
     { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
+    const { loading: editLoading, request } = useRequest();
     const extraKeys = Object.keys(extraFields);
 
     function pickExtras(source) {
@@ -33,7 +34,6 @@ export function useTransactionsEdit(
         ...pickExtras({}),
     });
     const editErrors = ref({});
-    const editLoading = ref(false);
 
     function openEdit(transaction) {
         editingTransaction.value = transaction;
@@ -50,39 +50,23 @@ export function useTransactionsEdit(
     }
 
     async function submitEdit() {
-        if (!editingTransaction.value || editLoading.value) return;
-        editLoading.value = true;
+        if (!editingTransaction.value) return;
         editErrors.value = {};
         editForm.value.amount = evaluateAmount(editForm.value.amount);
-        try {
-            const url = buildPath(updatePath, {
-                id: editingTransaction.value.id,
-            });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ...editForm.value,
-                    description: editForm.value.description || null,
-                    categoryId: editForm.value.categoryId || null,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                editErrors.value = payload?.errors ?? {};
-                return;
-            }
-            onUpdated(payload.transaction);
-            toast.success(t("personal_finance.transactions.updated"));
-            showEdit.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            editLoading.value = false;
+
+        const payload = await request(buildPath(updatePath, { id: editingTransaction.value.id }), {
+            ...editForm.value,
+            description: editForm.value.description || null,
+            categoryId: editForm.value.categoryId || null,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            editErrors.value = payload.errors ?? {};
+            return;
         }
+        onUpdated(payload.transaction);
+        toast.success(t("personal_finance.transactions.updated"));
+        showEdit.value = false;
     }
 
     return {

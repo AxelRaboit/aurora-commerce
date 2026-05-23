@@ -1,9 +1,9 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyPart() {
     return { categoryId: null, amount: "", description: "" };
@@ -25,11 +25,11 @@ function emptySplitForm() {
  */
 export function useSplitsCreate(createPath, onCreated) {
     const { t } = useI18n();
+    const { loading, request } = useRequest();
 
     const show = ref(false);
     const form = ref(emptySplitForm());
     const errors = ref({});
-    const loading = ref(false);
     const targetWalletId = ref(null);
 
     function open(walletId) {
@@ -49,42 +49,28 @@ export function useSplitsCreate(createPath, onCreated) {
     }
 
     async function submit() {
-        if (loading.value || !targetWalletId.value) return;
-        loading.value = true;
+        if (!targetWalletId.value) return;
         errors.value = {};
         const normalizedParts = form.value.parts.map((p) => ({
             categoryId: p.categoryId,
             amount: evaluateAmount(p.amount),
             description: p.description || null,
         }));
-        try {
-            const url = buildPath(createPath, { walletId: targetWalletId.value });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    type: form.value.type,
-                    date: form.value.date,
-                    description: form.value.description || null,
-                    parts: normalizedParts,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                errors.value = payload?.errors ?? {};
-                return;
-            }
-            toast.success(t("personal_finance.splits.created"));
-            show.value = false;
-            onCreated?.(payload.splitId);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+
+        const payload = await request(buildPath(createPath, { walletId: targetWalletId.value }), {
+            type: form.value.type,
+            date: form.value.date,
+            description: form.value.description || null,
+            parts: normalizedParts,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            errors.value = payload.errors ?? {};
+            return;
         }
+        toast.success(t("personal_finance.splits.created"));
+        show.value = false;
+        onCreated?.(payload.splitId);
     }
 
     return {

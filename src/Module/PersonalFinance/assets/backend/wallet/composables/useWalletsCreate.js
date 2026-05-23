@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 /**
  * @param {object} extraFields - client-extension fields, `{ key: { default: value } }`.
@@ -36,11 +36,11 @@ export function useWalletsCreate(
     { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
+    const { loading: createLoading, request } = useRequest();
 
     const showCreate = ref(false);
     const createForm = ref(emptyWalletForm(extraFields));
     const createErrors = ref({});
-    const createLoading = ref(false);
 
     function openCreate() {
         createForm.value = emptyWalletForm(extraFields);
@@ -49,34 +49,17 @@ export function useWalletsCreate(
     }
 
     async function submitCreate() {
-        if (createLoading.value) return;
-        createLoading.value = true;
         createErrors.value = {};
-        createForm.value.startBalance = evaluateAmount(
-            createForm.value.startBalance,
-        );
-        try {
-            const response = await fetch(createPath, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(createForm.value),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                createErrors.value = payload?.errors ?? {};
-                return;
-            }
-            onCreated(payload.wallet);
-            toast.success(t("personal_finance.wallets.created"));
-            showCreate.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            createLoading.value = false;
+        createForm.value.startBalance = evaluateAmount(createForm.value.startBalance);
+        const payload = await request(createPath, createForm.value);
+        if (!payload) return;
+        if (payload.success === false) {
+            createErrors.value = payload.errors ?? {};
+            return;
         }
+        onCreated(payload.wallet);
+        toast.success(t("personal_finance.wallets.created"));
+        showCreate.value = false;
     }
 
     return {

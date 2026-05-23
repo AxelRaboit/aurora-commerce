@@ -73,7 +73,31 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         </section>
 
         <div v-else class="relative space-y-4">
-            <div class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+            <div class="sm:hidden space-y-3">
+                <div v-for="rule in items" :key="rule.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-mono text-xs text-primary truncate">{{ rule.pattern }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ rule.walletName }}</p>
+                        </div>
+                        <span class="font-mono text-sm shrink-0">{{ rule.hits }}</span>
+                    </div>
+                    <AppMultiselect
+                        :model-value="rule.categoryId"
+                        :options="allCategoryOptions"
+                        :allow-empty="false"
+                        v-on:update:model-value="(val) => setCategory(rule, val)"
+                    />
+                    <slot name="extra-cells" :rule="rule" />
+                    <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(rule)">
+                            <Trash2 class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
@@ -110,6 +134,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     </tbody>
                 </table>
             </div>
+
             <AppPagination v-if="totalPages > 1" :page="page" :total-pages="totalPages" v-on:change="goToPage" />
             <AppLoader :active="loading" />
         </div>

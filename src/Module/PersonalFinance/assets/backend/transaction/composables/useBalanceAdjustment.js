@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyAdjustmentForm() {
     const today = new Date().toISOString().slice(0, 10);
@@ -11,10 +11,10 @@ function emptyAdjustmentForm() {
 
 export function useBalanceAdjustment(adjustPath, onAdjusted) {
     const { t } = useI18n();
+    const { loading, request } = useRequest();
     const show = ref(false);
     const form = ref(emptyAdjustmentForm());
     const errors = ref({});
-    const loading = ref(false);
     const targetWalletId = ref(null);
 
     function open(walletId) {
@@ -25,36 +25,21 @@ export function useBalanceAdjustment(adjustPath, onAdjusted) {
     }
 
     async function submit() {
-        if (loading.value || !targetWalletId.value) return;
-        loading.value = true;
+        if (!targetWalletId.value) return;
         errors.value = {};
-        try {
-            const url = buildPath(adjustPath, { walletId: targetWalletId.value });
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    newBalance: form.value.newBalance,
-                    date: form.value.date,
-                    description: form.value.description || null,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                errors.value = payload?.errors ?? {};
-                return;
-            }
-            toast.success(t("personal_finance.balance_adjustment.success"));
-            show.value = false;
-            onAdjusted?.(payload);
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+        const payload = await request(buildPath(adjustPath, { walletId: targetWalletId.value }), {
+            newBalance: form.value.newBalance,
+            date: form.value.date,
+            description: form.value.description || null,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            errors.value = payload.errors ?? {};
+            return;
         }
+        toast.success(t("personal_finance.balance_adjustment.success"));
+        show.value = false;
+        onAdjusted?.(payload);
     }
 
     return { show, form, errors, loading, targetWalletId, open, submit };

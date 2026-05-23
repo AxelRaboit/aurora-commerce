@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyCategoryForm(extraFields = {}) {
     const extras = Object.fromEntries(
@@ -23,11 +23,11 @@ export function useCategoriesCreate(
     { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
+    const { loading: createLoading, request } = useRequest();
 
     const showCreate = ref(false);
     const createForm = ref(emptyCategoryForm(extraFields));
     const createErrors = ref({});
-    const createLoading = ref(false);
     const targetWalletId = ref(null);
 
     function openCreate(walletId) {
@@ -38,35 +38,18 @@ export function useCategoriesCreate(
     }
 
     async function submitCreate() {
-        if (createLoading.value || !targetWalletId.value) return;
-        createLoading.value = true;
+        if (!targetWalletId.value) return;
         createErrors.value = {};
-        try {
-            const url = createPath.replace(
-                "__walletId__",
-                String(targetWalletId.value),
-            );
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(createForm.value),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                createErrors.value = payload?.errors ?? {};
-                return;
-            }
-            onCreated(payload.category, targetWalletId.value);
-            toast.success(t("personal_finance.categories.created"));
-            showCreate.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            createLoading.value = false;
+        const url = createPath.replace("__walletId__", String(targetWalletId.value));
+        const payload = await request(url, createForm.value);
+        if (!payload) return;
+        if (payload.success === false) {
+            createErrors.value = payload.errors ?? {};
+            return;
         }
+        onCreated(payload.category, targetWalletId.value);
+        toast.success(t("personal_finance.categories.created"));
+        showCreate.value = false;
     }
 
     return {

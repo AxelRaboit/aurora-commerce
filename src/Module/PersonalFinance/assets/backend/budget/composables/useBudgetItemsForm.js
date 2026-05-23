@@ -1,9 +1,9 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyItemForm() {
     return {
@@ -21,9 +21,16 @@ function emptyItemForm() {
 /**
  * Unified create + edit composable for budget items. Both operations
  * land in the same modal; isEditing tracks the mode.
+ *
+ * Two `useRequest` instances are used because the submit form flow and
+ * the delete confirmation flow need independent loading guards (so a
+ * confirm-delete spinner doesn't disable the form-edit button and
+ * vice-versa).
  */
 export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChanged }) {
     const { t } = useI18n();
+    const { loading, request } = useRequest();
+    const { loading: deleteLoading, request: deleteRequest } = useRequest();
 
     const show = ref(false);
     const isEditing = ref(false);
@@ -32,7 +39,6 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
     const targetMonth = ref(null);
     const form = ref(emptyItemForm());
     const errors = ref({});
-    const loading = ref(false);
 
     function openCreate({ walletId, month, section }) {
         targetWalletId.value = walletId;
@@ -64,8 +70,6 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
     }
 
     async function submit() {
-        if (loading.value) return;
-        loading.value = true;
         errors.value = {};
         form.value.plannedAmount = evaluateAmount(form.value.plannedAmount);
         form.value.carriedOver = evaluateAmount(form.value.carriedOver) || "0.00";
@@ -74,67 +78,35 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
             ? buildPath(updatePath, { id: editingItemId.value })
             : buildPath(createPath, { walletId: targetWalletId.value });
 
-        try {
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ...form.value,
-                    month: targetMonth.value,
-                    notes: form.value.notes || null,
-                    categoryId: form.value.categoryId || null,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                errors.value = payload?.errors ?? {};
-                return;
-            }
-            toast.success(
-                t(
-                    isEditing.value
-                        ? "personal_finance.budget.updated"
-                        : "personal_finance.budget.created",
-                ),
-            );
-            show.value = false;
-            onChanged?.();
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            loading.value = false;
+        const payload = await request(url, {
+            ...form.value,
+            month: targetMonth.value,
+            notes: form.value.notes || null,
+            categoryId: form.value.categoryId || null,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            errors.value = payload.errors ?? {};
+            return;
         }
+        toast.success(t(isEditing.value ? "personal_finance.budget.updated" : "personal_finance.budget.created"));
+        show.value = false;
+        onChanged?.();
     }
 
     const pendingDelete = ref(null);
-    const deleteLoading = ref(false);
 
     function confirmDelete(item) {
         pendingDelete.value = item;
     }
 
     async function doDelete() {
-        if (deleteLoading.value || !pendingDelete.value) return;
-        deleteLoading.value = true;
-        try {
-            const url = buildPath(deletePath, { id: pendingDelete.value.id });
-            const response = await fetch(url, { method: HttpMethod.Post });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                toast.error(t("shared.common.error"));
-                return;
-            }
-            pendingDelete.value = null;
-            toast.success(t("personal_finance.budget.deleted"));
-            onChanged?.();
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            deleteLoading.value = false;
-        }
+        if (!pendingDelete.value) return;
+        const payload = await deleteRequest(buildPath(deletePath, { id: pendingDelete.value.id }));
+        if (!payload || payload.success === false) return;
+        pendingDelete.value = null;
+        toast.success(t("personal_finance.budget.deleted"));
+        onChanged?.();
     }
 
     return {

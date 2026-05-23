@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
-import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 function emptyTransactionForm(extraFields = {}) {
     const today = new Date().toISOString().slice(0, 10);
@@ -28,11 +28,11 @@ export function useTransactionsCreate(
     { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
+    const { loading: createLoading, request } = useRequest();
 
     const showCreate = ref(false);
     const createForm = ref(emptyTransactionForm(extraFields));
     const createErrors = ref({});
-    const createLoading = ref(false);
     const targetWalletId = ref(null);
 
     function openCreate(walletId) {
@@ -43,40 +43,24 @@ export function useTransactionsCreate(
     }
 
     async function submitCreate() {
-        if (createLoading.value || !targetWalletId.value) return;
-        createLoading.value = true;
+        if (!targetWalletId.value) return;
         createErrors.value = {};
         createForm.value.amount = evaluateAmount(createForm.value.amount);
-        try {
-            const url = createPath.replace(
-                "__walletId__",
-                String(targetWalletId.value),
-            );
-            const response = await fetch(url, {
-                method: HttpMethod.Post,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ...createForm.value,
-                    description: createForm.value.description || null,
-                    categoryId: createForm.value.categoryId || null,
-                }),
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload?.success === false) {
-                createErrors.value = payload?.errors ?? {};
-                return;
-            }
-            onCreated(payload.transaction, targetWalletId.value);
-            toast.success(t("personal_finance.transactions.created"));
-            showCreate.value = false;
-        } catch {
-            toast.error(t("shared.common.error"));
-        } finally {
-            createLoading.value = false;
+
+        const url = createPath.replace("__walletId__", String(targetWalletId.value));
+        const payload = await request(url, {
+            ...createForm.value,
+            description: createForm.value.description || null,
+            categoryId: createForm.value.categoryId || null,
+        });
+        if (!payload) return;
+        if (payload.success === false) {
+            createErrors.value = payload.errors ?? {};
+            return;
         }
+        onCreated(payload.transaction, targetWalletId.value);
+        toast.success(t("personal_finance.transactions.created"));
+        showCreate.value = false;
     }
 
     return {

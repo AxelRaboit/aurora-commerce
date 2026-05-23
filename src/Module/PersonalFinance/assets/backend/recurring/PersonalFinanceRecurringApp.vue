@@ -137,11 +137,11 @@ function signedAmount(row) {
                 </button>
             </div>
             <template #actions>
-                <AppButton v-if="tab === 'recurring'" variant="primary" size="md" :disabled="!wallets.length" v-on:click="openRecCreate">
+                <AppButton v-if="tab === 'recurring'" variant="primary" size="md" class="w-full sm:w-auto" :disabled="!wallets.length" v-on:click="openRecCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t("personal_finance.recurring.add_recurring") }}
                 </AppButton>
-                <AppButton v-else variant="primary" size="md" :disabled="!wallets.length" v-on:click="openSchedCreate">
+                <AppButton v-else variant="primary" size="md" class="w-full sm:w-auto" :disabled="!wallets.length" v-on:click="openSchedCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t("personal_finance.recurring.add_scheduled") }}
                 </AppButton>
@@ -153,7 +153,31 @@ function signedAmount(row) {
             <section v-if="!recurring.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
                 {{ t("personal_finance.recurring.empty_recurring") }}
             </section>
-            <div v-else class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+
+            <div v-else class="sm:hidden space-y-3">
+                <div v-for="rec in recurring" :key="rec.id" class="bg-surface border border-line rounded-lg p-4 space-y-2" :class="rec.active ? '' : 'opacity-50'">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary truncate">{{ rec.description ?? '—' }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ rec.categoryName ?? t("personal_finance.transactions.uncategorized") }}</p>
+                            <p class="text-xs text-muted">{{ rec.walletName }} · {{ t("personal_finance.dashboard.day_of_month", { day: rec.dayOfMonth }) }}</p>
+                            <p v-if="rec.nextExpectedDate" class="text-xs text-muted font-mono">{{ t("personal_finance.recurring.next_expected", { date: rec.nextExpectedDate }) }}</p>
+                        </div>
+                        <p class="font-mono text-sm shrink-0" :class="rec.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ signedAmount(rec) }}</p>
+                    </div>
+                    <slot name="extra-cells" :tab="'recurring'" :item="rec" />
+                    <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                        <AppIconButton :color="rec.active ? 'amber' : 'emerald'" :title="rec.active ? t('personal_finance.recurring.toggle_disable') : t('personal_finance.recurring.toggle_enable')" v-on:click="toggleRec(rec)">
+                            <Pause v-if="rec.active" class="w-4 h-4" :stroke-width="2" />
+                            <Play v-else class="w-4 h-4" :stroke-width="2" />
+                        </AppIconButton>
+                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openRecEdit(rec)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteRec(rec)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="recurring.length" class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
@@ -201,7 +225,40 @@ function signedAmount(row) {
             <section v-if="!scheduled.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
                 {{ t("personal_finance.recurring.empty_scheduled") }}
             </section>
-            <div v-else class="bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+
+            <div v-else class="sm:hidden space-y-3">
+                <div v-for="sched in scheduled" :key="sched.id" class="bg-surface border border-line rounded-lg p-4 space-y-2" :class="sched.generated ? 'opacity-60' : ''">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-medium text-primary truncate">{{ sched.description ?? '—' }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ sched.categoryName ?? t("personal_finance.transactions.uncategorized") }}</p>
+                            <p class="text-xs text-muted">{{ sched.walletName }} · <span class="font-mono">{{ sched.scheduledDate }}</span></p>
+                            <p class="text-xs mt-1">
+                                <span v-if="sched.generated" class="inline-flex items-center gap-1 text-emerald-400">
+                                    <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />
+                                    {{ t("personal_finance.recurring.status_generated") }}
+                                </span>
+                                <span v-else class="inline-flex items-center gap-1 text-amber-400">
+                                    <Clock class="w-3.5 h-3.5" :stroke-width="2" />
+                                    {{ t("personal_finance.recurring.status_pending") }}
+                                </span>
+                            </p>
+                        </div>
+                        <p class="font-mono text-sm shrink-0" :class="sched.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ signedAmount(sched) }}</p>
+                    </div>
+                    <slot name="extra-cells" :tab="'scheduled'" :item="sched" />
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-line">
+                        <AppButton v-if="!sched.generated" variant="ghost" size="sm" v-on:click="materialize(sched)">
+                            <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("personal_finance.recurring.materialize") }}
+                        </AppButton>
+                        <AppIconButton v-if="!sched.generated" color="accent" :title="t('shared.common.edit')" v-on:click="openSchedEdit(sched)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDeleteSched(sched)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="scheduled.length" class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
