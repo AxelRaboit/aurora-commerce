@@ -39,7 +39,7 @@ abstract class AbstractWeldingPdfDocument implements WeldingPdfDocumentInterface
     #[ORM\Column(nullable: true)]
     protected ?int $contextId = null;
 
-    /** Relative path within var/pdfform/ (e.g. 2026-05/PDF-000001.pdf). */
+    /** Relative path within var/uploads/welding/pdf-documents/ (e.g. 2026/05/PDF-000001.pdf). */
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $filePath = null;
 

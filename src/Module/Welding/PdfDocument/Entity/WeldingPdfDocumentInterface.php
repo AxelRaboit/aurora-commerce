@@ -42,7 +42,7 @@ interface WeldingPdfDocumentInterface extends TimestampableInterface
 
     public function setContextId(?int $contextId): static;
 
-    /** Relative path within the pdfform storage directory (e.g. 2026-05/PDF-000001.pdf). */
+    /** Relative path within the welding PDF storage directory (e.g. 2026/05/PDF-000001.pdf). */
     public function getFilePath(): ?string;
 
     public function setFilePath(?string $filePath): static;

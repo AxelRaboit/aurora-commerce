@@ -107,7 +107,7 @@ class WeldingPdfDocumentManager implements WeldingPdfDocumentManagerInterface
         }
     }
 
-    private const string TMP_OUTPUT_PREFIX = 'aurora_pdfform_out_';
+    private const string TMP_OUTPUT_PREFIX = 'aurora_welding_pdf_out_';
 
     protected function auditCreated(WeldingPdfDocumentInterface $document): void
     {

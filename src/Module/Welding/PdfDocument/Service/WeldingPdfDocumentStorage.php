@@ -12,7 +12,13 @@ use Symfony\Component\Filesystem\Path;
 
 final readonly class WeldingPdfDocumentStorage
 {
-    private const string STORAGE_SUBDIR = 'pdfform';
+    /**
+     * Project-relative path under `var/` where generated welding PDFs land.
+     * Lives below `var/uploads/` per the Aurora storage convention
+     * (CLAUDE.md §5bis — "Tous les fichiers uploadés/générés vivent sous
+     * var/uploads/"), nested by module name then entity.
+     */
+    private const string STORAGE_SUBDIR = 'uploads/welding/pdf-documents';
 
     public function __construct(
         #[Autowire('%kernel.project_dir%')]

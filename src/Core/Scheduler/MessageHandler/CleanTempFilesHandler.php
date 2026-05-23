@@ -17,9 +17,10 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Cleans up orphaned temporary files left by Aurora processes.
  *
  * Covers:
- *   - /tmp/aurora_pdfform_* (XFDF + JSON values from pdftk fill — crash orphans)
- *   - /tmp/aurora_ssh_*     (SSH key files from MountPoint tunnels — crash orphans)
- *   - var/pdfform/**\/*.pdf  (generated PDFs whose WeldingPdfDocument entity was deleted)
+ *   - /tmp/aurora_welding_pdf_* (XFDF + JSON values from pdftk fill — crash orphans)
+ *   - /tmp/aurora_ssh_*         (SSH key files from MountPoint tunnels — crash orphans)
+ *   - var/uploads/welding/pdf-documents/**\/*.pdf
+ *       (generated PDFs whose WeldingPdfDocument entity was deleted)
  */
 #[AsMessageHandler]
 final readonly class CleanTempFilesHandler
@@ -29,7 +30,7 @@ final readonly class CleanTempFilesHandler
 
     /** Prefixes of temporary files Aurora creates in sys_get_temp_dir(). */
     private const array TMP_PREFIXES = [
-        'aurora_pdfform_xfdf_',
+        'aurora_welding_pdf_xfdf_',
         'aurora_welding_pdf_values_',
         'aurora_ssh_',
     ];
@@ -75,8 +76,8 @@ final readonly class CleanTempFilesHandler
 
     private function cleanOrphanPdfFiles(): int
     {
-        $pdfformDir = $this->projectDir.'/var/pdfform';
-        if (!is_dir($pdfformDir)) {
+        $storageDir = $this->projectDir.'/var/uploads/welding/pdf-documents';
+        if (!is_dir($storageDir)) {
             return 0;
         }
 
@@ -86,7 +87,7 @@ final readonly class CleanTempFilesHandler
 
         $removed = 0;
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($pdfformDir, FilesystemIterator::SKIP_DOTS),
+            new RecursiveDirectoryIterator($storageDir, FilesystemIterator::SKIP_DOTS),
         );
 
         foreach ($iterator as $file) {
@@ -98,8 +99,8 @@ final readonly class CleanTempFilesHandler
                 continue;
             }
 
-            // Relative path within var/pdfform/ (e.g. 2026-05/PDF-000001.pdf)
-            $relativePath = mb_ltrim(str_replace($pdfformDir, '', $file->getPathname()), DIRECTORY_SEPARATOR);
+            // Relative path within the welding PDF storage dir (e.g. 2026/05/PDF-000001.pdf)
+            $relativePath = mb_ltrim(str_replace($storageDir, '', $file->getPathname()), DIRECTORY_SEPARATOR);
 
             if (!isset($knownSet[$relativePath])) {
                 @unlink($file->getPathname());
