@@ -347,6 +347,8 @@ function describeTx(tx) {
                             <div class="min-w-0">
                                 <p class="font-medium text-primary truncate flex items-center gap-1.5">
                                     <Paperclip v-if="tx.hasAttachment" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
+                                    <ArrowRightLeft v-if="isTransferLeg(tx)" class="w-3.5 h-3.5 text-sky-400 shrink-0" :stroke-width="2" :title="t('personal_finance.transfers.leg_badge_title')" />
+                                    <SplitIcon v-if="isSplitLeg(tx)" class="w-3.5 h-3.5 text-amber-400 shrink-0" :stroke-width="2" :title="t('personal_finance.splits.leg_badge_title')" />
                                     <span>{{ tx.description ?? t("personal_finance.transactions.uncategorized") }}</span>
                                 </p>
                                 <p class="text-xs text-muted mt-0.5 font-mono">{{ tx.date }} · {{ formatType(tx.type) }}</p>
@@ -384,6 +386,8 @@ function describeTx(tx) {
                                 <td class="px-6 py-3">
                                     <div class="flex items-center gap-1.5">
                                         <Paperclip v-if="tx.hasAttachment" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
+                                        <ArrowRightLeft v-if="isTransferLeg(tx)" class="w-3.5 h-3.5 text-sky-400" :stroke-width="2" :title="t('personal_finance.transfers.leg_badge_title')" />
+                                        <SplitIcon v-if="isSplitLeg(tx)" class="w-3.5 h-3.5 text-amber-400" :stroke-width="2" :title="t('personal_finance.splits.leg_badge_title')" />
                                         <span>{{ tx.description }}</span>
                                     </div>
                                 </td>

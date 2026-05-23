@@ -165,6 +165,7 @@ personal_finance:
     created: Virement enregistré.
     updated: Virement mis à jour.
     default_description: 'Virement de {from} vers {to}'
+    leg_badge_title: Ligne de virement — édition via la modale Virement
     fields:
       from_wallet: Portefeuille source
       to_wallet: Portefeuille cible
@@ -192,6 +193,7 @@ personal_finance:
     add_part: Ajouter une ligne
     remove_part: Retirer cette ligne
     total: 'Total : {total}'
+    leg_badge_title: Ligne de décomposition — non modifiable (supprimer le split puis le recréer)
     fields:
       type: Type
       date: Date

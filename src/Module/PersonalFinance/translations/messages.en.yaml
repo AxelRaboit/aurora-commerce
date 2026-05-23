@@ -165,6 +165,7 @@ personal_finance:
     created: Transfer recorded.
     updated: Transfer updated.
     default_description: 'Transfer from {from} to {to}'
+    leg_badge_title: Transfer leg — edit via the Transfer modal
     fields:
       from_wallet: From wallet
       to_wallet: To wallet
@@ -192,6 +193,7 @@ personal_finance:
     add_part: Add a line
     remove_part: Remove this line
     total: 'Total: {total}'
+    leg_badge_title: Split leg — not editable (delete the split and recreate it)
     fields:
       type: Type
       date: Date
