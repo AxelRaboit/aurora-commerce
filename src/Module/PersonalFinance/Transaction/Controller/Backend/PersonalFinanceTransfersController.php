@@ -38,6 +38,39 @@ final class PersonalFinanceTransfersController extends AbstractController
         private readonly PayloadValidator $payloadValidator,
     ) {}
 
+    #[Route('/transfers/{transferId}/show', name: '_transfers_show', methods: [HttpMethodEnum::Get->value])]
+    public function show(string $transferId): JsonResponse
+    {
+        $transactions = $this->transactionRepository->findByTransferId($transferId);
+        if (2 !== count($transactions)) {
+            return $this->jsonNotFound();
+        }
+
+        $expense = $income = null;
+        foreach ($transactions as $tx) {
+            if ('expense' === $tx->getType()->value) {
+                $expense = $tx;
+            } elseif ('income' === $tx->getType()->value) {
+                $income = $tx;
+            }
+            $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $tx->getWallet());
+        }
+        if (null === $expense || null === $income) {
+            return $this->jsonNotFound();
+        }
+
+        return $this->jsonSuccess([
+            'transfer' => [
+                'transferId' => $transferId,
+                'fromWalletId' => $expense->getWallet()->getId(),
+                'toWalletId' => $income->getWallet()->getId(),
+                'amount' => $expense->getAmount(),
+                'date' => $expense->getDate()->format('Y-m-d'),
+                'description' => $expense->getDescription(),
+            ],
+        ]);
+    }
+
     #[Route('/transfers/create', name: '_transfers_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse
     {

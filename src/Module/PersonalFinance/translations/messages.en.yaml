@@ -141,6 +141,10 @@ personal_finance:
       amount: Amount
       date: Date
       description: Description
+    placeholders:
+      from_wallet: Pick a source wallet
+      to_wallet: Pick a target wallet
+      description: e.g. rent refund, savings move…
     errors:
       from_wallet_required: Source wallet is required.
       to_wallet_required: Target wallet is required.

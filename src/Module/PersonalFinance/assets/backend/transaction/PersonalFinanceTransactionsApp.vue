@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Receipt } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -18,6 +18,8 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useTransactionsCreate } from "./composables/useTransactionsCreate.js";
 import { useTransactionsEdit } from "./composables/useTransactionsEdit.js";
+import { useTransfersForm } from "./composables/useTransfersForm.js";
+import { useTransfersDelete } from "./composables/useTransfersDelete.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -30,6 +32,10 @@ const props = defineProps({
     createTransactionPath: { type: String, required: true },
     updateTransactionPath: { type: String, required: true },
     deleteTransactionPath: { type: String, required: true },
+    createTransferPath: { type: String, required: true },
+    updateTransferPath: { type: String, required: true },
+    deleteTransferPath: { type: String, required: true },
+    showTransferPath: { type: String, required: true },
     /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
@@ -84,6 +90,55 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
     "personal_finance.transactions.deleted",
 );
 
+const {
+    show: showTransfer,
+    isEditing: transferEditing,
+    form: transferForm,
+    errors: transferErrors,
+    loading: transferLoading,
+    openCreate: openTransferCreate,
+    openEdit: openTransferEdit,
+    submit: submitTransfer,
+} = useTransfersForm(
+    props.createTransferPath,
+    props.updateTransferPath,
+    props.showTransferPath,
+    () => reset(),
+);
+
+const {
+    pendingDelete: pendingTransferDelete,
+    loading: transferDeleteLoading,
+    confirm: confirmTransferDelete,
+    submit: doTransferDelete,
+} = useTransfersDelete(props.deleteTransferPath, () => reset());
+
+const toWalletOptionsForTransfer = computed(() =>
+    props.wallets
+        .filter((w) => w.id !== transferForm.value.fromWalletId)
+        .map((w) => ({ value: w.id, label: w.name })),
+);
+
+function isTransferLeg(tx) {
+    return !!tx?.transferId;
+}
+
+function onEditRow(tx) {
+    if (isTransferLeg(tx)) {
+        openTransferEdit(tx.transferId);
+        return;
+    }
+    openEdit(tx);
+}
+
+function onDeleteRow(tx) {
+    if (isTransferLeg(tx)) {
+        confirmTransferDelete({ transferId: tx.transferId, date: tx.date, amount: tx.amount });
+        return;
+    }
+    confirmDelete(tx);
+}
+
 function formatType(type) {
     return t(`personal_finance.transactions.types.${type}`);
 }
@@ -108,6 +163,16 @@ function describeTx(tx) {
                 v-on:search="onSearch"
             />
             <template #actions>
+                <AppButton
+                    variant="secondary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :disabled="wallets.length < 2"
+                    v-on:click="openTransferCreate(selectedWalletId)"
+                >
+                    <ArrowRightLeft class="w-4 h-4" :stroke-width="2" />
+                    {{ t("personal_finance.transfers.add") }}
+                </AppButton>
                 <AppButton
                     variant="primary"
                     size="md"
@@ -159,8 +224,8 @@ function describeTx(tx) {
                                 <slot name="extra-cells" :transaction="tx" />
                                 <td class="px-6 py-3">
                                     <div class="flex items-center justify-end gap-0.5">
-                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
-                                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="onEditRow(tx)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
+                                        <AppIconButton color="rose" :title="t('shared.common.delete')" v-on:click="onDeleteRow(tx)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     </div>
                                 </td>
                             </tr>
@@ -326,6 +391,100 @@ function describeTx(tx) {
                         {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="danger" size="md" :loading="deleteLoading" v-on:click="doDelete">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal
+            :show="showTransfer"
+            :title="transferEditing ? t('personal_finance.transfers.edit') : t('personal_finance.transfers.add')"
+            :icon="ArrowRightLeft"
+            :closeable="false"
+            v-on:close="showTransfer = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitTransfer">
+                <AppMultiselect
+                    v-model="transferForm.fromWalletId"
+                    :label="t('personal_finance.transfers.fields.from_wallet')"
+                    :placeholder="t('personal_finance.transfers.placeholders.from_wallet')"
+                    :options="walletOptions"
+                    :allow-empty="false"
+                    :disabled="transferEditing"
+                    :error="transferErrors.fromWalletId"
+                    required
+                />
+                <AppMultiselect
+                    v-model="transferForm.toWalletId"
+                    :label="t('personal_finance.transfers.fields.to_wallet')"
+                    :placeholder="t('personal_finance.transfers.placeholders.to_wallet')"
+                    :options="toWalletOptionsForTransfer"
+                    :allow-empty="false"
+                    :disabled="transferEditing"
+                    :error="transferErrors.toWalletId"
+                    required
+                />
+                <AppAmountInput
+                    v-model="transferForm.amount"
+                    :label="t('personal_finance.transfers.fields.amount')"
+                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
+                    :error="transferErrors.amount"
+                    required
+                />
+                <AppDatePicker
+                    v-model="transferForm.date"
+                    :label="t('personal_finance.transfers.fields.date')"
+                    :placeholder="t('personal_finance.transactions.placeholders.date')"
+                    :error="transferErrors.date"
+                    required
+                />
+                <AppInput
+                    v-model="transferForm.description"
+                    :label="t('personal_finance.transfers.fields.description')"
+                    :placeholder="t('personal_finance.transfers.placeholders.description')"
+                    :error="transferErrors.description"
+                />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showTransfer = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="transferLoading"
+                        v-on:click="submitTransfer"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal
+            :show="!!pendingTransferDelete"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingTransferDelete = null"
+        >
+            <p class="text-sm text-primary">
+                {{ t("personal_finance.transfers.delete_confirm") }}
+            </p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingTransferDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="transferDeleteLoading" v-on:click="doTransferDelete">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
                     </AppButton>

@@ -141,6 +141,10 @@ personal_finance:
       amount: Montant
       date: Date
       description: Description
+    placeholders:
+      from_wallet: Choisir un portefeuille source
+      to_wallet: Choisir un portefeuille cible
+      description: Ex. remboursement loyer, transfert épargne…
     errors:
       from_wallet_required: Le portefeuille source est requis.
       to_wallet_required: Le portefeuille cible est requis.

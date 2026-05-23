@@ -55,6 +55,10 @@ final readonly class PersonalFinanceTransactionsViewBuilder
             'createTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_transactions_create', ['walletId' => '__walletId__']),
             'updateTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_update', ['id' => '__id__']),
             'deleteTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_delete', ['id' => '__id__']),
+            'createTransferPath' => $this->urlGenerator->generate('backend_personal_finance_transfers_create'),
+            'updateTransferPath' => $this->urlGenerator->generate('backend_personal_finance_transfers_update', ['transferId' => '__transferId__']),
+            'deleteTransferPath' => $this->urlGenerator->generate('backend_personal_finance_transfers_delete', ['transferId' => '__transferId__']),
+            'showTransferPath' => $this->urlGenerator->generate('backend_personal_finance_transfers_show', ['transferId' => '__transferId__']),
         ];
     }
 
