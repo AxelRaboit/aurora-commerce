@@ -21,6 +21,9 @@ backend:
     welding_reference_prefix:
       label: Welding workflow reference prefix
       description: "Prefix used for auto-generated references (e.g. WLD-2026-000042)"
+    welding_notification_email:
+      label: Notification email (step validation)
+      description: "Address that receives a notification when a workflow step awaits validation. Empty = no notification."
   nav:
     sections:
       welding: Welding

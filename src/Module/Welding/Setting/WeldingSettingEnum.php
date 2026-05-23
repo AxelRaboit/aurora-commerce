@@ -9,6 +9,7 @@ use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 enum WeldingSettingEnum: string implements ApplicationParameterEnumInterface
 {
     case ReferencePrefix = 'backend_welding_reference_prefix';
+    case NotificationEmail = 'backend_welding_notification_email';
 
     public function getKey(): string
     {
@@ -19,6 +20,7 @@ enum WeldingSettingEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             self::ReferencePrefix => 'backend.parameters.welding_reference_prefix.label',
+            self::NotificationEmail => 'backend.parameters.welding_notification_email.label',
         };
     }
 
@@ -26,6 +28,7 @@ enum WeldingSettingEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             self::ReferencePrefix => 'backend.parameters.welding_reference_prefix.description',
+            self::NotificationEmail => 'backend.parameters.welding_notification_email.description',
         };
     }
 
@@ -33,6 +36,7 @@ enum WeldingSettingEnum: string implements ApplicationParameterEnumInterface
     {
         return match ($this) {
             self::ReferencePrefix => 'WLD',
+            self::NotificationEmail => '',
         };
     }
 
@@ -43,6 +47,9 @@ enum WeldingSettingEnum: string implements ApplicationParameterEnumInterface
 
     public function getGroup(): string
     {
-        return 'sequences';
+        return match ($this) {
+            self::ReferencePrefix => 'sequences',
+            self::NotificationEmail => 'welding',
+        };
     }
 }

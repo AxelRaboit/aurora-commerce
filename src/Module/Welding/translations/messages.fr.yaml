@@ -21,6 +21,9 @@ backend:
     welding_reference_prefix:
       label: Préfixe des références de workflow de soudure
       description: "Préfixe utilisé pour les références auto-générées (ex: WLD-2026-000042)"
+    welding_notification_email:
+      label: Email de notification (validation d'étape)
+      description: "Adresse qui reçoit une notification quand une étape de workflow attend une validation. Vide = pas de notification."
   nav:
     sections:
       welding: Soudures

@@ -16,6 +16,7 @@ use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 final readonly class WeldingConfigurationTabProvider implements ConfigurationTabProviderInterface
 {
     private const array TAB_PRIORITY = [
+        'welding' => 130,
         'sequences' => 90,
     ];
 

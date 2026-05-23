@@ -8,6 +8,7 @@ use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Welding\Enum\WorkflowStatusEnum;
 use Aurora\Module\Welding\Enum\WorkflowStepStatusEnum;
+use Aurora\Module\Welding\Service\WeldingStepNotifier;
 use Aurora\Module\Welding\Workflow\Entity\WorkflowInterface;
 use Aurora\Module\Welding\WorkflowStep\Dto\WorkflowStepValidationInput;
 use Aurora\Module\Welding\WorkflowStep\Dto\WorkflowStepValidationInputInterface;
@@ -23,6 +24,7 @@ class WorkflowStepManager implements WorkflowStepManagerInterface
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly AuditLogger $auditLogger,
+        protected readonly WeldingStepNotifier $notifier,
     ) {}
 
     public function submit(WorkflowStepInterface $step, CoreUserInterface $welder): void
@@ -51,6 +53,10 @@ class WorkflowStepManager implements WorkflowStepManagerInterface
         $this->maybeCompleteWorkflow($step->getWorkflow());
 
         $this->auditLogger->log('welding', 'workflow_step.submitted', 'WorkflowStep', $step->getId(), $this->auditPayload($step));
+
+        if ($requiresValidation) {
+            $this->notifier->notifyAwaitingValidation($step);
+        }
     }
 
     public function recordValidation(WorkflowStepInterface $step, CoreUserInterface $validator, WorkflowStepValidationInputInterface $input): void
