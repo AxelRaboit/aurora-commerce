@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { RefreshCw, TrendingUp, TrendingDown, Wallet, Target, RotateCw, Clock, AlertTriangle } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import { useDashboardData } from "./composables/useDashboardData.js";
 import { buildSparklinePath, deltaClass, formatDelta, signedAmount } from "./composables/dashboardFormatters.js";
 
@@ -29,6 +30,10 @@ const sparklinePath = computed(() => buildSparklinePath(snap.value.sparkline ?? 
                 </AppButton>
             </template>
         </AppListToolbar>
+
+        <AppMessage variant="info">
+            {{ t("personal_finance.dashboard.help") }}
+        </AppMessage>
 
         <!-- KPI tiles -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

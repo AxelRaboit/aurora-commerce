@@ -11,6 +11,7 @@ import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppColorPicker from "@/shared/components/form/picker/AppColorPicker.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useGoalsForm } from "./composables/useGoalsForm.js";
@@ -108,6 +109,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 </AppButton>
             </template>
         </AppListToolbar>
+
+        <AppMessage variant="info">
+            {{ t("personal_finance.goals.help") }}
+        </AppMessage>
 
         <section v-if="!sortedGoals.length" class="bg-surface border border-line rounded-lg p-8 text-center text-muted text-sm">
             {{ t("personal_finance.goals.empty") }}

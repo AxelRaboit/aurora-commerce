@@ -48,6 +48,7 @@ backend:
 personal_finance:
   wallets:
     title: Mes portefeuilles
+    help: 'Un portefeuille représente un compte (courant, livret, cash…). Définis sa balance initiale : Aurora calculera ensuite les soldes à partir des transactions.'
     empty: Aucun portefeuille pour l'instant. Créez votre premier portefeuille ci-dessus.
     create_form_title: Créer un portefeuille
     delete_confirm: 'Supprimer le portefeuille « {name} » ? Toutes les transactions, catégories et membres associés seront supprimés. Cette action est irréversible.'
@@ -92,6 +93,7 @@ personal_finance:
       invitation_role_required: Le rôle est requis.
   categories:
     title: Catégories
+    help: 'Les catégories organisent tes transactions (Courses, Loisirs, Salaire…). Chaque portefeuille a ses propres catégories. Crées-en quelques-unes avant de saisir des transactions.'
     empty: Aucune catégorie pour ce portefeuille.
     no_wallet: Créez d'abord un portefeuille pour pouvoir gérer des catégories.
     wallet: Portefeuille
@@ -115,6 +117,7 @@ personal_finance:
       name_required: Le nom de la catégorie est requis.
   transactions:
     title: Transactions
+    help: 'Saisis revenus et dépenses ici. Tu peux aussi faire un virement entre portefeuilles, décomposer une dépense en plusieurs catégories (split) ou ajuster manuellement la balance — boutons ci-dessus.'
     empty: Aucune transaction pour ce portefeuille.
     no_wallet: Créez d'abord un portefeuille pour pouvoir enregistrer des transactions.
     uncategorized: Sans catégorie
@@ -214,6 +217,7 @@ personal_finance:
       amount_positive: Le montant de chaque ligne doit être strictement positif.
   budget:
     title: Budget mensuel
+    help: 'Définis ce que tu prévois de dépenser chaque mois par catégorie. Aurora compare automatiquement le prévu vs le réel à partir de tes transactions. Le bouton 📃 sur chaque ligne ouvre la liste filtrée des transactions associées.'
     no_wallet: Crée d'abord un portefeuille pour pouvoir bâtir un budget.
     no_category: Sans catégorie
     add_item: Ajouter une ligne
@@ -258,6 +262,7 @@ personal_finance:
   dashboard:
     title: Tableau de bord
     subtitle: Vue d'ensemble en un coup d'œil de ta finance perso ce mois-ci.
+    help: 'Synthèse mensuelle de tes portefeuilles épinglés : KPIs revenus/dépenses, sparkline 30 jours, top catégories, transactions récentes et alertes budget. Les portefeuilles affichés sont ceux marqués comme épinglés depuis la page Portefeuilles.'
     vs_previous_month: vs. mois précédent
     income_minus_expense: Revenus − Dépenses
     across_wallets: 'sur {count} portefeuille(s)'
@@ -280,7 +285,7 @@ personal_finance:
       total_balance: Solde total
   categorization:
     title: Auto-catégorisation
-    intro: Les règles sont apprises automatiquement à chaque transaction catégorisée. Tu peux corriger une catégorie ou supprimer une règle obsolète ici.
+    help: 'Aurora apprend automatiquement à catégoriser tes transactions à partir de leur description : à chaque fois que tu sauvegardes une transaction avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Corrige ou supprime ici les règles obsolètes.'
     empty: Aucune règle pour le moment. Catégorise quelques transactions pour que le système apprenne.
     search_placeholder: Rechercher un pattern ou une catégorie…
     deleted: Règle supprimée.
@@ -353,6 +358,7 @@ personal_finance:
       date_required: La date est requise.
   goals:
     title: Objectifs d'épargne
+    help: 'Définis tes objectifs d''épargne (vacances, projet immo, achat conséquent…). Si tu lies un objectif à une catégorie, Aurora additionne automatiquement les transactions de cette catégorie comme avance. Sinon tu déposes manuellement avec le bouton +.'
     add: Nouvel objectif
     edit: Modifier l'objectif
     empty: Aucun objectif pour le moment. Crée ton premier objectif d'épargne pour suivre ta progression.

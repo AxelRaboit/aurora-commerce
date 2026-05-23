@@ -48,6 +48,7 @@ backend:
 personal_finance:
   wallets:
     title: My wallets
+    help: 'A wallet represents an account (checking, savings, cash…). Set its starting balance and Aurora will derive the running balances from your transactions.'
     empty: No wallet yet. Create your first one above.
     create_form_title: Create a wallet
     delete_confirm: 'Delete wallet "{name}"? All associated transactions, categories and members will be removed. This action is irreversible.'
@@ -92,6 +93,7 @@ personal_finance:
       invitation_role_required: Role is required.
   categories:
     title: Categories
+    help: 'Categories organise your transactions (Groceries, Leisure, Salary…). Each wallet has its own categories. Create a few before you start logging transactions.'
     empty: No category for this wallet yet.
     no_wallet: Create a wallet first to manage categories.
     wallet: Wallet
@@ -115,6 +117,7 @@ personal_finance:
       name_required: Category name is required.
   transactions:
     title: Transactions
+    help: 'Log incomes and expenses here. You can also transfer between wallets, split one expense across multiple categories, or adjust the balance manually — buttons above.'
     empty: No transaction for this wallet yet.
     no_wallet: Create a wallet first to record transactions.
     uncategorized: Uncategorized
@@ -214,6 +217,7 @@ personal_finance:
       amount_positive: Each line amount must be strictly positive.
   budget:
     title: Monthly budget
+    help: 'Set how much you plan to spend each month per category. Aurora compares planned vs. actual using your transactions. The 📃 button on each line opens the filtered list of transactions feeding that row.'
     no_wallet: Create a wallet first to start budgeting.
     no_category: No category
     add_item: Add a line
@@ -258,6 +262,7 @@ personal_finance:
   dashboard:
     title: Dashboard
     subtitle: Personal finance overview at a glance for this month.
+    help: 'Monthly summary of your pinned wallets: income / expense KPIs, 30-day sparkline, top categories, recent transactions and budget alerts. Pin or unpin wallets from the Wallets page.'
     vs_previous_month: vs. previous month
     income_minus_expense: Income − Expense
     across_wallets: 'across {count} wallet(s)'
@@ -280,7 +285,7 @@ personal_finance:
       total_balance: Total balance
   categorization:
     title: Auto-categorization
-    intro: Rules are learnt automatically every time you save a categorised transaction. Fix a category here, or delete an obsolete rule.
+    help: 'Aurora learns to categorise your transactions from their description: every time you save a transaction with a category, a "description → category" rule is created or strengthened. Fix or delete obsolete rules here.'
     empty: No rules yet. Categorise a few transactions so the system can learn.
     search_placeholder: Search by pattern or category…
     deleted: Rule deleted.
@@ -353,6 +358,7 @@ personal_finance:
       date_required: Date is required.
   goals:
     title: Savings goals
+    help: 'Define your savings goals (holidays, real estate down payment, big purchase…). Link a goal to a category and Aurora will sum the transactions in that category as progress. Otherwise, deposit manually with the + button.'
     add: New goal
     edit: Edit goal
     empty: No goals yet. Create your first savings goal to start tracking progress.

@@ -12,6 +12,7 @@ import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 
@@ -65,7 +66,9 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             />
         </AppListToolbar>
 
-        <p class="text-sm text-muted">{{ t("personal_finance.categorization.intro") }}</p>
+        <AppMessage variant="info">
+            {{ t("personal_finance.categorization.help") }}
+        </AppMessage>
 
         <section v-if="!items?.length" class="bg-surface border border-line rounded-lg p-8 text-center text-muted text-sm">
             <Sparkles class="inline w-5 h-5 mr-1" :stroke-width="1.5" />

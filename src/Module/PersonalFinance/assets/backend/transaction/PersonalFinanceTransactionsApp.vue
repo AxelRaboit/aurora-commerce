@@ -14,6 +14,7 @@ import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import PersonalFinanceTransactionCreateModal from "./components/PersonalFinanceTransactionCreateModal.vue";
@@ -260,6 +261,10 @@ function describeTx(tx) {
                 </div>
             </template>
         </AppListToolbar>
+
+        <AppMessage variant="info">
+            {{ t("personal_finance.transactions.help") }}
+        </AppMessage>
 
         <section v-if="!wallets.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
             {{ t("personal_finance.transactions.no_wallet") }}

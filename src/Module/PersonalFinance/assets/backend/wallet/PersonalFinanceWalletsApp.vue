@@ -13,6 +13,7 @@ import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useWalletsCreate } from "./composables/useWalletsCreate.js";
@@ -79,6 +80,10 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 </AppButton>
             </template>
         </AppListToolbar>
+
+        <AppMessage variant="info">
+            {{ t("personal_finance.wallets.help") }}
+        </AppMessage>
 
         <div class="relative space-y-4">
             <div class="sm:hidden space-y-3">
