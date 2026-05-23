@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -13,6 +13,7 @@ import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import PersonalFinanceTransactionCreateModal from "../transaction/components/PersonalFinanceTransactionCreateModal.vue";
+import PersonalFinanceBudgetItemTransactionsModal from "./components/PersonalFinanceBudgetItemTransactionsModal.vue";
 import { useBudgetData } from "./composables/useBudgetData.js";
 import { useBudgetItemsForm } from "./composables/useBudgetItemsForm.js";
 import { useBudgetQuickAdd } from "./composables/useBudgetQuickAdd.js";
@@ -30,6 +31,12 @@ const props = defineProps({
     updateItemPath: { type: String, required: true },
     deleteItemPath: { type: String, required: true },
     createTransactionPath: { type: String, required: true },
+    updateTransactionPath: { type: String, required: true },
+    deleteTransactionPath: { type: String, required: true },
+    itemTransactionsPath: { type: String, required: true },
+    uploadAttachmentPath: { type: String, required: true },
+    deleteAttachmentPath: { type: String, required: true },
+    serveAttachmentPath: { type: String, required: true },
     /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
@@ -92,6 +99,12 @@ const {
 });
 
 const { createModalRef, onQuickAdd } = useBudgetQuickAdd({ selectedWalletId, currentMonth });
+const listModalRef = ref(null);
+
+function onListTransactions(item) {
+    if (!item?.categoryId) return;
+    listModalRef.value?.open(item);
+}
 
 function onCreate(section) {
     openItemCreate({
@@ -227,6 +240,14 @@ function diffClass(item) {
                                 <AppIconButton color="emerald" :title="t('personal_finance.budget.quick_add_transaction')" v-on:click="onQuickAdd(item, section)">
                                     <Receipt class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
+                                <AppIconButton
+                                    color="sky"
+                                    :title="item.categoryId ? t('personal_finance.budget.list_transactions') : t('personal_finance.budget.list_transactions_disabled')"
+                                    :disabled="!item.categoryId"
+                                    v-on:click="onListTransactions(item)"
+                                >
+                                    <List class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
                                 <AppIconButton color="accent" :title="t('shared.common.edit')" v-on:click="onEdit(item)">
                                     <Pencil class="w-4 h-4" :stroke-width="2" />
                                 </AppIconButton>
@@ -319,6 +340,20 @@ function diffClass(item) {
             :create-path="createTransactionPath"
             :extra-fields="extraFields"
             v-on:created="refresh(selectedWalletId, currentMonth)"
+        />
+
+        <PersonalFinanceBudgetItemTransactionsModal
+            ref="listModalRef"
+            :categories-by-wallet="categoriesByWallet"
+            :types="types"
+            :item-transactions-path="itemTransactionsPath"
+            :update-transaction-path="updateTransactionPath"
+            :delete-transaction-path="deleteTransactionPath"
+            :upload-attachment-path="uploadAttachmentPath"
+            :delete-attachment-path="deleteAttachmentPath"
+            :serve-attachment-path="serveAttachmentPath"
+            :extra-fields="extraFields"
+            v-on:changed="refresh(selectedWalletId, currentMonth)"
         />
 
         <AppModal

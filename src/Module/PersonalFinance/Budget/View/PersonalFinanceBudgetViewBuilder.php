@@ -74,6 +74,12 @@ final readonly class PersonalFinanceBudgetViewBuilder
             'updateItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_update', ['id' => '__id__']),
             'deleteItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_delete', ['id' => '__id__']),
             'createTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_transactions_create', ['walletId' => '__walletId__']),
+            'updateTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_update', ['id' => '__id__']),
+            'deleteTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_delete', ['id' => '__id__']),
+            'itemTransactionsPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_transactions', ['id' => '__id__']),
+            'uploadAttachmentPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_attachment_upload', ['id' => '__id__']),
+            'deleteAttachmentPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_attachment_delete', ['id' => '__id__']),
+            'serveAttachmentPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_attachment_serve', ['id' => '__id__']),
         ];
     }
 

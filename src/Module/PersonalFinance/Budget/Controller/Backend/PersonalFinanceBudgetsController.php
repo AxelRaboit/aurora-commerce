@@ -15,6 +15,8 @@ use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetManagerInt
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
 use Aurora\Module\PersonalFinance\Budget\View\PersonalFinanceBudgetViewBuilder;
+use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
+use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransactionSerializerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
 use Aurora\Module\PersonalFinance\Wallet\Security\PersonalFinanceWalletVoter;
@@ -43,6 +45,8 @@ final class PersonalFinanceBudgetsController extends AbstractController
         private readonly PersonalFinanceBudgetItemSerializerInterface $itemSerializer,
         private readonly PersonalFinanceWalletRepository $walletRepository,
         private readonly PersonalFinanceBudgetViewBuilder $viewBuilder,
+        private readonly PersonalFinanceTransactionRepository $transactionRepository,
+        private readonly PersonalFinanceTransactionSerializerInterface $transactionSerializer,
         private readonly PayloadValidator $payloadValidator,
     ) {}
 
@@ -128,6 +132,34 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $this->itemManager->update($item, $input);
 
         return $this->jsonSuccess(['item' => $this->itemSerializer->serialize($item)]);
+    }
+
+    /**
+     * Drill-down: returns every transaction that belongs to a budget
+     * item's category over the item's budgeted month. Used by the
+     * Budgets page to let the user audit / edit / delete the actuals
+     * that feed a given line.
+     */
+    #[Route('/budget/items/{id}/transactions', name: '_budget_items_transactions', methods: [HttpMethodEnum::Get->value])]
+    public function itemTransactions(int $id): JsonResponse
+    {
+        $item = $this->itemRepository->find($id);
+        if (!$item instanceof PersonalFinanceBudgetItemInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $item->getBudget()->getWallet());
+
+        $category = $item->getCategory();
+        if (null === $category) {
+            return $this->jsonSuccess(['transactions' => []]);
+        }
+
+        $transactions = $this->transactionRepository->findByCategoryAndMonth($category, $item->getBudget()->getMonth());
+
+        return $this->jsonSuccess([
+            'transactions' => array_map($this->transactionSerializer->serialize(...), $transactions),
+        ]);
     }
 
     #[Route('/budget/items/{id}/delete', name: '_budget_items_delete', methods: [HttpMethodEnum::Post->value])]

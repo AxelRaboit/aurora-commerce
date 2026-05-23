@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, FileDown, Upload, Scale, Wallet } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, Scale, Wallet } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -17,12 +17,11 @@ import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import PersonalFinanceTransactionCreateModal from "./components/PersonalFinanceTransactionCreateModal.vue";
-import { useTransactionsEdit } from "./composables/useTransactionsEdit.js";
+import PersonalFinanceTransactionEditModal from "./components/PersonalFinanceTransactionEditModal.vue";
 import { useTransfersForm } from "./composables/useTransfersForm.js";
 import { useTransfersDelete } from "./composables/useTransfersDelete.js";
 import { useSplitsCreate } from "./composables/useSplitsCreate.js";
 import { useSplitsDelete } from "./composables/useSplitsDelete.js";
-import { useTransactionAttachment } from "./composables/useTransactionAttachment.js";
 import { useWalletBalance } from "./composables/useWalletBalance.js";
 import { useBalanceAdjustment } from "./composables/useBalanceAdjustment.js";
 
@@ -87,12 +86,7 @@ const currentCategoryOptions = computed(() => {
 });
 
 const createModalRef = ref(null);
-
-const { showEdit, editingTransaction, editForm, editErrors, editLoading, openEdit, submitEdit } = useTransactionsEdit(
-    props.updateTransactionPath,
-    () => refreshAfterTx(),
-    { extraFields: props.extraFields },
-);
+const editModalRef = ref(null);
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteTransactionPath,
@@ -137,35 +131,6 @@ const splitTotal = computed(() => {
     }
     return total.toFixed(2);
 });
-
-const { loading: attachmentLoading, upload: uploadAttachment, remove: removeAttachment, serveUrl: attachmentServeUrl } =
-    useTransactionAttachment(
-        props.uploadAttachmentPath,
-        props.deleteAttachmentPath,
-        props.serveAttachmentPath,
-        (updatedTransaction) => {
-            if (updatedTransaction && editingTransaction.value && updatedTransaction.id === editingTransaction.value.id) {
-                editingTransaction.value = updatedTransaction;
-            }
-            refreshAfterTx();
-        },
-    );
-
-const attachmentInput = ref(null);
-
-function onAttachmentPick(event) {
-    const file = event.target.files?.[0];
-    if (file && editingTransaction.value?.id) {
-        uploadAttachment(editingTransaction.value.id, file);
-    }
-    event.target.value = "";
-}
-
-function onAttachmentRemove() {
-    if (editingTransaction.value?.id) {
-        removeAttachment(editingTransaction.value.id);
-    }
-}
 
 const { balance, refresh: refreshBalance } = useWalletBalance(props.walletBalancePath, props.balance);
 
@@ -224,7 +189,7 @@ function onEditRow(tx) {
     if (isSplitLeg(tx)) {
         return;
     }
-    openEdit(tx);
+    editModalRef.value?.open(tx);
 }
 
 function onDeleteRow(tx) {
@@ -420,115 +385,22 @@ function describeTx(tx) {
             </template>
         </PersonalFinanceTransactionCreateModal>
 
-        <AppModal
-            :show="showEdit"
-            :title="t('personal_finance.transactions.edit', { name: describeTx(editingTransaction) })"
-            :icon="Pencil"
-            :closeable="false"
-            v-on:close="showEdit = false"
+        <PersonalFinanceTransactionEditModal
+            ref="editModalRef"
+            :categories-by-wallet="categoriesByWallet"
+            :types="types"
+            :update-path="updateTransactionPath"
+            :upload-attachment-path="uploadAttachmentPath"
+            :delete-attachment-path="deleteAttachmentPath"
+            :serve-attachment-path="serveAttachmentPath"
+            :extra-fields="extraFields"
+            v-on:updated="refreshAfterTx"
+            v-on:attachment-changed="refreshAfterTx"
         >
-            <form class="space-y-4" v-on:submit.prevent="submitEdit">
-                <AppMultiselect
-                    v-model="editForm.type"
-                    :label="t('personal_finance.transactions.fields.type')"
-                    :placeholder="t('personal_finance.transactions.placeholders.type')"
-                    :options="typeOptions"
-                    :allow-empty="false"
-                    required
-                />
-                <AppAmountInput
-                    v-model="editForm.amount"
-                    :label="t('personal_finance.transactions.fields.amount')"
-                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
-                    :error="editErrors.amount"
-                    required
-                />
-                <AppDatePicker
-                    v-model="editForm.date"
-                    :label="t('personal_finance.transactions.fields.date')"
-                    :placeholder="t('personal_finance.transactions.placeholders.date')"
-                    :error="editErrors.date"
-                    required
-                />
-                <AppMultiselect
-                    v-model="editForm.categoryId"
-                    :label="t('personal_finance.transactions.fields.category')"
-                    :placeholder="t('personal_finance.transactions.placeholders.category')"
-                    :options="currentCategoryOptions"
-                    :allow-empty="true"
-                />
-                <AppInput
-                    v-model="editForm.description"
-                    :label="t('personal_finance.transactions.fields.description')"
-                    :placeholder="t('personal_finance.transactions.placeholders.description')"
-                    :error="editErrors.description"
-                />
-                <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :transaction="editingTransaction" />
-
-                <div v-if="editingTransaction" class="border-t border-line pt-4 space-y-2">
-                    <label class="text-xs font-medium uppercase tracking-wider text-muted">
-                        {{ t("personal_finance.transactions.attachment.label") }}
-                    </label>
-                    <div v-if="editingTransaction.hasAttachment" class="flex items-center justify-between gap-3 bg-surface-2/40 border border-line rounded-md px-3 py-2">
-                        <a
-                            :href="attachmentServeUrl(editingTransaction.id)"
-                            target="_blank"
-                            rel="noopener"
-                            class="inline-flex items-center gap-2 text-sm text-accent hover:underline truncate"
-                        >
-                            <FileDown class="w-4 h-4" :stroke-width="2" />
-                            <span class="truncate">{{ editingTransaction.attachmentOriginalName ?? t('personal_finance.transactions.attachment.download') }}</span>
-                        </a>
-                        <AppIconButton
-                            color="rose"
-                            :title="t('personal_finance.transactions.attachment.remove')"
-                            :disabled="attachmentLoading"
-                            v-on:click="onAttachmentRemove"
-                        >
-                            <Trash2 class="w-4 h-4" :stroke-width="2" />
-                        </AppIconButton>
-                    </div>
-                    <div v-else class="flex items-center gap-2">
-                        <AppButton
-                            variant="ghost"
-                            size="sm"
-                            type="button"
-                            :loading="attachmentLoading"
-                            v-on:click="attachmentInput?.click()"
-                        >
-                            <Upload class="w-3.5 h-3.5" :stroke-width="2" />
-                            {{ t("personal_finance.transactions.attachment.add") }}
-                        </AppButton>
-                        <span class="text-xs text-muted">{{ t("personal_finance.transactions.attachment.hint") }}</span>
-                    </div>
-                    <input
-                        ref="attachmentInput"
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp,application/pdf"
-                        class="hidden"
-                        v-on:change="onAttachmentPick"
-                    />
-                </div>
-            </form>
-            <template #footer>
-                <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showEdit = false">
-                        <X class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.cancel") }}
-                    </AppButton>
-                    <AppButton
-                        variant="primary"
-                        size="md"
-                        type="submit"
-                        :loading="editLoading"
-                        v-on:click="submitEdit"
-                    >
-                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.save") }}
-                    </AppButton>
-                </AppModalFooter>
+            <template #extra-form-fields="slotProps">
+                <slot name="extra-form-fields" v-bind="slotProps" />
             </template>
-        </AppModal>
+        </PersonalFinanceTransactionEditModal>
 
         <AppModal
             :show="!!pendingDelete"

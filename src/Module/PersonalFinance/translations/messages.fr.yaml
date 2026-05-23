@@ -223,6 +223,10 @@ personal_finance:
     totals_line: '{actual} / {planned} dépensé'
     carried_label: 'reporté : {amount}'
     quick_add_transaction: Ajouter une transaction sur cette ligne
+    list_transactions: Voir les transactions associées
+    list_transactions_disabled: Aucune catégorie associée à cette ligne — impossible de filtrer
+    transactions_modal_title: 'Transactions — {name}'
+    transactions_modal_empty: Aucune transaction trouvée pour cette catégorie sur le mois.
     sections:
       income: Revenus
       savings: Épargne

@@ -223,6 +223,10 @@ personal_finance:
     totals_line: '{actual} / {planned} spent'
     carried_label: 'carried: {amount}'
     quick_add_transaction: Add a transaction on this line
+    list_transactions: View linked transactions
+    list_transactions_disabled: No category linked to this line — cannot filter
+    transactions_modal_title: 'Transactions — {name}'
+    transactions_modal_empty: No transactions found for this category in the budgeted month.
     sections:
       income: Income
       savings: Savings
