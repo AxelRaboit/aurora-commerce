@@ -1,0 +1,87 @@
+<script setup>
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { ClipboardCheck } from "lucide-vue-next";
+
+const props = defineProps({
+    workflows: { type: Array, default: () => [] },
+});
+
+const { t } = useI18n();
+const items = ref([...props.workflows]);
+
+const groupedByStatus = computed(() => {
+    const groups = {};
+    for (const w of items.value) {
+        (groups[w.status] ??= []).push(w);
+    }
+    return groups;
+});
+
+const STATUS_ORDER = [
+    "draft",
+    "in_progress",
+    "awaiting_validation",
+    "completed",
+    "rejected",
+    "archived",
+];
+
+const STATUS_COLOR = {
+    draft: "bg-gray-100 text-gray-700",
+    in_progress: "bg-blue-100 text-blue-700",
+    awaiting_validation: "bg-amber-100 text-amber-700",
+    completed: "bg-emerald-100 text-emerald-700",
+    rejected: "bg-rose-100 text-rose-700",
+    archived: "bg-zinc-100 text-zinc-600",
+};
+</script>
+
+<template>
+    <div class="p-6 space-y-6">
+        <div class="flex items-center gap-3">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
+                <ClipboardCheck class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
+            </div>
+            <div>
+                <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflows.title") }}</h1>
+                <p class="text-sm text-secondary">{{ t("welding.workflows.subtitle") }}</p>
+            </div>
+        </div>
+
+        <div v-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
+            {{ t("welding.workflows.empty") }}
+        </div>
+        <div v-else class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div v-for="status in STATUS_ORDER" :key="status">
+                <div v-if="groupedByStatus[status]?.length" class="space-y-2">
+                    <h2 class="text-xs uppercase tracking-wide font-medium text-secondary">
+                        {{ t("welding.workflows.status_" + status) }}
+                        <span class="text-muted">({{ groupedByStatus[status].length }})</span>
+                    </h2>
+                    <ul class="space-y-2">
+                        <li
+                            v-for="workflow in groupedByStatus[status]"
+                            :key="workflow.id"
+                            class="rounded-lg border border-line bg-surface p-3 space-y-1"
+                        >
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-mono text-xs text-secondary">{{ workflow.reference }}</span>
+                                <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_COLOR[workflow.status]]">
+                                    {{ t("welding.workflows.status_" + workflow.status) }}
+                                </span>
+                            </div>
+                            <div class="text-sm font-medium text-primary truncate">
+                                {{ workflow.templateTitle || "—" }}
+                                <span class="text-xs text-muted">v{{ workflow.templateVersion }}</span>
+                            </div>
+                            <div class="text-xs text-secondary truncate">
+                                {{ workflow.assigneeName || t("welding.workflows.no_assignee") }}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

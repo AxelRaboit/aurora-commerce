@@ -8,14 +8,26 @@ backend:
           create: Créer un modèle de workflow de soudure
           edit: Modifier un modèle de workflow de soudure
           delete: Supprimer un modèle de workflow de soudure
+        workflows:
+          view: Voir les workflows de soudure en cours
+          start: Démarrer un workflow de soudure
+          fill: Remplir un workflow de soudure (rôle soudeur)
+          validate: Valider une étape de workflow (rôle inspecteur/QA)
+          archive: Archiver / rejeter un workflow
   modules:
     welding_backend: Soudures
     welding_backend_description: Workflows de soudure réglementée — modèles, exécution étape par étape, validations et signatures
+  parameters:
+    welding_reference_prefix:
+      label: Préfixe des références de workflow de soudure
+      description: "Préfixe utilisé pour les références auto-générées (ex: WLD-2026-000042)"
   nav:
     sections:
       welding: Soudures
     welding: Soudures
     welding_description: Workflows de soudure réglementée
+    welding_workflows: Workflows
+    welding_workflows_description: Workflows de soudure en cours d'exécution (assignés aux soudeurs)
     welding_workflow_templates: Modèles de workflow
     welding_workflow_templates_description: Gérer les modèles de workflow de soudure (versions, étapes, PDFs requis)
 
@@ -46,6 +58,29 @@ welding:
       step_required: L'étape de rattachement est obligatoire
       pdf_template_required: Le PDF template est obligatoire
       position_invalid: La position doit être un entier positif ou zéro
+  workflows:
+    title: Workflows
+    subtitle: Workflows de soudure en cours et terminés
+    empty: Aucun workflow démarré pour l'instant.
+    no_assignee: Pas de soudeur assigné
+    status_draft: Brouillon
+    status_in_progress: En cours
+    status_awaiting_validation: En attente de validation
+    status_completed: Terminé
+    status_rejected: Rejeté
+    status_archived: Archivé
+    errors:
+      template_required: Le modèle de workflow est obligatoire
+      reason_required: Un motif de rejet est requis
+  workflow_steps:
+    status_pending: À faire
+    status_in_progress: En cours
+    status_awaiting_validation: En attente de validation
+    status_validated: Validée
+    status_rejected: Rejetée
+    errors:
+      decision_invalid: La décision doit être 'validate' ou 'reject'
+      unauthenticated: Utilisateur non authentifié
   validator_role_inspector: Inspecteur
   validator_role_quality_assurance: Assurance qualité
   validator_role_supervisor: Superviseur

@@ -205,6 +205,10 @@ use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
+use Aurora\Module\Welding\Workflow\Entity\Workflow;
+use Aurora\Module\Welding\Workflow\Entity\WorkflowInterface;
+use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStep;
+use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStepInterface;
 use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WorkflowStepPdfTemplate;
 use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WorkflowStepPdfTemplateInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
@@ -367,6 +371,8 @@ class AuroraBundle extends AbstractBundle
                     WorkflowTemplateInterface::class => WorkflowTemplate::class,
                     WorkflowStepTemplateInterface::class => WorkflowStepTemplate::class,
                     WorkflowStepPdfTemplateInterface::class => WorkflowStepPdfTemplate::class,
+                    WorkflowInterface::class => Workflow::class,
+                    WorkflowStepInterface::class => WorkflowStep::class,
                 ],
                 'mappings' => array_merge(
                     [

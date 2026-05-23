@@ -47,6 +47,7 @@ import {
     BarChart3,
     Upload,
     ScrollText,
+    ClipboardCheck,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -84,6 +85,7 @@ const ICON_MAP = {
     vault: Lock,
     flame: Flame,
     "scroll-text": ScrollText,
+    "clipboard-check": ClipboardCheck,
     "sticky-note": StickyNote,
     wallet: Wallet,
     "pie-chart": PieChart,

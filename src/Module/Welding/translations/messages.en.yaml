@@ -8,14 +8,26 @@ backend:
           create: Create a welding workflow template
           edit: Edit a welding workflow template
           delete: Delete a welding workflow template
+        workflows:
+          view: View ongoing welding workflows
+          start: Start a welding workflow
+          fill: Fill a welding workflow (welder role)
+          validate: Validate a workflow step (inspector/QA role)
+          archive: Archive / reject a workflow
   modules:
     welding_backend: Welding
     welding_backend_description: Regulated welding workflows — templates, step-by-step execution, validations and signatures
+  parameters:
+    welding_reference_prefix:
+      label: Welding workflow reference prefix
+      description: "Prefix used for auto-generated references (e.g. WLD-2026-000042)"
   nav:
     sections:
       welding: Welding
     welding: Welding
     welding_description: Regulated welding workflows
+    welding_workflows: Workflows
+    welding_workflows_description: Ongoing welding workflows (assigned to welders)
     welding_workflow_templates: Workflow templates
     welding_workflow_templates_description: Manage welding workflow templates (versions, steps, required PDFs)
 
@@ -46,6 +58,29 @@ welding:
       step_required: Parent step is required
       pdf_template_required: PDF template is required
       position_invalid: Position must be a non-negative integer
+  workflows:
+    title: Workflows
+    subtitle: Ongoing and completed welding workflows
+    empty: No workflow started yet.
+    no_assignee: No welder assigned
+    status_draft: Draft
+    status_in_progress: In progress
+    status_awaiting_validation: Awaiting validation
+    status_completed: Completed
+    status_rejected: Rejected
+    status_archived: Archived
+    errors:
+      template_required: Workflow template is required
+      reason_required: A rejection reason is required
+  workflow_steps:
+    status_pending: To do
+    status_in_progress: In progress
+    status_awaiting_validation: Awaiting validation
+    status_validated: Validated
+    status_rejected: Rejected
+    errors:
+      decision_invalid: Decision must be 'validate' or 'reject'
+      unauthenticated: Unauthenticated user
   validator_role_inspector: Inspector
   validator_role_quality_assurance: Quality assurance
   validator_role_supervisor: Supervisor

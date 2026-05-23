@@ -28,6 +28,11 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
             new NavPermission('welding.workflow_templates.create'),
             new NavPermission('welding.workflow_templates.edit'),
             new NavPermission('welding.workflow_templates.delete'),
+            new NavPermission('welding.workflows.view'),
+            new NavPermission('welding.workflows.start'),
+            new NavPermission('welding.workflows.fill'),
+            new NavPermission('welding.workflows.validate'),
+            new NavPermission('welding.workflows.archive'),
         ];
     }
 
@@ -39,6 +44,9 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
 
         return [
             new NavSection('welding', [
+                new NavItem('backend_welding_workflows', 'backend.nav.welding_workflows', 'clipboard-check',
+                    requiredPrivilege: 'welding.workflows.view',
+                    descriptionKey: 'backend.nav.welding_workflows_description'),
                 new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
                     requiredPrivilege: 'welding.workflow_templates.view',
                     descriptionKey: 'backend.nav.welding_workflow_templates_description'),
@@ -50,6 +58,9 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavSection('welding', [
+                new NavItem('backend_welding_workflows', 'backend.nav.welding_workflows', 'clipboard-check',
+                    requiredPrivilege: 'welding.workflows.view',
+                    descriptionKey: 'backend.nav.welding_workflows_description'),
                 new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
                     requiredPrivilege: 'welding.workflow_templates.view',
                     descriptionKey: 'backend.nav.welding_workflow_templates_description'),
