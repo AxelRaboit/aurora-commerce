@@ -7,8 +7,6 @@ namespace Aurora\Tests\Integration\Module\PersonalFinance\Import\Service;
 use Aurora\Module\PersonalFinance\Import\Dto\PersonalFinanceImportPreview;
 use Aurora\Module\PersonalFinance\Import\Service\PersonalFinanceImportServiceInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
-use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Tests\Integration\Module\PersonalFinance\PersonalFinanceTestCase;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

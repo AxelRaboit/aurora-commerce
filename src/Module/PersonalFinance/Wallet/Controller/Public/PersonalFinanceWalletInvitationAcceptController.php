@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\Controller\Public;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
 use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletInvitationManagerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletInvitationRepository;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
@@ -13,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -51,7 +51,7 @@ final class PersonalFinanceWalletInvitationAcceptController extends AbstractCont
         $user = $this->getUser();
 
         $member = $this->invitationManager->accept($token, $user);
-        if (null === $member) {
+        if (!$member instanceof PersonalFinanceWalletMemberInterface) {
             $this->addFlash('error', 'personal_finance.wallets.errors.invitation_token_invalid');
 
             return $this->redirectToRoute('personal_finance_wallet_invitation_accept_show', ['token' => $token]);
@@ -80,12 +80,15 @@ final class PersonalFinanceWalletInvitationAcceptController extends AbstractCont
         if (!$invitation instanceof PersonalFinanceWalletInvitationInterface) {
             return 'invalid';
         }
+
         if ($invitation->isAccepted()) {
             return 'accepted';
         }
+
         if ($invitation->isDeclined()) {
             return 'declined';
         }
+
         if ($invitation->isExpired()) {
             return 'expired';
         }

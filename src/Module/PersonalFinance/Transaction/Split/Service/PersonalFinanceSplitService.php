@@ -16,8 +16,8 @@ use Aurora\Module\PersonalFinance\Transaction\Split\Dto\PersonalFinanceSplitInpu
 use Aurora\Module\PersonalFinance\Transaction\Split\Dto\PersonalFinanceSplitPart;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
-use DomainException;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Uid\Uuid;
@@ -88,6 +88,7 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
             foreach ($transactions as $tx) {
                 $this->entityManager->remove($tx);
             }
+
             $this->entityManager->flush();
         });
 
@@ -111,6 +112,7 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
         if (null === $part->categoryId) {
             return null;
         }
+
         $category = $this->categoryRepository->find($part->categoryId);
         if (!$category instanceof PersonalFinanceCategoryInterface
             || $category->getWallet()->getId() !== $wallet->getId()) {

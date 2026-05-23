@@ -22,7 +22,7 @@ final class PersonalFinanceMonthResetServiceTest extends PersonalFinanceTestCase
     private PersonalFinanceMonthResetServiceInterface $resetService;
     private PersonalFinanceTransactionRepository $transactionRepository;
     private PersonalFinanceBudgetRepository $budgetRepository;
-        private PersonalFinanceTransferServiceInterface $transferService;
+    private PersonalFinanceTransferServiceInterface $transferService;
 
     private function walletRepository(): PersonalFinanceWalletRepository
     {

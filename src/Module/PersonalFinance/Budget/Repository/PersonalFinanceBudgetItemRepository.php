@@ -8,6 +8,8 @@ use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -44,8 +46,8 @@ class PersonalFinanceBudgetItemRepository extends ResolveTargetEntityRepository
      * roll over.
      */
     public function countRepeatableForPreviousMonth(
-        \Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface $wallet,
-        \DateTimeImmutable $currentMonth,
+        PersonalFinanceWalletInterface $wallet,
+        DateTimeImmutable $currentMonth,
     ): int {
         $previous = $currentMonth->modify('first day of this month')->modify('-1 month')->setTime(0, 0);
 

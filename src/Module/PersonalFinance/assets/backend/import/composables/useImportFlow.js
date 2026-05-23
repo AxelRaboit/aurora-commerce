@@ -39,7 +39,9 @@ export function useImportFlow({ previewPath, processPath }) {
 
     async function submitUpload() {
         if (!walletId.value) {
-            fileError.value = t("personal_finance.import.errors.wallet_required");
+            fileError.value = t(
+                "personal_finance.import.errors.wallet_required",
+            );
             return;
         }
         if (!file.value) {
@@ -87,12 +89,26 @@ export function useImportFlow({ previewPath, processPath }) {
             skippedRows: response.skippedRows ?? [],
         };
         step.value = "done";
-        toast.success(t("personal_finance.import.completed", { count: report.value.createdCount }, report.value.createdCount));
+        toast.success(
+            t(
+                "personal_finance.import.completed",
+                { count: report.value.createdCount },
+                report.value.createdCount,
+            ),
+        );
     }
 
     return {
-        step, walletId, file, preview, report, fileError, canConfirm,
+        step,
+        walletId,
+        file,
+        preview,
+        report,
+        fileError,
+        canConfirm,
         loading,
-        submitUpload, confirmProcess, reset,
+        submitUpload,
+        confirmProcess,
+        reset,
     };
 }

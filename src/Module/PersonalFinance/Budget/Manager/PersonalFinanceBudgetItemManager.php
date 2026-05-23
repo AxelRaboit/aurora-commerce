@@ -80,10 +80,12 @@ class PersonalFinanceBudgetItemManager implements PersonalFinanceBudgetItemManag
         if (null === $categoryId) {
             return null;
         }
+
         $category = $this->categoryRepository->find($categoryId);
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return null;
         }
+
         if ($category->getWallet()->getId() !== $budget->getWallet()->getId()) {
             return null;
         }

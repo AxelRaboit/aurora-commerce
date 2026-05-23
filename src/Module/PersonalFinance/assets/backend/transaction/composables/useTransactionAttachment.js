@@ -9,7 +9,12 @@ import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
  * a non-saved tx). Spendly's flow is identical: receipts are added
  * AFTER the transaction is saved.
  */
-export function useTransactionAttachment(uploadPath, deletePath, serveBaseUrl, onChanged) {
+export function useTransactionAttachment(
+    uploadPath,
+    deletePath,
+    serveBaseUrl,
+    onChanged,
+) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
 
@@ -17,7 +22,11 @@ export function useTransactionAttachment(uploadPath, deletePath, serveBaseUrl, o
         if (!file) return null;
         const formData = new FormData();
         formData.append("file", file);
-        const payload = await request(buildPath(uploadPath, { id: transactionId }), null, { rawBody: formData });
+        const payload = await request(
+            buildPath(uploadPath, { id: transactionId }),
+            null,
+            { rawBody: formData },
+        );
         if (!payload) return null;
         if (payload.success === false) {
             const message = payload.errors?.file ?? "shared.common.error";
@@ -30,7 +39,9 @@ export function useTransactionAttachment(uploadPath, deletePath, serveBaseUrl, o
     }
 
     async function remove(transactionId) {
-        const payload = await request(buildPath(deletePath, { id: transactionId }));
+        const payload = await request(
+            buildPath(deletePath, { id: transactionId }),
+        );
         if (!payload || payload.success === false) return;
         toast.success(t("personal_finance.transactions.attachment.removed"));
         onChanged?.(payload.transaction);

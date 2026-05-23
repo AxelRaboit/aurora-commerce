@@ -139,6 +139,7 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
         if (null === $walletId) {
             return null;
         }
+
         $wallet = $this->walletRepository->find($walletId);
 
         return $wallet instanceof PersonalFinanceWalletInterface ? $wallet : null;
@@ -149,10 +150,12 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
         if (null === $categoryId) {
             return null;
         }
+
         $category = $this->categoryRepository->find($categoryId);
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return null;
         }
+
         if ($category->isSystem()) {
             return null;
         }

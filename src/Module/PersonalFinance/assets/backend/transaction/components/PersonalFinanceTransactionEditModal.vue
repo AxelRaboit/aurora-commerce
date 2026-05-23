@@ -196,7 +196,7 @@ defineExpose({ open: openEdit });
                     accept="image/jpeg,image/png,image/webp,application/pdf"
                     class="hidden"
                     v-on:change="onAttachmentPick"
-                />
+                >
             </div>
         </form>
         <template #footer>
@@ -205,7 +205,13 @@ defineExpose({ open: openEdit });
                     <X class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("shared.common.cancel") }}
                 </AppButton>
-                <AppButton variant="primary" size="md" type="submit" :loading="editLoading" v-on:click="submitEdit">
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    type="submit"
+                    :loading="editLoading"
+                    v-on:click="submitEdit"
+                >
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("shared.common.save") }}
                 </AppButton>

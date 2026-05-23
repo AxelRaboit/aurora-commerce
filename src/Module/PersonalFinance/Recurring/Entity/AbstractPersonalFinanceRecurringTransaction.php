@@ -12,6 +12,7 @@ use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
 #[ORM\MappedSuperclass]
 #[ORM\HasLifecycleCallbacks]
@@ -135,8 +136,9 @@ abstract class AbstractPersonalFinanceRecurringTransaction implements PersonalFi
     public function setDayOfMonth(int $day): static
     {
         if ($day < 1 || $day > 28) {
-            throw new \InvalidArgumentException(sprintf('dayOfMonth must be in [1, 28], got %d.', $day));
+            throw new InvalidArgumentException(sprintf('dayOfMonth must be in [1, 28], got %d.', $day));
         }
+
         $this->dayOfMonth = $day;
 
         return $this;

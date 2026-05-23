@@ -20,6 +20,7 @@ use Aurora\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Throwable;
 
 /**
  * Shared scaffolding for PersonalFinance integration tests. Each child
@@ -58,7 +59,7 @@ abstract class PersonalFinanceTestCase extends IntegrationTestCase
         foreach ($tables as $table) {
             try {
                 $connection->executeStatement('DELETE FROM '.$table);
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 // table may not exist on every test database — best-effort cleanup
             }
         }

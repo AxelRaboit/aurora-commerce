@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\Notification;
 
 use Aurora\Core\Mail\Service\MailService;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
+use Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -57,7 +58,7 @@ readonly class PersonalFinanceWalletInvitationNotificationService
                 ['token' => $token],
                 UrlGeneratorInterface::ABSOLUTE_URL,
             );
-        } catch (\Exception) {
+        } catch (Exception) {
             // Public route not registered — degrade to the backend index.
             return $this->urlGenerator->generate(
                 'backend_personal_finance_wallets',

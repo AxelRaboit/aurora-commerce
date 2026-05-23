@@ -62,10 +62,12 @@ final readonly class PersonalFinanceGoalSyncSubscriber
         if (null === $categoryId) {
             return;
         }
+
         $category = $this->categoryRepository->find($categoryId);
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return;
         }
+
         foreach ($this->goalRepository->findByCategoryForUser($user, $category) as $goal) {
             $this->goalManager->recomputeSavedAmount($goal);
         }

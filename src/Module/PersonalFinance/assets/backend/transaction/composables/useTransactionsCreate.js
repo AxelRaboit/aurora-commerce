@@ -54,7 +54,10 @@ export function useTransactionsCreate(
         createErrors.value = {};
         createForm.value.amount = evaluateAmount(createForm.value.amount);
 
-        const url = createPath.replace("__walletId__", String(targetWalletId.value));
+        const url = createPath.replace(
+            "__walletId__",
+            String(targetWalletId.value),
+        );
         const payload = await request(url, {
             ...createForm.value,
             description: createForm.value.description || null,

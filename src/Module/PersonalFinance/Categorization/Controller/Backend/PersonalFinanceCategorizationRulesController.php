@@ -102,6 +102,7 @@ final class PersonalFinanceCategorizationRulesController extends AbstractControl
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return $this->jsonInvalidInput(['categoryId' => 'personal_finance.categorization.errors.category_not_found']);
         }
+
         if ($category->isSystem()) {
             return $this->jsonInvalidInput(['categoryId' => 'personal_finance.categorization.errors.category_system']);
         }
@@ -132,6 +133,7 @@ final class PersonalFinanceCategorizationRulesController extends AbstractControl
         if (!$rule instanceof PersonalFinanceCategorizationRuleInterface) {
             return null;
         }
+
         if ($rule->getUser()->getId() !== $user->getId()) {
             return null;
         }

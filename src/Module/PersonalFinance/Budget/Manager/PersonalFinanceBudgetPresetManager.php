@@ -7,7 +7,6 @@ namespace Aurora\Module\PersonalFinance\Budget\Manager;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Budget\Dto\PersonalFinanceBudgetPresetInputInterface;
 use Aurora\Module\PersonalFinance\Budget\Dto\PersonalFinanceBudgetPresetItemInputInterface;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
@@ -58,6 +57,7 @@ class PersonalFinanceBudgetPresetManager implements PersonalFinanceBudgetPresetM
         foreach ($preset->getItems()->toArray() as $existing) {
             $this->entityManager->remove($existing);
         }
+
         $this->applyInput($preset, $input);
 
         $this->entityManager->flush();
@@ -116,6 +116,7 @@ class PersonalFinanceBudgetPresetManager implements PersonalFinanceBudgetPresetM
             foreach ($budget->getItems()->toArray() as $existing) {
                 $this->entityManager->remove($existing);
             }
+
             $this->entityManager->flush();
         }
 

@@ -22,7 +22,9 @@ export function useScheduledMaterialize(materializePath, onMaterialized) {
 
     async function submit() {
         if (!pendingMaterialize.value) return;
-        const payload = await request(buildPath(materializePath, { id: pendingMaterialize.value.id }));
+        const payload = await request(
+            buildPath(materializePath, { id: pendingMaterialize.value.id }),
+        );
         if (!payload || payload.success === false || !payload.scheduled) return;
         const result = payload.scheduled;
         pendingMaterialize.value = null;

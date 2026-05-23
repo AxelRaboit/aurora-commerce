@@ -52,7 +52,14 @@ function formatBarTooltip(bar) {
     <div class="space-y-6">
         <AppListToolbar>
             <div class="flex items-center gap-2">
-                <AppTab v-for="period in snap.allowedPeriods" :key="period" variant="pill" size="sm" :active="months === period" v-on:click="setPeriod(period)">
+                <AppTab
+                    v-for="period in snap.allowedPeriods"
+                    :key="period"
+                    variant="pill"
+                    size="sm"
+                    :active="months === period"
+                    v-on:click="setPeriod(period)"
+                >
                     {{ t("personal_finance.statistics.period_months", { months: period }) }}
                 </AppTab>
             </div>
@@ -117,11 +124,11 @@ function formatBarTooltip(bar) {
                 </h3>
                 <div class="flex items-center gap-4 text-xs">
                     <span class="flex items-center gap-1.5 text-emerald-400">
-                        <span class="inline-block w-3 h-3 bg-emerald-400 rounded-sm"></span>
+                        <span class="inline-block w-3 h-3 bg-emerald-400 rounded-sm" />
                         {{ t("personal_finance.statistics.legend_income") }}
                     </span>
                     <span class="flex items-center gap-1.5 text-rose-400">
-                        <span class="inline-block w-3 h-3 bg-rose-400 rounded-sm"></span>
+                        <span class="inline-block w-3 h-3 bg-rose-400 rounded-sm" />
                         {{ t("personal_finance.statistics.legend_expense") }}
                     </span>
                 </div>
@@ -166,7 +173,13 @@ function formatBarTooltip(bar) {
                         <span class="font-mono text-rose-400 ml-2">-{{ cat.total }}</span>
                     </div>
                     <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-12 mt-1">
-                        <path :d="buildLinePath(cat.series, 'expense')" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-400" />
+                        <path
+                            :d="buildLinePath(cat.series, 'expense')"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            class="text-rose-400"
+                        />
                     </svg>
                 </li>
             </ul>

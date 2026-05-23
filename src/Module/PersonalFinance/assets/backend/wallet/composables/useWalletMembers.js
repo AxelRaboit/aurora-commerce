@@ -86,7 +86,9 @@ export function useWalletMembers(paths) {
     async function sendInvitation() {
         if (!currentWallet.value) return;
         inviteErrors.value = {};
-        const url = buildPath(paths.sendInvitationPath, { walletId: currentWallet.value.id });
+        const url = buildPath(paths.sendInvitationPath, {
+            walletId: currentWallet.value.id,
+        });
         const payload = await action.request(url, inviteForm.value);
         if (!payload) return;
         if (payload.success === false) {
@@ -106,7 +108,9 @@ export function useWalletMembers(paths) {
         });
         const payload = await action.request(url);
         if (!payload || payload.success === false) return;
-        invitations.value = invitations.value.filter((i) => i.id !== invitation.id);
+        invitations.value = invitations.value.filter(
+            (i) => i.id !== invitation.id,
+        );
         toast.success(t("personal_finance.wallets.members.invitation_revoked"));
     }
 
@@ -119,7 +123,9 @@ export function useWalletMembers(paths) {
         const payload = await action.request(url);
         if (!payload || payload.success === false) return;
         if (payload.invitation) {
-            const idx = invitations.value.findIndex((i) => i.id === invitation.id);
+            const idx = invitations.value.findIndex(
+                (i) => i.id === invitation.id,
+            );
             if (idx >= 0) invitations.value[idx] = payload.invitation;
         }
         toast.success(t("personal_finance.wallets.members.invitation_resent"));

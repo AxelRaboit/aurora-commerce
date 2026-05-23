@@ -12,7 +12,7 @@ class PersonalFinanceImportReport
 {
     /**
      * @param list<string> $categoriesCreated
-     * @param list<string> $skippedRows         human-readable line per skipped row (rowNumber + reason)
+     * @param list<string> $skippedRows       human-readable line per skipped row (rowNumber + reason)
      */
     public function __construct(
         public readonly int $createdCount,

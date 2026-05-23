@@ -78,8 +78,8 @@ final class PersonalFinanceRecurringController extends AbstractController
 
         try {
             $rec = $this->recurringManager->create($user, $input);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['walletId' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['walletId' => $domainException->getMessage()]);
         }
 
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT_TRANSACTIONS, $rec->getWallet());
@@ -106,8 +106,8 @@ final class PersonalFinanceRecurringController extends AbstractController
 
         try {
             $this->recurringManager->update($rec, $input);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['walletId' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['walletId' => $domainException->getMessage()]);
         }
 
         return $this->jsonSuccess(['recurring' => $this->recurringSerializer->serialize($rec)]);
@@ -160,8 +160,8 @@ final class PersonalFinanceRecurringController extends AbstractController
 
         try {
             $sched = $this->scheduledManager->create($user, $input);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['walletId' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['walletId' => $domainException->getMessage()]);
         }
 
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT_TRANSACTIONS, $sched->getWallet());
@@ -188,8 +188,8 @@ final class PersonalFinanceRecurringController extends AbstractController
 
         try {
             $this->scheduledManager->update($sched, $input);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['walletId' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['walletId' => $domainException->getMessage()]);
         }
 
         return $this->jsonSuccess(['scheduled' => $this->scheduledSerializer->serialize($sched)]);
@@ -207,8 +207,8 @@ final class PersonalFinanceRecurringController extends AbstractController
 
         try {
             $this->scheduledManager->materialize($sched);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['generated' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['generated' => $domainException->getMessage()]);
         }
 
         return $this->jsonSuccess(['scheduled' => $this->scheduledSerializer->serialize($sched)]);
@@ -237,6 +237,7 @@ final class PersonalFinanceRecurringController extends AbstractController
         if (!$rec instanceof PersonalFinanceRecurringTransactionInterface) {
             return null;
         }
+
         if ($rec->getUser()->getId() !== $user->getId()) {
             return null;
         }
@@ -252,6 +253,7 @@ final class PersonalFinanceRecurringController extends AbstractController
         if (!$sched instanceof PersonalFinanceScheduledTransactionInterface) {
             return null;
         }
+
         if ($sched->getUser()->getId() !== $user->getId()) {
             return null;
         }

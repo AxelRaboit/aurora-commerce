@@ -32,24 +32,14 @@ sont importants ; stock avancé est optionnel.
 - [Moyens de paiement](ecommerce/paiement.md) — abstraction PaymentMethod, config backend
 - [Stock avancé](ecommerce/stock.md) — par variante, mouvements, multi-entrepôt
 
-### PersonalFinance (Spendly) — nouveau module
+### ~~PersonalFinance (Spendly)~~ — ✅ livré
 
-Module `src/Module/PersonalFinance/` à créer, port du projet Spendly (Laravel) — gestion
-financière personnelle avec portefeuilles multi-modes, budget mensuel, virements,
-objectifs, transactions récurrentes, auto-catégorisation, statistiques, import
-Excel. Décisions transverses et architecture cible dans
-[`spendly/README.md`](spendly/README.md). 10 sous-modules un par entrée sidebar.
-
-- [Tableau de bord](spendly/tableau_de_bord.md) — agrégation KPI page d'accueil
-- [Vue globale](spendly/vue_globale.md) — synthèse multi-wallets avec navigation mensuelle
-- [Portefeuilles](spendly/portefeuilles.md) — wallets (Budget/Simple) + members + invitations + balance adjustment
-- [Transactions](spendly/transactions.md) — Income/Expense + virements (2 tx liées) + splits + attachments
-- [Objectifs](spendly/objectifs.md) — savings goals auto-trackés via EventSubscriber
-- [Automatiques](spendly/automatiques.md) — récurrentes mensuelles + planifiées one-off + commande cron
-- [Catégories](spendly/categories.md) — taxonomie scope-wallet + system categories
-- [Auto-catégorisation](spendly/auto_categorisation.md) — patterns appris description → catégorie
-- [Statistiques](spendly/statistiques.md) — 6 charts analytiques sur période sélectionnable
-- [Importer](spendly/importer.md) — import Excel 2-steps (upload → preview → process)
+Le port complet du projet Spendly vers `src/Module/PersonalFinance/` est
+terminé (V1 sealed mai 2026 + V2 complète mai 2026 incluant les sessions
+Excel export/import, BudgetPreset, Reset mois, tracking modes des Goals).
+Le scaffold de planning sous `spendly/` a été supprimé une fois le port
+clos. État détaillé + historique des sessions dans la mémoire
+`project_personal_finance_port_status.md`.
 
 ## Convention
 

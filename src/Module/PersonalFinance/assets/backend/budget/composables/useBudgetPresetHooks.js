@@ -39,11 +39,14 @@ export function useBudgetPresetHooks({
         if (!walletId) return;
         saveErrors.value = {};
 
-        const response = await request(buildPath(savePresetPath, { walletId }), {
-            name: saveForm.value.name,
-            description: saveForm.value.description || null,
-            month,
-        });
+        const response = await request(
+            buildPath(savePresetPath, { walletId }),
+            {
+                name: saveForm.value.name,
+                description: saveForm.value.description || null,
+                month,
+            },
+        );
         if (!response) return;
         if (response.success === false) {
             saveErrors.value = response.errors ?? {};
@@ -70,7 +73,11 @@ export function useBudgetPresetHooks({
             showApply.value = true;
             return;
         }
-        const response = await request(buildPath(listPresetsPath, { walletId }), undefined, { method: "GET" });
+        const response = await request(
+            buildPath(listPresetsPath, { walletId }),
+            undefined,
+            { method: "GET" },
+        );
         presetList.value = response?.presets ?? [];
         if (presetList.value.length === 1) {
             selectedPresetId.value = presetList.value[0].id;
@@ -80,7 +87,9 @@ export function useBudgetPresetHooks({
 
     async function submitApply(month) {
         if (!selectedPresetId.value) {
-            applyErrors.value = { preset: t("personal_finance.budget_presets.errors.pick_preset") };
+            applyErrors.value = {
+                preset: t("personal_finance.budget_presets.errors.pick_preset"),
+            };
             return;
         }
         applyErrors.value = {};
@@ -96,7 +105,11 @@ export function useBudgetPresetHooks({
         }
         const insertedCount = response.insertedCount ?? 0;
         toast.success(
-            t("personal_finance.budget_presets.applied", { count: insertedCount }, insertedCount),
+            t(
+                "personal_finance.budget_presets.applied",
+                { count: insertedCount },
+                insertedCount,
+            ),
         );
         showApply.value = false;
         onApplied?.(response);
@@ -105,8 +118,18 @@ export function useBudgetPresetHooks({
     return {
         loading,
         // save
-        showSave, saveForm, saveErrors, openSave, submitSave,
+        showSave,
+        saveForm,
+        saveErrors,
+        openSave,
+        submitSave,
         // apply
-        showApply, presetList, selectedPresetId, applyMode, applyErrors, openApply, submitApply,
+        showApply,
+        presetList,
+        selectedPresetId,
+        applyMode,
+        applyErrors,
+        openApply,
+        submitApply,
     };
 }

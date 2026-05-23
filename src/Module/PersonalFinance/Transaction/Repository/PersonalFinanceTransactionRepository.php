@@ -59,6 +59,7 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             if ([] === $ids) {
                 return ['items' => [], 'total' => 0, 'page' => 1, 'totalPages' => 1];
             }
+
             $qb->andWhere('t.id IN (:tagIds)')->setParameter('tagIds', $ids);
             $countQb->andWhere('t.id IN (:tagIds)')->setParameter('tagIds', $ids);
         }
@@ -141,6 +142,7 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             if ([] === $ids) {
                 return [];
             }
+
             $qb->andWhere('t.id IN (:tagIds)')->setParameter('tagIds', $ids);
         }
 
@@ -327,10 +329,11 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             ->setParameter('user', $user)
             ->setParameter('category', $category);
 
-        if (null !== $wallet) {
+        if ($wallet instanceof PersonalFinanceWalletInterface) {
             $qb->andWhere('t.wallet = :wallet')->setParameter('wallet', $wallet);
         }
-        if (null !== $type) {
+
+        if ($type instanceof PersonalFinanceTransactionTypeEnum) {
             $qb->andWhere('t.type = :type')->setParameter('type', $type);
         }
 
@@ -407,10 +410,11 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             ->setParameter('wallet', $wallet)
             ->groupBy('t.type');
 
-        if (null !== $from) {
+        if ($from instanceof DateTimeImmutable) {
             $qb->andWhere('t.date >= :from')->setParameter('from', $from);
         }
-        if (null !== $to) {
+
+        if ($to instanceof DateTimeImmutable) {
             $qb->andWhere('t.date < :to')->setParameter('to', $to);
         }
 

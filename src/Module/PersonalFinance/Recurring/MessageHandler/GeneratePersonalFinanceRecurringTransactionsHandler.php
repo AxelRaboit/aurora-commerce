@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Recurring\MessageHandler;
 use Aurora\Module\PersonalFinance\Recurring\Manager\PersonalFinanceRecurringTransactionManagerInterface;
 use Aurora\Module\PersonalFinance\Recurring\Message\GeneratePersonalFinanceRecurringTransactionsMessage;
 use Aurora\Module\PersonalFinance\Recurring\Repository\PersonalFinanceRecurringTransactionRepository;
+use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -47,7 +48,7 @@ final readonly class GeneratePersonalFinanceRecurringTransactionsHandler
         $generated = 0;
         foreach ($candidates as $rec) {
             $tx = $this->recurringManager->generateIfDue($rec, $today);
-            if (null !== $tx) {
+            if ($tx instanceof PersonalFinanceTransactionInterface) {
                 ++$generated;
             }
         }

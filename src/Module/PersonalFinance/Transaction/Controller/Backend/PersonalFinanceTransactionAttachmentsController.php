@@ -49,8 +49,8 @@ final class PersonalFinanceTransactionAttachmentsController extends AbstractCont
 
         try {
             $this->attachmentService->attach($transaction, $file);
-        } catch (FileException $exception) {
-            return $this->jsonInvalidInput(['file' => $exception->getMessage()]);
+        } catch (FileException $fileException) {
+            return $this->jsonInvalidInput(['file' => $fileException->getMessage()]);
         }
 
         return $this->jsonSuccess(['transaction' => $this->transactionSerializer->serialize($transaction)]);

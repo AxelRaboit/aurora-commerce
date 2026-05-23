@@ -12,6 +12,7 @@ use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletInvitation
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletInvitationRepository;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletMemberRepository;
 use Aurora\Tests\Integration\Module\PersonalFinance\PersonalFinanceTestCase;
+use DateTimeImmutable;
 use DomainException;
 
 /**
@@ -52,7 +53,7 @@ final class PersonalFinanceWalletInvitationManagerTest extends PersonalFinanceTe
         self::assertSame(PersonalFinanceWalletRoleEnum::Editor, $invitation->getRole());
         self::assertSame(64, mb_strlen($invitation->getToken()));
         self::assertTrue($invitation->isPending());
-        self::assertGreaterThan(new \DateTimeImmutable(), $invitation->getExpiresAt());
+        self::assertGreaterThan(new DateTimeImmutable(), $invitation->getExpiresAt());
     }
 
     public function testSendRejectsOwnerRole(): void
@@ -146,6 +147,6 @@ final class PersonalFinanceWalletInvitationManagerTest extends PersonalFinanceTe
         $this->manager->resend($invitation);
 
         self::assertNotSame($originalToken, $invitation->getToken());
-        self::assertGreaterThan(new \DateTimeImmutable(), $invitation->getExpiresAt());
+        self::assertGreaterThan(new DateTimeImmutable(), $invitation->getExpiresAt());
     }
 }

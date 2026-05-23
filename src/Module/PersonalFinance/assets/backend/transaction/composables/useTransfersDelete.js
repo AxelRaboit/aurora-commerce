@@ -20,7 +20,11 @@ export function useTransfersDelete(deletePath, onSuccess) {
 
     async function submit() {
         if (!pendingDelete.value) return;
-        const payload = await request(buildPath(deletePath, { transferId: pendingDelete.value.transferId }));
+        const payload = await request(
+            buildPath(deletePath, {
+                transferId: pendingDelete.value.transferId,
+            }),
+        );
         if (!payload || !payload.success) return;
         pendingDelete.value = null;
         toast.success(t("personal_finance.transfers.deleted"));

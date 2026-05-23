@@ -15,8 +15,9 @@ use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransact
 use Aurora\Module\PersonalFinance\Transaction\Transfer\Dto\PersonalFinanceTransferInputInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
-use DomainException;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Uid\Uuid;
 
@@ -168,7 +169,7 @@ class PersonalFinanceTransferService implements PersonalFinanceTransferServiceIn
             }
         }
 
-        if (null === $expense || null === $income) {
+        if (!$expense instanceof PersonalFinanceTransactionInterface || !$income instanceof PersonalFinanceTransactionInterface) {
             throw new DomainException(sprintf('Transfer %s legs are not paired as Expense+Income.', $transferId));
         }
 
@@ -181,7 +182,7 @@ class PersonalFinanceTransferService implements PersonalFinanceTransferServiceIn
         PersonalFinanceCategoryInterface $category,
         PersonalFinanceTransactionTypeEnum $type,
         string $amount,
-        \DateTimeImmutable $date,
+        DateTimeImmutable $date,
         ?string $description,
         string $transferId,
     ): PersonalFinanceTransactionInterface {

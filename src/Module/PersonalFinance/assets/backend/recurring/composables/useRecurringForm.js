@@ -33,7 +33,12 @@ function pickExtras(extraFields, source) {
     );
 }
 
-export function useRecurringForm(createPath, updatePath, onSaved, { extraFields = {} } = {}) {
+export function useRecurringForm(
+    createPath,
+    updatePath,
+    onSaved,
+    { extraFields = {} } = {},
+) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
 
@@ -72,7 +77,9 @@ export function useRecurringForm(createPath, updatePath, onSaved, { extraFields 
         errors.value = {};
         form.value.amount = evaluateAmount(form.value.amount);
 
-        const url = isEditing.value ? buildPath(updatePath, { id: editingId.value }) : createPath;
+        const url = isEditing.value
+            ? buildPath(updatePath, { id: editingId.value })
+            : createPath;
         const payload = await request(url, {
             ...form.value,
             description: form.value.description || null,
@@ -83,10 +90,25 @@ export function useRecurringForm(createPath, updatePath, onSaved, { extraFields 
             errors.value = payload.errors ?? {};
             return;
         }
-        toast.success(t(isEditing.value ? "personal_finance.recurring.updated_recurring" : "personal_finance.recurring.created_recurring"));
+        toast.success(
+            t(
+                isEditing.value
+                    ? "personal_finance.recurring.updated_recurring"
+                    : "personal_finance.recurring.created_recurring",
+            ),
+        );
         show.value = false;
         onSaved?.(payload.recurring);
     }
 
-    return { show, isEditing, form, errors, loading, openCreate, openEdit, submit };
+    return {
+        show,
+        isEditing,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        submit,
+    };
 }

@@ -136,7 +136,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             >
                 <header class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-2 min-w-0">
-                        <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" :style="{ backgroundColor: goal.color ?? '#6366f1' }"></span>
+                        <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" :style="{ backgroundColor: goal.color ?? '#6366f1' }" />
                         <h3 class="text-base font-medium text-primary truncate">{{ goal.name }}</h3>
                     </div>
                     <div class="flex items-center gap-0.5">
@@ -155,7 +155,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <span class="text-muted">{{ goal.progress }} %</span>
                     </div>
                     <div class="w-full h-2 bg-line/40 rounded mt-1 overflow-hidden">
-                        <div class="h-full" :style="{ width: goal.progress + '%', backgroundColor: goal.color ?? '#6366f1' }"></div>
+                        <div class="h-full" :style="{ width: goal.progress + '%', backgroundColor: goal.color ?? '#6366f1' }" />
                     </div>
                 </div>
 
@@ -257,7 +257,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="formLoading" v-on:click="submitForm">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="formLoading"
+                        v-on:click="submitForm"
+                    >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>
@@ -288,7 +294,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="depositLoading" v-on:click="submitDeposit">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="depositLoading"
+                        v-on:click="submitDeposit"
+                    >
                         <PiggyBank class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("personal_finance.goals.deposit") }}
                     </AppButton>

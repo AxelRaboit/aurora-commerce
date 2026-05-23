@@ -105,7 +105,13 @@ function walletUrl(walletId) {
             <section class="bg-surface border border-line rounded-lg p-4">
                 <h3 class="text-sm font-medium uppercase tracking-wider text-muted mb-3">{{ t("personal_finance.overview.spending_30d") }}</h3>
                 <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-16">
-                    <path :d="sparklinePath" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-400" />
+                    <path
+                        :d="sparklinePath"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        class="text-rose-400"
+                    />
                 </svg>
             </section>
 
@@ -118,7 +124,7 @@ function walletUrl(walletId) {
                             <span class="font-mono text-rose-400 ml-2">-{{ cat.total }}</span>
                         </div>
                         <div class="h-1 bg-line/40 rounded mt-1 overflow-hidden">
-                            <div class="h-full bg-rose-400" :style="{ width: cat.percent + '%' }"></div>
+                            <div class="h-full bg-rose-400" :style="{ width: cat.percent + '%' }" />
                         </div>
                     </li>
                 </ul>
@@ -142,7 +148,7 @@ function walletUrl(walletId) {
                                 <span class="font-mono shrink-0" :class="parseFloat(w.balance) >= 0 ? 'text-emerald-400' : 'text-rose-400'">{{ w.balance }}</span>
                             </div>
                             <div class="h-1 bg-line/40 rounded mt-1.5 overflow-hidden">
-                                <div class="h-full bg-accent-500" :style="{ width: w.share + '%' }"></div>
+                                <div class="h-full bg-accent-500" :style="{ width: w.share + '%' }" />
                             </div>
                             <div class="flex items-center justify-between text-xs text-muted mt-1">
                                 <span>+{{ w.monthIncome }} / -{{ w.monthExpense }}</span>
@@ -189,7 +195,7 @@ function walletUrl(walletId) {
                             <span class="text-xs text-muted">{{ g.progress }}%</span>
                         </div>
                         <div class="h-1 bg-line/40 rounded mt-1 overflow-hidden">
-                            <div class="h-full" :style="{ width: g.progress + '%', backgroundColor: g.color ?? '#6366f1' }"></div>
+                            <div class="h-full" :style="{ width: g.progress + '%', backgroundColor: g.color ?? '#6366f1' }" />
                         </div>
                     </li>
                 </ul>

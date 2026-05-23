@@ -11,14 +11,15 @@ use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\PersonalFinance\Budget\Dto\PersonalFinanceBudgetItemInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
+use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetItemManagerInterface;
 use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetManagerInterface;
-use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
 use Aurora\Module\PersonalFinance\Budget\Service\PersonalFinanceBudgetXlsxExporter;
 use Aurora\Module\PersonalFinance\Budget\Service\PersonalFinanceMonthResetServiceInterface;
 use Aurora\Module\PersonalFinance\Budget\View\PersonalFinanceBudgetViewBuilder;
+use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransactionSerializerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
@@ -103,7 +104,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $user = $this->getUser();
 
         $payload = $this->decodeJson($request);
-        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? $payload['month'] : null);
 
         $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
         $count = $this->budgetManager->rolloverFromPrevious($budget);
@@ -122,7 +123,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT_TRANSACTIONS, $wallet);
 
         $payload = $this->decodeJson($request);
-        $fromMonth = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+        $fromMonth = $this->resolveMonth(is_string($payload['month'] ?? null) ? $payload['month'] : null);
         $clearBudget = (bool) ($payload['clearBudget'] ?? false);
         $cascade = (bool) ($payload['cascade'] ?? false);
 
@@ -159,6 +160,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         foreach (PersonalFinanceBudgetSectionEnum::cases() as $sectionCase) {
             $sections[$sectionCase->value] = ['planned' => '0.00', 'expected' => '0.00', 'actual' => '0.00', 'items' => []];
         }
+
         foreach ($items as $item) {
             $categoryId = $item->getCategory()?->getId();
             $actual = null === $categoryId ? '0.00' : ($actuals[$categoryId] ?? '0.00');
@@ -188,7 +190,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $user = $this->getUser();
 
         $payload = $this->decodeJson($request);
-        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? $payload['month'] : null);
         $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
 
         $input = $this->itemInputFactory->fromArray($payload);
@@ -242,7 +244,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $item->getBudget()->getWallet());
 
         $category = $item->getCategory();
-        if (null === $category) {
+        if (!$category instanceof PersonalFinanceCategoryInterface) {
             return $this->jsonSuccess(['items' => [], 'page' => 1, 'totalPages' => 1, 'total' => 0]);
         }
 
@@ -281,6 +283,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         if (null === $monthParam || '' === $monthParam) {
             return new DateTimeImmutable('first day of this month');
         }
+
         try {
             return new DateTimeImmutable($monthParam.'-01');
         } catch (Exception) {

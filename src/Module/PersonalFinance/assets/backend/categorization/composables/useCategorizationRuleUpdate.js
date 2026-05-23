@@ -14,7 +14,9 @@ export function useCategorizationRuleUpdate(updatePath, onUpdated) {
 
     async function setCategory(rule, newCategoryId) {
         if (!newCategoryId || newCategoryId === rule.categoryId) return;
-        const payload = await request(buildPath(updatePath, { id: rule.id }), { categoryId: newCategoryId });
+        const payload = await request(buildPath(updatePath, { id: rule.id }), {
+            categoryId: newCategoryId,
+        });
         if (!payload || payload.success === false) return;
         toast.success(t("personal_finance.categorization.updated"));
         onUpdated?.(payload.rule);

@@ -40,7 +40,10 @@ export function useCategoriesCreate(
     async function submitCreate() {
         if (!targetWalletId.value) return;
         createErrors.value = {};
-        const url = createPath.replace("__walletId__", String(targetWalletId.value));
+        const url = createPath.replace(
+            "__walletId__",
+            String(targetWalletId.value),
+        );
         const payload = await request(url, createForm.value);
         if (!payload) return;
         if (payload.success === false) {

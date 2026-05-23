@@ -38,7 +38,12 @@ function pickExtras(extraFields, source) {
  * composable (useGoalDeposit) because the form shape and lifecycle
  * (auto-tracked vs manual) differ enough to keep them separate.
  */
-export function useGoalsForm(createPath, updatePath, onSaved, { extraFields = {} } = {}) {
+export function useGoalsForm(
+    createPath,
+    updatePath,
+    onSaved,
+    { extraFields = {} } = {},
+) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
 
@@ -77,7 +82,9 @@ export function useGoalsForm(createPath, updatePath, onSaved, { extraFields = {}
         errors.value = {};
         form.value.targetAmount = evaluateAmount(form.value.targetAmount);
 
-        const url = isEditing.value ? buildPath(updatePath, { id: editingId.value }) : createPath;
+        const url = isEditing.value
+            ? buildPath(updatePath, { id: editingId.value })
+            : createPath;
         const payload = await request(url, {
             ...form.value,
             walletId: form.value.walletId || null,
@@ -91,10 +98,25 @@ export function useGoalsForm(createPath, updatePath, onSaved, { extraFields = {}
             errors.value = payload.errors ?? {};
             return;
         }
-        toast.success(t(isEditing.value ? "personal_finance.goals.updated" : "personal_finance.goals.created"));
+        toast.success(
+            t(
+                isEditing.value
+                    ? "personal_finance.goals.updated"
+                    : "personal_finance.goals.created",
+            ),
+        );
         show.value = false;
         onSaved?.(payload.goal);
     }
 
-    return { show, isEditing, form, errors, loading, openCreate, openEdit, submit };
+    return {
+        show,
+        isEditing,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        submit,
+    };
 }

@@ -43,7 +43,10 @@ export function buildMonthlyBars(months, width = 600, height = 160) {
     if (!months || months.length === 0) {
         return { bars: [], max: 1, slotWidth: 0, labels: [] };
     }
-    const values = months.flatMap((m) => [parseFloat(m.income), parseFloat(m.expense)]);
+    const values = months.flatMap((m) => [
+        parseFloat(m.income),
+        parseFloat(m.expense),
+    ]);
     const max = Math.max(1, ...values);
     const slotWidth = width / months.length;
     const barWidth = Math.max(6, slotWidth * 0.35);
@@ -58,12 +61,22 @@ export function buildMonthlyBars(months, width = 600, height = 160) {
         // monthKey + amount carried on every bar so the SFC can render
         // a native <title> tooltip without re-deriving from the index.
         bars.push({
-            x: center - barWidth - gap / 2, y: height - incomeH, width: barWidth, height: incomeH,
-            kind: "income", monthKey: m.month, amount: m.income,
+            x: center - barWidth - gap / 2,
+            y: height - incomeH,
+            width: barWidth,
+            height: incomeH,
+            kind: "income",
+            monthKey: m.month,
+            amount: m.income,
         });
         bars.push({
-            x: center + gap / 2, y: height - expenseH, width: barWidth, height: expenseH,
-            kind: "expense", monthKey: m.month, amount: m.expense,
+            x: center + gap / 2,
+            y: height - expenseH,
+            width: barWidth,
+            height: expenseH,
+            kind: "expense",
+            monthKey: m.month,
+            amount: m.expense,
         });
         // Raw YYYY-MM key — the SFC formats it for the active locale (Intl
         // belongs to the consumer, not the geometry builder).

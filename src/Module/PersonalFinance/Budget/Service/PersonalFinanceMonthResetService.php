@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Budget\Service;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Budget\Dto\PersonalFinanceMonthResetReport;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetManagerInterface;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetRepository;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
@@ -102,11 +103,12 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
         $candidates = [new DateTimeImmutable('first day of this month')->setTime(0, 0)];
 
         $latestTx = $this->transactionRepository->findLatestDate($wallet);
-        if (null !== $latestTx) {
+        if ($latestTx instanceof DateTimeImmutable) {
             $candidates[] = $latestTx->modify('first day of this month')->setTime(0, 0);
         }
+
         $latestBudget = $this->budgetRepository->findLatestMonth($wallet);
-        if (null !== $latestBudget) {
+        if ($latestBudget instanceof DateTimeImmutable) {
             $candidates[] = $latestBudget;
         }
 
@@ -134,13 +136,14 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
             if (in_array($transaction->getId(), $handledIds, true)) {
                 continue;
             }
+
             $deletedCount += $this->deleteTransactionGroup($transaction, $handledIds);
         }
 
         $budgetCleared = false;
         if ($clearBudget) {
             $budget = $this->budgetRepository->findByWalletAndMonth($wallet, $month);
-            if (null !== $budget) {
+            if ($budget instanceof PersonalFinanceBudgetInterface) {
                 $this->budgetManager->delete($budget);
                 $budgetCleared = true;
             }
@@ -166,6 +169,7 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
             foreach ($siblings as $sibling) {
                 $handledIds[] = $sibling->getId();
             }
+
             $this->transferService->delete($transaction->getTransferId());
 
             return count($siblings);
@@ -177,6 +181,7 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
             foreach ($siblings as $sibling) {
                 $handledIds[] = $sibling->getId();
             }
+
             $this->splitService->delete($transaction->getSplitId());
 
             return count($siblings);

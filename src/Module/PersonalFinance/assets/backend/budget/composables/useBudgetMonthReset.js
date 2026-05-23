@@ -32,10 +32,11 @@ export function useBudgetMonthReset({ resetPath, monthRef, onReset }) {
         const month = unref(monthRef);
         if (!walletId || !month) return;
 
-        const response = await request(
-            buildPath(resetPath, { walletId }),
-            { month, clearBudget: clearBudget.value, cascade: cascade.value },
-        );
+        const response = await request(buildPath(resetPath, { walletId }), {
+            month,
+            clearBudget: clearBudget.value,
+            cascade: cascade.value,
+        });
         if (!response) return;
         if (response.success === false) {
             toast.error(t("shared.common.error"));
@@ -43,7 +44,13 @@ export function useBudgetMonthReset({ resetPath, monthRef, onReset }) {
         }
 
         const deleted = response.deletedTransactions ?? 0;
-        toast.success(t("personal_finance.budget.reset_done", { count: deleted }, deleted));
+        toast.success(
+            t(
+                "personal_finance.budget.reset_done",
+                { count: deleted },
+                deleted,
+            ),
+        );
         show.value = false;
         onReset?.(response);
     }

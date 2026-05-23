@@ -133,8 +133,8 @@ final class PersonalFinanceBudgetPresetsController extends AbstractController
         $user = $this->getUser();
 
         $payload = $this->decodeJson($request);
-        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
-        $modeValue = is_string($payload['mode'] ?? null) ? (string) $payload['mode'] : PersonalFinanceBudgetPresetApplyModeEnum::Append->value;
+        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? $payload['month'] : null);
+        $modeValue = is_string($payload['mode'] ?? null) ? $payload['mode'] : PersonalFinanceBudgetPresetApplyModeEnum::Append->value;
         $mode = PersonalFinanceBudgetPresetApplyModeEnum::tryFrom($modeValue) ?? PersonalFinanceBudgetPresetApplyModeEnum::Append;
 
         $budget = $this->budgetManager->ensureForMonth($user, $preset->getWallet(), $month);
@@ -180,13 +180,13 @@ final class PersonalFinanceBudgetPresetsController extends AbstractController
         $user = $this->getUser();
 
         $payload = $this->decodeJson($request);
-        $name = is_string($payload['name'] ?? null) ? trim((string) $payload['name']) : '';
+        $name = is_string($payload['name'] ?? null) ? mb_trim($payload['name']) : '';
         if ('' === $name) {
             return $this->jsonInvalidInput(['name' => 'personal_finance.budget_presets.errors.name_required']);
         }
 
-        $description = is_string($payload['description'] ?? null) ? (trim((string) $payload['description']) ?: null) : null;
-        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+        $description = is_string($payload['description'] ?? null) ? (mb_trim($payload['description']) ?: null) : null;
+        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? $payload['month'] : null);
         $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
 
         $preset = $this->presetManager->createFromBudget($user, $budget, $name, $description);
@@ -200,6 +200,7 @@ final class PersonalFinanceBudgetPresetsController extends AbstractController
         if (!$wallet instanceof PersonalFinanceWalletInterface) {
             return null;
         }
+
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $wallet);
 
         return $wallet;
@@ -211,6 +212,7 @@ final class PersonalFinanceBudgetPresetsController extends AbstractController
         if (!$preset instanceof PersonalFinanceBudgetPresetInterface) {
             return null;
         }
+
         $this->denyAccessUnlessGranted($attribute, $preset->getWallet());
 
         return $preset;
@@ -221,6 +223,7 @@ final class PersonalFinanceBudgetPresetsController extends AbstractController
         if (null === $monthParam || '' === $monthParam) {
             return new DateTimeImmutable('first day of this month');
         }
+
         try {
             return new DateTimeImmutable($monthParam.'-01');
         } catch (Exception) {

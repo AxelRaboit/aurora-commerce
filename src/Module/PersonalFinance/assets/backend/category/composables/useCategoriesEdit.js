@@ -37,7 +37,10 @@ export function useCategoriesEdit(
     async function submitEdit() {
         if (!editingCategory.value) return;
         editErrors.value = {};
-        const payload = await request(buildPath(updatePath, { id: editingCategory.value.id }), editForm.value);
+        const payload = await request(
+            buildPath(updatePath, { id: editingCategory.value.id }),
+            editForm.value,
+        );
         if (!payload) return;
         if (payload.success === false) {
             editErrors.value = payload.errors ?? {};

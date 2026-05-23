@@ -108,8 +108,8 @@ final class PersonalFinanceGoalsController extends AbstractController
 
         try {
             $this->goalManager->deposit($goal, $input);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['amount' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['amount' => $domainException->getMessage()]);
         }
 
         return $this->jsonSuccess(['goal' => $this->goalSerializer->serialize($goal)]);
@@ -141,6 +141,7 @@ final class PersonalFinanceGoalsController extends AbstractController
         if (!$goal instanceof PersonalFinanceGoalInterface) {
             return null;
         }
+
         if ($goal->getUser()->getId() !== $user->getId()) {
             return null;
         }

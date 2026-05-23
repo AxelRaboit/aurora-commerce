@@ -56,11 +56,14 @@ export function useTransactionsEdit(
         editErrors.value = {};
         editForm.value.amount = evaluateAmount(editForm.value.amount);
 
-        const payload = await request(buildPath(updatePath, { id: editingTransaction.value.id }), {
-            ...editForm.value,
-            description: editForm.value.description || null,
-            categoryId: editForm.value.categoryId || null,
-        });
+        const payload = await request(
+            buildPath(updatePath, { id: editingTransaction.value.id }),
+            {
+                ...editForm.value,
+                description: editForm.value.description || null,
+                categoryId: editForm.value.categoryId || null,
+            },
+        );
         if (!payload) return;
         if (payload.success === false) {
             editErrors.value = payload.errors ?? {};

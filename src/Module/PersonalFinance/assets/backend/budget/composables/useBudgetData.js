@@ -14,12 +14,22 @@ import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
  * `wasRolledOver` flags from the server.
  */
 export function useBudgetData(showBudgetPath, initial) {
-    const payload = ref(initial ?? { budget: null, sections: {}, balance: { current: "0.00", month: "0.00", rollingStart: "0.00" }, eligibleRolloverCount: 0, wasRolledOver: false });
+    const payload = ref(
+        initial ?? {
+            budget: null,
+            sections: {},
+            balance: { current: "0.00", month: "0.00", rollingStart: "0.00" },
+            eligibleRolloverCount: 0,
+            wasRolledOver: false,
+        },
+    );
     const { loading, request } = useRequest();
 
     async function refresh(walletId, month) {
         if (!walletId) return;
-        const url = buildPath(showBudgetPath, { walletId }) + `?month=${encodeURIComponent(month)}`;
+        const url =
+            buildPath(showBudgetPath, { walletId }) +
+            `?month=${encodeURIComponent(month)}`;
         const data = await request(url, null, HttpMethod.Get);
         if (data && data.success !== false) {
             payload.value = data;

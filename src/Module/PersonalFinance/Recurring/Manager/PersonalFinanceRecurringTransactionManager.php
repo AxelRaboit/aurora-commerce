@@ -120,6 +120,7 @@ class PersonalFinanceRecurringTransactionManager implements PersonalFinanceRecur
         if (!$rec->isActive()) {
             return false;
         }
+
         if ($rec->getDayOfMonth() > (int) $today->format('j')) {
             return false;
         }
@@ -133,6 +134,7 @@ class PersonalFinanceRecurringTransactionManager implements PersonalFinanceRecur
         if (!$wallet instanceof PersonalFinanceWalletInterface) {
             throw new DomainException('Wallet not found for recurring transaction.');
         }
+
         $rec->setWallet($wallet);
         $rec->setCategory($this->resolveCategory($wallet, $input->getCategoryId()));
         $rec->setType($input->getType());
@@ -147,10 +149,12 @@ class PersonalFinanceRecurringTransactionManager implements PersonalFinanceRecur
         if (null === $categoryId) {
             return null;
         }
+
         $category = $this->categoryRepository->find($categoryId);
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return null;
         }
+
         if ($category->getWallet()->getId() !== $wallet->getId()) {
             return null;
         }

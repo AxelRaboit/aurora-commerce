@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Wallet\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInvitationInputInterface;
 use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletMemberInputFactoryInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitation;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
@@ -42,7 +42,7 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
         CoreUserInterface $invitedBy,
     ): PersonalFinanceWalletInvitationInterface {
         $role = $input->getRole();
-        if (null === $role || !in_array($role, PersonalFinanceWalletRoleEnum::invitable(), true)) {
+        if (!$role instanceof PersonalFinanceWalletRoleEnum || !in_array($role, PersonalFinanceWalletRoleEnum::invitable(), true)) {
             throw new DomainException('Owner role cannot be assigned via invitation. Use transferOwnership instead.');
         }
 

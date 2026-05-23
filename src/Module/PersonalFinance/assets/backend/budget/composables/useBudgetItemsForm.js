@@ -43,7 +43,13 @@ function pickExtras(extraFields, source) {
  * confirm-delete spinner doesn't disable the form-edit button and
  * vice-versa).
  */
-export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChanged, extraFields = {} }) {
+export function useBudgetItemsForm({
+    createPath,
+    updatePath,
+    deletePath,
+    onChanged,
+    extraFields = {},
+}) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
     const { loading: deleteLoading, request: deleteRequest } = useRequest();
@@ -59,7 +65,10 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
     function openCreate({ walletId, month, section }) {
         targetWalletId.value = walletId;
         targetMonth.value = month;
-        form.value = { ...emptyItemForm(extraFields), section: section ?? "expenses" };
+        form.value = {
+            ...emptyItemForm(extraFields),
+            section: section ?? "expenses",
+        };
         isEditing.value = false;
         editingItemId.value = null;
         errors.value = {};
@@ -89,7 +98,8 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
     async function submit() {
         errors.value = {};
         form.value.plannedAmount = evaluateAmount(form.value.plannedAmount);
-        form.value.carriedOver = evaluateAmount(form.value.carriedOver) || "0.00";
+        form.value.carriedOver =
+            evaluateAmount(form.value.carriedOver) || "0.00";
 
         const url = isEditing.value
             ? buildPath(updatePath, { id: editingItemId.value })
@@ -106,7 +116,13 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
             errors.value = payload.errors ?? {};
             return;
         }
-        toast.success(t(isEditing.value ? "personal_finance.budget.updated" : "personal_finance.budget.created"));
+        toast.success(
+            t(
+                isEditing.value
+                    ? "personal_finance.budget.updated"
+                    : "personal_finance.budget.created",
+            ),
+        );
         show.value = false;
         onChanged?.();
     }
@@ -119,7 +135,9 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
 
     async function doDelete() {
         if (!pendingDelete.value) return;
-        const payload = await deleteRequest(buildPath(deletePath, { id: pendingDelete.value.id }));
+        const payload = await deleteRequest(
+            buildPath(deletePath, { id: pendingDelete.value.id }),
+        );
         if (!payload || payload.success === false) return;
         pendingDelete.value = null;
         toast.success(t("personal_finance.budget.deleted"));

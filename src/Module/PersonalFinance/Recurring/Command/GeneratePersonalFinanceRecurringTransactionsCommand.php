@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Recurring\Command;
 
 use Aurora\Module\PersonalFinance\Recurring\Manager\PersonalFinanceRecurringTransactionManagerInterface;
 use Aurora\Module\PersonalFinance\Recurring\Repository\PersonalFinanceRecurringTransactionRepository;
+use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use DateTimeImmutable;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -59,7 +60,7 @@ final class GeneratePersonalFinanceRecurringTransactionsCommand extends Command
             }
 
             $tx = $this->recurringManager->generateIfDue($rec, $today);
-            if (null === $tx) {
+            if (!$tx instanceof PersonalFinanceTransactionInterface) {
                 $io->writeln('  [skip] '.$label);
                 ++$skipped;
                 continue;
@@ -79,6 +80,7 @@ final class GeneratePersonalFinanceRecurringTransactionsCommand extends Command
         if (null === $value || '' === $value) {
             return new DateTimeImmutable('today');
         }
+
         try {
             return new DateTimeImmutable($value);
         } catch (Exception) {

@@ -93,6 +93,7 @@ class PersonalFinanceTransactionManager implements PersonalFinanceTransactionMan
         if (null !== $transaction->getTransferId()) {
             throw new DomainException(sprintf('Cannot %s a transfer transaction directly. Use PersonalFinanceTransferService instead.', $action));
         }
+
         if (null !== $transaction->getSplitId()) {
             throw new DomainException(sprintf('Cannot %s a split transaction directly. Use PersonalFinanceSplitService instead.', $action));
         }

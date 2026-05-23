@@ -73,6 +73,7 @@ class PersonalFinanceStatisticsService implements PersonalFinanceStatisticsServi
                 $income = bcadd($income, $this->transactionRepository->sumByTypeForPeriod($wallet, PersonalFinanceTransactionTypeEnum::Income->value, $start, $end), 2);
                 $expense = bcadd($expense, $this->transactionRepository->sumByTypeForPeriod($wallet, PersonalFinanceTransactionTypeEnum::Expense->value, $start, $end), 2);
             }
+
             $series[] = [
                 'month' => $start->format('Y-m'),
                 'income' => $income,
@@ -106,6 +107,7 @@ class PersonalFinanceStatisticsService implements PersonalFinanceStatisticsServi
                 if (!isset($aggregated[$key])) {
                     $aggregated[$key] = ['categoryName' => $key, 'total' => '0.00'];
                 }
+
                 $aggregated[$key]['total'] = bcadd($aggregated[$key]['total'], (string) $row['total'], 2);
             }
         }
@@ -132,8 +134,10 @@ class PersonalFinanceStatisticsService implements PersonalFinanceStatisticsServi
                         }
                     }
                 }
+
                 $series[] = ['month' => $monthStart->format('Y-m'), 'expense' => $monthTotal];
             }
+
             $top[$i]['series'] = $series;
         }
 

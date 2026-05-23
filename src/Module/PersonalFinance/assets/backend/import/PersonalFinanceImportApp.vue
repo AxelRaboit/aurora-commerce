@@ -103,7 +103,7 @@ function rowClasses(row) {
                             accept=".xlsx"
                             class="hidden"
                             v-on:change="onFilePicked"
-                        />
+                        >
                         <AppButton variant="secondary" size="md" v-on:click="fileInput?.click()">
                             <FileSpreadsheet class="w-4 h-4" :stroke-width="2" />
                             {{ t("personal_finance.import.pick_file") }}
@@ -114,7 +114,13 @@ function rowClasses(row) {
                 </div>
 
                 <div class="flex justify-end pt-2 border-t border-line">
-                    <AppButton variant="primary" size="md" :loading="loading" :disabled="!walletId || !file" v-on:click="submitUpload">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        :loading="loading"
+                        :disabled="!walletId || !file"
+                        v-on:click="submitUpload"
+                    >
                         <Upload class="w-4 h-4" :stroke-width="2" />
                         {{ t("personal_finance.import.preview_button") }}
                     </AppButton>
@@ -199,7 +205,13 @@ function rowClasses(row) {
                 </div>
 
                 <div class="flex justify-end pt-2 border-t border-line">
-                    <AppButton variant="primary" size="md" :loading="loading" :disabled="!canConfirm" v-on:click="confirmProcess">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        :loading="loading"
+                        :disabled="!canConfirm"
+                        v-on:click="confirmProcess"
+                    >
                         <Play class="w-4 h-4" :stroke-width="2" />
                         {{ t("personal_finance.import.confirm_button", { count: preview.validCount }, preview.validCount) }}
                     </AppButton>

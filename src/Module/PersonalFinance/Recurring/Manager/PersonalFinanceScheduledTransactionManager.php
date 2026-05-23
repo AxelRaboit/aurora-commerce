@@ -51,6 +51,7 @@ class PersonalFinanceScheduledTransactionManager implements PersonalFinanceSched
         if ($sched->isGenerated()) {
             throw new DomainException('Cannot update an already-materialized scheduled transaction.');
         }
+
         $this->applyInput($sched, $input);
         $this->entityManager->flush();
 
@@ -102,6 +103,7 @@ class PersonalFinanceScheduledTransactionManager implements PersonalFinanceSched
         if (!$wallet instanceof PersonalFinanceWalletInterface) {
             throw new DomainException('Wallet not found for scheduled transaction.');
         }
+
         $sched->setWallet($wallet);
         $sched->setCategory($this->resolveCategory($wallet, $input->getCategoryId()));
         $sched->setType($input->getType());
@@ -115,10 +117,12 @@ class PersonalFinanceScheduledTransactionManager implements PersonalFinanceSched
         if (null === $categoryId) {
             return null;
         }
+
         $category = $this->categoryRepository->find($categoryId);
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return null;
         }
+
         if ($category->getWallet()->getId() !== $wallet->getId()) {
             return null;
         }

@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Budget\View;
 
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
 use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetManagerInterface;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetSerializerInterface;
 use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
-use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Category\Serializer\PersonalFinanceCategorySerializerInterface;
+use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
@@ -123,7 +124,7 @@ final readonly class PersonalFinanceBudgetViewBuilder
         // hasn't already triggered the rollover for this month. Banner
         // disappears as soon as the button is clicked (or if a previous
         // session already rolled over).
-        $wasRolledOver = null !== $budget->getRolledOverAt();
+        $wasRolledOver = $budget->getRolledOverAt() instanceof DateTimeImmutable;
         $eligibleRolloverCount = $wasRolledOver
             ? 0
             : $this->itemRepository->countRepeatableForPreviousMonth($wallet, $month);
@@ -139,8 +140,8 @@ final readonly class PersonalFinanceBudgetViewBuilder
     }
 
     /**
-     * @param list<\Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface> $items
-     * @param array<int, string>                                                                   $actualsByCategoryId
+     * @param list<PersonalFinanceBudgetItemInterface> $items
+     * @param array<int, string>                       $actualsByCategoryId
      *
      * @return array<string, array<string, mixed>>
      */

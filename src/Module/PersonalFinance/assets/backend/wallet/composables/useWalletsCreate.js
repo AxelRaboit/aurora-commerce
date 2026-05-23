@@ -50,7 +50,9 @@ export function useWalletsCreate(
 
     async function submitCreate() {
         createErrors.value = {};
-        createForm.value.startBalance = evaluateAmount(createForm.value.startBalance);
+        createForm.value.startBalance = evaluateAmount(
+            createForm.value.startBalance,
+        );
         const payload = await request(createPath, createForm.value);
         if (!payload) return;
         if (payload.success === false) {

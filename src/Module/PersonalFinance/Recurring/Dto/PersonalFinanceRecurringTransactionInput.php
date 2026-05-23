@@ -25,7 +25,7 @@ class PersonalFinanceRecurringTransactionInput implements PersonalFinanceRecurri
         public readonly string $amount = '0.00',
         #[Assert\Length(max: 255)]
         public readonly ?string $description = null,
-        #[Assert\Range(min: 1, max: 28, notInRangeMessage: 'personal_finance.recurring.errors.day_of_month_range')]
+        #[Assert\Range(notInRangeMessage: 'personal_finance.recurring.errors.day_of_month_range', min: 1, max: 28)]
         public readonly int $dayOfMonth = 1,
         public readonly bool $active = true,
     ) {}

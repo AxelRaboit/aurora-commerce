@@ -57,12 +57,15 @@ export function useSplitsCreate(createPath, onCreated) {
             description: p.description || null,
         }));
 
-        const payload = await request(buildPath(createPath, { walletId: targetWalletId.value }), {
-            type: form.value.type,
-            date: form.value.date,
-            description: form.value.description || null,
-            parts: normalizedParts,
-        });
+        const payload = await request(
+            buildPath(createPath, { walletId: targetWalletId.value }),
+            {
+                type: form.value.type,
+                date: form.value.date,
+                description: form.value.description || null,
+                parts: normalizedParts,
+            },
+        );
         if (!payload) return;
         if (payload.success === false) {
             errors.value = payload.errors ?? {};

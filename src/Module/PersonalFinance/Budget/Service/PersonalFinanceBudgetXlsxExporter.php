@@ -8,7 +8,6 @@ use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
 use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
-use DateTimeImmutable;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -59,8 +58,8 @@ readonly class PersonalFinanceBudgetXlsxExporter
 
     /**
      * @param array<string, array{planned: string, expected: string, actual: string, items: list<PersonalFinanceBudgetItemInterface>}> $sections
-     *   keyed by PersonalFinanceBudgetSectionEnum value, items in display order
-     * @param array<int, string> $actualsByCategoryId category id → decimal sum (bcmath string)
+     *                                                                                                                                                      keyed by PersonalFinanceBudgetSectionEnum value, items in display order
+     * @param array<int, string>                                                                                                       $actualsByCategoryId category id → decimal sum (bcmath string)
      */
     public function buildResponse(PersonalFinanceWalletInterface $wallet, PersonalFinanceBudgetInterface $budget, array $sections, array $actualsByCategoryId): Response
     {
@@ -118,7 +117,10 @@ readonly class PersonalFinanceBudgetXlsxExporter
         $row = 2;
         foreach (PersonalFinanceBudgetSectionEnum::cases() as $sectionCase) {
             $bucket = $sections[$sectionCase->value] ?? null;
-            if (null === $bucket || [] === $bucket['items']) {
+            if (null === $bucket) {
+                continue;
+            }
+            if ([] === $bucket['items']) {
                 continue;
             }
 
@@ -140,7 +142,7 @@ readonly class PersonalFinanceBudgetXlsxExporter
                 $sheet->setCellValue('H'.$row, $variance);
                 $sheet->setCellValue('I'.$row, $item->repeatsNextMonth() ? 'yes' : 'no');
                 $sheet->setCellValue('J'.$row, $item->getNotes() ?? '');
-                $sheet->getStyle("D{$row}:H{$row}")->getNumberFormat()->setFormatCode('#,##0.00');
+                $sheet->getStyle(sprintf('D%d:H%d', $row, $row))->getNumberFormat()->setFormatCode('#,##0.00');
                 ++$row;
             }
         }
@@ -148,6 +150,7 @@ readonly class PersonalFinanceBudgetXlsxExporter
         foreach (range('A', 'J') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+
         $sheet->freezePane('A2');
     }
 
@@ -175,17 +178,18 @@ readonly class PersonalFinanceBudgetXlsxExporter
             $sheet->setCellValue('C'.$row, $expected);
             $sheet->setCellValue('D'.$row, $actual);
             $sheet->setCellValue('E'.$row, $variance);
-            $sheet->getStyle("A{$row}")->applyFromArray([
+            $sheet->getStyle('A'.$row)->applyFromArray([
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => self::SECTION_BG]],
                 'font' => ['bold' => true],
             ]);
-            $sheet->getStyle("B{$row}:E{$row}")->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle(sprintf('B%d:E%d', $row, $row))->getNumberFormat()->setFormatCode('#,##0.00');
             ++$row;
         }
 
         foreach (range('A', 'E') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+
         $sheet->freezePane('A2');
     }
 
@@ -195,7 +199,7 @@ readonly class PersonalFinanceBudgetXlsxExporter
     protected function writeHeader(Worksheet $sheet, array $headers, string $lastColumn): void
     {
         $sheet->fromArray($headers, null, 'A1');
-        $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
+        $sheet->getStyle(sprintf('A1:%s1', $lastColumn))->applyFromArray([
             'font' => ['bold' => true, 'color' => ['argb' => self::HEADER_TEXT]],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => self::HEADER_BG]],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -208,6 +212,6 @@ readonly class PersonalFinanceBudgetXlsxExporter
         $value = mb_strtolower($value);
         $value = preg_replace('/[^a-z0-9]+/i', '-', $value) ?? 'wallet';
 
-        return trim($value, '-') ?: 'wallet';
+        return mb_trim($value, '-') ?: 'wallet';
     }
 }

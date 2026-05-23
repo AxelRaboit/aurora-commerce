@@ -25,7 +25,10 @@ export function useGoalDeposit(depositPath, onDeposited) {
         if (!target.value) return;
         errors.value = {};
         const normalized = evaluateAmount(amount.value);
-        const payload = await request(buildPath(depositPath, { id: target.value.id }), { amount: normalized });
+        const payload = await request(
+            buildPath(depositPath, { id: target.value.id }),
+            { amount: normalized },
+        );
         if (!payload) return;
         if (payload.success === false) {
             errors.value = payload.errors ?? {};

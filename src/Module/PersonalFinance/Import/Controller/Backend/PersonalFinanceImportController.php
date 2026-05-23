@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
+
+use const JSON_THROW_ON_ERROR;
 
 #[Route('/backend/personal-finance', name: 'backend_personal_finance')]
 #[IsGranted('personal_finance.import.use')]
@@ -82,7 +85,7 @@ final class PersonalFinanceImportController extends AbstractController
             // Round-trip the parsed rows so /process doesn't have to re-parse the upload —
             // the client just POSTs them back. Cheaper UX (no second file upload) + the
             // service treats the wire payload as authoritative.
-            'rowsForProcess' => array_map(fn (PersonalFinanceImportRow $r): array => $this->serializeRowForProcess($r), $preview->rows),
+            'rowsForProcess' => array_map($this->serializeRowForProcess(...), $preview->rows),
         ]);
     }
 
@@ -99,7 +102,7 @@ final class PersonalFinanceImportController extends AbstractController
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $payload = json_decode($request->getContent(), true, flags: \JSON_THROW_ON_ERROR);
+        $payload = json_decode($request->getContent(), true, flags: JSON_THROW_ON_ERROR);
         if (!is_array($payload) || !isset($payload['rows']) || !is_array($payload['rows'])) {
             return $this->jsonInvalidInput(['rows' => 'personal_finance.import.errors.rows_required']);
         }
@@ -109,6 +112,7 @@ final class PersonalFinanceImportController extends AbstractController
             if (!is_array($rawRow)) {
                 continue;
             }
+
             $rows[] = $this->hydrateRow($rawRow);
         }
 
@@ -166,23 +170,23 @@ final class PersonalFinanceImportController extends AbstractController
         $date = null;
         if (is_string($raw['date'] ?? null) && '' !== $raw['date']) {
             try {
-                $date = new DateTimeImmutable((string) $raw['date']);
-            } catch (\Throwable) {
+                $date = new DateTimeImmutable($raw['date']);
+            } catch (Throwable) {
                 $date = null;
             }
         }
 
-        $type = is_string($raw['type'] ?? null) ? PersonalFinanceTransactionTypeEnum::tryFrom((string) $raw['type']) : null;
-        $tags = is_array($raw['tags'] ?? null) ? array_values(array_filter(array_map('strval', $raw['tags']))) : [];
-        $errors = is_array($raw['errors'] ?? null) ? array_values(array_filter(array_map('strval', $raw['errors']))) : [];
+        $type = is_string($raw['type'] ?? null) ? PersonalFinanceTransactionTypeEnum::tryFrom($raw['type']) : null;
+        $tags = is_array($raw['tags'] ?? null) ? array_values(array_filter(array_map(strval(...), $raw['tags']))) : [];
+        $errors = is_array($raw['errors'] ?? null) ? array_values(array_filter(array_map(strval(...), $raw['errors']))) : [];
 
         return new PersonalFinanceImportRow(
             rowNumber: (int) ($raw['rowNumber'] ?? 0),
             date: $date,
             type: $type,
-            amount: is_string($raw['amount'] ?? null) ? (string) $raw['amount'] : null,
-            categoryName: is_string($raw['categoryName'] ?? null) && '' !== $raw['categoryName'] ? (string) $raw['categoryName'] : null,
-            description: is_string($raw['description'] ?? null) && '' !== $raw['description'] ? (string) $raw['description'] : null,
+            amount: is_string($raw['amount'] ?? null) ? $raw['amount'] : null,
+            categoryName: is_string($raw['categoryName'] ?? null) && '' !== $raw['categoryName'] ? $raw['categoryName'] : null,
+            description: is_string($raw['description'] ?? null) && '' !== $raw['description'] ? $raw['description'] : null,
             tags: $tags,
             errors: $errors,
             rawValues: [],

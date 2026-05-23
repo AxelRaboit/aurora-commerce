@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Categorization\EventSubscriber;
 
 use Aurora\Module\PersonalFinance\Categorization\Service\PersonalFinanceCategorizationLearnServiceInterface;
+use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Transaction\Event\PersonalFinanceTransactionSavedEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
@@ -29,7 +30,7 @@ final readonly class PersonalFinanceCategorizationLearnSubscriber
     {
         $tx = $event->transaction;
         $category = $tx->getCategory();
-        if (null === $category) {
+        if (!$category instanceof PersonalFinanceCategoryInterface) {
             return;
         }
 

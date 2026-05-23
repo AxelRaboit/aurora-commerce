@@ -27,11 +27,14 @@ export function useBalanceAdjustment(adjustPath, onAdjusted) {
     async function submit() {
         if (!targetWalletId.value) return;
         errors.value = {};
-        const payload = await request(buildPath(adjustPath, { walletId: targetWalletId.value }), {
-            newBalance: form.value.newBalance,
-            date: form.value.date,
-            description: form.value.description || null,
-        });
+        const payload = await request(
+            buildPath(adjustPath, { walletId: targetWalletId.value }),
+            {
+                newBalance: form.value.newBalance,
+                date: form.value.date,
+                description: form.value.description || null,
+            },
+        );
         if (!payload) return;
         if (payload.success === false) {
             errors.value = payload.errors ?? {};

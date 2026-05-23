@@ -60,7 +60,7 @@ class PersonalFinanceBudgetManager implements PersonalFinanceBudgetManagerInterf
      */
     public function rolloverFromPrevious(PersonalFinanceBudgetInterface $budget): int
     {
-        if (null !== $budget->getRolledOverAt()) {
+        if ($budget->getRolledOverAt() instanceof DateTimeImmutable) {
             return 0;
         }
 

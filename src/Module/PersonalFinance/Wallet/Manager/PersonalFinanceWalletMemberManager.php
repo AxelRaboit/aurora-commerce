@@ -52,6 +52,7 @@ class PersonalFinanceWalletMemberManager implements PersonalFinanceWalletMemberM
         if (PersonalFinanceWalletRoleEnum::Owner === $member->getRole()) {
             throw new DomainException('Cannot change the Owner role directly. Use transferOwnership instead.');
         }
+
         if (PersonalFinanceWalletRoleEnum::Owner === $input->getRole()) {
             throw new DomainException('Cannot promote to Owner via update. Use transferOwnership instead.');
         }

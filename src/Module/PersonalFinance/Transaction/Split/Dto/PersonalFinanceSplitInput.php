@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class PersonalFinanceSplitInput implements PersonalFinanceSplitInputInterface
 {
     /**
-     * @param list<string>                  $tags
+     * @param list<string>                   $tags
      * @param list<PersonalFinanceSplitPart> $parts
      */
     public function __construct(

@@ -18,10 +18,9 @@ export function useBudgetRollover({ rolloverPath, onRolledOver }) {
     async function rollover(walletId, month) {
         if (!walletId || !month) return;
 
-        const response = await request(
-            buildPath(rolloverPath, { walletId }),
-            { month },
-        );
+        const response = await request(buildPath(rolloverPath, { walletId }), {
+            month,
+        });
         if (!response) return;
         if (response.success === false) {
             toast.error(t("shared.common.error"));
@@ -30,7 +29,9 @@ export function useBudgetRollover({ rolloverPath, onRolledOver }) {
 
         const count = response.rolledOverCount ?? 0;
         lastCount.value = count;
-        toast.success(t("personal_finance.budget.rolled_over_toast", { count }, count));
+        toast.success(
+            t("personal_finance.budget.rolled_over_toast", { count }, count),
+        );
         onRolledOver?.(response);
     }
 

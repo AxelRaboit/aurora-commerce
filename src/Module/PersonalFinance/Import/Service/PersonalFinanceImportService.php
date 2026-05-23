@@ -69,12 +69,12 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
             $reader = IOFactory::createReaderForFile($file->getPathname());
             $reader->setReadDataOnly(true);
             $spreadsheet = $reader->load($file->getPathname());
-        } catch (Throwable $exception) {
-            return new PersonalFinanceImportPreview([], [], [sprintf('Could not read uploaded file: %s', $exception->getMessage())]);
+        } catch (Throwable $throwable) {
+            return new PersonalFinanceImportPreview([], [], [sprintf('Could not read uploaded file: %s', $throwable->getMessage())]);
         }
 
         $sheet = $spreadsheet->getActiveSheet();
-        $highestRow = (int) $sheet->getHighestDataRow();
+        $highestRow = $sheet->getHighestDataRow();
 
         if ($highestRow > self::MAX_ROWS + 1) {
             $fatal[] = sprintf('Too many rows: %d (max %d).', $highestRow - 1, self::MAX_ROWS);
@@ -99,9 +99,10 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
 
         for ($r = 2; $r <= $highestRow; ++$r) {
             $row = $this->parseRow($sheet, $r);
-            if (null === $row) {
+            if (!$row instanceof PersonalFinanceImportRow) {
                 continue;
             }
+
             $rows[] = $row;
             if (null !== $row->categoryName && $row->isValid() && !in_array(mb_strtolower($row->categoryName), $existingNames, true)
                 && !in_array($row->categoryName, $newCategoriesSeen, true)) {
@@ -146,6 +147,7 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
                     $categoryCache[$key] = $category;
                     $categoriesCreated[] = $row->categoryName;
                 }
+
                 $categoryId = $categoryCache[$key]->getId();
             }
 
@@ -176,7 +178,7 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Transactions');
 
-        $headers = array_map('ucfirst', array_values(self::EXPECTED_HEADERS));
+        $headers = array_map(ucfirst(...), array_values(self::EXPECTED_HEADERS));
         $sheet->fromArray($headers, null, 'A1');
         $sheet->getStyle('A1:F1')->applyFromArray([
             'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
@@ -211,7 +213,7 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
     {
         $found = [];
         foreach (self::HEADER_LAYOUT as $col => $expected) {
-            $value = mb_strtolower(trim((string) $sheet->getCell($col.'1')->getValue()));
+            $value = mb_strtolower(mb_trim((string) $sheet->getCell($col.'1')->getValue()));
             $found[] = $value;
             if ($value !== $expected) {
                 return sprintf(
@@ -269,6 +271,7 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
 
             return null;
         }
+
         // Excel serial date (numeric) — convert via PhpSpreadsheet helper
         if (is_numeric($value)) {
             try {
@@ -279,8 +282,9 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
                 return null;
             }
         }
+
         // String — accept ISO YYYY-MM-DD primarily, fallback to DateTimeImmutable parser
-        $stringValue = trim((string) $value);
+        $stringValue = mb_trim((string) $value);
         try {
             return new DateTimeImmutable($stringValue);
         } catch (Throwable) {
@@ -293,12 +297,13 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
     /** @param list<string> $errors */
     protected function parseType(mixed $value, array &$errors): ?PersonalFinanceTransactionTypeEnum
     {
-        $stringValue = mb_strtolower(trim((string) $value));
+        $stringValue = mb_strtolower(mb_trim((string) $value));
         if ('' === $stringValue) {
             $errors[] = 'type is required';
 
             return null;
         }
+
         $resolved = PersonalFinanceTransactionTypeEnum::tryFrom($stringValue);
         if (null === $resolved) {
             $errors[] = sprintf('type "%s" must be one of: income, expense', $stringValue);
@@ -317,7 +322,8 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
 
             return null;
         }
-        $normalised = str_replace(',', '.', trim((string) $value));
+
+        $normalised = str_replace(',', '.', mb_trim((string) $value));
         if (1 !== preg_match('/^\d{1,8}(\.\d{1,2})?$/', $normalised)) {
             $errors[] = sprintf('amount "%s" is not a valid positive decimal (max 2 fractional digits)', $value);
 
@@ -332,7 +338,7 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
 
     protected function parseString(mixed $value): ?string
     {
-        $stringValue = trim((string) ($value ?? ''));
+        $stringValue = mb_trim((string) ($value ?? ''));
 
         return '' === $stringValue ? null : $stringValue;
     }
@@ -340,14 +346,15 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
     /** @return list<string> */
     protected function parseTags(mixed $value): array
     {
-        $stringValue = trim((string) ($value ?? ''));
+        $stringValue = mb_trim((string) ($value ?? ''));
         if ('' === $stringValue) {
             return [];
         }
+
         $parts = preg_split('/[,;]/', $stringValue) ?: [];
         $tags = [];
         foreach ($parts as $part) {
-            $clean = trim($part);
+            $clean = mb_trim($part);
             if ('' !== $clean && !in_array($clean, $tags, true)) {
                 $tags[] = $clean;
             }

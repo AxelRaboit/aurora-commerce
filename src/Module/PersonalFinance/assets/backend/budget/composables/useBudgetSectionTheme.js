@@ -1,4 +1,11 @@
-import { TrendingUp, PiggyBank, FileText, ShoppingCart, CreditCard, Folder } from "lucide-vue-next";
+import {
+    TrendingUp,
+    PiggyBank,
+    FileText,
+    ShoppingCart,
+    CreditCard,
+    Folder,
+} from "lucide-vue-next";
 
 /**
  * Per-section visual theme for the Budget page — colour-codes the

@@ -45,6 +45,7 @@ class PersonalFinanceSplitInputFactory implements PersonalFinanceSplitInputFacto
                 if (!is_array($part)) {
                     continue;
                 }
+
                 $parts[] = new PersonalFinanceSplitPart(
                     categoryId: isset($part['categoryId']) ? (int) $part['categoryId'] : null,
                     amount: Str::trimFromArray($part, 'amount') ?: '0.00',

@@ -105,11 +105,26 @@ export function useBudgetPresetsForm(createPath, updatePath, onSaved) {
             return;
         }
         toast.success(
-            t(isEditing.value ? "personal_finance.budget_presets.updated" : "personal_finance.budget_presets.created"),
+            t(
+                isEditing.value
+                    ? "personal_finance.budget_presets.updated"
+                    : "personal_finance.budget_presets.created",
+            ),
         );
         show.value = false;
         onSaved?.(response.preset);
     }
 
-    return { show, isEditing, form, errors, loading, openCreate, openEdit, addItem, removeItem, submit };
+    return {
+        show,
+        isEditing,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        addItem,
+        removeItem,
+        submit,
+    };
 }

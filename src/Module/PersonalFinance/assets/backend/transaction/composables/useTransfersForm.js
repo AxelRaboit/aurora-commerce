@@ -67,7 +67,11 @@ export function useTransfersForm(
 
     async function openEdit(transferId) {
         errors.value = {};
-        const payload = await request(buildPath(showPath, { transferId }), null, HttpMethod.Get);
+        const payload = await request(
+            buildPath(showPath, { transferId }),
+            null,
+            HttpMethod.Get,
+        );
         if (!payload || payload.success === false || !payload.transfer) return;
 
         isEditing.value = true;
@@ -100,7 +104,13 @@ export function useTransfersForm(
             errors.value = payload.errors ?? {};
             return;
         }
-        toast.success(t(isEditing.value ? "personal_finance.transfers.updated" : "personal_finance.transfers.created"));
+        toast.success(
+            t(
+                isEditing.value
+                    ? "personal_finance.transfers.updated"
+                    : "personal_finance.transfers.created",
+            ),
+        );
         show.value = false;
         onSaved?.(payload.transferId);
     }

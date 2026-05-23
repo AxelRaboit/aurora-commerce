@@ -359,7 +359,7 @@ const showRolloverBanner = computed(() => eligibleRolloverCount.value > 0 && !wa
                                     class="h-full transition-all"
                                     :class="isOverrun(sectionSummary(section)) ? 'bg-rose-500' : sectionBarClass(section)"
                                     :style="{ width: progressPct(sectionSummary(section)) + '%' }"
-                                ></div>
+                                />
                             </div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
@@ -401,7 +401,7 @@ const showRolloverBanner = computed(() => eligibleRolloverCount.value > 0 && !wa
                                         class="h-full transition-all"
                                         :class="isOverrun(item) ? 'bg-rose-500' : sectionBarClass(section)"
                                         :style="{ width: progressPct(item) + '%' }"
-                                    ></div>
+                                    />
                                 </div>
                             </div>
                             <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-0.5">
@@ -500,7 +500,13 @@ const showRolloverBanner = computed(() => eligibleRolloverCount.value > 0 && !wa
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="itemLoading" v-on:click="submitItem">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="itemLoading"
+                        v-on:click="submitItem"
+                    >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>

@@ -19,7 +19,10 @@ import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
  * @param {string} itemTransactionsPath - GET URL with `__id__` placeholder. Endpoint returns `{ items, page, totalPages, total }`.
  * @param {string} deleteTransactionPath - POST URL with `__id__` placeholder.
  */
-export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactionPath) {
+export function useBudgetItemTransactions(
+    itemTransactionsPath,
+    deleteTransactionPath,
+) {
     const { t } = useI18n();
     const list = useRequest();
     const del = useRequest();
@@ -105,9 +108,13 @@ export function useBudgetItemTransactions(itemTransactionsPath, deleteTransactio
     async function doDelete() {
         const tx = pendingDelete.value;
         if (!tx) return false;
-        const payload = await del.request(buildPath(deleteTransactionPath, { id: tx.id }));
+        const payload = await del.request(
+            buildPath(deleteTransactionPath, { id: tx.id }),
+        );
         if (!payload || payload.success === false) return false;
-        transactions.value = transactions.value.filter((row) => row.id !== tx.id);
+        transactions.value = transactions.value.filter(
+            (row) => row.id !== tx.id,
+        );
         pendingDelete.value = null;
         toast.success(t("personal_finance.transactions.deleted"));
         return true;

@@ -124,6 +124,7 @@ class PersonalFinanceTransactionAttachmentService implements PersonalFinanceTran
         if (null === $relative) {
             return;
         }
+
         $abs = Path::join($this->storageDir, $relative);
         if ($this->filesystem->exists($abs)) {
             $this->filesystem->remove($abs);

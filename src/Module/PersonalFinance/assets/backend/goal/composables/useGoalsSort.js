@@ -27,7 +27,10 @@ export function useGoalsSort(goalsRef) {
         if (sortBy.value === "progress") {
             out.sort((a, b) => b.progress - a.progress);
         } else if (sortBy.value === "amount") {
-            out.sort((a, b) => parseFloat(b.targetAmount) - parseFloat(a.targetAmount));
+            out.sort(
+                (a, b) =>
+                    parseFloat(b.targetAmount) - parseFloat(a.targetAmount),
+            );
         } else {
             out.sort((a, b) => {
                 if (!a.deadline && !b.deadline) return 0;
@@ -51,7 +54,10 @@ export function monthsRemaining(deadline) {
     if (!deadline) return null;
     const now = new Date();
     const target = new Date(deadline);
-    return (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+    return (
+        (target.getFullYear() - now.getFullYear()) * 12 +
+        (target.getMonth() - now.getMonth())
+    );
 }
 
 /**

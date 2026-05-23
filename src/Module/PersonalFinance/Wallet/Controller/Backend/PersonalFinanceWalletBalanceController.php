@@ -84,8 +84,8 @@ final class PersonalFinanceWalletBalanceController extends AbstractController
 
         try {
             $transaction = $this->balanceAdjustmentService->adjust($user, $wallet, $input);
-        } catch (DomainException $exception) {
-            return $this->jsonInvalidInput(['newBalance' => $exception->getMessage()]);
+        } catch (DomainException $domainException) {
+            return $this->jsonInvalidInput(['newBalance' => $domainException->getMessage()]);
         }
 
         return $this->jsonSuccess([
@@ -99,6 +99,7 @@ final class PersonalFinanceWalletBalanceController extends AbstractController
         if (null === $monthParam || '' === $monthParam) {
             return new DateTimeImmutable('first day of this month');
         }
+
         try {
             return new DateTimeImmutable($monthParam.'-01');
         } catch (Exception) {

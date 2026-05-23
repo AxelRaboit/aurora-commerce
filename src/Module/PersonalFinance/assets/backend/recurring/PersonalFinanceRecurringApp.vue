@@ -141,11 +141,25 @@ function signedAmount(row) {
                 </AppTab>
             </div>
             <template #actions>
-                <AppButton v-if="tab === 'recurring'" variant="primary" size="md" class="w-full sm:w-auto" :disabled="!wallets.length" v-on:click="openRecCreate">
+                <AppButton
+                    v-if="tab === 'recurring'"
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :disabled="!wallets.length"
+                    v-on:click="openRecCreate"
+                >
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t("personal_finance.recurring.add_recurring") }}
                 </AppButton>
-                <AppButton v-else variant="primary" size="md" class="w-full sm:w-auto" :disabled="!wallets.length" v-on:click="openSchedCreate">
+                <AppButton
+                    v-else
+                    variant="primary"
+                    size="md"
+                    class="w-full sm:w-auto"
+                    :disabled="!wallets.length"
+                    v-on:click="openSchedCreate"
+                >
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t("personal_finance.recurring.add_scheduled") }}
                 </AppButton>
@@ -318,18 +332,57 @@ function signedAmount(row) {
         </template>
 
         <!-- Recurring modal -->
-        <AppModal :show="showRec" :title="recEditing ? t('personal_finance.recurring.edit_recurring') : t('personal_finance.recurring.add_recurring')" :icon="RotateCw" :closeable="false" v-on:close="showRec = false">
+        <AppModal
+            :show="showRec"
+            :title="recEditing ? t('personal_finance.recurring.edit_recurring') : t('personal_finance.recurring.add_recurring')"
+            :icon="RotateCw"
+            :closeable="false"
+            v-on:close="showRec = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitRec">
-                <AppMultiselect v-model="recForm.walletId" :label="t('personal_finance.recurring.fields.wallet')" :options="walletOptions" :allow-empty="false" :error="recErrors.walletId" required />
-                <AppMultiselect v-model="recForm.type" :label="t('personal_finance.recurring.fields.type')" :options="typeOptions" :allow-empty="false" required />
-                <AppAmountInput v-model="recForm.amount" :label="t('personal_finance.recurring.fields.amount')" :placeholder="t('personal_finance.transactions.placeholders.amount')" :error="recErrors.amount" required />
+                <AppMultiselect
+                    v-model="recForm.walletId"
+                    :label="t('personal_finance.recurring.fields.wallet')"
+                    :options="walletOptions"
+                    :allow-empty="false"
+                    :error="recErrors.walletId"
+                    required
+                />
+                <AppMultiselect
+                    v-model="recForm.type"
+                    :label="t('personal_finance.recurring.fields.type')"
+                    :options="typeOptions"
+                    :allow-empty="false"
+                    required
+                />
+                <AppAmountInput
+                    v-model="recForm.amount"
+                    :label="t('personal_finance.recurring.fields.amount')"
+                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
+                    :error="recErrors.amount"
+                    required
+                />
                 <AppMultiselect v-model="recForm.categoryId" :label="t('personal_finance.recurring.fields.category')" :options="categoryOptionsForWallet(recForm.walletId)" :allow-empty="true" />
                 <AppInput v-model="recForm.description" :label="t('personal_finance.recurring.fields.description')" />
                 <div>
-                    <AppInput v-model.number="recForm.dayOfMonth" type="number" min="1" max="28" :label="t('personal_finance.recurring.fields.day_of_month')" :error="recErrors.dayOfMonth" required />
+                    <AppInput
+                        v-model.number="recForm.dayOfMonth"
+                        type="number"
+                        min="1"
+                        max="28"
+                        :label="t('personal_finance.recurring.fields.day_of_month')"
+                        :error="recErrors.dayOfMonth"
+                        required
+                    />
                     <p class="text-xs text-muted mt-1">{{ t("personal_finance.recurring.fields.day_of_month_hint") }}</p>
                 </div>
-                <slot name="extra-form-fields" :form="recForm" :errors="recErrors" :editing="recEditing" :tab="'recurring'" />
+                <slot
+                    name="extra-form-fields"
+                    :form="recForm"
+                    :errors="recErrors"
+                    :editing="recEditing"
+                    :tab="'recurring'"
+                />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -337,7 +390,13 @@ function signedAmount(row) {
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="recLoading" v-on:click="submitRec">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="recLoading"
+                        v-on:click="submitRec"
+                    >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>
@@ -346,15 +405,52 @@ function signedAmount(row) {
         </AppModal>
 
         <!-- Scheduled modal -->
-        <AppModal :show="showSched" :title="schedEditing ? t('personal_finance.recurring.edit_scheduled') : t('personal_finance.recurring.add_scheduled')" :icon="Clock" :closeable="false" v-on:close="showSched = false">
+        <AppModal
+            :show="showSched"
+            :title="schedEditing ? t('personal_finance.recurring.edit_scheduled') : t('personal_finance.recurring.add_scheduled')"
+            :icon="Clock"
+            :closeable="false"
+            v-on:close="showSched = false"
+        >
             <form class="space-y-4" v-on:submit.prevent="submitSched">
-                <AppMultiselect v-model="schedForm.walletId" :label="t('personal_finance.recurring.fields.wallet')" :options="walletOptions" :allow-empty="false" :error="schedErrors.walletId" required />
-                <AppMultiselect v-model="schedForm.type" :label="t('personal_finance.recurring.fields.type')" :options="typeOptions" :allow-empty="false" required />
-                <AppAmountInput v-model="schedForm.amount" :label="t('personal_finance.recurring.fields.amount')" :placeholder="t('personal_finance.transactions.placeholders.amount')" :error="schedErrors.amount" required />
+                <AppMultiselect
+                    v-model="schedForm.walletId"
+                    :label="t('personal_finance.recurring.fields.wallet')"
+                    :options="walletOptions"
+                    :allow-empty="false"
+                    :error="schedErrors.walletId"
+                    required
+                />
+                <AppMultiselect
+                    v-model="schedForm.type"
+                    :label="t('personal_finance.recurring.fields.type')"
+                    :options="typeOptions"
+                    :allow-empty="false"
+                    required
+                />
+                <AppAmountInput
+                    v-model="schedForm.amount"
+                    :label="t('personal_finance.recurring.fields.amount')"
+                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
+                    :error="schedErrors.amount"
+                    required
+                />
                 <AppMultiselect v-model="schedForm.categoryId" :label="t('personal_finance.recurring.fields.category')" :options="categoryOptionsForWallet(schedForm.walletId)" :allow-empty="true" />
-                <AppDatePicker v-model="schedForm.scheduledDate" :label="t('personal_finance.recurring.fields.scheduled_date')" :placeholder="t('personal_finance.transactions.placeholders.date')" :error="schedErrors.scheduledDate" required />
+                <AppDatePicker
+                    v-model="schedForm.scheduledDate"
+                    :label="t('personal_finance.recurring.fields.scheduled_date')"
+                    :placeholder="t('personal_finance.transactions.placeholders.date')"
+                    :error="schedErrors.scheduledDate"
+                    required
+                />
                 <AppInput v-model="schedForm.description" :label="t('personal_finance.recurring.fields.description')" />
-                <slot name="extra-form-fields" :form="schedForm" :errors="schedErrors" :editing="schedEditing" :tab="'scheduled'" />
+                <slot
+                    name="extra-form-fields"
+                    :form="schedForm"
+                    :errors="schedErrors"
+                    :editing="schedEditing"
+                    :tab="'scheduled'"
+                />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -362,7 +458,13 @@ function signedAmount(row) {
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton variant="primary" size="md" type="submit" :loading="schedLoading" v-on:click="submitSched">
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="schedLoading"
+                        v-on:click="submitSched"
+                    >
                         <Save class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.save") }}
                     </AppButton>
@@ -371,7 +473,14 @@ function signedAmount(row) {
         </AppModal>
 
         <!-- Delete confirmations -->
-        <AppModal :show="!!pendingDeleteRec" max-width="sm" :closeable="false" :title="t('shared.common.delete')" :icon="Trash2" v-on:close="pendingDeleteRec = null">
+        <AppModal
+            :show="!!pendingDeleteRec"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDeleteRec = null"
+        >
             <p class="text-sm text-primary">{{ t("personal_finance.recurring.delete_confirm_recurring") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -387,7 +496,14 @@ function signedAmount(row) {
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingDeleteSched" max-width="sm" :closeable="false" :title="t('shared.common.delete')" :icon="Trash2" v-on:close="pendingDeleteSched = null">
+        <AppModal
+            :show="!!pendingDeleteSched"
+            max-width="sm"
+            :closeable="false"
+            :title="t('shared.common.delete')"
+            :icon="Trash2"
+            v-on:close="pendingDeleteSched = null"
+        >
             <p class="text-sm text-primary">{{ t("personal_finance.recurring.delete_confirm_scheduled") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -403,7 +519,14 @@ function signedAmount(row) {
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingPause" max-width="sm" :closeable="false" :title="t('personal_finance.recurring.toggle_disable')" :icon="Pause" v-on:close="pendingPause = null">
+        <AppModal
+            :show="!!pendingPause"
+            max-width="sm"
+            :closeable="false"
+            :title="t('personal_finance.recurring.toggle_disable')"
+            :icon="Pause"
+            v-on:close="pendingPause = null"
+        >
             <p class="text-sm text-primary">{{ t("personal_finance.recurring.toggle_pause_confirm") }}</p>
             <template #footer>
                 <AppModalFooter>
@@ -419,7 +542,14 @@ function signedAmount(row) {
             </template>
         </AppModal>
 
-        <AppModal :show="!!pendingMaterialize" max-width="sm" :closeable="false" :title="t('personal_finance.recurring.materialize')" :icon="CheckCircle2" v-on:close="pendingMaterialize = null">
+        <AppModal
+            :show="!!pendingMaterialize"
+            max-width="sm"
+            :closeable="false"
+            :title="t('personal_finance.recurring.materialize')"
+            :icon="CheckCircle2"
+            v-on:close="pendingMaterialize = null"
+        >
             <p class="text-sm text-primary">{{ t("personal_finance.recurring.materialize_confirm") }}</p>
             <template #footer>
                 <AppModalFooter>

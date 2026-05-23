@@ -43,7 +43,7 @@ class PersonalFinanceBalanceAdjustmentService implements PersonalFinanceBalanceA
         $amount = $isCredit ? $diff : bcmul($diff, '-1', 2);
         $type = $isCredit ? PersonalFinanceTransactionTypeEnum::Income : PersonalFinanceTransactionTypeEnum::Expense;
 
-        $transaction = $this->entityManager->wrapInTransaction(function () use ($user, $wallet, $input, $amount, $type, $diff): PersonalFinanceTransactionInterface {
+        return $this->entityManager->wrapInTransaction(function () use ($user, $wallet, $input, $amount, $type, $diff): PersonalFinanceTransactionInterface {
             $category = $this->categoryManager->getOrCreateSystem(
                 $user,
                 $wallet,
@@ -67,8 +67,6 @@ class PersonalFinanceBalanceAdjustmentService implements PersonalFinanceBalanceA
 
             return $tx;
         });
-
-        return $transaction;
     }
 
     /**

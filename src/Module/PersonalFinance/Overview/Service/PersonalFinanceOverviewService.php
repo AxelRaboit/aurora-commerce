@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PersonalFinance\Overview\Service;
 
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetRepository;
 use Aurora\Module\PersonalFinance\Goal\Repository\PersonalFinanceGoalRepository;
@@ -214,6 +215,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
                 if (!isset($aggregated[$key])) {
                     $aggregated[$key] = ['categoryName' => $key, 'total' => '0.00'];
                 }
+
                 $aggregated[$key]['total'] = bcadd($aggregated[$key]['total'], (string) $row['total'], 2);
             }
         }
@@ -229,6 +231,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
         foreach ($aggregated as $row) {
             $sum = bcadd($sum, $row['total'], 2);
         }
+
         $sumFloat = (float) $sum;
         foreach ($aggregated as $i => $row) {
             $aggregated[$i]['percent'] = $sumFloat > 0 ? (int) round(((float) $row['total'] / $sumFloat) * 100) : 0;
@@ -309,9 +312,11 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
             if (!$r->isActive()) {
                 continue;
             }
+
             if ($r->getLastGeneratedAt()?->format('Y-m') === $thisMonth && $r->getDayOfMonth() <= $todayDay) {
                 continue;
             }
+
             $upcoming[] = [
                 'id' => $r->getId(),
                 'description' => $r->getDescription(),
@@ -341,9 +346,11 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
             if ($s->isGenerated()) {
                 continue;
             }
+
             if ($s->getScheduledDate() < $today) {
                 continue;
             }
+
             $upcoming[] = [
                 'id' => $s->getId(),
                 'description' => $s->getDescription(),
@@ -374,9 +381,10 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
         $alerts = [];
         foreach ($wallets as $wallet) {
             $budget = $this->budgetRepository->findByWalletAndMonth($wallet, $month);
-            if (null === $budget) {
+            if (!$budget instanceof PersonalFinanceBudgetInterface) {
                 continue;
             }
+
             $items = $this->budgetItemRepository->findByBudget($budget);
             $actuals = $this->transactionRepository->actualsByCategoryForMonth($wallet, $month, $end);
 
@@ -387,6 +395,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
                 if (1 !== bccomp($actual, $expected, 2)) {
                     continue;
                 }
+
                 $alerts[] = [
                     'walletId' => $wallet->getId(),
                     'walletName' => $wallet->getName(),

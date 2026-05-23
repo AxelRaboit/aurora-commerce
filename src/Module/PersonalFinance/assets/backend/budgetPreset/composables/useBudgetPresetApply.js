@@ -48,7 +48,11 @@ export function useBudgetPresetApply(applyPath, onApplied) {
         }
         const insertedCount = response.insertedCount ?? 0;
         toast.success(
-            t("personal_finance.budget_presets.applied", { count: insertedCount }, insertedCount),
+            t(
+                "personal_finance.budget_presets.applied",
+                { count: insertedCount },
+                insertedCount,
+            ),
         );
         show.value = false;
         onApplied?.(response);

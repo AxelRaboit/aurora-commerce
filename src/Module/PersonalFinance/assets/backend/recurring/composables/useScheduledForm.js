@@ -34,7 +34,12 @@ function pickExtras(extraFields, source) {
     );
 }
 
-export function useScheduledForm(createPath, updatePath, onSaved, { extraFields = {} } = {}) {
+export function useScheduledForm(
+    createPath,
+    updatePath,
+    onSaved,
+    { extraFields = {} } = {},
+) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
 
@@ -72,7 +77,9 @@ export function useScheduledForm(createPath, updatePath, onSaved, { extraFields 
         errors.value = {};
         form.value.amount = evaluateAmount(form.value.amount);
 
-        const url = isEditing.value ? buildPath(updatePath, { id: editingId.value }) : createPath;
+        const url = isEditing.value
+            ? buildPath(updatePath, { id: editingId.value })
+            : createPath;
         const payload = await request(url, {
             ...form.value,
             description: form.value.description || null,
@@ -83,10 +90,25 @@ export function useScheduledForm(createPath, updatePath, onSaved, { extraFields 
             errors.value = payload.errors ?? {};
             return;
         }
-        toast.success(t(isEditing.value ? "personal_finance.recurring.updated_scheduled" : "personal_finance.recurring.created_scheduled"));
+        toast.success(
+            t(
+                isEditing.value
+                    ? "personal_finance.recurring.updated_scheduled"
+                    : "personal_finance.recurring.created_scheduled",
+            ),
+        );
         show.value = false;
         onSaved?.(payload.scheduled);
     }
 
-    return { show, isEditing, form, errors, loading, openCreate, openEdit, submit };
+    return {
+        show,
+        isEditing,
+        form,
+        errors,
+        loading,
+        openCreate,
+        openEdit,
+        submit,
+    };
 }

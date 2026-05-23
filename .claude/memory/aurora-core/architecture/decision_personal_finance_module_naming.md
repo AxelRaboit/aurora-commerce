@@ -47,13 +47,14 @@ Trois alternatives écartées :
   ou `Spendly` dans le code.
 - **Si on parle du port en prose** : "le port de Spendly" reste valide
   (référence à l'origine), mais le module lui-même est `PersonalFinance`.
-- **TODO docs** : sous `docs/aurora-core/todo/spendly/` — le folder est nommé
-  d'après l'origine pour grouper, mais le contenu utilise `PersonalFinance`.
 - **Distinguer de `Billing`** : `Billing` = factures B2B (clients d'agence,
   TVA, OCR, signatures). `PersonalFinance` = budget perso (wallets, virements
   inter-comptes, objectifs d'épargne, abonnements perso). Si un cas se trouve
   à cheval (ex. un freelance qui voit ses revenus perso ET facture des
   clients), c'est deux modules complémentaires, pas un seul.
 
-Voir TODO complet et architecture cible dans
-[`docs/aurora-core/todo/spendly/README.md`](../../../../docs/aurora-core/todo/spendly/README.md).
+État du port + historique des sessions livrées :
+[[project-personal-finance-port-status]] (mémoire dédiée). Les TODO
+sources qui vivaient sous `docs/aurora-core/todo/spendly/` ont été
+supprimés une fois le port complété — ils étaient un scaffold de
+planning, pas une doc de référence.

@@ -9,7 +9,7 @@ namespace Aurora\Module\PersonalFinance\Categorization\Support;
  * pattern used by PersonalFinanceCategorizationRule:
  *   - strip accents via iconv ASCII//TRANSLIT
  *   - lowercase
- *   - collapse whitespace
+ *   - collapse whitespace.
  *
  * Identical normalisation must apply to both write (learn) and read
  * (suggest) paths — extracted to a single helper to keep them in sync.

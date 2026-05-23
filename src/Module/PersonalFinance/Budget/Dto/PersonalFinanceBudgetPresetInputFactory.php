@@ -22,8 +22,6 @@ class PersonalFinanceBudgetPresetInputFactory implements PersonalFinanceBudgetPr
     }
 
     /**
-     * @param mixed $raw
-     *
      * @return list<PersonalFinanceBudgetPresetItemInputInterface>
      */
     protected function buildItems(mixed $raw): array
@@ -37,6 +35,7 @@ class PersonalFinanceBudgetPresetInputFactory implements PersonalFinanceBudgetPr
             if (!is_array($row)) {
                 continue;
             }
+
             $items[] = $this->buildItem($row);
         }
 

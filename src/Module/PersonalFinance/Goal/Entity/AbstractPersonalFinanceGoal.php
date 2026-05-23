@@ -180,6 +180,6 @@ abstract class AbstractPersonalFinanceGoal implements PersonalFinanceGoalInterfa
 
     public function isAutoTracked(): bool
     {
-        return null !== $this->category;
+        return $this->category instanceof PersonalFinanceCategoryInterface;
     }
 }

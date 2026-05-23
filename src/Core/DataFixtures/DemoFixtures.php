@@ -2607,7 +2607,6 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     // ── Menus ─────────────────────────────────────────────────────────────────
 
-    /** @param Media[] $media */
     // ── Personal Finance ──────────────────────────────────────────────────────
 
     /**
@@ -2719,7 +2718,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         // Monthly salary (3 months back through today, 1st of month)
         foreach ([90, 60, 30, 0] as $daysAgo) {
-            $date = $today->modify("-{$daysAgo} days")->modify('first day of this month');
+            $date = $today->modify(sprintf('-%s days', $daysAgo))->modify('first day of this month');
             $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Salaire'], 'type' => PersonalFinanceTransactionTypeEnum::Income, 'amount' => '2800.00', 'date' => $date, 'desc' => 'Salaire Aurora Tech'];
         }
 
@@ -2738,7 +2737,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'cat' => $ccCats['Freelance'],
                 'type' => PersonalFinanceTransactionTypeEnum::Income,
                 'amount' => $def['amount'],
-                'date' => $today->modify("-{$def['daysAgo']} days"),
+                'date' => $today->modify(sprintf('-%s days', $def['daysAgo'])),
                 'desc' => $def['desc'],
             ];
         }
@@ -2750,10 +2749,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 'cat' => $ccCats['Cashback'],
                 'type' => PersonalFinanceTransactionTypeEnum::Income,
                 'amount' => '12.50',
-                'date' => $today->modify("-{$daysAgo} days"),
+                'date' => $today->modify(sprintf('-%s days', $daysAgo)),
                 'desc' => 'Cashback carte bleue',
             ];
         }
+
         $txDefs[] = [
             'wallet' => $cc,
             'cat' => $ccCats['Cashback'],
@@ -2765,7 +2765,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         // Rent (5th of each month)
         foreach ([90, 60, 30, 0] as $daysAgo) {
-            $date = $today->modify("-{$daysAgo} days")->modify('first day of this month')->modify('+4 days');
+            $date = $today->modify(sprintf('-%s days', $daysAgo))->modify('first day of this month')->modify('+4 days');
             if ($date <= $today) {
                 $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Loyer'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '850.00', 'date' => $date, 'desc' => 'Loyer appartement'];
             }
@@ -2773,7 +2773,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         // Subscriptions (15th of each month)
         foreach ([85, 55, 25] as $daysAgo) {
-            $date = $today->modify("-{$daysAgo} days");
+            $date = $today->modify(sprintf('-%s days', $daysAgo));
             $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Abonnements'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '13.99', 'date' => $date, 'desc' => 'Netflix'];
             $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Abonnements'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '9.99', 'date' => $date->modify('+3 days'), 'desc' => 'Spotify Premium'];
         }
@@ -2796,7 +2796,8 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 if ($offset < 0) {
                     continue;
                 }
-                $txDefs[] = ['wallet' => $cc, 'cat' => $cat, 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => $amount, 'date' => $today->modify("-{$offset} days"), 'desc' => $desc];
+
+                $txDefs[] = ['wallet' => $cc, 'cat' => $cat, 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => $amount, 'date' => $today->modify(sprintf('-%s days', $offset)), 'desc' => $desc];
             }
         }
 
@@ -2808,7 +2809,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ['12.50', 'Café du coin'], ['18.00', 'McDonalds'], ['22.50', 'Burger King'], ['9.80', 'Boulangerie'],
             ['15.30', 'Sandwich shop'], ['28.50', 'Pizzeria Mario'], ['45.00', 'Sushi Yama'], ['16.20', 'Pizzeria'],
             ['8.50', 'Café'], ['32.00', 'Brasserie'], ['52.00', 'Le Bistrot'], ['11.00', 'Croissanterie'],
-            ['19.50', 'Five Guys'], ['24.00', 'Subway'], ['38.50', 'Le P\'tit Resto'], ['14.00', 'KFC'],
+            ['19.50', 'Five Guys'], ['24.00', 'Subway'], ['38.50', "Le P'tit Resto"], ['14.00', 'KFC'],
             ['6.50', 'Café'], ['42.30', 'Pizzeria Roma'], ['27.80', 'Tacos King'], ['55.00', 'Restaurant gastronomique'],
         ];
         $monthStart = $today->modify('first day of this month');
@@ -2821,6 +2822,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if ($date >= $monthEnd) {
                 continue;
             }
+
             $tx = new $txClass();
             $tx->setUser($owner)
                ->setWallet($cc)
@@ -3018,19 +3020,21 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if (null !== $def['deadlineMonths']) {
                 $goal->setDeadline($today->modify('+'.$def['deadlineMonths'].' months'));
             }
+
             $em->persist($goal);
 
-            if (null !== $def['category']) {
+            if ($def['category'] instanceof PersonalFinanceCategory) {
                 $autoTrackedGoals[] = $goal;
             }
         }
+
         $em->flush();
 
         // Trigger the sync subscriber once so the auto-tracked goals
         // pick up the seeded transaction history right away (the cards
         // would otherwise show "0.00" until the user touches a tx).
         $goalManager = $this->goalManager ?? null;
-        if (null !== $goalManager) {
+        if ($goalManager instanceof PersonalFinanceGoalManagerInterface) {
             foreach ($autoTrackedGoals as $goal) {
                 $goalManager->recomputeSavedAmount($goal);
             }
@@ -3077,10 +3081,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ['desc' => 'Carrefour',     'cat' => $ccCats['Courses'],     'hits' => 3],
             ['desc' => 'Lidl',          'cat' => $ccCats['Courses'],     'hits' => 2],
             ['desc' => 'Biocoop',       'cat' => $ccCats['Courses'],     'hits' => 1],
-            ['desc' => 'Pizzeria Mario','cat' => $ccCats['Restaurant'],  'hits' => 1],
+            ['desc' => 'Pizzeria Mario', 'cat' => $ccCats['Restaurant'],  'hits' => 1],
             ['desc' => 'Plein essence', 'cat' => $ccCats['Transport'],   'hits' => 3],
             ['desc' => 'Netflix',       'cat' => $ccCats['Abonnements'], 'hits' => 3],
-            ['desc' => 'Spotify Premium','cat' => $ccCats['Abonnements'],'hits' => 3],
+            ['desc' => 'Spotify Premium', 'cat' => $ccCats['Abonnements'], 'hits' => 3],
         ];
 
         foreach ($ruleDefs as $def) {
@@ -3088,6 +3092,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             if (null === $pattern) {
                 continue;
             }
+
             $rule = new $ruleClass();
             $rule->setUser($owner)->setPattern($pattern)
                  ->setCategory($def['cat'])->setHits($def['hits']);

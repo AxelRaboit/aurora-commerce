@@ -90,6 +90,7 @@ readonly class PersonalFinanceTransactionXlsxExporter
         foreach (range('A', 'G') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+
         $sheet->freezePane('A2');
 
         return $spreadsheet;
@@ -126,6 +127,6 @@ readonly class PersonalFinanceTransactionXlsxExporter
         $value = mb_strtolower($value);
         $value = preg_replace('/[^a-z0-9]+/i', '-', $value) ?? 'wallet';
 
-        return trim($value, '-') ?: 'wallet';
+        return mb_trim($value, '-') ?: 'wallet';
     }
 }

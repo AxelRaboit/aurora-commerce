@@ -117,7 +117,13 @@ defineExpose({ open: openCreate });
                     <X class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("shared.common.cancel") }}
                 </AppButton>
-                <AppButton variant="primary" size="md" type="submit" :loading="createLoading" v-on:click="submitCreate">
+                <AppButton
+                    variant="primary"
+                    size="md"
+                    type="submit"
+                    :loading="createLoading"
+                    v-on:click="submitCreate"
+                >
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("shared.common.save") }}
                 </AppButton>

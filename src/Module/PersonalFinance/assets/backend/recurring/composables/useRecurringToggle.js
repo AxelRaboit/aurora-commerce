@@ -23,7 +23,13 @@ export function useRecurringToggle(togglePath, onToggled) {
         const wasActive = rec.active;
         const payload = await request(buildPath(togglePath, { id: rec.id }));
         if (!payload || payload.success === false || !payload.recurring) return;
-        toast.success(t(wasActive ? "personal_finance.recurring.toggle_paused" : "personal_finance.recurring.toggle_resumed"));
+        toast.success(
+            t(
+                wasActive
+                    ? "personal_finance.recurring.toggle_paused"
+                    : "personal_finance.recurring.toggle_resumed",
+            ),
+        );
         onToggled?.(payload.recurring);
     }
 

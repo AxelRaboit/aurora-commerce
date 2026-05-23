@@ -40,8 +40,10 @@ class PersonalFinanceCategorizationSuggestService implements PersonalFinanceCate
             if (null === $pattern) {
                 continue;
             }
+
             $descriptionByPattern[$pattern] = $desc;
         }
+
         if ([] === $descriptionByPattern) {
             return [];
         }

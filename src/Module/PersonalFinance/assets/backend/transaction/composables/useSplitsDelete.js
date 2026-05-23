@@ -19,7 +19,9 @@ export function useSplitsDelete(deletePath, onSuccess) {
 
     async function submit() {
         if (!pendingDelete.value) return;
-        const payload = await request(buildPath(deletePath, { splitId: pendingDelete.value.splitId }));
+        const payload = await request(
+            buildPath(deletePath, { splitId: pendingDelete.value.splitId }),
+        );
         if (!payload || !payload.success) return;
         pendingDelete.value = null;
         toast.success(t("personal_finance.splits.deleted"));

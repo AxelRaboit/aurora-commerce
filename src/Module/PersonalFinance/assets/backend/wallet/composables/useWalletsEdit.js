@@ -57,8 +57,13 @@ export function useWalletsEdit(
     async function submitEdit() {
         if (!editingWallet.value) return;
         editErrors.value = {};
-        editForm.value.startBalance = evaluateAmount(editForm.value.startBalance);
-        const payload = await request(buildPath(updatePath, { id: editingWallet.value.id }), editForm.value);
+        editForm.value.startBalance = evaluateAmount(
+            editForm.value.startBalance,
+        );
+        const payload = await request(
+            buildPath(updatePath, { id: editingWallet.value.id }),
+            editForm.value,
+        );
         if (!payload) return;
         if (payload.success === false) {
             editErrors.value = payload.errors ?? {};

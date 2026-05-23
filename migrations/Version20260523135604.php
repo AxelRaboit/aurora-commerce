@@ -23,7 +23,7 @@ final class Version20260523135604 extends AbstractMigration
         // Existing budgets created via the auto-rollover policy are
         // treated as already-rolled-over so the banner doesn't appear
         // retroactively on months the user already moved past.
-        $this->addSql("UPDATE core_personal_finance_budget SET rolled_over_at = created_at WHERE EXISTS (SELECT 1 FROM core_personal_finance_budget_item WHERE budget_id = core_personal_finance_budget.id)");
+        $this->addSql('UPDATE core_personal_finance_budget SET rolled_over_at = created_at WHERE EXISTS (SELECT 1 FROM core_personal_finance_budget_item WHERE budget_id = core_personal_finance_budget.id)');
     }
 
     public function down(Schema $schema): void

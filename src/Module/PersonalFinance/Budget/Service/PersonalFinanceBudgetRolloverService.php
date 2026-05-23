@@ -39,7 +39,7 @@ class PersonalFinanceBudgetRolloverService implements PersonalFinanceBudgetRollo
      * the user uses the module on this wallet) or if the previous
      * month had zero items flagged repeatNextMonth.
      *
-     * @return int Number of items actually copied.
+     * @return int number of items actually copied
      */
     public function rolloverFrom(PersonalFinanceBudgetInterface $newBudget): int
     {

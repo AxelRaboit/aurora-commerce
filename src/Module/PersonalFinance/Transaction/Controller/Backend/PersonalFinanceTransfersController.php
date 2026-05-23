@@ -8,6 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransactionSerializerInterface;
 use Aurora\Module\PersonalFinance\Transaction\Transfer\Dto\PersonalFinanceTransferInputFactoryInterface;
@@ -45,17 +46,19 @@ final class PersonalFinanceTransfersController extends AbstractController
         if (2 !== count($transactions)) {
             return $this->jsonNotFound();
         }
-
-        $expense = $income = null;
+        $expense = null;
+        $income = null;
         foreach ($transactions as $tx) {
             if ('expense' === $tx->getType()->value) {
                 $expense = $tx;
             } elseif ('income' === $tx->getType()->value) {
                 $income = $tx;
             }
+
             $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $tx->getWallet());
         }
-        if (null === $expense || null === $income) {
+
+        if (!$expense instanceof PersonalFinanceTransactionInterface || !$income instanceof PersonalFinanceTransactionInterface) {
             return $this->jsonNotFound();
         }
 
