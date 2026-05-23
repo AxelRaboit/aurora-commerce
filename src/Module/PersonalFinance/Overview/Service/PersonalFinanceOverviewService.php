@@ -193,7 +193,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
 
         usort($rows, static fn (array $a, array $b): int => bccomp($b['balance'], $a['balance'], 2));
 
-        return array_values($rows);
+        return $rows;
     }
 
     /**
@@ -211,7 +211,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
 
         foreach ($wallets as $wallet) {
             foreach ($this->transactionRepository->topExpenseCategories($wallet, $monthStart, $monthEnd) as $row) {
-                $key = $row['categoryName'] ?? 'uncategorized';
+                $key = $row['categoryName'];
                 if (!isset($aggregated[$key])) {
                     $aggregated[$key] = ['categoryName' => $key, 'total' => '0.00'];
                 }
@@ -237,7 +237,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
             $aggregated[$i]['percent'] = $sumFloat > 0 ? (int) round(((float) $row['total'] / $sumFloat) * 100) : 0;
         }
 
-        return array_values($aggregated);
+        return $aggregated;
     }
 
     /**
@@ -283,7 +283,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
         return [
             'totalCount' => count($goals),
             'activeCount' => count($active),
-            'top' => array_values(array_map(
+            'top' => array_map(
                 static fn ($g): array => [
                     'id' => $g->getId(),
                     'name' => $g->getName(),
@@ -291,7 +291,7 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
                     'color' => $g->getColor(),
                 ],
                 array_slice($active, 0, 3),
-            )),
+            ),
         ];
     }
 

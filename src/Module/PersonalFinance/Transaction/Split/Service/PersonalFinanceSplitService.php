@@ -150,10 +150,10 @@ class PersonalFinanceSplitService implements PersonalFinanceSplitServiceInterfac
         $this->auditLogger->log('personal_finance', 'split.created', 'PersonalFinanceSplit', null, $this->auditPayload($splitId, $wallet, $transactions));
     }
 
-    /** @param list<PersonalFinanceTransactionInterface> $transactions */
+    /** @param non-empty-list<PersonalFinanceTransactionInterface> $transactions */
     protected function auditDeleted(string $splitId, array $transactions): void
     {
-        $wallet = $transactions[0]?->getWallet();
+        $wallet = $transactions[0]->getWallet();
         $this->auditLogger->log('personal_finance', 'split.deleted', 'PersonalFinanceSplit', null, $this->auditPayload($splitId, $wallet, $transactions));
     }
 

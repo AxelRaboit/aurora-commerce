@@ -120,6 +120,7 @@ readonly class PersonalFinanceBudgetXlsxExporter
             if (null === $bucket) {
                 continue;
             }
+
             if ([] === $bucket['items']) {
                 continue;
             }

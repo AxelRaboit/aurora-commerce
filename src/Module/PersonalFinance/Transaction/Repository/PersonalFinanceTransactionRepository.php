@@ -110,7 +110,10 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             return null;
         }
 
-        return $result instanceof DateTimeImmutable ? $result : new DateTimeImmutable((string) $result);
+        // getSingleScalarResult() promises a scalar; MAX() on a date_immutable
+        // column actually returns the DateTimeImmutable, but we coerce through
+        // string to stay within the documented contract either way.
+        return new DateTimeImmutable((string) $result);
     }
 
     /**

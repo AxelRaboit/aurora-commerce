@@ -37,7 +37,11 @@ class PersonalFinanceBudgetRepository extends ResolveTargetEntityRepository
             return null;
         }
 
-        return $result instanceof DateTimeImmutable ? $result : new DateTimeImmutable((string) $result);
+        // getSingleScalarResult() promises a scalar, but Doctrine actually
+        // hands back the DateTimeImmutable when MAX() is applied to a
+        // date_immutable column. Coerce to string + reparse to stay
+        // within the documented contract regardless.
+        return new DateTimeImmutable((string) $result);
     }
 
     public function findByWalletAndMonth(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $month): ?PersonalFinanceBudgetInterface

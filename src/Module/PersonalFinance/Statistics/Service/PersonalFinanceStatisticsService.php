@@ -103,7 +103,7 @@ class PersonalFinanceStatisticsService implements PersonalFinanceStatisticsServi
         $aggregated = [];
         foreach ($wallets as $wallet) {
             foreach ($this->transactionRepository->topExpenseCategories($wallet, $periodStart, $periodEnd) as $row) {
-                $key = $row['categoryName'] ?? 'uncategorized';
+                $key = $row['categoryName'];
                 if (!isset($aggregated[$key])) {
                     $aggregated[$key] = ['categoryName' => $key, 'total' => '0.00'];
                 }
@@ -129,7 +129,7 @@ class PersonalFinanceStatisticsService implements PersonalFinanceStatisticsServi
                 $monthTotal = '0.00';
                 foreach ($wallets as $wallet) {
                     foreach ($this->transactionRepository->topExpenseCategories($wallet, $monthStart, $monthEnd) as $perMonth) {
-                        if (($perMonth['categoryName'] ?? null) === $row['categoryName']) {
+                        if ($perMonth['categoryName'] === $row['categoryName']) {
                             $monthTotal = bcadd($monthTotal, (string) $perMonth['total'], 2);
                         }
                     }
@@ -141,7 +141,7 @@ class PersonalFinanceStatisticsService implements PersonalFinanceStatisticsServi
             $top[$i]['series'] = $series;
         }
 
-        return array_values($top);
+        return $top;
     }
 
     /**

@@ -2791,11 +2791,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         foreach ($variablePattern as $group) {
             $cat = $ccCats[$group['cat']];
             foreach ($group['samples'] as $idx => [$amount, $desc]) {
-                // Spread across the last 90 days deterministically (no random — fixtures are reproducible)
-                $offset = 85 - $idx * 14;
-                if ($offset < 0) {
-                    continue;
-                }
+                // Spread across the last 90 days deterministically (no random — fixtures are reproducible).
+                // The current sample sets all fit in 0..85 days with the 14-day stride; if a contributor
+                // bumps them past 7 samples, clamp at the most recent day rather than pushing into the future.
+                $offset = max(0, 85 - $idx * 14);
 
                 $txDefs[] = ['wallet' => $cc, 'cat' => $cat, 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => $amount, 'date' => $today->modify(sprintf('-%s days', $offset)), 'desc' => $desc];
             }

@@ -46,6 +46,7 @@ final class PersonalFinanceTransfersController extends AbstractController
         if (2 !== count($transactions)) {
             return $this->jsonNotFound();
         }
+
         $expense = null;
         $income = null;
         foreach ($transactions as $tx) {

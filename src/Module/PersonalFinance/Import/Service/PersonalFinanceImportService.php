@@ -178,7 +178,7 @@ readonly class PersonalFinanceImportService implements PersonalFinanceImportServ
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Transactions');
 
-        $headers = array_map(ucfirst(...), array_values(self::EXPECTED_HEADERS));
+        $headers = array_map(ucfirst(...), self::EXPECTED_HEADERS);
         $sheet->fromArray($headers, null, 'A1');
         $sheet->getStyle('A1:F1')->applyFromArray([
             'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
