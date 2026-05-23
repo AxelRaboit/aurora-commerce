@@ -1,20 +1,24 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import {
-    ScrollText, Plus, Pencil, Trash2, FileText, X, ArrowUp, ArrowDown, Send, Archive,
+    Plus, Pencil, Trash2, FileText, X, ArrowUp, ArrowDown, Send, Archive,
+    CheckSquare, Save, AlertTriangle, Copy,
 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
+import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
 import AppCheckbox from "@/shared/components/form/toggle/AppCheckbox.vue";
-import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
-import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
+import { useWeldingTemplateEdit } from "./composables/useWeldingTemplateEdit.js";
+import { useWeldingWorkflowSteps } from "./composables/useWeldingWorkflowSteps.js";
+import { useWeldingStepPdfs } from "./composables/useWeldingStepPdfs.js";
+import { useWeldingStepTasks } from "./composables/useWeldingStepTasks.js";
 
 const props = defineProps({
     workflowTemplate: { type: Object, required: true },
@@ -22,392 +26,320 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { TONE: STATUS_TONE } = useTemplateStatus();
+
 const tpl = ref({ ...props.workflowTemplate });
-const steps = ref(props.steps.map((s) => ({ ...s, pdfTemplates: [...s.pdfTemplates] })));
+const steps = ref(props.steps.map((s) => ({
+    ...s,
+    pdfTemplates: [...(s.pdfTemplates ?? [])],
+    tasks: [...(s.tasks ?? [])],
+})));
 
 const editable = computed(() => tpl.value.status === "draft");
 
-const { BADGE: STATUS_BADGE } = useTemplateStatus();
-const { loading: requestLoading, request } = useRequest();
+const {
+    loading: tplEditLoading,
+    editing: editingTpl,
+    form: tplForm,
+    errors: tplErrors,
+    openEdit: openTplEdit,
+    submitEdit: submitTplEdit,
+    showPublishConfirm,
+    doPublish,
+    showCloneConfirm,
+    doClone,
+    showArchiveConfirm,
+    doArchive,
+} = useWeldingTemplateEdit(tpl);
 
-// ── Template header edit ──────────────────────────────────────────────────
-const editingTpl = ref(false);
-const tplForm = ref({});
-const tplErrors = ref({});
+const {
+    loading: stepLoading,
+    validatorRoleOptions,
+    modalOpen: stepModalOpen,
+    editing: editingStep,
+    form: stepForm,
+    errors: stepErrors,
+    openCreate: openStepCreate,
+    openEdit: openStepEdit,
+    save: saveStep,
+    pendingDelete: pendingStepDelete,
+    doDelete: doDeleteStep,
+    move: moveStep,
+} = useWeldingWorkflowSteps(tpl, steps);
 
-function openTplEdit() {
-    tplForm.value = {
-        title: tpl.value.title,
-        description: tpl.value.description ?? "",
-        applicableTo: tpl.value.applicableTo ?? "",
-    };
-    tplErrors.value = {};
-    editingTpl.value = true;
-}
+const {
+    loading: pdfLoading,
+    modalStep: pdfModalStep,
+    pdfTemplateOptions,
+    form: pdfForm,
+    openAdd: openAddPdf,
+    close: closePdfModal,
+    save: savePdf,
+    remove: removePdf,
+} = useWeldingStepPdfs(steps);
 
-async function saveTpl() {
-    const data = await request(`/backend/welding/workflow-templates/${tpl.value.id}/edit`, tplForm.value);
-    if (!data) return;
-    if (data.success) {
-        Object.assign(tpl.value, data.workflowTemplate);
-        editingTpl.value = false;
-        toast.success(t("welding.editor.template_updated"));
-    } else if (data.errors) {
-        tplErrors.value = translateServerErrors(t, data.errors);
-    }
-}
-
-async function publishTpl() {
-    const data = await request(`/backend/welding/workflow-templates/${tpl.value.id}/publish`, {});
-    if (data?.success) {
-        tpl.value.status = "published";
-        toast.success(t("welding.workflow_templates.published"));
-    }
-}
-
-async function archiveTpl() {
-    const data = await request(`/backend/welding/workflow-templates/${tpl.value.id}/archive`, {});
-    if (data?.success) {
-        tpl.value.status = "archived";
-        toast.success(t("welding.workflow_templates.archived"));
-    }
-}
-
-// ── Step add/edit/delete ──────────────────────────────────────────────────
-const stepModalOpen = ref(false);
-const editingStep = ref(null);
-const stepForm = ref({});
-const stepErrors = ref({});
-
-const validatorRoleOptions = computed(() => [
-    { value: "inspector", label: t("welding.validator_role_inspector") },
-    { value: "quality_assurance", label: t("welding.validator_role_quality_assurance") },
-    { value: "supervisor", label: t("welding.validator_role_supervisor") },
-    { value: "customer", label: t("welding.validator_role_customer") },
-]);
-
-function openStepCreate() {
-    editingStep.value = null;
-    stepForm.value = {
-        position: steps.value.length,
-        title: "",
-        description: "",
-        requiresValidation: false,
-        validatorRole: "",
-    };
-    stepErrors.value = {};
-    stepModalOpen.value = true;
-}
-
-function openStepEdit(step) {
-    editingStep.value = step;
-    stepForm.value = {
-        position: step.position,
-        title: step.title,
-        description: step.description ?? "",
-        requiresValidation: step.requiresValidation,
-        validatorRole: step.validatorRole ?? "",
-    };
-    stepErrors.value = {};
-    stepModalOpen.value = true;
-}
-
-async function saveStep() {
-    stepErrors.value = {};
-    const payload = {
-        ...stepForm.value,
-        validatorRole: stepForm.value.validatorRole || null,
-    };
-
-    let data;
-    if (editingStep.value) {
-        data = await request(`/backend/welding/workflow-step-templates/${editingStep.value.id}/edit`, payload);
-    } else {
-        payload.workflowTemplateId = tpl.value.id;
-        data = await request("/backend/welding/workflow-step-templates", payload);
-    }
-    if (!data) return;
-    if (data.success) {
-        if (editingStep.value) {
-            const idx = steps.value.findIndex((s) => s.id === editingStep.value.id);
-            steps.value[idx] = { ...steps.value[idx], ...data.step };
-        } else {
-            steps.value.push({ ...data.step, pdfTemplates: [] });
-        }
-        stepModalOpen.value = false;
-        toast.success(t(editingStep.value ? "welding.editor.step_updated" : "welding.editor.step_added"));
-    } else if (data.errors) {
-        stepErrors.value = translateServerErrors(t, data.errors);
-    }
-}
-
-const pendingStepDelete = ref(null);
-
-function confirmStepDelete(step) {
-    pendingStepDelete.value = step;
-}
-
-async function doDeleteStep() {
-    if (!pendingStepDelete.value) return;
-    const step = pendingStepDelete.value;
-    const data = await request(`/backend/welding/workflow-step-templates/${step.id}/delete`, {});
-    if (data?.success) {
-        steps.value = steps.value.filter((s) => s.id !== step.id);
-        toast.success(t("welding.editor.step_deleted"));
-        pendingStepDelete.value = null;
-    }
-}
-
-async function moveStep(step, delta) {
-    const idx = steps.value.findIndex((s) => s.id === step.id);
-    const target = idx + delta;
-    if (target < 0 || target >= steps.value.length) return;
-
-    // Optimistic local swap; revert on failure
-    const previous = steps.value.map((s) => ({ ...s }));
-    const reordered = [...steps.value];
-    [reordered[idx], reordered[target]] = [reordered[target], reordered[idx]];
-    reordered.forEach((s, i) => (s.position = i));
-    steps.value = reordered;
-
-    const data = await request("/backend/welding/workflow-step-templates/reorder", {
-        orderedStepIds: reordered.map((s) => s.id),
-    });
-    if (!data?.success) {
-        steps.value = previous;
-        toast.error(t("welding.editor.reorder_failed"));
-    }
-}
-
-// ── Add PDF to step ───────────────────────────────────────────────────────
-const pdfModalStep = ref(null);
-const pdfTemplateOptions = ref([]);
-const pdfForm = ref({});
-
-async function openAddPdf(step) {
-    pdfModalStep.value = step;
-    pdfForm.value = { pdfTemplateId: "", position: step.pdfTemplates.length, required: true };
-    if (pdfTemplateOptions.value.length === 0) {
-        const res = await fetch("/backend/welding/options/pdf-templates", { headers: { Accept: "application/json" } });
-        const data = await res.json();
-        if (data.success) pdfTemplateOptions.value = data.items;
-    }
-}
-
-async function savePdf() {
-    if (!pdfForm.value.pdfTemplateId) {
-        toast.error(t("welding.editor.pdf_template_required"));
-        return;
-    }
-    const data = await request("/backend/welding/workflow-step-pdf-templates", {
-        workflowStepTemplateId: pdfModalStep.value.id,
-        pdfTemplateId: Number(pdfForm.value.pdfTemplateId),
-        position: pdfForm.value.position,
-        required: pdfForm.value.required,
-    });
-    if (data?.success) {
-        const stepIdx = steps.value.findIndex((s) => s.id === pdfModalStep.value.id);
-        steps.value[stepIdx].pdfTemplates.push(data.entry);
-        steps.value[stepIdx].pdfTemplatesCount = steps.value[stepIdx].pdfTemplates.length;
-        pdfModalStep.value = null;
-        toast.success(t("welding.editor.pdf_added"));
-    }
-}
-
-async function removePdf(step, entry) {
-    const data = await request(`/backend/welding/workflow-step-pdf-templates/${entry.id}/delete`, {});
-    if (data?.success) {
-        const stepIdx = steps.value.findIndex((s) => s.id === step.id);
-        steps.value[stepIdx].pdfTemplates = steps.value[stepIdx].pdfTemplates.filter((p) => p.id !== entry.id);
-    }
-}
-
+const {
+    loading: taskLoading,
+    modalStep: taskModalStep,
+    editing: editingTask,
+    form: taskForm,
+    errors: taskErrors,
+    openCreate: openTaskCreate,
+    openEdit: openTaskEdit,
+    close: closeTaskModal,
+    save: saveTask,
+    pendingDelete: pendingTaskDelete,
+    confirmDelete: confirmTaskDelete,
+    doDelete: doDeleteTask,
+} = useWeldingStepTasks(steps);
 </script>
 
 <template>
-    <div class="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
-        <!-- Header -->
-        <div class="rounded-xl border border-line bg-surface p-5 space-y-2">
-            <div class="flex items-start justify-between gap-4 flex-wrap">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
-                        <ScrollText class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
-                    </div>
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h1 class="text-lg font-semibold text-primary truncate">{{ tpl.title }}</h1>
-                            <span class="text-xs text-muted">v{{ tpl.version }}</span>
-                            <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_BADGE[tpl.status]]">
-                                {{ t("welding.workflow_templates.status_" + tpl.status) }}
-                            </span>
-                        </div>
-                        <p v-if="tpl.applicableTo" class="text-sm text-secondary">{{ tpl.applicableTo }}</p>
-                        <p v-if="tpl.description" class="text-sm text-secondary whitespace-pre-line mt-1">{{ tpl.description }}</p>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <!-- Hero card -->
+        <div class="bg-surface border border-line rounded-lg p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div class="min-w-0">
+                    <h2 class="text-lg sm:text-xl font-bold text-primary break-words">{{ tpl.title }}</h2>
+                    <p class="text-xs text-muted mt-0.5">v{{ tpl.version }}</p>
+                    <div class="flex items-center gap-2 flex-wrap mt-2">
+                        <AppBadge :color="STATUS_TONE[tpl.status]">
+                            {{ t("welding.workflow_templates.status_" + tpl.status) }}
+                        </AppBadge>
+                        <AppBadge v-if="tpl.applicableTo" color="sky">{{ tpl.applicableTo }}</AppBadge>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <AppButton v-if="editable" variant="ghost" size="sm" v-on:click="openTplEdit">
-                        <Pencil class="w-3.5 h-3.5" /> {{ t("welding.editor.edit_template") }}
-                    </AppButton>
-                    <AppButton v-if="tpl.status === 'draft'" variant="primary" size="sm" v-on:click="publishTpl">
-                        <Send class="w-3.5 h-3.5" /> {{ t("welding.workflow_templates.publish") }}
-                    </AppButton>
-                    <AppButton v-if="tpl.status !== 'archived'" variant="ghost" size="sm" v-on:click="archiveTpl">
-                        <Archive class="w-3.5 h-3.5" /> {{ t("welding.workflow_templates.archive") }}
-                    </AppButton>
+                <div class="flex items-center justify-between sm:justify-end gap-1 sm:shrink-0 self-end sm:self-auto">
+                    <AppIconButton v-if="editable" color="accent" :title="t('welding.editor.edit_template')" v-on:click="openTplEdit">
+                        <Pencil class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton v-if="tpl.status === 'draft'" color="emerald" :title="t('welding.workflow_templates.publish')" v-on:click="showPublishConfirm = true">
+                        <Send class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton v-if="tpl.status === 'published'" color="sky" :title="t('welding.workflow_templates.clone')" v-on:click="showCloneConfirm = true">
+                        <Copy class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton v-if="tpl.status !== 'archived'" color="amber" :title="t('welding.workflow_templates.archive')" v-on:click="showArchiveConfirm = true">
+                        <Archive class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
                 </div>
             </div>
-            <p v-if="!editable" class="text-xs text-amber-600 dark:text-amber-400">
-                {{ t("welding.editor.locked_warning") }}
+
+            <dl v-if="tpl.description" class="mt-6 pt-4 border-t border-line">
+                <dt class="text-xs text-muted uppercase tracking-wide mb-1">
+                    {{ t("welding.workflow_templates.field_description") }}
+                </dt>
+                <dd class="text-secondary text-sm whitespace-pre-wrap break-words">{{ tpl.description }}</dd>
+            </dl>
+
+            <p v-if="!editable" class="mt-6 pt-4 border-t border-line flex items-start gap-2 text-xs text-amber-600 dark:text-amber-400">
+                <AlertTriangle class="w-4 h-4 shrink-0 mt-0.5" :stroke-width="2" />
+                <span>{{ t("welding.editor.locked_warning") }}</span>
             </p>
         </div>
 
         <!-- Steps -->
-        <div class="space-y-2">
+        <div class="space-y-3">
             <div class="flex items-center justify-between">
-                <h2 class="text-sm font-medium text-primary">{{ t("welding.editor.steps") }}</h2>
-                <AppButton v-if="editable" variant="primary" size="sm" v-on:click="openStepCreate">
-                    <Plus class="w-3.5 h-3.5" /> {{ t("welding.editor.add_step") }}
+                <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t("welding.editor.steps") }}</h3>
+                <AppButton v-if="editable" variant="primary" size="md" v-on:click="openStepCreate">
+                    <Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("welding.editor.add_step") }}
                 </AppButton>
             </div>
 
-            <div v-if="steps.length === 0" class="rounded border border-dashed border-line p-6 text-sm text-secondary text-center">
+            <div v-if="steps.length === 0" class="bg-surface border border-dashed border-line rounded-lg p-6 text-sm text-secondary text-center">
                 {{ t("welding.editor.no_steps_yet") }}
             </div>
 
-            <ol v-else class="space-y-2">
+            <ol v-else class="space-y-3">
                 <li
                     v-for="(step, idx) in steps"
                     :key="step.id"
-                    class="rounded-lg border border-line bg-surface p-4 space-y-2"
+                    class="bg-surface border border-line rounded-lg p-4 sm:p-5 space-y-4"
                 >
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="flex-1 min-w-0">
+                    <!-- Step header -->
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-xs font-mono text-muted">#{{ step.position + 1 }}</span>
-                                <span class="font-medium text-primary truncate">{{ step.title }}</span>
-                                <span v-if="step.requiresValidation" class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                                    {{ t("welding.editor.requires_validation") }}
-                                    <span v-if="step.validatorRole">— {{ t("welding.validator_role_" + step.validatorRole) }}</span>
-                                </span>
+                                <h4 class="text-base font-bold text-primary break-words">{{ step.title }}</h4>
                             </div>
-                            <p v-if="step.description" class="text-sm text-secondary whitespace-pre-line mt-1">{{ step.description }}</p>
+                            <div v-if="step.requiresValidation" class="flex items-center gap-1.5 flex-wrap mt-2">
+                                <AppBadge color="amber">{{ t("welding.editor.requires_validation") }}</AppBadge>
+                                <AppBadge v-if="step.validatorRole" color="slate">
+                                    {{ t("welding.validator_role_" + step.validatorRole) }}
+                                </AppBadge>
+                            </div>
+                            <p v-if="step.description" class="text-sm text-secondary whitespace-pre-wrap break-words mt-2">
+                                {{ step.description }}
+                            </p>
                         </div>
-                        <div v-if="editable" class="flex gap-1">
-                            <AppButton
-                                variant="ghost"
-                                size="sm"
-                                :disabled="idx === 0 || requestLoading"
-                                :aria-label="t('welding.editor.move_step_up')"
+                        <div v-if="editable" class="flex items-center gap-1 sm:shrink-0 self-end sm:self-auto">
+                            <AppIconButton
+                                :title="t('welding.editor.move_step_up')"
+                                :disabled="idx === 0 || stepLoading"
                                 v-on:click="moveStep(step, -1)"
                             >
-                                <ArrowUp class="w-3.5 h-3.5" :stroke-width="2" />
-                            </AppButton>
-                            <AppButton
-                                variant="ghost"
-                                size="sm"
-                                :disabled="idx === steps.length - 1 || requestLoading"
-                                :aria-label="t('welding.editor.move_step_down')"
+                                <ArrowUp class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton
+                                :title="t('welding.editor.move_step_down')"
+                                :disabled="idx === steps.length - 1 || stepLoading"
                                 v-on:click="moveStep(step, 1)"
                             >
-                                <ArrowDown class="w-3.5 h-3.5" :stroke-width="2" />
-                            </AppButton>
-                            <AppButton
-                                variant="ghost"
-                                size="sm"
-                                :aria-label="t('welding.editor.edit_step')"
-                                v-on:click="openStepEdit(step)"
-                            >
-                                <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
-                            </AppButton>
-                            <AppButton
-                                variant="ghost"
-                                size="sm"
-                                :aria-label="t('welding.editor.delete_step')"
-                                :disabled="requestLoading"
-                                v-on:click="confirmStepDelete(step)"
-                            >
-                                <Trash2 class="w-3.5 h-3.5 text-rose-500" :stroke-width="2" />
-                            </AppButton>
+                                <ArrowDown class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton color="accent" :title="t('welding.editor.edit_step')" v-on:click="openStepEdit(step)">
+                                <Pencil class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                            <AppIconButton color="rose" :title="t('welding.editor.delete_step')" :disabled="stepLoading" v-on:click="pendingStepDelete = step">
+                                <Trash2 class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
                         </div>
                     </div>
 
-                    <!-- PDFs for this step -->
-                    <div class="ml-4 space-y-1">
+                    <!-- Tasks for this step -->
+                    <div class="pt-4 border-t border-line space-y-2">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xs uppercase tracking-wide font-medium text-secondary">{{ t("welding.editor.required_pdfs") }}</h3>
-                            <AppButton v-if="editable" variant="ghost" size="sm" v-on:click="openAddPdf(step)">
-                                <Plus class="w-3 h-3" /> {{ t("welding.editor.add_pdf") }}
+                            <dt class="text-xs text-muted uppercase tracking-wide">{{ t("welding.editor.tasks") }}</dt>
+                            <AppButton v-if="editable" variant="ghost" size="sm" v-on:click="openTaskCreate(step)">
+                                <Plus class="w-3 h-3" :stroke-width="2" /> {{ t("welding.editor.add_task") }}
                             </AppButton>
                         </div>
-                        <ul v-if="step.pdfTemplates.length > 0" class="space-y-1">
+                        <ul v-if="step.tasks.length > 0" class="space-y-1.5">
+                            <li
+                                v-for="task in step.tasks"
+                                :key="task.id"
+                                class="flex items-start justify-between gap-2 bg-surface-2 rounded p-2.5 text-sm"
+                            >
+                                <div class="flex items-start gap-2 min-w-0 flex-1">
+                                    <CheckSquare class="w-4 h-4 text-secondary shrink-0 mt-0.5" :stroke-width="1.5" />
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="font-medium text-primary">{{ task.label }}</span>
+                                            <AppBadge v-if="task.required" color="rose">{{ t("welding.editor.field_required") }}</AppBadge>
+                                        </div>
+                                        <p v-if="task.description" class="text-xs text-secondary whitespace-pre-wrap mt-0.5">{{ task.description }}</p>
+                                    </div>
+                                </div>
+                                <div v-if="editable" class="flex gap-1 shrink-0">
+                                    <AppIconButton color="accent" :title="t('welding.editor.edit_task')" v-on:click="openTaskEdit(step, task)">
+                                        <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
+                                    </AppIconButton>
+                                    <AppIconButton color="rose" :title="t('welding.editor.delete_task')" :disabled="taskLoading" v-on:click="confirmTaskDelete(step, task)">
+                                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
+                                    </AppIconButton>
+                                </div>
+                            </li>
+                        </ul>
+                        <p v-else class="text-xs text-muted">{{ t("welding.editor.no_tasks_for_step") }}</p>
+                    </div>
+
+                    <!-- PDFs for this step -->
+                    <div class="pt-4 border-t border-line space-y-2">
+                        <div class="flex items-center justify-between">
+                            <dt class="text-xs text-muted uppercase tracking-wide">{{ t("welding.editor.required_pdfs") }}</dt>
+                            <AppButton v-if="editable" variant="ghost" size="sm" v-on:click="openAddPdf(step)">
+                                <Plus class="w-3 h-3" :stroke-width="2" /> {{ t("welding.editor.add_pdf") }}
+                            </AppButton>
+                        </div>
+                        <ul v-if="step.pdfTemplates.length > 0" class="space-y-1.5">
                             <li
                                 v-for="entry in step.pdfTemplates"
                                 :key="entry.id"
-                                class="flex items-center justify-between gap-2 bg-surface-2 rounded p-2 text-sm"
+                                class="flex items-center justify-between gap-2 bg-surface-2 rounded p-2.5 text-sm"
                             >
-                                <div class="flex items-center gap-2 min-w-0">
+                                <div class="flex items-center gap-2 min-w-0 flex-1">
                                     <FileText class="w-4 h-4 text-secondary shrink-0" :stroke-width="1.5" />
-                                    <span class="truncate">{{ entry.pdfTemplateName }}</span>
-                                    <span v-if="entry.required" class="text-xs text-rose-500" :aria-label="t('welding.editor.field_required')">*</span>
+                                    <span class="truncate text-primary">{{ entry.pdfTemplateName }}</span>
+                                    <AppBadge v-if="entry.required" color="rose">{{ t("welding.editor.field_required") }}</AppBadge>
                                 </div>
-                                <AppButton
+                                <AppIconButton
                                     v-if="editable"
-                                    variant="ghost"
-                                    size="sm"
-                                    :aria-label="t('welding.editor.remove_pdf')"
-                                    :disabled="requestLoading"
+                                    color="rose"
+                                    :title="t('welding.editor.remove_pdf')"
+                                    :disabled="pdfLoading"
                                     v-on:click="removePdf(step, entry)"
                                 >
                                     <X class="w-3.5 h-3.5" :stroke-width="2" />
-                                </AppButton>
+                                </AppIconButton>
                             </li>
                         </ul>
-                        <p v-else class="text-xs text-muted ml-1">{{ t("welding.editor.no_pdfs_for_step") }}</p>
+                        <p v-else class="text-xs text-muted">{{ t("welding.editor.no_pdfs_for_step") }}</p>
                     </div>
                 </li>
             </ol>
         </div>
 
         <!-- Template edit modal -->
-        <AppModal :show="editingTpl" :title="t('welding.editor.edit_template')" v-on:close="editingTpl = false">
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflow_templates.field_title") }} *</label>
-                    <input v-model="tplForm.title" type="text" class="w-full rounded border border-line bg-surface p-2 text-sm" />
-                    <p v-if="tplErrors.title" class="text-xs text-rose-500 mt-1">{{ tplErrors.title }}</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflow_templates.field_description") }}</label>
-                    <textarea v-model="tplForm.description" rows="3" class="w-full rounded border border-line bg-surface p-2 text-sm"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflow_templates.field_applicable_to") }}</label>
-                    <input v-model="tplForm.applicableTo" type="text" class="w-full rounded border border-line bg-surface p-2 text-sm" />
-                </div>
-            </div>
+        <AppModal
+            :show="editingTpl"
+            :title="t('welding.editor.edit_template')"
+            :icon="Pencil"
+            :closeable="false"
+            v-on:close="editingTpl = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitTplEdit">
+                <AppInput
+                    v-model="tplForm.title"
+                    :label="t('welding.workflow_templates.field_title')"
+                    :placeholder="t('welding.workflow_templates.field_title_placeholder')"
+                    :error="tplErrors.title"
+                    required
+                />
+                <AppTextarea
+                    v-model="tplForm.description"
+                    :label="t('welding.workflow_templates.field_description')"
+                    :placeholder="t('welding.workflow_templates.field_description_placeholder')"
+                    :rows="3"
+                />
+                <AppInput
+                    v-model="tplForm.applicableTo"
+                    :label="t('welding.workflow_templates.field_applicable_to')"
+                    :placeholder="t('welding.workflow_templates.field_applicable_to_placeholder')"
+                />
+            </form>
             <template #footer>
-                <AppButton variant="ghost" v-on:click="editingTpl = false">{{ t("welding.runner.cancel") }}</AppButton>
-                <AppButton variant="primary" v-on:click="saveTpl">{{ t("welding.runner.confirm") }}</AppButton>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="editingTpl = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="tplEditLoading"
+                        v-on:click="submitTplEdit"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
             </template>
         </AppModal>
 
         <!-- Step modal -->
-        <AppModal :show="stepModalOpen" :title="t(editingStep ? 'welding.editor.edit_step' : 'welding.editor.add_step')" v-on:close="stepModalOpen = false">
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.editor.field_step_title") }} *</label>
-                    <input v-model="stepForm.title" type="text" class="w-full rounded border border-line bg-surface p-2 text-sm" />
-                    <p v-if="stepErrors.title" class="text-xs text-rose-500 mt-1">{{ stepErrors.title }}</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflow_templates.field_description") }}</label>
-                    <textarea v-model="stepForm.description" rows="2" class="w-full rounded border border-line bg-surface p-2 text-sm"></textarea>
-                </div>
-                <AppCheckbox
-                    v-model="stepForm.requiresValidation"
-                    :label="t('welding.editor.requires_validation')"
+        <AppModal
+            :show="stepModalOpen"
+            :title="t(editingStep ? 'welding.editor.edit_step' : 'welding.editor.add_step')"
+            :icon="editingStep ? Pencil : Plus"
+            :closeable="false"
+            v-on:close="stepModalOpen = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="saveStep">
+                <AppInput
+                    v-model="stepForm.title"
+                    :label="t('welding.editor.field_step_title')"
+                    :placeholder="t('welding.editor.field_step_title_placeholder')"
+                    :error="stepErrors.title"
+                    required
                 />
+                <AppTextarea
+                    v-model="stepForm.description"
+                    :label="t('welding.editor.field_step_description')"
+                    :placeholder="t('welding.editor.field_step_description_placeholder')"
+                    :rows="3"
+                />
+                <AppCheckbox v-model="stepForm.requiresValidation" :label="t('welding.editor.requires_validation')" />
                 <AppMultiselect
                     v-if="stepForm.requiresValidation"
                     v-model="stepForm.validatorRole"
@@ -416,16 +348,34 @@ async function removePdf(step, entry) {
                     :placeholder="t('welding.editor.field_validator_role_placeholder')"
                     required
                 />
-            </div>
+            </form>
             <template #footer>
-                <AppButton variant="ghost" v-on:click="stepModalOpen = false">{{ t("welding.runner.cancel") }}</AppButton>
-                <AppButton variant="primary" v-on:click="saveStep">{{ t("welding.runner.confirm") }}</AppButton>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="stepModalOpen = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="stepLoading"
+                        v-on:click="saveStep"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.save") }}
+                    </AppButton>
+                </AppModalFooter>
             </template>
         </AppModal>
 
         <!-- Add PDF modal -->
-        <AppModal :show="pdfModalStep !== null" :title="t('welding.editor.add_pdf')" :icon="FileText" v-on:close="pdfModalStep = null">
-            <div class="space-y-4">
+        <AppModal
+            :show="pdfModalStep !== null"
+            :title="t('welding.editor.add_pdf')"
+            :icon="FileText"
+            :closeable="false"
+            v-on:close="closePdfModal"
+        >
+            <form class="space-y-4" v-on:submit.prevent="savePdf">
                 <AppMultiselect
                     v-model="pdfForm.pdfTemplateId"
                     :options="pdfTemplateOptions"
@@ -433,31 +383,177 @@ async function removePdf(step, entry) {
                     :placeholder="t('welding.editor.field_pdf_template_placeholder')"
                     required
                 />
-                <AppCheckbox
-                    v-model="pdfForm.required"
-                    :label="t('welding.editor.field_required')"
-                />
-            </div>
+                <AppCheckbox v-model="pdfForm.required" :label="t('welding.editor.field_required')" />
+            </form>
             <template #footer>
-                <AppButton variant="ghost" v-on:click="pdfModalStep = null">{{ t("welding.runner.cancel") }}</AppButton>
-                <AppButton variant="primary" v-on:click="savePdf">{{ t("welding.runner.confirm") }}</AppButton>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="closePdfModal">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="pdfLoading"
+                        v-on:click="savePdf"
+                    >
+                        <Plus class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.add") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Task add/edit modal -->
+        <AppModal
+            :show="taskModalStep !== null"
+            :title="t(editingTask ? 'welding.editor.edit_task' : 'welding.editor.add_task')"
+            :icon="CheckSquare"
+            :closeable="false"
+            v-on:close="closeTaskModal"
+        >
+            <form class="space-y-4" v-on:submit.prevent="saveTask">
+                <AppInput
+                    v-model="taskForm.label"
+                    :label="t('welding.editor.field_task_label')"
+                    :placeholder="t('welding.editor.field_task_label_placeholder')"
+                    :error="taskErrors.label"
+                    required
+                />
+                <AppTextarea
+                    v-model="taskForm.description"
+                    :label="t('welding.editor.field_task_description')"
+                    :placeholder="t('welding.editor.field_task_description_placeholder')"
+                    :rows="3"
+                />
+                <AppCheckbox v-model="taskForm.required" :label="t('welding.editor.field_task_required')" />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="closeTaskModal">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="taskLoading"
+                        v-on:click="saveTask"
+                    >
+                        <Save v-if="editingTask" class="w-3.5 h-3.5" :stroke-width="2" />
+                        <Plus v-else class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t(editingTask ? "shared.common.save" : "shared.common.add") }}
+                    </AppButton>
+                </AppModalFooter>
             </template>
         </AppModal>
 
         <!-- Delete step confirmation -->
         <AppModal
             :show="pendingStepDelete !== null"
-            max-width="md"
+            max-width="sm"
             :title="t('welding.editor.delete_step')"
             :icon="Trash2"
+            :closeable="false"
             v-on:close="pendingStepDelete = null"
         >
-            <p class="text-sm text-secondary">{{ t("welding.editor.confirm_delete_step") }}</p>
+            <p class="text-sm text-primary">{{ t("welding.editor.confirm_delete_step") }}</p>
             <template #footer>
-                <AppButton variant="ghost" v-on:click="pendingStepDelete = null">{{ t("welding.runner.cancel") }}</AppButton>
-                <AppButton variant="danger" :loading="requestLoading" :disabled="requestLoading" v-on:click="doDeleteStep">
-                    {{ t("welding.workflow_templates.confirm_delete_button") }}
-                </AppButton>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingStepDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="stepLoading" v-on:click="doDeleteStep">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Delete task confirmation -->
+        <AppModal
+            :show="pendingTaskDelete !== null"
+            max-width="sm"
+            :title="t('welding.editor.delete_task')"
+            :icon="Trash2"
+            :closeable="false"
+            v-on:close="pendingTaskDelete = null"
+        >
+            <p class="text-sm text-primary">{{ t("welding.editor.confirm_delete_task") }}</p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="pendingTaskDelete = null">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="taskLoading" v-on:click="doDeleteTask">
+                        <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Publish confirmation -->
+        <AppModal
+            :show="showPublishConfirm"
+            max-width="sm"
+            :title="t('welding.workflow_templates.confirm_publish', { title: tpl.title })"
+            :icon="Send"
+            :closeable="false"
+            v-on:close="showPublishConfirm = false"
+        >
+            <p class="text-sm text-secondary">{{ t("welding.workflow_templates.confirm_publish_warning") }}</p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showPublishConfirm = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="tplEditLoading" v-on:click="doPublish">
+                        <Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("welding.workflow_templates.publish") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Clone confirmation -->
+        <AppModal
+            :show="showCloneConfirm"
+            max-width="sm"
+            :title="t('welding.workflow_templates.confirm_clone', { title: tpl.title })"
+            :icon="Copy"
+            :closeable="false"
+            v-on:close="showCloneConfirm = false"
+        >
+            <p class="text-sm text-secondary">{{ t("welding.workflow_templates.confirm_clone_warning") }}</p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showCloneConfirm = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="tplEditLoading" v-on:click="doClone">
+                        <Copy class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("welding.workflow_templates.clone") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Archive confirmation -->
+        <AppModal
+            :show="showArchiveConfirm"
+            max-width="sm"
+            :title="t('welding.workflow_templates.confirm_archive', { title: tpl.title })"
+            :icon="Archive"
+            :closeable="false"
+            v-on:close="showArchiveConfirm = false"
+        >
+            <p class="text-sm text-secondary">{{ t("welding.workflow_templates.confirm_archive_warning") }}</p>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showArchiveConfirm = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="primary" size="md" :loading="tplEditLoading" v-on:click="doArchive">
+                        <Archive class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("welding.workflow_templates.archive") }}
+                    </AppButton>
+                </AppModalFooter>
             </template>
         </AppModal>
     </div>

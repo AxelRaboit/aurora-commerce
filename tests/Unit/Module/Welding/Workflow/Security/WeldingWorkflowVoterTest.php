@@ -45,7 +45,7 @@ final class WeldingWorkflowVoterTest extends TestCase
 
         if ([] !== $privileges) {
             $rpp = new ReflectionProperty(User::class, 'cachedPrivileges');
-            if ($rpp->isInitialized($user) || $rpp->getDefaultValue() !== null) {
+            if ($rpp->isInitialized($user) || null !== $rpp->getDefaultValue()) {
                 // ignore
             }
             // Use hasPrivilege public method indirectly through reflection if needed.

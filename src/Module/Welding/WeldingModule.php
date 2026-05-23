@@ -73,19 +73,25 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
     /** @return list<NavItem> */
     private function navItems(): array
     {
+        // PDF templates + generated documents are managed inline from the
+        // workflow template editor and from the runner respectively — no
+        // standalone nav items. Their routes/controllers still exist so the
+        // existing pages remain reachable via direct URL if needed.
         return [
-            new NavItem('backend_welding_workflows', 'backend.nav.welding_workflows', 'clipboard-check',
+            new NavItem(
+                'backend_welding_workflows',
+                'backend.nav.welding_workflows',
+                'clipboard-check',
                 requiredPrivilege: 'welding.workflows.view',
-                descriptionKey: 'backend.nav.welding_workflows_description'),
-            new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
+                descriptionKey: 'backend.nav.welding_workflows_description'
+            ),
+            new NavItem(
+                'backend_welding_workflow_templates',
+                'backend.nav.welding_workflow_templates',
+                'scroll-text',
                 requiredPrivilege: 'welding.workflow_templates.view',
-                descriptionKey: 'backend.nav.welding_workflow_templates_description'),
-            new NavItem('backend_welding_pdf_templates', 'backend.nav.welding_pdf_templates', 'file-text',
-                requiredPrivilege: 'welding.pdf_templates.view',
-                descriptionKey: 'backend.nav.welding_pdf_templates_description'),
-            new NavItem('backend_welding_pdf_documents', 'backend.nav.welding_pdf_documents', 'file-output',
-                requiredPrivilege: 'welding.pdf_documents.view',
-                descriptionKey: 'backend.nav.welding_pdf_documents_description'),
+                descriptionKey: 'backend.nav.welding_workflow_templates_description'
+            ),
         ];
     }
 }

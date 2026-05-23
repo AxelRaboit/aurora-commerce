@@ -13,10 +13,13 @@ use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
 use Aurora\Module\Welding\WorkflowStep\Dto\WeldingWorkflowStepValidationInput;
 use Aurora\Module\Welding\WorkflowStep\Dto\WeldingWorkflowStepValidationInputInterface;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
+use Aurora\Module\Welding\WorkflowStep\Exception\RequiredTasksUndoneException;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+
+use const DATE_ATOM;
 
 #[AsAlias(WeldingWorkflowStepManagerInterface::class)]
 class WeldingWorkflowStepManager implements WeldingWorkflowStepManagerInterface
@@ -33,6 +36,8 @@ class WeldingWorkflowStepManager implements WeldingWorkflowStepManagerInterface
         if (!in_array($step->getStatus(), $allowedFrom, true)) {
             throw new RuntimeException(sprintf('Step #%d cannot be submitted from status %s', $step->getId(), $step->getStatus()->value));
         }
+
+        $this->assertRequiredTasksDone($step);
 
         $step->setCompletedBy($welder);
         $step->setCompletedAt(new DateTimeImmutable());
@@ -106,7 +111,7 @@ class WeldingWorkflowStepManager implements WeldingWorkflowStepManagerInterface
      */
     protected function maybeCompleteWorkflow(?WeldingWorkflowInterface $workflow): void
     {
-        if (null === $workflow || WeldingWorkflowStatusEnum::Completed === $workflow->getStatus()) {
+        if (!$workflow instanceof WeldingWorkflowInterface || WeldingWorkflowStatusEnum::Completed === $workflow->getStatus()) {
             return;
         }
 
@@ -118,11 +123,12 @@ class WeldingWorkflowStepManager implements WeldingWorkflowStepManagerInterface
 
         $workflow->setStatus(WeldingWorkflowStatusEnum::Completed);
         $workflow->setCompletedAt(new DateTimeImmutable());
+
         $this->entityManager->flush();
 
         $this->auditLogger->log('welding', 'workflow.completed', 'WeldingWorkflow', $workflow->getId(), [
             'reference' => $workflow->getReference(),
-            'completedAt' => $workflow->getCompletedAt()?->format(\DATE_ATOM),
+            'completedAt' => $workflow->getCompletedAt()?->format(DATE_ATOM),
         ]);
     }
 
@@ -133,7 +139,7 @@ class WeldingWorkflowStepManager implements WeldingWorkflowStepManagerInterface
      */
     protected function syncWorkflowAwaitingValidation(?WeldingWorkflowInterface $workflow): void
     {
-        if (null === $workflow || $workflow->getStatus()->isTerminal()) {
+        if (!$workflow instanceof WeldingWorkflowInterface || $workflow->getStatus()->isTerminal()) {
             return;
         }
 
@@ -149,6 +155,20 @@ class WeldingWorkflowStepManager implements WeldingWorkflowStepManagerInterface
         if ($workflow->getStatus() !== $target) {
             $workflow->setStatus($target);
             $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * Blocks submit() if any required task is not yet done. Throws a domain
+     * exception the controller catches and maps to a 422 with the translation
+     * key the runner displays inline.
+     */
+    protected function assertRequiredTasksDone(WeldingWorkflowStepInterface $step): void
+    {
+        foreach ($step->getTasks() as $task) {
+            if ($task->getRequired() && !$task->getDone()) {
+                throw new RequiredTasksUndoneException($step->getId() ?? 0);
+            }
         }
     }
 

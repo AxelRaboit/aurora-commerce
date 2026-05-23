@@ -1,31 +1,21 @@
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import { ClipboardCheck, Plus, ExternalLink } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
-import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
-import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useWorkflowStatus } from "@welding/backend/composables/useWeldingStatus.js";
+import { useWorkflowsList } from "./composables/useWorkflowsList.js";
 
 const { t } = useI18n();
 const { formatDateTime } = useDateFormat();
-
-const items = ref([]);
-const page = ref(1);
-const totalPages = ref(1);
-const total = ref(0);
-const query = ref("");
-const statusFilter = ref("");
-const listLoading = ref(false);
-
 const { ORDER: STATUS_ORDER, COLOR: STATUS_COLOR } = useWorkflowStatus();
 
 const statusOptions = computed(() => [
@@ -33,97 +23,25 @@ const statusOptions = computed(() => [
     ...STATUS_ORDER.map((s) => ({ value: s, label: t("welding.workflows.status_" + s) })),
 ]);
 
-async function fetchList() {
-    listLoading.value = true;
-    try {
-        const params = new URLSearchParams({ page: String(page.value), limit: "20" });
-        if (query.value) params.set("search", query.value);
-        if (statusFilter.value) params.set("status", statusFilter.value);
-
-        const res = await fetch(`/backend/welding/workflows/list?${params}`, {
-            headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" },
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!data.success) return;
-        items.value = data.items;
-        page.value = data.page;
-        totalPages.value = data.totalPages;
-        total.value = data.total;
-    } finally {
-        listLoading.value = false;
-    }
-}
-
-onMounted(fetchList);
-
-const debouncedRefetch = useDebounce(() => {
-    page.value = 1;
-    fetchList();
-}, 300);
-
-watch(query, debouncedRefetch);
-watch(statusFilter, () => {
-    page.value = 1;
-    fetchList();
-});
-
-function goToPage(newPage) {
-    page.value = newPage;
-    fetchList();
-}
-
-const startOpen = ref(false);
-const templateOptions = ref([]);
-const employeeOptions = ref([]);
-const startForm = ref({ templateId: "", assigneeId: "" });
-const optionsLoading = ref(false);
-
-const publishedTemplates = computed(() =>
-    templateOptions.value.filter((opt) => opt.status === "published"),
-);
-
-const { loading: createLoading, request } = useRequest();
-
-async function fetchJson(url) {
-    const res = await fetch(url, { headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" } });
-    if (!res.ok) return null;
-    return res.json();
-}
-
-async function openStart() {
-    startForm.value = { templateId: "", assigneeId: "" };
-    startOpen.value = true;
-    if (templateOptions.value.length === 0 && employeeOptions.value.length === 0) {
-        optionsLoading.value = true;
-        try {
-            const [tpl, emp] = await Promise.all([
-                fetchJson("/backend/welding/workflow-templates/options"),
-                fetchJson("/backend/welding/options/employees"),
-            ]);
-            if (tpl?.success) templateOptions.value = tpl.items;
-            if (emp?.success) employeeOptions.value = emp.items;
-        } finally {
-            optionsLoading.value = false;
-        }
-    }
-}
-
-async function submitStart() {
-    if (!startForm.value.templateId) {
-        toast.error(t("welding.workflows.errors.template_required"));
-        return;
-    }
-    const payload = {
-        templateId: Number(startForm.value.templateId),
-        assigneeId: startForm.value.assigneeId ? Number(startForm.value.assigneeId) : null,
-    };
-    const data = await request("/backend/welding/workflows", payload);
-    if (!data?.success) return;
-
-    toast.success(t("welding.workflows.created"));
-    window.location.href = `/backend/welding/workflows/${data.workflow.id}/runner`;
-}
+const {
+    items,
+    listLoading,
+    page,
+    totalPages,
+    total,
+    search: query,
+    onSearch,
+    goToPage,
+    statusFilter,
+    startOpen,
+    publishedTemplates,
+    employeeOptions,
+    startForm,
+    optionsLoading,
+    createLoading,
+    openStart,
+    submitStart,
+} = useWorkflowsList();
 </script>
 
 <template>
@@ -141,8 +59,9 @@ async function submitStart() {
         <AppListToolbar>
             <div class="grid grid-cols-1 sm:grid-cols-[1fr_220px] gap-2">
                 <AppSearchInput
-                    v-model="query"
+                    :model-value="query"
                     :placeholder="t('welding.workflows.search_placeholder')"
+                    v-on:update:model-value="onSearch"
                 />
                 <AppMultiselect
                     v-model="statusFilter"
@@ -254,9 +173,16 @@ async function submitStart() {
 
         <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
-        <AppModal :show="startOpen" max-width="lg" :title="t('welding.workflows.new')" :icon="ClipboardCheck" v-on:close="startOpen = false">
+        <AppModal
+            :show="startOpen"
+            max-width="lg"
+            :title="t('welding.workflows.new')"
+            :icon="ClipboardCheck"
+            :close-on-overlay="false"
+            v-on:close="startOpen = false"
+        >
             <div v-if="optionsLoading" class="text-sm text-secondary">{{ t("welding.workflows.loading_options") }}</div>
-            <div v-else class="space-y-4">
+            <form v-else class="space-y-4" v-on:submit.prevent="submitStart">
                 <AppMultiselect
                     v-model="startForm.templateId"
                     :options="publishedTemplates"
@@ -274,17 +200,22 @@ async function submitStart() {
                     :placeholder="t('welding.workflows.no_assignee_option')"
                     allow-empty
                 />
-            </div>
+            </form>
             <template #footer>
-                <AppButton variant="ghost" v-on:click="startOpen = false">{{ t("welding.runner.cancel") }}</AppButton>
-                <AppButton
-                    variant="primary"
-                    :loading="createLoading"
-                    :disabled="optionsLoading || createLoading || publishedTemplates.length === 0"
-                    v-on:click="submitStart"
-                >
-                    {{ t("welding.workflows.create_and_open") }}
-                </AppButton>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="startOpen = false">
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        :loading="createLoading"
+                        :disabled="optionsLoading || createLoading || publishedTemplates.length === 0"
+                        v-on:click="submitStart"
+                    >
+                        {{ t("welding.workflows.create_and_open") }}
+                    </AppButton>
+                </AppModalFooter>
             </template>
         </AppModal>
     </div>

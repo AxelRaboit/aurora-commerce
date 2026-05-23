@@ -12,6 +12,14 @@ puis par topic.
   élimine ~700 lignes de boilerplate identique d'une entité à l'autre.
   Staged en 3 phases (PHP → Vue → migration auto).
 
+### Frontend / Vue
+
+- [Audit `translateServerErrors`](translate_server_errors_audit.md) — ~18
+  fichiers Vue bindent `data.errors` à `:error` sans passer le payload
+  par `translateServerErrors`, ce qui affiche une clé i18n brute sous le
+  champ. Mix de vrais bugs et de cas légitimes à trier (toast-only,
+  composables génériques).
+
 ### Roadmap modules
 
 Liste des modules à venir, classés par priorité et impact.

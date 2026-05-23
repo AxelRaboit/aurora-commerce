@@ -10,6 +10,8 @@ use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
 use Aurora\Module\Welding\Workflow\Serializer\WeldingWorkflowSerializerInterface;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
 use Aurora\Module\Welding\WorkflowStep\Serializer\WeldingWorkflowStepSerializerInterface;
+use Aurora\Module\Welding\WorkflowStepTask\Serializer\WeldingWorkflowStepTaskSerializerInterface;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
 
 use const DATE_ATOM;
 
@@ -21,6 +23,7 @@ class WeldingWorkflowRunnerViewBuilder
         protected readonly WeldingWorkflowSerializerInterface $workflowSerializer,
         protected readonly WeldingWorkflowStepSerializerInterface $stepSerializer,
         protected readonly WeldingPdfDocumentRepository $pdfDocumentRepository,
+        protected readonly WeldingWorkflowStepTaskSerializerInterface $stepTaskSerializer,
     ) {}
 
     /** @return array<string, mixed> */
@@ -29,7 +32,7 @@ class WeldingWorkflowRunnerViewBuilder
         return [
             'workflow' => $this->workflowSerializer->serialize($workflow),
             'steps' => array_map(
-                fn (WeldingWorkflowStepInterface $step): array => $this->serializeStepWithPdfs($step),
+                $this->serializeStepWithPdfs(...),
                 $workflow->getSteps()->toArray(),
             ),
             'pdfContextType' => self::PDF_CONTEXT_TYPE,
@@ -41,6 +44,10 @@ class WeldingWorkflowRunnerViewBuilder
     {
         $base = $this->stepSerializer->serialize($step);
         $base['pdfTemplates'] = $this->collectPdfTemplates($step);
+        $base['tasks'] = array_map(
+            $this->stepTaskSerializer->serialize(...),
+            $step->getTasks()->toArray(),
+        );
 
         return $base;
     }
@@ -49,7 +56,7 @@ class WeldingWorkflowRunnerViewBuilder
     protected function collectPdfTemplates(WeldingWorkflowStepInterface $step): array
     {
         $stepTemplate = $step->getStepTemplate();
-        if (null === $stepTemplate) {
+        if (!$stepTemplate instanceof WeldingWorkflowStepTemplateInterface) {
             return [];
         }
 

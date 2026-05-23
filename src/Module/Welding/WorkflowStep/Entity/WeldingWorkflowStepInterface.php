@@ -8,8 +8,10 @@ use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Welding\Enum\WeldingWorkflowStepStatusEnum;
 use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
+use Aurora\Module\Welding\WorkflowStepTask\Entity\WeldingWorkflowStepTaskInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 
 interface WeldingWorkflowStepInterface extends TimestampableInterface
 {
@@ -54,4 +56,7 @@ interface WeldingWorkflowStepInterface extends TimestampableInterface
     public function getRejectionComment(): ?string;
 
     public function setRejectionComment(?string $rejectionComment): static;
+
+    /** @return Collection<int, WeldingWorkflowStepTaskInterface> */
+    public function getTasks(): Collection;
 }

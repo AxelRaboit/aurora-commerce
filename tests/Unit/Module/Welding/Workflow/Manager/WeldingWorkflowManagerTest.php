@@ -13,6 +13,10 @@ use Aurora\Module\Welding\Enum\WeldingWorkflowStatusEnum;
 use Aurora\Module\Welding\Workflow\Dto\WeldingWorkflowInput;
 use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
 use Aurora\Module\Welding\Workflow\Manager\WeldingWorkflowManager;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
+use Aurora\Module\Welding\WorkflowStepTask\Entity\WeldingWorkflowStepTask;
+use Aurora\Module\Welding\WorkflowStepTask\Manager\WeldingWorkflowStepTaskManagerInterface;
+use Aurora\Module\Welding\WorkflowStepTaskTemplate\Entity\WeldingWorkflowStepTaskTemplate;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
 use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplate;
 use Aurora\Module\Welding\WorkflowTemplate\Repository\WeldingWorkflowTemplateRepository;
@@ -20,6 +24,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;
+use IteratorAggregate;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -33,6 +38,7 @@ final class WeldingWorkflowManagerTest extends TestCase
     private WeldingWorkflowTemplateRepository $templateRepository;
     private EmployeeRepository $employeeRepository;
     private SettingRepository $settingRepository;
+    private WeldingWorkflowStepTaskManagerInterface $taskManager;
     private WeldingWorkflowManager $manager;
 
     protected function setUp(): void
@@ -42,6 +48,7 @@ final class WeldingWorkflowManagerTest extends TestCase
         $this->employeeRepository = $this->createMock(EmployeeRepository::class);
         $this->settingRepository = $this->createMock(SettingRepository::class);
         $this->settingRepository->method('getOrDefault')->willReturn('WLD');
+        $this->taskManager = $this->createMock(WeldingWorkflowStepTaskManagerInterface::class);
         $this->manager = $this->makeManager();
     }
 
@@ -68,6 +75,7 @@ final class WeldingWorkflowManagerTest extends TestCase
                 new SequenceGenerator($connection),
                 $this->createStub(SettingRepository::class),
             ),
+            $this->taskManager,
         );
     }
 
@@ -158,7 +166,7 @@ final class WeldingWorkflowManagerTest extends TestCase
         $persistedSteps = [];
         $this->entityManager->method('persist')->willReturnCallback(
             static function (object $entity) use (&$persistedSteps): void {
-                if ($entity instanceof \Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep) {
+                if ($entity instanceof WeldingWorkflowStep) {
                     $persistedSteps[] = $entity;
                 }
             }
@@ -210,6 +218,39 @@ final class WeldingWorkflowManagerTest extends TestCase
         $this->manager->archive($workflow);
 
         self::assertSame(WeldingWorkflowStatusEnum::Archived, $workflow->getStatus());
+    }
+
+    public function testStartDelegatesTaskSnapshotPerStep(): void
+    {
+        $template = new WeldingWorkflowTemplate();
+
+        $stepTpl = new WeldingWorkflowStepTemplate();
+        $stepTpl->setTitle('S1');
+        $taskTpl = new WeldingWorkflowStepTaskTemplate();
+        $taskTpl->setLabel('Check gauge')->setRequired(true);
+        $this->setProperty($stepTpl, 'tasks', new ArrayCollection([$taskTpl]));
+
+        $this->setProperty($template, 'steps', new ArrayCollection([$stepTpl]));
+
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::Draft);
+        $workflow->setTemplate($template);
+
+        $capturedTemplates = null;
+        $this->taskManager
+            ->expects(self::once())
+            ->method('snapshotFromTemplates')
+            ->willReturnCallback(static function ($step, iterable $templates) use (&$capturedTemplates): array {
+                $capturedTemplates = iterator_to_array($templates instanceof IteratorAggregate ? $templates->getIterator() : $templates);
+
+                return [new WeldingWorkflowStepTask()];
+            });
+
+        $this->manager->start($workflow);
+
+        self::assertNotNull($capturedTemplates);
+        self::assertCount(1, $capturedTemplates);
+        self::assertSame('Check gauge', $capturedTemplates[0]->getLabel());
     }
 
     private function setProperty(object $target, string $property, mixed $value): void

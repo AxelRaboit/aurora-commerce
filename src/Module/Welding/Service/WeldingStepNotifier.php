@@ -47,7 +47,7 @@ class WeldingStepNotifier
         }
 
         $workflow = $step->getWorkflow();
-        if (null === $workflow) {
+        if (!$workflow instanceof WeldingWorkflowInterface) {
             return;
         }
 
@@ -71,7 +71,7 @@ class WeldingStepNotifier
                 'siteName' => $siteName,
             ]);
 
-            $email = (new Email())
+            $email = new Email()
                 ->from($this->mailerFrom)
                 ->to($recipient)
                 ->subject($this->buildSubject($workflow, $step, $siteName))

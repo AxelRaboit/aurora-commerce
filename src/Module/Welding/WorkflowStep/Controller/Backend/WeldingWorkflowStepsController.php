@@ -12,6 +12,7 @@ use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Welding\Workflow\Security\WeldingWorkflowVoter;
 use Aurora\Module\Welding\WorkflowStep\Dto\WeldingWorkflowStepValidationInputFactoryInterface;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
+use Aurora\Module\Welding\WorkflowStep\Exception\RequiredTasksUndoneException;
 use Aurora\Module\Welding\WorkflowStep\Manager\WeldingWorkflowStepManagerInterface;
 use Aurora\Module\Welding\WorkflowStep\Serializer\WeldingWorkflowStepSerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,7 +44,11 @@ class WeldingWorkflowStepsController extends AbstractController
             return $this->jsonFailure('backend.welding.workflow_steps.errors.unauthenticated');
         }
 
-        $this->manager->submit($step, $welder);
+        try {
+            $this->manager->submit($step, $welder);
+        } catch (RequiredTasksUndoneException) {
+            return $this->jsonFailure(RequiredTasksUndoneException::TRANSLATION_KEY);
+        }
 
         return $this->jsonSuccess(['step' => $this->serializer->serialize($step)]);
     }

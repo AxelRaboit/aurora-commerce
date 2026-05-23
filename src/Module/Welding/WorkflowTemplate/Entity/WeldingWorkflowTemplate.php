@@ -21,7 +21,7 @@ class WeldingWorkflowTemplate extends AbstractWeldingWorkflowTemplate
     protected ?int $id = null;
 
     /** @var Collection<int, WeldingWorkflowStepTemplateInterface> */
-    #[ORM\OneToMany(mappedBy: 'workflowTemplate', targetEntity: WeldingWorkflowStepTemplateInterface::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: WeldingWorkflowStepTemplateInterface::class, mappedBy: 'workflowTemplate', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
     protected Collection $steps;
 

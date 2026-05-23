@@ -9,6 +9,7 @@ use Aurora\Module\Welding\WorkflowStepTemplate\Dto\WeldingWorkflowStepTemplateIn
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Repository\WeldingWorkflowStepTemplateRepository;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplateInterface;
 use Aurora\Module\Welding\WorkflowTemplate\Repository\WeldingWorkflowTemplateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
@@ -71,6 +72,7 @@ class WeldingWorkflowStepTemplateManager implements WeldingWorkflowStepTemplateM
                 if (null === $step) {
                     throw new RuntimeException(sprintf('WeldingWorkflowStepTemplate #%d not found', $stepId));
                 }
+
                 $step->setPosition($position);
             }
 
@@ -90,11 +92,12 @@ class WeldingWorkflowStepTemplateManager implements WeldingWorkflowStepTemplateM
     protected function applyInput(WeldingWorkflowStepTemplateInterface $step, WeldingWorkflowStepTemplateInputInterface $input): void
     {
         $workflowTemplateId = $input->getWorkflowTemplateId();
-        if (null === $step->getWorkflowTemplate() && null !== $workflowTemplateId) {
+        if (!$step->getWorkflowTemplate() instanceof WeldingWorkflowTemplateInterface && null !== $workflowTemplateId) {
             $workflowTemplate = $this->workflowTemplateRepository->find($workflowTemplateId);
             if (null === $workflowTemplate) {
                 throw new RuntimeException(sprintf('WeldingWorkflowTemplate #%d not found', $workflowTemplateId));
             }
+
             $step->setWorkflowTemplate($workflowTemplate);
         }
 

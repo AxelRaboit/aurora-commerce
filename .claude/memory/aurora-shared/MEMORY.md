@@ -28,6 +28,10 @@ Distribué via composer : les clients lisent ces mémoires depuis
   controllers ultra-fins (routing + auth + DTO + délégation + sérialisation).
   Toute logique métier dans Manager (mutations) ou Service (calcul pur). À
   répéter à chaque session.
+- [convention_domain_exception_translation_key.md](convention_domain_exception_translation_key.md) —
+  pour les rejets métier surfacés en JSON : `DomainException` dédiée +
+  constante `TRANSLATION_KEY`. Anti-pattern explicite : `str_starts_with`
+  sur `$e->getMessage()`.
 - [convention_sfc_thin_presentation.md](convention_sfc_thin_presentation.md) —
   **règle dure** : les SFC `.vue` restent fines (template + bindings + refs
   UI-only), toute logique métier (état orchestré, watchers, autosave, HTTP,

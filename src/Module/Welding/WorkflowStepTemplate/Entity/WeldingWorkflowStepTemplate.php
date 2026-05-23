@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Welding\WorkflowStepTemplate\Entity;
 
 use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplateInterface;
+use Aurora\Module\Welding\WorkflowStepTaskTemplate\Entity\WeldingWorkflowStepTaskTemplateInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Repository\WeldingWorkflowStepTemplateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,13 +22,19 @@ class WeldingWorkflowStepTemplate extends AbstractWeldingWorkflowStepTemplate
     protected ?int $id = null;
 
     /** @var Collection<int, WeldingWorkflowStepPdfTemplateInterface> */
-    #[ORM\OneToMany(mappedBy: 'workflowStepTemplate', targetEntity: WeldingWorkflowStepPdfTemplateInterface::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: WeldingWorkflowStepPdfTemplateInterface::class, mappedBy: 'workflowStepTemplate', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
     protected Collection $pdfTemplates;
+
+    /** @var Collection<int, WeldingWorkflowStepTaskTemplateInterface> */
+    #[ORM\OneToMany(targetEntity: WeldingWorkflowStepTaskTemplateInterface::class, mappedBy: 'workflowStepTemplate', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    protected Collection $tasks;
 
     public function __construct()
     {
         $this->pdfTemplates = new ArrayCollection();
+        $this->tasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -38,5 +45,10 @@ class WeldingWorkflowStepTemplate extends AbstractWeldingWorkflowStepTemplate
     public function getPdfTemplates(): Collection
     {
         return $this->pdfTemplates;
+    }
+
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
     }
 }

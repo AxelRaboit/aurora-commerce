@@ -38,7 +38,10 @@ export function usePdfTemplatesForm(
     const { t } = useI18n();
 
     const statusOptions = [
-        { value: "draft", label: t("backend.welding.pdf_templates.status_draft") },
+        {
+            value: "draft",
+            label: t("backend.welding.pdf_templates.status_draft"),
+        },
         {
             value: "active",
             label: t("backend.welding.pdf_templates.status_active"),
@@ -105,7 +108,9 @@ export function usePdfTemplatesForm(
                                   "backend.welding.pdf_templates.detectFieldsSuccess",
                                   { count },
                               )
-                            : t("backend.welding.pdf_templates.detectFieldsEmpty"),
+                            : t(
+                                  "backend.welding.pdf_templates.detectFieldsEmpty",
+                              ),
                     );
                     reset();
                 } else if (detectionData) {
@@ -208,11 +213,26 @@ export function usePdfTemplatesForm(
     } = useForm();
 
     const fieldTypeOptions = [
-        { value: "text", label: t("backend.welding.pdf_template_fields.type_text") },
-        { value: "checkbox", label: t("backend.welding.pdf_template_fields.type_checkbox") },
-        { value: "radio", label: t("backend.welding.pdf_template_fields.type_radio") },
-        { value: "dropdown", label: t("backend.welding.pdf_template_fields.type_dropdown") },
-        { value: "date", label: t("backend.welding.pdf_template_fields.type_date") },
+        {
+            value: "text",
+            label: t("backend.welding.pdf_template_fields.type_text"),
+        },
+        {
+            value: "checkbox",
+            label: t("backend.welding.pdf_template_fields.type_checkbox"),
+        },
+        {
+            value: "radio",
+            label: t("backend.welding.pdf_template_fields.type_radio"),
+        },
+        {
+            value: "dropdown",
+            label: t("backend.welding.pdf_template_fields.type_dropdown"),
+        },
+        {
+            value: "date",
+            label: t("backend.welding.pdf_template_fields.type_date"),
+        },
         {
             value: "signature",
             label: t("backend.welding.pdf_template_fields.type_signature"),
@@ -269,9 +289,11 @@ export function usePdfTemplatesForm(
         if (
             !validateField({
                 label: () =>
-                    required(t("backend.welding.pdf_template_fields.errors.label_required"))(
-                        fieldForm.value.label,
-                    ),
+                    required(
+                        t(
+                            "backend.welding.pdf_template_fields.errors.label_required",
+                        ),
+                    )(fieldForm.value.label),
             })
         )
             return;

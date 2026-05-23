@@ -44,7 +44,7 @@ final class WeldingWorkflowOptionsController extends AbstractController
         $items = array_map(
             static fn (EmployeeInterface $e): array => [
                 'value' => (string) $e->getId(),
-                'label' => trim($e->getFirstName().' '.$e->getLastName()),
+                'label' => mb_trim($e->getFirstName().' '.$e->getLastName()),
             ],
             $employees,
         );

@@ -174,9 +174,22 @@ welding:
     delete: Supprimer le modèle
     confirm_delete: Supprimer définitivement ce modèle ?
     confirm_delete_button: Supprimer
+    confirm_publish: Publier « {title} » ?
+    confirm_publish_warning: Une fois publié, le modèle ne sera plus modifiable.
+      Pour faire évoluer la procédure, il faudra le cloner pour créer une nouvelle
+      version brouillon.
+    confirm_archive: Archiver « {title} » ?
+    confirm_archive_warning: Un modèle archivé ne pourra plus servir à démarrer
+      de nouveaux workflows. Les workflows déjà en cours restent fonctionnels.
+    confirm_clone: Cloner « {title} » ?
+    confirm_clone_warning: Une nouvelle version brouillon va être créée avec les
+      mêmes étapes, tâches et PDFs. Vous serez redirigé vers l'éditeur de la
+      nouvelle version.
     deleted: Modèle supprimé
     field_title: Titre
+    field_title_placeholder: Ex. DMOS soudure tube inox 316L
     field_description: Description
+    field_description_placeholder: Procédure, prérequis, normes applicables…
     field_applicable_to: Portée / type de soudure
     field_applicable_to_placeholder: TIG, MIG, SAW, soudure manuelle…
     errors:
@@ -195,6 +208,13 @@ welding:
       step_required: L'étape de rattachement est obligatoire
       pdf_template_required: Le PDF template est obligatoire
       position_invalid: La position doit être un entier positif ou zéro
+  workflow_step_tasks:
+    errors:
+      step_required: L'étape de rattachement est obligatoire
+      label_required: Le libellé est obligatoire
+      label_too_long: Le libellé ne peut pas dépasser 300 caractères
+      position_invalid: La position doit être un entier positif ou zéro
+      ordered_ids_required: Liste d'identifiants de tâches manquante
   workflows:
     title: Workflows
     subtitle: Workflows de soudure en cours et terminés
@@ -237,6 +257,8 @@ welding:
     errors:
       decision_invalid: La décision doit être 'validate' ou 'reject'
       unauthenticated: Utilisateur non authentifié
+      required_tasks_undone: Toutes les consignes obligatoires doivent être cochées
+        avant de soumettre cette étape.
   runner:
     open: Ouvrir le workflow
     start_workflow: Démarrer le workflow
@@ -258,6 +280,11 @@ welding:
     required_pdfs: Documents PDF requis
     fill_pdf: Remplir
     add_pdf_document: Ajouter un autre
+    tasks: Consignes
+    no_tasks_for_step: Aucune consigne pour cette étape.
+    task_required_badge: Obligatoire
+    task_optional_badge: Facultative
+    task_done_by: Cochée par {name}
     submit_step: Soumettre cette étape
     step_submitted: Étape soumise
     validate_step: Valider cette étape
@@ -288,6 +315,10 @@ welding:
     no_steps_yet: Aucune étape. Ajoutez la première pour démarrer.
     requires_validation: Nécessite validation
     field_step_title: Titre de l'étape
+    field_step_title_placeholder: Ex. Préparation du joint
+    field_step_description: Description
+    field_step_description_placeholder: Détails, paramètres attendus, points
+      de contrôle…
     field_validator_role: Rôle du validateur
     field_validator_role_placeholder: Sélectionnez un rôle
     field_pdf_template_placeholder: Sélectionnez un template PDF
@@ -299,6 +330,22 @@ welding:
     field_required: Obligatoire
     no_pdfs_for_step: Aucun PDF attaché à cette étape.
     reorder_failed: Réordonnancement échoué. État restauré.
+    tasks: Consignes (checklist)
+    add_task: Ajouter une consigne
+    edit_task: Modifier la consigne
+    delete_task: Supprimer la consigne
+    task_added: Consigne ajoutée
+    task_updated: Consigne mise à jour
+    task_deleted: Consigne supprimée
+    confirm_delete_task: Supprimer cette consigne ?
+    no_tasks_for_step: Aucune consigne sur cette étape.
+    field_task_label: Libellé de la consigne
+    field_task_label_placeholder: Ex. Vérifier la pression du gaz, contrôler la propreté
+      du joint…
+    field_task_description: Description
+    field_task_description_placeholder: Détails complémentaires, méthode, valeurs
+      attendues…
+    field_task_required: Obligatoire pour soumettre l'étape
   validator_role_inspector: Inspecteur
   validator_role_quality_assurance: Assurance qualité
   validator_role_supervisor: Superviseur

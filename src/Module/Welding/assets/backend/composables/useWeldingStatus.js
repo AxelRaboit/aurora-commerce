@@ -20,14 +20,26 @@ import {
 
 export function useWorkflowStatus() {
     return {
-        ORDER: ["draft", "in_progress", "awaiting_validation", "completed", "rejected", "archived"],
+        ORDER: [
+            "draft",
+            "in_progress",
+            "awaiting_validation",
+            "completed",
+            "rejected",
+            "archived",
+        ],
         COLOR: {
             draft: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-            in_progress: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-            awaiting_validation: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-            completed: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-            rejected: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
-            archived: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+            in_progress:
+                "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+            awaiting_validation:
+                "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+            completed:
+                "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+            rejected:
+                "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
+            archived:
+                "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
         },
     };
 }
@@ -50,10 +62,14 @@ export function useStepStatus() {
         },
         BG: {
             pending: "bg-gray-50 dark:bg-gray-900/30 border-line",
-            in_progress: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
-            awaiting_validation: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800",
-            validated: "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800",
-            rejected: "bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800",
+            in_progress:
+                "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
+            awaiting_validation:
+                "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800",
+            validated:
+                "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800",
+            rejected:
+                "bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800",
         },
     };
 }
@@ -62,8 +78,17 @@ export function useTemplateStatus() {
     return {
         BADGE: {
             draft: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-            published: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-            archived: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+            published:
+                "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+            archived:
+                "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+        },
+        // AppBadge `:color` preset names — prefer this over BADGE when the
+        // surrounding component already uses <AppBadge>.
+        TONE: {
+            draft: "gray",
+            published: "emerald",
+            archived: "slate",
         },
         ICON: {
             draft: Send,

@@ -137,13 +137,19 @@ export function usePdfDocumentsForm(
             let found = null;
             let currentPage = 1;
             while (!found) {
-                const params = new URLSearchParams({ page: String(currentPage), status: "active" });
+                const params = new URLSearchParams({
+                    page: String(currentPage),
+                    status: "active",
+                });
                 const res = await fetch(`${templateListPath}?${params}`, {
                     headers: { "X-Requested-With": "XMLHttpRequest" },
                 });
                 const data = await res.json();
                 if (!data?.success) break;
-                found = data.items.find((tpl) => String(tpl.id) === String(templateId)) ?? null;
+                found =
+                    data.items.find(
+                        (tpl) => String(tpl.id) === String(templateId),
+                    ) ?? null;
                 if (found || currentPage >= data.totalPages) break;
                 currentPage += 1;
             }
@@ -192,7 +198,9 @@ export function usePdfDocumentsForm(
             !validateGenerate({
                 templateId: () =>
                     required(
-                        t("backend.welding.pdf_documents.errors.template_required"),
+                        t(
+                            "backend.welding.pdf_documents.errors.template_required",
+                        ),
                     )(generateForm.value.templateId),
             })
         )

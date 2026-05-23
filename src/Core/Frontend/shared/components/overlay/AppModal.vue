@@ -22,6 +22,14 @@ const props = defineProps({
      * existing modals visually unchanged.
      */
     mobileFullscreen: { type: Boolean, default: false },
+    /**
+     * Allow clicks on the dark overlay to close the modal. Default `true`
+     * matches the historical behavior (lightweight modals = overlay click
+     * cancels). Set to `false` for form modals so an accidental click on
+     * the backdrop doesn't wipe in-flight user input — ESC + the X button
+     * still close.
+     */
+    closeOnOverlay: { type: Boolean, default: true },
 });
 
 const { t } = useI18n();
@@ -45,6 +53,10 @@ const { requestClose } = useBackButtonClose({
 
 function close() {
     if (props.closeable) requestClose();
+}
+
+function onOverlayClick() {
+    if (props.closeOnOverlay) close();
 }
 
 function closeOnEscape(event) {
@@ -133,7 +145,7 @@ const contentClass = computed(() => [
                 leave-from-class="opacity-100"
                 leave-to-class="opacity-0"
             >
-                <div v-show="show" class="fixed inset-0 bg-black/60" v-on:click="close" />
+                <div v-show="show" class="fixed inset-0 bg-black/60" v-on:click="onOverlayClick" />
             </Transition>
 
             <Transition

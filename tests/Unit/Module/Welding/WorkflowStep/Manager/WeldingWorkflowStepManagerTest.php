@@ -14,7 +14,9 @@ use Aurora\Module\Welding\Service\WeldingStepNotifier;
 use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
 use Aurora\Module\Welding\WorkflowStep\Dto\WeldingWorkflowStepValidationInput;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
+use Aurora\Module\Welding\WorkflowStep\Exception\RequiredTasksUndoneException;
 use Aurora\Module\Welding\WorkflowStep\Manager\WeldingWorkflowStepManager;
+use Aurora\Module\Welding\WorkflowStepTask\Entity\WeldingWorkflowStepTask;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
@@ -163,5 +165,40 @@ final class WeldingWorkflowStepManagerTest extends TestCase
         $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: true);
         $this->expectException(RuntimeException::class);
         $this->manager->recordValidation($step, $this->makeWelder(99), new WeldingWorkflowStepValidationInput(decision: 'validate'));
+    }
+
+    public function testSubmitBlocksIfRequiredTaskNotDone(): void
+    {
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: false);
+        $task = new WeldingWorkflowStepTask();
+        $task->setLabel('Required check')->setRequired(true)->setDone(false);
+        $step->getTasks()->add($task);
+
+        $this->expectException(RequiredTasksUndoneException::class);
+        $this->manager->submit($step, $this->makeWelder());
+    }
+
+    public function testSubmitIgnoresUndoneOptionalTasks(): void
+    {
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: false);
+        $optional = new WeldingWorkflowStepTask();
+        $optional->setLabel('Optional check')->setRequired(false)->setDone(false);
+        $step->getTasks()->add($optional);
+
+        $this->manager->submit($step, $this->makeWelder());
+
+        self::assertSame(WeldingWorkflowStepStatusEnum::Validated, $step->getStatus());
+    }
+
+    public function testSubmitPassesWhenAllRequiredTasksDone(): void
+    {
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: false);
+        $task = new WeldingWorkflowStepTask();
+        $task->setLabel('Required check')->setRequired(true)->setDone(true);
+        $step->getTasks()->add($task);
+
+        $this->manager->submit($step, $this->makeWelder());
+
+        self::assertSame(WeldingWorkflowStepStatusEnum::Validated, $step->getStatus());
     }
 }

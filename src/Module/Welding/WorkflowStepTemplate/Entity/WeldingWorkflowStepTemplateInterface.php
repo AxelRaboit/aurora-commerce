@@ -6,6 +6,8 @@ namespace Aurora\Module\Welding\WorkflowStepTemplate\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Welding\Enum\WeldingValidatorRoleEnum;
+use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplateInterface;
+use Aurora\Module\Welding\WorkflowStepTaskTemplate\Entity\WeldingWorkflowStepTaskTemplateInterface;
 use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplateInterface;
 use Doctrine\Common\Collections\Collection;
 
@@ -37,6 +39,9 @@ interface WeldingWorkflowStepTemplateInterface extends TimestampableInterface
 
     public function setValidatorRole(?WeldingValidatorRoleEnum $validatorRole): static;
 
-    /** @return Collection<int, \Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplateInterface> */
+    /** @return Collection<int, WeldingWorkflowStepPdfTemplateInterface> */
     public function getPdfTemplates(): Collection;
+
+    /** @return Collection<int, WeldingWorkflowStepTaskTemplateInterface> */
+    public function getTasks(): Collection;
 }

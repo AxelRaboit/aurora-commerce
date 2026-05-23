@@ -171,9 +171,21 @@ welding:
     delete: Delete template
     confirm_delete: Delete this template permanently?
     confirm_delete_button: Delete
+    confirm_publish: Publish "{title}"?
+    confirm_publish_warning: Once published, the template can no longer be edited.
+      To evolve the procedure, you'll need to clone it to create a new draft
+      version.
+    confirm_archive: Archive "{title}"?
+    confirm_archive_warning: An archived template can no longer be used to start
+      new workflows. Workflows already in progress remain functional.
+    confirm_clone: Clone "{title}"?
+    confirm_clone_warning: A new draft version will be created with the same
+      steps, tasks and PDFs. You'll be redirected to the new version's editor.
     deleted: Template deleted
     field_title: Title
+    field_title_placeholder: E.g. Stainless steel 316L tube WPS
     field_description: Description
+    field_description_placeholder: Procedure, prerequisites, applicable standards…
     field_applicable_to: Scope / welding type
     field_applicable_to_placeholder: TIG, MIG, SAW, manual…
     errors:
@@ -192,6 +204,13 @@ welding:
       step_required: Parent step is required
       pdf_template_required: PDF template is required
       position_invalid: Position must be a non-negative integer
+  workflow_step_tasks:
+    errors:
+      step_required: Parent step is required
+      label_required: Label is required
+      label_too_long: Label cannot exceed 300 characters
+      position_invalid: Position must be a non-negative integer
+      ordered_ids_required: Missing list of task ids
   workflows:
     title: Workflows
     subtitle: Ongoing and completed welding workflows
@@ -234,6 +253,8 @@ welding:
     errors:
       decision_invalid: Decision must be 'validate' or 'reject'
       unauthenticated: Unauthenticated user
+      required_tasks_undone: All required checklist items must be checked before
+        submitting this step.
   runner:
     open: Open workflow
     start_workflow: Start workflow
@@ -255,6 +276,11 @@ welding:
     required_pdfs: Required PDF documents
     fill_pdf: Fill
     add_pdf_document: Add another
+    tasks: Checklist
+    no_tasks_for_step: No checklist item on this step.
+    task_required_badge: Required
+    task_optional_badge: Optional
+    task_done_by: Checked by {name}
     submit_step: Submit this step
     step_submitted: Step submitted
     validate_step: Validate this step
@@ -285,6 +311,10 @@ welding:
     no_steps_yet: No step yet. Add the first one to get started.
     requires_validation: Requires validation
     field_step_title: Step title
+    field_step_title_placeholder: E.g. Joint preparation
+    field_step_description: Description
+    field_step_description_placeholder: Details, expected parameters, control
+      points…
     field_validator_role: Validator role
     field_validator_role_placeholder: Pick a role
     field_pdf_template_placeholder: Pick a PDF template
@@ -296,6 +326,20 @@ welding:
     field_required: Required
     no_pdfs_for_step: No PDF attached to this step.
     reorder_failed: Reorder failed. Previous state restored.
+    tasks: Checklist items
+    add_task: Add a checklist item
+    edit_task: Edit checklist item
+    delete_task: Delete checklist item
+    task_added: Checklist item added
+    task_updated: Checklist item updated
+    task_deleted: Checklist item deleted
+    confirm_delete_task: Delete this checklist item?
+    no_tasks_for_step: No checklist item on this step.
+    field_task_label: Item label
+    field_task_label_placeholder: E.g. Verify gas pressure, inspect joint cleanliness…
+    field_task_description: Description
+    field_task_description_placeholder: Extra details, method, expected values…
+    field_task_required: Required to submit the step
   validator_role_inspector: Inspector
   validator_role_quality_assurance: Quality assurance
   validator_role_supervisor: Supervisor

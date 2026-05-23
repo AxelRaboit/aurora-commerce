@@ -16,7 +16,9 @@ use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
 use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
+use Aurora\Module\Welding\WorkflowStepTask\Manager\WeldingWorkflowStepTaskManagerInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplateInterface;
 use Aurora\Module\Welding\WorkflowTemplate\Repository\WeldingWorkflowTemplateRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +35,7 @@ class WeldingWorkflowManager implements WeldingWorkflowManagerInterface
         protected readonly SettingRepository $settingRepository,
         protected readonly SequenceGenerator $sequenceGenerator,
         protected readonly AuditLogger $auditLogger,
+        protected readonly WeldingWorkflowStepTaskManagerInterface $taskManager,
     ) {}
 
     public function create(WeldingWorkflowInputInterface $input): WeldingWorkflowInterface
@@ -63,7 +66,7 @@ class WeldingWorkflowManager implements WeldingWorkflowManagerInterface
         }
 
         $template = $workflow->getTemplate();
-        if (null === $template) {
+        if (!$template instanceof WeldingWorkflowTemplateInterface) {
             throw new RuntimeException(sprintf('WeldingWorkflow #%d has no template', $workflow->getId()));
         }
 
@@ -137,6 +140,7 @@ class WeldingWorkflowManager implements WeldingWorkflowManagerInterface
             if (null === $assignee) {
                 throw new RuntimeException(sprintf('Employee #%d not found', $input->getAssigneeId()));
             }
+
             $workflow->setAssignee($assignee);
         }
 
@@ -155,7 +159,7 @@ class WeldingWorkflowManager implements WeldingWorkflowManagerInterface
     protected function snapshotSteps(WeldingWorkflowInterface $workflow): void
     {
         $template = $workflow->getTemplate();
-        if (null === $template) {
+        if (!$template instanceof WeldingWorkflowTemplateInterface) {
             return;
         }
 
@@ -167,13 +171,26 @@ class WeldingWorkflowManager implements WeldingWorkflowManagerInterface
             $step->setStatus(WeldingWorkflowStepStatusEnum::Pending);
 
             $this->entityManager->persist($step);
+
+            $this->snapshotStepTasks($step, $stepTemplate);
         }
+    }
+
+    /**
+     * Snapshots template tasks → instance tasks for one step at workflow start.
+     * Delegates to the task manager which knows how to instantiate the concrete
+     * class (so a client substituting WeldingWorkflowStepTask via
+     * resolve_target_entities is honored).
+     */
+    protected function snapshotStepTasks(WeldingWorkflowStepInterface $step, WeldingWorkflowStepTemplateInterface $stepTemplate): void
+    {
+        $this->taskManager->snapshotFromTemplates($step, $stepTemplate->getTasks());
     }
 
     protected function generateReference(): string
     {
         $prefix = $this->settingRepository->getOrDefault(WeldingSettingEnum::ReferencePrefix);
-        $year = (int) (new DateTimeImmutable())->format('Y');
+        $year = (int) new DateTimeImmutable()->format('Y');
 
         return $this->sequenceGenerator->nextYearly($prefix, $year, 6);
     }

@@ -153,7 +153,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningBackend => 'backend.modules.planning_backend',
             self::HrBackend => 'backend.modules.hr_backend',
             self::VaultBackend => 'backend.modules.vault_backend',
-            
+
             self::WeldingPdfTemplates => 'backend.nav.welding_pdf_templates',
             self::WeldingPdfDocuments => 'backend.nav.welding_pdf_documents',
             self::WeldingBackend => 'backend.modules.welding_backend',
@@ -231,7 +231,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningBackend => 'backend.modules.planning_backend_description',
             self::HrBackend => 'backend.modules.hr_backend_description',
             self::VaultBackend => 'backend.modules.vault_backend_description',
-            
+
             self::WeldingPdfTemplates => 'backend.nav.welding_pdf_templates_description',
             self::WeldingPdfDocuments => 'backend.nav.welding_pdf_documents_description',
             self::WeldingBackend => 'backend.modules.welding_backend_description',

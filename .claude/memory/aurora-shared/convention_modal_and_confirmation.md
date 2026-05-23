@@ -24,6 +24,10 @@ metadata:
 - `v-on:close` (event) — émis quand l'utilisateur veut fermer (ESC, clic overlay, bouton X)
 - `:title` (String, optionnel) — header avec close button automatique
 - `max-width` — `sm` / `md` / `lg` / `xl` / `2xl`
+- `:close-on-overlay` (Boolean, default `true`) — passer `false` pour les
+  **modales avec formulaire**. ESC + bouton X ferment toujours, mais
+  un clic dans le backdrop noir n'efface plus la saisie en cours.
+  Confirmations Yes/No : garder le défaut `true` (overlay click = cancel).
 
 **Règle absolue** : les boutons d'action vont **toujours** dans `<template #footer><AppModalFooter>` — jamais inline dans le body.
 

@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class WeldingWorkflowStepValidationInput implements WeldingWorkflowStepValidationInputInterface
 {
     public const string DECISION_VALIDATE = 'validate';
+
     public const string DECISION_REJECT = 'reject';
 
     public function __construct(

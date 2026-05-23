@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Welding\Workflow\Serializer;
 
+use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
 use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -25,7 +26,7 @@ class WeldingWorkflowSerializer implements WeldingWorkflowSerializerInterface
             'templateTitle' => $template?->getTitle(),
             'templateVersion' => $template?->getVersion(),
             'assigneeId' => $assignee?->getId(),
-            'assigneeName' => null === $assignee ? null : trim($assignee->getFirstName().' '.$assignee->getLastName()),
+            'assigneeName' => $assignee instanceof EmployeeInterface ? mb_trim($assignee->getFirstName().' '.$assignee->getLastName()) : null,
             'status' => $workflow->getStatus()->value,
             'startedAt' => $workflow->getStartedAt()?->format(DATE_ATOM),
             'completedAt' => $workflow->getCompletedAt()?->format(DATE_ATOM),

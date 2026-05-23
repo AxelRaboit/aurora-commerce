@@ -32,7 +32,7 @@ abstract class AbstractWeldingWorkflowStepTemplate implements WeldingWorkflowSte
     #[ORM\Column(options: ['default' => false])]
     protected bool $requiresValidation = false;
 
-    #[ORM\Column(length: 30, enumType: WeldingValidatorRoleEnum::class, nullable: true)]
+    #[ORM\Column(length: 30, nullable: true, enumType: WeldingValidatorRoleEnum::class)]
     protected ?WeldingValidatorRoleEnum $validatorRole = null;
 
     public function getWorkflowTemplate(): ?WeldingWorkflowTemplateInterface

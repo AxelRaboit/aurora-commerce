@@ -10,6 +10,7 @@ use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
 use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -44,7 +45,7 @@ final class WeldingStepNotifierTest extends TestCase
     public function testSilentlySwallowsMailerExceptionsToNotBlockState(): void
     {
         $mailer = $this->createStub(MailerInterface::class);
-        $mailer->method('send')->willThrowException(new \RuntimeException('SMTP down'));
+        $mailer->method('send')->willThrowException(new RuntimeException('SMTP down'));
 
         $settings = $this->createStub(SettingRepository::class);
         $settings->method('getOrDefault')->willReturnCallback(

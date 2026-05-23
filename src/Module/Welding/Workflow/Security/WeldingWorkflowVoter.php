@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Welding\Workflow\Security;
 
+use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
@@ -74,12 +76,12 @@ final class WeldingWorkflowVoter extends Voter
     private function isAssignee(WeldingWorkflowInterface $workflow, User $user): bool
     {
         $assignee = $workflow->getAssignee();
-        if (null === $assignee) {
+        if (!$assignee instanceof EmployeeInterface) {
             return false;
         }
 
         $assigneeUser = $assignee->getUser();
 
-        return null !== $assigneeUser && $assigneeUser->getId() === $user->getId();
+        return $assigneeUser instanceof CoreUserInterface && $assigneeUser->getId() === $user->getId();
     }
 }

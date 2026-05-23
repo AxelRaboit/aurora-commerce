@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Aurora\Module\Welding\WorkflowStepPdfTemplate\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\Welding\PdfTemplate\Entity\WeldingPdfTemplateInterface;
 use Aurora\Module\Welding\PdfTemplate\Repository\WeldingPdfTemplateRepository;
 use Aurora\Module\Welding\WorkflowStepPdfTemplate\Dto\WeldingWorkflowStepPdfTemplateInputInterface;
 use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplate;
 use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplateInterface;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
 use Aurora\Module\Welding\WorkflowStepTemplate\Repository\WeldingWorkflowStepTemplateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
@@ -60,19 +62,21 @@ class WeldingWorkflowStepPdfTemplateManager implements WeldingWorkflowStepPdfTem
 
     protected function applyInput(WeldingWorkflowStepPdfTemplateInterface $entry, WeldingWorkflowStepPdfTemplateInputInterface $input): void
     {
-        if (null === $entry->getWorkflowStepTemplate() && null !== $input->getWorkflowStepTemplateId()) {
+        if (!$entry->getWorkflowStepTemplate() instanceof WeldingWorkflowStepTemplateInterface && null !== $input->getWorkflowStepTemplateId()) {
             $step = $this->stepRepository->find($input->getWorkflowStepTemplateId());
             if (null === $step) {
                 throw new RuntimeException(sprintf('WeldingWorkflowStepTemplate #%d not found', $input->getWorkflowStepTemplateId()));
             }
+
             $entry->setWorkflowStepTemplate($step);
         }
 
-        if (null === $entry->getPdfTemplate() && null !== $input->getPdfTemplateId()) {
+        if (!$entry->getPdfTemplate() instanceof WeldingPdfTemplateInterface && null !== $input->getPdfTemplateId()) {
             $pdfTemplate = $this->pdfTemplateRepository->find($input->getPdfTemplateId());
             if (null === $pdfTemplate) {
                 throw new RuntimeException(sprintf('WeldingPdfTemplate #%d not found', $input->getPdfTemplateId()));
             }
+
             $entry->setPdfTemplate($pdfTemplate);
         }
 

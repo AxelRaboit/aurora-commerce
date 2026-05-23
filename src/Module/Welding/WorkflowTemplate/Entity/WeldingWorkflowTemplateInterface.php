@@ -6,6 +6,7 @@ namespace Aurora\Module\Welding\WorkflowTemplate\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Welding\Enum\WeldingWorkflowTemplateStatusEnum;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface WeldingWorkflowTemplateInterface extends TimestampableInterface
@@ -36,6 +37,6 @@ interface WeldingWorkflowTemplateInterface extends TimestampableInterface
 
     public function setParentVersion(?self $parentVersion): static;
 
-    /** @return Collection<int, \Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface> */
+    /** @return Collection<int, WeldingWorkflowStepTemplateInterface> */
     public function getSteps(): Collection;
 }
