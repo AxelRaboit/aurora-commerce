@@ -87,6 +87,9 @@ Distribué via composer : les clients lisent ces mémoires depuis
   les libellés UI nommés à la main
 - [convention_locale_options.md](convention_locale_options.md) — importer
   `LOCALE_OPTIONS` depuis `@core/utils/locales.js` ; locales supportées : `fr` et `en`
+- [convention_ui_copy_tone.md](convention_ui_copy_tone.md) — copy UI impersonnel
+  (pas de tu/vous, pas de nom de marque, pas d'emojis dans le texte). S'applique
+  aux AppMessage helpers, empty states, page subtitles
 
 ## Process / commits
 

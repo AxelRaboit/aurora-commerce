@@ -48,7 +48,7 @@ backend:
 personal_finance:
   wallets:
     title: Mes portefeuilles
-    help: 'Un portefeuille représente un compte (courant, livret, cash…). Définis sa balance initiale : Aurora calculera ensuite les soldes à partir des transactions.'
+    help: 'Un portefeuille représente un compte (courant, livret, cash…). La balance initiale sert de point de départ ; les soldes courants sont ensuite calculés automatiquement à partir des transactions enregistrées.'
     empty: Aucun portefeuille pour l'instant. Créez votre premier portefeuille ci-dessus.
     create_form_title: Créer un portefeuille
     delete_confirm: 'Supprimer le portefeuille « {name} » ? Toutes les transactions, catégories et membres associés seront supprimés. Cette action est irréversible.'
@@ -93,7 +93,7 @@ personal_finance:
       invitation_role_required: Le rôle est requis.
   categories:
     title: Catégories
-    help: 'Les catégories organisent tes transactions (Courses, Loisirs, Salaire…). Chaque portefeuille a ses propres catégories. Crées-en quelques-unes avant de saisir des transactions.'
+    help: 'Les catégories organisent les transactions (Courses, Loisirs, Salaire…). Chaque portefeuille possède ses propres catégories — il est recommandé d''en créer plusieurs avant de saisir les premières transactions.'
     empty: Aucune catégorie pour ce portefeuille.
     no_wallet: Créez d'abord un portefeuille pour pouvoir gérer des catégories.
     wallet: Portefeuille
@@ -117,7 +117,7 @@ personal_finance:
       name_required: Le nom de la catégorie est requis.
   transactions:
     title: Transactions
-    help: 'Saisis revenus et dépenses ici. Tu peux aussi faire un virement entre portefeuilles, décomposer une dépense en plusieurs catégories (split) ou ajuster manuellement la balance — boutons ci-dessus.'
+    help: 'Cette page regroupe les revenus et dépenses du portefeuille sélectionné. Les actions au-dessus permettent également de réaliser un virement entre portefeuilles, de décomposer une dépense en plusieurs catégories (split) ou d''ajuster manuellement la balance.'
     empty: Aucune transaction pour ce portefeuille.
     no_wallet: Créez d'abord un portefeuille pour pouvoir enregistrer des transactions.
     uncategorized: Sans catégorie
@@ -217,7 +217,7 @@ personal_finance:
       amount_positive: Le montant de chaque ligne doit être strictement positif.
   budget:
     title: Budget mensuel
-    help: 'Définis ce que tu prévois de dépenser chaque mois par catégorie. Aurora compare automatiquement le prévu vs le réel à partir de tes transactions. Le bouton 📃 sur chaque ligne ouvre la liste filtrée des transactions associées.'
+    help: 'Le budget mensuel définit les montants prévus par catégorie. Une comparaison automatique entre le prévu et le réel est calculée à partir des transactions du mois. Sur chaque ligne, un bouton ouvre la liste filtrée des transactions associées.'
     no_wallet: Crée d'abord un portefeuille pour pouvoir bâtir un budget.
     no_category: Sans catégorie
     add_item: Ajouter une ligne
@@ -262,7 +262,7 @@ personal_finance:
   dashboard:
     title: Tableau de bord
     subtitle: Vue d'ensemble en un coup d'œil de ta finance perso ce mois-ci.
-    help: 'Synthèse mensuelle de tes portefeuilles épinglés : KPIs revenus/dépenses, sparkline 30 jours, top catégories, transactions récentes et alertes budget. Les portefeuilles affichés sont ceux marqués comme épinglés depuis la page Portefeuilles.'
+    help: 'Synthèse mensuelle des portefeuilles épinglés : indicateurs revenus / dépenses, sparkline 30 jours, top catégories, transactions récentes et alertes budget. Les portefeuilles affichés sont ceux marqués comme épinglés depuis la page Portefeuilles.'
     vs_previous_month: vs. mois précédent
     income_minus_expense: Revenus − Dépenses
     across_wallets: 'sur {count} portefeuille(s)'
@@ -285,7 +285,7 @@ personal_finance:
       total_balance: Solde total
   categorization:
     title: Auto-catégorisation
-    help: 'Aurora apprend automatiquement à catégoriser tes transactions à partir de leur description : à chaque fois que tu sauvegardes une transaction avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Corrige ou supprime ici les règles obsolètes.'
+    help: 'L''auto-catégorisation apprend à classer les transactions à partir de leur description : chaque fois qu''une transaction est enregistrée avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Cette page permet de corriger une mauvaise association ou de supprimer une règle obsolète.'
     empty: Aucune règle pour le moment. Catégorise quelques transactions pour que le système apprenne.
     search_placeholder: Rechercher un pattern ou une catégorie…
     deleted: Règle supprimée.
@@ -307,8 +307,8 @@ personal_finance:
       scheduled: Planifiées
     empty_recurring: Aucune transaction récurrente. Ajoute-en une pour ne plus saisir tes charges fixes chaque mois.
     empty_scheduled: Aucune transaction planifiée. Ajoute-en une pour anticiper un revenu ou une dépense future.
-    help_recurring: Les transactions récurrentes se répètent chaque mois à un jour fixe (ex. loyer, abonnement). Elles sont automatiquement générées le jour spécifié.
-    help_scheduled: Les transactions planifiées sont des transactions ponctuelles futures que tu anticipes (ex. impôts, cadeau). Tu peux les matérialiser manuellement quand elles surviennent.
+    help_recurring: Les transactions récurrentes se répètent chaque mois à un jour fixe (ex. loyer, abonnement). Elles sont générées automatiquement le jour spécifié.
+    help_scheduled: Les transactions planifiées sont des transactions ponctuelles futures à anticiper (ex. impôts, cadeau). Leur matérialisation se fait manuellement quand elles surviennent.
     add_recurring: Nouvelle récurrente
     add_scheduled: Nouvelle planifiée
     edit_recurring: Modifier la récurrente
@@ -359,7 +359,7 @@ personal_finance:
       date_required: La date est requise.
   goals:
     title: Objectifs d'épargne
-    help: 'Définis tes objectifs d''épargne (vacances, projet immo, achat conséquent…). Si tu lies un objectif à une catégorie, Aurora additionne automatiquement les transactions de cette catégorie comme avance. Sinon tu déposes manuellement avec le bouton +.'
+    help: 'Les objectifs d''épargne suivent une cagnotte (vacances, projet immobilier, achat important…). Lorsqu''un objectif est lié à une catégorie, les transactions de cette catégorie sont additionnées automatiquement comme avancement. À défaut, les dépôts se font manuellement via le bouton dédié.'
     add: Nouvel objectif
     edit: Modifier l'objectif
     empty: Aucun objectif pour le moment. Crée ton premier objectif d'épargne pour suivre ta progression.

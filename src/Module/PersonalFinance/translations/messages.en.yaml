@@ -48,7 +48,7 @@ backend:
 personal_finance:
   wallets:
     title: My wallets
-    help: 'A wallet represents an account (checking, savings, cash…). Set its starting balance and Aurora will derive the running balances from your transactions.'
+    help: 'A wallet represents an account (checking, savings, cash…). The starting balance defines the baseline; running balances are then derived automatically from the recorded transactions.'
     empty: No wallet yet. Create your first one above.
     create_form_title: Create a wallet
     delete_confirm: 'Delete wallet "{name}"? All associated transactions, categories and members will be removed. This action is irreversible.'
@@ -93,7 +93,7 @@ personal_finance:
       invitation_role_required: Role is required.
   categories:
     title: Categories
-    help: 'Categories organise your transactions (Groceries, Leisure, Salary…). Each wallet has its own categories. Create a few before you start logging transactions.'
+    help: 'Categories organise transactions (Groceries, Leisure, Salary…). Each wallet has its own categories — creating a few before logging the first transactions is recommended.'
     empty: No category for this wallet yet.
     no_wallet: Create a wallet first to manage categories.
     wallet: Wallet
@@ -117,7 +117,7 @@ personal_finance:
       name_required: Category name is required.
   transactions:
     title: Transactions
-    help: 'Log incomes and expenses here. You can also transfer between wallets, split one expense across multiple categories, or adjust the balance manually — buttons above.'
+    help: 'This page lists incomes and expenses for the selected wallet. The actions above also support wallet-to-wallet transfers, splitting an expense across multiple categories, or manually adjusting the balance.'
     empty: No transaction for this wallet yet.
     no_wallet: Create a wallet first to record transactions.
     uncategorized: Uncategorized
@@ -217,7 +217,7 @@ personal_finance:
       amount_positive: Each line amount must be strictly positive.
   budget:
     title: Monthly budget
-    help: 'Set how much you plan to spend each month per category. Aurora compares planned vs. actual using your transactions. The 📃 button on each line opens the filtered list of transactions feeding that row.'
+    help: 'The monthly budget defines planned amounts per category. A planned-vs-actual comparison is computed automatically from the month''s transactions. Each row exposes a button that opens the filtered list of transactions feeding it.'
     no_wallet: Create a wallet first to start budgeting.
     no_category: No category
     add_item: Add a line
@@ -262,7 +262,7 @@ personal_finance:
   dashboard:
     title: Dashboard
     subtitle: Personal finance overview at a glance for this month.
-    help: 'Monthly summary of your pinned wallets: income / expense KPIs, 30-day sparkline, top categories, recent transactions and budget alerts. Pin or unpin wallets from the Wallets page.'
+    help: 'Monthly summary of pinned wallets: income / expense KPIs, 30-day sparkline, top categories, recent transactions and budget alerts. Wallets are pinned or unpinned from the Wallets page.'
     vs_previous_month: vs. previous month
     income_minus_expense: Income − Expense
     across_wallets: 'across {count} wallet(s)'
@@ -285,7 +285,7 @@ personal_finance:
       total_balance: Total balance
   categorization:
     title: Auto-categorization
-    help: 'Aurora learns to categorise your transactions from their description: every time you save a transaction with a category, a "description → category" rule is created or strengthened. Fix or delete obsolete rules here.'
+    help: 'Auto-categorisation learns to classify transactions from their description: every time a transaction is saved with a category, a "description → category" rule is created or strengthened. This page lets a misclassification be fixed or an obsolete rule deleted.'
     empty: No rules yet. Categorise a few transactions so the system can learn.
     search_placeholder: Search by pattern or category…
     deleted: Rule deleted.
@@ -307,8 +307,8 @@ personal_finance:
       scheduled: Scheduled
     empty_recurring: No recurring transactions yet. Add one so you don't re-enter your fixed bills every month.
     empty_scheduled: No scheduled transactions yet. Add one to plan a future income or expense.
-    help_recurring: Recurring transactions repeat every month on a fixed day (e.g. rent, subscription). They are automatically generated on the specified day.
-    help_scheduled: Scheduled transactions are one-time future transactions you anticipate (e.g. taxes, gift). You can materialise them manually when they occur.
+    help_recurring: Recurring transactions repeat every month on a fixed day (e.g. rent, subscription). They are generated automatically on the specified day.
+    help_scheduled: Scheduled transactions are one-time future transactions to anticipate (e.g. taxes, gift). They are materialised manually when they occur.
     add_recurring: New recurring
     add_scheduled: New scheduled
     edit_recurring: Edit recurring
@@ -359,7 +359,7 @@ personal_finance:
       date_required: Date is required.
   goals:
     title: Savings goals
-    help: 'Define your savings goals (holidays, real estate down payment, big purchase…). Link a goal to a category and Aurora will sum the transactions in that category as progress. Otherwise, deposit manually with the + button.'
+    help: 'Savings goals track a target amount (holidays, real estate down payment, big purchase…). When a goal is linked to a category, transactions in that category are summed automatically as progress. Otherwise, deposits are recorded manually via the dedicated button.'
     add: New goal
     edit: Edit goal
     empty: No goals yet. Create your first savings goal to start tracking progress.
