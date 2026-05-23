@@ -238,9 +238,9 @@ function totalsLine(summary) {
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             <slot name="extra-headers" :section="section" />
-                            <AppButton variant="ghost" size="sm" v-on:click="onCreate(section)">
+                            <AppButton variant="ghost" size="sm" :title="t('personal_finance.budget.add_item')" v-on:click="onCreate(section)">
                                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                                {{ t("personal_finance.budget.add_item") }}
+                                <span class="hidden sm:inline">{{ t("personal_finance.budget.add_item") }}</span>
                             </AppButton>
                         </div>
                     </header>
