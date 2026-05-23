@@ -25,7 +25,7 @@ backend:
           delete: Supprimer des documents PDF générés
   modules:
     welding_backend: Soudures
-    welding_backend_description: WeldingWorkflows de soudure réglementée — modèles,
+    welding_backend_description: Workflows de soudure réglementée — modèles,
       exécution étape par étape, validations et signatures
   parameters:
     welding_reference_prefix:
@@ -42,9 +42,9 @@ backend:
     sections:
       welding: Soudures
     welding: Soudures
-    welding_description: WeldingWorkflows de soudure réglementée
-    welding_workflows: WeldingWorkflows
-    welding_workflows_description: WeldingWorkflows de soudure en cours d'exécution
+    welding_description: Workflows de soudure réglementée
+    welding_workflows: Workflows
+    welding_workflows_description: Workflows de soudure en cours d'exécution
       (assignés aux soudeurs)
     welding_workflow_templates: Modèles de workflow
     welding_workflow_templates_description: Gérer les modèles de workflow de soudure
@@ -146,7 +146,7 @@ backend:
         et la génération de PDF ne sont pas disponibles.
 welding:
   title: Soudures
-  subtitle: WeldingWorkflows de soudure réglementée
+  subtitle: Workflows de soudure réglementée
   placeholder: Le module est installé. Les modèles de workflow et les instances en
     cours apparaîtront ici.
   workflow_templates:
@@ -156,6 +156,8 @@ welding:
     search_placeholder: Rechercher un modèle (titre, portée)…
     search_no_match: Aucun modèle ne correspond à votre recherche.
     steps: étape(s)
+    col_status: Statut
+    col_steps: Étapes
     status_draft: Brouillon
     status_published: Publié
     status_archived: Archivé
@@ -194,14 +196,20 @@ welding:
       pdf_template_required: Le PDF template est obligatoire
       position_invalid: La position doit être un entier positif ou zéro
   workflows:
-    title: WeldingWorkflows
-    subtitle: WeldingWorkflows de soudure en cours et terminés
+    title: Workflows
+    subtitle: Workflows de soudure en cours et terminés
     empty: Aucun workflow démarré pour l'instant.
     loading: Chargement des workflows…
     search_placeholder: Rechercher (référence, modèle, soudeur)…
     search_no_match: Aucun workflow ne correspond à votre recherche.
     filter_status: Filtrer par statut
     filter_all: Tous les statuts
+    col_reference: Référence
+    col_template: Modèle
+    col_assignee: Soudeur
+    col_status: Statut
+    col_created_at: Créé le
+    field_template_placeholder: Sélectionnez un modèle publié
     no_assignee: Pas de soudeur assigné
     no_assignee_option: Aucun
     status_draft: Brouillon
@@ -211,7 +219,7 @@ welding:
     status_rejected: Rejeté
     status_archived: Archivé
     new: Nouveau workflow
-    created: WeldingWorkflow créé
+    created: Workflow créé
     create_and_open: Créer et ouvrir
     loading_options: Chargement…
     field_template: Modèle de workflow
@@ -230,8 +238,9 @@ welding:
       decision_invalid: La décision doit être 'validate' ou 'reject'
       unauthenticated: Utilisateur non authentifié
   runner:
+    open: Ouvrir le workflow
     start_workflow: Démarrer le workflow
-    started: WeldingWorkflow démarré
+    started: Workflow démarré
     start_to_see_steps: Démarrez le workflow pour générer les étapes à partir du modèle
     reject_workflow: Rejeter le workflow
     reject_workflow_warning: Le rejet est irréversible et terminal. Le soudeur devra
@@ -240,9 +249,9 @@ welding:
     rejection_reason_placeholder: Décrivez précisément la raison du rejet (non-conformité,
       problème de procédure…)
     confirm_reject: Confirmer le rejet
-    workflow_rejected: WeldingWorkflow rejeté
+    workflow_rejected: Workflow rejeté
     archive_workflow: Archiver le workflow
-    workflow_archived: WeldingWorkflow archivé
+    workflow_archived: Workflow archivé
     requires_validation_by: Validation requise par
     previous_rejection: Rejet précédent
     validation_comment: Commentaire du validateur

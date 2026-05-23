@@ -4,9 +4,12 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { ScrollText, Plus, Pencil, Send, Archive, Copy, Trash2 } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
+import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
+import AppInput from "@/shared/components/form/input/AppInput.vue";
+import AppTextarea from "@/shared/components/form/input/AppTextarea.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 import { translateServerErrors } from "@/shared/utils/validation/translateServerErrors.js";
 import { useTemplateStatus } from "@welding/backend/composables/useWeldingStatus.js";
@@ -101,7 +104,7 @@ async function doDelete() {
 </script>
 
 <template>
-    <div class="p-4 sm:p-6 space-y-6">
+    <div class="p-4 sm:p-6 space-y-4">
         <div class="flex items-center gap-3">
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
                 <ScrollText class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
@@ -118,26 +121,21 @@ async function doDelete() {
                 :placeholder="t('welding.workflow_templates.search_placeholder')"
             />
             <template #actions>
-                <AppButton variant="primary" v-on:click="openCreate">
+                <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="openCreate">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     {{ t("welding.workflow_templates.new") }}
                 </AppButton>
             </template>
         </AppListToolbar>
 
-        <div v-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
-            {{ t("welding.workflow_templates.empty") }}
-        </div>
-        <div v-else-if="filteredItems.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
-            {{ t("welding.workflow_templates.search_no_match") }}
-        </div>
-        <ul v-else class="space-y-2">
-            <li
+        <!-- Mobile card layout -->
+        <div class="sm:hidden space-y-3">
+            <div
                 v-for="template in filteredItems"
                 :key="template.id"
-                class="rounded-lg border border-line bg-surface p-4 flex flex-wrap items-center gap-4"
+                class="bg-surface border border-line rounded-lg p-4 space-y-3"
             >
-                <div class="flex-1 min-w-0">
+                <div class="space-y-1">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="font-medium text-primary truncate">{{ template.title }}</span>
                         <span class="text-xs text-muted">v{{ template.version }}</span>
@@ -145,94 +143,118 @@ async function doDelete() {
                             {{ t("welding.workflow_templates.status_" + template.status) }}
                         </span>
                     </div>
-                    <div class="text-xs text-secondary mt-0.5">
+                    <p class="text-xs text-secondary">
                         {{ template.applicableTo || "—" }} ·
                         {{ template.stepsCount }} {{ t("welding.workflow_templates.steps") }}
-                    </div>
+                    </p>
                 </div>
-                <div class="flex flex-wrap gap-1">
-                    <AppButton
-                        variant="ghost"
-                        size="sm"
-                        :href="`/backend/welding/workflow-templates/${template.id}/editor`"
-                        :aria-label="t('welding.workflow_templates.open')"
-                    >
-                        <Pencil class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("welding.workflow_templates.open") }}
-                    </AppButton>
-                    <AppButton
-                        v-if="template.status === 'draft'"
-                        variant="ghost"
-                        size="sm"
-                        :loading="requestLoading"
-                        :disabled="requestLoading"
-                        v-on:click="publish(template)"
-                    >
-                        <Send class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("welding.workflow_templates.publish") }}
-                    </AppButton>
-                    <AppButton
-                        v-if="template.status === 'published'"
-                        variant="ghost"
-                        size="sm"
-                        :loading="requestLoading"
-                        :disabled="requestLoading"
-                        v-on:click="clone(template)"
-                    >
-                        <Copy class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("welding.workflow_templates.clone") }}
-                    </AppButton>
-                    <AppButton
-                        v-if="template.status !== 'archived'"
-                        variant="ghost"
-                        size="sm"
-                        :loading="requestLoading"
-                        :disabled="requestLoading"
-                        v-on:click="archive(template)"
-                    >
-                        <Archive class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("welding.workflow_templates.archive") }}
-                    </AppButton>
-                    <AppButton
-                        variant="ghost"
-                        size="sm"
-                        :aria-label="t('welding.workflow_templates.delete')"
-                        v-on:click="confirmDelete(template)"
-                    >
-                        <Trash2 class="w-3.5 h-3.5 text-rose-500" :stroke-width="2" />
-                    </AppButton>
-                </div>
-            </li>
-        </ul>
-
-        <AppModal :show="createOpen" :title="t('welding.workflow_templates.new')" v-on:close="createOpen = false">
-            <div class="space-y-3">
-                <div>
-                    <label for="tplTitle" class="block text-xs font-medium text-secondary mb-1">
-                        {{ t("welding.workflow_templates.field_title") }} *
-                    </label>
-                    <input id="tplTitle" v-model="form.title" type="text" class="w-full rounded border border-line bg-surface p-2 text-sm" />
-                    <p v-if="formErrors.title" class="text-xs text-rose-500 dark:text-rose-400 mt-1">{{ formErrors.title }}</p>
-                </div>
-                <div>
-                    <label for="tplDesc" class="block text-xs font-medium text-secondary mb-1">
-                        {{ t("welding.workflow_templates.field_description") }}
-                    </label>
-                    <textarea id="tplDesc" v-model="form.description" rows="3" class="w-full rounded border border-line bg-surface p-2 text-sm"></textarea>
-                </div>
-                <div>
-                    <label for="tplScope" class="block text-xs font-medium text-secondary mb-1">
-                        {{ t("welding.workflow_templates.field_applicable_to") }}
-                    </label>
-                    <input
-                        id="tplScope"
-                        v-model="form.applicableTo"
-                        type="text"
-                        class="w-full rounded border border-line bg-surface p-2 text-sm"
-                        :placeholder="t('welding.workflow_templates.field_applicable_to_placeholder')"
-                    />
+                <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-line">
+                    <AppIconButton color="accent" :title="t('welding.workflow_templates.open')" :href="`/backend/welding/workflow-templates/${template.id}/editor`">
+                        <Pencil class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton v-if="template.status === 'draft'" color="emerald" :title="t('welding.workflow_templates.publish')" v-on:click="publish(template)">
+                        <Send class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton v-if="template.status === 'published'" color="sky" :title="t('welding.workflow_templates.clone')" v-on:click="clone(template)">
+                        <Copy class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton v-if="template.status !== 'archived'" color="amber" :title="t('welding.workflow_templates.archive')" v-on:click="archive(template)">
+                        <Archive class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
+                    <AppIconButton color="rose" :title="t('welding.workflow_templates.delete')" v-on:click="confirmDelete(template)">
+                        <Trash2 class="w-4 h-4" :stroke-width="2" />
+                    </AppIconButton>
                 </div>
             </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-surface-2/50 border-b border-line/40">
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("welding.workflow_templates.field_title") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("welding.workflow_templates.field_applicable_to") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("welding.workflow_templates.col_status") }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("welding.workflow_templates.col_steps") }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-line/40">
+                    <tr
+                        v-for="template in filteredItems"
+                        :key="template.id"
+                        class="group hover:bg-surface-2/40 transition-colors"
+                    >
+                        <td class="px-6 py-3">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-medium text-primary truncate">{{ template.title }}</span>
+                                <span class="text-xs text-muted">v{{ template.version }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ template.applicableTo || "—" }}</td>
+                        <td class="px-6 py-3 hidden lg:table-cell">
+                            <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_BADGE[template.status]]">
+                                {{ t("welding.workflow_templates.status_" + template.status) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-3 text-secondary hidden lg:table-cell">
+                            {{ template.stepsCount }}
+                        </td>
+                        <td class="px-6 py-3">
+                            <div class="flex items-center justify-end gap-0.5">
+                                <AppIconButton color="accent" :title="t('welding.workflow_templates.open')" :href="`/backend/welding/workflow-templates/${template.id}/editor`">
+                                    <Pencil class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="template.status === 'draft'" color="emerald" :title="t('welding.workflow_templates.publish')" v-on:click="publish(template)">
+                                    <Send class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="template.status === 'published'" color="sky" :title="t('welding.workflow_templates.clone')" v-on:click="clone(template)">
+                                    <Copy class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton v-if="template.status !== 'archived'" color="amber" :title="t('welding.workflow_templates.archive')" v-on:click="archive(template)">
+                                    <Archive class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                                <AppIconButton color="rose" :title="t('welding.workflow_templates.delete')" v-on:click="confirmDelete(template)">
+                                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="items.length === 0">
+                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t("welding.workflow_templates.empty") }}</td>
+                    </tr>
+                    <tr v-else-if="filteredItems.length === 0">
+                        <td :colspan="5" class="px-6 py-8 text-center text-sm text-muted">{{ t("welding.workflow_templates.search_no_match") }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p v-if="items.length === 0" class="sm:hidden py-8 text-center text-sm text-muted">{{ t("welding.workflow_templates.empty") }}</p>
+        <p v-else-if="filteredItems.length === 0" class="sm:hidden py-8 text-center text-sm text-muted">{{ t("welding.workflow_templates.search_no_match") }}</p>
+
+        <AppModal :show="createOpen" max-width="lg" :title="t('welding.workflow_templates.new')" :icon="ScrollText" v-on:close="createOpen = false">
+            <form class="space-y-4" v-on:submit.prevent="submitCreate">
+                <AppInput
+                    v-model="form.title"
+                    :label="t('welding.workflow_templates.field_title')"
+                    :error="formErrors.title"
+                    required
+                />
+                <AppTextarea
+                    v-model="form.description"
+                    :label="t('welding.workflow_templates.field_description')"
+                    :rows="3"
+                    :error="formErrors.description"
+                />
+                <AppInput
+                    v-model="form.applicableTo"
+                    :label="t('welding.workflow_templates.field_applicable_to')"
+                    :placeholder="t('welding.workflow_templates.field_applicable_to_placeholder')"
+                    :error="formErrors.applicableTo"
+                />
+            </form>
             <template #footer>
                 <AppButton variant="ghost" v-on:click="createOpen = false">{{ t("welding.runner.cancel") }}</AppButton>
                 <AppButton variant="primary" :loading="requestLoading" :disabled="requestLoading" v-on:click="submitCreate">
@@ -243,7 +265,9 @@ async function doDelete() {
 
         <AppModal
             :show="pendingDelete !== null"
+            max-width="md"
             :title="t('welding.workflow_templates.delete')"
+            :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
             <p class="text-sm text-secondary">{{ t("welding.workflow_templates.confirm_delete") }}</p>

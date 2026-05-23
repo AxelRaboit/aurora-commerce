@@ -43,9 +43,9 @@ backend:
       welding: Welding
     welding: Welding
     welding_description: Regulated welding workflows
-    welding_workflows: WeldingWorkflows
+    welding_workflows: Workflows
     welding_workflows_description: Ongoing welding workflows (assigned to welders)
-    welding_workflow_templates: WeldingWorkflow templates
+    welding_workflow_templates: Workflow templates
     welding_workflow_templates_description: Manage welding workflow templates (versions,
       steps, required PDFs)
     welding_pdf_templates: PDF Templates
@@ -144,15 +144,17 @@ backend:
 welding:
   title: Welding
   subtitle: Regulated welding workflows
-  placeholder: The module is installed. WeldingWorkflow templates and running instances
+  placeholder: The module is installed. Workflow templates and running instances
     will appear here.
   workflow_templates:
-    title: WeldingWorkflow templates
+    title: Workflow templates
     subtitle: Regulated welding procedure templates
     empty: No workflow template yet. Create one to get started.
     search_placeholder: Search a template (title, scope)…
     search_no_match: No template matches your search.
     steps: step(s)
+    col_status: Status
+    col_steps: Steps
     status_draft: Draft
     status_published: Published
     status_archived: Archived
@@ -191,7 +193,7 @@ welding:
       pdf_template_required: PDF template is required
       position_invalid: Position must be a non-negative integer
   workflows:
-    title: WeldingWorkflows
+    title: Workflows
     subtitle: Ongoing and completed welding workflows
     empty: No workflow started yet.
     loading: Loading workflows…
@@ -199,13 +201,19 @@ welding:
     search_no_match: No workflow matches your search.
     filter_status: Filter by status
     filter_all: All statuses
+    col_reference: Reference
+    col_template: Template
+    col_assignee: Welder
+    col_status: Status
+    col_created_at: Created at
+    field_template_placeholder: Pick a published template
     no_assignee: No welder assigned
     no_assignee_option: None
     new: New workflow
-    created: WeldingWorkflow created
+    created: Workflow created
     create_and_open: Create and open
     loading_options: Loading…
-    field_template: WeldingWorkflow template
+    field_template: Workflow template
     field_assignee: Assigned welder
     no_published_template: No published template available. Publish a template first.
     status_draft: Draft
@@ -215,7 +223,7 @@ welding:
     status_rejected: Rejected
     status_archived: Archived
     errors:
-      template_required: WeldingWorkflow template is required
+      template_required: Workflow template is required
       reason_required: A rejection reason is required
   workflow_steps:
     status_pending: To do
@@ -227,8 +235,9 @@ welding:
       decision_invalid: Decision must be 'validate' or 'reject'
       unauthenticated: Unauthenticated user
   runner:
+    open: Open workflow
     start_workflow: Start workflow
-    started: WeldingWorkflow started
+    started: Workflow started
     start_to_see_steps: Start the workflow to generate steps from the template
     reject_workflow: Reject workflow
     reject_workflow_warning: Rejection is irreversible and terminal. The welder will
@@ -237,9 +246,9 @@ welding:
     rejection_reason_placeholder: Describe precisely the reason for rejection (non-conformity,
       procedure issue…)
     confirm_reject: Confirm rejection
-    workflow_rejected: WeldingWorkflow rejected
+    workflow_rejected: Workflow rejected
     archive_workflow: Archive workflow
-    workflow_archived: WeldingWorkflow archived
+    workflow_archived: Workflow archived
     requires_validation_by: Validation required by
     previous_rejection: Previous rejection
     validation_comment: Validator comment
