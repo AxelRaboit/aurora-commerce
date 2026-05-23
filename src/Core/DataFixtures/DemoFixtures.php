@@ -62,6 +62,31 @@ use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Notes\Markdown\Entity\AbstractMarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
+use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
+use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRule;
+use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
+use Aurora\Module\PersonalFinance\Categorization\Support\PatternNormalizer;
+use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategory;
+use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
+use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoal;
+use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
+use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceRecurringTransaction;
+use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceRecurringTransactionInterface;
+use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceScheduledTransaction;
+use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceScheduledTransactionInterface;
+use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
+use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
+use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMember;
+use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletModeEnum;
+use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
@@ -95,6 +120,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Comprehensive demo fixtures covering all Aurora modules.
@@ -151,6 +177,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createPlanning($manager, $users);
         $this->createProjects($manager, $users, $companies, $contacts);
         $this->createMarkdownNotes($manager, $users);
+        $this->createPersonalFinance($manager, $users);
         $this->createMenuItems($manager, $media);
 
         $manager->flush();
@@ -2573,6 +2600,333 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     // ── Menus ─────────────────────────────────────────────────────────────────
 
     /** @param Media[] $media */
+    // ── Personal Finance ──────────────────────────────────────────────────────
+
+    /**
+     * Seeds a realistic personal-finance demo on the first user: 3 wallets
+     * (current account in budget mode + savings + cash), ~30 categories,
+     * ~70 transactions across 3 months, 1 transfer + 1 split, a populated
+     * budget for the current month, 3 goals with various progress states,
+     * 3 recurring rules + 2 scheduled, and a handful of learnt
+     * categorization rules.
+     *
+     * Bypasses the Managers on purpose — fixtures should not fire events,
+     * dispatch audit logs, or trigger categorization learning side
+     * effects. Anything Manager-computed (goal.savedAmount when the
+     * goal is linked to a category, rule.hits) is pre-set to a value
+     * matching the seeded transactions so the demo stays coherent
+     * without a runtime recompute.
+     *
+     * @param User[] $users
+     */
+    private function createPersonalFinance(EntityManagerInterface $em, array $users): void
+    {
+        if ([] === $users) {
+            return;
+        }
+
+        /** @var class-string<PersonalFinanceWallet> $walletClass */
+        $walletClass = $em->getClassMetadata(PersonalFinanceWalletInterface::class)->getName();
+        /** @var class-string<PersonalFinanceWalletMember> $memberClass */
+        $memberClass = $em->getClassMetadata(PersonalFinanceWalletMemberInterface::class)->getName();
+        /** @var class-string<PersonalFinanceCategory> $categoryClass */
+        $categoryClass = $em->getClassMetadata(PersonalFinanceCategoryInterface::class)->getName();
+        /** @var class-string<PersonalFinanceTransaction> $txClass */
+        $txClass = $em->getClassMetadata(PersonalFinanceTransactionInterface::class)->getName();
+        /** @var class-string<PersonalFinanceBudget> $budgetClass */
+        $budgetClass = $em->getClassMetadata(PersonalFinanceBudgetInterface::class)->getName();
+        /** @var class-string<PersonalFinanceBudgetItem> $budgetItemClass */
+        $budgetItemClass = $em->getClassMetadata(PersonalFinanceBudgetItemInterface::class)->getName();
+        /** @var class-string<PersonalFinanceGoal> $goalClass */
+        $goalClass = $em->getClassMetadata(PersonalFinanceGoalInterface::class)->getName();
+        /** @var class-string<PersonalFinanceRecurringTransaction> $recClass */
+        $recClass = $em->getClassMetadata(PersonalFinanceRecurringTransactionInterface::class)->getName();
+        /** @var class-string<PersonalFinanceScheduledTransaction> $schedClass */
+        $schedClass = $em->getClassMetadata(PersonalFinanceScheduledTransactionInterface::class)->getName();
+        /** @var class-string<PersonalFinanceCategorizationRule> $ruleClass */
+        $ruleClass = $em->getClassMetadata(PersonalFinanceCategorizationRuleInterface::class)->getName();
+
+        $owner = $users[0];
+        $today = new DateTimeImmutable('today');
+
+        // ── Wallets (+ Owner membership for the Voter to grant access) ────────
+        $walletDefs = [
+            ['name' => 'Compte courant', 'mode' => PersonalFinanceWalletModeEnum::Budget, 'startBalance' => '2500.00', 'pinned' => true,  'position' => 0],
+            ['name' => 'Livret A',       'mode' => PersonalFinanceWalletModeEnum::Simple, 'startBalance' => '5000.00', 'pinned' => true,  'position' => 1],
+            ['name' => 'Cash',           'mode' => PersonalFinanceWalletModeEnum::Simple, 'startBalance' => '100.00',  'pinned' => false, 'position' => 2],
+        ];
+
+        $wallets = [];
+        foreach ($walletDefs as $def) {
+            $wallet = new $walletClass();
+            $wallet->setOwner($owner)
+                   ->setName($def['name'])
+                   ->setMode($def['mode'])
+                   ->setStartBalance($def['startBalance'])
+                   ->setShowOnDashboard($def['pinned'])
+                   ->setPosition($def['position']);
+            $em->persist($wallet);
+
+            $member = new $memberClass();
+            $member->setWallet($wallet)->setUser($owner)->setRole(PersonalFinanceWalletRoleEnum::Owner);
+            $em->persist($member);
+
+            $wallets[$def['name']] = $wallet;
+        }
+
+        // ── Categories (per wallet, user-created only — system categories
+        //     are created lazily by TransferService/BalanceAdjustmentService) ─
+        $categoryDefs = [
+            'Compte courant' => ['Salaire', 'Loyer', 'Courses', 'Restaurant', 'Transport', 'Loisirs', 'Santé', 'Abonnements', 'Vêtements'],
+            'Livret A' => ['Épargne'],
+            'Cash' => ['Cash divers', 'Pourboires'],
+        ];
+
+        /** @var array<string, array<string, PersonalFinanceCategory>> $categories nested by [walletName][categoryName] */
+        $categories = [];
+        foreach ($categoryDefs as $walletName => $names) {
+            $categories[$walletName] = [];
+            foreach ($names as $name) {
+                $cat = new $categoryClass();
+                $cat->setUser($owner)->setWallet($wallets[$walletName])->setName($name);
+                $em->persist($cat);
+                $categories[$walletName][$name] = $cat;
+            }
+        }
+
+        // ── Transactions over the last 3 months ───────────────────────────────
+        $cc = $wallets['Compte courant'];
+        $ccCats = $categories['Compte courant'];
+
+        $txDefs = [];
+
+        // Monthly salary (3 months back through today, 1st of month)
+        foreach ([90, 60, 30, 0] as $daysAgo) {
+            $date = $today->modify("-{$daysAgo} days")->modify('first day of this month');
+            $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Salaire'], 'type' => PersonalFinanceTransactionTypeEnum::Income, 'amount' => '2800.00', 'date' => $date, 'desc' => 'Salaire Aurora Tech'];
+        }
+
+        // Rent (5th of each month)
+        foreach ([90, 60, 30, 0] as $daysAgo) {
+            $date = $today->modify("-{$daysAgo} days")->modify('first day of this month')->modify('+4 days');
+            if ($date <= $today) {
+                $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Loyer'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '850.00', 'date' => $date, 'desc' => 'Loyer appartement'];
+            }
+        }
+
+        // Subscriptions (15th of each month)
+        foreach ([85, 55, 25] as $daysAgo) {
+            $date = $today->modify("-{$daysAgo} days");
+            $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Abonnements'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '13.99', 'date' => $date, 'desc' => 'Netflix'];
+            $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Abonnements'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '9.99', 'date' => $date->modify('+3 days'), 'desc' => 'Spotify Premium'];
+        }
+
+        // Variable spending — 6 groceries, 5 restaurants, 4 transport, 3 leisure across 3 months
+        $variablePattern = [
+            ['cat' => 'Courses',    'samples' => [['65.40', 'Carrefour'], ['38.20', 'Lidl'], ['72.10', 'Carrefour'], ['41.90', 'Biocoop'], ['58.30', 'Carrefour'], ['29.80', 'Lidl']]],
+            ['cat' => 'Restaurant', 'samples' => [['28.50', 'Pizzeria Mario'], ['45.00', 'Sushi Yama'], ['18.40', 'McDonalds'], ['52.00', 'Le Bistrot'], ['22.00', 'Tacos King']]],
+            ['cat' => 'Transport',  'samples' => [['62.00', 'Plein essence'], ['45.30', 'Plein essence'], ['58.20', 'Plein essence'], ['12.00', 'Parking centre-ville']]],
+            ['cat' => 'Loisirs',    'samples' => [['25.00', 'Cinéma'], ['80.00', 'Concert'], ['45.00', 'Salle de sport']]],
+            ['cat' => 'Santé',      'samples' => [['28.00', 'Pharmacie'], ['55.00', 'Consultation médecin']]],
+            ['cat' => 'Vêtements',  'samples' => [['89.00', 'Uniqlo'], ['45.50', 'Decathlon']]],
+        ];
+
+        foreach ($variablePattern as $group) {
+            $cat = $ccCats[$group['cat']];
+            foreach ($group['samples'] as $idx => [$amount, $desc]) {
+                // Spread across the last 90 days deterministically (no random — fixtures are reproducible)
+                $offset = 85 - $idx * 14;
+                if ($offset < 0) {
+                    continue;
+                }
+                $txDefs[] = ['wallet' => $cc, 'cat' => $cat, 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => $amount, 'date' => $today->modify("-{$offset} days"), 'desc' => $desc];
+            }
+        }
+
+        // A few cash transactions
+        $cash = $wallets['Cash'];
+        $txDefs[] = ['wallet' => $cash, 'cat' => $categories['Cash']['Cash divers'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '15.00', 'date' => $today->modify('-12 days'), 'desc' => 'Boulangerie'];
+        $txDefs[] = ['wallet' => $cash, 'cat' => $categories['Cash']['Pourboires'], 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '5.00', 'date' => $today->modify('-8 days'), 'desc' => 'Pourboire serveur'];
+
+        foreach ($txDefs as $def) {
+            $tx = new $txClass();
+            $tx->setUser($owner)
+               ->setWallet($def['wallet'])
+               ->setCategory($def['cat'])
+               ->setType($def['type'])
+               ->setAmount($def['amount'])
+               ->setDate($def['date'])
+               ->setDescription($def['desc']);
+            $em->persist($tx);
+        }
+
+        // ── Transfer (Compte courant → Livret A, 500€) ───────────────────────
+        $transferId = Uuid::v7()->toRfc4122();
+        $transferDate = $today->modify('-15 days');
+
+        $livret = $wallets['Livret A'];
+        // System categories created on demand (mirrors TransferService::getOrCreateSystem)
+        $expenseSystemCat = new $categoryClass();
+        $expenseSystemCat->setUser($owner)->setWallet($cc)
+                         ->setName(sprintf('Virement vers %s', $livret->getName()))
+                         ->setIsSystem(true)
+                         ->setSystemKey('transfer_expense_PLACEHOLDER');
+        $em->persist($expenseSystemCat);
+
+        $incomeSystemCat = new $categoryClass();
+        $incomeSystemCat->setUser($owner)->setWallet($livret)
+                        ->setName('Virement reçu')
+                        ->setIsSystem(true)
+                        ->setSystemKey('transfer_income');
+        $em->persist($incomeSystemCat);
+
+        $em->flush(); // need IDs to compute the transfer_expense_{toWalletId} key
+
+        $expenseSystemCat->setSystemKey('transfer_expense_'.$livret->getId());
+
+        $expenseLeg = new $txClass();
+        $expenseLeg->setUser($owner)->setWallet($cc)->setCategory($expenseSystemCat)
+                   ->setType(PersonalFinanceTransactionTypeEnum::Expense)
+                   ->setAmount('500.00')->setDate($transferDate)
+                   ->setDescription('Virement épargne')->setTransferId($transferId);
+        $em->persist($expenseLeg);
+
+        $incomeLeg = new $txClass();
+        $incomeLeg->setUser($owner)->setWallet($livret)->setCategory($incomeSystemCat)
+                  ->setType(PersonalFinanceTransactionTypeEnum::Income)
+                  ->setAmount('500.00')->setDate($transferDate)
+                  ->setDescription('Virement épargne')->setTransferId($transferId);
+        $em->persist($incomeLeg);
+
+        // ── Split: 1 grocery split into Courses + Vêtements ──────────────────
+        $splitId = Uuid::v7()->toRfc4122();
+        $splitDate = $today->modify('-5 days');
+
+        $splitGroceries = new $txClass();
+        $splitGroceries->setUser($owner)->setWallet($cc)->setCategory($ccCats['Courses'])
+                       ->setType(PersonalFinanceTransactionTypeEnum::Expense)
+                       ->setAmount('80.00')->setDate($splitDate)
+                       ->setDescription('Carrefour — courses')->setSplitId($splitId);
+        $em->persist($splitGroceries);
+
+        $splitClothes = new $txClass();
+        $splitClothes->setUser($owner)->setWallet($cc)->setCategory($ccCats['Vêtements'])
+                     ->setType(PersonalFinanceTransactionTypeEnum::Expense)
+                     ->setAmount('35.00')->setDate($splitDate)
+                     ->setDescription('Carrefour — t-shirt')->setSplitId($splitId);
+        $em->persist($splitClothes);
+
+        // ── Budget — current month, populated for Compte courant ─────────────
+        $budget = new $budgetClass();
+        $budget->setUser($owner)->setWallet($cc)
+               ->setMonth($today->modify('first day of this month'))
+               ->setNotes('Budget mensuel');
+        $em->persist($budget);
+
+        $budgetItemDefs = [
+            ['section' => PersonalFinanceBudgetSectionEnum::Income,   'label' => 'Salaire',     'planned' => '2800.00', 'cat' => 'Salaire',     'repeat' => true,  'pos' => 0],
+            ['section' => PersonalFinanceBudgetSectionEnum::Bills,    'label' => 'Loyer',       'planned' => '850.00',  'cat' => 'Loyer',       'repeat' => true,  'pos' => 0],
+            ['section' => PersonalFinanceBudgetSectionEnum::Bills,    'label' => 'Abonnements', 'planned' => '30.00',   'cat' => 'Abonnements', 'repeat' => true,  'pos' => 1],
+            ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Courses',     'planned' => '400.00',  'cat' => 'Courses',     'repeat' => true,  'pos' => 0],
+            ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Restaurant',  'planned' => '120.00',  'cat' => 'Restaurant',  'repeat' => true,  'pos' => 1],
+            ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Transport',   'planned' => '150.00',  'cat' => 'Transport',   'repeat' => true,  'pos' => 2],
+            ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Loisirs',     'planned' => '100.00',  'cat' => 'Loisirs',     'repeat' => true,  'pos' => 3],
+            ['section' => PersonalFinanceBudgetSectionEnum::Savings,  'label' => 'Épargne',     'planned' => '500.00',  'cat' => null,          'repeat' => true,  'pos' => 0],
+        ];
+
+        foreach ($budgetItemDefs as $def) {
+            $item = new $budgetItemClass();
+            $item->setBudget($budget)
+                 ->setSection($def['section'])
+                 ->setLabel($def['label'])
+                 ->setPlannedAmount($def['planned'])
+                 ->setCategory(null !== $def['cat'] ? $ccCats[$def['cat']] : null)
+                 ->setPosition($def['pos'])
+                 ->setRepeatNextMonth($def['repeat']);
+            $em->persist($item);
+        }
+
+        // ── Goals — 3 with various progress, deadline, color ─────────────────
+        $goalDefs = [
+            ['name' => 'Vacances d\'été',     'target' => '1500.00', 'saved' => '600.00',   'deadlineMonths' => 6,  'color' => '#f59e0b', 'wallet' => $livret, 'category' => null],
+            ['name' => 'Apport immobilier',   'target' => '15000.00', 'saved' => '4500.00', 'deadlineMonths' => 18, 'color' => '#6366f1', 'wallet' => $livret, 'category' => null],
+            ['name' => 'Permis de conduire',  'target' => '1200.00', 'saved' => '1200.00',  'deadlineMonths' => null, 'color' => '#10b981', 'wallet' => null,   'category' => null],
+        ];
+
+        foreach ($goalDefs as $def) {
+            $goal = new $goalClass();
+            $goal->setUser($owner)
+                 ->setName($def['name'])
+                 ->setTargetAmount($def['target'])
+                 ->setSavedAmount($def['saved'])
+                 ->setWallet($def['wallet'])
+                 ->setCategory($def['category'])
+                 ->setColor($def['color']);
+            if (null !== $def['deadlineMonths']) {
+                $goal->setDeadline($today->modify('+'.$def['deadlineMonths'].' months'));
+            }
+            $em->persist($goal);
+        }
+
+        // ── Recurring rules ───────────────────────────────────────────────────
+        $recurringDefs = [
+            ['cat' => 'Salaire',     'type' => PersonalFinanceTransactionTypeEnum::Income,  'amount' => '2800.00', 'day' => 1,  'desc' => 'Salaire Aurora Tech', 'active' => true],
+            ['cat' => 'Loyer',       'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '850.00',  'day' => 5,  'desc' => 'Loyer appartement',   'active' => true],
+            ['cat' => 'Abonnements', 'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '13.99',   'day' => 15, 'desc' => 'Netflix',             'active' => true],
+        ];
+
+        foreach ($recurringDefs as $def) {
+            $rec = new $recClass();
+            $rec->setUser($owner)->setWallet($cc)->setCategory($ccCats[$def['cat']])
+                ->setType($def['type'])->setAmount($def['amount'])
+                ->setDayOfMonth($def['day'])->setDescription($def['desc'])
+                ->setActive($def['active'])
+                ->setLastGeneratedAt($today->modify('first day of this month')); // already generated for current month
+            $em->persist($rec);
+        }
+
+        // ── Scheduled (one-off future transactions) ──────────────────────────
+        $scheduledDefs = [
+            ['cat' => null,          'type' => PersonalFinanceTransactionTypeEnum::Income,  'amount' => '1200.00', 'monthsAhead' => 1, 'desc' => 'Prime annuelle'],
+            ['cat' => 'Loyer',       'type' => PersonalFinanceTransactionTypeEnum::Expense, 'amount' => '850.00',  'monthsAhead' => 2, 'desc' => 'Taxe foncière'],
+        ];
+
+        foreach ($scheduledDefs as $def) {
+            $sched = new $schedClass();
+            $sched->setUser($owner)->setWallet($cc)
+                  ->setCategory(null !== $def['cat'] ? $ccCats[$def['cat']] : null)
+                  ->setType($def['type'])->setAmount($def['amount'])
+                  ->setScheduledDate($today->modify('+'.$def['monthsAhead'].' months'))
+                  ->setDescription($def['desc']);
+            $em->persist($sched);
+        }
+
+        // ── Categorization rules — pre-learnt from the variable spending ────
+        // Pre-populated so the auto-suggestion demo works the moment the
+        // user types a known description; matches what the LearnSubscriber
+        // would have produced if events had fired during seeding.
+        $ruleDefs = [
+            ['desc' => 'Carrefour',     'cat' => $ccCats['Courses'],     'hits' => 3],
+            ['desc' => 'Lidl',          'cat' => $ccCats['Courses'],     'hits' => 2],
+            ['desc' => 'Biocoop',       'cat' => $ccCats['Courses'],     'hits' => 1],
+            ['desc' => 'Pizzeria Mario','cat' => $ccCats['Restaurant'],  'hits' => 1],
+            ['desc' => 'Plein essence', 'cat' => $ccCats['Transport'],   'hits' => 3],
+            ['desc' => 'Netflix',       'cat' => $ccCats['Abonnements'], 'hits' => 3],
+            ['desc' => 'Spotify Premium','cat' => $ccCats['Abonnements'],'hits' => 3],
+        ];
+
+        foreach ($ruleDefs as $def) {
+            $pattern = PatternNormalizer::normalize($def['desc']);
+            if (null === $pattern) {
+                continue;
+            }
+            $rule = new $ruleClass();
+            $rule->setUser($owner)->setPattern($pattern)
+                 ->setCategory($def['cat'])->setHits($def['hits']);
+            $em->persist($rule);
+        }
+    }
+
     private function createMenuItems(EntityManagerInterface $em, array $media): void
     {
         // ── Ensure menus exist ────────────────────────────────────────────────
