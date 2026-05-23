@@ -1,0 +1,18 @@
+backend:
+  permissions:
+    names:
+      welding:
+        use: Accéder au module Soudures
+  modules:
+    welding_backend: Soudures
+    welding_backend_description: Workflows de soudure réglementée — modèles, exécution étape par étape, validations et signatures
+  nav:
+    sections:
+      welding: Soudures
+    welding: Soudures
+    welding_description: Workflows de soudure réglementée
+
+welding:
+  title: Soudures
+  subtitle: Workflows de soudure réglementée
+  placeholder: Le module est installé. Les modèles de workflow et les instances en cours apparaîtront ici.

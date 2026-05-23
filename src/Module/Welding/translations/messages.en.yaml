@@ -1,0 +1,18 @@
+backend:
+  permissions:
+    names:
+      welding:
+        use: Access the Welding module
+  modules:
+    welding_backend: Welding
+    welding_backend_description: Regulated welding workflows — templates, step-by-step execution, validations and signatures
+  nav:
+    sections:
+      welding: Welding
+    welding: Welding
+    welding_description: Regulated welding workflows
+
+welding:
+  title: Welding
+  subtitle: Regulated welding workflows
+  placeholder: The module is installed. Workflow templates and running instances will appear here.

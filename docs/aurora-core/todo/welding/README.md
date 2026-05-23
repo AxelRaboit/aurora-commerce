@@ -304,13 +304,33 @@ Un email envoyé au validator quand une step passe `AwaitingValidation`.
 Pas de framework notification générique avant qu'un besoin transversal
 soit identifié.
 
-### 11. Dépendance PdfForm — **vérification au boot du module**
+### 11. Dépendance PdfForm — **native via `ModuleParameterEnum::getCascadeRequires()`**
 
-`WeldingModule` implémente un check au bootstrap : si PdfForm est
-désactivé dans le toggle dashboard, Welding refuse de s'activer et
-affiche un message clair « Activez PdfForm d'abord ». **Premier cas
-d'inter-dépendance de modules dans Aurora** — la convention sera posée
-proprement et documentée pour les futurs modules dépendants.
+**Découverte sprint 1** : Aurora supporte déjà nativement les
+dépendances inter-modules top-level via `getCascadeRequires()`. Pas
+besoin de boot-check custom dans `WeldingModule`.
+
+L'ajout d'une ligne `self::WeldingBackend => self::PdfFormBackend->value`
+dans le `match` de `getCascadeRequires()` suffit. Effet :
+
+- Au runtime, `ModuleAccessChecker::isEnabled(WeldingBackend)` retourne
+  `false` si `PdfFormBackend` est désactivé — même si l'admin a coché
+  Welding dans le toggle dashboard. Donc `WeldingContext::isBackendEnabled()`
+  reflète la dépendance automatiquement, et `getNavSections()` retourne
+  `[]` quand PdfForm est OFF.
+- Côté UI du toggle dashboard, le système peut afficher la dépendance
+  (à confirmer via le module Dev).
+
+Le mécanisme distingue :
+- `getCascadeRequires()` (chaîne de dépendances arbitraire — Welding →
+  PdfForm est un cas top-level, voir ligne 338+ du fichier enum).
+- `getParentCase()` (hiérarchie parent-enfant entre un module et ses
+  sous-modules toggleables — pas applicable ici, Welding est top-level).
+
+Décision révisée : « premier cas d'inter-dépendance de modules dans
+Aurora » → faux, le mécanisme existe (cf. `ErpBackend` requires
+`CrmBackend`, `EcommerceBackend` requires `ErpBackend`, etc.). Welding
+suit simplement la même convention.
 
 ---
 
@@ -359,17 +379,23 @@ proprement et documentée pour les futurs modules dépendants.
 2. ✅ **Sprint 0 — audit PdfForm signature** : blocker confirmé (cf. décision #5).
 3. ✅ **Sprint 0.5 — instrumenter signature embed dans PdfForm** : livré,
    modification JS-only de `tools/pdf/fill.mjs`. Cf. décision #5 pour le détail.
-4. ⏸ **Sprint 1 — module + entités template** : `aurora:make:module Welding`
-   + `WorkflowTemplate` + `WorkflowStepTemplate` + `WorkflowStepPdfTemplate`,
-   CRUD admin V1, migration.
-4. ⏸ **Sprint 2 — entités instance** : `Workflow` + `WorkflowStep`,
+4. 🟡 **Sprint 1 — module + entités template** : *partiellement livré.*
+   - ✅ **1a** — Module shell : `WeldingModule` + `WeldingContext` +
+     Controller + Twig + Vue entrypoint + translations FR/EN + permission
+     `welding.use` + cascadeRequires `PdfFormBackend` (cf. décision #11).
+   - ⏸ **1b** — Entités template : `WorkflowTemplate` +
+     `WorkflowStepTemplate` + `WorkflowStepPdfTemplate` + CRUD admin + migration.
+5. ⏸ **Sprint 2 — entités instance** : `Workflow` + `WorkflowStep`,
    state machine de transition, hooks Manager. Référence
-   auto-numérotée `WLD-{YYYY}-{NNNNNN}` via Setting `welding.reference_prefix`.
-5. ⏸ **Sprint 3 — UI runner soudeur** : cœur du module. Wizard step-by-step,
+   auto-numérotée `WLD-{YYYY}-{NNNNNN}` via Setting `welding.reference_prefix`
+   (à ajouter sous `Module/Welding/Setting/`).
+6. ⏸ **Sprint 3 — UI runner soudeur** : cœur du module. Wizard step-by-step,
    intégration PdfForm filler.
-6. ⏸ **Sprint 4 — UI validateur + notifications email** : page validateur +
+7. ⏸ **Sprint 4 — UI validateur + notifications email** : page validateur +
    email Symfony Mailer simple sur `AwaitingValidation`.
-7. ⏸ **Sprint 5 — toggle + dépendance PdfForm + permissions + i18n + audit** :
-   finalisation. Premier cas d'inter-dépendance de modules (PdfForm requis).
-8. ⏸ **V2 (post-V1)** : archive Ged auto, multi-validation par step,
+8. ⏸ **Sprint 5 — permissions granulaires + audit** : permissions
+   spécifiques aux entités (`welding.workflow_template.view/edit/...`,
+   `welding.workflow.start/fill/validate/archive`), audit trail
+   réglementaire (timestamps + signatures immutables).
+9. ⏸ **V2 (post-V1)** : archive Ged auto, multi-validation par step,
    rattachement Project/Affaire (`contextType`/`contextId` sur `Workflow`).

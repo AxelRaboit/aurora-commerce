@@ -27,6 +27,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case HrBackend = 'modules_hr_backend';
     case VaultBackend = 'modules_vault_backend';
     case PdfFormBackend = 'modules_pdfform_backend';
+    case WeldingBackend = 'modules_welding_backend';
     case NotesBackend = 'modules_notes_backend';
     case PersonalFinanceBackend = 'modules_personal_finance_backend';
 
@@ -156,6 +157,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PdfFormBackend => 'backend.modules.pdfform_backend',
             self::PdfFormTemplates => 'backend.nav.pdfform_templates',
             self::PdfFormDocuments => 'backend.nav.pdfform_documents',
+            self::WeldingBackend => 'backend.modules.welding_backend',
             self::BillingTiers => 'backend.nav.tiers',
             self::BillingInvoices => 'backend.nav.invoices',
             self::BillingCompliance => 'backend.nav.ocr_import',
@@ -233,6 +235,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PdfFormBackend => 'backend.modules.pdfform_backend_description',
             self::PdfFormTemplates => 'backend.nav.pdfform_templates_description',
             self::PdfFormDocuments => 'backend.nav.pdfform_documents_description',
+            self::WeldingBackend => 'backend.modules.welding_backend_description',
             self::BillingTiers => 'backend.nav.tiers_description',
             self::BillingInvoices => 'backend.nav.invoices_description',
             self::BillingCompliance => 'backend.nav.ocr_import_description',
@@ -339,6 +342,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::EcommerceBackend, self::EcommerceFrontend => self::ErpBackend->value,
             self::BillingBackend => self::CrmBackend->value,
             self::PhotoFrontend => self::PhotoBackend->value,
+            self::WeldingBackend => self::PdfFormBackend->value,
             // Core sub-modules
             self::GeneralDashboard => self::GeneralBackend->value,
             // Platform sub-modules
