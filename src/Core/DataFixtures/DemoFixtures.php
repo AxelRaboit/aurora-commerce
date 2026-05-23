@@ -2694,7 +2694,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         // ── Categories (per wallet, user-created only — system categories
         //     are created lazily by TransferService/BalanceAdjustmentService) ─
         $categoryDefs = [
-            'Compte courant' => ['Salaire', 'Loyer', 'Courses', 'Restaurant', 'Transport', 'Loisirs', 'Santé', 'Abonnements', 'Vêtements'],
+            'Compte courant' => ['Salaire', 'Freelance', 'Cashback', 'Loyer', 'Courses', 'Restaurant', 'Transport', 'Loisirs', 'Santé', 'Abonnements', 'Vêtements'],
             'Livret A' => ['Épargne'],
             'Cash' => ['Cash divers', 'Pourboires'],
         ];
@@ -2722,6 +2722,46 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $date = $today->modify("-{$daysAgo} days")->modify('first day of this month');
             $txDefs[] = ['wallet' => $cc, 'cat' => $ccCats['Salaire'], 'type' => PersonalFinanceTransactionTypeEnum::Income, 'amount' => '2800.00', 'date' => $date, 'desc' => 'Salaire Aurora Tech'];
         }
+
+        // Freelance income — irregular gigs, each month picks up a different
+        // mission so the cumulative goal looks realistic over the 4-month
+        // window seeded above.
+        $freelanceTxs = [
+            ['daysAgo' => 80, 'amount' => '1500.00', 'desc' => 'Mission freelance Acme Corp'],
+            ['daysAgo' => 50, 'amount' => '800.00',  'desc' => 'Audit technique Wayne Enterprises'],
+            ['daysAgo' => 25, 'amount' => '1200.00', 'desc' => 'Refonte site Initech'],
+            ['daysAgo' => 5,  'amount' => '600.00',  'desc' => 'Conseil archi Stark Industries'],
+        ];
+        foreach ($freelanceTxs as $def) {
+            $txDefs[] = [
+                'wallet' => $cc,
+                'cat' => $ccCats['Freelance'],
+                'type' => PersonalFinanceTransactionTypeEnum::Income,
+                'amount' => $def['amount'],
+                'date' => $today->modify("-{$def['daysAgo']} days"),
+                'desc' => $def['desc'],
+            ];
+        }
+
+        // Cashback — small monthly income drip from card rewards / referral codes.
+        foreach ([85, 55, 25] as $daysAgo) {
+            $txDefs[] = [
+                'wallet' => $cc,
+                'cat' => $ccCats['Cashback'],
+                'type' => PersonalFinanceTransactionTypeEnum::Income,
+                'amount' => '12.50',
+                'date' => $today->modify("-{$daysAgo} days"),
+                'desc' => 'Cashback carte bleue',
+            ];
+        }
+        $txDefs[] = [
+            'wallet' => $cc,
+            'cat' => $ccCats['Cashback'],
+            'type' => PersonalFinanceTransactionTypeEnum::Income,
+            'amount' => '25.00',
+            'date' => $today->modify('-12 days'),
+            'desc' => 'Parrainage banque en ligne',
+        ];
 
         // Rent (5th of each month)
         foreach ([90, 60, 30, 0] as $daysAgo) {
@@ -2956,8 +2996,12 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             ['name' => 'Plafond Restaurant',  'target' => '2500.00',  'saved' => '0.00',    'deadlineMonths' => null, 'color' => '#ef4444', 'wallet' => $cc,     'category' => $ccCats['Restaurant'], 'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
             ['name' => 'Plafond Loisirs',     'target' => '600.00',   'saved' => '0.00',    'deadlineMonths' => null, 'color' => '#a855f7', 'wallet' => $cc,     'category' => $ccCats['Loisirs'],    'mode' => PersonalFinanceGoalTrackingModeEnum::ExpenseOnly],
 
-            // IncomeOnly — savings goals tied to a steady income stream.
-            ['name' => 'Salaire cumulé',      'target' => '33600.00', 'saved' => '0.00',    'deadlineMonths' => 12,   'color' => '#22c55e', 'wallet' => $cc,     'category' => $ccCats['Salaire'],    'mode' => PersonalFinanceGoalTrackingModeEnum::IncomeOnly],
+            // IncomeOnly — three flavours: payroll (steady), freelance
+            // (lumpy), cashback (tiny drip). Each card lands on a distinct
+            // visual progress band so the mode is easy to spot in the UI.
+            ['name' => 'Salaire cumulé',       'target' => '33600.00', 'saved' => '0.00', 'deadlineMonths' => 12,   'color' => '#22c55e', 'wallet' => $cc, 'category' => $ccCats['Salaire'],   'mode' => PersonalFinanceGoalTrackingModeEnum::IncomeOnly],
+            ['name' => 'Revenus freelance',    'target' => '6000.00',  'saved' => '0.00', 'deadlineMonths' => 12,   'color' => '#0ea5e9', 'wallet' => $cc, 'category' => $ccCats['Freelance'], 'mode' => PersonalFinanceGoalTrackingModeEnum::IncomeOnly],
+            ['name' => 'Cashback annuel',      'target' => '200.00',   'saved' => '0.00', 'deadlineMonths' => 12,   'color' => '#eab308', 'wallet' => $cc, 'category' => $ccCats['Cashback'],  'mode' => PersonalFinanceGoalTrackingModeEnum::IncomeOnly],
         ];
 
         $autoTrackedGoals = [];
