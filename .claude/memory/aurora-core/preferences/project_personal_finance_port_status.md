@@ -26,8 +26,10 @@ jour à la fin de chaque session.
 | 4c | TransactionSplit (N tx liées par `splitId` UUID v7) + `PersonalFinanceSplitInput` + `PersonalFinanceSplitService` + Controller + Manager guard généralisé en `ensureMutableLeg` + UI modale dynamique N rows | _(à committer)_ | 🟢 |
 | 4d | Attachments (1 fichier/tx, PDF+raster, 5 Mo, var/uploads/personal-finance/transactions/{id}/) + colonne `attachment_original_name` (migration `Version20260523000000`) + Service + Controller (upload/delete/serve) + UI section dans la modale edit | _(à committer)_ | 🟢 |
 | 5 | WalletBalanceService (`currentBalance` / `monthlyBalance` / `rollingStartBalance` en bcmath) + `BalanceAdjustmentService` (lazy `BalanceAdjustment` system category) + DTO + Controller + UI barre de soldes + modale Ajuster dans `PersonalFinanceTransactionsApp` | `73480834` | 🟢 |
-| 6a | Budget + BudgetItem entities (5-layer) + `BudgetSectionEnum` + Manager.ensureForMonth lazy + ViewBuilder + 4 endpoints + migration `Version20260523120000` + cascade `PersonalFinanceBudgets` toggle | _(à committer)_ | 🟢 |
-| 6b | Page Vue `PersonalFinanceBudgetsApp` (mois nav + sections + items inline avec progress + modale create/edit) + Twig + NavItem + composables `useBudgetData`/`useBudgetItemsForm` + translations | _(à committer)_ | 🟢 |
+| 6a | Budget + BudgetItem entities (5-layer) + `BudgetSectionEnum` + Manager.ensureForMonth lazy + ViewBuilder + 4 endpoints + migration `Version20260523120000` + cascade `PersonalFinanceBudgets` toggle | `d49767e4` | 🟢 |
+| 6b | Page Vue `PersonalFinanceBudgetsApp` (mois nav + sections + items inline avec progress + modale create/edit) + Twig + NavItem + composables `useBudgetData`/`useBudgetItemsForm` + translations | `b4892526` | 🟢 |
+| 7a | Goal entity + Manager User-style (create/update/deposit/delete/recomputeSavedAmount) + 2 events + `PersonalFinanceGoalSyncSubscriber` (dispatch depuis Manager + SplitService) + migration `Version20260523180000` + partial unique (user_id, category_id) | _(à committer)_ | 🟢 |
+| 7b | Page Vue `PersonalFinanceGoalsApp` (cards grid avec progress + color + monthly contribution + tri) + 3 modales (create/edit/deposit) + Twig + NavItem + ViewBuilder + translations | _(à committer)_ | 🟢 |
 
 ## Sessions à venir
 
@@ -35,7 +37,6 @@ jour à la fin de chaque session.
 |---|---|---|---|
 | 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
 | 6c | BudgetPreset (template user-level) + service auto-rollover next month (copy items repeat=true) | non — V2 | 6a |
-| 7 | Goal + EventSubscriber qui sync `savedAmount` depuis transactions | non | 5 |
 | 8 | RecurringTransaction + ScheduledTransaction + commande cron `personal-finance:recurring:generate` | non | 4a |
 | 9 | CategorizationRule + Learn/Suggest services + `afterSave` hook standardisé dans la convention | non | 4a |
 | 10 | Dashboard + Overview + Statistics services (agrégations) | non | 5 + 6 + 7 |

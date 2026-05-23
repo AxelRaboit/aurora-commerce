@@ -79,6 +79,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
+        if ($this->personalFinanceContext->isGoalsEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_goals',
+                'backend.nav.personal_finance_goals',
+                'target',
+                requiredPrivilege: 'personal_finance.goals.use',
+                descriptionKey: 'backend.nav.personal_finance_goals_description',
+            );
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -117,6 +127,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     'scale',
                     requiredPrivilege: 'personal_finance.budgets.use',
                     descriptionKey: 'backend.nav.personal_finance_budgets_description',
+                ),
+                new NavItem(
+                    'backend_personal_finance_goals',
+                    'backend.nav.personal_finance_goals',
+                    'target',
+                    requiredPrivilege: 'personal_finance.goals.use',
+                    descriptionKey: 'backend.nav.personal_finance_goals_description',
                 ),
             ], priority: 25),
         ];

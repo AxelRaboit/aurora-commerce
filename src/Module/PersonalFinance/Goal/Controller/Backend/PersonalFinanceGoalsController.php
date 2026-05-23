@@ -14,11 +14,13 @@ use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
 use Aurora\Module\PersonalFinance\Goal\Manager\PersonalFinanceGoalManagerInterface;
 use Aurora\Module\PersonalFinance\Goal\Repository\PersonalFinanceGoalRepository;
 use Aurora\Module\PersonalFinance\Goal\Serializer\PersonalFinanceGoalSerializerInterface;
+use Aurora\Module\PersonalFinance\Goal\View\PersonalFinanceGoalsViewBuilder;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DomainException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -35,8 +37,21 @@ final class PersonalFinanceGoalsController extends AbstractController
         private readonly PersonalFinanceGoalSerializerInterface $goalSerializer,
         private readonly PersonalFinanceGoalInputFactoryInterface $goalInputFactory,
         private readonly PersonalFinanceGoalDepositInputFactoryInterface $depositInputFactory,
+        private readonly PersonalFinanceGoalsViewBuilder $viewBuilder,
         private readonly PayloadValidator $payloadValidator,
     ) {}
+
+    #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
+    public function index(): Response
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        return $this->render(
+            '@PersonalFinance/backend/goals/index.html.twig',
+            $this->viewBuilder->indexView($user),
+        );
+    }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]
     public function create(Request $request): JsonResponse

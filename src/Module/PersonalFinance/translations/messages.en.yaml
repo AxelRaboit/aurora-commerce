@@ -229,6 +229,48 @@ personal_finance:
       planned_required: Planned amount is required.
       planned_format: 'Invalid format. Example: 1234.56'
       carried_format: 'Invalid format. Example: 1234.56 or -1234.56'
+  goals:
+    title: Savings goals
+    add: New goal
+    edit: Edit goal
+    empty: No goals yet. Create your first savings goal to start tracking progress.
+    created: Goal created.
+    updated: Goal updated.
+    deleted: Goal deleted.
+    delete_confirm: 'Delete the goal "{name}"? This action is irreversible.'
+    deposit: Deposit
+    deposit_title: 'Deposit into "{name}"'
+    deposit_disabled: Auto-synced from the linked category.
+    deposit_hint: The amount is added to the goal's saved balance. No transaction is created.
+    deposit_success: Deposit recorded.
+    no_wallet_link: Not linked to a wallet
+    no_category_link: No auto-sync (manual)
+    auto_tracked_from: 'Auto-synced from: {category}'
+    auto_tracked_hint: While this category is linked, the saved amount is recomputed on every transaction.
+    monthly_contribution: '{amount} / month to hit the deadline'
+    sort:
+      deadline: Sort by deadline
+      progress: Sort by progress
+      amount: Sort by amount
+    fields:
+      name: Goal name
+      target: Target amount
+      wallet: Wallet (optional)
+      category: Category (enables auto-sync)
+      deadline: Deadline
+      color: Color
+      deposit_amount: Deposit amount
+    placeholders:
+      name: e.g. Summer holidays, House down payment…
+    errors:
+      name_required: Name is required.
+      target_required: Target amount is required.
+      target_format: 'Invalid format. Example: 5000.00'
+      target_positive: Target amount must be strictly positive.
+      color_format: 'Invalid hex format (expected: #RRGGBB).'
+      deposit_amount_required: Deposit amount is required.
+      deposit_amount_format: 'Invalid format. Example: 100.00'
+      deposit_amount_positive: Amount must be strictly positive.
   balance:
     current: Current balance
     month: Month-end balance

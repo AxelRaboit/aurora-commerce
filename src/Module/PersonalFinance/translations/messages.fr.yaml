@@ -229,6 +229,48 @@ personal_finance:
       planned_required: Le montant planifié est requis.
       planned_format: 'Format invalide. Exemple : 1234.56'
       carried_format: 'Format invalide. Exemple : 1234.56 ou -1234.56'
+  goals:
+    title: Objectifs d'épargne
+    add: Nouvel objectif
+    edit: Modifier l'objectif
+    empty: Aucun objectif pour le moment. Crée ton premier objectif d'épargne pour suivre ta progression.
+    created: Objectif créé.
+    updated: Objectif mis à jour.
+    deleted: Objectif supprimé.
+    delete_confirm: 'Supprimer l''objectif "{name}" ? Cette action est irréversible.'
+    deposit: Déposer
+    deposit_title: 'Déposer sur "{name}"'
+    deposit_disabled: Auto-synchronisé depuis la catégorie liée.
+    deposit_hint: Le montant est ajouté au solde épargné de l'objectif. Aucune transaction n'est créée.
+    deposit_success: Dépôt enregistré.
+    no_wallet_link: Pas lié à un portefeuille
+    no_category_link: Pas d'auto-sync (manuel)
+    auto_tracked_from: 'Auto-synchronisé depuis : {category}'
+    auto_tracked_hint: Tant que cette catégorie est liée, le solde épargné est recalculé à chaque transaction.
+    monthly_contribution: '{amount} / mois pour atteindre la deadline'
+    sort:
+      deadline: Trier par deadline
+      progress: Trier par progression
+      amount: Trier par montant
+    fields:
+      name: Nom de l'objectif
+      target: Montant cible
+      wallet: Portefeuille (optionnel)
+      category: Catégorie (active l'auto-sync)
+      deadline: Deadline
+      color: Couleur
+      deposit_amount: Montant du dépôt
+    placeholders:
+      name: Ex. Vacances été, Apport immobilier…
+    errors:
+      name_required: Le nom est requis.
+      target_required: Le montant cible est requis.
+      target_format: 'Format invalide. Exemple : 5000.00'
+      target_positive: Le montant cible doit être strictement positif.
+      color_format: 'Format hex invalide (attendu : #RRGGBB).'
+      deposit_amount_required: Le montant du dépôt est requis.
+      deposit_amount_format: 'Format invalide. Exemple : 100.00'
+      deposit_amount_positive: Le montant doit être strictement positif.
   balance:
     current: Solde actuel
     month: Solde fin de mois
