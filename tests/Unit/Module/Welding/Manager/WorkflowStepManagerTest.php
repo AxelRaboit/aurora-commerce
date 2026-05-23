@@ -8,14 +8,14 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Welding\Enum\WorkflowStatusEnum;
-use Aurora\Module\Welding\Enum\WorkflowStepStatusEnum;
+use Aurora\Module\Welding\Enum\WeldingWorkflowStatusEnum;
+use Aurora\Module\Welding\Enum\WeldingWorkflowStepStatusEnum;
 use Aurora\Module\Welding\Service\WeldingStepNotifier;
-use Aurora\Module\Welding\Workflow\Entity\Workflow;
-use Aurora\Module\Welding\WorkflowStep\Dto\WorkflowStepValidationInput;
-use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStep;
-use Aurora\Module\Welding\WorkflowStep\Manager\WorkflowStepManager;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
+use Aurora\Module\Welding\WorkflowStep\Dto\WeldingWorkflowStepValidationInput;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
+use Aurora\Module\Welding\WorkflowStep\Manager\WeldingWorkflowStepManager;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
@@ -27,11 +27,11 @@ use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[AllowMockObjectsWithoutExpectations]
-final class WorkflowStepManagerTest extends TestCase
+final class WeldingWorkflowStepManagerTest extends TestCase
 {
     private EntityManagerInterface $entityManager;
     private WeldingStepNotifier $notifier;
-    private WorkflowStepManager $manager;
+    private WeldingWorkflowStepManager $manager;
 
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ final class WorkflowStepManagerTest extends TestCase
         $this->manager = $this->makeManager();
     }
 
-    private function makeManager(): WorkflowStepManager
+    private function makeManager(): WeldingWorkflowStepManager
     {
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
@@ -50,7 +50,7 @@ final class WorkflowStepManagerTest extends TestCase
         $connection = $this->createStub(Connection::class);
         $connection->method('executeQuery')->willReturn($dbalResult);
 
-        return new WorkflowStepManager(
+        return new WeldingWorkflowStepManager(
             $this->entityManager,
             new AuditLogger(
                 $this->entityManager,
@@ -71,18 +71,18 @@ final class WorkflowStepManagerTest extends TestCase
         return $user;
     }
 
-    private function makeStep(WorkflowStepStatusEnum $status, bool $requiresValidation, ?Workflow $workflow = null): WorkflowStep
+    private function makeStep(WeldingWorkflowStepStatusEnum $status, bool $requiresValidation, ?WeldingWorkflow $workflow = null): WeldingWorkflowStep
     {
-        $tpl = new WorkflowStepTemplate();
+        $tpl = new WeldingWorkflowStepTemplate();
         $tpl->setTitle('S')->setRequiresValidation($requiresValidation);
 
-        $step = new WorkflowStep();
+        $step = new WeldingWorkflowStep();
         $step->setStatus($status);
         $step->setStepTemplate($tpl);
 
-        $workflow ??= new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::InProgress);
-        $rp = new ReflectionProperty(Workflow::class, 'steps');
+        $workflow ??= new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::InProgress);
+        $rp = new ReflectionProperty(WeldingWorkflow::class, 'steps');
         $rp->setValue($workflow, new ArrayCollection([$step]));
         $step->setWorkflow($workflow);
 
@@ -91,14 +91,14 @@ final class WorkflowStepManagerTest extends TestCase
 
     public function testSubmitFromPendingNonValidatingGoesDirectlyToValidated(): void
     {
-        $step = $this->makeStep(WorkflowStepStatusEnum::Pending, requiresValidation: false);
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: false);
         $welder = $this->makeWelder();
 
         $this->notifier->expects(self::never())->method('notifyAwaitingValidation');
 
         $this->manager->submit($step, $welder);
 
-        self::assertSame(WorkflowStepStatusEnum::Validated, $step->getStatus());
+        self::assertSame(WeldingWorkflowStepStatusEnum::Validated, $step->getStatus());
         self::assertSame($welder, $step->getCompletedBy());
         self::assertSame($welder, $step->getValidatedBy());
         self::assertNotNull($step->getCompletedAt());
@@ -107,51 +107,51 @@ final class WorkflowStepManagerTest extends TestCase
 
     public function testSubmitFromPendingValidatingGoesToAwaitingValidation(): void
     {
-        $step = $this->makeStep(WorkflowStepStatusEnum::Pending, requiresValidation: true);
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: true);
         $welder = $this->makeWelder();
 
         $this->notifier->expects(self::once())->method('notifyAwaitingValidation')->with($step);
 
         $this->manager->submit($step, $welder);
 
-        self::assertSame(WorkflowStepStatusEnum::AwaitingValidation, $step->getStatus());
+        self::assertSame(WeldingWorkflowStepStatusEnum::AwaitingValidation, $step->getStatus());
         self::assertSame($welder, $step->getCompletedBy());
         self::assertNull($step->getValidatedBy());
     }
 
     public function testSubmitFromTerminalThrows(): void
     {
-        $step = $this->makeStep(WorkflowStepStatusEnum::Validated, requiresValidation: false);
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Validated, requiresValidation: false);
         $this->expectException(RuntimeException::class);
         $this->manager->submit($step, $this->makeWelder());
     }
 
     public function testRecordValidationApprovesAndAutoCompletesWorkflow(): void
     {
-        $step = $this->makeStep(WorkflowStepStatusEnum::AwaitingValidation, requiresValidation: true);
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::AwaitingValidation, requiresValidation: true);
         $validator = $this->makeWelder(99);
 
-        $this->manager->recordValidation($step, $validator, new WorkflowStepValidationInput(decision: 'validate', comment: 'OK'));
+        $this->manager->recordValidation($step, $validator, new WeldingWorkflowStepValidationInput(decision: 'validate', comment: 'OK'));
 
-        self::assertSame(WorkflowStepStatusEnum::Validated, $step->getStatus());
+        self::assertSame(WeldingWorkflowStepStatusEnum::Validated, $step->getStatus());
         self::assertSame($validator, $step->getValidatedBy());
         self::assertSame('OK', $step->getValidationComment());
-        // Workflow only has this 1 step, all validated → auto Completed
-        self::assertSame(WorkflowStatusEnum::Completed, $step->getWorkflow()->getStatus());
+        // WeldingWorkflow only has this 1 step, all validated → auto Completed
+        self::assertSame(WeldingWorkflowStatusEnum::Completed, $step->getWorkflow()->getStatus());
         self::assertNotNull($step->getWorkflow()->getCompletedAt());
     }
 
     public function testRecordValidationRejectsAndResetsStepToPending(): void
     {
-        $step = $this->makeStep(WorkflowStepStatusEnum::AwaitingValidation, requiresValidation: true);
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::AwaitingValidation, requiresValidation: true);
         $welder = $this->makeWelder(1);
         $step->setCompletedBy($welder)->setValidationComment('previous');
 
         $validator = $this->makeWelder(99);
 
-        $this->manager->recordValidation($step, $validator, new WorkflowStepValidationInput(decision: 'reject', comment: 'redo'));
+        $this->manager->recordValidation($step, $validator, new WeldingWorkflowStepValidationInput(decision: 'reject', comment: 'redo'));
 
-        self::assertSame(WorkflowStepStatusEnum::Pending, $step->getStatus());
+        self::assertSame(WeldingWorkflowStepStatusEnum::Pending, $step->getStatus());
         self::assertSame('redo', $step->getRejectionComment());
         self::assertNull($step->getCompletedBy());
         self::assertNull($step->getValidatedBy());
@@ -160,8 +160,8 @@ final class WorkflowStepManagerTest extends TestCase
 
     public function testRecordValidationFailsIfNotAwaiting(): void
     {
-        $step = $this->makeStep(WorkflowStepStatusEnum::Pending, requiresValidation: true);
+        $step = $this->makeStep(WeldingWorkflowStepStatusEnum::Pending, requiresValidation: true);
         $this->expectException(RuntimeException::class);
-        $this->manager->recordValidation($step, $this->makeWelder(99), new WorkflowStepValidationInput(decision: 'validate'));
+        $this->manager->recordValidation($step, $this->makeWelder(99), new WeldingWorkflowStepValidationInput(decision: 'validate'));
     }
 }

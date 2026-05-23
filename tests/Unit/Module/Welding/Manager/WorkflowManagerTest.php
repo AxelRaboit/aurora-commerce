@@ -9,13 +9,13 @@ use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Hr\Employee\Repository\EmployeeRepository;
-use Aurora\Module\Welding\Enum\WorkflowStatusEnum;
-use Aurora\Module\Welding\Workflow\Dto\WorkflowInput;
-use Aurora\Module\Welding\Workflow\Entity\Workflow;
-use Aurora\Module\Welding\Workflow\Manager\WorkflowManager;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
-use Aurora\Module\Welding\WorkflowTemplate\Entity\WorkflowTemplate;
-use Aurora\Module\Welding\WorkflowTemplate\Repository\WorkflowTemplateRepository;
+use Aurora\Module\Welding\Enum\WeldingWorkflowStatusEnum;
+use Aurora\Module\Welding\Workflow\Dto\WeldingWorkflowInput;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
+use Aurora\Module\Welding\Workflow\Manager\WeldingWorkflowManager;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplate;
+use Aurora\Module\Welding\WorkflowTemplate\Repository\WeldingWorkflowTemplateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
@@ -27,25 +27,25 @@ use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[AllowMockObjectsWithoutExpectations]
-final class WorkflowManagerTest extends TestCase
+final class WeldingWorkflowManagerTest extends TestCase
 {
     private EntityManagerInterface $entityManager;
-    private WorkflowTemplateRepository $templateRepository;
+    private WeldingWorkflowTemplateRepository $templateRepository;
     private EmployeeRepository $employeeRepository;
     private SettingRepository $settingRepository;
-    private WorkflowManager $manager;
+    private WeldingWorkflowManager $manager;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->templateRepository = $this->createMock(WorkflowTemplateRepository::class);
+        $this->templateRepository = $this->createMock(WeldingWorkflowTemplateRepository::class);
         $this->employeeRepository = $this->createMock(EmployeeRepository::class);
         $this->settingRepository = $this->createMock(SettingRepository::class);
         $this->settingRepository->method('getOrDefault')->willReturn('WLD');
         $this->manager = $this->makeManager();
     }
 
-    private function makeManager(): WorkflowManager
+    private function makeManager(): WeldingWorkflowManager
     {
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
@@ -56,7 +56,7 @@ final class WorkflowManagerTest extends TestCase
         $connection = $this->createStub(Connection::class);
         $connection->method('executeQuery')->willReturn($dbalResult);
 
-        return new WorkflowManager(
+        return new WeldingWorkflowManager(
             $this->entityManager,
             $this->templateRepository,
             $this->employeeRepository,
@@ -73,24 +73,24 @@ final class WorkflowManagerTest extends TestCase
 
     public function testCreateGeneratesReferenceAndStartsInDraft(): void
     {
-        $template = new WorkflowTemplate();
+        $template = new WeldingWorkflowTemplate();
         $template->setTitle('DMOS');
         $this->templateRepository->method('find')->willReturn($template);
 
         $captured = null;
         $this->entityManager->method('persist')->willReturnCallback(
             static function (object $entity) use (&$captured): void {
-                if ($entity instanceof Workflow) {
+                if ($entity instanceof WeldingWorkflow) {
                     $captured = $entity;
                 }
             }
         );
 
-        $result = $this->manager->create(new WorkflowInput(templateId: 1));
+        $result = $this->manager->create(new WeldingWorkflowInput(templateId: 1));
 
-        self::assertInstanceOf(Workflow::class, $captured);
+        self::assertInstanceOf(WeldingWorkflow::class, $captured);
         self::assertSame($template, $captured->getTemplate());
-        self::assertSame(WorkflowStatusEnum::Draft, $captured->getStatus());
+        self::assertSame(WeldingWorkflowStatusEnum::Draft, $captured->getStatus());
         self::assertNotNull($captured->getReference());
         self::assertStringStartsWith('WLD-', $captured->getReference());
         self::assertSame($captured, $result);
@@ -101,12 +101,12 @@ final class WorkflowManagerTest extends TestCase
         $this->templateRepository->method('find')->willReturn(null);
 
         $this->expectException(RuntimeException::class);
-        $this->manager->create(new WorkflowInput(templateId: 999));
+        $this->manager->create(new WeldingWorkflowInput(templateId: 999));
     }
 
     public function testCreateResolvesAssignee(): void
     {
-        $template = new WorkflowTemplate();
+        $template = new WeldingWorkflowTemplate();
         $this->templateRepository->method('find')->willReturn($template);
 
         $employee = new Employee();
@@ -115,21 +115,21 @@ final class WorkflowManagerTest extends TestCase
         $captured = null;
         $this->entityManager->method('persist')->willReturnCallback(
             static function (object $entity) use (&$captured): void {
-                if ($entity instanceof Workflow) {
+                if ($entity instanceof WeldingWorkflow) {
                     $captured = $entity;
                 }
             }
         );
 
-        $this->manager->create(new WorkflowInput(templateId: 1, assigneeId: 7));
+        $this->manager->create(new WeldingWorkflowInput(templateId: 1, assigneeId: 7));
 
         self::assertSame($employee, $captured->getAssignee());
     }
 
     public function testStartFailsIfNotInDraft(): void
     {
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::InProgress);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::InProgress);
 
         $this->expectException(RuntimeException::class);
         $this->manager->start($workflow);
@@ -137,8 +137,8 @@ final class WorkflowManagerTest extends TestCase
 
     public function testStartFailsIfNoTemplate(): void
     {
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::Draft);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::Draft);
 
         $this->expectException(RuntimeException::class);
         $this->manager->start($workflow);
@@ -146,19 +146,19 @@ final class WorkflowManagerTest extends TestCase
 
     public function testStartSnapshotsStepsAndTransitionsToInProgress(): void
     {
-        $template = new WorkflowTemplate();
-        $stepTpl = new WorkflowStepTemplate();
+        $template = new WeldingWorkflowTemplate();
+        $stepTpl = new WeldingWorkflowStepTemplate();
         $stepTpl->setTitle('S1')->setPosition(0);
         $this->setProperty($template, 'steps', new ArrayCollection([$stepTpl]));
 
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::Draft);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::Draft);
         $workflow->setTemplate($template);
 
         $persistedSteps = [];
         $this->entityManager->method('persist')->willReturnCallback(
             static function (object $entity) use (&$persistedSteps): void {
-                if ($entity instanceof \Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStep) {
+                if ($entity instanceof \Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep) {
                     $persistedSteps[] = $entity;
                 }
             }
@@ -166,7 +166,7 @@ final class WorkflowManagerTest extends TestCase
 
         $this->manager->start($workflow);
 
-        self::assertSame(WorkflowStatusEnum::InProgress, $workflow->getStatus());
+        self::assertSame(WeldingWorkflowStatusEnum::InProgress, $workflow->getStatus());
         self::assertNotNull($workflow->getStartedAt());
         self::assertCount(1, $persistedSteps);
         self::assertSame($stepTpl, $persistedSteps[0]->getStepTemplate());
@@ -174,8 +174,8 @@ final class WorkflowManagerTest extends TestCase
 
     public function testRejectFailsIfTerminal(): void
     {
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::Completed);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::Completed);
 
         $this->expectException(RuntimeException::class);
         $this->manager->reject($workflow, 'foo');
@@ -183,20 +183,20 @@ final class WorkflowManagerTest extends TestCase
 
     public function testRejectSetsStatusReasonAndTimestamp(): void
     {
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::InProgress);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::InProgress);
 
         $this->manager->reject($workflow, 'non-conformity');
 
-        self::assertSame(WorkflowStatusEnum::Rejected, $workflow->getStatus());
+        self::assertSame(WeldingWorkflowStatusEnum::Rejected, $workflow->getStatus());
         self::assertSame('non-conformity', $workflow->getRejectionReason());
         self::assertNotNull($workflow->getRejectedAt());
     }
 
     public function testArchiveOnlyAllowedFromCompleted(): void
     {
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::InProgress);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::InProgress);
 
         $this->expectException(RuntimeException::class);
         $this->manager->archive($workflow);
@@ -204,12 +204,12 @@ final class WorkflowManagerTest extends TestCase
 
     public function testArchiveTransitionsCompletedToArchived(): void
     {
-        $workflow = new Workflow();
-        $workflow->setStatus(WorkflowStatusEnum::Completed);
+        $workflow = new WeldingWorkflow();
+        $workflow->setStatus(WeldingWorkflowStatusEnum::Completed);
 
         $this->manager->archive($workflow);
 
-        self::assertSame(WorkflowStatusEnum::Archived, $workflow->getStatus());
+        self::assertSame(WeldingWorkflowStatusEnum::Archived, $workflow->getStatus());
     }
 
     private function setProperty(object $target, string $property, mixed $value): void

@@ -14,30 +14,141 @@ backend:
           fill: Remplir un workflow de soudure (rôle soudeur)
           validate: Valider une étape de workflow (rôle inspecteur/QA)
           archive: Archiver / rejeter un workflow
+        pdf_templates:
+          view: Voir les templates PDF
+          create: Créer des templates PDF
+          edit: Modifier les templates PDF
+          delete: Supprimer les templates PDF
+        pdf_documents:
+          view: Voir les documents PDF générés
+          generate: Générer des documents PDF remplis
+          delete: Supprimer des documents PDF générés
   modules:
     welding_backend: Soudures
-    welding_backend_description: Workflows de soudure réglementée — modèles, exécution étape par étape, validations et signatures
+    welding_backend_description: WeldingWorkflows de soudure réglementée — modèles,
+      exécution étape par étape, validations et signatures
   parameters:
     welding_reference_prefix:
       label: Préfixe des références de workflow de soudure
-      description: "Préfixe utilisé pour les références auto-générées (ex: WLD-2026-000042)"
+      description: 'Préfixe utilisé pour les références auto-générées (ex: WLD-2026-000042)'
     welding_notification_email:
       label: Email de notification (validation d'étape)
-      description: "Adresse qui reçoit une notification quand une étape de workflow attend une validation. Vide = pas de notification."
+      description: Adresse qui reçoit une notification quand une étape de workflow
+        attend une validation. Vide = pas de notification.
+    welding_pdf_document_prefix:
+      label: Préfixe des références PDF
+      description: Préfixe utilisé pour générer les références des documents PDF.
   nav:
     sections:
       welding: Soudures
     welding: Soudures
-    welding_description: Workflows de soudure réglementée
-    welding_workflows: Workflows
-    welding_workflows_description: Workflows de soudure en cours d'exécution (assignés aux soudeurs)
+    welding_description: WeldingWorkflows de soudure réglementée
+    welding_workflows: WeldingWorkflows
+    welding_workflows_description: WeldingWorkflows de soudure en cours d'exécution
+      (assignés aux soudeurs)
     welding_workflow_templates: Modèles de workflow
-    welding_workflow_templates_description: Gérer les modèles de workflow de soudure (versions, étapes, PDFs requis)
-
+    welding_workflow_templates_description: Gérer les modèles de workflow de soudure
+      (versions, étapes, PDFs requis)
+    welding_pdf_templates: Templates PDF
+    welding_pdf_templates_description: Gérer les templates de formulaires PDF
+    welding_pdf_documents: Documents générés
+    welding_pdf_documents_description: Documents PDF remplis et générés à partir des
+      templates
+  pdfform:
+    pdftk:
+      unavailable: pdftk n'est pas installé sur ce serveur. La détection de champs
+        et la génération de PDF ne sont pas disponibles.
+    templates:
+      name: Nom
+      description: Description
+      status: Statut
+      file: Fichier PDF
+      fieldCount: Champs
+      add: Ajouter un template
+      create: Nouveau template
+      edit: Modifier le template {name}
+      detectFields: Détecter les champs
+      detectFieldsSuccess: '{count} champ(s) détecté(s) avec succès.'
+      detectFieldsEmpty: Aucun champ détecté. Vérifiez que le template a un PDF avec
+        des champs AcroForm.
+      autoDetectFields: Détecter automatiquement les champs après création
+      autoDetectFieldsHelp: Lance la détection des champs AcroForm dès que le template
+        est créé.
+      autoDetectFieldsNeedFile: Sélectionnez un PDF d'abord pour activer cette option.
+      flattenOnGenerate: Verrouiller le PDF à la génération
+      flattenOnGenerateHelp: 'Quand activé : le PDF généré est aplati (non éditable,
+        champs verrouillés).'
+      requiresSignature: Exiger une signature lors de la génération
+      requiresSignatureHelp: L'utilisateur devra apposer sa signature avant de générer
+        le document.
+      namePlaceholder: Ex. Contrat de prestation
+      descriptionPlaceholder: Description du template
+      searchPlaceholder: Rechercher un template…
+      chooseFile: Choisir un PDF
+      empty: Aucun template PDF pour l'instant.
+      deleteConfirm: Supprimer le template « {name} » ?
+      deleted: Template supprimé.
+      deleteWarning: Les documents générés à partir de ce template ne seront pas supprimés.
+      status_draft: Brouillon
+      status_active: Actif
+      status_archived: Archivé
+      errors:
+        name_required: Le nom est obligatoire.
+    fields:
+      pdfFieldName: Nom du champ PDF
+      label: Libellé
+      fieldType: Type
+      mappingKey: Source de données automatique
+      mappingKeyPlaceholder: 'ex : crm.contact.name'
+      defaultValue: Valeur par défaut
+      defaultValuePlaceholder: Valeur pré-remplie
+      editField: Modifier le champ « {label} »
+      type_text: Texte
+      type_checkbox: Case à cocher
+      type_radio: Bouton radio
+      type_dropdown: Liste déroulante
+      type_date: Date
+      type_signature: Signature
+      errors:
+        pdf_field_name_required: Le nom du champ PDF est obligatoire.
+        label_required: Le libellé est obligatoire.
+    documents:
+      reference: Référence
+      label: Libellé
+      template: Template
+      status: Statut
+      fieldValues: Valeurs des champs
+      add: Ajouter un document
+      pickTemplate: Choisir un template
+      noActiveTemplate: Aucun template actif disponible. Activez un template dans
+        la section Templates PDF.
+      noPreview: Aucun fichier PDF associé à ce template.
+      previewUpdating: Mise à jour…
+      generate: Générer le document
+      searchPlaceholder: Rechercher un document…
+      empty: Aucun document généré pour l'instant.
+      labelPlaceholder: Ex. Contrat client Dupont
+      deleted: Document supprimé.
+      deleteConfirm: Supprimer le document « {reference} » ?
+      deleteWarning: Le fichier PDF généré sera également supprimé.
+      view: Visualiser
+      download: Télécharger
+      status_draft: Brouillon
+      status_generated: Généré
+      status_archived: Archivé
+      signatureTitle: Signature du document
+      signatureDesc: Dessinez votre signature dans la zone ci-dessous pour valider
+        le document.
+      signatureHint: Dessinez votre signature ici…
+      signatureClear: Effacer
+      signatureNext: Signer et continuer
+      errors:
+        template_required: Le template est obligatoire.
 welding:
   title: Soudures
-  subtitle: Workflows de soudure réglementée
-  placeholder: Le module est installé. Les modèles de workflow et les instances en cours apparaîtront ici.
+  subtitle: WeldingWorkflows de soudure réglementée
+  placeholder: Le module est installé. Les modèles de workflow et les instances en
+    cours apparaîtront ici.
   workflow_templates:
     title: Modèles de workflow
     subtitle: Modèles de procédure de soudure réglementée
@@ -65,7 +176,7 @@ welding:
     field_title: Titre
     field_description: Description
     field_applicable_to: Portée / type de soudure
-    field_applicable_to_placeholder: "TIG, MIG, SAW, soudure manuelle…"
+    field_applicable_to_placeholder: TIG, MIG, SAW, soudure manuelle…
     errors:
       title_required: Le titre est obligatoire
       title_too_long: Le titre ne peut pas dépasser 200 caractères
@@ -83,8 +194,8 @@ welding:
       pdf_template_required: Le PDF template est obligatoire
       position_invalid: La position doit être un entier positif ou zéro
   workflows:
-    title: Workflows
-    subtitle: Workflows de soudure en cours et terminés
+    title: WeldingWorkflows
+    subtitle: WeldingWorkflows de soudure en cours et terminés
     empty: Aucun workflow démarré pour l'instant.
     loading: Chargement des workflows…
     search_placeholder: Rechercher (référence, modèle, soudeur)…
@@ -100,7 +211,7 @@ welding:
     status_rejected: Rejeté
     status_archived: Archivé
     new: Nouveau workflow
-    created: Workflow créé
+    created: WeldingWorkflow créé
     create_and_open: Créer et ouvrir
     loading_options: Chargement…
     field_template: Modèle de workflow
@@ -120,16 +231,18 @@ welding:
       unauthenticated: Utilisateur non authentifié
   runner:
     start_workflow: Démarrer le workflow
-    started: Workflow démarré
+    started: WeldingWorkflow démarré
     start_to_see_steps: Démarrez le workflow pour générer les étapes à partir du modèle
     reject_workflow: Rejeter le workflow
-    reject_workflow_warning: Le rejet est irréversible et terminal. Le soudeur devra démarrer un nouveau workflow pour reprendre.
+    reject_workflow_warning: Le rejet est irréversible et terminal. Le soudeur devra
+      démarrer un nouveau workflow pour reprendre.
     rejection_reason: Motif du rejet
-    rejection_reason_placeholder: Décrivez précisément la raison du rejet (non-conformité, problème de procédure…)
+    rejection_reason_placeholder: Décrivez précisément la raison du rejet (non-conformité,
+      problème de procédure…)
     confirm_reject: Confirmer le rejet
-    workflow_rejected: Workflow rejeté
+    workflow_rejected: WeldingWorkflow rejeté
     archive_workflow: Archiver le workflow
-    workflow_archived: Workflow archivé
+    workflow_archived: WeldingWorkflow archivé
     requires_validation_by: Validation requise par
     previous_rejection: Rejet précédent
     validation_comment: Commentaire du validateur
@@ -150,7 +263,8 @@ welding:
   editor:
     edit_template: Modifier le modèle
     template_updated: Modèle mis à jour
-    locked_warning: Ce modèle est publié — les modifications sont verrouillées. Clonez-le pour créer une nouvelle version.
+    locked_warning: Ce modèle est publié — les modifications sont verrouillées. Clonez-le
+      pour créer une nouvelle version.
     steps: Étapes
     add_step: Ajouter une étape
     edit_step: Modifier l'étape
@@ -180,13 +294,14 @@ welding:
   validator_role_customer: Client
   email:
     step_awaiting_validation:
-      subject: "[{siteName}] {reference} — étape à valider : {title}"
-      title: "Étape à valider — {reference}"
-      intro: "Un soudeur a soumis une étape qui requiert votre validation sur le workflow <strong>{title}</strong> (v{version})."
+      subject: '[{siteName}] {reference} — étape à valider : {title}'
+      title: Étape à valider — {reference}
+      intro: Un soudeur a soumis une étape qui requiert votre validation sur le workflow
+        <strong>{title}</strong> (v{version}).
       label_reference: Référence
       label_step: Étape
       label_expected_role: Rôle attendu
       label_submitted_by: Soumis par
       label_submitted_at: Soumis le
       cta_open: Ouvrir le workflow
-      footer: "Email envoyé automatiquement par {siteName}."
+      footer: Email envoyé automatiquement par {siteName}.

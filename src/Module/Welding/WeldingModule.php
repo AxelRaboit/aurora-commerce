@@ -33,6 +33,13 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
             new NavPermission('welding.workflows.fill'),
             new NavPermission('welding.workflows.validate'),
             new NavPermission('welding.workflows.archive'),
+            new NavPermission('welding.pdf_templates.view'),
+            new NavPermission('welding.pdf_templates.create'),
+            new NavPermission('welding.pdf_templates.edit'),
+            new NavPermission('welding.pdf_templates.delete'),
+            new NavPermission('welding.pdf_documents.view'),
+            new NavPermission('welding.pdf_documents.generate'),
+            new NavPermission('welding.pdf_documents.delete'),
         ];
     }
 
@@ -43,28 +50,14 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
         }
 
         return [
-            new NavSection('welding', [
-                new NavItem('backend_welding_workflows', 'backend.nav.welding_workflows', 'clipboard-check',
-                    requiredPrivilege: 'welding.workflows.view',
-                    descriptionKey: 'backend.nav.welding_workflows_description'),
-                new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
-                    requiredPrivilege: 'welding.workflow_templates.view',
-                    descriptionKey: 'backend.nav.welding_workflow_templates_description'),
-            ], priority: 52),
+            new NavSection('welding', $this->navItems(), priority: 52),
         ];
     }
 
     public function getCatalogNavSections(): array
     {
         return [
-            new NavSection('welding', [
-                new NavItem('backend_welding_workflows', 'backend.nav.welding_workflows', 'clipboard-check',
-                    requiredPrivilege: 'welding.workflows.view',
-                    descriptionKey: 'backend.nav.welding_workflows_description'),
-                new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
-                    requiredPrivilege: 'welding.workflow_templates.view',
-                    descriptionKey: 'backend.nav.welding_workflow_templates_description'),
-            ], priority: 52),
+            new NavSection('welding', $this->navItems(), priority: 52),
         ];
     }
 
@@ -72,6 +65,27 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             ModuleParameterEnum::WeldingBackend->toToggle(),
+            ModuleParameterEnum::WeldingPdfTemplates->toToggle(),
+            ModuleParameterEnum::WeldingPdfDocuments->toToggle(),
+        ];
+    }
+
+    /** @return list<NavItem> */
+    private function navItems(): array
+    {
+        return [
+            new NavItem('backend_welding_workflows', 'backend.nav.welding_workflows', 'clipboard-check',
+                requiredPrivilege: 'welding.workflows.view',
+                descriptionKey: 'backend.nav.welding_workflows_description'),
+            new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
+                requiredPrivilege: 'welding.workflow_templates.view',
+                descriptionKey: 'backend.nav.welding_workflow_templates_description'),
+            new NavItem('backend_welding_pdf_templates', 'backend.nav.welding_pdf_templates', 'file-text',
+                requiredPrivilege: 'welding.pdf_templates.view',
+                descriptionKey: 'backend.nav.welding_pdf_templates_description'),
+            new NavItem('backend_welding_pdf_documents', 'backend.nav.welding_pdf_documents', 'file-output',
+                requiredPrivilege: 'welding.pdf_documents.view',
+                descriptionKey: 'backend.nav.welding_pdf_documents_description'),
         ];
     }
 }

@@ -14,32 +14,140 @@ backend:
           fill: Fill a welding workflow (welder role)
           validate: Validate a workflow step (inspector/QA role)
           archive: Archive / reject a workflow
+        pdf_templates:
+          view: View PDF templates
+          create: Create PDF templates
+          edit: Edit PDF templates
+          delete: Delete PDF templates
+        pdf_documents:
+          view: View generated PDF documents
+          generate: Generate filled PDF documents
+          delete: Delete generated PDF documents
   modules:
     welding_backend: Welding
-    welding_backend_description: Regulated welding workflows — templates, step-by-step execution, validations and signatures
+    welding_backend_description: Regulated welding workflows — templates, step-by-step
+      execution, validations and signatures
   parameters:
     welding_reference_prefix:
       label: Welding workflow reference prefix
-      description: "Prefix used for auto-generated references (e.g. WLD-2026-000042)"
+      description: Prefix used for auto-generated references (e.g. WLD-2026-000042)
     welding_notification_email:
       label: Notification email (step validation)
-      description: "Address that receives a notification when a workflow step awaits validation. Empty = no notification."
+      description: Address that receives a notification when a workflow step awaits
+        validation. Empty = no notification.
+    welding_pdf_document_prefix:
+      label: PDF reference prefix
+      description: Prefix used to generate PDF document references.
   nav:
     sections:
       welding: Welding
     welding: Welding
     welding_description: Regulated welding workflows
-    welding_workflows: Workflows
+    welding_workflows: WeldingWorkflows
     welding_workflows_description: Ongoing welding workflows (assigned to welders)
-    welding_workflow_templates: Workflow templates
-    welding_workflow_templates_description: Manage welding workflow templates (versions, steps, required PDFs)
-
+    welding_workflow_templates: WeldingWorkflow templates
+    welding_workflow_templates_description: Manage welding workflow templates (versions,
+      steps, required PDFs)
+    welding_pdf_templates: PDF Templates
+    welding_pdf_templates_description: Manage fillable PDF form templates
+    welding_pdf_documents: Generated documents
+    welding_pdf_documents_description: Filled PDF documents generated from templates
+  pdfform:
+    pdftk:
+      unavailable: pdftk is not installed on this server. Field detection and PDF
+        generation are not available.
+    templates:
+      name: Name
+      description: Description
+      status: Status
+      file: PDF file
+      fieldCount: Fields
+      add: Add template
+      create: New template
+      edit: Edit template {name}
+      detectFields: Detect fields
+      detectFieldsSuccess: '{count} field(s) successfully detected.'
+      detectFieldsEmpty: No fields detected. Check that the template has a PDF with
+        AcroForm fields.
+      autoDetectFields: Auto-detect fields after creation
+      autoDetectFieldsHelp: Runs AcroForm field detection as soon as the template
+        is created.
+      autoDetectFieldsNeedFile: Select a PDF first to enable this option.
+      flattenOnGenerate: Lock PDF on generation
+      flattenOnGenerateHelp: 'When enabled: the generated PDF is flattened (non-editable,
+        fields locked).'
+      requiresSignature: Require a signature on generation
+      requiresSignatureHelp: The user will need to draw their signature before generating
+        the document.
+      namePlaceholder: E.g. Service contract
+      descriptionPlaceholder: Template description
+      searchPlaceholder: Search templates…
+      chooseFile: Choose a PDF
+      empty: No PDF templates yet.
+      deleted: Template deleted.
+      deleteConfirm: Delete template "{name}"?
+      deleteWarning: Documents generated from this template will not be deleted.
+      status_draft: Draft
+      status_active: Active
+      status_archived: Archived
+      errors:
+        name_required: Name is required.
+    fields:
+      pdfFieldName: PDF field name
+      label: Label
+      fieldType: Type
+      mappingKey: Automatic data source
+      mappingKeyPlaceholder: e.g. crm.contact.name
+      defaultValue: Default value
+      defaultValuePlaceholder: Pre-filled value
+      editField: Edit field "{label}"
+      type_text: Text
+      type_checkbox: Checkbox
+      type_radio: Radio button
+      type_dropdown: Dropdown
+      type_date: Date
+      type_signature: Signature
+      errors:
+        pdf_field_name_required: PDF field name is required.
+        label_required: Label is required.
+    documents:
+      reference: Reference
+      label: Label
+      template: Template
+      status: Status
+      fieldValues: Field values
+      add: Add document
+      pickTemplate: Choose a template
+      noActiveTemplate: No active template available. Activate a template in the PDF
+        Templates section.
+      noPreview: No PDF file attached to this template.
+      previewUpdating: Updating…
+      generate: Generate document
+      searchPlaceholder: Search documents…
+      empty: No generated documents yet.
+      labelPlaceholder: E.g. Dupont client contract
+      deleted: Document deleted.
+      deleteConfirm: Delete document "{reference}"?
+      deleteWarning: The generated PDF file will also be deleted.
+      view: View
+      download: Download
+      status_draft: Draft
+      status_generated: Generated
+      status_archived: Archived
+      signatureTitle: Document signature
+      signatureDesc: Draw your signature in the area below to confirm the document.
+      signatureHint: Draw your signature here…
+      signatureClear: Clear
+      signatureNext: Sign and continue
+      errors:
+        template_required: Template is required.
 welding:
   title: Welding
   subtitle: Regulated welding workflows
-  placeholder: The module is installed. Workflow templates and running instances will appear here.
+  placeholder: The module is installed. WeldingWorkflow templates and running instances
+    will appear here.
   workflow_templates:
-    title: Workflow templates
+    title: WeldingWorkflow templates
     subtitle: Regulated welding procedure templates
     empty: No workflow template yet. Create one to get started.
     search_placeholder: Search a template (title, scope)…
@@ -65,7 +173,7 @@ welding:
     field_title: Title
     field_description: Description
     field_applicable_to: Scope / welding type
-    field_applicable_to_placeholder: "TIG, MIG, SAW, manual…"
+    field_applicable_to_placeholder: TIG, MIG, SAW, manual…
     errors:
       title_required: Title is required
       title_too_long: Title cannot exceed 200 characters
@@ -83,7 +191,7 @@ welding:
       pdf_template_required: PDF template is required
       position_invalid: Position must be a non-negative integer
   workflows:
-    title: Workflows
+    title: WeldingWorkflows
     subtitle: Ongoing and completed welding workflows
     empty: No workflow started yet.
     loading: Loading workflows…
@@ -94,10 +202,10 @@ welding:
     no_assignee: No welder assigned
     no_assignee_option: None
     new: New workflow
-    created: Workflow created
+    created: WeldingWorkflow created
     create_and_open: Create and open
     loading_options: Loading…
-    field_template: Workflow template
+    field_template: WeldingWorkflow template
     field_assignee: Assigned welder
     no_published_template: No published template available. Publish a template first.
     status_draft: Draft
@@ -107,7 +215,7 @@ welding:
     status_rejected: Rejected
     status_archived: Archived
     errors:
-      template_required: Workflow template is required
+      template_required: WeldingWorkflow template is required
       reason_required: A rejection reason is required
   workflow_steps:
     status_pending: To do
@@ -120,16 +228,18 @@ welding:
       unauthenticated: Unauthenticated user
   runner:
     start_workflow: Start workflow
-    started: Workflow started
+    started: WeldingWorkflow started
     start_to_see_steps: Start the workflow to generate steps from the template
     reject_workflow: Reject workflow
-    reject_workflow_warning: Rejection is irreversible and terminal. The welder will have to start a new workflow to resume.
+    reject_workflow_warning: Rejection is irreversible and terminal. The welder will
+      have to start a new workflow to resume.
     rejection_reason: Rejection reason
-    rejection_reason_placeholder: Describe precisely the reason for rejection (non-conformity, procedure issue…)
+    rejection_reason_placeholder: Describe precisely the reason for rejection (non-conformity,
+      procedure issue…)
     confirm_reject: Confirm rejection
-    workflow_rejected: Workflow rejected
+    workflow_rejected: WeldingWorkflow rejected
     archive_workflow: Archive workflow
-    workflow_archived: Workflow archived
+    workflow_archived: WeldingWorkflow archived
     requires_validation_by: Validation required by
     previous_rejection: Previous rejection
     validation_comment: Validator comment
@@ -150,7 +260,8 @@ welding:
   editor:
     edit_template: Edit template
     template_updated: Template updated
-    locked_warning: This template is published — edits are locked. Clone it to create a new version.
+    locked_warning: This template is published — edits are locked. Clone it to create
+      a new version.
     steps: Steps
     add_step: Add a step
     edit_step: Edit step
@@ -180,13 +291,14 @@ welding:
   validator_role_customer: Customer
   email:
     step_awaiting_validation:
-      subject: "[{siteName}] {reference} — step to validate: {title}"
-      title: "Step to validate — {reference}"
-      intro: "A welder has submitted a step requiring your validation on workflow <strong>{title}</strong> (v{version})."
+      subject: '[{siteName}] {reference} — step to validate: {title}'
+      title: Step to validate — {reference}
+      intro: A welder has submitted a step requiring your validation on workflow <strong>{title}</strong>
+        (v{version}).
       label_reference: Reference
       label_step: Step
       label_expected_role: Expected role
       label_submitted_by: Submitted by
       label_submitted_at: Submitted at
       cta_open: Open the workflow
-      footer: "Automated email sent by {siteName}."
+      footer: Automated email sent by {siteName}.

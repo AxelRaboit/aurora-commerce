@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Welding\Security;
 
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Welding\Workflow\Entity\Workflow;
-use Aurora\Module\Welding\Workflow\Security\WorkflowVoter;
-use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStep;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
+use Aurora\Module\Welding\Workflow\Security\WeldingWorkflowVoter;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -18,15 +18,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 #[AllowMockObjectsWithoutExpectations]
-final class WorkflowVoterTest extends TestCase
+final class WeldingWorkflowVoterTest extends TestCase
 {
     private AccessDecisionManagerInterface $accessDecisionManager;
-    private WorkflowVoter $voter;
+    private WeldingWorkflowVoter $voter;
 
     protected function setUp(): void
     {
         $this->accessDecisionManager = $this->createMock(AccessDecisionManagerInterface::class);
-        $this->voter = new WorkflowVoter($this->accessDecisionManager);
+        $this->voter = new WeldingWorkflowVoter($this->accessDecisionManager);
     }
 
     private function token(User $user): TokenInterface
@@ -54,9 +54,9 @@ final class WorkflowVoterTest extends TestCase
         return $user;
     }
 
-    private function workflowWithAssignee(?int $userId): Workflow
+    private function workflowWithAssignee(?int $userId): WeldingWorkflow
     {
-        $workflow = new Workflow();
+        $workflow = new WeldingWorkflow();
         if (null !== $userId) {
             $employee = new Employee();
             $employee->setUser($this->userWithId($userId));
@@ -75,7 +75,7 @@ final class WorkflowVoterTest extends TestCase
         $token = $this->token($user);
 
         $vote = new Vote();
-        $result = $this->voter->vote($token, $workflow, [WorkflowVoter::SUBMIT_STEP], $vote);
+        $result = $this->voter->vote($token, $workflow, [WeldingWorkflowVoter::SUBMIT_STEP], $vote);
 
         self::assertSame(VoterInterface::ACCESS_GRANTED, $result);
     }
@@ -89,7 +89,7 @@ final class WorkflowVoterTest extends TestCase
         $token = $this->token($user);
 
         $vote = new Vote();
-        $result = $this->voter->vote($token, $workflow, [WorkflowVoter::SUBMIT_STEP], $vote);
+        $result = $this->voter->vote($token, $workflow, [WeldingWorkflowVoter::SUBMIT_STEP], $vote);
 
         self::assertSame(VoterInterface::ACCESS_DENIED, $result);
     }
@@ -100,12 +100,12 @@ final class WorkflowVoterTest extends TestCase
         $this->accessDecisionManager->method('decide')->willReturn(true); // grant via Dev
 
         $workflow = $this->workflowWithAssignee(1);
-        $step = new WorkflowStep();
+        $step = new WeldingWorkflowStep();
         $step->setWorkflow($workflow);
 
         $token = $this->token($user);
         $vote = new Vote();
-        $result = $this->voter->vote($token, $step, [WorkflowVoter::SUBMIT_STEP], $vote);
+        $result = $this->voter->vote($token, $step, [WeldingWorkflowVoter::SUBMIT_STEP], $vote);
 
         self::assertSame(VoterInterface::ACCESS_GRANTED, $result);
     }

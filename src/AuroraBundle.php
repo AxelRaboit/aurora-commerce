@@ -123,12 +123,12 @@ use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\Notes\PostIt\Entity\PostItNote;
 use Aurora\Module\Notes\PostIt\Entity\PostItNoteInterface;
-use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocument;
-use Aurora\Module\PdfForm\PdfDocument\Entity\PdfDocumentInterface;
-use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplate;
-use Aurora\Module\PdfForm\PdfTemplate\Entity\PdfTemplateInterface;
-use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateField;
-use Aurora\Module\PdfForm\PdfTemplateField\Entity\PdfTemplateFieldInterface;
+use Aurora\Module\Welding\PdfDocument\Entity\WeldingPdfDocument;
+use Aurora\Module\Welding\PdfDocument\Entity\WeldingPdfDocumentInterface;
+use Aurora\Module\Welding\PdfTemplate\Entity\WeldingPdfTemplate;
+use Aurora\Module\Welding\PdfTemplate\Entity\WeldingPdfTemplateInterface;
+use Aurora\Module\Welding\PdfTemplateField\Entity\WeldingPdfTemplateField;
+use Aurora\Module\Welding\PdfTemplateField\Entity\WeldingPdfTemplateFieldInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
@@ -205,16 +205,16 @@ use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
-use Aurora\Module\Welding\Workflow\Entity\Workflow;
-use Aurora\Module\Welding\Workflow\Entity\WorkflowInterface;
-use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStep;
-use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStepInterface;
-use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WorkflowStepPdfTemplate;
-use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WorkflowStepPdfTemplateInterface;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplateInterface;
-use Aurora\Module\Welding\WorkflowTemplate\Entity\WorkflowTemplate;
-use Aurora\Module\Welding\WorkflowTemplate\Entity\WorkflowTemplateInterface;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
+use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplate;
+use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplateInterface;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplate;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplateInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -342,9 +342,9 @@ class AuroraBundle extends AbstractBundle
                     DocumentCategoryInterface::class => DocumentCategory::class,
                     DocumentTagInterface::class => DocumentTag::class,
                     DocumentFolderInterface::class => DocumentFolder::class,
-                    PdfTemplateInterface::class => PdfTemplate::class,
-                    PdfTemplateFieldInterface::class => PdfTemplateField::class,
-                    PdfDocumentInterface::class => PdfDocument::class,
+                    WeldingPdfTemplateInterface::class => WeldingPdfTemplate::class,
+                    WeldingPdfTemplateFieldInterface::class => WeldingPdfTemplateField::class,
+                    WeldingPdfDocumentInterface::class => WeldingPdfDocument::class,
                     VaultEntryInterface::class => VaultEntry::class,
                     VaultFolderInterface::class => VaultFolder::class,
                     VaultUserConfigInterface::class => VaultUserConfig::class,
@@ -368,11 +368,11 @@ class AuroraBundle extends AbstractBundle
                     PersonalFinanceRecurringTransactionInterface::class => PersonalFinanceRecurringTransaction::class,
                     PersonalFinanceScheduledTransactionInterface::class => PersonalFinanceScheduledTransaction::class,
                     PersonalFinanceCategorizationRuleInterface::class => PersonalFinanceCategorizationRule::class,
-                    WorkflowTemplateInterface::class => WorkflowTemplate::class,
-                    WorkflowStepTemplateInterface::class => WorkflowStepTemplate::class,
-                    WorkflowStepPdfTemplateInterface::class => WorkflowStepPdfTemplate::class,
-                    WorkflowInterface::class => Workflow::class,
-                    WorkflowStepInterface::class => WorkflowStep::class,
+                    WeldingWorkflowTemplateInterface::class => WeldingWorkflowTemplate::class,
+                    WeldingWorkflowStepTemplateInterface::class => WeldingWorkflowStepTemplate::class,
+                    WeldingWorkflowStepPdfTemplateInterface::class => WeldingWorkflowStepPdfTemplate::class,
+                    WeldingWorkflowInterface::class => WeldingWorkflow::class,
+                    WeldingWorkflowStepInterface::class => WeldingWorkflowStep::class,
                 ],
                 'mappings' => array_merge(
                     [

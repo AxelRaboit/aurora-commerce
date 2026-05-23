@@ -8,12 +8,12 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Welding\Enum\WeldingValidatorRoleEnum;
-use Aurora\Module\Welding\WorkflowStepTemplate\Dto\WorkflowStepTemplateInput;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
-use Aurora\Module\Welding\WorkflowStepTemplate\Manager\WorkflowStepTemplateManager;
-use Aurora\Module\Welding\WorkflowStepTemplate\Repository\WorkflowStepTemplateRepository;
-use Aurora\Module\Welding\WorkflowTemplate\Entity\WorkflowTemplate;
-use Aurora\Module\Welding\WorkflowTemplate\Repository\WorkflowTemplateRepository;
+use Aurora\Module\Welding\WorkflowStepTemplate\Dto\WeldingWorkflowStepTemplateInput;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
+use Aurora\Module\Welding\WorkflowStepTemplate\Manager\WeldingWorkflowStepTemplateManager;
+use Aurora\Module\Welding\WorkflowStepTemplate\Repository\WeldingWorkflowStepTemplateRepository;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplate;
+use Aurora\Module\Welding\WorkflowTemplate\Repository\WeldingWorkflowTemplateRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,22 +23,22 @@ use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[AllowMockObjectsWithoutExpectations]
-final class WorkflowStepTemplateManagerTest extends TestCase
+final class WeldingWorkflowStepTemplateManagerTest extends TestCase
 {
     private EntityManagerInterface $entityManager;
-    private WorkflowTemplateRepository $workflowTemplateRepository;
-    private WorkflowStepTemplateRepository $stepRepository;
-    private WorkflowStepTemplateManager $manager;
+    private WeldingWorkflowTemplateRepository $workflowTemplateRepository;
+    private WeldingWorkflowStepTemplateRepository $stepRepository;
+    private WeldingWorkflowStepTemplateManager $manager;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->workflowTemplateRepository = $this->createMock(WorkflowTemplateRepository::class);
-        $this->stepRepository = $this->createMock(WorkflowStepTemplateRepository::class);
+        $this->workflowTemplateRepository = $this->createMock(WeldingWorkflowTemplateRepository::class);
+        $this->stepRepository = $this->createMock(WeldingWorkflowStepTemplateRepository::class);
         $this->manager = $this->makeManager();
     }
 
-    private function makeManager(): WorkflowStepTemplateManager
+    private function makeManager(): WeldingWorkflowStepTemplateManager
     {
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
@@ -49,7 +49,7 @@ final class WorkflowStepTemplateManagerTest extends TestCase
         $connection = $this->createStub(Connection::class);
         $connection->method('executeQuery')->willReturn($dbalResult);
 
-        return new WorkflowStepTemplateManager(
+        return new WeldingWorkflowStepTemplateManager(
             $this->entityManager,
             $this->workflowTemplateRepository,
             $this->stepRepository,
@@ -64,7 +64,7 @@ final class WorkflowStepTemplateManagerTest extends TestCase
 
     public function testCreateResolvesWorkflowTemplateAndAppliesFields(): void
     {
-        $parent = new WorkflowTemplate();
+        $parent = new WeldingWorkflowTemplate();
         $parent->setTitle('Parent');
 
         $this->workflowTemplateRepository->expects(self::once())->method('find')->with(42)->willReturn($parent);
@@ -72,13 +72,13 @@ final class WorkflowStepTemplateManagerTest extends TestCase
         $captured = null;
         $this->entityManager->method('persist')->willReturnCallback(
             static function (object $entity) use (&$captured): void {
-                if ($entity instanceof WorkflowStepTemplate) {
+                if ($entity instanceof WeldingWorkflowStepTemplate) {
                     $captured = $entity;
                 }
             }
         );
 
-        $this->manager->create(new WorkflowStepTemplateInput(
+        $this->manager->create(new WeldingWorkflowStepTemplateInput(
             workflowTemplateId: 42,
             position: 2,
             title: 'Étape 1',
@@ -87,7 +87,7 @@ final class WorkflowStepTemplateManagerTest extends TestCase
             validatorRole: WeldingValidatorRoleEnum::Inspector,
         ));
 
-        self::assertInstanceOf(WorkflowStepTemplate::class, $captured);
+        self::assertInstanceOf(WeldingWorkflowStepTemplate::class, $captured);
         self::assertSame($parent, $captured->getWorkflowTemplate());
         self::assertSame(2, $captured->getPosition());
         self::assertSame('Étape 1', $captured->getTitle());
@@ -101,26 +101,26 @@ final class WorkflowStepTemplateManagerTest extends TestCase
         $this->workflowTemplateRepository->method('find')->willReturn(null);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('WorkflowTemplate #999 not found');
+        $this->expectExceptionMessage('WeldingWorkflowTemplate #999 not found');
 
-        $this->manager->create(new WorkflowStepTemplateInput(workflowTemplateId: 999, title: 'X'));
+        $this->manager->create(new WeldingWorkflowStepTemplateInput(workflowTemplateId: 999, title: 'X'));
     }
 
     public function testApplyInputClearsValidatorRoleWhenRequiresValidationIsFalse(): void
     {
-        $parent = new WorkflowTemplate();
+        $parent = new WeldingWorkflowTemplate();
         $this->workflowTemplateRepository->method('find')->willReturn($parent);
 
         $captured = null;
         $this->entityManager->method('persist')->willReturnCallback(
             static function (object $entity) use (&$captured): void {
-                if ($entity instanceof WorkflowStepTemplate) {
+                if ($entity instanceof WeldingWorkflowStepTemplate) {
                     $captured = $entity;
                 }
             }
         );
 
-        $this->manager->create(new WorkflowStepTemplateInput(
+        $this->manager->create(new WeldingWorkflowStepTemplateInput(
             workflowTemplateId: 1,
             title: 'Step',
             requiresValidation: false,

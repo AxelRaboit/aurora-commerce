@@ -7,8 +7,8 @@ namespace Aurora\Module\Welding\Service;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Welding\Setting\WeldingSettingEnum;
-use Aurora\Module\Welding\Workflow\Entity\WorkflowInterface;
-use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStepInterface;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -39,7 +39,7 @@ class WeldingStepNotifier
         protected readonly string $mailerFrom,
     ) {}
 
-    public function notifyAwaitingValidation(WorkflowStepInterface $step): void
+    public function notifyAwaitingValidation(WeldingWorkflowStepInterface $step): void
     {
         $recipient = mb_trim($this->settingRepository->getOrDefault(WeldingSettingEnum::NotificationEmail));
         if ('' === $recipient) {
@@ -84,7 +84,7 @@ class WeldingStepNotifier
         }
     }
 
-    private function buildSubject(WorkflowInterface $workflow, WorkflowStepInterface $step, string $siteName): string
+    private function buildSubject(WeldingWorkflowInterface $workflow, WeldingWorkflowStepInterface $step, string $siteName): string
     {
         return $this->translator->trans('welding.email.step_awaiting_validation.subject', [
             'siteName' => $siteName,

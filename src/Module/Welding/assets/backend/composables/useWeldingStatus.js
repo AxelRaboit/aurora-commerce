@@ -1,9 +1,9 @@
 /**
  * Single source of truth for the Welding status colour / icon / order tables.
  * Three independent status spaces:
- *  - Workflow (instance):       Draft / InProgress / AwaitingValidation / Completed / Rejected / Archived
- *  - WorkflowStep (instance):   Pending / InProgress / AwaitingValidation / Validated / Rejected
- *  - WorkflowTemplate:          Draft / Published / Archived
+ *  - WeldingWorkflow (instance):       Draft / InProgress / AwaitingValidation / Completed / Rejected / Archived
+ *  - WeldingWorkflowStep (instance):   Pending / InProgress / AwaitingValidation / Validated / Rejected
+ *  - WeldingWorkflowTemplate:          Draft / Published / Archived
  *
  * All colour classes carry their dark-mode variant so callers don't have to
  * remember to add it.

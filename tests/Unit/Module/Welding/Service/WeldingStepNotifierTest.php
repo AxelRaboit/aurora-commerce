@@ -6,8 +6,8 @@ namespace Aurora\Tests\Unit\Module\Welding\Service;
 
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Welding\Service\WeldingStepNotifier;
-use Aurora\Module\Welding\Workflow\Entity\Workflow;
-use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStep;
+use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
+use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mailer\MailerInterface;
@@ -35,8 +35,8 @@ final class WeldingStepNotifierTest extends TestCase
             'noreply@example.com',
         );
 
-        $step = new WorkflowStep();
-        $step->setWorkflow(new Workflow());
+        $step = new WeldingWorkflowStep();
+        $step->setWorkflow(new WeldingWorkflow());
 
         $notifier->notifyAwaitingValidation($step);
     }
@@ -69,8 +69,8 @@ final class WeldingStepNotifierTest extends TestCase
             'noreply@example.com',
         );
 
-        $step = new WorkflowStep();
-        $step->setWorkflow(new Workflow());
+        $step = new WeldingWorkflowStep();
+        $step->setWorkflow(new WeldingWorkflow());
 
         // Should not throw
         $notifier->notifyAwaitingValidation($step);
@@ -95,7 +95,7 @@ final class WeldingStepNotifierTest extends TestCase
             'noreply@example.com',
         );
 
-        $step = new WorkflowStep(); // no workflow
+        $step = new WeldingWorkflowStep(); // no workflow
 
         $notifier->notifyAwaitingValidation($step);
     }

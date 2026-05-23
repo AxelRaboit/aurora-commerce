@@ -1,0 +1,26 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.welding_pdf_templates'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.sections.welding'|trans},
+            {label: 'backend.nav.welding_pdf_templates'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('welding/backend/pdf_templates/WeldingPdfTemplatesApp', {
+    templates: templates,
+    search: search,
+    createPath: createPath,
+    updatePath: updatePath,
+    deletePath: deletePath,
+    detectFieldsPath: detectFieldsPath,
+    updateFieldPath: updateFieldPath,
+    listPath: listPath,
+    mediaPickerPath: mediaPickerPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

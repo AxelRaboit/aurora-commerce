@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Scheduler\MessageHandler;
 
 use Aurora\Core\Scheduler\Message\CleanTempFilesMessage;
-use Aurora\Module\PdfForm\PdfDocument\Repository\PdfDocumentRepository;
+use Aurora\Module\Welding\PdfDocument\Repository\WeldingPdfDocumentRepository;
 use FilesystemIterator;
 use Psr\Log\LoggerInterface;
 use RecursiveDirectoryIterator;
@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Covers:
  *   - /tmp/aurora_pdfform_* (XFDF + JSON values from pdftk fill — crash orphans)
  *   - /tmp/aurora_ssh_*     (SSH key files from MountPoint tunnels — crash orphans)
- *   - var/pdfform/**\/*.pdf  (generated PDFs whose PdfDocument entity was deleted)
+ *   - var/pdfform/**\/*.pdf  (generated PDFs whose WeldingPdfDocument entity was deleted)
  */
 #[AsMessageHandler]
 final readonly class CleanTempFilesHandler
@@ -30,12 +30,12 @@ final readonly class CleanTempFilesHandler
     /** Prefixes of temporary files Aurora creates in sys_get_temp_dir(). */
     private const array TMP_PREFIXES = [
         'aurora_pdfform_xfdf_',
-        'aurora_pdfform_values_',
+        'aurora_welding_pdf_values_',
         'aurora_ssh_',
     ];
 
     public function __construct(
-        private PdfDocumentRepository $pdfDocumentRepository,
+        private WeldingPdfDocumentRepository $pdfDocumentRepository,
         private LoggerInterface $logger,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
