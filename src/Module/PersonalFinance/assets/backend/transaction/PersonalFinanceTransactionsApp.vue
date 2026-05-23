@@ -349,7 +349,7 @@ function describeTx(tx) {
                                     <Paperclip v-if="tx.hasAttachment" class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" />
                                     <ArrowRightLeft v-if="isTransferLeg(tx)" class="w-3.5 h-3.5 text-sky-400 shrink-0" :stroke-width="2" :title="t('personal_finance.transfers.leg_badge_title')" />
                                     <SplitIcon v-else-if="isSplitLeg(tx)" class="w-3.5 h-3.5 text-amber-400 shrink-0" :stroke-width="2" :title="t('personal_finance.splits.leg_badge_title')" />
-                                    <Receipt v-else class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" :title="t('personal_finance.transactions.leg_badge_title')" />
+                                    <Receipt v-else class="w-3.5 h-3.5 text-accent-400 shrink-0" :stroke-width="2" :title="t('personal_finance.transactions.leg_badge_title')" />
                                     <span>{{ tx.description ?? t("personal_finance.transactions.uncategorized") }}</span>
                                 </p>
                                 <p class="text-xs text-muted mt-0.5 font-mono">{{ tx.date }} · {{ formatType(tx.type) }}</p>
@@ -389,7 +389,7 @@ function describeTx(tx) {
                                         <Paperclip v-if="tx.hasAttachment" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                                         <ArrowRightLeft v-if="isTransferLeg(tx)" class="w-3.5 h-3.5 text-sky-400" :stroke-width="2" :title="t('personal_finance.transfers.leg_badge_title')" />
                                         <SplitIcon v-else-if="isSplitLeg(tx)" class="w-3.5 h-3.5 text-amber-400" :stroke-width="2" :title="t('personal_finance.splits.leg_badge_title')" />
-                                        <Receipt v-else class="w-3.5 h-3.5 text-muted" :stroke-width="2" :title="t('personal_finance.transactions.leg_badge_title')" />
+                                        <Receipt v-else class="w-3.5 h-3.5 text-accent-400" :stroke-width="2" :title="t('personal_finance.transactions.leg_badge_title')" />
                                         <span>{{ tx.description }}</span>
                                     </div>
                                 </td>
