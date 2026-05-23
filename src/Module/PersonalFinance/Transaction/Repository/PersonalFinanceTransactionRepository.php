@@ -94,6 +94,123 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Sum of `amount` for the given wallet, filtered by transaction
+     * type, within [from, to). Transfer legs excluded so transfers
+     * don't double-count in monthly flow KPIs.
+     */
+    public function sumByTypeForPeriod(PersonalFinanceWalletInterface $wallet, string $typeValue, DateTimeImmutable $from, DateTimeImmutable $to): string
+    {
+        $total = $this->createQueryBuilder('t')
+            ->select('SUM(t.amount) AS total')
+            ->where('t.wallet = :wallet')
+            ->andWhere('t.type = :type')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallet', $wallet)
+            ->setParameter('type', $typeValue)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return bcadd('0', (string) ($total ?? '0'), 2);
+    }
+
+    /**
+     * Daily expense series for the wallet over [from, to). Returns a
+     * map of YYYY-MM-DD → decimal sum (bcmath string). Excludes
+     * transfer legs.
+     *
+     * @return array<string, string>
+     */
+    public function dailyExpenseSeries(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $rows = $this->createQueryBuilder('t')
+            ->select('t.date AS day', 'SUM(t.amount) AS total')
+            ->where('t.wallet = :wallet')
+            ->andWhere('t.type = :type')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallet', $wallet)
+            ->setParameter('type', 'expense')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('t.date')
+            ->getQuery()
+            ->getResult();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $day = $row['day'] instanceof DateTimeImmutable ? $row['day']->format('Y-m-d') : (string) $row['day'];
+            $out[$day] = bcadd('0', (string) $row['total'], 2);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Top expense categories for the wallet over [from, to). Returns
+     * raw rows {categoryId, categoryName, total}; the caller can
+     * sort / take(N) / merge across wallets.
+     *
+     * @return list<array{categoryId: int, categoryName: string, total: string}>
+     */
+    public function topExpenseCategories(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $rows = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.category) AS categoryId', 'c.name AS categoryName', 'SUM(t.amount) AS total')
+            ->leftJoin('t.category', 'c')
+            ->where('t.wallet = :wallet')
+            ->andWhere('t.type = :type')
+            ->andWhere('t.category IS NOT NULL')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallet', $wallet)
+            ->setParameter('type', 'expense')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('t.category', 'c.name')
+            ->getQuery()
+            ->getResult();
+
+        return array_map(
+            static fn (array $row): array => [
+                'categoryId' => (int) $row['categoryId'],
+                'categoryName' => (string) $row['categoryName'],
+                'total' => bcadd('0', (string) $row['total'], 2),
+            ],
+            $rows,
+        );
+    }
+
+    /**
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return list<PersonalFinanceTransactionInterface>
+     */
+    public function findRecentAcrossWallets(array $wallets, int $limit = 6): array
+    {
+        if ([] === $wallets) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.category', 'c')->addSelect('c')
+            ->leftJoin('t.wallet', 'w')->addSelect('w')
+            ->where('t.wallet IN (:wallets)')
+            ->andWhere('t.transferId IS NULL')
+            ->setParameter('wallets', $wallets)
+            ->orderBy('t.date', Order::Descending->value)
+            ->addOrderBy('t.id', Order::Descending->value)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Sums |amount| of every transaction belonging to the user in the
      * given category, ignoring type sign (Spendly-compatible: both
      * income and expense add up — the user decides the semantic).

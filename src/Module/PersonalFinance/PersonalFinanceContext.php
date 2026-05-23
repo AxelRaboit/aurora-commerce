@@ -50,4 +50,9 @@ final readonly class PersonalFinanceContext
     {
         return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceCategorization);
     }
+
+    public function isDashboardEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceDashboard);
+    }
 }

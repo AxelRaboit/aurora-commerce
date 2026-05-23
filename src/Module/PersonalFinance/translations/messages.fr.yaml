@@ -16,6 +16,8 @@ backend:
           use: Gérer les transactions récurrentes et planifiées
         categorization:
           use: Gérer les règles d'auto-catégorisation
+        dashboard:
+          use: Voir le tableau de bord finance perso
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -36,6 +38,8 @@ backend:
     personal_finance_recurring_description: 'Transactions récurrentes (chaque mois à un jour fixe) et planifiées (one-off futur).'
     personal_finance_categorization: Auto-catégorisation
     personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement quand tu catégorises une transaction.'
+    personal_finance_dashboard: Tableau de bord
+    personal_finance_dashboard_description: 'Vue d''ensemble : KPIs du mois, sparkline 30 jours, top catégories, soldes pinés, dernières transactions, alertes budget.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -237,6 +241,29 @@ personal_finance:
       planned_required: Le montant planifié est requis.
       planned_format: 'Format invalide. Exemple : 1234.56'
       carried_format: 'Format invalide. Exemple : 1234.56 ou -1234.56'
+  dashboard:
+    title: Tableau de bord
+    subtitle: Vue d'ensemble en un coup d'œil de ta finance perso ce mois-ci.
+    vs_previous_month: vs. mois précédent
+    income_minus_expense: Revenus − Dépenses
+    across_wallets: 'sur {count} portefeuille(s)'
+    spending_30d: Dépenses sur 30 jours
+    top_categories: Top catégories du mois
+    pinned_wallets: Portefeuilles épinglés
+    no_pinned_wallets: Aucun portefeuille épinglé. Active "Afficher sur le tableau de bord" dans l'édition d'un portefeuille.
+    recent_transactions: Dernières transactions
+    goals: Objectifs
+    goals_active_total: actifs / total
+    upcoming_recurring: Récurrentes à venir
+    upcoming_scheduled: Planifiées à venir
+    day_of_month: 'Le {day} du mois'
+    budget_alerts: Alertes budget
+    no_data_yet: Pas encore de données.
+    kpi:
+      expense_month: Dépenses du mois
+      income_month: Revenus du mois
+      net_month: Net du mois
+      total_balance: Solde total
   categorization:
     title: Auto-catégorisation
     intro: Les règles sont apprises automatiquement à chaque transaction catégorisée. Tu peux corriger une catégorie ou supprimer une règle obsolète ici.
