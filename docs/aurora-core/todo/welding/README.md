@@ -1,12 +1,9 @@
 # Welding — nouveau module Aurora
 
-> **Statut** : décisions structurelles actées (mai 2026), sprint 0.5
-> (signature embed dans PdfForm) livré. Le scaffold du module Welding
-> n'a pas démarré. Document vivant — le doc se découpera en sous-fichiers
-> thématiques (à la [`nimbus/`](../nimbus/README.md)) une fois la V1 lancée.
->
-> **Prochaine étape** : sprint 1 = `aurora:make:module Welding` + entités
-> de la couche template.
+> **Statut V1 livrée (mai 2026)** : sprints -1 à 5 tous livrés. Le module
+> est fonctionnel de bout en bout — template editor, runner soudeur,
+> validation tierce, notifications email, voter d'autorisation, audit
+> trail. Seul le V2 (cf. point 9 du plan ci-dessous) reste ouvert.
 
 Module pour piloter des **workflows de soudure réglementée** (cible
 initiale : nucléaire — RCC-M, ASME III, normes ISO 15614). Un superviseur
@@ -392,17 +389,35 @@ suit simplement la même convention.
      Vue placeholder pour le listing. Manager principal expose en plus
      `publish()` / `archive()` / `cloneAsNewVersion()`. UI riche (drag&drop
      steps, attach PdfTemplates) reportée au sprint 3.
-5. ⏸ **Sprint 2 — entités instance** : `Workflow` + `WorkflowStep`,
-   state machine de transition, hooks Manager. Référence
-   auto-numérotée `WLD-{YYYY}-{NNNNNN}` via Setting `welding.reference_prefix`
-   (à ajouter sous `Module/Welding/Setting/`).
-6. ⏸ **Sprint 3 — UI runner soudeur** : cœur du module. Wizard step-by-step,
-   intégration PdfForm filler.
-7. ⏸ **Sprint 4 — UI validateur + notifications email** : page validateur +
-   email Symfony Mailer simple sur `AwaitingValidation`.
-8. ⏸ **Sprint 5 — permissions granulaires + audit** : permissions
-   spécifiques aux entités (`welding.workflow_template.view/edit/...`,
-   `welding.workflow.start/fill/validate/archive`), audit trail
-   réglementaire (timestamps + signatures immutables).
+5. ✅ **Sprint 2 — entités instance** : `Workflow` + `WorkflowStep`,
+   state machine de transition complète (create / start / submit /
+   recordValidation / reject / archive / delete), hooks Manager dans
+   les 4 familles (createX, applyInput, audit*, plus les transitions
+   métier). Référence auto-numérotée `WLD-{YYYY}-{NNNNNN}` via Setting
+   `backend_welding_reference_prefix` (préfixe configurable, défaut
+   "WLD"). Migration `Version20260523181528`.
+6. ✅ **Sprint 3 — UI runner soudeur** : `WorkflowRunnerApp.vue` —
+   stepper vertical, statuts colorés par step, actions Submit step /
+   Validate step / Reject workflow / Archive workflow. Modales
+   validate/reject inline. Intégration PdfForm via lien externe (les
+   PDFs requis ouvrent PdfForm avec `?templateId&contextType=welding_step&contextId`).
+   Fix collatéral dans `PdfDocumentManager` pour propager
+   contextType/contextId du DTO à l'entité (deux lignes manquantes).
+7. ✅ **Sprint 4 — notifications email validator** : `WeldingStepNotifier`
+   service, template Twig `@Welding/email/step_awaiting_validation.html.twig`,
+   appel dans `WorkflowStepManager::submit()` post-flush quand la step
+   requiert validation. Setting `backend_welding_notification_email`
+   (vide = pas d'email, single recipient pour V1).
+8. ✅ **Sprint 5 — permissions granulaires + Voter + audit** : les 9
+   permissions `welding.workflow_templates.*` + `welding.workflows.*`
+   sont en place et gating les controllers. `WorkflowVoter` ajouté
+   pour restreindre `SUBMIT_STEP` à l'assignee du workflow
+   (un soudeur ne peut pas soumettre l'étape d'un autre). Audit trail :
+   tous les Managers loggent via `AuditLogger` qui capture nativement
+   l'auteur via Security ; les timestamps `created/updated/validated/
+   completed/rejectedAt` sont immutables côté code (jamais réécrits
+   sauf reset explicite sur reject où l'audit log préserve l'historique).
 9. ⏸ **V2 (post-V1)** : archive Ged auto, multi-validation par step,
-   rattachement Project/Affaire (`contextType`/`contextId` sur `Workflow`).
+   rattachement Project/Affaire (`contextType`/`contextId` sur `Workflow`),
+   notifications email routées par `validatorRole`, page dédiée
+   "Validations en attente pour moi" pour les validateurs.

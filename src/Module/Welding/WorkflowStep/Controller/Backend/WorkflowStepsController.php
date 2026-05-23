@@ -9,6 +9,7 @@ use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use Aurora\Module\Welding\Workflow\Security\WorkflowVoter;
 use Aurora\Module\Welding\WorkflowStep\Dto\WorkflowStepValidationInputFactoryInterface;
 use Aurora\Module\Welding\WorkflowStep\Entity\WorkflowStepInterface;
 use Aurora\Module\Welding\WorkflowStep\Manager\WorkflowStepManagerInterface;
@@ -34,7 +35,7 @@ class WorkflowStepsController extends AbstractController
     ) {}
 
     #[Route('/{id}/submit', name: '_submit', methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('welding.workflows.fill')]
+    #[IsGranted(WorkflowVoter::SUBMIT_STEP, subject: 'step')]
     public function submit(WorkflowStepInterface $step): JsonResponse
     {
         $welder = $this->getUser();

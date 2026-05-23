@@ -18,15 +18,17 @@ Liste des modules à venir, classés par priorité et impact.
 
 - [Roadmap modules](module_roadmap.md)
 
-### Welding — workflows de soudure réglementée (brainstorm)
+### ~~Welding — workflows de soudure réglementée~~ — ✅ V1 livrée
 
 Module pour piloter des workflows de soudure réglementée (cible initiale :
-nucléaire — RCC-M, ASME III, ISO 15614). Workflow segmenté en steps, PDFs
-à remplir par step, signatures + validations tierces, archive. Banc d'essai
-de bout en bout des briques `PdfForm` (templates / fields / documents avec
-signature).
+nucléaire — RCC-M, ASME III, ISO 15614). V1 sealed mai 2026 : 5 entités
+(WorkflowTemplate / Step / StepPdf / Workflow / WorkflowStep), state machine,
+runner soudeur, validateur, notifications email, voter d'autorisation,
+audit trail réglementaire. Code sous `src/Module/Welding/`. Cf.
+[`welding/README.md`](welding/README.md) pour l'historique sprint-by-sprint
+et le scope V2 restant ouvert.
 
-- [Welding — README brainstorm](welding/README.md)
+- [Welding — historique + V2 backlog](welding/README.md)
 
 ### Ecommerce — gaps vs Sylius
 

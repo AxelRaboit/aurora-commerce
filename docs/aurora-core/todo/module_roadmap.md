@@ -20,6 +20,7 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | Vault (Safe + PasswordGenerator) | ✅ Core |
 | PdfForm (formulaires PDF) | ✅ Core |
 | Assistant (Ollama / chat IA) | ✅ Core |
+| Welding (workflows de soudure réglementée) | ✅ Core (V1 sealed mai 2026) |
 
 ---
 
