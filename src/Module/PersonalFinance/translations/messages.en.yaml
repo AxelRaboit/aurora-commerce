@@ -186,3 +186,25 @@ personal_finance:
       amount_required: Amount is required for each line.
       amount_format: 'Invalid amount format on a line. Example: 1234.56'
       amount_positive: Each line amount must be strictly positive.
+  balance:
+    current: Current balance
+    month: Month-end balance
+    rolling_start: Month-start balance
+  balance_adjustment:
+    title: Adjust balance
+    open: Adjust
+    hint: Enter the real balance — an adjustment transaction will be created to bridge the gap.
+    submit: Adjust
+    success: Balance adjusted.
+    fields:
+      new_balance: Real balance
+      date: Date
+      description: Description (optional)
+    placeholders:
+      new_balance: '0.00'
+      description: e.g. bank statement correction…
+    errors:
+      new_balance_required: The new balance is required.
+      new_balance_format: 'Invalid format. Example: 1234.56'
+      date_required: Date is required.
+      no_diff: The new balance already matches the computed one — nothing to adjust.

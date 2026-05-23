@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, FileDown, Upload } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Receipt, ArrowRightLeft, Split as SplitIcon, Paperclip, FileDown, Upload, Scale, Wallet } from "lucide-vue-next";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -23,6 +23,8 @@ import { useTransfersDelete } from "./composables/useTransfersDelete.js";
 import { useSplitsCreate } from "./composables/useSplitsCreate.js";
 import { useSplitsDelete } from "./composables/useSplitsDelete.js";
 import { useTransactionAttachment } from "./composables/useTransactionAttachment.js";
+import { useWalletBalance } from "./composables/useWalletBalance.js";
+import { useBalanceAdjustment } from "./composables/useBalanceAdjustment.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -44,6 +46,10 @@ const props = defineProps({
     uploadAttachmentPath: { type: String, required: true },
     deleteAttachmentPath: { type: String, required: true },
     serveAttachmentPath: { type: String, required: true },
+    walletBalancePath: { type: String, required: true },
+    walletBalanceAdjustPath: { type: String, required: true },
+    balance: { type: Object, default: () => ({ current: "0.00", month: "0.00", rollingStart: "0.00" }) },
+    balanceMonth: { type: String, default: null },
     /** Client-extension hook — cf. `entity_extensibility_convention.md` §"Couche 5". */
     extraFields: { type: Object, default: () => ({}) },
 });
@@ -82,19 +88,19 @@ const currentCategoryOptions = computed(() => {
 
 const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useTransactionsCreate(
     props.createTransactionPath,
-    () => reset(),
+    () => refreshAfterTx(),
     { extraFields: props.extraFields },
 );
 
 const { showEdit, editingTransaction, editForm, editErrors, editLoading, openEdit, submitEdit } = useTransactionsEdit(
     props.updateTransactionPath,
-    () => reset(),
+    () => refreshAfterTx(),
     { extraFields: props.extraFields },
 );
 
 const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: doDelete } = useDelete(
     props.deleteTransactionPath,
-    () => reset(),
+    () => refreshAfterTx(),
     "personal_finance.transactions.deleted",
 );
 
@@ -111,7 +117,7 @@ const {
     props.createTransferPath,
     props.updateTransferPath,
     props.showTransferPath,
-    () => reset(),
+    () => refreshAfterTx(),
 );
 
 const {
@@ -145,7 +151,7 @@ const { loading: attachmentLoading, upload: uploadAttachment, remove: removeAtta
             if (updatedTransaction && editingTransaction.value && updatedTransaction.id === editingTransaction.value.id) {
                 editingTransaction.value = updatedTransaction;
             }
-            reset();
+            refreshAfterTx();
         },
     );
 
@@ -163,6 +169,29 @@ function onAttachmentRemove() {
     if (editingTransaction.value?.id) {
         removeAttachment(editingTransaction.value.id);
     }
+}
+
+const { balance, refresh: refreshBalance } = useWalletBalance(props.walletBalancePath, props.balance);
+
+const {
+    show: showAdjust,
+    form: adjustForm,
+    errors: adjustErrors,
+    loading: adjustLoading,
+    open: openAdjust,
+    submit: submitAdjust,
+} = useBalanceAdjustment(props.walletBalanceAdjustPath, () => {
+    reset();
+    refreshBalance(selectedWalletId.value);
+});
+
+watch(selectedWalletId, (id) => {
+    if (id) refreshBalance(id);
+});
+
+function refreshAfterTx() {
+    reset();
+    refreshBalance(selectedWalletId.value);
 }
 
 const {
@@ -276,13 +305,36 @@ function describeTx(tx) {
         </section>
 
         <template v-else>
-            <div class="bg-surface border border-line rounded-lg p-4">
+            <div class="bg-surface border border-line rounded-lg p-4 space-y-4">
                 <AppMultiselect
                     v-model="selectedWalletId"
                     :label="t('personal_finance.transactions.fields.wallet')"
                     :options="walletOptions"
                     :allow-empty="false"
                 />
+
+                <div v-if="selectedWalletId" class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-line pt-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-muted">{{ t("personal_finance.balance.current") }}</p>
+                        <p class="font-mono text-lg" :class="parseFloat(balance.current) >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                            {{ balance.current }}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-muted">{{ t("personal_finance.balance.month") }}</p>
+                        <p class="font-mono text-lg text-primary">{{ balance.month }}</p>
+                    </div>
+                    <div class="flex items-end justify-between gap-3">
+                        <div>
+                            <p class="text-xs uppercase tracking-wider text-muted">{{ t("personal_finance.balance.rolling_start") }}</p>
+                            <p class="font-mono text-lg text-primary">{{ balance.rollingStart }}</p>
+                        </div>
+                        <AppButton variant="ghost" size="sm" v-on:click="openAdjust(selectedWalletId)">
+                            <Scale class="w-3.5 h-3.5" :stroke-width="2" />
+                            {{ t("personal_finance.balance_adjustment.open") }}
+                        </AppButton>
+                    </div>
+                </div>
             </div>
 
             <div class="relative space-y-4">
@@ -746,6 +798,55 @@ function describeTx(tx) {
                     <AppButton variant="danger" size="md" :loading="splitDeleteLoading" v-on:click="doSplitDelete">
                         <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.delete") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <AppModal
+            :show="showAdjust"
+            :title="t('personal_finance.balance_adjustment.title')"
+            :icon="Scale"
+            :closeable="false"
+            v-on:close="showAdjust = false"
+        >
+            <form class="space-y-4" v-on:submit.prevent="submitAdjust">
+                <p class="text-sm text-muted">{{ t("personal_finance.balance_adjustment.hint") }}</p>
+                <AppAmountInput
+                    v-model="adjustForm.newBalance"
+                    :label="t('personal_finance.balance_adjustment.fields.new_balance')"
+                    :placeholder="t('personal_finance.balance_adjustment.placeholders.new_balance')"
+                    :error="adjustErrors.newBalance"
+                    required
+                />
+                <AppDatePicker
+                    v-model="adjustForm.date"
+                    :label="t('personal_finance.balance_adjustment.fields.date')"
+                    :placeholder="t('personal_finance.transactions.placeholders.date')"
+                    :error="adjustErrors.date"
+                    required
+                />
+                <AppInput
+                    v-model="adjustForm.description"
+                    :label="t('personal_finance.balance_adjustment.fields.description')"
+                    :placeholder="t('personal_finance.balance_adjustment.placeholders.description')"
+                />
+            </form>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" type="button" v-on:click="showAdjust = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        size="md"
+                        type="submit"
+                        :loading="adjustLoading"
+                        v-on:click="submitAdjust"
+                    >
+                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("personal_finance.balance_adjustment.submit") }}
                     </AppButton>
                 </AppModalFooter>
             </template>

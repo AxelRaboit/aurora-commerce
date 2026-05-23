@@ -186,3 +186,25 @@ personal_finance:
       amount_required: Le montant est requis pour chaque ligne.
       amount_format: 'Format invalide pour la ligne. Exemple : 1234.56'
       amount_positive: Le montant de chaque ligne doit être strictement positif.
+  balance:
+    current: Solde actuel
+    month: Solde fin de mois
+    rolling_start: Solde début de mois
+  balance_adjustment:
+    title: Ajuster le solde
+    open: Ajuster
+    hint: Saisis le solde réel ; une transaction d'ajustement sera créée pour compenser l'écart.
+    submit: Ajuster
+    success: Solde ajusté.
+    fields:
+      new_balance: Solde réel
+      date: Date
+      description: Description (optionnel)
+    placeholders:
+      new_balance: '0.00'
+      description: Ex. correction relevé bancaire…
+    errors:
+      new_balance_required: Le solde réel est requis.
+      new_balance_format: 'Format invalide. Exemple : 1234.56'
+      date_required: La date est requise.
+      no_diff: Le solde réel correspond déjà au solde calculé — rien à ajuster.

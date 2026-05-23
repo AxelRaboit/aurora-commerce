@@ -21,22 +21,22 @@ jour à la fin de chaque session.
 | 2c | WalletInvitation + member management (updateRole, removeMember) + 2 Controllers (invitations, members) | `4ec2de2b` | 🟢 |
 | 3 | Category (5-layer) + `SystemCategoryKeyEnum` + sub-feature `PersonalFinanceCategories` | `e44f366d` | 🟢 |
 | 4a | Transaction (5-layer, sans Splits/Attachments/Transfer) + Enum Income/Expense + sub-feature `PersonalFinanceTransactions` | `f667ba1b` | 🟢 |
-| 4b | TransferService atomique (2 transactions liées par `transferId` UUID v7) + `PersonalFinanceTransferInput` DTO + `PersonalFinanceTransfersController` (create/update/delete) + guard `ensureNotTransferLeg` sur le Manager + `findByTransferId` repo | _(à committer)_ | 🟢 |
+| 4b | TransferService atomique (2 transactions liées par `transferId` UUID v7) + `PersonalFinanceTransferInput` DTO + `PersonalFinanceTransfersController` (create/update/delete) + guard `ensureNotTransferLeg` sur le Manager + `findByTransferId` repo | `dce46700` | 🟢 |
+| 4b-UI | Modale Transfer Vue intégrée dans `PersonalFinanceTransactionsApp` (toolbar 2 boutons, composables `useTransfersForm` + `useTransfersDelete`, endpoint `/transfers/{id}/show`) | `598d8418` | 🟢 |
+| 4c | TransactionSplit (N tx liées par `splitId` UUID v7) + `PersonalFinanceSplitInput` + `PersonalFinanceSplitService` + Controller + Manager guard généralisé en `ensureMutableLeg` + UI modale dynamique N rows | _(à committer)_ | 🟢 |
+| 4d | Attachments (1 fichier/tx, PDF+raster, 5 Mo, var/uploads/personal-finance/transactions/{id}/) + colonne `attachment_original_name` (migration `Version20260523000000`) + Service + Controller (upload/delete/serve) + UI section dans la modale edit | _(à committer)_ | 🟢 |
+| 5 | WalletBalanceService (`currentBalance` / `monthlyBalance` / `rollingStartBalance` en bcmath) + `BalanceAdjustmentService` (lazy `BalanceAdjustment` system category) + DTO + Controller + UI barre de soldes + modale Ajuster dans `PersonalFinanceTransactionsApp` | _(à committer)_ | 🟢 |
 
 ## Sessions à venir
 
 | # | Session | Bloque ? | Prérequis |
 |---|---|---|---|
 | 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
-| 4b-UI | Modal Transfer côté Vue (form 2-wallets) — reste à brancher dans `PersonalFinanceTransactionsApp.vue` ou app dédiée | non — backend prêt | 4b |
-| 4c | TransactionSplit (N tx liées par splitId) — optionnel V2 | non | 4a |
-| 4d | Transaction attachments (1 fichier par tx, route `/uploads/personal-finance/transactions/`) | non | 4a |
-| 5 | WalletBalanceService (currentBalance, monthlyBalance, rollingStartBalance) + BalanceAdjustmentService | non | **4a** (somme transactions) |
-| 6 | Budget + BudgetItem + BudgetPreset + carry-over service | non | 4a |
-| 7 | Goal + EventSubscriber qui sync `savedAmount` depuis transactions | non | 4a |
+| 6 | Budget + BudgetItem + BudgetPreset + carry-over service | non | 5 |
+| 7 | Goal + EventSubscriber qui sync `savedAmount` depuis transactions | non | 5 |
 | 8 | RecurringTransaction + ScheduledTransaction + commande cron `personal-finance:recurring:generate` | non | 4a |
 | 9 | CategorizationRule + Learn/Suggest services + `afterSave` hook standardisé dans la convention | non | 4a |
-| 10 | Dashboard + Overview + Statistics services (agrégations) | non | toutes les précédentes (data) |
+| 10 | Dashboard + Overview + Statistics services (agrégations) | non | 5 + 6 + 7 |
 | 11 | Import Excel (2 steps : upload → preview → process) | non | 4a |
 
 ## État de conformité au 2026-05-23 (post-audit)

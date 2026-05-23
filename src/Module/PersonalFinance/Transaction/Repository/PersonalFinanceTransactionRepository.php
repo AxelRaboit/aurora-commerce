@@ -8,6 +8,7 @@ use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
+use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Order;
@@ -104,6 +105,42 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             ->orderBy('t.id', Order::Ascending->value)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Returns the signed net flow on the wallet over the given closed
+     * interval [from, to). Income is positive, Expense negative. The
+     * sum is returned as a decimal string (bcmath-safe) — never as
+     * float, to avoid drift on long histories.
+     *
+     * Pass `null` for either bound to leave it open.
+     */
+    public function netFlow(PersonalFinanceWalletInterface $wallet, ?DateTimeImmutable $from = null, ?DateTimeImmutable $to = null): string
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->select('t.type', 'SUM(t.amount) AS total')
+            ->where('t.wallet = :wallet')
+            ->setParameter('wallet', $wallet)
+            ->groupBy('t.type');
+
+        if (null !== $from) {
+            $qb->andWhere('t.date >= :from')->setParameter('from', $from);
+        }
+        if (null !== $to) {
+            $qb->andWhere('t.date < :to')->setParameter('to', $to);
+        }
+
+        $income = '0';
+        $expense = '0';
+        foreach ($qb->getQuery()->getResult() as $row) {
+            if (PersonalFinanceTransactionTypeEnum::Income === $row['type']) {
+                $income = (string) $row['total'];
+            } elseif (PersonalFinanceTransactionTypeEnum::Expense === $row['type']) {
+                $expense = (string) $row['total'];
+            }
+        }
+
+        return bcsub($income, $expense, 2);
     }
 
     /**

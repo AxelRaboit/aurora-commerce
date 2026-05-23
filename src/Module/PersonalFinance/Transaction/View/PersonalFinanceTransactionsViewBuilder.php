@@ -13,7 +13,9 @@ use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransact
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
 use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletSerializerInterface;
+use Aurora\Module\PersonalFinance\Wallet\Service\PersonalFinanceWalletBalanceServiceInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
+use DateTimeImmutable;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class PersonalFinanceTransactionsViewBuilder
@@ -25,6 +27,7 @@ final readonly class PersonalFinanceTransactionsViewBuilder
         private PersonalFinanceCategorySerializerInterface $categorySerializer,
         private PersonalFinanceTransactionRepository $transactionRepository,
         private PersonalFinanceTransactionSerializerInterface $transactionSerializer,
+        private PersonalFinanceWalletBalanceServiceInterface $balanceService,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 
@@ -42,6 +45,11 @@ final readonly class PersonalFinanceTransactionsViewBuilder
             );
         }
 
+        $month = new DateTimeImmutable('first day of this month');
+        $balance = $selectedWallet instanceof PersonalFinanceWalletInterface
+            ? $this->balanceService->snapshot($selectedWallet, $month)
+            : ['current' => '0.00', 'month' => '0.00', 'rollingStart' => '0.00'];
+
         return [
             'wallets' => array_map($this->walletSerializer->serialize(...), $wallets),
             'categoriesByWallet' => $categoriesByWallet,
@@ -49,6 +57,8 @@ final readonly class PersonalFinanceTransactionsViewBuilder
             'transactions' => $selectedWallet instanceof PersonalFinanceWalletInterface
                 ? $this->buildListPayload($selectedWallet, $pagination)
                 : ['success' => true, 'items' => [], 'page' => 1, 'totalPages' => 1, 'total' => 0],
+            'balance' => $balance,
+            'balanceMonth' => $month->format('Y-m'),
             'search' => $pagination->search ?? '',
             'types' => PersonalFinanceTransactionTypeEnum::values(),
             'listPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_list'),
@@ -64,6 +74,8 @@ final readonly class PersonalFinanceTransactionsViewBuilder
             'uploadAttachmentPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_attachment_upload', ['id' => '__id__']),
             'deleteAttachmentPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_attachment_delete', ['id' => '__id__']),
             'serveAttachmentPath' => $this->urlGenerator->generate('backend_personal_finance_transactions_attachment_serve', ['id' => '__id__']),
+            'walletBalancePath' => $this->urlGenerator->generate('backend_personal_finance_wallets_balance', ['walletId' => '__walletId__']),
+            'walletBalanceAdjustPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_balance_adjust', ['walletId' => '__walletId__']),
         ];
     }
 
