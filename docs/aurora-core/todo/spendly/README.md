@@ -3,11 +3,15 @@
 > 📍 **Si tu reprends ce port (IA ou humain) — lis d'abord
 > `.claude/memory/aurora-core/preferences/project_personal_finance_port_status.md`.**
 > Tu y trouveras le tableau des sessions complétées (avec SHA de commits)
-> et celui des sessions à venir avec leurs prérequis. Le prochain item
-> conseillé est **Session 4b — TransferService atomique**. Le module est
-> à **100% conforme aux conventions Aurora** au 2026-05-22 ; aucune
-> dette technique restante sur ce qui est implémenté. Pour scaffolder
-> une nouvelle liste CRUD, utilise le skill `/add-crud-list-ui`.
+> et celui des sessions à venir avec leurs prérequis. Les prochains items
+> candidats (au 2026-05-23, choisir selon priorité produit) :
+> **4b-UI** (modale Transfer côté Vue, le backend est prêt depuis le
+> commit `dce46700`), **4c** (TransactionSplit), **4d** (attachments),
+> **5** (WalletBalanceService — débloquant pour budgets/goals/stats).
+> Le module est à **100% conforme aux conventions Aurora** au
+> 2026-05-23 ; aucune dette technique restante sur ce qui est
+> implémenté. Pour scaffolder une nouvelle liste CRUD, utilise le skill
+> `/add-crud-list-ui`.
 
 Port du projet [`Spendly`](https://github.com/AxelRaboit/spendly) (Laravel 13 +
 Vue 3 + Inertia) vers un module Aurora Symfony, sur le même modèle que
@@ -54,11 +58,11 @@ Implications concrètes :
 |---|---|---|
 | Tableau de bord | [`tableau_de_bord.md`](tableau_de_bord.md) | ⏳ |
 | Vue globale | [`vue_globale.md`](vue_globale.md) | ⏳ |
-| Portefeuilles | [`portefeuilles.md`](portefeuilles.md) | ⏳ |
-| Transactions | [`transactions.md`](transactions.md) | ⏳ |
+| Portefeuilles | [`portefeuilles.md`](portefeuilles.md) | 🟡 backend + voter + invitations (UI Members modal restante) |
+| Transactions | [`transactions.md`](transactions.md) | 🟡 CRUD + TransferService (splits/attachments + UI Transfer restants) |
 | Objectifs | [`objectifs.md`](objectifs.md) | ⏳ |
 | Automatiques (récurrentes + planifiées) | [`automatiques.md`](automatiques.md) | ⏳ |
-| Catégories | [`categories.md`](categories.md) | ⏳ |
+| Catégories | [`categories.md`](categories.md) | 🟡 backend (CRUD + system keys) |
 | Auto-catégorisation | [`auto_categorisation.md`](auto_categorisation.md) | ⏳ |
 | Statistiques | [`statistiques.md`](statistiques.md) | ⏳ |
 | Importer | [`importer.md`](importer.md) | ⏳ |
