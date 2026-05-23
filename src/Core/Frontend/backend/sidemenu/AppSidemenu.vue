@@ -10,6 +10,7 @@ import { useResizable } from "@/shared/composables/useResizable.js";
 import { useBackendSearch } from "@core/backend/sidemenu/composables/useBackendSearch.js";
 import { useSidemenuCollapse } from "@core/backend/sidemenu/composables/useSidemenuCollapse.js";
 import { useSidemenuNav } from "@core/backend/sidemenu/composables/useSidemenuNav.js";
+import { useSidemenuSectionTheme } from "@core/backend/sidemenu/composables/useSidemenuSectionTheme.js";
 import AppLogo from "@/shared/components/display/AppLogo.vue";
 import AppAvatar from "@/shared/components/display/AppAvatar.vue";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -77,6 +78,8 @@ const {
     isGroupExpanded, toggleGroup, isSectionExpanded, toggleSection,
     isActive, isActiveExact, itemIsActive, itemClasses, iconClasses,
 } = useSidemenuNav(props.navSections, props.activeRoute, props.navSectionAliases, props.navItemAliases);
+
+const { headerClasses: sectionHeaderClasses, labelClasses: sectionLabelClasses } = useSidemenuSectionTheme();
 
 const SECTION_CONFIG = {
     recent:  { icon: Clock,         labelKey: "backend.search.sections.recent"   },
@@ -205,7 +208,8 @@ function openSearchFromMobile() {
                 <button
                     v-if="!navFilter"
                     type="button"
-                    class="si-section-header w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted hover:text-secondary transition-colors"
+                    class="si-section-header w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider transition-colors"
+                    :class="[sectionHeaderClasses(section.id), sectionLabelClasses(section.id)]"
                     v-on:click="toggleSection(section)"
                 >
                     <span class="si-label truncate">{{ section.label }}</span>
@@ -409,7 +413,8 @@ function openSearchFromMobile() {
                 <div v-for="section in groupedSections" :key="section.id" class="space-y-0.5">
                     <button
                         type="button"
-                        class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted hover:text-secondary transition-colors"
+                        class="w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors"
+                        :class="[sectionHeaderClasses(section.id), sectionLabelClasses(section.id)]"
                         v-on:click="toggleSection(section)"
                     >
                         <span class="truncate">{{ section.label }}</span>
