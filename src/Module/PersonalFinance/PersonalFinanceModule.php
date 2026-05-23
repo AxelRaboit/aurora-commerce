@@ -86,7 +86,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             $items[] = new NavItem(
                 'backend_personal_finance_budgets',
                 'backend.nav.personal_finance_budgets',
-                'scale',
+                'pie-chart',
                 requiredPrivilege: 'personal_finance.budgets.use',
                 descriptionKey: 'backend.nav.personal_finance_budgets_description',
             );
@@ -106,7 +106,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             $items[] = new NavItem(
                 'backend_personal_finance_recurring',
                 'backend.nav.personal_finance_recurring',
-                'rotate-cw',
+                'repeat',
                 requiredPrivilege: 'personal_finance.recurring.use',
                 descriptionKey: 'backend.nav.personal_finance_recurring_description',
             );

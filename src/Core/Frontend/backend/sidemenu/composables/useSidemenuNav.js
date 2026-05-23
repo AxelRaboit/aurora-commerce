@@ -37,6 +37,11 @@ import {
     Flame,
     StickyNote,
     Wallet,
+    PieChart,
+    Target,
+    Repeat,
+    Sparkles,
+    Scale,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -75,6 +80,11 @@ const ICON_MAP = {
     flame: Flame,
     "sticky-note": StickyNote,
     wallet: Wallet,
+    "pie-chart": PieChart,
+    target: Target,
+    repeat: Repeat,
+    sparkles: Sparkles,
+    scale: Scale,
 };
 
 export function useSidemenuNav(
