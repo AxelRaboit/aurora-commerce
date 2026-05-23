@@ -1,11 +1,12 @@
 # Welding — nouveau module Aurora
 
-> **Statut** : décisions structurelles actées (mai 2026). Aucun code écrit.
-> Document vivant — le doc se découpera en sous-fichiers thématiques (à la
-> [`nimbus/`](../nimbus/README.md)) une fois la V1 lancée.
+> **Statut** : décisions structurelles actées (mai 2026), sprint 0.5
+> (signature embed dans PdfForm) livré. Le scaffold du module Welding
+> n'a pas démarré. Document vivant — le doc se découpera en sous-fichiers
+> thématiques (à la [`nimbus/`](../nimbus/README.md)) une fois la V1 lancée.
 >
-> **Prochaine étape** : sprint 0 = audit du mécanisme signature canvas →
-> embed PDF dans `PdfForm` (blocker à lever avant de scaffolder Welding).
+> **Prochaine étape** : sprint 1 = `aurora:make:module Welding` + entités
+> de la couche template.
 
 Module pour piloter des **workflows de soudure réglementée** (cible
 initiale : nucléaire — RCC-M, ASME III, normes ISO 15614). Un superviseur
@@ -227,44 +228,42 @@ dans l'instance — `Workflow.template` est une simple FK figée.
 passer par v2) en échange d'une garantie réglementaire forte (un
 template « validé » ne change plus).
 
-### 5. Signature canvas → PDF — **blocker confirmé, sprint 0.5 requis** ⚠️
+### 5. Signature canvas → PDF — **✅ résolu (sprint 0.5, mai 2026)**
 
-**Audit effectué (mai 2026)** : la capture canvas **n'est PAS embarquée**
-dans le PDF généré aujourd'hui. État actuel détaillé :
+**Audit initial** : la capture canvas n'était PAS embarquée dans le PDF
+généré (la data URL `__signature__` était silencieusement abandonnée par
+le `try/catch` de `fill.mjs` car aucune branche ne traitait le type
+`PDFSignature`).
 
-| Couche | État |
-|---|---|
-| Frontend `SignaturePad.vue` (canvas) | ✅ Implémenté — capture en `data:image/png;base64,...` |
-| Frontend `SignatureDisplay.vue` (rendu read-only) | ✅ Implémenté |
-| Frontend `usePdfDocumentsForm.js` | ✅ Injecte `__signature__: <dataUrl>` dans `fieldValues` |
-| Backend `PdfTemplate.requiresSignature` (bool template) | ✅ Persisté, un toggle au niveau du template entier |
-| Backend `PdfDocumentManager::generate()` | ❌ Passe `fieldValues` brut au manipulator sans extraire `__signature__` |
-| Backend `PdfManipulator::fill()` + `tools/pdf/fill.mjs` | ❌ Ne connaît que les types AcroForm standard (Text, CheckBox, RadioGroup, Dropdown, OptionList, Button). Aucune branche pour `PDFSignature` |
-| Net résultat | La data URL `__signature__` est silencieusement abandonnée par le `try/catch` de `fill.mjs:90-95`. **Le PDF généré ne contient pas la signature.** |
+**Implémentation livrée** — entièrement côté JS, **aucune modification
+PHP nécessaire** (le PHP transmet déjà `fieldValues` brut au script Node) :
 
-**Plan sprint 0.5** (PR séparée avant Welding) :
+1. `tools/pdf/fill.mjs` extrait `__signature__` des values avant la boucle
+   de fill.
+2. Trouve le premier champ `PDFSignature` du form, décode la data URL,
+   `pdfDoc.embedPng()` + `page.drawImage()` aux coords du widget
+   (avec `fitContain()` pour préserver le ratio canvas → widget rect,
+   centré).
+3. **Détache le widget signature** des annots de la page + de l'AcroForm
+   `/Fields` (cleanup manuel — `form.removeField()` de pdf-lib 1.17.1 ne
+   suffisait pas pour les structures "merged widget+field"). Évite que
+   `form.flatten()` ne crashe sur un widget Sig sans `/AP/N`.
+4. `setFieldValue()` ignore explicitement les champs `PDFSignature`
+   (jamais de `setText()` dessus).
+5. `form.flatten()` enveloppé dans un try/catch défensif : si un widget
+   résiduel sans `/AP` survit au cleanup, le PDF est tout de même
+   sauvegardé (l'image dessinée est déjà sur la page).
 
-1. Dans `PdfDocumentManager::generate()` : extraire `__signature__` des
-   `fieldValues` avant l'appel `pdfManipulator->fill()`. Passer la data URL
-   en paramètre dédié.
-2. Étendre `PdfManipulator::fill()` (ou ajouter `fillWithSignature()`)
-   pour transmettre la signature au script Node.
-3. Dans `tools/pdf/fill.mjs` :
-   - Détecter le champ de type `PDFSignature` (`field.constructor.name`)
-   - Récupérer son rectangle via `field.acroField.getWidgets()[0].getRectangle()`
-     + sa page
-   - Décoder la data URL → bytes PNG → `pdfDoc.embedPng(bytes)`
-   - `page.drawImage(pngImage, { x, y, width, height })` aux coords du widget
-4. Si `flatten = true`, l'image est conservée dans le rendu final.
+**Tests** : 4 scénarios validés manuellement (PDF avec/sans champ sig,
+payload avec/sans `__signature__`, flatten on/off). Tests PHP/JS verts
+(2880/2880 + 877/877).
 
-**Effort estimé** : 0.5 à 1 jour.
-
-**Note de scope** : `PdfTemplate.requiresSignature` est aujourd'hui un
-**bool sur le template entier** (une seule signature finale par PDF
-généré), pas une signature par champ. Pour Welding V1, ça suffit : si
-une step demande 3 signatures différentes (soudeur, inspecteur, QA),
-on génère 3 `PdfDocument` rattachés à la step (1 PDF = 1 signature).
-Multi-signature par PDF = V2 si besoin réel.
+**Note de scope** : `PdfTemplate.requiresSignature` est un **bool sur le
+template entier** (une seule signature finale par PDF généré), pas une
+signature par champ. Pour Welding V1, ça suffit : si une step demande
+3 signatures différentes (soudeur, inspecteur, QA), on génère 3
+`PdfDocument` rattachés à la step (1 PDF = 1 signature). Multi-signature
+par PDF = V2 si besoin réel.
 
 ### 6. Multi-validation par step — **V1 = single validator**
 
@@ -358,8 +357,8 @@ proprement et documentée pour les futurs modules dépendants.
 
 1. ✅ **Sprint -1 — décisions** : 11 décisions actées (cf. section ci-dessus).
 2. ✅ **Sprint 0 — audit PdfForm signature** : blocker confirmé (cf. décision #5).
-3. ⏳ **Sprint 0.5 — instrumenter signature embed dans PdfForm** : PR séparée,
-   ~0.5-1 jour. Détaillée dans la décision #5 ci-dessus.
+3. ✅ **Sprint 0.5 — instrumenter signature embed dans PdfForm** : livré,
+   modification JS-only de `tools/pdf/fill.mjs`. Cf. décision #5 pour le détail.
 4. ⏸ **Sprint 1 — module + entités template** : `aurora:make:module Welding`
    + `WorkflowTemplate` + `WorkflowStepTemplate` + `WorkflowStepPdfTemplate`,
    CRUD admin V1, migration.
