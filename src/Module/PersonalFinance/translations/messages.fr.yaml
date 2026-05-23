@@ -12,6 +12,8 @@ backend:
           use: Gérer les budgets mensuels
         goals:
           use: Gérer les objectifs d'épargne
+        recurring:
+          use: Gérer les transactions récurrentes et planifiées
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -28,6 +30,8 @@ backend:
     personal_finance_budgets_description: 'Budget mensuel par portefeuille : sections, lignes planifiées vs réelles, report.'
     personal_finance_goals: Objectifs
     personal_finance_goals_description: 'Objectifs d''épargne avec suivi de progression. Liés à une catégorie = auto-synchronisé depuis les transactions.'
+    personal_finance_recurring: Automatiques
+    personal_finance_recurring_description: 'Transactions récurrentes (chaque mois à un jour fixe) et planifiées (one-off futur).'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -229,6 +233,59 @@ personal_finance:
       planned_required: Le montant planifié est requis.
       planned_format: 'Format invalide. Exemple : 1234.56'
       carried_format: 'Format invalide. Exemple : 1234.56 ou -1234.56'
+  recurring:
+    title: Automatiques
+    tabs:
+      recurring: Récurrentes
+      scheduled: Planifiées
+    empty_recurring: Aucune transaction récurrente. Ajoute-en une pour ne plus saisir tes charges fixes chaque mois.
+    empty_scheduled: Aucune transaction planifiée. Ajoute-en une pour anticiper un revenu ou une dépense future.
+    add_recurring: Nouvelle récurrente
+    add_scheduled: Nouvelle planifiée
+    edit_recurring: Modifier la récurrente
+    edit_scheduled: Modifier la planifiée
+    created_recurring: Récurrente enregistrée.
+    created_scheduled: Planifiée enregistrée.
+    updated_recurring: Récurrente mise à jour.
+    updated_scheduled: Planifiée mise à jour.
+    deleted_recurring: Récurrente supprimée.
+    deleted_scheduled: Planifiée supprimée.
+    delete_confirm_recurring: 'Supprimer cette transaction récurrente ? Les transactions déjà générées sont conservées.'
+    delete_confirm_scheduled: 'Supprimer cette transaction planifiée ?'
+    materialize: Matérialiser
+    materialized: Transaction matérialisée — visible dans Transactions.
+    materialize_disabled: Déjà matérialisée
+    toggle_enable: Activer
+    toggle_disable: Mettre en pause
+    next_expected: 'Prochaine : {date}'
+    last_generated: 'Dernière génération : {date}'
+    never_generated: Jamais générée
+    status_generated: Matérialisée
+    status_pending: En attente
+    fields:
+      wallet: Portefeuille
+      category: Catégorie (optionnel)
+      type: Type
+      amount: Montant
+      description: Description
+      day_of_month: Jour du mois
+      day_of_month_hint: 'Entier entre 1 et 28 (les jours 29-31 sont exclus pour garantir la génération chaque mois).'
+      scheduled_date: Date prévue
+      active: Active
+    errors:
+      wallet_required: Le portefeuille est requis.
+      amount_required: Le montant est requis.
+      amount_format: 'Format invalide. Exemple : 1234.56'
+      amount_positive: Le montant doit être strictement positif.
+      day_of_month_range: Le jour doit être compris entre 1 et 28.
+      date_required: La date est requise.
+  scheduled:
+    errors:
+      wallet_required: Le portefeuille est requis.
+      amount_required: Le montant est requis.
+      amount_format: 'Format invalide. Exemple : 1234.56'
+      amount_positive: Le montant doit être strictement positif.
+      date_required: La date est requise.
   goals:
     title: Objectifs d'épargne
     add: Nouvel objectif

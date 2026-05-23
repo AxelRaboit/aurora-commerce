@@ -12,6 +12,8 @@ backend:
           use: Manage monthly budgets
         goals:
           use: Manage savings goals
+        recurring:
+          use: Manage recurring and scheduled transactions
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -28,6 +30,8 @@ backend:
     personal_finance_budgets_description: 'Monthly budget per wallet: sections, planned vs actual lines, carry-over.'
     personal_finance_goals: Goals
     personal_finance_goals_description: 'Savings goals with progress tracking. Linking a category enables automatic sync from transactions.'
+    personal_finance_recurring: Automations
+    personal_finance_recurring_description: 'Recurring transactions (monthly on a fixed day) and scheduled one-offs.'
   parameters:
     personal_finance_default_currency:
       label: Default currency
@@ -229,6 +233,59 @@ personal_finance:
       planned_required: Planned amount is required.
       planned_format: 'Invalid format. Example: 1234.56'
       carried_format: 'Invalid format. Example: 1234.56 or -1234.56'
+  recurring:
+    title: Automations
+    tabs:
+      recurring: Recurring
+      scheduled: Scheduled
+    empty_recurring: No recurring transactions yet. Add one so you don't re-enter your fixed bills every month.
+    empty_scheduled: No scheduled transactions yet. Add one to plan a future income or expense.
+    add_recurring: New recurring
+    add_scheduled: New scheduled
+    edit_recurring: Edit recurring
+    edit_scheduled: Edit scheduled
+    created_recurring: Recurring rule saved.
+    created_scheduled: Scheduled rule saved.
+    updated_recurring: Recurring rule updated.
+    updated_scheduled: Scheduled rule updated.
+    deleted_recurring: Recurring rule deleted.
+    deleted_scheduled: Scheduled rule deleted.
+    delete_confirm_recurring: 'Delete this recurring rule? Already-generated transactions are kept.'
+    delete_confirm_scheduled: 'Delete this scheduled rule?'
+    materialize: Materialize
+    materialized: Transaction materialised — visible under Transactions.
+    materialize_disabled: Already materialised
+    toggle_enable: Enable
+    toggle_disable: Pause
+    next_expected: 'Next: {date}'
+    last_generated: 'Last generated: {date}'
+    never_generated: Never generated
+    status_generated: Materialised
+    status_pending: Pending
+    fields:
+      wallet: Wallet
+      category: Category (optional)
+      type: Type
+      amount: Amount
+      description: Description
+      day_of_month: Day of month
+      day_of_month_hint: 'Integer between 1 and 28 (days 29-31 are excluded so generation is guaranteed every month).'
+      scheduled_date: Scheduled date
+      active: Active
+    errors:
+      wallet_required: Wallet is required.
+      amount_required: Amount is required.
+      amount_format: 'Invalid format. Example: 1234.56'
+      amount_positive: Amount must be strictly positive.
+      day_of_month_range: Day must be between 1 and 28.
+      date_required: Date is required.
+  scheduled:
+    errors:
+      wallet_required: Wallet is required.
+      amount_required: Amount is required.
+      amount_format: 'Invalid format. Example: 1234.56'
+      amount_positive: Amount must be strictly positive.
+      date_required: Date is required.
   goals:
     title: Savings goals
     add: New goal

@@ -34,6 +34,7 @@ shared:
       error: Échec de l'enregistrement
       last_saved: 'Enregistré {time}'
     actions: Actions
+    status: Statut
     or: ou
     name: Nom
     description: Description

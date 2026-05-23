@@ -28,6 +28,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.transactions.use'),
             new NavPermission('personal_finance.budgets.use'),
             new NavPermission('personal_finance.goals.use'),
+            new NavPermission('personal_finance.recurring.use'),
         ];
     }
 
@@ -89,6 +90,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
+        if ($this->personalFinanceContext->isRecurringEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_recurring',
+                'backend.nav.personal_finance_recurring',
+                'rotate-cw',
+                requiredPrivilege: 'personal_finance.recurring.use',
+                descriptionKey: 'backend.nav.personal_finance_recurring_description',
+            );
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -135,6 +146,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     requiredPrivilege: 'personal_finance.goals.use',
                     descriptionKey: 'backend.nav.personal_finance_goals_description',
                 ),
+                new NavItem(
+                    'backend_personal_finance_recurring',
+                    'backend.nav.personal_finance_recurring',
+                    'rotate-cw',
+                    requiredPrivilege: 'personal_finance.recurring.use',
+                    descriptionKey: 'backend.nav.personal_finance_recurring_description',
+                ),
             ], priority: 25),
         ];
     }
@@ -148,6 +166,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceTransactions->toToggle(),
             ModuleParameterEnum::PersonalFinanceBudgets->toToggle(),
             ModuleParameterEnum::PersonalFinanceGoals->toToggle(),
+            ModuleParameterEnum::PersonalFinanceRecurring->toToggle(),
         ];
     }
 }

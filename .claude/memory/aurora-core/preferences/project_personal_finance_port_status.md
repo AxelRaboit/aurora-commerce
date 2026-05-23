@@ -28,8 +28,9 @@ jour à la fin de chaque session.
 | 5 | WalletBalanceService (`currentBalance` / `monthlyBalance` / `rollingStartBalance` en bcmath) + `BalanceAdjustmentService` (lazy `BalanceAdjustment` system category) + DTO + Controller + UI barre de soldes + modale Ajuster dans `PersonalFinanceTransactionsApp` | `73480834` | 🟢 |
 | 6a | Budget + BudgetItem entities (5-layer) + `BudgetSectionEnum` + Manager.ensureForMonth lazy + ViewBuilder + 4 endpoints + migration `Version20260523120000` + cascade `PersonalFinanceBudgets` toggle | `d49767e4` | 🟢 |
 | 6b | Page Vue `PersonalFinanceBudgetsApp` (mois nav + sections + items inline avec progress + modale create/edit) + Twig + NavItem + composables `useBudgetData`/`useBudgetItemsForm` + translations | `b4892526` | 🟢 |
-| 7a | Goal entity + Manager User-style (create/update/deposit/delete/recomputeSavedAmount) + 2 events + `PersonalFinanceGoalSyncSubscriber` (dispatch depuis Manager + SplitService) + migration `Version20260523180000` + partial unique (user_id, category_id) | _(à committer)_ | 🟢 |
-| 7b | Page Vue `PersonalFinanceGoalsApp` (cards grid avec progress + color + monthly contribution + tri) + 3 modales (create/edit/deposit) + Twig + NavItem + ViewBuilder + translations | _(à committer)_ | 🟢 |
+| 7a | Goal entity + Manager User-style (create/update/deposit/delete/recomputeSavedAmount) + 2 events + `PersonalFinanceGoalSyncSubscriber` (dispatch depuis Manager + SplitService) + migration `Version20260523180000` + partial unique (user_id, category_id) | `aeac5162` | 🟢 |
+| 7b | Page Vue `PersonalFinanceGoalsApp` (cards grid avec progress + color + monthly contribution + tri) + 3 modales (create/edit/deposit) + Twig + NavItem + ViewBuilder + translations | `56ad3b02` | 🟢 |
+| 8 | Recurring + Scheduled entities (5-layer chacune) + Manager hooks (`generateIfDue`, `materialize`, `toggle`) + commande `personal-finance:recurring:generate` (idempotente, --dry-run, --date) + Controller (8 endpoints) + Vue 2-tabs (`PersonalFinanceRecurringApp`) + migration `Version20260524000000` + CHECK constraint day_of_month 1-28 | _(à committer)_ | 🟢 |
 
 ## Sessions à venir
 
@@ -37,9 +38,8 @@ jour à la fin de chaque session.
 |---|---|---|---|
 | 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
 | 6c | BudgetPreset (template user-level) + service auto-rollover next month (copy items repeat=true) | non — V2 | 6a |
-| 8 | RecurringTransaction + ScheduledTransaction + commande cron `personal-finance:recurring:generate` | non | 4a |
 | 9 | CategorizationRule + Learn/Suggest services + `afterSave` hook standardisé dans la convention | non | 4a |
-| 10 | Dashboard + Overview + Statistics services (agrégations) | non | 5 + 6 + 7 |
+| 10 | Dashboard + Overview + Statistics services (agrégations) | non | 5 + 6 + 7 + 8 |
 | 11 | Import Excel (2 steps : upload → preview → process) | non | 4a |
 
 ## État de conformité au 2026-05-23 (post-audit)
