@@ -306,19 +306,30 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
      * income and expense add up — the user decides the semantic).
      * Transfer legs are excluded.
      *
+     * When `$wallet` is provided, the sum is further scoped to that
+     * single wallet — used by Goals with an explicit wallet filter so
+     * "Courses on Wallet A" doesn't see Wallet B's tx.
+     *
      * Used by PersonalFinanceGoalManager::recomputeSavedAmount.
      */
-    public function sumByCategoryForUser(CoreUserInterface $user, PersonalFinanceCategoryInterface $category): string
-    {
-        $total = $this->createQueryBuilder('t')
+    public function sumByCategoryForUser(
+        CoreUserInterface $user,
+        PersonalFinanceCategoryInterface $category,
+        ?PersonalFinanceWalletInterface $wallet = null,
+    ): string {
+        $qb = $this->createQueryBuilder('t')
             ->select('SUM(t.amount) AS total')
             ->where('t.user = :user')
             ->andWhere('t.category = :category')
             ->andWhere('t.transferId IS NULL')
             ->setParameter('user', $user)
-            ->setParameter('category', $category)
-            ->getQuery()
-            ->getSingleScalarResult();
+            ->setParameter('category', $category);
+
+        if (null !== $wallet) {
+            $qb->andWhere('t.wallet = :wallet')->setParameter('wallet', $wallet);
+        }
+
+        $total = $qb->getQuery()->getSingleScalarResult();
 
         return bcadd('0', (string) ($total ?? '0'), 2);
     }

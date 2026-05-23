@@ -39,17 +39,24 @@ class PersonalFinanceGoalRepository extends ResolveTargetEntityRepository
     }
 
     /**
-     * Returns the goal auto-tracking the given category for the user, if any.
-     * At most one row by the partial unique constraint `uniq_pf_goal_user_category`.
+     * Returns every goal auto-tracking the given category for the user.
+     * Now that goals can be wallet-scoped, multiple rows can match a
+     * single category: at most one with `wallet = NULL` (cross-wallet
+     * goal) plus one per specific wallet. Filtered downstream by the
+     * sync subscriber which compares each goal's wallet to the
+     * transaction's wallet.
+     *
+     * @return list<PersonalFinanceGoalInterface>
      */
-    public function findOneByCategoryForUser(CoreUserInterface $user, PersonalFinanceCategoryInterface $category): ?PersonalFinanceGoalInterface
+    public function findByCategoryForUser(CoreUserInterface $user, PersonalFinanceCategoryInterface $category): array
     {
         return $this->createQueryBuilder('g')
+            ->leftJoin('g.wallet', 'w')->addSelect('w')
             ->where('g.user = :user')
             ->andWhere('g.category = :category')
             ->setParameter('user', $user)
             ->setParameter('category', $category)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 }

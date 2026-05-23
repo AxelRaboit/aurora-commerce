@@ -93,7 +93,13 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
             return;
         }
 
-        $total = $this->transactionRepository->sumByCategoryForUser($goal->getUser(), $category);
+        // Goal wallet filters the sum: null wallet = aggregate across
+        // every wallet of the user, set wallet = only that wallet's tx.
+        $total = $this->transactionRepository->sumByCategoryForUser(
+            $goal->getUser(),
+            $category,
+            $goal->getWallet(),
+        );
         $goal->setSavedAmount($total);
         $this->entityManager->flush();
     }

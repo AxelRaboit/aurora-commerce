@@ -12,15 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_pf_goal_user', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_pf_goal_category', columns: ['category_id'])]
 #[ORM\Index(name: 'idx_pf_goal_wallet', columns: ['wallet_id'])]
-// Partial unique index on (user_id, category_id) so a category can
-// drive at most one auto-tracked goal per user. The DB-level guarantee
-// lets PersonalFinanceGoalRepository::findByCategory return at most one
-// row, mirroring Spendly's TransactionObserver which used ->first().
-#[ORM\UniqueConstraint(
-    name: 'uniq_pf_goal_user_category',
-    columns: ['user_id', 'category_id'],
-    options: ['where' => '(category_id IS NOT NULL)'],
-)]
+// One auto-tracked goal per (user, category, wallet) — wallet=NULL is a
+// distinct slot (the cross-wallet variant) so users can have BOTH "Food
+// global" and "Food on Wallet A" living side by side. Postgres treats
+// NULLs as distinct in standard unique indexes, so the COALESCE(wallet_id, 0)
+// trick collapses them into a single slot. Defined via a raw migration —
+// Doctrine's UniqueConstraint attribute can't express the COALESCE
+// expression natively.
 class PersonalFinanceGoal extends AbstractPersonalFinanceGoal
 {
     #[ORM\Id]

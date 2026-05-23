@@ -6,7 +6,6 @@ namespace Aurora\Module\PersonalFinance\Goal\EventSubscriber;
 
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
 use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
-use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
 use Aurora\Module\PersonalFinance\Goal\Manager\PersonalFinanceGoalManagerInterface;
 use Aurora\Module\PersonalFinance\Goal\Repository\PersonalFinanceGoalRepository;
 use Aurora\Module\PersonalFinance\Transaction\Event\PersonalFinanceTransactionDeletedEvent;
@@ -48,6 +47,16 @@ final readonly class PersonalFinanceGoalSyncSubscriber
         $this->syncForCategoryId($event->user, $event->categoryId);
     }
 
+    /**
+     * Recomputes every goal sitting on the (user, category) pair. There
+     * can be more than one row now that goals are wallet-scopable:
+     * - the cross-wallet variant (`wallet = NULL`) which aggregates over
+     *   every wallet of the user
+     * - one row per specific wallet, scoping its sum to that wallet
+     * All matching goals get a fresh `savedAmount` so a tx edit that
+     * affects multiple goals (e.g. moving a wallet-A tx into the
+     * category) keeps every aggregate honest.
+     */
     private function syncForCategoryId(CoreUserInterface $user, ?int $categoryId): void
     {
         if (null === $categoryId) {
@@ -57,10 +66,8 @@ final readonly class PersonalFinanceGoalSyncSubscriber
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return;
         }
-        $goal = $this->goalRepository->findOneByCategoryForUser($user, $category);
-        if (!$goal instanceof PersonalFinanceGoalInterface) {
-            return;
+        foreach ($this->goalRepository->findByCategoryForUser($user, $category) as $goal) {
+            $this->goalManager->recomputeSavedAmount($goal);
         }
-        $this->goalManager->recomputeSavedAmount($goal);
     }
 }
