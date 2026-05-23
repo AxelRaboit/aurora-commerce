@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Goal\View;
 
 use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
 use Aurora\Module\PersonalFinance\Category\Serializer\PersonalFinanceCategorySerializerInterface;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use Aurora\Module\PersonalFinance\Goal\Repository\PersonalFinanceGoalRepository;
 use Aurora\Module\PersonalFinance\Goal\Serializer\PersonalFinanceGoalSerializerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
@@ -46,6 +47,7 @@ final readonly class PersonalFinanceGoalsViewBuilder
             'goals' => $goals,
             'wallets' => array_map($this->walletSerializer->serialize(...), $wallets),
             'categoriesByWallet' => $categoriesByWallet,
+            'trackingModes' => PersonalFinanceGoalTrackingModeEnum::values(),
             'createPath' => $this->urlGenerator->generate('backend_personal_finance_goals_create'),
             'updatePath' => $this->urlGenerator->generate('backend_personal_finance_goals_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_personal_finance_goals_delete', ['id' => '__id__']),

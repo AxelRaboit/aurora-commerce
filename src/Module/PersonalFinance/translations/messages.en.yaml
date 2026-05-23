@@ -552,6 +552,14 @@ personal_finance:
     no_category_link: No auto-sync (manual)
     auto_tracked_from: 'Auto-synced from: {category}'
     auto_tracked_hint: While this category is linked, the saved amount is recomputed on every transaction.
+    tracking_modes:
+      income_only: Income only
+      expense_only: Expenses only
+      absolute_sum: Total (income + expenses)
+    tracking_mode_hints:
+      income_only: 'Savings mode: only income transactions in this category add to the saved amount.'
+      expense_only: 'Budget-consumed mode: only expense transactions in this category fill the goal.'
+      absolute_sum: 'Absolute total: every transaction in this category (income and expense alike) adds its amount. Legacy behaviour preserved for older goals.'
     monthly_contribution: '{amount} / month to hit the deadline'
     sort:
       deadline: Sort by deadline
@@ -562,6 +570,7 @@ personal_finance:
       target: Target amount
       wallet: Wallet
       category: Category (enables auto-sync)
+      tracking_mode: Tracking mode
       deadline: Deadline
       color: Color
       deposit_amount: Deposit amount

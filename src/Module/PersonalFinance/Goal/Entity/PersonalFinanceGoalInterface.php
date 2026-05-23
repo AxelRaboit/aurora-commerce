@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Goal\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
@@ -45,6 +46,10 @@ interface PersonalFinanceGoalInterface extends TimestampableInterface
     public function getColor(): ?string;
 
     public function setColor(?string $color): static;
+
+    public function getTrackingMode(): PersonalFinanceGoalTrackingModeEnum;
+
+    public function setTrackingMode(PersonalFinanceGoalTrackingModeEnum $trackingMode): static;
 
     /** Percentage [0.0, 100.0]. */
     public function getProgress(): float;

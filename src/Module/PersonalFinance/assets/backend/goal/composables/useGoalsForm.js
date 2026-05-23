@@ -19,6 +19,7 @@ function emptyGoalForm(extraFields = {}) {
         categoryId: null,
         deadline: "",
         color: "#6366f1",
+        trackingMode: "expense_only",
         ...extras,
     };
 }
@@ -65,6 +66,7 @@ export function useGoalsForm(createPath, updatePath, onSaved, { extraFields = {}
             categoryId: goal.categoryId ?? null,
             deadline: goal.deadline ?? "",
             color: goal.color ?? "#6366f1",
+            trackingMode: goal.trackingMode ?? "expense_only",
             ...pickExtras(extraFields, goal),
         };
         errors.value = {};
@@ -82,6 +84,7 @@ export function useGoalsForm(createPath, updatePath, onSaved, { extraFields = {}
             categoryId: form.value.categoryId || null,
             deadline: form.value.deadline || null,
             color: form.value.color || null,
+            trackingMode: form.value.trackingMode,
         });
         if (!payload) return;
         if (payload.success === false) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Goal\Dto;
 
 use Aurora\Core\Support\Str;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use DateTimeImmutable;
 use Exception;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -25,6 +26,9 @@ class PersonalFinanceGoalInputFactory implements PersonalFinanceGoalInputFactory
             }
         }
 
+        $trackingModeValue = Str::trimFromArray($data, 'trackingMode');
+        $trackingMode = PersonalFinanceGoalTrackingModeEnum::tryFrom($trackingModeValue) ?? PersonalFinanceGoalTrackingModeEnum::ExpenseOnly;
+
         return new PersonalFinanceGoalInput(
             name: Str::trimFromArray($data, 'name'),
             targetAmount: Str::trimFromArray($data, 'targetAmount') ?: '0.00',
@@ -32,6 +36,7 @@ class PersonalFinanceGoalInputFactory implements PersonalFinanceGoalInputFactory
             categoryId: isset($data['categoryId']) && '' !== $data['categoryId'] ? (int) $data['categoryId'] : null,
             deadline: $deadline,
             color: Str::trimOrNullFromArray($data, 'color'),
+            trackingMode: $trackingMode,
         );
     }
 }

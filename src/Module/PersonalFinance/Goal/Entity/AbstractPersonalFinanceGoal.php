@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Goal\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
@@ -44,6 +45,16 @@ abstract class AbstractPersonalFinanceGoal implements PersonalFinanceGoalInterfa
 
     #[ORM\Column(length: 7, nullable: true)]
     protected ?string $color = null;
+
+    /**
+     * Drives how the auto-sync subscriber sums transactions onto
+     * `savedAmount`. Ignored when `category` is null (manual deposit
+     * mode). Defaults to `ExpenseOnly` for new goals; pre-existing
+     * rows are backfilled to `AbsoluteSum` by the migration so their
+     * saved amount doesn't shift silently.
+     */
+    #[ORM\Column(length: 16, enumType: PersonalFinanceGoalTrackingModeEnum::class, options: ['default' => 'expense_only'])]
+    protected PersonalFinanceGoalTrackingModeEnum $trackingMode = PersonalFinanceGoalTrackingModeEnum::ExpenseOnly;
 
     public function getUser(): CoreUserInterface
     {
@@ -137,6 +148,18 @@ abstract class AbstractPersonalFinanceGoal implements PersonalFinanceGoalInterfa
     public function setColor(?string $color): static
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    public function getTrackingMode(): PersonalFinanceGoalTrackingModeEnum
+    {
+        return $this->trackingMode;
+    }
+
+    public function setTrackingMode(PersonalFinanceGoalTrackingModeEnum $trackingMode): static
+    {
+        $this->trackingMode = $trackingMode;
 
         return $this;
     }

@@ -23,6 +23,7 @@ const props = defineProps({
     goals: { type: Array, required: true },
     wallets: { type: Array, required: true },
     categoriesByWallet: { type: Object, required: true },
+    trackingModes: { type: Array, default: () => ["income_only", "expense_only", "absolute_sum"] },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -41,6 +42,13 @@ const walletOptions = computed(() => [
     { value: null, label: t("personal_finance.goals.no_wallet_link") },
     ...props.wallets.map((w) => ({ value: w.id, label: w.name })),
 ]);
+
+const trackingModeOptions = computed(() =>
+    props.trackingModes.map((mode) => ({
+        value: mode,
+        label: t(`personal_finance.goals.tracking_modes.${mode}`),
+    })),
+);
 
 const categoryOptionsForForm = computed(() => {
     const opts = [{ value: null, label: t("personal_finance.goals.no_category_link") }];
@@ -225,7 +233,15 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     :options="categoryOptionsForForm"
                     :allow-empty="true"
                 />
-                <p v-if="form.categoryId" class="text-xs text-muted">{{ t("personal_finance.goals.auto_tracked_hint") }}</p>
+                <template v-if="form.categoryId">
+                    <AppMultiselect
+                        v-model="form.trackingMode"
+                        :label="t('personal_finance.goals.fields.tracking_mode')"
+                        :options="trackingModeOptions"
+                        :allow-empty="false"
+                    />
+                    <p class="text-xs text-muted">{{ t(`personal_finance.goals.tracking_mode_hints.${form.trackingMode}`) }}</p>
+                </template>
                 <AppColorPicker
                     v-model="form.color"
                     :label="t('personal_finance.goals.fields.color')"

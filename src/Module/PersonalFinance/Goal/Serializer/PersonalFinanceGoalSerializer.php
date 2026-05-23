@@ -29,6 +29,7 @@ class PersonalFinanceGoalSerializer implements PersonalFinanceGoalSerializerInte
             'categoryName' => $goal->getCategory()?->getName(),
             'deadline' => $goal->getDeadline()?->format('Y-m-d'),
             'color' => $goal->getColor(),
+            'trackingMode' => $goal->getTrackingMode()->value,
             'createdAt' => $goal->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $goal->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];

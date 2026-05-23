@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PersonalFinance\Goal\Dto;
 
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use DateTimeImmutable;
 
 interface PersonalFinanceGoalInputInterface
@@ -19,4 +20,6 @@ interface PersonalFinanceGoalInputInterface
     public function getDeadline(): ?DateTimeImmutable;
 
     public function getColor(): ?string;
+
+    public function getTrackingMode(): PersonalFinanceGoalTrackingModeEnum;
 }

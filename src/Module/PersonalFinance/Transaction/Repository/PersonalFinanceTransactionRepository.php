@@ -302,20 +302,21 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
 
     /**
      * Sums |amount| of every transaction belonging to the user in the
-     * given category, ignoring type sign (Spendly-compatible: both
-     * income and expense add up — the user decides the semantic).
-     * Transfer legs are excluded.
+     * given category. Transfer legs are excluded.
      *
-     * When `$wallet` is provided, the sum is further scoped to that
-     * single wallet — used by Goals with an explicit wallet filter so
-     * "Courses on Wallet A" doesn't see Wallet B's tx.
+     * - `$wallet` (optional): scope the sum to that single wallet.
+     * - `$type` (optional): filter to a specific transaction type. Null
+     *   means "both types add" — the Spendly-compatible "AbsoluteSum"
+     *   semantic, kept for backwards compat.
      *
-     * Used by PersonalFinanceGoalManager::recomputeSavedAmount.
+     * Used by PersonalFinanceGoalManager::recomputeSavedAmount; the
+     * goal's `wallet` + `trackingMode` drive the filters.
      */
     public function sumByCategoryForUser(
         CoreUserInterface $user,
         PersonalFinanceCategoryInterface $category,
         ?PersonalFinanceWalletInterface $wallet = null,
+        ?PersonalFinanceTransactionTypeEnum $type = null,
     ): string {
         $qb = $this->createQueryBuilder('t')
             ->select('SUM(t.amount) AS total')
@@ -327,6 +328,9 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
 
         if (null !== $wallet) {
             $qb->andWhere('t.wallet = :wallet')->setParameter('wallet', $wallet);
+        }
+        if (null !== $type) {
+            $qb->andWhere('t.type = :type')->setParameter('type', $type);
         }
 
         $total = $qb->getQuery()->getSingleScalarResult();

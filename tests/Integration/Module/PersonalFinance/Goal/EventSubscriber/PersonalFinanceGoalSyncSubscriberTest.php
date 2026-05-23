@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Module\PersonalFinance\Goal\EventSubscriber;
 
 use Aurora\Module\PersonalFinance\Goal\Dto\PersonalFinanceGoalInput;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use Aurora\Module\PersonalFinance\Goal\Manager\PersonalFinanceGoalManagerInterface;
 use Aurora\Module\PersonalFinance\Goal\Repository\PersonalFinanceGoalRepository;
 use Aurora\Module\PersonalFinance\Transaction\Dto\PersonalFinanceTransactionInput;
@@ -38,6 +39,7 @@ final class PersonalFinanceGoalSyncSubscriberTest extends PersonalFinanceTestCas
             targetAmount: '1000.00',
             walletId: (int) $wallet->getId(),
             categoryId: $cat->getId(),
+            trackingMode: PersonalFinanceGoalTrackingModeEnum::IncomeOnly,
         ));
 
         self::assertSame('0.00', $goal->getSavedAmount());
@@ -67,12 +69,14 @@ final class PersonalFinanceGoalSyncSubscriberTest extends PersonalFinanceTestCas
             targetAmount: '500.00',
             walletId: (int) $wallet->getId(),
             categoryId: $catA->getId(),
+            trackingMode: PersonalFinanceGoalTrackingModeEnum::IncomeOnly,
         ));
         $goalB = $this->goalManager->create($user, new PersonalFinanceGoalInput(
             name: 'B',
             targetAmount: '500.00',
             walletId: (int) $wallet->getId(),
             categoryId: $catB->getId(),
+            trackingMode: PersonalFinanceGoalTrackingModeEnum::IncomeOnly,
         ));
 
         $tx = $this->transactionManager->create($user, $wallet, new PersonalFinanceTransactionInput(
@@ -115,6 +119,7 @@ final class PersonalFinanceGoalSyncSubscriberTest extends PersonalFinanceTestCas
             targetAmount: '1000.00',
             walletId: (int) $wallet->getId(),
             categoryId: $cat->getId(),
+            trackingMode: PersonalFinanceGoalTrackingModeEnum::IncomeOnly,
         ));
 
         $tx = $this->transactionManager->create($user, $wallet, new PersonalFinanceTransactionInput(

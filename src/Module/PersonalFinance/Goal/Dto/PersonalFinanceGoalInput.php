@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\PersonalFinance\Goal\Dto;
 
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
 use DateTimeImmutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,6 +29,8 @@ class PersonalFinanceGoalInput implements PersonalFinanceGoalInputInterface
             message: 'personal_finance.goals.errors.color_format',
         )]
         public readonly ?string $color = null,
+        #[Assert\NotNull]
+        public readonly PersonalFinanceGoalTrackingModeEnum $trackingMode = PersonalFinanceGoalTrackingModeEnum::ExpenseOnly,
     ) {}
 
     public function getName(): string
@@ -58,5 +61,10 @@ class PersonalFinanceGoalInput implements PersonalFinanceGoalInputInterface
     public function getColor(): ?string
     {
         return $this->color;
+    }
+
+    public function getTrackingMode(): PersonalFinanceGoalTrackingModeEnum
+    {
+        return $this->trackingMode;
     }
 }

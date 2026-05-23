@@ -11,6 +11,8 @@ use Aurora\Module\PersonalFinance\Goal\Dto\PersonalFinanceGoalDepositInputInterf
 use Aurora\Module\PersonalFinance\Goal\Dto\PersonalFinanceGoalInputInterface;
 use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoal;
 use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
+use Aurora\Module\PersonalFinance\Goal\Enum\PersonalFinanceGoalTrackingModeEnum;
+use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
@@ -93,12 +95,22 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
             return;
         }
 
-        // Goal wallet filters the sum: null wallet = aggregate across
-        // every wallet of the user, set wallet = only that wallet's tx.
+        // The goal's wallet filters which wallet's tx count; the
+        // trackingMode picks which tx type contributes:
+        // - IncomeOnly  → only income tx in the category
+        // - ExpenseOnly → only expense tx
+        // - AbsoluteSum → no type filter (both directions add)
+        $typeFilter = match ($goal->getTrackingMode()) {
+            PersonalFinanceGoalTrackingModeEnum::IncomeOnly => PersonalFinanceTransactionTypeEnum::Income,
+            PersonalFinanceGoalTrackingModeEnum::ExpenseOnly => PersonalFinanceTransactionTypeEnum::Expense,
+            PersonalFinanceGoalTrackingModeEnum::AbsoluteSum => null,
+        };
+
         $total = $this->transactionRepository->sumByCategoryForUser(
             $goal->getUser(),
             $category,
             $goal->getWallet(),
+            $typeFilter,
         );
         $goal->setSavedAmount($total);
         $this->entityManager->flush();
@@ -121,6 +133,7 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
         $goal->setColor($input->getColor());
         $goal->setWallet($this->resolveWallet($input->getWalletId()));
         $goal->setCategory($this->resolveCategory($goal->getUser(), $input->getCategoryId()));
+        $goal->setTrackingMode($input->getTrackingMode());
     }
 
     protected function resolveWallet(?int $walletId): ?PersonalFinanceWalletInterface
