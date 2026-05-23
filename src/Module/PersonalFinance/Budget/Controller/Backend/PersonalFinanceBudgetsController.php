@@ -17,6 +17,7 @@ use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
 use Aurora\Module\PersonalFinance\Budget\Service\PersonalFinanceBudgetXlsxExporter;
+use Aurora\Module\PersonalFinance\Budget\Service\PersonalFinanceMonthResetServiceInterface;
 use Aurora\Module\PersonalFinance\Budget\View\PersonalFinanceBudgetViewBuilder;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Transaction\Serializer\PersonalFinanceTransactionSerializerInterface;
@@ -52,6 +53,7 @@ final class PersonalFinanceBudgetsController extends AbstractController
         private readonly PersonalFinanceTransactionSerializerInterface $transactionSerializer,
         private readonly PayloadValidator $payloadValidator,
         private readonly PersonalFinanceBudgetXlsxExporter $xlsxExporter,
+        private readonly PersonalFinanceMonthResetServiceInterface $monthResetService,
     ) {}
 
     #[Route('/budgets', name: '_budgets', methods: [HttpMethodEnum::Get->value])]
@@ -85,6 +87,28 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
 
         return $this->json($this->viewBuilder->buildShowPayload($budget));
+    }
+
+    #[Route('/wallets/{walletId}/budget/reset', name: '_wallets_budget_reset', methods: [HttpMethodEnum::Post->value])]
+    public function reset(int $walletId, Request $request): JsonResponse
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT_TRANSACTIONS, $wallet);
+
+        $payload = $this->decodeJson($request);
+        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+        $clearBudget = (bool) ($payload['clearBudget'] ?? false);
+
+        $report = $this->monthResetService->reset($wallet, $month, $clearBudget);
+
+        return $this->jsonSuccess([
+            'deletedTransactions' => $report->deletedTransactions,
+            'budgetCleared' => $report->budgetCleared,
+        ]);
     }
 
     #[Route('/wallets/{walletId}/budget/export', name: '_wallets_budget_export', methods: [HttpMethodEnum::Get->value])]

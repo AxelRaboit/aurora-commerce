@@ -71,6 +71,7 @@ final readonly class PersonalFinanceBudgetViewBuilder
             'budgetPayload' => $payload,
             'showBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_show', ['walletId' => '__walletId__']),
             'exportBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_export', ['walletId' => '__walletId__']),
+            'resetBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_reset', ['walletId' => '__walletId__']),
             'savePresetPath' => $this->urlGenerator->generate('backend_personal_finance_budget_presets_save_from_month', ['walletId' => '__walletId__']),
             'listPresetsPath' => $this->urlGenerator->generate('backend_personal_finance_budget_presets_list', ['walletId' => '__walletId__']),
             'applyPresetPath' => $this->urlGenerator->generate('backend_personal_finance_budget_presets_apply', ['id' => '__id__']),

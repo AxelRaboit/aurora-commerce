@@ -300,6 +300,13 @@ personal_finance:
     rolled_over_toast: '1 line rolled over from the previous month | {count} lines rolled over from the previous month'
     overrun_warning: Planned budget exceeded
     section_progress_title: Overall section progress
+    reset_button: Reset the month
+    reset_title: Reset the month
+    reset_confirm: 'Delete every transaction for {month}? Transfers and splits are cleaned up on both sides. This action is irreversible.'
+    reset_help: Other months are not affected. Subsequent balances update automatically.
+    reset_clear_budget: Also wipe the planned budget lines
+    reset_confirm_button: Reset
+    reset_done: '{count} transactions deleted | 1 transaction deleted | {count} transactions deleted'
     empty_section_cta: Add the first line
     quick_add_transaction: Add a transaction on this line
     list_transactions: View linked transactions

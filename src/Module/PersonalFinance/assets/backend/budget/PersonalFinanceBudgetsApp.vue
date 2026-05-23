@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
-import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock, FileDown, ClipboardList, Play, Bookmark } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Save, X, Scale, RefreshCw, Receipt, List, ChevronLeft, ChevronRight, AlertTriangle, Wallet, TrendingUp, Clock, FileDown, ClipboardList, Play, Bookmark, RotateCcw } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -23,6 +23,7 @@ import { useBudgetQuickAdd } from "./composables/useBudgetQuickAdd.js";
 import { useBudgetSectionTheme } from "./composables/useBudgetSectionTheme.js";
 import { useBudgetProgress } from "./composables/useBudgetProgress.js";
 import { useBudgetPresetHooks } from "./composables/useBudgetPresetHooks.js";
+import { useBudgetMonthReset } from "./composables/useBudgetMonthReset.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -34,6 +35,7 @@ const props = defineProps({
     budgetPayload: { type: Object, default: () => ({ budget: null, sections: {}, balance: { current: "0.00", month: "0.00", rollingStart: "0.00" } }) },
     showBudgetPath: { type: String, required: true },
     exportBudgetPath: { type: String, required: true },
+    resetBudgetPath: { type: String, required: true },
     savePresetPath: { type: String, default: null },
     listPresetsPath: { type: String, default: null },
     applyPresetPath: { type: String, default: null },
@@ -187,6 +189,17 @@ const {
     onApplied: () => refresh(selectedWalletId.value, currentMonth.value),
 });
 
+const {
+    show: showReset,
+    clearBudget: resetClearBudget,
+    loading: resetLoading,
+    open: openReset,
+    confirm: confirmReset,
+} = useBudgetMonthReset({
+    resetPath: props.resetBudgetPath,
+    onReset: () => refresh(selectedWalletId.value, currentMonth.value),
+});
+
 </script>
 
 <template>
@@ -234,6 +247,16 @@ const {
                     >
                         <FileDown class="w-4 h-4" :stroke-width="2" />
                         <span class="hidden sm:inline">{{ t("personal_finance.budget.export_xlsx") }}</span>
+                    </AppButton>
+                    <AppButton
+                        variant="danger"
+                        size="md"
+                        :disabled="!selectedWalletId"
+                        :title="t('personal_finance.budget.reset_button')"
+                        v-on:click="openReset"
+                    >
+                        <RotateCcw class="w-4 h-4" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ t("personal_finance.budget.reset_button") }}</span>
                     </AppButton>
                     <AppButton variant="ghost" size="md" :loading="loading" v-on:click="refresh(selectedWalletId, currentMonth)">
                         <RefreshCw class="w-4 h-4" :stroke-width="2" />
@@ -605,6 +628,39 @@ const {
                     >
                         <Play class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("personal_finance.budget_presets.apply") }}
+                    </AppButton>
+                </AppModalFooter>
+            </template>
+        </AppModal>
+
+        <!-- Reset month confirmation -->
+        <AppModal
+            :show="showReset"
+            :title="t('personal_finance.budget.reset_title')"
+            :icon="AlertTriangle"
+            :closeable="false"
+            max-width="md"
+            v-on:close="showReset = false"
+        >
+            <div class="space-y-4">
+                <p class="text-sm text-primary">
+                    {{ t("personal_finance.budget.reset_confirm", { month: formatMonthYear(currentMonth) }) }}
+                </p>
+                <p class="text-xs text-muted">{{ t("personal_finance.budget.reset_help") }}</p>
+                <AppCheckbox
+                    v-model="resetClearBudget"
+                    :label="t('personal_finance.budget.reset_clear_budget')"
+                />
+            </div>
+            <template #footer>
+                <AppModalFooter>
+                    <AppButton variant="ghost" size="md" v-on:click="showReset = false">
+                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("shared.common.cancel") }}
+                    </AppButton>
+                    <AppButton variant="danger" size="md" :loading="resetLoading" v-on:click="confirmReset(selectedWalletId, currentMonth)">
+                        <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
+                        {{ t("personal_finance.budget.reset_confirm_button") }}
                     </AppButton>
                 </AppModalFooter>
             </template>

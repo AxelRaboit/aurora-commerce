@@ -300,6 +300,13 @@ personal_finance:
     rolled_over_toast: '1 ligne reportée du mois précédent | {count} lignes reportées du mois précédent'
     overrun_warning: Dépassement du budget prévu
     section_progress_title: Progression globale de la section
+    reset_button: Réinitialiser le mois
+    reset_title: Réinitialiser le mois
+    reset_confirm: 'Supprimer toutes les transactions de {month} ? Les virements et splits associés seront nettoyés des deux côtés. Cette action est irréversible.'
+    reset_help: Les autres mois ne sont pas affectés. Les soldes des mois suivants se mettront à jour automatiquement.
+    reset_clear_budget: Vider aussi les lignes prévues du budget
+    reset_confirm_button: Réinitialiser
+    reset_done: '{count} transactions supprimées | 1 transaction supprimée | {count} transactions supprimées'
     empty_section_cta: Ajouter la première ligne
     quick_add_transaction: Ajouter une transaction sur cette ligne
     list_transactions: Voir les transactions associées
