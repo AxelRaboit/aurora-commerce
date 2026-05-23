@@ -24,6 +24,10 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavPermission('welding.use'),
+            new NavPermission('welding.workflow_templates.view'),
+            new NavPermission('welding.workflow_templates.create'),
+            new NavPermission('welding.workflow_templates.edit'),
+            new NavPermission('welding.workflow_templates.delete'),
         ];
     }
 
@@ -35,9 +39,9 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
 
         return [
             new NavSection('welding', [
-                new NavItem('backend_welding', 'backend.nav.welding', 'flame',
-                    requiredPrivilege: 'welding.use',
-                    descriptionKey: 'backend.nav.welding_description'),
+                new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
+                    requiredPrivilege: 'welding.workflow_templates.view',
+                    descriptionKey: 'backend.nav.welding_workflow_templates_description'),
             ], priority: 52),
         ];
     }
@@ -46,9 +50,9 @@ final readonly class WeldingModule implements ModuleInterface, ModuleToggleProvi
     {
         return [
             new NavSection('welding', [
-                new NavItem('backend_welding', 'backend.nav.welding', 'flame',
-                    requiredPrivilege: 'welding.use',
-                    descriptionKey: 'backend.nav.welding_description'),
+                new NavItem('backend_welding_workflow_templates', 'backend.nav.welding_workflow_templates', 'scroll-text',
+                    requiredPrivilege: 'welding.workflow_templates.view',
+                    descriptionKey: 'backend.nav.welding_workflow_templates_description'),
             ], priority: 52),
         ];
     }

@@ -383,8 +383,15 @@ suit simplement la même convention.
    - ✅ **1a** — Module shell : `WeldingModule` + `WeldingContext` +
      Controller + Twig + Vue entrypoint + translations FR/EN + permission
      `welding.use` + cascadeRequires `PdfFormBackend` (cf. décision #11).
-   - ⏸ **1b** — Entités template : `WorkflowTemplate` +
-     `WorkflowStepTemplate` + `WorkflowStepPdfTemplate` + CRUD admin + migration.
+   - ✅ **1b** — Entités template : `WorkflowTemplate` +
+     `WorkflowStepTemplate` + `WorkflowStepPdfTemplate` avec leur stack
+     5-couches Sylius complète (Entity triplet + DTO quartet + Manager pair +
+     Serializer pair + Repository + Controller JSON). Migration
+     `Version20260523175759.php`. Permissions granulaires
+     `welding.workflow_templates.{view,create,edit,delete}`. ViewBuilder +
+     Vue placeholder pour le listing. Manager principal expose en plus
+     `publish()` / `archive()` / `cloneAsNewVersion()`. UI riche (drag&drop
+     steps, attach PdfTemplates) reportée au sprint 3.
 5. ⏸ **Sprint 2 — entités instance** : `Workflow` + `WorkflowStep`,
    state machine de transition, hooks Manager. Référence
    auto-numérotée `WLD-{YYYY}-{NNNNNN}` via Setting `welding.reference_prefix`

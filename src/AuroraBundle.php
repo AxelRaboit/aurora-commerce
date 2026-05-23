@@ -205,6 +205,12 @@ use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
+use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WorkflowStepPdfTemplate;
+use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WorkflowStepPdfTemplateInterface;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplate;
+use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WorkflowStepTemplateInterface;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WorkflowTemplate;
+use Aurora\Module\Welding\WorkflowTemplate\Entity\WorkflowTemplateInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -358,6 +364,9 @@ class AuroraBundle extends AbstractBundle
                     PersonalFinanceRecurringTransactionInterface::class => PersonalFinanceRecurringTransaction::class,
                     PersonalFinanceScheduledTransactionInterface::class => PersonalFinanceScheduledTransaction::class,
                     PersonalFinanceCategorizationRuleInterface::class => PersonalFinanceCategorizationRule::class,
+                    WorkflowTemplateInterface::class => WorkflowTemplate::class,
+                    WorkflowStepTemplateInterface::class => WorkflowStepTemplate::class,
+                    WorkflowStepPdfTemplateInterface::class => WorkflowStepPdfTemplate::class,
                 ],
                 'mappings' => array_merge(
                     [

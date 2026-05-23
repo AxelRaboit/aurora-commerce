@@ -3,6 +3,11 @@ backend:
     names:
       welding:
         use: Accéder au module Soudures
+        workflow_templates:
+          view: Voir les modèles de workflow de soudure
+          create: Créer un modèle de workflow de soudure
+          edit: Modifier un modèle de workflow de soudure
+          delete: Supprimer un modèle de workflow de soudure
   modules:
     welding_backend: Soudures
     welding_backend_description: Workflows de soudure réglementée — modèles, exécution étape par étape, validations et signatures
@@ -11,8 +16,37 @@ backend:
       welding: Soudures
     welding: Soudures
     welding_description: Workflows de soudure réglementée
+    welding_workflow_templates: Modèles de workflow
+    welding_workflow_templates_description: Gérer les modèles de workflow de soudure (versions, étapes, PDFs requis)
 
 welding:
   title: Soudures
   subtitle: Workflows de soudure réglementée
   placeholder: Le module est installé. Les modèles de workflow et les instances en cours apparaîtront ici.
+  workflow_templates:
+    title: Modèles de workflow
+    subtitle: Modèles de procédure de soudure réglementée
+    empty: Aucun modèle de workflow pour l'instant. Créez-en un pour démarrer.
+    steps: étape(s)
+    status_draft: Brouillon
+    status_published: Publié
+    status_archived: Archivé
+    errors:
+      title_required: Le titre est obligatoire
+      title_too_long: Le titre ne peut pas dépasser 200 caractères
+      applicable_to_too_long: La portée ne peut pas dépasser 100 caractères
+  workflow_step_templates:
+    errors:
+      workflow_template_required: Le modèle de workflow parent est obligatoire
+      title_required: Le titre de l'étape est obligatoire
+      title_too_long: Le titre ne peut pas dépasser 200 caractères
+      position_invalid: La position doit être un entier positif ou zéro
+  workflow_step_pdf_templates:
+    errors:
+      step_required: L'étape de rattachement est obligatoire
+      pdf_template_required: Le PDF template est obligatoire
+      position_invalid: La position doit être un entier positif ou zéro
+  validator_role_inspector: Inspecteur
+  validator_role_quality_assurance: Assurance qualité
+  validator_role_supervisor: Superviseur
+  validator_role_customer: Client

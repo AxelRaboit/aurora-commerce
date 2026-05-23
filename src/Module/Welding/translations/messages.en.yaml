@@ -3,6 +3,11 @@ backend:
     names:
       welding:
         use: Access the Welding module
+        workflow_templates:
+          view: View welding workflow templates
+          create: Create a welding workflow template
+          edit: Edit a welding workflow template
+          delete: Delete a welding workflow template
   modules:
     welding_backend: Welding
     welding_backend_description: Regulated welding workflows — templates, step-by-step execution, validations and signatures
@@ -11,8 +16,37 @@ backend:
       welding: Welding
     welding: Welding
     welding_description: Regulated welding workflows
+    welding_workflow_templates: Workflow templates
+    welding_workflow_templates_description: Manage welding workflow templates (versions, steps, required PDFs)
 
 welding:
   title: Welding
   subtitle: Regulated welding workflows
   placeholder: The module is installed. Workflow templates and running instances will appear here.
+  workflow_templates:
+    title: Workflow templates
+    subtitle: Regulated welding procedure templates
+    empty: No workflow template yet. Create one to get started.
+    steps: step(s)
+    status_draft: Draft
+    status_published: Published
+    status_archived: Archived
+    errors:
+      title_required: Title is required
+      title_too_long: Title cannot exceed 200 characters
+      applicable_to_too_long: Scope cannot exceed 100 characters
+  workflow_step_templates:
+    errors:
+      workflow_template_required: Parent workflow template is required
+      title_required: Step title is required
+      title_too_long: Title cannot exceed 200 characters
+      position_invalid: Position must be a non-negative integer
+  workflow_step_pdf_templates:
+    errors:
+      step_required: Parent step is required
+      pdf_template_required: PDF template is required
+      position_invalid: Position must be a non-negative integer
+  validator_role_inspector: Inspector
+  validator_role_quality_assurance: Quality assurance
+  validator_role_supervisor: Supervisor
+  validator_role_customer: Customer
