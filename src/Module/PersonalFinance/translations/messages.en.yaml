@@ -298,6 +298,9 @@ personal_finance:
     totals_line: '{actual} / {planned} spent'
     carried_label: 'carried: {amount}'
     rolled_over_toast: '1 line rolled over from the previous month | {count} lines rolled over from the previous month'
+    rollover_available: '1 line from the previous month can be rolled over here | {count} lines from the previous month can be rolled over here'
+    rollover_hint: Lines flagged "repeat next month" are copied onto this month. One-time action per month.
+    rollover_apply: Roll over
     overrun_warning: Planned budget exceeded
     section_progress_title: Overall section progress
     reset_button: Reset the month

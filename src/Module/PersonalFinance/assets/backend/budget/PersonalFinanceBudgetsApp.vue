@@ -24,6 +24,7 @@ import { useBudgetSectionTheme } from "./composables/useBudgetSectionTheme.js";
 import { useBudgetProgress } from "./composables/useBudgetProgress.js";
 import { useBudgetPresetHooks } from "./composables/useBudgetPresetHooks.js";
 import { useBudgetMonthReset } from "./composables/useBudgetMonthReset.js";
+import { useBudgetRollover } from "./composables/useBudgetRollover.js";
 
 const props = defineProps({
     wallets: { type: Array, required: true },
@@ -36,6 +37,7 @@ const props = defineProps({
     showBudgetPath: { type: String, required: true },
     exportBudgetPath: { type: String, required: true },
     resetBudgetPath: { type: String, required: true },
+    rolloverBudgetPath: { type: String, required: true },
     savePresetPath: { type: String, default: null },
     listPresetsPath: { type: String, default: null },
     applyPresetPath: { type: String, default: null },
@@ -202,6 +204,15 @@ const {
     onReset: () => refresh(selectedWalletId.value, currentMonth.value),
 });
 
+const { loading: rolloverLoading, rollover: triggerRollover } = useBudgetRollover({
+    rolloverPath: props.rolloverBudgetPath,
+    onRolledOver: () => refresh(selectedWalletId.value, currentMonth.value),
+});
+
+const eligibleRolloverCount = computed(() => payload.value.eligibleRolloverCount ?? 0);
+const wasRolledOver = computed(() => payload.value.wasRolledOver ?? false);
+const showRolloverBanner = computed(() => eligibleRolloverCount.value > 0 && !wasRolledOver.value);
+
 </script>
 
 <template>
@@ -267,6 +278,25 @@ const {
         <AppMessage variant="info">
             {{ t("personal_finance.budget.help") }}
         </AppMessage>
+
+        <div
+            v-if="showRolloverBanner"
+            class="bg-accent-500/10 border border-accent-500/30 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+        >
+            <div class="flex items-start gap-3">
+                <RefreshCw class="w-5 h-5 text-accent-400 mt-0.5 shrink-0" :stroke-width="2" />
+                <div>
+                    <p class="text-sm text-primary font-medium">
+                        {{ t("personal_finance.budget.rollover_available", { count: eligibleRolloverCount }, eligibleRolloverCount) }}
+                    </p>
+                    <p class="text-xs text-muted mt-1">{{ t("personal_finance.budget.rollover_hint") }}</p>
+                </div>
+            </div>
+            <AppButton variant="primary" size="md" :loading="rolloverLoading" v-on:click="triggerRollover(selectedWalletId, currentMonth)">
+                <RefreshCw class="w-4 h-4" :stroke-width="2" />
+                {{ t("personal_finance.budget.rollover_apply") }}
+            </AppButton>
+        </div>
 
         <section v-if="!wallets.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
             {{ t("personal_finance.budget.no_wallet") }}

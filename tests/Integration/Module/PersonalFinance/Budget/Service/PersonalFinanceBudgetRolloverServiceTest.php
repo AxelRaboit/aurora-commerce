@@ -100,22 +100,40 @@ final class PersonalFinanceBudgetRolloverServiceTest extends PersonalFinanceTest
         self::assertSame(0, $count);
     }
 
-    public function testEnsureForMonthTriggersAutoRolloverOnNewBudget(): void
+    public function testEnsureForMonthNoLongerAutoRollsOver(): void
+    {
+        // ensureForMonth used to auto-rollover on first creation; the
+        // behaviour is now explicit (rolloverFromPrevious()). Validating
+        // ensureForMonth stays silent so the UI banner is the only
+        // trigger users see.
+        $user = $this->createTestUser();
+        $wallet = $this->createWallet($user);
+        $marchBudget = $this->createBudget($user, $wallet, '2026-03');
+        $this->createItem($marchBudget, 'Rent', '850.00', null, repeatNextMonth: true);
+
+        $aprilBudget = $this->budgetManager->ensureForMonth($user, $wallet, new DateTimeImmutable('2026-04-01'));
+
+        self::assertCount(0, $this->itemRepository->findByBudget($aprilBudget), 'April should land empty — rollover is no longer implicit');
+        self::assertNull($aprilBudget->getRolledOverAt());
+    }
+
+    public function testManualRolloverCopiesRepeatItemsAndFlipsTheFlag(): void
     {
         $user = $this->createTestUser();
         $wallet = $this->createWallet($user);
         $marchBudget = $this->createBudget($user, $wallet, '2026-03');
         $this->createItem($marchBudget, 'Rent', '850.00', null, repeatNextMonth: true);
 
-        // First call → creates April + triggers rollover
         $aprilBudget = $this->budgetManager->ensureForMonth($user, $wallet, new DateTimeImmutable('2026-04-01'));
+        $count = $this->budgetManager->rolloverFromPrevious($aprilBudget);
 
-        self::assertSame(1, $this->budgetManager->lastRolloverCount());
+        self::assertSame(1, $count);
         self::assertCount(1, $this->itemRepository->findByBudget($aprilBudget));
+        self::assertNotNull($aprilBudget->getRolledOverAt());
 
-        // Second call on the same month → no rollover (budget already existed)
-        $this->budgetManager->ensureForMonth($user, $wallet, new DateTimeImmutable('2026-04-01'));
-        self::assertSame(0, $this->budgetManager->lastRolloverCount());
+        // Second call is a no-op — guard prevents double-rollover even on user retries.
+        $secondCount = $this->budgetManager->rolloverFromPrevious($aprilBudget);
+        self::assertSame(0, $secondCount);
         self::assertCount(1, $this->itemRepository->findByBudget($aprilBudget));
     }
 
@@ -127,6 +145,7 @@ final class PersonalFinanceBudgetRolloverServiceTest extends PersonalFinanceTest
         $this->createItem($marchBudget, 'Rent', '850.00', null, repeatNextMonth: true);
 
         $aprilBudget = $this->budgetManager->ensureForMonth($user, $wallet, new DateTimeImmutable('2026-04-01'));
+        $this->budgetManager->rolloverFromPrevious($aprilBudget);
         $aprilItem = $this->itemRepository->findByBudget($aprilBudget)[0];
 
         // The cloned item itself keeps repeatNextMonth=true so it

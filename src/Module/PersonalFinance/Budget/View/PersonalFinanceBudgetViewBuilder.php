@@ -72,6 +72,7 @@ final readonly class PersonalFinanceBudgetViewBuilder
             'showBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_show', ['walletId' => '__walletId__']),
             'exportBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_export', ['walletId' => '__walletId__']),
             'resetBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_reset', ['walletId' => '__walletId__']),
+            'rolloverBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_rollover', ['walletId' => '__walletId__']),
             'savePresetPath' => $this->urlGenerator->generate('backend_personal_finance_budget_presets_save_from_month', ['walletId' => '__walletId__']),
             'listPresetsPath' => $this->urlGenerator->generate('backend_personal_finance_budget_presets_list', ['walletId' => '__walletId__']),
             'applyPresetPath' => $this->urlGenerator->generate('backend_personal_finance_budget_presets_apply', ['id' => '__id__']),
@@ -118,12 +119,22 @@ final readonly class PersonalFinanceBudgetViewBuilder
 
         $serializedBySection = $this->groupItemsBySection($items, $actuals);
 
+        // Rollover banner state — show the count only when the user
+        // hasn't already triggered the rollover for this month. Banner
+        // disappears as soon as the button is clicked (or if a previous
+        // session already rolled over).
+        $wasRolledOver = null !== $budget->getRolledOverAt();
+        $eligibleRolloverCount = $wasRolledOver
+            ? 0
+            : $this->itemRepository->countRepeatableForPreviousMonth($wallet, $month);
+
         return [
             'success' => true,
             'budget' => $this->budgetSerializer->serialize($budget),
             'sections' => $serializedBySection,
             'balance' => $this->balanceService->snapshot($wallet, $month),
-            'rolledOver' => $this->budgetManager->lastRolloverCount(),
+            'wasRolledOver' => $wasRolledOver,
+            'eligibleRolloverCount' => $eligibleRolloverCount,
         ];
     }
 

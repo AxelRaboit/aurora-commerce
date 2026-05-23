@@ -28,10 +28,10 @@ interface PersonalFinanceBudgetManagerInterface
     public function delete(PersonalFinanceBudgetInterface $budget): void;
 
     /**
-     * Number of items the last `ensureForMonth` call copied from the
-     * previous month via the auto-rollover service. Zero when the
-     * budget already existed (no creation, no rollover) or when no
-     * previous month had repeat-flagged items.
+     * Explicit rollover from the previous month's `repeatNextMonth`
+     * items. Triggered by a button in the Budget UI, no longer implicit
+     * on `ensureForMonth`. Sets `rolledOverAt` so the banner hides on
+     * subsequent loads. Returns the count of items inserted.
      */
-    public function lastRolloverCount(): int;
+    public function rolloverFromPrevious(PersonalFinanceBudgetInterface $budget): int;
 }

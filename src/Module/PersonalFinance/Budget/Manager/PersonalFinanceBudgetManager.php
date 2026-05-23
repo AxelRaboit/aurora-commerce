@@ -18,14 +18,6 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 #[AsAlias(PersonalFinanceBudgetManagerInterface::class)]
 class PersonalFinanceBudgetManager implements PersonalFinanceBudgetManagerInterface
 {
-    /**
-     * Number of items copied by the last `ensureForMonth` call. The
-     * Twig/Vue layer reads this from `lastRolloverCount()` (instead
-     * of mutating the Budget entity) so the rollover stays a service
-     * concern and the entity contract stays pure.
-     */
-    protected int $lastRolloverCount = 0;
-
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly AuditLogger $auditLogger,
@@ -38,8 +30,6 @@ class PersonalFinanceBudgetManager implements PersonalFinanceBudgetManagerInterf
         PersonalFinanceWalletInterface $wallet,
         DateTimeImmutable $month,
     ): PersonalFinanceBudgetInterface {
-        $this->lastRolloverCount = 0;
-
         $existing = $this->budgetRepository->findByWalletAndMonth($wallet, $month);
         if ($existing instanceof PersonalFinanceBudgetInterface) {
             return $existing;
@@ -55,17 +45,34 @@ class PersonalFinanceBudgetManager implements PersonalFinanceBudgetManagerInterf
 
         $this->auditCreated($budget);
 
-        $this->lastRolloverCount = $this->rollover->rolloverFrom($budget);
-        if ($this->lastRolloverCount > 0) {
-            $this->auditRolledOver($budget, $this->lastRolloverCount);
-        }
-
         return $budget;
     }
 
-    public function lastRolloverCount(): int
+    /**
+     * Explicit rollover from the previous month's `repeatNextMonth`
+     * items — triggered from a button in the Budget UI rather than
+     * implicitly on `ensureForMonth`. Sets `rolledOverAt` so the UI
+     * banner hides on subsequent loads.
+     *
+     * Returns the count of items inserted. No-op (returns 0) when
+     * already rolled over, when the budget already has items, or
+     * when the previous month has nothing to carry.
+     */
+    public function rolloverFromPrevious(PersonalFinanceBudgetInterface $budget): int
     {
-        return $this->lastRolloverCount;
+        if (null !== $budget->getRolledOverAt()) {
+            return 0;
+        }
+
+        $count = $this->rollover->rolloverFrom($budget);
+        $budget->setRolledOverAt(new DateTimeImmutable());
+        $this->entityManager->flush();
+
+        if ($count > 0) {
+            $this->auditRolledOver($budget, $count);
+        }
+
+        return $count;
     }
 
     protected function auditRolledOver(PersonalFinanceBudgetInterface $budget, int $count): void

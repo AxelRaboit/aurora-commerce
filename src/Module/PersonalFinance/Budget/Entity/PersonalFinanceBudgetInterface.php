@@ -30,6 +30,10 @@ interface PersonalFinanceBudgetInterface extends TimestampableInterface
 
     public function setNotes(?string $notes): static;
 
+    public function getRolledOverAt(): ?DateTimeImmutable;
+
+    public function setRolledOverAt(?DateTimeImmutable $rolledOverAt): static;
+
     /** @return Collection<int, PersonalFinanceBudgetItemInterface> */
     public function getItems(): Collection;
 }

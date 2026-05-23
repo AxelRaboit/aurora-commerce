@@ -33,6 +33,15 @@ abstract class AbstractPersonalFinanceBudget implements PersonalFinanceBudgetInt
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $notes = null;
 
+    /**
+     * Timestamp of the manual rollover from the previous month. `null`
+     * means the user hasn't triggered the rollover yet — drives the
+     * "Reporter les lignes du mois précédent" banner in the Budget UI.
+     * Set once; subsequent edits to items don't re-flip it.
+     */
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    protected ?DateTimeImmutable $rolledOverAt = null;
+
     /** @var Collection<int, PersonalFinanceBudgetItemInterface> */
     #[ORM\OneToMany(targetEntity: PersonalFinanceBudgetItemInterface::class, mappedBy: 'budget', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
@@ -87,6 +96,18 @@ abstract class AbstractPersonalFinanceBudget implements PersonalFinanceBudgetInt
     public function setNotes(?string $notes): static
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getRolledOverAt(): ?DateTimeImmutable
+    {
+        return $this->rolledOverAt;
+    }
+
+    public function setRolledOverAt(?DateTimeImmutable $rolledOverAt): static
+    {
+        $this->rolledOverAt = $rolledOverAt;
 
         return $this;
     }

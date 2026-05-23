@@ -298,6 +298,9 @@ personal_finance:
     totals_line: '{actual} / {planned} dépensé'
     carried_label: 'reporté : {amount}'
     rolled_over_toast: '1 ligne reportée du mois précédent | {count} lignes reportées du mois précédent'
+    rollover_available: '1 ligne du mois précédent peut être reportée ici | {count} lignes du mois précédent peuvent être reportées ici'
+    rollover_hint: Les lignes marquées « répéter le mois suivant » sont copiées vers ce mois. Action ponctuelle — possible une seule fois par mois.
+    rollover_apply: Reporter
     overrun_warning: Dépassement du budget prévu
     section_progress_title: Progression globale de la section
     reset_button: Réinitialiser le mois

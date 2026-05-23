@@ -89,6 +89,28 @@ final class PersonalFinanceBudgetsController extends AbstractController
         return $this->json($this->viewBuilder->buildShowPayload($budget));
     }
 
+    #[Route('/wallets/{walletId}/budget/rollover', name: '_wallets_budget_rollover', methods: [HttpMethodEnum::Post->value])]
+    public function rollover(int $walletId, Request $request): JsonResponse
+    {
+        $wallet = $this->walletRepository->find($walletId);
+        if (!$wallet instanceof PersonalFinanceWalletInterface) {
+            return $this->jsonNotFound();
+        }
+
+        $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT_TRANSACTIONS, $wallet);
+
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+
+        $payload = $this->decodeJson($request);
+        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+
+        $budget = $this->budgetManager->ensureForMonth($user, $wallet, $month);
+        $count = $this->budgetManager->rolloverFromPrevious($budget);
+
+        return $this->jsonSuccess($this->viewBuilder->buildShowPayload($budget) + ['rolledOverCount' => $count]);
+    }
+
     #[Route('/wallets/{walletId}/budget/reset', name: '_wallets_budget_reset', methods: [HttpMethodEnum::Post->value])]
     public function reset(int $walletId, Request $request): JsonResponse
     {

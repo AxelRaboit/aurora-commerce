@@ -37,6 +37,33 @@ class PersonalFinanceBudgetItemRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Counts how many items on the previous month's budget (relative to
+     * $currentMonth) are flagged `repeatNextMonth`. Used by the
+     * Budget UI to decide whether to show the "Reporter les lignes du
+     * mois précédent" banner — non-zero means there's something to
+     * roll over.
+     */
+    public function countRepeatableForPreviousMonth(
+        \Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface $wallet,
+        \DateTimeImmutable $currentMonth,
+    ): int {
+        $previous = $currentMonth->modify('first day of this month')->modify('-1 month')->setTime(0, 0);
+
+        $result = $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->innerJoin('i.budget', 'b')
+            ->where('b.wallet = :wallet')
+            ->andWhere('b.month = :month')
+            ->andWhere('i.repeatNextMonth = true')
+            ->setParameter('wallet', $wallet)
+            ->setParameter('month', $previous)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $result;
+    }
+
+    /**
      * Items flagged repeat_next_month from the given prior budget — used
      * by the carry-over service to seed the next month's budget.
      *
