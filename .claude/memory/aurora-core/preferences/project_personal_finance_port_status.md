@@ -81,6 +81,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 |---|---|---|---|
 | v2-3 | UI Members modal + email integration + public acceptance page | (lot v2-3) | 🟢 |
 | v2-6 | Tags UI : input + display pills + click-to-filter + backend JSONB filter | (lot v2-6) | 🟢 |
+| v2-1A | Budget auto-rollover : `repeatNextMonth` items copiés mois N → N+1 via `BudgetRolloverService` + toast UI | (lot v2-1A) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
@@ -100,7 +101,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 
 | # | Session | Effort | Pourquoi |
 |---|---|---|---|
-| **v2-1** (6c) | **BudgetPreset + auto-rollover** : entité template user-level + service qui copie les items `repeatNextMonth=true` au début du mois suivant. Modale "appliquer un preset" au create d'un nouveau budget mensuel | M | Évite la re-saisie manuelle chaque mois — feedback récurrent de tout user Spendly |
+| **v2-1B** | **BudgetPreset standalone** (Phase B de l'item v2-1) : entité template user-level + CRUD + apply-to-month. La Phase A (auto-rollover) est déjà livrée — Phase B couvre les bascules vers un autre profil de dépenses (ex. "Budget vacances" appliqué juste au mois de juillet). | M | Permet de créer un "Mois type" réutilisable indépendamment du dernier budget enregistré. |
 | **v2-2** (11) | **Import Excel** : 2-step upload → preview → process. Service `PersonalFinanceImportService` (parse via PhpSpreadsheet ou ext locale) + template Excel téléchargeable + DTO de validation. Mapping flexible (date / montant / catégorie / description / tags) | L | Onboarding utilisateurs qui ont déjà un historique ailleurs (banque, autre app) |
 | ~~v2-3~~ | ~~UI Members modal + email + public page~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
 | **v2-4** | **Vue Globale (Overview)** multi-wallets agrégée : `PersonalFinanceOverviewService` somme cross-wallet + Vue dédiée. Différent du Dashboard qui est centré KPIs du mois | M | Utilisateurs avec 3+ wallets : voir le big picture |
@@ -129,11 +130,12 @@ et valeur immédiate :
 
 1. ~~v2-3 UI Members~~ ✅ **livré**
 2. ~~v2-6 Tags UI~~ ✅ **livré**
-3. **v2-1 BudgetPreset** (M) — feature à forte demande, scope auto-suffisant (prochain)
-4. **v2-4 Overview** (M) — bénéficie de la maturité Budget/Goal
+3. ~~v2-1A Auto-rollover~~ ✅ **livré**
+4. **v2-4 Overview** (M) — bénéficie de la maturité Budget/Goal (prochain — Phase B de v2-1 reportée car valeur marginale derrière l'auto-rollover)
 5. **v2-5 Statistics** (M) — vient après Overview, même pattern d'agrégation
 6. **v2-7 Export** (M) — feature transverse, peut se faire à n'importe quel moment
-7. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée
+7. **v2-1B BudgetPreset standalone** (M) — rebascule entre profils (utile si Phase A ne suffit pas en pratique)
+8. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée
 
 ## Comment l'appliquer
 
