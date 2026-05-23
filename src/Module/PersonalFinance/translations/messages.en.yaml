@@ -190,6 +190,41 @@ personal_finance:
       amount_required: Amount is required for each line.
       amount_format: 'Invalid amount format on a line. Example: 1234.56'
       amount_positive: Each line amount must be strictly positive.
+  budget:
+    title: Monthly budget
+    no_wallet: Create a wallet first to start budgeting.
+    no_category: No category
+    add_item: Add a line
+    edit_item: Edit line
+    empty_section: No lines in this section yet.
+    delete_confirm: 'Delete this line? Existing transactions are not affected.'
+    deleted: Line deleted.
+    created: Line added.
+    updated: Line updated.
+    totals_line: '{actual} / {planned} spent'
+    carried_label: 'carried: {amount}'
+    sections:
+      income: Income
+      savings: Savings
+      bills: Bills
+      expenses: Expenses
+      debt: Debt
+    fields:
+      section: Section
+      label: Label
+      planned: Planned amount
+      carried: Carried over from previous month
+      category: Category
+      notes: Notes
+      repeat_next_month: Repeat next month automatically
+    placeholders:
+      label: e.g. Rent, Groceries, Salary…
+      notes: Optional
+    errors:
+      label_required: Line label is required.
+      planned_required: Planned amount is required.
+      planned_format: 'Invalid format. Example: 1234.56'
+      carried_format: 'Invalid format. Example: 1234.56 or -1234.56'
   balance:
     current: Current balance
     month: Month-end balance

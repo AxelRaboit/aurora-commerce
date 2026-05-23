@@ -26,6 +26,7 @@ shared:
     error: An error occurred.
     saved: Saved.
     deleted: Deleted.
+    refresh: Refresh
     autosave:
       pending: Unsaved changes
       saving: Saving…

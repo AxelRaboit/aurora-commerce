@@ -68,10 +68,15 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
-        // Budgets nav item is registered by Session 6b (UI) once the
-        // index route exists. The permission + toggle stay registered
-        // here so the API endpoints (`/wallets/{id}/budget*`) remain
-        // gated when used from the Transactions page meanwhile.
+        if ($this->personalFinanceContext->isBudgetsEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_budgets',
+                'backend.nav.personal_finance_budgets',
+                'scale',
+                requiredPrivilege: 'personal_finance.budgets.use',
+                descriptionKey: 'backend.nav.personal_finance_budgets_description',
+            );
+        }
 
         if ([] === $items) {
             return [];
@@ -104,6 +109,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     'receipt',
                     requiredPrivilege: 'personal_finance.transactions.use',
                     descriptionKey: 'backend.nav.personal_finance_transactions_description',
+                ),
+                new NavItem(
+                    'backend_personal_finance_budgets',
+                    'backend.nav.personal_finance_budgets',
+                    'scale',
+                    requiredPrivilege: 'personal_finance.budgets.use',
+                    descriptionKey: 'backend.nav.personal_finance_budgets_description',
                 ),
             ], priority: 25),
         ];

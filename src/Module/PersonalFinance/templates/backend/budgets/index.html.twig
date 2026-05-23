@@ -1,0 +1,27 @@
+{% extends '@Core/backend/layout.html.twig' %}
+
+{% block title %}{{ 'backend.nav.personal_finance_budgets'|trans }} - {{ parent() }}{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('@Shared/components/page_header.html.twig', {
+        crumbs: [
+            {label: 'backend.nav.sections.personal_finance'|trans},
+            {label: 'backend.nav.personal_finance_budgets'|trans},
+        ],
+    }) }}
+{% endblock %}
+
+{% block body %}
+<div {{ vue_component('personalfinance/backend/budget/PersonalFinanceBudgetsApp', {
+    wallets: wallets,
+    categoriesByWallet: categoriesByWallet,
+    selectedWalletId: selectedWalletId,
+    month: month,
+    sections: sections,
+    budgetPayload: budgetPayload,
+    showBudgetPath: showBudgetPath,
+    createItemPath: createItemPath,
+    updateItemPath: updateItemPath,
+    deleteItemPath: deleteItemPath,
+}) }} class="flex-1 min-w-0"></div>
+{% endblock %}

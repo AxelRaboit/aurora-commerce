@@ -24,6 +24,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -44,6 +45,20 @@ final class PersonalFinanceBudgetsController extends AbstractController
         private readonly PersonalFinanceBudgetViewBuilder $viewBuilder,
         private readonly PayloadValidator $payloadValidator,
     ) {}
+
+    #[Route('/budgets', name: '_budgets', methods: [HttpMethodEnum::Get->value])]
+    public function index(Request $request): Response
+    {
+        /** @var CoreUserInterface $user */
+        $user = $this->getUser();
+        $walletId = $request->query->getInt('walletId') ?: null;
+        $month = $this->resolveMonth($request->query->get('month'));
+
+        return $this->render(
+            '@PersonalFinance/backend/budgets/index.html.twig',
+            $this->viewBuilder->indexView($user, $walletId, $month),
+        );
+    }
 
     #[Route('/wallets/{walletId}/budget', name: '_wallets_budget_show', methods: [HttpMethodEnum::Get->value])]
     public function show(int $walletId, Request $request): JsonResponse

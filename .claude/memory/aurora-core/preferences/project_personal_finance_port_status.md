@@ -25,14 +25,16 @@ jour à la fin de chaque session.
 | 4b-UI | Modale Transfer Vue intégrée dans `PersonalFinanceTransactionsApp` (toolbar 2 boutons, composables `useTransfersForm` + `useTransfersDelete`, endpoint `/transfers/{id}/show`) | `598d8418` | 🟢 |
 | 4c | TransactionSplit (N tx liées par `splitId` UUID v7) + `PersonalFinanceSplitInput` + `PersonalFinanceSplitService` + Controller + Manager guard généralisé en `ensureMutableLeg` + UI modale dynamique N rows | _(à committer)_ | 🟢 |
 | 4d | Attachments (1 fichier/tx, PDF+raster, 5 Mo, var/uploads/personal-finance/transactions/{id}/) + colonne `attachment_original_name` (migration `Version20260523000000`) + Service + Controller (upload/delete/serve) + UI section dans la modale edit | _(à committer)_ | 🟢 |
-| 5 | WalletBalanceService (`currentBalance` / `monthlyBalance` / `rollingStartBalance` en bcmath) + `BalanceAdjustmentService` (lazy `BalanceAdjustment` system category) + DTO + Controller + UI barre de soldes + modale Ajuster dans `PersonalFinanceTransactionsApp` | _(à committer)_ | 🟢 |
+| 5 | WalletBalanceService (`currentBalance` / `monthlyBalance` / `rollingStartBalance` en bcmath) + `BalanceAdjustmentService` (lazy `BalanceAdjustment` system category) + DTO + Controller + UI barre de soldes + modale Ajuster dans `PersonalFinanceTransactionsApp` | `73480834` | 🟢 |
+| 6a | Budget + BudgetItem entities (5-layer) + `BudgetSectionEnum` + Manager.ensureForMonth lazy + ViewBuilder + 4 endpoints + migration `Version20260523120000` + cascade `PersonalFinanceBudgets` toggle | _(à committer)_ | 🟢 |
+| 6b | Page Vue `PersonalFinanceBudgetsApp` (mois nav + sections + items inline avec progress + modale create/edit) + Twig + NavItem + composables `useBudgetData`/`useBudgetItemsForm` + translations | _(à committer)_ | 🟢 |
 
 ## Sessions à venir
 
 | # | Session | Bloque ? | Prérequis |
 |---|---|---|---|
 | 2c-2 | UI Members modal Vue + page publique respond + email integration (Mailer + Twig) | non — UX nice-to-have | 2c |
-| 6 | Budget + BudgetItem + BudgetPreset + carry-over service | non | 5 |
+| 6c | BudgetPreset (template user-level) + service auto-rollover next month (copy items repeat=true) | non — V2 | 6a |
 | 7 | Goal + EventSubscriber qui sync `savedAmount` depuis transactions | non | 5 |
 | 8 | RecurringTransaction + ScheduledTransaction + commande cron `personal-finance:recurring:generate` | non | 4a |
 | 9 | CategorizationRule + Learn/Suggest services + `afterSave` hook standardisé dans la convention | non | 4a |

@@ -6,13 +6,20 @@ namespace Aurora\Module\PersonalFinance\Budget\View;
 
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
+use Aurora\Module\PersonalFinance\Budget\Manager\PersonalFinanceBudgetManagerInterface;
 use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRepository;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetSerializerInterface;
+use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
+use Aurora\Module\PersonalFinance\Category\Serializer\PersonalFinanceCategorySerializerInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
+use Aurora\Module\PersonalFinance\Wallet\Serializer\PersonalFinanceWalletSerializerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Service\PersonalFinanceWalletBalanceServiceInterface;
+use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use DateTimeImmutable;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Assembles the JSON payload for `GET /wallets/{id}/budget?month=YYYY-MM`.
@@ -22,12 +29,68 @@ use DateTimeImmutable;
 final readonly class PersonalFinanceBudgetViewBuilder
 {
     public function __construct(
+        private PersonalFinanceBudgetManagerInterface $budgetManager,
         private PersonalFinanceBudgetItemRepository $itemRepository,
         private PersonalFinanceBudgetItemSerializerInterface $itemSerializer,
         private PersonalFinanceBudgetSerializerInterface $budgetSerializer,
         private PersonalFinanceTransactionRepository $transactionRepository,
         private PersonalFinanceWalletBalanceServiceInterface $balanceService,
+        private PersonalFinanceWalletRepository $walletRepository,
+        private PersonalFinanceWalletSerializerInterface $walletSerializer,
+        private PersonalFinanceCategoryRepository $categoryRepository,
+        private PersonalFinanceCategorySerializerInterface $categorySerializer,
+        private UrlGeneratorInterface $urlGenerator,
     ) {}
+
+    /** @return array<string, mixed> */
+    public function indexView(CoreUserInterface $user, ?int $walletId, DateTimeImmutable $month): array
+    {
+        $wallets = $this->walletRepository->findAccessibleByUser($user);
+        $selectedWallet = $this->resolveWallet($wallets, $walletId);
+
+        $categoriesByWallet = [];
+        foreach ($wallets as $wallet) {
+            $categoriesByWallet[(string) $wallet->getId()] = array_map(
+                $this->categorySerializer->serialize(...),
+                $this->categoryRepository->findUserCategoriesByWallet($wallet),
+            );
+        }
+
+        $payload = ($selectedWallet instanceof PersonalFinanceWalletInterface)
+            ? $this->buildShowPayload($this->budgetManager->ensureForMonth($user, $selectedWallet, $month))
+            : ['success' => true, 'budget' => null, 'sections' => [], 'balance' => ['current' => '0.00', 'month' => '0.00', 'rollingStart' => '0.00']];
+
+        return [
+            'wallets' => array_map($this->walletSerializer->serialize(...), $wallets),
+            'categoriesByWallet' => $categoriesByWallet,
+            'selectedWalletId' => $selectedWallet?->getId(),
+            'month' => $month->format('Y-m'),
+            'sections' => PersonalFinanceBudgetSectionEnum::values(),
+            'budgetPayload' => $payload,
+            'showBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_show', ['walletId' => '__walletId__']),
+            'createItemPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_items_create', ['walletId' => '__walletId__']),
+            'updateItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_update', ['id' => '__id__']),
+            'deleteItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_delete', ['id' => '__id__']),
+        ];
+    }
+
+    /**
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     */
+    public function resolveWallet(array $wallets, ?int $walletId): ?PersonalFinanceWalletInterface
+    {
+        if (null === $walletId) {
+            return $wallets[0] ?? null;
+        }
+
+        foreach ($wallets as $wallet) {
+            if ($wallet->getId() === $walletId) {
+                return $wallet;
+            }
+        }
+
+        return $wallets[0] ?? null;
+    }
 
     /** @return array<string, mixed> */
     public function buildShowPayload(PersonalFinanceBudgetInterface $budget): array

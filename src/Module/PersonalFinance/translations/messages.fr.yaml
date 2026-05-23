@@ -190,6 +190,41 @@ personal_finance:
       amount_required: Le montant est requis pour chaque ligne.
       amount_format: 'Format invalide pour la ligne. Exemple : 1234.56'
       amount_positive: Le montant de chaque ligne doit être strictement positif.
+  budget:
+    title: Budget mensuel
+    no_wallet: Crée d'abord un portefeuille pour pouvoir bâtir un budget.
+    no_category: Sans catégorie
+    add_item: Ajouter une ligne
+    edit_item: Modifier la ligne
+    empty_section: Aucune ligne dans cette section.
+    delete_confirm: 'Supprimer cette ligne ? L''historique des transactions n''est pas affecté.'
+    deleted: Ligne supprimée.
+    created: Ligne ajoutée.
+    updated: Ligne mise à jour.
+    totals_line: '{actual} / {planned} dépensé'
+    carried_label: 'reporté : {amount}'
+    sections:
+      income: Revenus
+      savings: Épargne
+      bills: Factures
+      expenses: Dépenses
+      debt: Dette
+    fields:
+      section: Section
+      label: Intitulé
+      planned: Montant planifié
+      carried: Reporté du mois précédent
+      category: Catégorie
+      notes: Notes
+      repeat_next_month: Reporter automatiquement le mois prochain
+    placeholders:
+      label: Ex. Loyer, Courses, Salaire…
+      notes: Optionnel
+    errors:
+      label_required: L'intitulé de la ligne est requis.
+      planned_required: Le montant planifié est requis.
+      planned_format: 'Format invalide. Exemple : 1234.56'
+      carried_format: 'Format invalide. Exemple : 1234.56 ou -1234.56'
   balance:
     current: Solde actuel
     month: Solde fin de mois

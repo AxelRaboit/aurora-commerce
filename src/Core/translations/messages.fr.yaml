@@ -26,6 +26,7 @@ shared:
     error: Une erreur est survenue.
     saved: Enregistré.
     deleted: Supprimé.
+    refresh: Actualiser
     autosave:
       pending: Modifications non enregistrées
       saving: Enregistrement…
