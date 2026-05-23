@@ -8,6 +8,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppMessage from "@/shared/components/feedback/AppMessage.vue";
@@ -288,14 +289,11 @@ function summarizeItems(preset) {
             <div v-if="applyTarget" class="space-y-4">
                 <p class="text-sm text-muted">{{ t("personal_finance.budget_presets.apply_help") }}</p>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-muted mb-1">{{ `${t('personal_finance.budget_presets.fields.month')} *` }}</label>
-                    <input
-                        v-model="applyMonth"
-                        type="month"
-                        class="w-full bg-surface-2 border border-line rounded-md px-3 py-2 text-sm text-primary"
-                    />
-                </div>
+                <AppDatePicker
+                    v-model="applyMonth"
+                    :label="`${t('personal_finance.budget_presets.fields.month')} *`"
+                    :month-only="true"
+                />
 
                 <div>
                     <label class="block text-xs uppercase tracking-wider text-muted mb-2">{{ t("personal_finance.budget_presets.fields.mode") }}</label>

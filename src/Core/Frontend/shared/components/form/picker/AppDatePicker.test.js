@@ -57,4 +57,16 @@ describe("AppDatePicker", () => {
         });
         expect(wrapper.find("vue-date-picker-stub").exists()).toBe(true);
     });
+
+    it("accepts a YYYY-MM modelValue in monthOnly mode without crashing", () => {
+        // Smoke test: the YYYY-MM parser in the SFC's internalValue computed
+        // shouldn't blow up on a 7-char value (the bug we'd otherwise hit by
+        // shoving it through `new Date(...)` which gives a UTC midnight that
+        // can shift the month in some timezones).
+        const wrapper = mount(AppDatePicker, {
+            props: { modelValue: "2026-05", monthOnly: true },
+            global: globalConfig,
+        });
+        expect(wrapper.find("vue-date-picker-stub").exists()).toBe(true);
+    });
 });

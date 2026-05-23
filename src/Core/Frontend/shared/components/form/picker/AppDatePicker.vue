@@ -21,14 +21,27 @@ const props = defineProps({
     required: { type: Boolean, default: false },
     error: { type: String, default: "" },
     enableTime: { type: Boolean, default: false },
+    /**
+     * Month-only picker. `modelValue` is then expected/emitted as
+     * `YYYY-MM` (e.g. `2026-05`) instead of a full ISO date — handy
+     * for budget months, monthly reports, etc.
+     */
+    monthOnly: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
 function onUpdate(val) {
     if (!val) { emit("update:modelValue", ""); return; }
-    const d = new Date(val);
     const pad = (n) => String(n).padStart(2, "0");
+    if (props.monthOnly) {
+        // VueDatePicker emits `{ month, year }` in month-picker mode.
+        const year = val.year ?? new Date(val).getFullYear();
+        const monthIndex = (val.month ?? new Date(val).getMonth());
+        emit("update:modelValue", `${year}-${pad(monthIndex + 1)}`);
+        return;
+    }
+    const d = new Date(val);
     if (props.enableTime) {
         emit("update:modelValue", `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
     } else {
@@ -38,6 +51,13 @@ function onUpdate(val) {
 
 const internalValue = computed(() => {
     if (!props.modelValue) return null;
+    if (props.monthOnly) {
+        // Accept either YYYY-MM or YYYY-MM-DD — pull year + month index back out
+        // and feed VueDatePicker's `{ month, year }` shape.
+        const match = /^(\d{4})-(\d{2})/.exec(props.modelValue);
+        if (!match) return null;
+        return { year: Number.parseInt(match[1], 10), month: Number.parseInt(match[2], 10) - 1 };
+    }
     const d = new Date(props.modelValue);
     return isNaN(d.getTime()) ? null : d;
 });
@@ -51,6 +71,7 @@ const internalValue = computed(() => {
             :dark="isDark"
             :locale="dateFnsLocale"
             :enable-time-picker="enableTime"
+            :month-picker="monthOnly"
             :placeholder="placeholder"
             auto-apply
             :teleport="true"
