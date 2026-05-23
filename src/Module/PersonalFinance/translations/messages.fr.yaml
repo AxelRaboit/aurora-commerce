@@ -139,6 +139,7 @@ personal_finance:
     types:
       income: Revenu
       expense: Dépense
+    leg_badge_title: Transaction simple
     actions:
       create: Ajouter
       delete: Supprimer

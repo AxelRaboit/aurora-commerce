@@ -139,6 +139,7 @@ personal_finance:
     types:
       income: Income
       expense: Expense
+    leg_badge_title: Plain transaction
     actions:
       create: Add
       delete: Delete
