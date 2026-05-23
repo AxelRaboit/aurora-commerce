@@ -96,6 +96,7 @@ const {
     updatePath: props.updateItemPath,
     deletePath: props.deleteItemPath,
     onChanged: () => refresh(selectedWalletId.value, currentMonth.value),
+    extraFields: props.extraFields,
 });
 
 const { createModalRef, onQuickAdd } = useBudgetQuickAdd({ selectedWalletId, currentMonth });

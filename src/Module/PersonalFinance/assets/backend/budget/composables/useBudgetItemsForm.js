@@ -5,7 +5,13 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
-function emptyItemForm() {
+function emptyItemForm(extraFields = {}) {
+    const extras = Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            extraFields[k]?.default ?? null,
+        ]),
+    );
     return {
         section: "expenses",
         label: "",
@@ -15,7 +21,17 @@ function emptyItemForm() {
         notes: "",
         repeatNextMonth: false,
         position: 0,
+        ...extras,
     };
+}
+
+function pickExtras(extraFields, source) {
+    return Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            source?.[k] ?? extraFields[k]?.default ?? null,
+        ]),
+    );
 }
 
 /**
@@ -27,7 +43,7 @@ function emptyItemForm() {
  * confirm-delete spinner doesn't disable the form-edit button and
  * vice-versa).
  */
-export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChanged }) {
+export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChanged, extraFields = {} }) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
     const { loading: deleteLoading, request: deleteRequest } = useRequest();
@@ -37,13 +53,13 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
     const editingItemId = ref(null);
     const targetWalletId = ref(null);
     const targetMonth = ref(null);
-    const form = ref(emptyItemForm());
+    const form = ref(emptyItemForm(extraFields));
     const errors = ref({});
 
     function openCreate({ walletId, month, section }) {
         targetWalletId.value = walletId;
         targetMonth.value = month;
-        form.value = { ...emptyItemForm(), section: section ?? "expenses" };
+        form.value = { ...emptyItemForm(extraFields), section: section ?? "expenses" };
         isEditing.value = false;
         editingItemId.value = null;
         errors.value = {};
@@ -62,6 +78,7 @@ export function useBudgetItemsForm({ createPath, updatePath, deletePath, onChang
             notes: item.notes ?? "",
             repeatNextMonth: item.repeatNextMonth,
             position: item.position ?? 0,
+            ...pickExtras(extraFields, item),
         };
         isEditing.value = true;
         editingItemId.value = item.id;

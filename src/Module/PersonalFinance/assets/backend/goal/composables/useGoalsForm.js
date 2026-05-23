@@ -5,7 +5,13 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
-function emptyGoalForm() {
+function emptyGoalForm(extraFields = {}) {
+    const extras = Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            extraFields[k]?.default ?? null,
+        ]),
+    );
     return {
         name: "",
         targetAmount: "",
@@ -13,7 +19,17 @@ function emptyGoalForm() {
         categoryId: null,
         deadline: "",
         color: "#6366f1",
+        ...extras,
     };
+}
+
+function pickExtras(extraFields, source) {
+    return Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            source?.[k] ?? extraFields[k]?.default ?? null,
+        ]),
+    );
 }
 
 /**
@@ -21,20 +37,20 @@ function emptyGoalForm() {
  * composable (useGoalDeposit) because the form shape and lifecycle
  * (auto-tracked vs manual) differ enough to keep them separate.
  */
-export function useGoalsForm(createPath, updatePath, onSaved) {
+export function useGoalsForm(createPath, updatePath, onSaved, { extraFields = {} } = {}) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
 
     const show = ref(false);
     const isEditing = ref(false);
     const editingId = ref(null);
-    const form = ref(emptyGoalForm());
+    const form = ref(emptyGoalForm(extraFields));
     const errors = ref({});
 
     function openCreate() {
         isEditing.value = false;
         editingId.value = null;
-        form.value = emptyGoalForm();
+        form.value = emptyGoalForm(extraFields);
         errors.value = {};
         show.value = true;
     }
@@ -49,6 +65,7 @@ export function useGoalsForm(createPath, updatePath, onSaved) {
             categoryId: goal.categoryId ?? null,
             deadline: goal.deadline ?? "",
             color: goal.color ?? "#6366f1",
+            ...pickExtras(extraFields, goal),
         };
         errors.value = {};
         show.value = true;
@@ -60,8 +77,7 @@ export function useGoalsForm(createPath, updatePath, onSaved) {
 
         const url = isEditing.value ? buildPath(updatePath, { id: editingId.value }) : createPath;
         const payload = await request(url, {
-            name: form.value.name,
-            targetAmount: form.value.targetAmount,
+            ...form.value,
             walletId: form.value.walletId || null,
             categoryId: form.value.categoryId || null,
             deadline: form.value.deadline || null,

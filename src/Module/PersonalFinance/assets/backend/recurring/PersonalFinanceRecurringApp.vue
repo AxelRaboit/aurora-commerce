@@ -12,6 +12,7 @@ import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useRecurringForm } from "./composables/useRecurringForm.js";
 import { useScheduledForm } from "./composables/useScheduledForm.js";
@@ -77,7 +78,7 @@ const {
     openCreate: openRecCreate,
     openEdit: openRecEdit,
     submit: submitRec,
-} = useRecurringForm(props.createRecurringPath, props.updateRecurringPath, refreshRecurring);
+} = useRecurringForm(props.createRecurringPath, props.updateRecurringPath, refreshRecurring, { extraFields: props.extraFields });
 
 const {
     show: showSched,
@@ -88,7 +89,7 @@ const {
     openCreate: openSchedCreate,
     openEdit: openSchedEdit,
     submit: submitSched,
-} = useScheduledForm(props.createScheduledPath, props.updateScheduledPath, refreshScheduled);
+} = useScheduledForm(props.createScheduledPath, props.updateScheduledPath, refreshScheduled, { extraFields: props.extraFields });
 
 const { pendingDelete: pendingDeleteRec, loading: deleteRecLoading, confirm: confirmDeleteRec, submit: doDeleteRec } = useDelete(
     props.deleteRecurringPath,
@@ -119,24 +120,14 @@ function signedAmount(row) {
     <div class="space-y-4">
         <AppListToolbar>
             <div class="flex border-b border-line">
-                <button
-                    type="button"
-                    class="px-4 py-2 text-sm border-b-2 transition-colors"
-                    :class="tab === 'recurring' ? 'border-accent-500 text-primary' : 'border-transparent text-muted hover:text-primary'"
-                    v-on:click="tab = 'recurring'"
-                >
-                    <RotateCw class="inline w-3.5 h-3.5 mr-1" :stroke-width="2" />
+                <AppTab variant="underline" :active="tab === 'recurring'" v-on:click="tab = 'recurring'">
+                    <RotateCw class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("personal_finance.recurring.tabs.recurring") }}
-                </button>
-                <button
-                    type="button"
-                    class="px-4 py-2 text-sm border-b-2 transition-colors"
-                    :class="tab === 'scheduled' ? 'border-accent-500 text-primary' : 'border-transparent text-muted hover:text-primary'"
-                    v-on:click="tab = 'scheduled'"
-                >
-                    <Clock class="inline w-3.5 h-3.5 mr-1" :stroke-width="2" />
+                </AppTab>
+                <AppTab variant="underline" :active="tab === 'scheduled'" v-on:click="tab = 'scheduled'">
+                    <Clock class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("personal_finance.recurring.tabs.scheduled") }}
-                </button>
+                </AppTab>
             </div>
             <template #actions>
                 <AppButton v-if="tab === 'recurring'" variant="primary" size="md" class="w-full sm:w-auto" :disabled="!wallets.length" v-on:click="openRecCreate">

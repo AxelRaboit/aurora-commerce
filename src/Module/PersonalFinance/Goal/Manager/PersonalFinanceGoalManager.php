@@ -34,7 +34,7 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
     {
         $goal = $this->createGoal();
         $goal->setUser($user);
-        $this->hydrate($goal, $input);
+        $this->applyInput($goal, $input);
 
         $this->entityManager->persist($goal);
         $this->entityManager->flush();
@@ -51,7 +51,7 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
     public function update(PersonalFinanceGoalInterface $goal, PersonalFinanceGoalInputInterface $input): void
     {
         $previousCategoryId = $goal->getCategory()?->getId();
-        $this->hydrate($goal, $input);
+        $this->applyInput($goal, $input);
         $this->entityManager->flush();
 
         if ($goal->getCategory()?->getId() !== $previousCategoryId) {
@@ -107,7 +107,7 @@ class PersonalFinanceGoalManager implements PersonalFinanceGoalManagerInterface
         return new PersonalFinanceGoal();
     }
 
-    protected function hydrate(PersonalFinanceGoalInterface $goal, PersonalFinanceGoalInputInterface $input): void
+    protected function applyInput(PersonalFinanceGoalInterface $goal, PersonalFinanceGoalInputInterface $input): void
     {
         $goal->setName($input->getName());
         $goal->setTargetAmount($input->getTargetAmount());

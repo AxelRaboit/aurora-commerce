@@ -6,6 +6,33 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
+function emptyTransferForm(extraFields = {}) {
+    const today = new Date().toISOString().slice(0, 10);
+    const extras = Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            extraFields[k]?.default ?? null,
+        ]),
+    );
+    return {
+        fromWalletId: null,
+        toWalletId: null,
+        amount: "",
+        date: today,
+        description: "",
+        ...extras,
+    };
+}
+
+function pickExtras(extraFields, source) {
+    return Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            source?.[k] ?? extraFields[k]?.default ?? null,
+        ]),
+    );
+}
+
 /**
  * Unified create + edit composable for wallet-to-wallet transfers.
  *
@@ -18,6 +45,7 @@ export function useTransfersForm(
     updatePath,
     showPath,
     onSaved,
+    { extraFields = {} } = {},
 ) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
@@ -25,24 +53,13 @@ export function useTransfersForm(
     const show = ref(false);
     const isEditing = ref(false);
     const editingTransferId = ref(null);
-    const form = ref(emptyTransferForm());
+    const form = ref(emptyTransferForm(extraFields));
     const errors = ref({});
-
-    function emptyTransferForm() {
-        const today = new Date().toISOString().slice(0, 10);
-        return {
-            fromWalletId: null,
-            toWalletId: null,
-            amount: "",
-            date: today,
-            description: "",
-        };
-    }
 
     function openCreate(defaultFromWalletId = null) {
         isEditing.value = false;
         editingTransferId.value = null;
-        form.value = emptyTransferForm();
+        form.value = emptyTransferForm(extraFields);
         if (defaultFromWalletId) form.value.fromWalletId = defaultFromWalletId;
         errors.value = {};
         show.value = true;
@@ -61,6 +78,7 @@ export function useTransfersForm(
             amount: payload.transfer.amount,
             date: payload.transfer.date,
             description: payload.transfer.description ?? "",
+            ...pickExtras(extraFields, payload.transfer),
         };
         show.value = true;
     }
@@ -74,10 +92,7 @@ export function useTransfersForm(
             : createPath;
 
         const payload = await request(url, {
-            fromWalletId: form.value.fromWalletId,
-            toWalletId: form.value.toWalletId,
-            amount: form.value.amount,
-            date: form.value.date,
+            ...form.value,
             description: form.value.description || null,
         });
         if (!payload) return;

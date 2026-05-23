@@ -69,7 +69,7 @@ const {
     openCreate,
     openEdit,
     submit: submitForm,
-} = useGoalsForm(props.createPath, props.updatePath, refreshGoal);
+} = useGoalsForm(props.createPath, props.updatePath, refreshGoal, { extraFields: props.extraFields });
 
 const {
     show: showDeposit,

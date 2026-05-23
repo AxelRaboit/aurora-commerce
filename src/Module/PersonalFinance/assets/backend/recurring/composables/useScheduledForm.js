@@ -5,9 +5,15 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { evaluateAmount } from "@/shared/utils/form/amount/evaluateAmount.js";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
-function emptyForm() {
+function emptyForm(extraFields = {}) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    const extras = Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            extraFields[k]?.default ?? null,
+        ]),
+    );
     return {
         walletId: null,
         categoryId: null,
@@ -15,23 +21,33 @@ function emptyForm() {
         amount: "",
         description: "",
         scheduledDate: tomorrow.toISOString().slice(0, 10),
+        ...extras,
     };
 }
 
-export function useScheduledForm(createPath, updatePath, onSaved) {
+function pickExtras(extraFields, source) {
+    return Object.fromEntries(
+        Object.keys(extraFields).map((k) => [
+            k,
+            source?.[k] ?? extraFields[k]?.default ?? null,
+        ]),
+    );
+}
+
+export function useScheduledForm(createPath, updatePath, onSaved, { extraFields = {} } = {}) {
     const { t } = useI18n();
     const { loading, request } = useRequest();
 
     const show = ref(false);
     const isEditing = ref(false);
     const editingId = ref(null);
-    const form = ref(emptyForm());
+    const form = ref(emptyForm(extraFields));
     const errors = ref({});
 
     function openCreate() {
         isEditing.value = false;
         editingId.value = null;
-        form.value = emptyForm();
+        form.value = emptyForm(extraFields);
         errors.value = {};
         show.value = true;
     }
@@ -46,6 +62,7 @@ export function useScheduledForm(createPath, updatePath, onSaved) {
             amount: sched.amount,
             description: sched.description ?? "",
             scheduledDate: sched.scheduledDate,
+            ...pickExtras(extraFields, sched),
         };
         errors.value = {};
         show.value = true;

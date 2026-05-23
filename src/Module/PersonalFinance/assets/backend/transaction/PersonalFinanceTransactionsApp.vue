@@ -108,6 +108,7 @@ const {
     props.updateTransferPath,
     props.showTransferPath,
     () => refreshAfterTx(),
+    { extraFields: props.extraFields },
 );
 
 const {
