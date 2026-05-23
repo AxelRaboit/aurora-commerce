@@ -2831,8 +2831,8 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $budgetItemDefs = [
             ['section' => PersonalFinanceBudgetSectionEnum::Income,   'label' => 'Salaire',     'planned' => '2800.00', 'cat' => 'Salaire',     'repeat' => true,  'pos' => 0],
-            ['section' => PersonalFinanceBudgetSectionEnum::Bills,    'label' => 'Loyer',       'planned' => '850.00',  'cat' => 'Loyer',       'repeat' => true,  'pos' => 0],
-            ['section' => PersonalFinanceBudgetSectionEnum::Bills,    'label' => 'Abonnements', 'planned' => '30.00',   'cat' => 'Abonnements', 'repeat' => true,  'pos' => 1],
+            ['section' => PersonalFinanceBudgetSectionEnum::FixedCharges, 'label' => 'Loyer',       'planned' => '850.00',  'cat' => 'Loyer',       'repeat' => true,  'pos' => 0],
+            ['section' => PersonalFinanceBudgetSectionEnum::FixedCharges, 'label' => 'Abonnements', 'planned' => '30.00',   'cat' => 'Abonnements', 'repeat' => true,  'pos' => 1],
             ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Courses',     'planned' => '400.00',  'cat' => 'Courses',     'repeat' => true,  'pos' => 0],
             ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Restaurant',  'planned' => '120.00',  'cat' => 'Restaurant',  'repeat' => true,  'pos' => 1],
             ['section' => PersonalFinanceBudgetSectionEnum::Expenses, 'label' => 'Transport',   'planned' => '150.00',  'cat' => 'Transport',   'repeat' => true,  'pos' => 2],

@@ -226,7 +226,7 @@ personal_finance:
     sections:
       income: Revenus
       savings: Épargne
-      bills: Factures
+      fixed_charges: Charges fixes
       expenses: Dépenses
       debt: Dette
     fields:

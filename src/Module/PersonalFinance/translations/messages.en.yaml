@@ -226,7 +226,7 @@ personal_finance:
     sections:
       income: Income
       savings: Savings
-      bills: Bills
+      fixed_charges: Fixed charges
       expenses: Expenses
       debt: Debt
     fields:

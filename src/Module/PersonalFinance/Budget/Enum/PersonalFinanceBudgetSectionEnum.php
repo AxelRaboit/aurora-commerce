@@ -12,7 +12,7 @@ enum PersonalFinanceBudgetSectionEnum: string
 {
     case Income = 'income';
     case Savings = 'savings';
-    case Bills = 'bills';
+    case FixedCharges = 'fixed_charges';
     case Expenses = 'expenses';
     case Debt = 'debt';
 

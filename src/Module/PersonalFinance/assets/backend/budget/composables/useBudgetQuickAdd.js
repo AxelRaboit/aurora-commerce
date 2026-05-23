@@ -14,7 +14,7 @@ export function useBudgetQuickAdd({ selectedWalletId, currentMonth }) {
 
     /**
      * Map a budget section to the matching transaction type. Income →
-     * income, everything else (Bills/Expenses/Savings/Debt) → expense.
+     * income, everything else (FixedCharges/Expenses/Savings/Debt) → expense.
      */
     function sectionToType(section) {
         return section === "income" ? "income" : "expense";
