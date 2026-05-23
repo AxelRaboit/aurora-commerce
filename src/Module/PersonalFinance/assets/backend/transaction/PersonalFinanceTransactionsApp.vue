@@ -16,7 +16,7 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
-import { useTransactionsCreate } from "./composables/useTransactionsCreate.js";
+import PersonalFinanceTransactionCreateModal from "./components/PersonalFinanceTransactionCreateModal.vue";
 import { useTransactionsEdit } from "./composables/useTransactionsEdit.js";
 import { useTransfersForm } from "./composables/useTransfersForm.js";
 import { useTransfersDelete } from "./composables/useTransfersDelete.js";
@@ -86,11 +86,7 @@ const currentCategoryOptions = computed(() => {
     ];
 });
 
-const { showCreate, createForm, createErrors, createLoading, openCreate, submitCreate } = useTransactionsCreate(
-    props.createTransactionPath,
-    () => refreshAfterTx(),
-    { extraFields: props.extraFields },
-);
+const createModalRef = ref(null);
 
 const { showEdit, editingTransaction, editForm, editErrors, editLoading, openEdit, submitEdit } = useTransactionsEdit(
     props.updateTransactionPath,
@@ -290,7 +286,7 @@ function describeTx(tx) {
                         variant="primary"
                         size="md"
                         :disabled="!selectedWalletId"
-                        v-on:click="openCreate(selectedWalletId)"
+                        v-on:click="createModalRef?.open(selectedWalletId)"
                     >
                         <Plus class="w-4 h-4" :stroke-width="2" />
                         {{ t("personal_finance.transactions.add") }}
@@ -410,70 +406,19 @@ function describeTx(tx) {
             </div>
         </template>
 
-        <AppModal
-            :show="showCreate"
-            :title="t('personal_finance.transactions.create_form_title')"
-            :icon="Receipt"
-            :closeable="false"
-            v-on:close="showCreate = false"
+        <PersonalFinanceTransactionCreateModal
+            ref="createModalRef"
+            :wallets="wallets"
+            :categories-by-wallet="categoriesByWallet"
+            :types="types"
+            :create-path="createTransactionPath"
+            :extra-fields="extraFields"
+            v-on:created="refreshAfterTx"
         >
-            <form class="space-y-4" v-on:submit.prevent="submitCreate">
-                <AppMultiselect
-                    v-model="createForm.type"
-                    :label="t('personal_finance.transactions.fields.type')"
-                    :placeholder="t('personal_finance.transactions.placeholders.type')"
-                    :options="typeOptions"
-                    :allow-empty="false"
-                    required
-                />
-                <AppAmountInput
-                    v-model="createForm.amount"
-                    :label="t('personal_finance.transactions.fields.amount')"
-                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
-                    :error="createErrors.amount"
-                    required
-                />
-                <AppDatePicker
-                    v-model="createForm.date"
-                    :label="t('personal_finance.transactions.fields.date')"
-                    :placeholder="t('personal_finance.transactions.placeholders.date')"
-                    :error="createErrors.date"
-                    required
-                />
-                <AppMultiselect
-                    v-model="createForm.categoryId"
-                    :label="t('personal_finance.transactions.fields.category')"
-                    :placeholder="t('personal_finance.transactions.placeholders.category')"
-                    :options="currentCategoryOptions"
-                    :allow-empty="true"
-                />
-                <AppInput
-                    v-model="createForm.description"
-                    :label="t('personal_finance.transactions.fields.description')"
-                    :placeholder="t('personal_finance.transactions.placeholders.description')"
-                    :error="createErrors.description"
-                />
-                <slot name="extra-form-fields" :form="createForm" :errors="createErrors" />
-            </form>
-            <template #footer>
-                <AppModalFooter>
-                    <AppButton variant="ghost" size="md" type="button" v-on:click="showCreate = false">
-                        <X class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.cancel") }}
-                    </AppButton>
-                    <AppButton
-                        variant="primary"
-                        size="md"
-                        type="submit"
-                        :loading="createLoading"
-                        v-on:click="submitCreate"
-                    >
-                        <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                        {{ t("shared.common.save") }}
-                    </AppButton>
-                </AppModalFooter>
+            <template #extra-form-fields="slotProps">
+                <slot name="extra-form-fields" v-bind="slotProps" />
             </template>
-        </AppModal>
+        </PersonalFinanceTransactionCreateModal>
 
         <AppModal
             :show="showEdit"

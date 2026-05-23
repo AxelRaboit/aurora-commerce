@@ -222,6 +222,7 @@ personal_finance:
     updated: Line updated.
     totals_line: '{actual} / {planned} spent'
     carried_label: 'carried: {amount}'
+    quick_add_transaction: Add a transaction on this line
     sections:
       income: Income
       savings: Savings

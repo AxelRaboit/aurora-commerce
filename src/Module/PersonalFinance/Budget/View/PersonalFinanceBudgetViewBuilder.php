@@ -11,6 +11,7 @@ use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetItemRep
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetItemSerializerInterface;
 use Aurora\Module\PersonalFinance\Budget\Serializer\PersonalFinanceBudgetSerializerInterface;
 use Aurora\Module\PersonalFinance\Category\Repository\PersonalFinanceCategoryRepository;
+use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Category\Serializer\PersonalFinanceCategorySerializerInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
@@ -66,11 +67,13 @@ final readonly class PersonalFinanceBudgetViewBuilder
             'selectedWalletId' => $selectedWallet?->getId(),
             'month' => $month->format('Y-m'),
             'sections' => PersonalFinanceBudgetSectionEnum::values(),
+            'types' => PersonalFinanceTransactionTypeEnum::values(),
             'budgetPayload' => $payload,
             'showBudgetPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_show', ['walletId' => '__walletId__']),
             'createItemPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_budget_items_create', ['walletId' => '__walletId__']),
             'updateItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_update', ['id' => '__id__']),
             'deleteItemPath' => $this->urlGenerator->generate('backend_personal_finance_budget_items_delete', ['id' => '__id__']),
+            'createTransactionPath' => $this->urlGenerator->generate('backend_personal_finance_wallets_transactions_create', ['walletId' => '__walletId__']),
         ];
     }
 

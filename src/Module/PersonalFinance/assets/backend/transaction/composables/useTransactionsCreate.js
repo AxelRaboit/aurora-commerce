@@ -35,9 +35,15 @@ export function useTransactionsCreate(
     const createErrors = ref({});
     const targetWalletId = ref(null);
 
-    function openCreate(walletId) {
+    /**
+     * @param {number|string} walletId
+     * @param {object} [prefill] - shallow-merged into the empty form so
+     *        callers (e.g., the Budgets page) can pre-set type / categoryId
+     *        / description / date / amount before showing the modal.
+     */
+    function openCreate(walletId, prefill = {}) {
         targetWalletId.value = walletId;
-        createForm.value = emptyTransactionForm(extraFields);
+        createForm.value = { ...emptyTransactionForm(extraFields), ...prefill };
         createErrors.value = {};
         showCreate.value = true;
     }

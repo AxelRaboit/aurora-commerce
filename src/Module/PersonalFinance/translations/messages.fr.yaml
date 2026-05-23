@@ -222,6 +222,7 @@ personal_finance:
     updated: Ligne mise à jour.
     totals_line: '{actual} / {planned} dépensé'
     carried_label: 'reporté : {amount}'
+    quick_add_transaction: Ajouter une transaction sur cette ligne
     sections:
       income: Revenus
       savings: Épargne
