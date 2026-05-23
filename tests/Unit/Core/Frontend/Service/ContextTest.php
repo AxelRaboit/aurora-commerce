@@ -109,7 +109,8 @@ final class ContextTest extends TestCase
             $this->makeLocale('en'),
             $this->makeLocale('fr'),
         ]);
-        $this->settingRepository->method('get')
+        $this->settingRepository->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::DefaultLocale->value, self::anything())
             ->willReturn('de');
 
@@ -168,7 +169,8 @@ final class ContextTest extends TestCase
     {
         // siteDescription expects to receive whatever the repo returns,
         // including null — keep the contract loose for unset values.
-        $this->settingRepository->method('get')
+        $this->settingRepository->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::SiteDescription->value, null)
             ->willReturn(null);
 
@@ -177,7 +179,8 @@ final class ContextTest extends TestCase
 
     public function testSiteUrlStripsTrailingSlash(): void
     {
-        $this->settingRepository->method('get')
+        $this->settingRepository->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::SiteUrl->value, self::anything())
             ->willReturn('https://aurora.test///');
 
@@ -200,7 +203,8 @@ final class ContextTest extends TestCase
 
     public function testHomepagePostIdParsesAsInt(): void
     {
-        $this->settingRepository->method('get')
+        $this->settingRepository->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::HomepagePostId->value, self::anything())
             ->willReturn('42');
 

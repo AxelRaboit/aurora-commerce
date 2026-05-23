@@ -198,7 +198,8 @@ final class MailServiceTest extends TestCase
 
     public function testAdminEmailReturnsNullWhenSettingIsUnset(): void
     {
-        $this->settings->method('get')
+        $this->settings->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::AdminEmail->value)
             ->willReturn(null);
 
@@ -209,7 +210,8 @@ final class MailServiceTest extends TestCase
     {
         // Empty-string settings come from the UI when an admin clears the
         // field — caller must see this as "not configured", not "empty addr".
-        $this->settings->method('get')
+        $this->settings->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::AdminEmail->value)
             ->willReturn('');
 
@@ -218,7 +220,8 @@ final class MailServiceTest extends TestCase
 
     public function testAdminEmailReturnsTheConfiguredAddress(): void
     {
-        $this->settings->method('get')
+        $this->settings->expects(self::atLeastOnce())
+            ->method('get')
             ->with(ApplicationParameterEnum::AdminEmail->value)
             ->willReturn('admin@aurora.test');
 
