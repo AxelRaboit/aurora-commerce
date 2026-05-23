@@ -223,14 +223,14 @@ function openSearchFromMobile() {
                             <AppTooltip :title="item.label" :description="item.description" placement="right">
                                 <div
                                     class="flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                                    :class="itemClasses(item)"
+                                    :class="itemClasses(item, section.id)"
                                 >
                                     <a
                                         :href="item.path"
                                         :data-sidemenu-active="itemIsActive(item) ? 'true' : null"
                                         class="flex items-center flex-1 min-w-0 gap-3 py-[0.625rem] pl-3"
                                     >
-                                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item, section.id)" :stroke-width="2" />
                                         <span class="si-label flex-1 truncate">{{ item.label }}</span>
                                     </a>
                                     <AppIconButton
@@ -248,12 +248,12 @@ function openSearchFromMobile() {
                                     :key="child.route"
                                     :href="child.path"
                                     :active="isActive(child.route)"
-                                    :active-color="child.activeColor"
                                     :sidemenu-active="isActive(child.route)"
+                                    :link-classes-override="itemClasses(child, section.id)"
                                     :tooltip-title="child.label"
                                     :tooltip-description="child.description"
                                 >
-                                    <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child)" :stroke-width="2" />
+                                    <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child, section.id)" :stroke-width="2" />
                                     <span class="si-label truncate">{{ child.label }}</span>
                                 </AppNavLink>
                             </div>
@@ -263,12 +263,12 @@ function openSearchFromMobile() {
                             v-else
                             :href="item.path"
                             :active="itemIsActive(item)"
-                            :active-color="item.activeColor"
                             :sidemenu-active="itemIsActive(item)"
+                            :link-classes-override="itemClasses(item, section.id)"
                             :tooltip-title="item.label"
                             :tooltip-description="item.description"
                         >
-                            <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                            <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item, section.id)" :stroke-width="2" />
                             <span class="si-label truncate">{{ item.label }}</span>
                         </AppNavLink>
                     </template>
@@ -427,10 +427,10 @@ function openSearchFromMobile() {
                             <template v-if="item.children?.length">
                                 <div
                                     class="flex items-center rounded-lg text-sm font-medium transition-colors"
-                                    :class="itemClasses(item)"
+                                    :class="itemClasses(item, section.id)"
                                 >
                                     <a :href="item.path" class="flex items-center flex-1 gap-3 px-3 py-2.5">
-                                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                        <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item, section.id)" :stroke-width="2" />
                                         {{ item.label }}
                                     </a>
                                     <AppIconButton :title="item.label" class="mr-1 opacity-50 hover:opacity-100 hover:!bg-transparent" v-on:click.stop="toggleGroup(item.route)">
@@ -443,9 +443,9 @@ function openSearchFromMobile() {
                                         :key="child.route"
                                         :href="child.path"
                                         :active="isActive(child.route)"
-                                        :active-color="child.activeColor"
+                                        :link-classes-override="itemClasses(child, section.id)"
                                     >
-                                        <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child)" :stroke-width="2" />
+                                        <component :is="child.icon" class="w-4 h-4 shrink-0" :class="iconClasses(child, section.id)" :stroke-width="2" />
                                         <span class="truncate">{{ child.label }}</span>
                                         <template #tooltip>{{ child.label }}</template>
                                     </AppNavLink>
@@ -456,9 +456,9 @@ function openSearchFromMobile() {
                                 v-else
                                 :href="item.path"
                                 :active="itemIsActive(item)"
-                                :active-color="item.activeColor"
+                                :link-classes-override="itemClasses(item, section.id)"
                             >
-                                <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item)" :stroke-width="2" />
+                                <component :is="item.icon" class="w-5 h-5 shrink-0" :class="iconClasses(item, section.id)" :stroke-width="2" />
                                 <span class="si-label truncate">{{ item.label }}</span>
                                 <template #tooltip>{{ item.label }}</template>
                             </AppNavLink>

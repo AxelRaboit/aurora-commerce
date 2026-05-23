@@ -1,6 +1,7 @@
 import { ref, computed, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePersistedExpanded } from "@/shared/composables/usePersistedExpanded.js";
+import { useSidemenuSectionTheme } from "./useSidemenuSectionTheme.js";
 import {
     LayoutDashboard,
     FileText,
@@ -100,6 +101,7 @@ export function useSidemenuNav(
     itemAliases = {},
 ) {
     const { t } = useI18n();
+    const { itemClasses: themeItemClasses, iconClasses: themeIconClasses } = useSidemenuSectionTheme();
 
     const {
         isExpanded: isGroupExpanded,
@@ -187,31 +189,24 @@ export function useSidemenuNav(
         );
     }
 
-    function itemClasses(item) {
-        if (isActive(item.route)) {
-            return item.activeColor === "rose"
-                ? "bg-rose-600/15 text-rose-400"
-                : "bg-accent-600/15 text-accent-400";
-        }
-        if (itemIsActive(item)) {
-            return item.activeColor === "rose"
-                ? "text-rose-400 hover:bg-rose-600/10"
-                : "text-accent-400 hover:bg-surface-2";
-        }
-        return item.activeColor === "rose"
-            ? "text-secondary hover:text-rose-400 hover:bg-rose-600/10"
-            : "text-secondary hover:text-accent-400 hover:bg-accent-600/10";
+    /**
+     * Wrapper classes for a nav item. Delegates to the section theme
+     * registry so the active/hover hue inherits the section colour
+     * (e.g. a personal-finance item lights up emerald, an editorial
+     * item lights up rose). Falls back to the accent palette when the
+     * sectionId isn't known.
+     */
+    function itemClasses(item, sectionId = null) {
+        return themeItemClasses(sectionId, {
+            isActive: isActive(item.route),
+            inTree: itemIsActive(item) && !isActive(item.route),
+        });
     }
 
-    function iconClasses(item) {
-        if (isActive(item.route) || itemIsActive(item)) {
-            return item.activeColor === "rose"
-                ? "text-rose-400"
-                : "text-accent-400";
-        }
-        return item.activeColor === "rose"
-            ? "text-muted group-hover:text-rose-400 transition-colors"
-            : "text-muted group-hover:text-accent-400 transition-colors";
+    function iconClasses(item, sectionId = null) {
+        return themeIconClasses(sectionId, {
+            isActive: isActive(item.route) || itemIsActive(item),
+        });
     }
 
     onMounted(() => {

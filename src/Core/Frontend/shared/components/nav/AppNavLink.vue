@@ -21,6 +21,16 @@ const props = defineProps({
         default: "right",
         validator: (value) => ["right", "left", "top", "bottom"].includes(value),
     },
+    /**
+     * Optional override for the link's active / hover Tailwind class
+     * string — supersedes the internal `activeColor` + `hoverColor`
+     * maps. The sidemenu uses this to inject per-section colours from
+     * `useSidemenuSectionTheme` without having to extend the local map.
+     * Pass a single string already containing both active *and* hover
+     * variants; the consumer is responsible for picking based on the
+     * active state.
+     */
+    linkClassesOverride: { type: String, default: "" },
 });
 
 const ACTIVE_CLASSES = {
@@ -37,6 +47,9 @@ const HOVER_CLASSES = {
 };
 
 const linkClasses = computed(() => {
+    if (props.linkClassesOverride) {
+        return props.linkClassesOverride;
+    }
     if (props.active) {
         return ACTIVE_CLASSES[props.activeColor] ?? ACTIVE_CLASSES.accent;
     }
