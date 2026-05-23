@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { ClipboardCheck, Plus } from "lucide-vue-next";
@@ -7,34 +7,62 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
+import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
+import { useDebounce } from "@/shared/composables/useDebounce.js";
 import { useWorkflowStatus } from "@welding/backend/composables/useWeldingStatus.js";
 
-const props = defineProps({
-    workflows: { type: Array, default: () => [] },
-});
-
 const { t } = useI18n();
-const items = ref([...props.workflows]);
+
+const items = ref([]);
+const page = ref(1);
+const totalPages = ref(1);
+const total = ref(0);
 const query = ref("");
+const statusFilter = ref("");
+const listLoading = ref(false);
 
 const { ORDER: STATUS_ORDER, COLOR: STATUS_COLOR } = useWorkflowStatus();
 
-const filteredItems = computed(() => {
-    const q = query.value.trim().toLowerCase();
-    if (!q) return items.value;
-    return items.value.filter((w) =>
-        (w.reference ?? "").toLowerCase().includes(q)
-        || (w.templateTitle ?? "").toLowerCase().includes(q)
-        || (w.assigneeName ?? "").toLowerCase().includes(q),
-    );
+async function fetchList() {
+    listLoading.value = true;
+    try {
+        const params = new URLSearchParams({ page: String(page.value), limit: "20" });
+        if (query.value) params.set("search", query.value);
+        if (statusFilter.value) params.set("status", statusFilter.value);
+
+        const res = await fetch(`/backend/welding/workflows/list?${params}`, {
+            headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.success) return;
+        items.value = data.items;
+        page.value = data.page;
+        totalPages.value = data.totalPages;
+        total.value = data.total;
+    } finally {
+        listLoading.value = false;
+    }
+}
+
+onMounted(fetchList);
+
+const debouncedRefetch = useDebounce(() => {
+    page.value = 1;
+    fetchList();
+}, 300);
+
+watch(query, debouncedRefetch);
+watch(statusFilter, () => {
+    page.value = 1;
+    fetchList();
 });
 
-const groupedByStatus = computed(() => {
-    const groups = {};
-    for (const w of filteredItems.value) (groups[w.status] ??= []).push(w);
-    return groups;
-});
+function goToPage(newPage) {
+    page.value = newPage;
+    fetchList();
+}
 
 const startOpen = ref(false);
 const templateOptions = ref([]);
@@ -102,10 +130,23 @@ async function submitStart() {
         </div>
 
         <AppListToolbar>
-            <AppSearchInput
-                v-model="query"
-                :placeholder="t('welding.workflows.search_placeholder')"
-            />
+            <div class="flex flex-col sm:flex-row gap-2">
+                <AppSearchInput
+                    v-model="query"
+                    :placeholder="t('welding.workflows.search_placeholder')"
+                    class="flex-1"
+                />
+                <select
+                    v-model="statusFilter"
+                    class="rounded border border-line bg-surface px-3 py-2 text-sm"
+                    :aria-label="t('welding.workflows.filter_status')"
+                >
+                    <option value="">{{ t("welding.workflows.filter_all") }}</option>
+                    <option v-for="status in STATUS_ORDER" :key="status" :value="status">
+                        {{ t("welding.workflows.status_" + status) }}
+                    </option>
+                </select>
+            </div>
             <template #actions>
                 <AppButton variant="primary" v-on:click="openStart">
                     <Plus class="w-4 h-4" :stroke-width="2" />
@@ -114,44 +155,39 @@ async function submitStart() {
             </template>
         </AppListToolbar>
 
-        <div v-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
+        <div v-if="listLoading && items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
+            {{ t("welding.workflows.loading") }}
+        </div>
+        <div v-else-if="items.length === 0 && total === 0 && !query && !statusFilter" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
             {{ t("welding.workflows.empty") }}
         </div>
-        <div v-else-if="filteredItems.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
+        <div v-else-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
             {{ t("welding.workflows.search_no_match") }}
         </div>
-        <div v-else class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <section v-for="status in STATUS_ORDER" :key="status">
-                <div v-if="groupedByStatus[status]?.length" class="space-y-2">
-                    <h2 class="text-xs uppercase tracking-wide font-medium text-secondary">
-                        {{ t("welding.workflows.status_" + status) }}
-                        <span class="text-muted">({{ groupedByStatus[status].length }})</span>
-                    </h2>
-                    <ul class="space-y-2">
-                        <li v-for="workflow in groupedByStatus[status]" :key="workflow.id">
-                            <a
-                                :href="`/backend/welding/workflows/${workflow.id}/runner`"
-                                class="block rounded-lg border border-line bg-surface p-3 space-y-1 hover:border-accent-300 dark:hover:border-accent-700 transition-colors"
-                            >
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="font-mono text-xs text-secondary">{{ workflow.reference }}</span>
-                                    <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_COLOR[workflow.status]]">
-                                        {{ t("welding.workflows.status_" + workflow.status) }}
-                                    </span>
-                                </div>
-                                <div class="text-sm font-medium text-primary truncate">
-                                    {{ workflow.templateTitle || "—" }}
-                                    <span class="text-xs text-muted">v{{ workflow.templateVersion }}</span>
-                                </div>
-                                <div class="text-xs text-secondary truncate">
-                                    {{ workflow.assigneeName || t("welding.workflows.no_assignee") }}
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-        </div>
+        <ul v-else class="space-y-2">
+            <li v-for="workflow in items" :key="workflow.id">
+                <a
+                    :href="`/backend/welding/workflows/${workflow.id}/runner`"
+                    class="block rounded-lg border border-line bg-surface p-3 hover:border-accent-300 dark:hover:border-accent-700 transition-colors"
+                >
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <span class="font-mono text-xs text-secondary">{{ workflow.reference }}</span>
+                        <span :class="['text-xs px-2 py-0.5 rounded-full', STATUS_COLOR[workflow.status]]">
+                            {{ t("welding.workflows.status_" + workflow.status) }}
+                        </span>
+                    </div>
+                    <div class="text-sm font-medium text-primary truncate mt-1">
+                        {{ workflow.templateTitle || "—" }}
+                        <span class="text-xs text-muted">v{{ workflow.templateVersion }}</span>
+                    </div>
+                    <div class="text-xs text-secondary truncate">
+                        {{ workflow.assigneeName || t("welding.workflows.no_assignee") }}
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <AppPagination :page="page" :total-pages="totalPages" v-on:change="goToPage" />
 
         <AppModal :show="startOpen" :title="t('welding.workflows.new')" v-on:close="startOpen = false">
             <div v-if="optionsLoading" class="text-sm text-secondary">{{ t("welding.workflows.loading_options") }}</div>

@@ -12,7 +12,5 @@
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('welding/backend/workflows/WorkflowsApp', {
-    workflows: workflows,
-}) }} class="flex-1 min-w-0"></div>
+<div {{ vue_component('welding/backend/workflows/WorkflowsApp', {}) }} class="flex-1 min-w-0"></div>
 {% endblock %}

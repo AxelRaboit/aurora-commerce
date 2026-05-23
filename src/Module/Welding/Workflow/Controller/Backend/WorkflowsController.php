@@ -15,7 +15,6 @@ use Aurora\Module\Welding\Workflow\Manager\WorkflowManagerInterface;
 use Aurora\Module\Welding\Workflow\Repository\WorkflowRepository;
 use Aurora\Module\Welding\Workflow\Serializer\WorkflowSerializerInterface;
 use Aurora\Module\Welding\Workflow\View\WorkflowRunnerViewBuilder;
-use Aurora\Module\Welding\Workflow\View\WorkflowsViewBuilder;
 use Aurora\Module\Welding\WorkflowStep\Serializer\WorkflowStepSerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,7 +34,6 @@ class WorkflowsController extends AbstractController
         protected readonly WorkflowRepository $repository,
         protected readonly WorkflowSerializerInterface $serializer,
         protected readonly WorkflowStepSerializerInterface $stepSerializer,
-        protected readonly WorkflowsViewBuilder $viewBuilder,
         protected readonly WorkflowRunnerViewBuilder $runnerViewBuilder,
         protected readonly WorkflowManagerInterface $manager,
         protected readonly WorkflowInputFactoryInterface $inputFactory,
@@ -45,7 +43,30 @@ class WorkflowsController extends AbstractController
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
     public function index(): Response
     {
-        return $this->render('@Welding/backend/workflows/index.html.twig', $this->viewBuilder->indexView());
+        return $this->render('@Welding/backend/workflows/index.html.twig');
+    }
+
+    #[Route('/list', name: '_list', methods: [HttpMethodEnum::Get->value])]
+    public function list(Request $request): JsonResponse
+    {
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = max(1, min(100, (int) $request->query->get('limit', 20)));
+        $search = (string) $request->query->get('search', '');
+        $status = (string) $request->query->get('status', '');
+
+        $result = $this->repository->findPaginated(
+            page: $page,
+            limit: $limit,
+            search: '' !== $search ? $search : null,
+            status: '' !== $status ? $status : null,
+        );
+
+        return $this->jsonSuccess([
+            'items' => array_map($this->serializer->serialize(...), $result['items']),
+            'page' => $result['page'],
+            'totalPages' => $result['totalPages'],
+            'total' => $result['total'],
+        ]);
     }
 
     #[Route('/{id}/runner', name: '_runner', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Get->value])]

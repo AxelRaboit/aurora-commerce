@@ -86,8 +86,11 @@ welding:
     title: Workflows
     subtitle: Ongoing and completed welding workflows
     empty: No workflow started yet.
+    loading: Loading workflows…
     search_placeholder: Search (reference, template, welder)…
     search_no_match: No workflow matches your search.
+    filter_status: Filter by status
+    filter_all: All statuses
     no_assignee: No welder assigned
     no_assignee_option: None
     new: New workflow

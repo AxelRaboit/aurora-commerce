@@ -86,8 +86,11 @@ welding:
     title: Workflows
     subtitle: Workflows de soudure en cours et terminés
     empty: Aucun workflow démarré pour l'instant.
+    loading: Chargement des workflows…
     search_placeholder: Rechercher (référence, modèle, soudeur)…
     search_no_match: Aucun workflow ne correspond à votre recherche.
+    filter_status: Filtrer par statut
+    filter_all: Tous les statuts
     no_assignee: Pas de soudeur assigné
     no_assignee_option: Aucun
     status_draft: Brouillon
