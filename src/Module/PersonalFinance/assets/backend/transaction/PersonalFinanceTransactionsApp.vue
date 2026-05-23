@@ -8,6 +8,7 @@ import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
+import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
@@ -188,6 +189,7 @@ function describeTx(tx) {
                 <AppMultiselect
                     v-model="createForm.type"
                     :label="t('personal_finance.transactions.fields.type')"
+                    :placeholder="t('personal_finance.transactions.placeholders.type')"
                     :options="typeOptions"
                     :allow-empty="false"
                     required
@@ -199,22 +201,24 @@ function describeTx(tx) {
                     :error="createErrors.amount"
                     required
                 />
-                <AppInput
+                <AppDatePicker
                     v-model="createForm.date"
                     :label="t('personal_finance.transactions.fields.date')"
-                    type="date"
+                    :placeholder="t('personal_finance.transactions.placeholders.date')"
                     :error="createErrors.date"
                     required
                 />
                 <AppMultiselect
                     v-model="createForm.categoryId"
                     :label="t('personal_finance.transactions.fields.category')"
+                    :placeholder="t('personal_finance.transactions.placeholders.category')"
                     :options="currentCategoryOptions"
                     :allow-empty="true"
                 />
                 <AppInput
                     v-model="createForm.description"
                     :label="t('personal_finance.transactions.fields.description')"
+                    :placeholder="t('personal_finance.transactions.placeholders.description')"
                     :error="createErrors.description"
                 />
                 <slot name="extra-form-fields" :form="createForm" :errors="createErrors" />
@@ -250,6 +254,7 @@ function describeTx(tx) {
                 <AppMultiselect
                     v-model="editForm.type"
                     :label="t('personal_finance.transactions.fields.type')"
+                    :placeholder="t('personal_finance.transactions.placeholders.type')"
                     :options="typeOptions"
                     :allow-empty="false"
                     required
@@ -257,25 +262,28 @@ function describeTx(tx) {
                 <AppAmountInput
                     v-model="editForm.amount"
                     :label="t('personal_finance.transactions.fields.amount')"
+                    :placeholder="t('personal_finance.transactions.placeholders.amount')"
                     :error="editErrors.amount"
                     required
                 />
-                <AppInput
+                <AppDatePicker
                     v-model="editForm.date"
                     :label="t('personal_finance.transactions.fields.date')"
-                    type="date"
+                    :placeholder="t('personal_finance.transactions.placeholders.date')"
                     :error="editErrors.date"
                     required
                 />
                 <AppMultiselect
                     v-model="editForm.categoryId"
                     :label="t('personal_finance.transactions.fields.category')"
+                    :placeholder="t('personal_finance.transactions.placeholders.category')"
                     :options="currentCategoryOptions"
                     :allow-empty="true"
                 />
                 <AppInput
                     v-model="editForm.description"
                     :label="t('personal_finance.transactions.fields.description')"
+                    :placeholder="t('personal_finance.transactions.placeholders.description')"
                     :error="editErrors.description"
                 />
                 <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :transaction="editingTransaction" />

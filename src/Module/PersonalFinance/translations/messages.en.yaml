@@ -104,7 +104,11 @@ personal_finance:
     created: Transaction recorded.
     updated: Transaction updated.
     placeholders:
+      type: Select a type
       amount: '0.00 — tip: 100+50 will be evaluated'
+      date: YYYY-MM-DD
+      category: Select a category
+      description: e.g. weekly groceries, Netflix subscription…
     fields:
       wallet: Wallet
       type: Type

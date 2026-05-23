@@ -104,7 +104,11 @@ personal_finance:
     created: Transaction enregistrée.
     updated: Transaction mise à jour.
     placeholders:
+      type: Sélectionner le type
       amount: '0.00 — astuce : 100+50 sera calculé'
+      date: AAAA-MM-JJ
+      category: Sélectionner une catégorie
+      description: Ex. courses du samedi, abonnement Netflix…
     fields:
       wallet: Portefeuille
       type: Type
