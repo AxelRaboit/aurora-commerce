@@ -15,7 +15,7 @@ export const DOCUMENT_STATUS_BADGE = {
     archived: "accent",
 };
 
-function emptyGenerateForm(template) {
+function emptyGenerateForm(template, context = null) {
     const fieldValues = {};
     for (const field of template?.fields ?? []) {
         fieldValues[field.pdfFieldName] = field.defaultValue ?? "";
@@ -24,6 +24,8 @@ function emptyGenerateForm(template) {
         templateId: template?.id ?? null,
         label: "",
         fieldValues,
+        contextType: context?.contextType ?? null,
+        contextId: context?.contextId ?? null,
     };
 }
 
@@ -32,6 +34,7 @@ export function usePdfDocumentsForm(
     deletePath,
     templateListPath,
     reset,
+    onAfterGenerate = null,
 ) {
     const { t } = useI18n();
 
@@ -97,19 +100,62 @@ export function usePdfDocumentsForm(
         fetchPicker(pickerPage.value + 1, false);
     }
 
-    function selectTemplate(template) {
+    /**
+     * @param {object} template
+     * @param {{contextType?: string|null, contextId?: number|null}|null} context
+     *   Optional polymorphic pointer carried into the generated PdfDocument.
+     *   Used by callers like Welding's runner that hand off here with a
+     *   pre-attached context (welding_step + step.id) so the generated PDF
+     *   shows up in the right place when the user returns.
+     */
+    function selectTemplate(template, context = null) {
         editorTemplate.value = template;
-        generateForm.value = emptyGenerateForm(template);
+        generateForm.value = emptyGenerateForm(template, context);
         signatureData.value = null;
         clearGenerate();
         resetPositions();
         step.value = 2;
-        // Extraire les positions une seule fois pour les overlays
         extractPositions(
             template,
             generateForm.value.fieldValues,
             template.fields ?? [],
         );
+    }
+
+    /**
+     * Opens the modal directly at the editor step for a specific template,
+     * skipping the picker entirely. Used by query-param hand-off from other
+     * modules (e.g. Welding runner — see WorkflowRunnerApp.openPdfFiller).
+     * Fetches matching templates from the picker endpoint until found.
+     */
+    async function openModalForTemplate(templateId, context = null) {
+        if (!templateId) return false;
+        showModal.value = true;
+        step.value = 1; // show picker loader while fetching
+        pickerLoading.value = true;
+        try {
+            let found = null;
+            let currentPage = 1;
+            while (!found) {
+                const params = new URLSearchParams({ page: String(currentPage), status: "active" });
+                const res = await fetch(`${templateListPath}?${params}`, {
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                });
+                const data = await res.json();
+                if (!data?.success) break;
+                found = data.items.find((tpl) => String(tpl.id) === String(templateId)) ?? null;
+                if (found || currentPage >= data.totalPages) break;
+                currentPage += 1;
+            }
+            if (!found) {
+                showModal.value = false;
+                return false;
+            }
+            selectTemplate(found, context);
+            return true;
+        } finally {
+            pickerLoading.value = false;
+        }
     }
 
     function backToPicker() {
@@ -166,6 +212,9 @@ export function usePdfDocumentsForm(
             showModal.value = false;
             toast.success(t("backend.pdfform.documents.generate"));
             reset();
+            if (typeof onAfterGenerate === "function") {
+                onAfterGenerate(data.document ?? null);
+            }
         } else if (data.errors) {
             setGenerateErrors(translateServerErrors(data.errors));
         }
@@ -187,6 +236,7 @@ export function usePdfDocumentsForm(
         showModal,
         step,
         openModal,
+        openModalForTemplate,
         backToPicker,
         goToSignature,
         backToEditor,

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -41,15 +41,44 @@ const { items, loading, page, totalPages, search: searchInput, onSearch, goToPag
     props.listPath, { initialSearch: props.search, initialData: props.documents },
 );
 
+// Parse query-string context hand-off from other modules (e.g. Welding runner
+// linking with ?templateId=N&contextType=welding_step&contextId=X&returnTo=/...).
+// Empty when the user landed directly on the documents page.
+const urlParams = new URLSearchParams(window.location.search);
+const queryTemplateId = urlParams.get("templateId");
+const queryContextType = urlParams.get("contextType");
+const queryContextIdRaw = urlParams.get("contextId");
+const queryContextId = queryContextIdRaw ? Number(queryContextIdRaw) : null;
+const queryReturnTo = urlParams.get("returnTo");
+
+function onAfterGenerate() {
+    if (queryReturnTo) {
+        // The user originated from another module's page (e.g. welding runner) —
+        // send them back so they see the document they just generated reflected
+        // in the source context.
+        window.location.href = queryReturnTo;
+    }
+}
+
 const {
-    showModal, step, openModal, backToPicker, goToSignature, backToEditor,
+    showModal, step, openModal, openModalForTemplate,
+    backToPicker, goToSignature, backToEditor,
     pickerItems, pickerLoading, pickerLoadingMore, pickerHasMore,
     debouncedSearch, loadMorePicker, selectTemplate,
     editorTemplate, generateForm, generateErrors, generateLoading,
     fieldPositions, signatureData,
     submitGenerate,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
-} = usePdfDocumentsForm(props.generatePath, props.deletePath, props.templateListPath, reset);
+} = usePdfDocumentsForm(props.generatePath, props.deletePath, props.templateListPath, reset, onAfterGenerate);
+
+onMounted(() => {
+    if (queryTemplateId) {
+        openModalForTemplate(queryTemplateId, {
+            contextType: queryContextType,
+            contextId: queryContextId,
+        });
+    }
+});
 </script>
 
 <template>
