@@ -1,7 +1,11 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { ClipboardCheck } from "lucide-vue-next";
+import { toast } from "vue-sonner";
+import { ClipboardCheck, Plus } from "lucide-vue-next";
+import AppButton from "@/shared/components/action/AppButton.vue";
+import AppModal from "@/shared/components/overlay/AppModal.vue";
+import { useRequest } from "@/shared/composables/http/backend/useRequest.js";
 
 const props = defineProps({
     workflows: { type: Array, default: () => [] },
@@ -18,14 +22,7 @@ const groupedByStatus = computed(() => {
     return groups;
 });
 
-const STATUS_ORDER = [
-    "draft",
-    "in_progress",
-    "awaiting_validation",
-    "completed",
-    "rejected",
-    "archived",
-];
+const STATUS_ORDER = ["draft", "in_progress", "awaiting_validation", "completed", "rejected", "archived"];
 
 const STATUS_COLOR = {
     draft: "bg-gray-100 text-gray-700",
@@ -35,18 +32,71 @@ const STATUS_COLOR = {
     rejected: "bg-rose-100 text-rose-700",
     archived: "bg-zinc-100 text-zinc-600",
 };
+
+const startOpen = ref(false);
+const templateOptions = ref([]);
+const employeeOptions = ref([]);
+const startForm = ref({ templateId: "", assigneeId: "" });
+const optionsLoading = ref(false);
+
+const publishedTemplates = computed(() =>
+    templateOptions.value.filter((t) => t.status === "published"),
+);
+
+const { request } = useRequest();
+
+async function openStart() {
+    startForm.value = { templateId: "", assigneeId: "" };
+    startOpen.value = true;
+    if (templateOptions.value.length === 0 && employeeOptions.value.length === 0) {
+        optionsLoading.value = true;
+        try {
+            const [tplRes, empRes] = await Promise.all([
+                fetch("/backend/welding/workflow-templates/options", { headers: { Accept: "application/json" } }),
+                fetch("/backend/welding/options/employees", { headers: { Accept: "application/json" } }),
+            ]);
+            const tpl = await tplRes.json();
+            const emp = await empRes.json();
+            if (tpl.success) templateOptions.value = tpl.items;
+            if (emp.success) employeeOptions.value = emp.items;
+        } finally {
+            optionsLoading.value = false;
+        }
+    }
+}
+
+async function submitStart() {
+    if (!startForm.value.templateId) {
+        toast.error(t("welding.workflows.errors.template_required"));
+        return;
+    }
+    const payload = {
+        templateId: Number(startForm.value.templateId),
+        assigneeId: startForm.value.assigneeId ? Number(startForm.value.assigneeId) : null,
+    };
+    const data = await request("/backend/welding/workflows", payload);
+    if (!data?.success) return;
+
+    toast.success(t("welding.workflows.created"));
+    window.location.href = `/backend/welding/workflows/${data.workflow.id}/runner`;
+}
 </script>
 
 <template>
     <div class="p-6 space-y-6">
-        <div class="flex items-center gap-3">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
-                <ClipboardCheck class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="flex items-center gap-3">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-900/30">
+                    <ClipboardCheck class="w-6 h-6 text-accent-500" :stroke-width="1.5" />
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflows.title") }}</h1>
+                    <p class="text-sm text-secondary">{{ t("welding.workflows.subtitle") }}</p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-xl font-semibold text-primary">{{ t("welding.workflows.title") }}</h1>
-                <p class="text-sm text-secondary">{{ t("welding.workflows.subtitle") }}</p>
-            </div>
+            <AppButton variant="primary" v-on:click="openStart">
+                <Plus class="w-4 h-4" /> {{ t("welding.workflows.new") }}
+            </AppButton>
         </div>
 
         <div v-if="items.length === 0" class="rounded-xl border border-line bg-surface p-6 text-sm text-secondary text-center">
@@ -87,5 +137,34 @@ const STATUS_COLOR = {
                 </div>
             </div>
         </div>
+
+        <AppModal :show="startOpen" :title="t('welding.workflows.new')" v-on:close="startOpen = false">
+            <div v-if="optionsLoading" class="text-sm text-secondary">{{ t("welding.workflows.loading_options") }}</div>
+            <div v-else class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflows.field_template") }} *</label>
+                    <select v-model="startForm.templateId" class="w-full rounded border border-line bg-surface p-2 text-sm">
+                        <option value="">—</option>
+                        <option v-for="opt in publishedTemplates" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                    </select>
+                    <p v-if="publishedTemplates.length === 0" class="text-xs text-amber-600 mt-1">
+                        {{ t("welding.workflows.no_published_template") }}
+                    </p>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-secondary mb-1">{{ t("welding.workflows.field_assignee") }}</label>
+                    <select v-model="startForm.assigneeId" class="w-full rounded border border-line bg-surface p-2 text-sm">
+                        <option value="">— {{ t("welding.workflows.no_assignee_option") }}</option>
+                        <option v-for="opt in employeeOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+            </div>
+            <template #footer>
+                <AppButton variant="ghost" v-on:click="startOpen = false">{{ t("welding.runner.cancel") }}</AppButton>
+                <AppButton variant="primary" v-on:click="submitStart" :disabled="optionsLoading || publishedTemplates.length === 0">
+                    {{ t("welding.workflows.create_and_open") }}
+                </AppButton>
+            </template>
+        </AppModal>
     </div>
 </template>

@@ -43,6 +43,27 @@ class WorkflowTemplatesController extends AbstractController
         return $this->render('@Welding/backend/workflow_templates/index.html.twig', $this->viewBuilder->indexView());
     }
 
+    #[Route('/{id}/editor', name: '_editor', requirements: ['id' => '\d+'], methods: [HttpMethodEnum::Get->value])]
+    public function editor(WorkflowTemplateInterface $workflowTemplate): Response
+    {
+        return $this->render('@Welding/backend/workflow_templates/editor.html.twig', $this->viewBuilder->editorView($workflowTemplate));
+    }
+
+    #[Route('/options', name: '_options', methods: [HttpMethodEnum::Get->value])]
+    public function options(): JsonResponse
+    {
+        $items = array_map(
+            static fn ($t): array => [
+                'value' => (string) $t->getId(),
+                'label' => sprintf('%s (v%d)', $t->getTitle(), $t->getVersion()),
+                'status' => $t->getStatus()->value,
+            ],
+            $this->repository->findAllForIndex(),
+        );
+
+        return $this->jsonSuccess(['items' => $items]);
+    }
+
     #[Route('', name: '_create', methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('welding.workflow_templates.create')]
     public function create(Request $request): JsonResponse

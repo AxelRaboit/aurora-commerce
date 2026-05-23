@@ -46,6 +46,22 @@ welding:
     status_draft: Draft
     status_published: Published
     status_archived: Archived
+    new: New template
+    create_and_open: Create and open
+    created: Template created
+    open: Open
+    publish: Publish
+    published: Template published
+    archive: Archive
+    archived: Template archived
+    clone: Clone (new version)
+    cloned: New version created
+    confirm_delete: Delete this template permanently?
+    deleted: Template deleted
+    field_title: Title
+    field_description: Description
+    field_applicable_to: Scope / welding type
+    field_applicable_to_placeholder: "TIG, MIG, SAW, manual…"
     errors:
       title_required: Title is required
       title_too_long: Title cannot exceed 200 characters
@@ -66,6 +82,14 @@ welding:
     subtitle: Ongoing and completed welding workflows
     empty: No workflow started yet.
     no_assignee: No welder assigned
+    no_assignee_option: None
+    new: New workflow
+    created: Workflow created
+    create_and_open: Create and open
+    loading_options: Loading…
+    field_template: Workflow template
+    field_assignee: Assigned welder
+    no_published_template: No published template available. Publish a template first.
     status_draft: Draft
     status_in_progress: In progress
     status_awaiting_validation: Awaiting validation
@@ -113,6 +137,28 @@ welding:
     comment_placeholder: Optional — details on the decision
     cancel: Cancel
     confirm: Confirm
+  editor:
+    edit_template: Edit template
+    template_updated: Template updated
+    locked_warning: This template is published — edits are locked. Clone it to create a new version.
+    steps: Steps
+    add_step: Add a step
+    edit_step: Edit step
+    step_added: Step added
+    step_updated: Step updated
+    step_deleted: Step deleted
+    confirm_delete_step: Delete this step and its attached PDFs?
+    no_steps_yet: No step yet. Add the first one to get started.
+    requires_validation: Requires validation
+    field_step_title: Step title
+    field_validator_role: Validator role
+    required_pdfs: Required PDFs
+    add_pdf: Add a PDF
+    pdf_added: PDF added
+    pdf_template_required: Pick a PDF
+    field_pdf_template: PDF template
+    field_required: Required
+    no_pdfs_for_step: No PDF attached to this step.
   validator_role_inspector: Inspector
   validator_role_quality_assurance: Quality assurance
   validator_role_supervisor: Supervisor

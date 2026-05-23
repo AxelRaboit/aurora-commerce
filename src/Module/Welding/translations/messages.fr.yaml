@@ -46,6 +46,22 @@ welding:
     status_draft: Brouillon
     status_published: Publié
     status_archived: Archivé
+    new: Nouveau modèle
+    create_and_open: Créer et ouvrir
+    created: Modèle créé
+    open: Ouvrir
+    publish: Publier
+    published: Modèle publié
+    archive: Archiver
+    archived: Modèle archivé
+    clone: Cloner (nouvelle version)
+    cloned: Nouvelle version créée
+    confirm_delete: Supprimer définitivement ce modèle ?
+    deleted: Modèle supprimé
+    field_title: Titre
+    field_description: Description
+    field_applicable_to: Portée / type de soudure
+    field_applicable_to_placeholder: "TIG, MIG, SAW, soudure manuelle…"
     errors:
       title_required: Le titre est obligatoire
       title_too_long: Le titre ne peut pas dépasser 200 caractères
@@ -66,12 +82,20 @@ welding:
     subtitle: Workflows de soudure en cours et terminés
     empty: Aucun workflow démarré pour l'instant.
     no_assignee: Pas de soudeur assigné
+    no_assignee_option: Aucun
     status_draft: Brouillon
     status_in_progress: En cours
     status_awaiting_validation: En attente de validation
     status_completed: Terminé
     status_rejected: Rejeté
     status_archived: Archivé
+    new: Nouveau workflow
+    created: Workflow créé
+    create_and_open: Créer et ouvrir
+    loading_options: Chargement…
+    field_template: Modèle de workflow
+    field_assignee: Soudeur assigné
+    no_published_template: Aucun modèle publié disponible. Publiez d'abord un modèle.
     errors:
       template_required: Le modèle de workflow est obligatoire
       reason_required: Un motif de rejet est requis
@@ -113,6 +137,28 @@ welding:
     comment_placeholder: Optionnel — précisions sur la décision
     cancel: Annuler
     confirm: Confirmer
+  editor:
+    edit_template: Modifier le modèle
+    template_updated: Modèle mis à jour
+    locked_warning: Ce modèle est publié — les modifications sont verrouillées. Clonez-le pour créer une nouvelle version.
+    steps: Étapes
+    add_step: Ajouter une étape
+    edit_step: Modifier l'étape
+    step_added: Étape ajoutée
+    step_updated: Étape mise à jour
+    step_deleted: Étape supprimée
+    confirm_delete_step: Supprimer cette étape et ses PDFs associés ?
+    no_steps_yet: Aucune étape. Ajoutez la première pour démarrer.
+    requires_validation: Nécessite validation
+    field_step_title: Titre de l'étape
+    field_validator_role: Rôle du validateur
+    required_pdfs: PDFs requis
+    add_pdf: Ajouter un PDF
+    pdf_added: PDF ajouté
+    pdf_template_required: Sélectionnez un PDF
+    field_pdf_template: PDF template
+    field_required: Obligatoire
+    no_pdfs_for_step: Aucun PDF attaché à cette étape.
   validator_role_inspector: Inspecteur
   validator_role_quality_assurance: Assurance qualité
   validator_role_supervisor: Superviseur
