@@ -16,9 +16,9 @@ import AppListItemButton from "@/shared/components/action/AppListItemButton.vue"
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import PdfCanvasEditor from "./components/PdfCanvasEditor.vue";
-import SignaturePad from "./components/SignaturePad.vue";
-import SignatureDisplay from "./components/SignatureDisplay.vue";
+import PdfCanvasEditor from "./components/WeldingPdfCanvasEditor.vue";
+import SignaturePad from "./components/WeldingSignaturePad.vue";
+import SignatureDisplay from "./components/WeldingSignatureDisplay.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Trash2, FileOutput, X, Download, FileText, ChevronLeft, Eye, Loader2, PenLine } from "lucide-vue-next";
 

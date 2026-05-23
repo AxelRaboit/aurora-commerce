@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { useDebounce } from "@/shared/composables/useDebounce.js";
-import { PdfFieldType } from "../../constants/pdfFieldType.js";
+import { PdfFieldType } from "../../pdf_constants/pdfFieldType.js";
 
 export function usePdfLivePreview() {
     const fieldPositions = ref({});

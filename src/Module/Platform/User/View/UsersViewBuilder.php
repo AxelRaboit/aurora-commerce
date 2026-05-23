@@ -33,7 +33,6 @@ final readonly class UsersViewBuilder
         'media' => 22,
         'configuration' => 25,
         'editorial' => 30,
-        'pdfform' => 34,
         'ged' => 35,
         'project' => 35,
         'crm' => 40,

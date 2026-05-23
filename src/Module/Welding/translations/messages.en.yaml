@@ -52,11 +52,8 @@ backend:
     welding_pdf_templates_description: Manage fillable PDF form templates
     welding_pdf_documents: Generated documents
     welding_pdf_documents_description: Filled PDF documents generated from templates
-  pdfform:
-    pdftk:
-      unavailable: pdftk is not installed on this server. Field detection and PDF
-        generation are not available.
-    templates:
+  welding:
+    pdf_templates:
       name: Name
       description: Description
       status: Status
@@ -92,25 +89,7 @@ backend:
       status_archived: Archived
       errors:
         name_required: Name is required.
-    fields:
-      pdfFieldName: PDF field name
-      label: Label
-      fieldType: Type
-      mappingKey: Automatic data source
-      mappingKeyPlaceholder: e.g. crm.contact.name
-      defaultValue: Default value
-      defaultValuePlaceholder: Pre-filled value
-      editField: Edit field "{label}"
-      type_text: Text
-      type_checkbox: Checkbox
-      type_radio: Radio button
-      type_dropdown: Dropdown
-      type_date: Date
-      type_signature: Signature
-      errors:
-        pdf_field_name_required: PDF field name is required.
-        label_required: Label is required.
-    documents:
+    pdf_documents:
       reference: Reference
       label: Label
       template: Template
@@ -141,6 +120,27 @@ backend:
       signatureNext: Sign and continue
       errors:
         template_required: Template is required.
+    pdf_template_fields:
+      pdfFieldName: PDF field name
+      label: Label
+      fieldType: Type
+      mappingKey: Automatic data source
+      mappingKeyPlaceholder: e.g. crm.contact.name
+      defaultValue: Default value
+      defaultValuePlaceholder: Pre-filled value
+      editField: Edit field "{label}"
+      type_text: Text
+      type_checkbox: Checkbox
+      type_radio: Radio button
+      type_dropdown: Dropdown
+      type_date: Date
+      type_signature: Signature
+      errors:
+        pdf_field_name_required: PDF field name is required.
+        label_required: Label is required.
+    pdf_pdftk:
+      unavailable: pdftk is not installed on this server. Field detection and PDF
+        generation are not available.
 welding:
   title: Welding
   subtitle: Regulated welding workflows

@@ -4,12 +4,12 @@
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import SignatureDisplay from "./SignatureDisplay.vue";
+import SignatureDisplay from "./WeldingSignatureDisplay.vue";
 
-const pdfformMessages = {
+const messages = {
     backend: {
-        pdfform: {
-            documents: {
+        welding: {
+            pdf_documents: {
                 signatureTitle: "Signature",
             },
         },
@@ -19,7 +19,7 @@ const pdfformMessages = {
 function mountSignatureDisplay(src) {
     return mount(SignatureDisplay, {
         props: { src },
-        global: { plugins: [createTestI18n(pdfformMessages)] },
+        global: { plugins: [createTestI18n(messages)] },
     });
 }
 

@@ -54,11 +54,8 @@ backend:
     welding_pdf_documents: Documents générés
     welding_pdf_documents_description: Documents PDF remplis et générés à partir des
       templates
-  pdfform:
-    pdftk:
-      unavailable: pdftk n'est pas installé sur ce serveur. La détection de champs
-        et la génération de PDF ne sont pas disponibles.
-    templates:
+  welding:
+    pdf_templates:
       name: Nom
       description: Description
       status: Statut
@@ -94,25 +91,7 @@ backend:
       status_archived: Archivé
       errors:
         name_required: Le nom est obligatoire.
-    fields:
-      pdfFieldName: Nom du champ PDF
-      label: Libellé
-      fieldType: Type
-      mappingKey: Source de données automatique
-      mappingKeyPlaceholder: 'ex : crm.contact.name'
-      defaultValue: Valeur par défaut
-      defaultValuePlaceholder: Valeur pré-remplie
-      editField: Modifier le champ « {label} »
-      type_text: Texte
-      type_checkbox: Case à cocher
-      type_radio: Bouton radio
-      type_dropdown: Liste déroulante
-      type_date: Date
-      type_signature: Signature
-      errors:
-        pdf_field_name_required: Le nom du champ PDF est obligatoire.
-        label_required: Le libellé est obligatoire.
-    documents:
+    pdf_documents:
       reference: Référence
       label: Libellé
       template: Template
@@ -144,6 +123,27 @@ backend:
       signatureNext: Signer et continuer
       errors:
         template_required: Le template est obligatoire.
+    pdf_template_fields:
+      pdfFieldName: Nom du champ PDF
+      label: Libellé
+      fieldType: Type
+      mappingKey: Source de données automatique
+      mappingKeyPlaceholder: 'ex : crm.contact.name'
+      defaultValue: Valeur par défaut
+      defaultValuePlaceholder: Valeur pré-remplie
+      editField: Modifier le champ « {label} »
+      type_text: Texte
+      type_checkbox: Case à cocher
+      type_radio: Bouton radio
+      type_dropdown: Liste déroulante
+      type_date: Date
+      type_signature: Signature
+      errors:
+        pdf_field_name_required: Le nom du champ PDF est obligatoire.
+        label_required: Le libellé est obligatoire.
+    pdf_pdftk:
+      unavailable: pdftk n'est pas installé sur ce serveur. La détection de champs
+        et la génération de PDF ne sont pas disponibles.
 welding:
   title: Soudures
   subtitle: WeldingWorkflows de soudure réglementée

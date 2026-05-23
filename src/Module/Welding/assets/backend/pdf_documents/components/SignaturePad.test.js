@@ -4,12 +4,12 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
-import SignaturePad from "./SignaturePad.vue";
+import SignaturePad from "./WeldingSignaturePad.vue";
 
-const pdfformMessages = {
+const messages = {
     backend: {
-        pdfform: {
-            documents: {
+        welding: {
+            pdf_documents: {
                 signatureHint: "Dessinez votre signature ici…",
                 signatureClear: "Effacer",
             },
@@ -19,7 +19,7 @@ const pdfformMessages = {
 
 function mountSignaturePad() {
     return mount(SignaturePad, {
-        global: { plugins: [createTestI18n(pdfformMessages)] },
+        global: { plugins: [createTestI18n(messages)] },
         attachTo: document.body,
     });
 }
