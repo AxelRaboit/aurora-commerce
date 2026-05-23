@@ -15,12 +15,26 @@ const props = defineProps({
     refreshPath: { type: String, required: true },
 });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { formatMonthYear } = useDateFormat();
 const { snapshot: snap, months, loading, refresh, setPeriod } = useStatisticsData(props.refreshPath, props.snapshot);
 
 const monthlyChart = computed(() => buildMonthlyBars(snap.value.monthlyFlow ?? [], 600, 160));
 const yoy = computed(() => snap.value.yoyComparison ?? {});
+
+/**
+ * "2026-05" → "Mai 26" / "May 26". Locale-aware short month name +
+ * 2-digit year so the year transition stays visible across a
+ * 12-month period without crowding the x-axis.
+ */
+function formatBarLabel(monthKey) {
+    if (!monthKey) return "";
+    const iso = /^\d{4}-\d{2}$/.test(monthKey) ? `${monthKey}-01` : monthKey;
+    const date = new Date(iso);
+    const month = new Intl.DateTimeFormat(locale.value, { month: "short" }).format(date).replace(/\.$/, "");
+    const year = new Intl.DateTimeFormat(locale.value, { year: "2-digit" }).format(date);
+    return `${month.charAt(0).toUpperCase()}${month.slice(1)} ${year}`;
+}
 </script>
 
 <template>
@@ -120,9 +134,9 @@ const yoy = computed(() => snap.value.yoyComparison ?? {});
                         :x="label.x"
                         y="195"
                         text-anchor="middle"
-                        class="fill-muted font-mono"
-                        style="font-size: 10px;"
-                    >{{ label.label }}</text>
+                        class="fill-muted"
+                        style="font-size: 11px;"
+                    >{{ formatBarLabel(label.monthKey) }}</text>
                 </svg>
             </div>
             <p v-else class="text-sm text-muted text-center py-8">{{ t("personal_finance.statistics.no_data_yet") }}</p>

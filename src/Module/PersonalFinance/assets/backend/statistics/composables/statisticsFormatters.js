@@ -37,7 +37,7 @@ export function buildLinePath(points, valueKey, width = 200, height = 40) {
  * @param {Array<{ month: string, income: string, expense: string }>} months
  * @param {number} [width=600]
  * @param {number} [height=160]
- * @returns {{ bars: Array<{x: number, y: number, width: number, height: number, kind: 'income' | 'expense'}>, max: number, slotWidth: number, labels: Array<{x: number, label: string}> }}
+ * @returns {{ bars: Array<{x: number, y: number, width: number, height: number, kind: 'income' | 'expense'}>, max: number, slotWidth: number, labels: Array<{x: number, monthKey: string}> }}
  */
 export function buildMonthlyBars(months, width = 600, height = 160) {
     if (!months || months.length === 0) {
@@ -57,7 +57,9 @@ export function buildMonthlyBars(months, width = 600, height = 160) {
         const expenseH = (parseFloat(m.expense) / max) * height;
         bars.push({ x: center - barWidth - gap / 2, y: height - incomeH, width: barWidth, height: incomeH, kind: "income" });
         bars.push({ x: center + gap / 2, y: height - expenseH, width: barWidth, height: expenseH, kind: "expense" });
-        labels.push({ x: center, label: m.month.slice(5) }); // MM
+        // Raw YYYY-MM key — the SFC formats it for the active locale (Intl
+        // belongs to the consumer, not the geometry builder).
+        labels.push({ x: center, monthKey: m.month });
     });
 
     return { bars, max, slotWidth, labels };
