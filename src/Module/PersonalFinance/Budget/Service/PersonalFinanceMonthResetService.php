@@ -42,21 +42,74 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
 
     public function reset(
         PersonalFinanceWalletInterface $wallet,
-        DateTimeImmutable $month,
+        DateTimeImmutable $fromMonth,
+        bool $cascade,
         bool $clearBudget,
     ): PersonalFinanceMonthResetReport {
+        $start = $fromMonth->modify('first day of this month')->setTime(0, 0);
+        $end = $this->resolveEndMonth($start, $cascade);
+
+        $totalDeleted = 0;
+        $budgetClearedAny = false;
+        $monthsProcessed = 0;
+
+        $cursor = $start;
+        while ($cursor <= $end) {
+            [$deletedThisMonth, $budgetClearedThisMonth] = $this->resetOneMonth($wallet, $cursor, $clearBudget);
+            $totalDeleted += $deletedThisMonth;
+            $budgetClearedAny = $budgetClearedAny || $budgetClearedThisMonth;
+            ++$monthsProcessed;
+
+            $cursor = $cursor->modify('first day of next month');
+        }
+
+        $this->auditLogger->log(
+            'personal_finance',
+            'month.reset',
+            'PersonalFinanceWallet',
+            $wallet->getId(),
+            [
+                'fromMonth' => $start->format('Y-m'),
+                'toMonth' => $end->format('Y-m'),
+                'monthsProcessed' => $monthsProcessed,
+                'deletedTransactions' => $totalDeleted,
+                'budgetCleared' => $budgetClearedAny,
+            ],
+        );
+
+        return new PersonalFinanceMonthResetReport($totalDeleted, $budgetClearedAny, $monthsProcessed);
+    }
+
+    /**
+     * Caps the cascade at the current month — the policy lives here so
+     * callers don't have to repeat it. Single-month resets resolve to
+     * `$start` regardless of how far back it is.
+     */
+    protected function resolveEndMonth(DateTimeImmutable $start, bool $cascade): DateTimeImmutable
+    {
+        if (!$cascade) {
+            return $start;
+        }
+        $today = new DateTimeImmutable('first day of this month')->setTime(0, 0);
+
+        return $today < $start ? $start : $today;
+    }
+
+    /** @return array{0: int, 1: bool} `[deletedCount, budgetClearedThisMonth]` */
+    protected function resetOneMonth(
+        PersonalFinanceWalletInterface $wallet,
+        DateTimeImmutable $month,
+        bool $clearBudget,
+    ): array {
         $transactions = $this->transactionRepository->findByWalletAndMonth($wallet, $month);
 
         $handledIds = [];
         $deletedCount = 0;
-
         foreach ($transactions as $transaction) {
             if (in_array($transaction->getId(), $handledIds, true)) {
                 continue;
             }
-
-            $deleted = $this->deleteTransactionGroup($transaction, $handledIds);
-            $deletedCount += $deleted;
+            $deletedCount += $this->deleteTransactionGroup($transaction, $handledIds);
         }
 
         $budgetCleared = false;
@@ -68,19 +121,7 @@ readonly class PersonalFinanceMonthResetService implements PersonalFinanceMonthR
             }
         }
 
-        $this->auditLogger->log(
-            'personal_finance',
-            'month.reset',
-            'PersonalFinanceWallet',
-            $wallet->getId(),
-            [
-                'month' => $month->format('Y-m'),
-                'deletedTransactions' => $deletedCount,
-                'budgetCleared' => $budgetCleared,
-            ],
-        );
-
-        return new PersonalFinanceMonthResetReport($deletedCount, $budgetCleared);
+        return [$deletedCount, $budgetCleared];
     }
 
     /**

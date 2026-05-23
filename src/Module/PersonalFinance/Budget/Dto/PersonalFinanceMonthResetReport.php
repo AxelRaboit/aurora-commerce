@@ -14,5 +14,6 @@ class PersonalFinanceMonthResetReport
     public function __construct(
         public readonly int $deletedTransactions,
         public readonly bool $budgetCleared,
+        public readonly int $monthsProcessed = 1,
     ) {}
 }

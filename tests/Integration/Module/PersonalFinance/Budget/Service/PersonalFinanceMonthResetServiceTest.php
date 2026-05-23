@@ -51,16 +51,59 @@ final class PersonalFinanceMonthResetServiceTest extends PersonalFinanceTestCase
         $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Income, '500.00', new DateTimeImmutable('2026-06-01'), 'june-keep-1');
         $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '40.00', new DateTimeImmutable('2026-06-15'), 'june-keep-2');
 
-        $report = $this->resetService->reset($wallet, new DateTimeImmutable('2026-05-15'), clearBudget: false);
+        $report = $this->resetService->reset($wallet, new DateTimeImmutable('2026-05-15'), cascade: false, clearBudget: false);
 
         self::assertSame(3, $report->deletedTransactions);
         self::assertFalse($report->budgetCleared);
+        self::assertSame(1, $report->monthsProcessed);
 
         $remaining = $this->transactionRepository->findByWallet($wallet);
         self::assertCount(2, $remaining);
         $descriptions = array_map(static fn ($t) => $t->getDescription(), $remaining);
         self::assertContains('june-keep-1', $descriptions);
         self::assertContains('june-keep-2', $descriptions);
+    }
+
+    public function testCascadeResetWipesEveryMonthUpToCurrentMonthInclusive(): void
+    {
+        $user = $this->createTestUser();
+        $wallet = $this->createWallet($user, 'W');
+        $cat = $this->createCategory($wallet, 'Food');
+
+        $now = new DateTimeImmutable('first day of this month');
+        $twoMonthsAgo = $now->modify('-2 months');
+        $oneMonthAgo = $now->modify('-1 month');
+        $futureMonth = $now->modify('+1 month');
+
+        $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '10.00', $twoMonthsAgo->modify('+5 days'), 'past-1');
+        $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '20.00', $oneMonthAgo->modify('+5 days'), 'past-2');
+        $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '30.00', $now->modify('+5 days'), 'current');
+        $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '99.00', $futureMonth->modify('+5 days'), 'future-keep');
+
+        $report = $this->resetService->reset($wallet, $twoMonthsAgo, cascade: true, clearBudget: false);
+
+        self::assertSame(3, $report->deletedTransactions);
+        self::assertSame(3, $report->monthsProcessed);
+
+        $remaining = $this->transactionRepository->findByWallet($wallet);
+        self::assertCount(1, $remaining);
+        self::assertSame('future-keep', $remaining[0]->getDescription());
+    }
+
+    public function testCascadeWithFutureFromMonthCollapsesToSingleMonth(): void
+    {
+        $user = $this->createTestUser();
+        $wallet = $this->createWallet($user, 'W');
+        $cat = $this->createCategory($wallet, 'Food');
+
+        $futureMonth = new DateTimeImmutable('first day of this month')->modify('+2 months');
+        $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '10.00', $futureMonth->modify('+5 days'), 'future-tx');
+
+        // cascade=true but fromMonth is in the future → end = from (single-month reset)
+        $report = $this->resetService->reset($wallet, $futureMonth, cascade: true, clearBudget: false);
+
+        self::assertSame(1, $report->deletedTransactions);
+        self::assertSame(1, $report->monthsProcessed);
     }
 
     public function testResetCleansBothTransferLegsAcrossWallets(): void
@@ -78,7 +121,7 @@ final class PersonalFinanceMonthResetServiceTest extends PersonalFinanceTestCase
         self::assertCount(2, $this->transactionRepository->findByTransferId($transferId), 'sanity: transfer creates 2 legs');
 
         // Reset May on $from — should also wipe the income leg on $to
-        $report = $this->resetService->reset($from, new DateTimeImmutable('2026-05-15'), clearBudget: false);
+        $report = $this->resetService->reset($from, new DateTimeImmutable('2026-05-15'), cascade: false, clearBudget: false);
 
         self::assertSame(2, $report->deletedTransactions);
         self::assertCount(0, $this->transactionRepository->findByTransferId($transferId));
@@ -104,7 +147,7 @@ final class PersonalFinanceMonthResetServiceTest extends PersonalFinanceTestCase
 
         $wallet = $this->walletRepository()->find($wallet->getId());
 
-        $report = $this->resetService->reset($wallet, new DateTimeImmutable('2026-05-15'), clearBudget: true);
+        $report = $this->resetService->reset($wallet, new DateTimeImmutable('2026-05-15'), cascade: false, clearBudget: true);
 
         self::assertTrue($report->budgetCleared);
         self::assertNull($this->budgetRepository->findByWalletAndMonth($wallet, new DateTimeImmutable('2026-05-01')));
@@ -122,7 +165,7 @@ final class PersonalFinanceMonthResetServiceTest extends PersonalFinanceTestCase
         $this->entityManager->clear();
         $wallet = $this->walletRepository()->find($wallet->getId());
 
-        $report = $this->resetService->reset($wallet, new DateTimeImmutable('2026-05-15'), clearBudget: false);
+        $report = $this->resetService->reset($wallet, new DateTimeImmutable('2026-05-15'), cascade: false, clearBudget: false);
 
         self::assertFalse($report->budgetCleared);
         self::assertNotNull($this->budgetRepository->findByWalletAndMonth($wallet, new DateTimeImmutable('2026-05-01')));

@@ -100,14 +100,16 @@ final class PersonalFinanceBudgetsController extends AbstractController
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::EDIT_TRANSACTIONS, $wallet);
 
         $payload = $this->decodeJson($request);
-        $month = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
+        $fromMonth = $this->resolveMonth(is_string($payload['month'] ?? null) ? (string) $payload['month'] : null);
         $clearBudget = (bool) ($payload['clearBudget'] ?? false);
+        $cascade = (bool) ($payload['cascade'] ?? false);
 
-        $report = $this->monthResetService->reset($wallet, $month, $clearBudget);
+        $report = $this->monthResetService->reset($wallet, $fromMonth, $cascade, $clearBudget);
 
         return $this->jsonSuccess([
             'deletedTransactions' => $report->deletedTransactions,
             'budgetCleared' => $report->budgetCleared,
+            'monthsProcessed' => $report->monthsProcessed,
         ]);
     }
 

@@ -192,11 +192,15 @@ const {
 const {
     show: showReset,
     clearBudget: resetClearBudget,
+    cascade: resetCascade,
     loading: resetLoading,
+    cascadeEndMonth: resetCascadeEndMonth,
+    cascadePreviewCount: resetCascadePreviewCount,
     open: openReset,
     confirm: confirmReset,
 } = useBudgetMonthReset({
     resetPath: props.resetBudgetPath,
+    monthRef: currentMonth,
     onReset: () => refresh(selectedWalletId.value, currentMonth.value),
 });
 
@@ -644,9 +648,18 @@ const {
         >
             <div class="space-y-4">
                 <p class="text-sm text-primary">
-                    {{ t("personal_finance.budget.reset_confirm", { month: formatMonthYear(currentMonth) }) }}
+                    <template v-if="resetCascade">
+                        {{ t("personal_finance.budget.reset_confirm_cascade", { from: formatMonthYear(currentMonth), to: formatMonthYear(resetCascadeEndMonth), count: resetCascadePreviewCount }) }}
+                    </template>
+                    <template v-else>
+                        {{ t("personal_finance.budget.reset_confirm", { month: formatMonthYear(currentMonth) }) }}
+                    </template>
                 </p>
                 <p class="text-xs text-muted">{{ t("personal_finance.budget.reset_help") }}</p>
+                <AppCheckbox
+                    v-model="resetCascade"
+                    :label="t('personal_finance.budget.reset_cascade')"
+                />
                 <AppCheckbox
                     v-model="resetClearBudget"
                     :label="t('personal_finance.budget.reset_clear_budget')"
@@ -658,7 +671,7 @@ const {
                         <X class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("shared.common.cancel") }}
                     </AppButton>
-                    <AppButton variant="danger" size="md" :loading="resetLoading" v-on:click="confirmReset(selectedWalletId, currentMonth)">
+                    <AppButton variant="danger" size="md" :loading="resetLoading" v-on:click="confirmReset(selectedWalletId)">
                         <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
                         {{ t("personal_finance.budget.reset_confirm_button") }}
                     </AppButton>
