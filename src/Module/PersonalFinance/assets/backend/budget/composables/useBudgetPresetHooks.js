@@ -94,8 +94,9 @@ export function useBudgetPresetHooks({
             applyErrors.value = response.errors ?? {};
             return;
         }
+        const insertedCount = response.insertedCount ?? 0;
         toast.success(
-            t("personal_finance.budget_presets.applied", { count: response.insertedCount ?? 0 }),
+            t("personal_finance.budget_presets.applied", { count: insertedCount }, insertedCount),
         );
         showApply.value = false;
         onApplied?.(response);

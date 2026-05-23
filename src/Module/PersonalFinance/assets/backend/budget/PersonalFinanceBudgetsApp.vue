@@ -570,7 +570,7 @@ const {
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm text-primary truncate">{{ preset.name }}</p>
                                 <p v-if="preset.description" class="text-xs text-muted line-clamp-1">{{ preset.description }}</p>
-                                <p class="text-xs text-muted">{{ t("personal_finance.budget_presets.summary", { count: preset.itemCount ?? 0 }) }}</p>
+                                <p class="text-xs text-muted">{{ t("personal_finance.budget_presets.summary", { count: preset.itemCount ?? 0 }, preset.itemCount ?? 0) }}</p>
                             </div>
                         </li>
                     </ul>

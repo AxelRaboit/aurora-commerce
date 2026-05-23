@@ -297,7 +297,7 @@ personal_finance:
     updated: Ligne mise à jour.
     totals_line: '{actual} / {planned} dépensé'
     carried_label: 'reporté : {amount}'
-    rolled_over_toast: '{count, plural, one {1 ligne reportée du mois précédent} other {# lignes reportées du mois précédent}}'
+    rolled_over_toast: '1 ligne reportée du mois précédent | {count} lignes reportées du mois précédent'
     overrun_warning: Dépassement du budget prévu
     section_progress_title: Progression globale de la section
     empty_section_cta: Ajouter la première ligne
@@ -386,11 +386,11 @@ personal_finance:
     empty: Aucun mois type pour ce portefeuille. Utilise le bouton ci-dessus, ou enregistre un mois déjà saisi depuis la page Budget.
     items_title: Lignes du mois type
     no_items: 'Aucune ligne dans ce modèle. Utilise « Ajouter une ligne » pour en créer une.'
-    summary: '{count, plural, one {1 ligne} other {# lignes}}'
+    summary: '1 ligne | {count} lignes'
     created: Mois type créé.
     updated: Mois type mis à jour.
     deleted: Mois type supprimé.
-    applied: '{count, plural, one {1 ligne appliquée au mois} other {# lignes appliquées au mois}}'
+    applied: '1 ligne appliquée au mois | {count} lignes appliquées au mois'
     delete_confirm: 'Supprimer le mois type « {name} » ? Cette action est irréversible.'
     fields:
       name: Nom
@@ -420,8 +420,8 @@ personal_finance:
     pick_file: Choisir un fichier
     no_file: Aucun fichier sélectionné.
     preview_button: Aperçu de l'import
-    confirm_button: '{count, plural, one {Importer 1 transaction} other {Importer # transactions}}'
-    completed: '{count, plural, one {1 transaction importée} other {# transactions importées}}'
+    confirm_button: 'Importer 1 transaction | Importer {count} transactions'
+    completed: '1 transaction importée | {count} transactions importées'
     reset: Recommencer
     new_import: Nouvel import
     valid_rows: Lignes valides

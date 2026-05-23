@@ -297,7 +297,7 @@ personal_finance:
     updated: Line updated.
     totals_line: '{actual} / {planned} spent'
     carried_label: 'carried: {amount}'
-    rolled_over_toast: '{count, plural, one {1 line rolled over from the previous month} other {# lines rolled over from the previous month}}'
+    rolled_over_toast: '1 line rolled over from the previous month | {count} lines rolled over from the previous month'
     overrun_warning: Planned budget exceeded
     section_progress_title: Overall section progress
     empty_section_cta: Add the first line
@@ -386,11 +386,11 @@ personal_finance:
     empty: No month templates for this wallet yet. Use the button above, or save an already-filled month from the Budget page.
     items_title: Template lines
     no_items: 'No line in this template. Use "Add a line" to create one.'
-    summary: '{count, plural, one {1 line} other {# lines}}'
+    summary: '1 line | {count} lines'
     created: Month template created.
     updated: Month template updated.
     deleted: Month template deleted.
-    applied: '{count, plural, one {1 line applied to month} other {# lines applied to month}}'
+    applied: '1 line applied to month | {count} lines applied to month'
     delete_confirm: 'Delete the month template "{name}"? This action is irreversible.'
     fields:
       name: Name
@@ -420,8 +420,8 @@ personal_finance:
     pick_file: Pick a file
     no_file: No file selected.
     preview_button: Preview import
-    confirm_button: '{count, plural, one {Import 1 transaction} other {Import # transactions}}'
-    completed: '{count, plural, one {1 transaction imported} other {# transactions imported}}'
+    confirm_button: 'Import 1 transaction | Import {count} transactions'
+    completed: '1 transaction imported | {count} transactions imported'
     reset: Start over
     new_import: New import
     valid_rows: Valid rows

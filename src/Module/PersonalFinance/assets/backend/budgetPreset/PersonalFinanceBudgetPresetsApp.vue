@@ -117,7 +117,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
 );
 
 function summarizeItems(preset) {
-    return t("personal_finance.budget_presets.summary", { count: preset.itemCount ?? 0 });
+    const count = preset.itemCount ?? 0;
+    return t("personal_finance.budget_presets.summary", { count }, count);
 }
 </script>
 

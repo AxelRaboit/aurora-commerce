@@ -201,7 +201,7 @@ function rowClasses(row) {
                 <div class="flex justify-end pt-2 border-t border-line">
                     <AppButton variant="primary" size="md" :loading="loading" :disabled="!canConfirm" v-on:click="confirmProcess">
                         <Play class="w-4 h-4" :stroke-width="2" />
-                        {{ t("personal_finance.import.confirm_button", { count: preview.validCount }) }}
+                        {{ t("personal_finance.import.confirm_button", { count: preview.validCount }, preview.validCount) }}
                     </AppButton>
                 </div>
             </template>

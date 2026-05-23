@@ -87,7 +87,7 @@ export function useImportFlow({ previewPath, processPath }) {
             skippedRows: response.skippedRows ?? [],
         };
         step.value = "done";
-        toast.success(t("personal_finance.import.completed", { count: report.value.createdCount }));
+        toast.success(t("personal_finance.import.completed", { count: report.value.createdCount }, report.value.createdCount));
     }
 
     return {
