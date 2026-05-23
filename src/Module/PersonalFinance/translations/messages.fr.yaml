@@ -302,6 +302,8 @@ personal_finance:
       scheduled: Planifiées
     empty_recurring: Aucune transaction récurrente. Ajoute-en une pour ne plus saisir tes charges fixes chaque mois.
     empty_scheduled: Aucune transaction planifiée. Ajoute-en une pour anticiper un revenu ou une dépense future.
+    help_recurring: Les transactions récurrentes se répètent chaque mois à un jour fixe (ex. loyer, abonnement). Elles sont automatiquement générées le jour spécifié.
+    help_scheduled: Les transactions planifiées sont des transactions ponctuelles futures que tu anticipes (ex. impôts, cadeau). Tu peux les matérialiser manuellement quand elles surviennent.
     add_recurring: Nouvelle récurrente
     add_scheduled: Nouvelle planifiée
     edit_recurring: Modifier la récurrente

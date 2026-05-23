@@ -302,6 +302,8 @@ personal_finance:
       scheduled: Scheduled
     empty_recurring: No recurring transactions yet. Add one so you don't re-enter your fixed bills every month.
     empty_scheduled: No scheduled transactions yet. Add one to plan a future income or expense.
+    help_recurring: Recurring transactions repeat every month on a fixed day (e.g. rent, subscription). They are automatically generated on the specified day.
+    help_scheduled: Scheduled transactions are one-time future transactions you anticipate (e.g. taxes, gift). You can materialise them manually when they occur.
     add_recurring: New recurring
     add_scheduled: New scheduled
     edit_recurring: Edit recurring

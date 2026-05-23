@@ -14,6 +14,7 @@ import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppMessage from "@/shared/components/feedback/AppMessage.vue";
 import { useRecurringForm } from "./composables/useRecurringForm.js";
 import { useScheduledForm } from "./composables/useScheduledForm.js";
 import { useRecurringToggle } from "./composables/useRecurringToggle.js";
@@ -143,6 +144,10 @@ function signedAmount(row) {
 
         <!-- Recurring tab -->
         <template v-if="tab === 'recurring'">
+            <AppMessage variant="info">
+                {{ t("personal_finance.recurring.help_recurring") }}
+            </AppMessage>
+
             <section v-if="!recurring.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
                 {{ t("personal_finance.recurring.empty_recurring") }}
             </section>
@@ -215,6 +220,10 @@ function signedAmount(row) {
 
         <!-- Scheduled tab -->
         <template v-else>
+            <AppMessage variant="info">
+                {{ t("personal_finance.recurring.help_scheduled") }}
+            </AppMessage>
+
             <section v-if="!scheduled.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
                 {{ t("personal_finance.recurring.empty_scheduled") }}
             </section>
