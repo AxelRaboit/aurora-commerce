@@ -101,7 +101,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 v-model="sortBy"
                 :options="sortOptions"
                 :allow-empty="false"
-                class="w-full sm:w-64"
+                class="w-full"
             />
             <template #actions>
                 <slot name="extra-headers" />

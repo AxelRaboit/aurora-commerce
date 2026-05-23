@@ -66,6 +66,10 @@ use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPreset;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetInterface;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetItem;
+use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetItemInterface;
 use Aurora\Module\PersonalFinance\Budget\Enum\PersonalFinanceBudgetSectionEnum;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRule;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
@@ -2638,6 +2642,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $budgetClass = $em->getClassMetadata(PersonalFinanceBudgetInterface::class)->getName();
         /** @var class-string<PersonalFinanceBudgetItem> $budgetItemClass */
         $budgetItemClass = $em->getClassMetadata(PersonalFinanceBudgetItemInterface::class)->getName();
+        /** @var class-string<PersonalFinanceBudgetPreset> $presetClass */
+        $presetClass = $em->getClassMetadata(PersonalFinanceBudgetPresetInterface::class)->getName();
+        /** @var class-string<PersonalFinanceBudgetPresetItem> $presetItemClass */
+        $presetItemClass = $em->getClassMetadata(PersonalFinanceBudgetPresetItemInterface::class)->getName();
         /** @var class-string<PersonalFinanceGoal> $goalClass */
         $goalClass = $em->getClassMetadata(PersonalFinanceGoalInterface::class)->getName();
         /** @var class-string<PersonalFinanceRecurringTransaction> $recClass */
@@ -2882,6 +2890,50 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                  ->setPosition($def['pos'])
                  ->setRepeatNextMonth($def['repeat']);
             $em->persist($item);
+        }
+
+        // ── Budget presets — 2 reusable monthly templates ────────────────────
+        $presetDefs = [
+            [
+                'name' => 'Mois standard',
+                'description' => 'Structure habituelle : salaire + loyer + courses + loisirs.',
+                'items' => [
+                    ['section' => PersonalFinanceBudgetSectionEnum::Income,       'label' => 'Salaire',     'planned' => '2800.00', 'cat' => 'Salaire'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::FixedCharges, 'label' => 'Loyer',       'planned' => '850.00',  'cat' => 'Loyer'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::FixedCharges, 'label' => 'Abonnements', 'planned' => '30.00',   'cat' => 'Abonnements'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::Expenses,     'label' => 'Courses',     'planned' => '400.00',  'cat' => 'Courses'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::Expenses,     'label' => 'Transport',   'planned' => '150.00',  'cat' => 'Transport'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::Savings,      'label' => 'Épargne',     'planned' => '500.00',  'cat' => null],
+                ],
+            ],
+            [
+                'name' => 'Mois vacances',
+                'description' => 'Budget allégé sur les charges fixes, gonflé sur les loisirs + voyage.',
+                'items' => [
+                    ['section' => PersonalFinanceBudgetSectionEnum::Income,       'label' => 'Salaire',     'planned' => '2800.00', 'cat' => 'Salaire'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::FixedCharges, 'label' => 'Loyer',       'planned' => '850.00',  'cat' => 'Loyer'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::Expenses,     'label' => 'Loisirs',     'planned' => '400.00',  'cat' => 'Loisirs'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::Expenses,     'label' => 'Restaurant',  'planned' => '350.00',  'cat' => 'Restaurant'],
+                    ['section' => PersonalFinanceBudgetSectionEnum::Expenses,     'label' => 'Transport',   'planned' => '300.00',  'cat' => 'Transport'],
+                ],
+            ],
+        ];
+
+        foreach ($presetDefs as $presetDef) {
+            $preset = new $presetClass();
+            $preset->setUser($owner)->setWallet($cc)->setName($presetDef['name'])->setDescription($presetDef['description']);
+            $em->persist($preset);
+
+            foreach ($presetDef['items'] as $position => $itemDef) {
+                $presetItem = new $presetItemClass();
+                $presetItem->setPreset($preset)
+                           ->setSection($itemDef['section'])
+                           ->setLabel($itemDef['label'])
+                           ->setPlannedAmount($itemDef['planned'])
+                           ->setCategory(null !== $itemDef['cat'] ? $ccCats[$itemDef['cat']] : null)
+                           ->setPosition($position);
+                $em->persist($presetItem);
+            }
         }
 
         // ── Goals — 3 with various progress, deadline, color ─────────────────

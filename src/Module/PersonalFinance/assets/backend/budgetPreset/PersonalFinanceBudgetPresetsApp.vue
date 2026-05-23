@@ -129,12 +129,13 @@ function summarizeItems(preset) {
                 :label="t('personal_finance.budget_presets.wallet_selector')"
                 :options="walletOptions"
                 :allow-empty="false"
-                class="min-w-[14rem]"
+                class="w-full"
             />
             <template #actions>
                 <AppButton
                     variant="primary"
                     size="md"
+                    class="w-full sm:w-auto"
                     :disabled="!selectedWalletId"
                     v-on:click="openCreate(selectedWalletId, sections[3] || 'expenses')"
                 >
@@ -191,7 +192,7 @@ function summarizeItems(preset) {
             :title="formEditing ? t('personal_finance.budget_presets.edit') : t('personal_finance.budget_presets.create')"
             :icon="ClipboardList"
             :closeable="false"
-            max-width="lg"
+            max-width="2xl"
             v-on:close="showForm = false"
         >
             <div class="space-y-4">
