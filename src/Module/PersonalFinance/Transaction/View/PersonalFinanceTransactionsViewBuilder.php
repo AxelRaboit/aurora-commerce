@@ -80,12 +80,13 @@ final readonly class PersonalFinanceTransactionsViewBuilder
     }
 
     /** @return array<string, mixed> */
-    public function buildListPayload(PersonalFinanceWalletInterface $wallet, PaginationRequest $pagination): array
+    public function buildListPayload(PersonalFinanceWalletInterface $wallet, PaginationRequest $pagination, ?string $tag = null): array
     {
         $result = $this->transactionRepository->findPaginatedByWallet(
             $wallet,
             $pagination->page,
             search: $pagination->search,
+            tag: $tag,
         );
 
         return [

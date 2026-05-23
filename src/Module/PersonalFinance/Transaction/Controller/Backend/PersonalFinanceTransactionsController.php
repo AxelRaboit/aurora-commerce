@@ -71,7 +71,9 @@ final class PersonalFinanceTransactionsController extends AbstractController
 
         $this->denyAccessUnlessGranted(PersonalFinanceWalletVoter::VIEW, $wallet);
 
-        return $this->json($this->viewBuilder->buildListPayload($wallet, $pagination));
+        $tag = mb_trim((string) $request->query->get('tag', '')) ?: null;
+
+        return $this->json($this->viewBuilder->buildListPayload($wallet, $pagination, $tag));
     }
 
     #[Route('/wallets/{walletId}/transactions/create', name: '_wallets_transactions_create', methods: [HttpMethodEnum::Post->value])]

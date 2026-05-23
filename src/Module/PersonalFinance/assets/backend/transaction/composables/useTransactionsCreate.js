@@ -18,6 +18,7 @@ function emptyTransactionForm(extraFields = {}) {
         date: today,
         description: "",
         categoryId: null,
+        tags: [],
         ...extras,
     };
 }

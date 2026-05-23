@@ -185,6 +185,7 @@ personal_finance:
       date: YYYY-MM-DD
       category: Select a category
       description: e.g. weekly groceries, Netflix subscription…
+      tags: 'e.g. deductible, holiday, emergency (Enter to add)'
     fields:
       wallet: Wallet
       type: Type
@@ -192,10 +193,13 @@ personal_finance:
       date: Date
       category: Category
       description: Description
+      tags: Tags
     types:
       income: Income
       expense: Expense
     leg_badge_title: Plain transaction
+    filtered_by_tag: Filtered by tag
+    filter_by_tag_title: 'Filter by tag "{tag}"'
     actions:
       create: Add
       delete: Delete

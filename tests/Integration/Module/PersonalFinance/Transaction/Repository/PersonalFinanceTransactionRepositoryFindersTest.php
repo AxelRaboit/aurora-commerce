@@ -186,4 +186,37 @@ final class PersonalFinanceTransactionRepositoryFindersTest extends PersonalFina
 
         self::assertSame('20.00', $actuals[$cat->getId()]);
     }
+
+    public function testFindPaginatedByWalletFiltersByTag(): void
+    {
+        $user = $this->createTestUser();
+        $wallet = $this->createWallet($user, 'W', '0.00');
+        $cat = $this->createCategory($wallet, 'Food');
+
+        $taggedHoliday = $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '10.00', new DateTimeImmutable('2026-03-01'), 'restaurant nice');
+        $taggedHoliday->setTags(['holiday', 'lunch']);
+        $taggedDeductible = $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '20.00', new DateTimeImmutable('2026-03-02'), 'pro lunch');
+        $taggedDeductible->setTags(['deductible']);
+        $this->createTransaction($wallet, $cat, PersonalFinanceTransactionTypeEnum::Expense, '30.00', new DateTimeImmutable('2026-03-03'), 'no tag');
+        $this->entityManager->flush();
+
+        $byHoliday = $this->repository->findPaginatedByWallet($wallet, 1, 30, tag: 'holiday');
+        self::assertSame(1, $byHoliday['total']);
+        self::assertSame($taggedHoliday->getId(), $byHoliday['items'][0]->getId());
+
+        $byDeductible = $this->repository->findPaginatedByWallet($wallet, 1, 30, tag: 'deductible');
+        self::assertSame(1, $byDeductible['total']);
+        self::assertSame($taggedDeductible->getId(), $byDeductible['items'][0]->getId());
+
+        // Substring guard : searching "holid" must not match "holiday" since the
+        // pattern wraps the tag in JSON quotes.
+        $partial = $this->repository->findPaginatedByWallet($wallet, 1, 30, tag: 'holid');
+        self::assertSame(0, $partial['total']);
+
+        // Unknown tag → empty paginated payload (no exception). totalPages
+        // follows the PaginationTrait convention (clamped to ≥ 1).
+        $unknown = $this->repository->findPaginatedByWallet($wallet, 1, 30, tag: 'nonexistent');
+        self::assertSame(0, $unknown['total']);
+        self::assertSame([], $unknown['items']);
+    }
 }

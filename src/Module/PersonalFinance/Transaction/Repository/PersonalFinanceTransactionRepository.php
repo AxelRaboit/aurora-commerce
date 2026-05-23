@@ -32,7 +32,7 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
      *
      * @return array{items: list<PersonalFinanceTransactionInterface>, total: int, page: int, totalPages: int}
      */
-    public function findPaginatedByWallet(PersonalFinanceWalletInterface $wallet, int $page, int $limit = 30, ?string $search = null): array
+    public function findPaginatedByWallet(PersonalFinanceWalletInterface $wallet, int $page, int $limit = 30, ?string $search = null, ?string $tag = null): array
     {
         $qb = $this->createQueryBuilder('t')
             ->leftJoin('t.category', 'c')
@@ -54,7 +54,41 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             $countQb->andWhere('LOWER(t.description) LIKE :search OR LOWER(c.name) LIKE :search')->setParameter('search', $pattern);
         }
 
+        if (null !== $tag && '' !== $tag) {
+            $ids = $this->idsTaggedWith($wallet, $tag);
+            if ([] === $ids) {
+                return ['items' => [], 'total' => 0, 'page' => 1, 'totalPages' => 1];
+            }
+            $qb->andWhere('t.id IN (:tagIds)')->setParameter('tagIds', $ids);
+            $countQb->andWhere('t.id IN (:tagIds)')->setParameter('tagIds', $ids);
+        }
+
         return $this->paginate($qb, $countQb, $page, $limit);
+    }
+
+    /**
+     * Returns the transaction ids on the given wallet whose `tags` JSON
+     * array contains the exact tag value. DQL can't express JSONB
+     * containment portably so we drop to native SQL — the JSON
+     * serialization always quotes string values, so the `%"<tag>"%`
+     * pattern matches the whole token without false-positives on
+     * substrings (e.g. searching `bio` won't match `biology`).
+     *
+     * @return list<int>
+     */
+    private function idsTaggedWith(PersonalFinanceWalletInterface $wallet, string $tag): array
+    {
+        $rows = $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT id FROM core_personal_finance_transaction
+             WHERE wallet_id = :walletId
+               AND tags::text LIKE :pattern',
+            [
+                'walletId' => $wallet->getId(),
+                'pattern' => '%"'.$tag.'"%',
+            ],
+        )->fetchAllAssociative();
+
+        return array_map(static fn (array $row): int => (int) $row['id'], $rows);
     }
 
     /**

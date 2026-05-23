@@ -59,17 +59,28 @@ const { t } = useI18n();
 const { formatDateShort } = useDateFormat();
 
 const selectedWalletId = ref(props.selectedWalletId ?? props.wallets[0]?.id ?? null);
+const activeTag = ref(null);
 
 const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
     {
         initialSearch: props.search,
         initialData: props.transactions,
-        extraParams: () => ({ walletId: selectedWalletId.value }),
+        extraParams: () => ({ walletId: selectedWalletId.value, tag: activeTag.value || undefined }),
     },
 );
 
 watch(selectedWalletId, () => reset());
+
+function filterByTag(tag) {
+    activeTag.value = tag;
+    reset();
+}
+
+function clearTagFilter() {
+    activeTag.value = null;
+    reset();
+}
 
 const walletOptions = computed(() =>
     props.wallets.map((w) => ({ value: w.id, label: w.name })),
@@ -268,6 +279,18 @@ function describeTx(tx) {
             {{ t("personal_finance.transactions.help") }}
         </AppMessage>
 
+        <div v-if="activeTag" class="flex items-center gap-2">
+            <span class="text-xs text-muted">{{ t("personal_finance.transactions.filtered_by_tag") }}</span>
+            <button
+                type="button"
+                class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs bg-accent-500/15 text-accent-400 hover:bg-accent-500/25 transition-colors"
+                v-on:click="clearTagFilter"
+            >
+                <span>#{{ activeTag }}</span>
+                <X class="w-3 h-3" :stroke-width="2" />
+            </button>
+        </div>
+
         <section v-if="!wallets.length" class="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
             {{ t("personal_finance.transactions.no_wallet") }}
         </section>
@@ -323,6 +346,18 @@ function describeTx(tx) {
                                 </p>
                                 <p class="text-xs text-muted mt-0.5">{{ formatDateShort(tx.date) }} · {{ formatType(tx.type) }}</p>
                                 <p v-if="tx.categoryName" class="text-xs text-muted">{{ tx.categoryName }}</p>
+                                <div v-if="tx.tags?.length" class="flex flex-wrap gap-1 mt-1">
+                                    <button
+                                        v-for="tag in tx.tags"
+                                        :key="tag"
+                                        type="button"
+                                        class="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-surface-2 text-secondary hover:bg-accent-500/15 hover:text-accent-400 transition-colors"
+                                        :title="t('personal_finance.transactions.filter_by_tag_title', { tag })"
+                                        v-on:click.stop="filterByTag(tag)"
+                                    >
+                                        #{{ tag }}
+                                    </button>
+                                </div>
                             </div>
                             <p class="font-mono text-sm shrink-0" :class="tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ formatAmount(tx) }}</p>
                         </div>
@@ -360,6 +395,18 @@ function describeTx(tx) {
                                         <SplitIcon v-else-if="isSplitLeg(tx)" class="w-3.5 h-3.5 text-amber-400" :stroke-width="2" :title="t('personal_finance.splits.leg_badge_title')" />
                                         <Receipt v-else class="w-3.5 h-3.5 text-accent-400" :stroke-width="2" :title="t('personal_finance.transactions.leg_badge_title')" />
                                         <span>{{ tx.description }}</span>
+                                    </div>
+                                    <div v-if="tx.tags?.length" class="flex flex-wrap gap-1 mt-1">
+                                        <button
+                                            v-for="tag in tx.tags"
+                                            :key="tag"
+                                            type="button"
+                                            class="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-surface-2 text-secondary hover:bg-accent-500/15 hover:text-accent-400 transition-colors"
+                                            :title="t('personal_finance.transactions.filter_by_tag_title', { tag })"
+                                            v-on:click.stop="filterByTag(tag)"
+                                        >
+                                            #{{ tag }}
+                                        </button>
                                     </div>
                                 </td>
                                 <slot name="extra-cells" :transaction="tx" />

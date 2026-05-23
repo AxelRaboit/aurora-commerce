@@ -80,6 +80,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | # | Session | Commit | Statut |
 |---|---|---|---|
 | v2-3 | UI Members modal + email integration + public acceptance page | (lot v2-3) | 🟢 |
+| v2-6 | Tags UI : input + display pills + click-to-filter + backend JSONB filter | (lot v2-6) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
@@ -109,7 +110,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 
 | # | Session | Effort | Pourquoi |
 |---|---|---|---|
-| **v2-6** | **Tags UI** : la colonne `tags` (jsonb) existe déjà sur `PersonalFinanceTransaction` mais aucune UI ne l'utilise. Ajouter un `AppTagInput` dans la modale create/edit + filter par tag dans la liste | S | Backend 100% prêt — gros levier UX pour 1 session |
+| ~~v2-6~~ | ~~Tags UI~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
 | **v2-7** | **Export PDF/Excel** des transactions + budget : bouton download dans la toolbar, génération côté serveur (PhpSpreadsheet déjà installable, Dompdf déjà dans Aurora) | M | Archivage, déclarations fiscales, transition vers comptable |
 
 ### 🔵 Hors scope V2 (idées sans décision)
@@ -127,8 +128,8 @@ Si aucun item n'est prioritaire produit, attaquer par effort croissant
 et valeur immédiate :
 
 1. ~~v2-3 UI Members~~ ✅ **livré**
-2. **v2-6 Tags UI** (S) — backend prêt, quick win UX (prochain)
-3. **v2-1 BudgetPreset** (M) — feature à forte demande, scope auto-suffisant
+2. ~~v2-6 Tags UI~~ ✅ **livré**
+3. **v2-1 BudgetPreset** (M) — feature à forte demande, scope auto-suffisant (prochain)
 4. **v2-4 Overview** (M) — bénéficie de la maturité Budget/Goal
 5. **v2-5 Statistics** (M) — vient après Overview, même pattern d'agrégation
 6. **v2-7 Export** (M) — feature transverse, peut se faire à n'importe quel moment

@@ -31,6 +31,7 @@ export function useTransactionsEdit(
         date: "",
         description: "",
         categoryId: null,
+        tags: [],
         ...pickExtras({}),
     });
     const editErrors = ref({});
@@ -43,6 +44,7 @@ export function useTransactionsEdit(
             date: transaction.date,
             description: transaction.description ?? "",
             categoryId: transaction.categoryId ?? null,
+            tags: Array.isArray(transaction.tags) ? [...transaction.tags] : [],
             ...pickExtras(transaction),
         };
         editErrors.value = {};

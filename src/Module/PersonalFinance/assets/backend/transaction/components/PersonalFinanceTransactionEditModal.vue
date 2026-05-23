@@ -8,6 +8,7 @@ import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
 import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppTagsInput from "@/shared/components/form/select/AppTagsInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
@@ -145,6 +146,11 @@ defineExpose({ open: openEdit });
                 :label="t('personal_finance.transactions.fields.description')"
                 :placeholder="t('personal_finance.transactions.placeholders.description')"
                 :error="editErrors.description"
+            />
+            <AppTagsInput
+                v-model="editForm.tags"
+                :label="t('personal_finance.transactions.fields.tags')"
+                :placeholder="t('personal_finance.transactions.placeholders.tags')"
             />
             <slot name="extra-form-fields" :form="editForm" :errors="editErrors" :transaction="editingTransaction" />
 

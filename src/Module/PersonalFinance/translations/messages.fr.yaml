@@ -185,6 +185,7 @@ personal_finance:
       date: AAAA-MM-JJ
       category: Sélectionner une catégorie
       description: Ex. courses du samedi, abonnement Netflix…
+      tags: 'Ex. déductible, vacances, urgence (Entrée pour valider)'
     fields:
       wallet: Portefeuille
       type: Type
@@ -192,10 +193,13 @@ personal_finance:
       date: Date
       category: Catégorie
       description: Description
+      tags: Étiquettes
     types:
       income: Revenu
       expense: Dépense
     leg_badge_title: Transaction simple
+    filtered_by_tag: Filtré par étiquette
+    filter_by_tag_title: 'Filtrer par étiquette « {tag} »'
     actions:
       create: Ajouter
       delete: Supprimer

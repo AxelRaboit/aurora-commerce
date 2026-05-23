@@ -7,6 +7,7 @@ import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppAmountInput from "@/shared/components/form/input/AppAmountInput.vue";
 import AppDatePicker from "@/shared/components/form/picker/AppDatePicker.vue";
 import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
+import AppTagsInput from "@/shared/components/form/select/AppTagsInput.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import { useTransactionsCreate } from "../composables/useTransactionsCreate.js";
@@ -102,6 +103,11 @@ defineExpose({ open: openCreate });
                 :label="t('personal_finance.transactions.fields.description')"
                 :placeholder="t('personal_finance.transactions.placeholders.description')"
                 :error="createErrors.description"
+            />
+            <AppTagsInput
+                v-model="createForm.tags"
+                :label="t('personal_finance.transactions.fields.tags')"
+                :placeholder="t('personal_finance.transactions.placeholders.tags')"
             />
             <slot name="extra-form-fields" :form="createForm" :errors="createErrors" />
         </form>
