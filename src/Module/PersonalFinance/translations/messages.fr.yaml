@@ -318,6 +318,7 @@ personal_finance:
       description: Description
       day_of_month: Jour du mois
       day_of_month_hint: 'Entier entre 1 et 28 (les jours 29-31 sont exclus pour garantir la génération chaque mois).'
+      next_expected: Prochaine échéance
       scheduled_date: Date prévue
       active: Active
     errors:

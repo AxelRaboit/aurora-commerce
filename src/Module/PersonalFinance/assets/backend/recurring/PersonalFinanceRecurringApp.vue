@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2, Save, X, RotateCw, Play, Pause, CheckCircle2, Clock } from "lucide-vue-next";
 import { useDelete } from "@/shared/composables/form/useDelete.js";
+import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
@@ -36,6 +37,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { formatDateShort } = useDateFormat();
 
 const tab = ref("recurring");
 const recurring = ref([...props.recurring]);
@@ -161,7 +163,7 @@ function signedAmount(row) {
                             <p class="font-medium text-primary truncate">{{ rec.description ?? '—' }}</p>
                             <p class="text-xs text-muted mt-0.5">{{ rec.categoryName ?? t("personal_finance.transactions.uncategorized") }}</p>
                             <p class="text-xs text-muted">{{ rec.walletName }} · {{ t("personal_finance.dashboard.day_of_month", { day: rec.dayOfMonth }) }}</p>
-                            <p v-if="rec.nextExpectedDate" class="text-xs text-muted font-mono">{{ t("personal_finance.recurring.next_expected", { date: rec.nextExpectedDate }) }}</p>
+                            <p v-if="rec.nextExpectedDate" class="text-xs text-muted">{{ t("personal_finance.recurring.next_expected", { date: formatDateShort(rec.nextExpectedDate) }) }}</p>
                         </div>
                         <p class="font-mono text-sm shrink-0" :class="rec.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ signedAmount(rec) }}</p>
                     </div>
@@ -185,7 +187,7 @@ function signedAmount(row) {
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.wallet") }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.amount") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.day_of_month") }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.next_expected", { date: '' }) }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("personal_finance.recurring.fields.next_expected") }}</th>
                             <slot name="extra-headers" :tab="'recurring'" />
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
@@ -200,7 +202,7 @@ function signedAmount(row) {
                             <td class="px-6 py-3 text-right font-mono" :class="rec.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ signedAmount(rec) }}</td>
                             <td class="px-6 py-3">{{ rec.dayOfMonth }}</td>
                             <td class="px-6 py-3 text-xs">
-                                <span v-if="rec.nextExpectedDate" class="font-mono">{{ rec.nextExpectedDate }}</span>
+                                <span v-if="rec.nextExpectedDate">{{ formatDateShort(rec.nextExpectedDate) }}</span>
                                 <span v-else class="text-muted">—</span>
                             </td>
                             <slot name="extra-cells" :tab="'recurring'" :item="rec" />
@@ -232,7 +234,7 @@ function signedAmount(row) {
                         <div class="min-w-0">
                             <p class="font-medium text-primary truncate">{{ sched.description ?? '—' }}</p>
                             <p class="text-xs text-muted mt-0.5">{{ sched.categoryName ?? t("personal_finance.transactions.uncategorized") }}</p>
-                            <p class="text-xs text-muted">{{ sched.walletName }} · <span class="font-mono">{{ sched.scheduledDate }}</span></p>
+                            <p class="text-xs text-muted">{{ sched.walletName }} · {{ formatDateShort(sched.scheduledDate) }}</p>
                             <p class="text-xs mt-1">
                                 <span v-if="sched.generated" class="inline-flex items-center gap-1 text-emerald-400">
                                     <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />
@@ -279,7 +281,7 @@ function signedAmount(row) {
                             </td>
                             <td class="px-6 py-3">{{ sched.walletName }}</td>
                             <td class="px-6 py-3 text-right font-mono" :class="sched.type === 'income' ? 'text-emerald-400' : 'text-rose-400'">{{ signedAmount(sched) }}</td>
-                            <td class="px-6 py-3 font-mono text-xs">{{ sched.scheduledDate }}</td>
+                            <td class="px-6 py-3 text-xs">{{ formatDateShort(sched.scheduledDate) }}</td>
                             <td class="px-6 py-3">
                                 <span v-if="sched.generated" class="inline-flex items-center gap-1 text-xs text-emerald-400">
                                     <CheckCircle2 class="w-3.5 h-3.5" :stroke-width="2" />

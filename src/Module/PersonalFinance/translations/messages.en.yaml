@@ -318,6 +318,7 @@ personal_finance:
       description: Description
       day_of_month: Day of month
       day_of_month_hint: 'Integer between 1 and 28 (days 29-31 are excluded so generation is guaranteed every month).'
+      next_expected: Next due
       scheduled_date: Scheduled date
       active: Active
     errors:
