@@ -382,7 +382,7 @@ personal_finance:
     apply_help: 'Cible le mois sur lequel appliquer ce modèle. En mode « Ajouter », les lignes du modèle s''ajoutent aux lignes existantes. En mode « Remplacer », les lignes du mois ciblé sont effacées avant insertion.'
     save_from_month: Enregistrer ce mois comme mois type
     saved_from_month: Mois type créé à partir du mois courant.
-    no_wallet: Crée d''abord un portefeuille pour pouvoir créer un mois type.
+    no_wallet: Crée d'abord un portefeuille pour pouvoir créer un mois type.
     empty: Aucun mois type pour ce portefeuille. Utilise le bouton ci-dessus, ou enregistre un mois déjà saisi depuis la page Budget.
     items_title: Lignes du mois type
     no_items: 'Aucune ligne dans ce modèle. Utilise « Ajouter une ligne » pour en créer une.'
@@ -412,14 +412,14 @@ personal_finance:
   import:
     title: Import Excel
     help: 'Importe en lot des transactions à partir d''un fichier Excel. Télécharge le template ci-dessous, remplis-le (Date / Type / Montant / Catégorie / Description / Tags), puis ré-uploade-le. La validation se fait ligne par ligne — les lignes invalides sont signalées et ignorées au moment du traitement. Les catégories absentes du portefeuille sélectionné sont créées automatiquement (signalées dans l''aperçu).'
-    no_wallet: Crée d''abord un portefeuille pour pouvoir importer des transactions.
+    no_wallet: Crée d'abord un portefeuille pour pouvoir importer des transactions.
     step_upload: Téléversement
     step_preview: Aperçu
     step_done: Terminé
     download_template: Télécharger le template
     pick_file: Choisir un fichier
     no_file: Aucun fichier sélectionné.
-    preview_button: Aperçu de l''import
+    preview_button: Aperçu de l'import
     confirm_button: '{count, plural, one {Importer 1 transaction} other {Importer # transactions}}'
     completed: '{count, plural, one {1 transaction importée} other {# transactions importées}}'
     reset: Recommencer
