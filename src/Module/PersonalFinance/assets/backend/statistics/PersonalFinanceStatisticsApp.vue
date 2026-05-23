@@ -35,6 +35,17 @@ function formatBarLabel(monthKey) {
     const year = new Intl.DateTimeFormat(locale.value, { year: "2-digit" }).format(date);
     return `${month.charAt(0).toUpperCase()}${month.slice(1)} ${year}`;
 }
+
+/**
+ * Tooltip text shown when the user hovers a bar. Native SVG <title>
+ * — picked up by browsers + screen-readers without any custom JS.
+ */
+function formatBarTooltip(bar) {
+    const monthLabel = formatMonthYear(bar.monthKey);
+    const typeLabel = t(`personal_finance.statistics.legend_${bar.kind}`);
+    const sign = bar.kind === "income" ? "+" : "-";
+    return `${monthLabel} · ${typeLabel} : ${sign}${bar.amount}`;
+}
 </script>
 
 <template>
@@ -126,8 +137,11 @@ function formatBarLabel(monthKey) {
                         :width="bar.width"
                         :height="bar.height"
                         rx="2"
+                        class="transition-opacity hover:opacity-70 cursor-default"
                         :class="bar.kind === 'income' ? 'fill-emerald-400' : 'fill-rose-400'"
-                    />
+                    >
+                        <title>{{ formatBarTooltip(bar) }}</title>
+                    </rect>
                     <text
                         v-for="(label, i) in monthlyChart.labels"
                         :key="`l-${i}`"
