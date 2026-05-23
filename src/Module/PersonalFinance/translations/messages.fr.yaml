@@ -18,6 +18,8 @@ backend:
           use: Gérer les règles d'auto-catégorisation
         overview:
           use: Voir la vue globale cross-portefeuilles
+        statistics:
+          use: Voir les statistiques d'évolution temporelle
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
@@ -40,6 +42,8 @@ backend:
     personal_finance_categorization_description: 'Règles description → catégorie apprises automatiquement quand tu catégorises une transaction.'
     personal_finance_overview: Vue globale
     personal_finance_overview_description: 'Synthèse cross-portefeuilles : solde total cumulé, flux mensuel agrégé, breakdown par portefeuille et par catégorie, transactions récentes toutes wallets confondues.'
+    personal_finance_statistics: Statistiques
+    personal_finance_statistics_description: 'Analyses temporelles sur 3, 6 ou 12 mois : flux revenus / dépenses mois par mois, tendance par catégorie, comparaison année N vs N-1.'
   parameters:
     personal_finance_default_currency:
       label: Devise par défaut
@@ -341,6 +345,21 @@ personal_finance:
       month_income: Revenus du mois
       month_expense: Dépenses du mois
       month_net: Net du mois
+  statistics:
+    title: Statistiques
+    help: 'Analyse l''évolution dans le temps : flux revenus / dépenses sur les 3, 6 ou 12 derniers mois, tendance par catégorie sur la même période, comparaison du mois courant avec le même mois un an plus tôt. Complète la Vue globale qui ne couvre que le mois en cours.'
+    period_months: '{months} mois'
+    monthly_flow: Flux mensuel
+    category_trend: Tendance par catégorie
+    legend_income: Revenus
+    legend_expense: Dépenses
+    vs_last_year: vs. année précédente
+    previous_month_label: '{month}'
+    no_data_yet: Pas encore assez de données pour cette période.
+    kpi:
+      yoy_income: Revenus du mois
+      yoy_expense: Dépenses du mois
+      yoy_net: Net du mois
   categorization:
     title: Auto-catégorisation
     help: 'L''auto-catégorisation apprend à classer les transactions à partir de leur description : chaque fois qu''une transaction est enregistrée avec une catégorie, une règle « description → catégorie » est créée ou renforcée. Cette page permet de corriger une mauvaise association ou de supprimer une règle obsolète.'

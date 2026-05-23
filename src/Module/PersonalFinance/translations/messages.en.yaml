@@ -18,6 +18,8 @@ backend:
           use: Manage auto-categorization rules
         overview:
           use: View the cross-wallet global overview
+        statistics:
+          use: View time-series statistics
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
@@ -40,6 +42,8 @@ backend:
     personal_finance_categorization_description: 'Description → category rules learnt automatically every time you categorise a transaction.'
     personal_finance_overview: Global overview
     personal_finance_overview_description: 'Cross-wallet summary: cumulative balance, monthly aggregated flow, per-wallet and per-category breakdowns, recent transactions across every wallet.'
+    personal_finance_statistics: Statistics
+    personal_finance_statistics_description: 'Time-series analyses over 3, 6 or 12 months: month-by-month income / expense flow, per-category trend, current-month versus same-month-last-year comparison.'
   parameters:
     personal_finance_default_currency:
       label: Default currency
@@ -341,6 +345,21 @@ personal_finance:
       month_income: Month income
       month_expense: Month expenses
       month_net: Month net
+  statistics:
+    title: Statistics
+    help: 'Track evolution over time: income / expense flow over the last 3, 6 or 12 months, per-category trend on the same window, current-month vs. same-month-last-year comparison. Complements the Global overview which only covers the current month.'
+    period_months: '{months} months'
+    monthly_flow: Monthly flow
+    category_trend: Per-category trend
+    legend_income: Income
+    legend_expense: Expense
+    vs_last_year: vs. last year
+    previous_month_label: '{month}'
+    no_data_yet: Not enough data yet for this period.
+    kpi:
+      yoy_income: Month income
+      yoy_expense: Month expense
+      yoy_net: Month net
   categorization:
     title: Auto-categorization
     help: 'Auto-categorisation learns to classify transactions from their description: every time a transaction is saved with a category, a "description → category" rule is created or strengthened. This page lets a misclassification be fixed or an obsolete rule deleted.'

@@ -55,4 +55,9 @@ final readonly class PersonalFinanceContext
     {
         return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceOverview);
     }
+
+    public function isStatisticsEnabled(): bool
+    {
+        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::PersonalFinanceStatistics);
+    }
 }

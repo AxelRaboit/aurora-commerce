@@ -43,6 +43,7 @@ import {
     Sparkles,
     Scale,
     Globe2,
+    BarChart3,
 } from "lucide-vue-next";
 
 const ICON_MAP = {
@@ -87,6 +88,7 @@ const ICON_MAP = {
     sparkles: Sparkles,
     scale: Scale,
     "globe-2": Globe2,
+    "bar-chart-3": BarChart3,
 };
 
 export function useSidemenuNav(

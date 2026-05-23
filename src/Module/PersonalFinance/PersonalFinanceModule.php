@@ -31,6 +31,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             new NavPermission('personal_finance.recurring.use'),
             new NavPermission('personal_finance.categorization.use'),
             new NavPermission('personal_finance.overview.use'),
+            new NavPermission('personal_finance.statistics.use'),
         ];
     }
 
@@ -122,6 +123,16 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             );
         }
 
+        if ($this->personalFinanceContext->isStatisticsEnabled()) {
+            $items[] = new NavItem(
+                'backend_personal_finance_statistics',
+                'backend.nav.personal_finance_statistics',
+                'bar-chart-3',
+                requiredPrivilege: 'personal_finance.statistics.use',
+                descriptionKey: 'backend.nav.personal_finance_statistics_description',
+            );
+        }
+
         if ([] === $items) {
             return [];
         }
@@ -189,6 +200,13 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
                     requiredPrivilege: 'personal_finance.categorization.use',
                     descriptionKey: 'backend.nav.personal_finance_categorization_description',
                 ),
+                new NavItem(
+                    'backend_personal_finance_statistics',
+                    'backend.nav.personal_finance_statistics',
+                    'bar-chart-3',
+                    requiredPrivilege: 'personal_finance.statistics.use',
+                    descriptionKey: 'backend.nav.personal_finance_statistics_description',
+                ),
             ], priority: 25),
         ];
     }
@@ -205,6 +223,7 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
             ModuleParameterEnum::PersonalFinanceRecurring->toToggle(),
             ModuleParameterEnum::PersonalFinanceCategorization->toToggle(),
             ModuleParameterEnum::PersonalFinanceOverview->toToggle(),
+            ModuleParameterEnum::PersonalFinanceStatistics->toToggle(),
         ];
     }
 }

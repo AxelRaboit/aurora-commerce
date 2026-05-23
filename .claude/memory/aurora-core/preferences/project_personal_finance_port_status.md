@@ -84,6 +84,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | v2-1A | Budget auto-rollover : `repeatNextMonth` items copiés mois N → N+1 via `BudgetRolloverService` + toast UI | (lot v2-1A) | 🟢 |
 | v2-4  | Vue Globale (Overview) : sub-feature `Overview/` + service d'agrégation cross-wallet + page Vue + nav + toggle + permission | (lot v2-4) | 🟢 |
 | v2-4-merge | Fusion Dashboard → Overview : suppression du sous-module Dashboard (Service + Controller + Vue + composable + Twig + nav + permission + toggle), absorption des blocs uniques (sparkline / goals / upcoming / budget alerts) dans Overview, redirect URL 301 conservé via `config/routes.yaml` | (lot v2-4-merge) | 🟢 |
+| v2-5  | Statistics page : sub-feature `Statistics/` + `StatisticsService` (monthlyFlow / categoryTrend / yoyComparison) + Vue inline-SVG bar chart + small-multi lines + period switcher 3/6/12 + nav + toggle + permission | (lot v2-5) | 🟢 |
 
 **v2-3 livré** :
 - Backend `GET /wallets/{walletId}/members` returning `{ members, invitations }` (voter `MANAGE_MEMBERS`)
@@ -107,7 +108,7 @@ ci-dessous reflète **valeur utilisateur** / effort.
 | **v2-2** (11) | **Import Excel** : 2-step upload → preview → process. Service `PersonalFinanceImportService` (parse via PhpSpreadsheet ou ext locale) + template Excel téléchargeable + DTO de validation. Mapping flexible (date / montant / catégorie / description / tags) | L | Onboarding utilisateurs qui ont déjà un historique ailleurs (banque, autre app) |
 | ~~v2-3~~ | ~~UI Members modal + email + public page~~ | ~~S~~ | ✅ **livré** — voir bloc ci-dessus |
 | ~~v2-4~~ | ~~Vue Globale (Overview) multi-wallets~~ | ~~M~~ | ✅ **livré** — voir bloc ci-dessus |
-| **v2-5** | **Statistics page** : analyses temporelles (3/6/12 mois), heatmap dépenses, comparaison année-N vs N-1, breakdown par catégorie. Inline SVG chart lib-free comme le Dashboard | M | Power users qui veulent challenger leurs habitudes |
+| ~~v2-5~~ | ~~Statistics page (3/6/12 mois, bar chart, category trend, YoY)~~ | ~~M~~ | ✅ **livré** — heatmap reportée à un v2-5B éventuel (complexité SVG inline) |
 
 ### 🟢 Quick-wins (2 sessions)
 
@@ -134,8 +135,8 @@ et valeur immédiate :
 2. ~~v2-6 Tags UI~~ ✅ **livré**
 3. ~~v2-1A Auto-rollover~~ ✅ **livré**
 4. ~~v2-4 Overview~~ ✅ **livré**
-5. **v2-5 Statistics** (M) — analyses temporelles, heatmap, comparaison année-N vs N-1 (prochain)
-6. **v2-7 Export** (M) — feature transverse, peut se faire à n'importe quel moment
+5. ~~v2-5 Statistics~~ ✅ **livré** (heatmap reportée)
+6. **v2-7 Export** (M) — feature transverse, peut se faire à n'importe quel moment (prochain)
 7. **v2-1B BudgetPreset standalone** (M) — rebascule entre profils (utile si Phase A ne suffit pas en pratique)
 8. **v2-2 Import Excel** (L) — gros chantier, valeur d'onboarding moindre une fois la base bossée
 
