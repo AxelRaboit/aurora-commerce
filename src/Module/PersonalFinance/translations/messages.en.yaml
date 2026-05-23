@@ -87,6 +87,9 @@ personal_finance:
       invitation_token_invalid: Invalid, expired or already-used invitation token.
       invitation_already_pending: An invitation is already pending for this email.
       invitation_owner_role_forbidden: 'Owner role cannot be assigned via invitation — use ownership transfer instead.'
+      invitation_email_required: Email address is required.
+      invitation_email_format: The email address is not valid.
+      invitation_role_required: Role is required.
   categories:
     title: Categories
     empty: No category for this wallet yet.

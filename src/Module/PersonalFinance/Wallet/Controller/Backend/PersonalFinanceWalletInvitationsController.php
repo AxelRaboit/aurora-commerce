@@ -7,10 +7,11 @@ namespace Aurora\Module\PersonalFinance\Wallet\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInvitationInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
-use Aurora\Module\PersonalFinance\Wallet\Enum\PersonalFinanceWalletRoleEnum;
 use Aurora\Module\PersonalFinance\Wallet\Manager\PersonalFinanceWalletInvitationManagerInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletInvitationRepository;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
@@ -36,8 +37,10 @@ final class PersonalFinanceWalletInvitationsController extends AbstractControlle
         private readonly PersonalFinanceWalletRepository $walletRepository,
         private readonly PersonalFinanceWalletInvitationRepository $invitationRepository,
         private readonly PersonalFinanceWalletInvitationManagerInterface $invitationManager,
+        private readonly PersonalFinanceWalletInvitationInputFactoryInterface $invitationInputFactory,
         private readonly PersonalFinanceWalletInvitationSerializerInterface $invitationSerializer,
         private readonly PersonalFinanceWalletMemberSerializerInterface $memberSerializer,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('/wallets/{walletId}/invitations/send', name: '_wallets_invitations_send', methods: [HttpMethodEnum::Post->value])]
@@ -53,17 +56,15 @@ final class PersonalFinanceWalletInvitationsController extends AbstractControlle
         /** @var CoreUserInterface $user */
         $user = $this->getUser();
 
-        $data = $this->decodeJson($request);
-        $email = mb_trim((string) ($data['email'] ?? ''));
-        $roleValue = (string) ($data['role'] ?? '');
-        $role = PersonalFinanceWalletRoleEnum::tryFrom($roleValue);
+        $input = $this->invitationInputFactory->fromArray($this->decodeJson($request));
 
-        if ('' === $email || null === $role) {
-            return $this->jsonInvalidInput(['email' => ['email and role are required']]);
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors);
         }
 
         try {
-            $invitation = $this->invitationManager->send($wallet, $email, $role, $user);
+            $invitation = $this->invitationManager->send($wallet, $input, $user);
         } catch (DomainException $domainException) {
             return $this->jsonInvalidInput(['email' => [$domainException->getMessage()]]);
         }

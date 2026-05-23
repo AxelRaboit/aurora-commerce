@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Categorization\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
+use Aurora\Module\PersonalFinance\Categorization\Dto\PersonalFinanceCategorizationRuleInputInterface;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRule;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
 use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
@@ -38,7 +39,15 @@ class PersonalFinanceCategorizationRuleManager implements PersonalFinanceCategor
 
     public function updateCategory(PersonalFinanceCategorizationRuleInterface $rule, PersonalFinanceCategoryInterface $category): void
     {
-        $rule->setCategory($category);
+        $this->applyCategory($rule, $category);
+        $this->entityManager->flush();
+
+        $this->auditUpdated($rule);
+    }
+
+    public function update(PersonalFinanceCategorizationRuleInterface $rule, PersonalFinanceCategorizationRuleInputInterface $input, PersonalFinanceCategoryInterface $category): void
+    {
+        $this->applyInput($rule, $input, $category);
         $this->entityManager->flush();
 
         $this->auditUpdated($rule);
@@ -57,6 +66,22 @@ class PersonalFinanceCategorizationRuleManager implements PersonalFinanceCategor
     protected function createRule(): PersonalFinanceCategorizationRuleInterface
     {
         return new PersonalFinanceCategorizationRule();
+    }
+
+    /**
+     * Hook: hydrate the rule from the DTO. The category was already
+     * resolved + validated by the controller (ownership, system-flag,
+     * existence) — the DTO carries only the id, the manager receives
+     * the resolved instance to keep this hook side-effect free.
+     */
+    protected function applyInput(PersonalFinanceCategorizationRuleInterface $rule, PersonalFinanceCategorizationRuleInputInterface $input, PersonalFinanceCategoryInterface $category): void
+    {
+        $this->applyCategory($rule, $category);
+    }
+
+    protected function applyCategory(PersonalFinanceCategorizationRuleInterface $rule, PersonalFinanceCategoryInterface $category): void
+    {
+        $rule->setCategory($category);
     }
 
     protected function auditCreated(PersonalFinanceCategorizationRuleInterface $rule): void

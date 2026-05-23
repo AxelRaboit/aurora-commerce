@@ -8,6 +8,8 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Dto\PaginationRequest;
+use Aurora\Core\Validation\Service\PayloadValidator;
+use Aurora\Module\PersonalFinance\Categorization\Dto\PersonalFinanceCategorizationRuleInputFactoryInterface;
 use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
 use Aurora\Module\PersonalFinance\Categorization\Manager\PersonalFinanceCategorizationRuleManagerInterface;
 use Aurora\Module\PersonalFinance\Categorization\Repository\PersonalFinanceCategorizationRuleRepository;
@@ -34,10 +36,12 @@ final class PersonalFinanceCategorizationRulesController extends AbstractControl
     public function __construct(
         private readonly PersonalFinanceCategorizationRuleManagerInterface $ruleManager,
         private readonly PersonalFinanceCategorizationRuleRepository $ruleRepository,
+        private readonly PersonalFinanceCategorizationRuleInputFactoryInterface $ruleInputFactory,
         private readonly PersonalFinanceCategorizationRuleSerializerInterface $ruleSerializer,
         private readonly PersonalFinanceCategorizationSuggestServiceInterface $suggestService,
         private readonly PersonalFinanceCategoryRepository $categoryRepository,
         private readonly PersonalFinanceCategorizationRulesViewBuilder $viewBuilder,
+        private readonly PayloadValidator $payloadValidator,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -87,13 +91,14 @@ final class PersonalFinanceCategorizationRulesController extends AbstractControl
             return $this->jsonNotFound();
         }
 
-        $payload = $this->decodeJson($request);
-        $categoryId = isset($payload['categoryId']) ? (int) $payload['categoryId'] : null;
-        if (null === $categoryId) {
-            return $this->jsonInvalidInput(['categoryId' => 'personal_finance.categorization.errors.category_required']);
+        $input = $this->ruleInputFactory->fromArray($this->decodeJson($request));
+
+        $errors = $this->payloadValidator->errors($input);
+        if ([] !== $errors) {
+            return $this->jsonInvalidInput($errors);
         }
 
-        $category = $this->categoryRepository->find($categoryId);
+        $category = $this->categoryRepository->find($input->getCategoryId());
         if (!$category instanceof PersonalFinanceCategoryInterface) {
             return $this->jsonInvalidInput(['categoryId' => 'personal_finance.categorization.errors.category_not_found']);
         }
@@ -101,7 +106,7 @@ final class PersonalFinanceCategorizationRulesController extends AbstractControl
             return $this->jsonInvalidInput(['categoryId' => 'personal_finance.categorization.errors.category_system']);
         }
 
-        $this->ruleManager->updateCategory($rule, $category);
+        $this->ruleManager->update($rule, $input, $category);
 
         return $this->jsonSuccess(['rule' => $this->ruleSerializer->serialize($rule)]);
     }

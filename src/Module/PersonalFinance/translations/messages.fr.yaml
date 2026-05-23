@@ -87,6 +87,9 @@ personal_finance:
       invitation_token_invalid: Lien d'invitation invalide, expiré ou déjà utilisé.
       invitation_already_pending: Une invitation est déjà en cours pour cet email.
       invitation_owner_role_forbidden: 'Le rôle Propriétaire ne peut pas être attribué via invitation — utiliser le transfert d''ownership.'
+      invitation_email_required: L'adresse email est requise.
+      invitation_email_format: L'adresse email n'est pas valide.
+      invitation_role_required: Le rôle est requis.
   categories:
     title: Catégories
     empty: Aucune catégorie pour ce portefeuille.

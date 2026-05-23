@@ -6,6 +6,7 @@ namespace Aurora\Module\PersonalFinance\Wallet\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
+use Aurora\Module\PersonalFinance\Wallet\Dto\PersonalFinanceWalletInvitationInputInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitation;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
@@ -33,24 +34,23 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
 
     public function send(
         PersonalFinanceWalletInterface $wallet,
-        string $email,
-        PersonalFinanceWalletRoleEnum $role,
+        PersonalFinanceWalletInvitationInputInterface $input,
         CoreUserInterface $invitedBy,
     ): PersonalFinanceWalletInvitationInterface {
-        if (!in_array($role, PersonalFinanceWalletRoleEnum::invitable(), true)) {
+        $role = $input->getRole();
+        if (null === $role || !in_array($role, PersonalFinanceWalletRoleEnum::invitable(), true)) {
             throw new DomainException('Owner role cannot be assigned via invitation. Use transferOwnership instead.');
         }
 
-        $existing = $this->invitationRepository->findOneByWalletAndEmail($wallet, $email);
+        $existing = $this->invitationRepository->findOneByWalletAndEmail($wallet, $input->getEmail());
         if ($existing instanceof PersonalFinanceWalletInvitationInterface && $existing->isPending()) {
             throw new DomainException('A pending invitation already exists for this email on this wallet.');
         }
 
         $invitation = $this->createInvitation();
+        $this->applyInput($invitation, $input);
         $invitation->setWallet($wallet);
         $invitation->setInvitedBy($invitedBy);
-        $invitation->setEmail($email);
-        $invitation->setRole($role);
         $invitation->setToken($this->generateToken());
         $invitation->setExpiresAt($this->computeExpiresAt());
 
@@ -60,6 +60,12 @@ class PersonalFinanceWalletInvitationManager implements PersonalFinanceWalletInv
         $this->auditCreated($invitation);
 
         return $invitation;
+    }
+
+    protected function applyInput(PersonalFinanceWalletInvitationInterface $invitation, PersonalFinanceWalletInvitationInputInterface $input): void
+    {
+        $invitation->setEmail($input->getEmail());
+        $invitation->setRole($input->getRole());
     }
 
     public function accept(string $token, CoreUserInterface $accepter): ?PersonalFinanceWalletMemberInterface

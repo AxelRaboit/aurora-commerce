@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Transaction\Attachment\Service;
 
 use Aurora\Core\Storage\BinaryFileServer;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
+use Aurora\Module\PersonalFinance\Transaction\Attachment\Enum\PersonalFinanceAttachmentMimeTypeEnum;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
@@ -27,14 +27,14 @@ class PersonalFinanceTransactionAttachmentService implements PersonalFinanceTran
      * Domain allowlist of MIME types accepted as a receipt. Matches
      * Spendly: common raster images + PDF. SVG excluded (XSS risk).
      *
-     * @var list<MimeTypeEnum>
+     * @var list<PersonalFinanceAttachmentMimeTypeEnum>
      */
     private const array ALLOWED_MIME_TYPES = [
-        MimeTypeEnum::Jpeg,
-        MimeTypeEnum::Jpg,
-        MimeTypeEnum::Png,
-        MimeTypeEnum::Webp,
-        MimeTypeEnum::Pdf,
+        PersonalFinanceAttachmentMimeTypeEnum::Jpeg,
+        PersonalFinanceAttachmentMimeTypeEnum::Jpg,
+        PersonalFinanceAttachmentMimeTypeEnum::Png,
+        PersonalFinanceAttachmentMimeTypeEnum::Webp,
+        PersonalFinanceAttachmentMimeTypeEnum::Pdf,
     ];
 
     public function __construct(
@@ -58,7 +58,7 @@ class PersonalFinanceTransactionAttachmentService implements PersonalFinanceTran
         }
 
         $mime = $file->getMimeType() ?? '';
-        $mimeEnum = MimeTypeEnum::tryFrom($mime);
+        $mimeEnum = PersonalFinanceAttachmentMimeTypeEnum::tryFrom($mime);
         if (null === $mimeEnum || !in_array($mimeEnum, self::ALLOWED_MIME_TYPES, true)) {
             throw new FileException(sprintf('Unsupported MIME type "%s".', $mime));
         }
