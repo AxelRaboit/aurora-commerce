@@ -23,8 +23,11 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDocumentFilters } from "./composables/useDocumentFilters.js";
 import { useDocumentDetail } from "./composables/useDocumentDetail.js";
+import { useDocumentsDisplay, DOCUMENT_SORT_FIELDS } from "./composables/useDocumentsDisplay.js";
+import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
+import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
-import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode } from "lucide-vue-next";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
 
@@ -43,6 +46,7 @@ const props = defineProps({
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    bulkDeletePath: { type: String, default: "" },
     listPath: { type: String, required: true },
     uploadPath: { type: String, required: true },
 });
@@ -83,6 +87,23 @@ const {
     showEdit, editingDoc, editForm, uploadingEdit, editErrors, editLoading, openEdit, onLocalFileEdit, submitEdit,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
 } = useDocumentsForm(props.createPath, props.updatePath, props.deletePath, reset, props.uploadPath);
+
+const { viewMode, setViewMode, sortBy, sortDir, setSort, displayedItems } = useDocumentsDisplay(items);
+const { selectedIds, isSelecting, toggle: toggleSelect, clear: clearSelection } = useMultiSelection();
+
+async function doBulkDelete() {
+    if (!props.bulkDeletePath || selectedIds.value.size === 0) return;
+    const ids = [...selectedIds.value];
+    const res = await fetch(props.bulkDeletePath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+        body: JSON.stringify({ ids }),
+    });
+    if (!res.ok) return;
+    clearSelection();
+    isSelecting.value = false;
+    await reset();
+}
 </script>
 
 <template>
@@ -151,11 +172,76 @@ const {
             </AppButton>
         </div>
 
+        <!-- View toolbar: sort + view mode + multiselect -->
+        <div class="flex flex-wrap items-center gap-1.5">
+            <div class="flex gap-1 border border-line/60 rounded-lg p-0.5">
+                <AppTab
+                    v-for="s in DOCUMENT_SORT_FIELDS"
+                    :key="s.key"
+                    size="xs"
+                    :active="sortBy === s.key"
+                    :title="s.labelKey ? t(s.labelKey) : s.label"
+                    v-on:click="setSort(s.key)"
+                >
+                    {{ s.labelKey ? t(s.labelKey) : s.label }}
+                    <SortAsc v-if="sortBy === s.key && sortDir === 'asc'" class="w-3 h-3" :stroke-width="2" />
+                    <SortDesc v-else-if="sortBy === s.key" class="w-3 h-3" :stroke-width="2" />
+                </AppTab>
+            </div>
+            <div class="flex border border-line/60 rounded-lg p-0.5">
+                <AppIconButton
+                    size="sm"
+                    variant="ghost"
+                    :class="viewMode === 'grid' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                    v-on:click="setViewMode('grid')"
+                >
+                    <LayoutGrid class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+                <AppIconButton
+                    size="sm"
+                    variant="ghost"
+                    :class="viewMode === 'list' ? 'bg-surface-3 text-primary' : 'text-muted hover:text-primary'"
+                    v-on:click="setViewMode('list')"
+                >
+                    <List class="w-4 h-4" :stroke-width="2" />
+                </AppIconButton>
+            </div>
+            <AppIconButton
+                v-if="can('ged.documents.delete')"
+                size="sm"
+                variant="ghost"
+                class="border border-line/60"
+                :class="isSelecting ? 'bg-accent-500/15 text-accent-400' : 'text-muted hover:text-primary'"
+                v-on:click="isSelecting = !isSelecting; if (!isSelecting) clearSelection()"
+            >
+                <CheckSquare class="w-4 h-4" :stroke-width="2" />
+            </AppIconButton>
+            <AppButton
+                v-if="isSelecting && selectedIds.size > 0"
+                variant="danger"
+                size="sm"
+                class="ml-auto"
+                v-on:click="doBulkDelete"
+            >
+                <Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.delete") }} ({{ selectedIds.size }})
+            </AppButton>
+        </div>
+
         <div class="relative space-y-4">
-            <!-- Mobile cards -->
-            <div class="sm:hidden space-y-2">
-                <AppNoData v-if="!items?.length" :message="t('backend.ged.documents.empty')" />
-                <div v-for="doc in items" :key="doc.id" class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm">
+            <!-- Mobile cards / grid view -->
+            <div :class="viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3' : 'sm:hidden space-y-2'">
+                <AppNoData v-if="!displayedItems?.length" :message="t('backend.ged.documents.empty')" />
+                <div
+                    v-for="doc in displayedItems"
+                    :key="doc.id"
+                    class="bg-surface border border-line/60 rounded-xl overflow-hidden shadow-sm relative"
+                    :class="{ 'ring-2 ring-accent-400': isSelecting && selectedIds.has(doc.id), 'cursor-pointer': isSelecting }"
+                    v-on:click="isSelecting ? toggleSelect(doc.id) : null"
+                >
+                    <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10 bg-surface/90 rounded p-0.5" v-on:click.stop="toggleSelect(doc.id)">
+                        <CheckSquare v-if="selectedIds.has(doc.id)" class="w-4 h-4 text-accent-400" :stroke-width="2" />
+                        <Square v-else class="w-4 h-4 text-muted" :stroke-width="2" />
+                    </div>
                     <div class="flex items-start gap-3 p-4">
                         <!-- Thumbnail or file icon -->
                         <div class="shrink-0 mt-0.5">
@@ -217,11 +303,12 @@ const {
                 </div>
             </div>
 
-            <!-- Desktop table -->
-            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
+            <!-- Desktop table (list view) -->
+            <div v-show="viewMode === 'list'" class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto scrollbar-thin">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
+                            <th v-if="isSelecting" class="w-8 px-3 py-3" />
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.ged.documents.title") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.documents.category") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.status") }}</th>
@@ -232,7 +319,17 @@ const {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line/40">
-                        <tr v-for="doc in items" :key="doc.id" class="group hover:bg-surface-2/40 transition-colors">
+                        <tr
+                            v-for="doc in displayedItems"
+                            :key="doc.id"
+                            class="group hover:bg-surface-2/40 transition-colors"
+                            :class="{ 'bg-accent-500/10': isSelecting && selectedIds.has(doc.id), 'cursor-pointer': isSelecting }"
+                            v-on:click="isSelecting ? toggleSelect(doc.id) : null"
+                        >
+                            <td v-if="isSelecting" class="px-3 py-3" v-on:click.stop="toggleSelect(doc.id)">
+                                <CheckSquare v-if="selectedIds.has(doc.id)" class="w-4 h-4 text-accent-400" :stroke-width="2" />
+                                <Square v-else class="w-4 h-4 text-muted" :stroke-width="2" />
+                            </td>
                             <td class="px-6 py-3">
                                 <p class="font-medium text-primary">{{ doc.title }}</p>
                                 <div class="flex items-center gap-2 mt-0.5 flex-wrap">

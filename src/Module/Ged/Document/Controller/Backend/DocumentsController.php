@@ -126,6 +126,17 @@ final class DocumentsController extends AbstractController
         return $this->jsonSuccess();
     }
 
+    #[Route('/bulk-delete', name: '_bulk_delete', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.delete')]
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $payload = $this->decodeJson($request);
+        $ids = array_values(array_filter(array_map(intval(...), (array) ($payload['ids'] ?? []))));
+        $count = $this->manager->bulkDelete($ids);
+
+        return $this->jsonSuccess(['deleted' => $count]);
+    }
+
     /**
      * Uploads a file to GED storage (`var/uploads/ged/Y/m/<slug>-<uniq>.<ext>`)
      * without persisting any DB row yet. Returns the file metadata the form

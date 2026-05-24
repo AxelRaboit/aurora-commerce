@@ -14,4 +14,7 @@ interface DocumentManagerInterface
     public function update(DocumentInterface $document, DocumentInputInterface $input): void;
 
     public function delete(DocumentInterface $document): void;
+
+    /** @param list<int> $ids */
+    public function bulkDelete(array $ids): int;
 }

@@ -12,6 +12,7 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
 use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
@@ -33,6 +34,7 @@ class DocumentManager implements DocumentManagerInterface
         protected readonly DocumentTagRepository $tagRepository,
         protected readonly DocumentFolderRepository $folderRepository,
         protected readonly DocumentVersionRepository $versionRepository,
+        protected readonly DocumentRepository $documentRepository,
     ) {}
 
     public function create(DocumentInputInterface $input): DocumentInterface
@@ -79,6 +81,29 @@ class DocumentManager implements DocumentManagerInterface
 
         $this->entityManager->remove($document);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Bulk-delete by id with a single flush. Audits each removal so the log
+     * stays granular. Returns the number of rows actually removed.
+     *
+     * @param list<int> $ids
+     */
+    public function bulkDelete(array $ids): int
+    {
+        if ([] === $ids) {
+            return 0;
+        }
+
+        $documents = $this->documentRepository->findBy(['id' => $ids]);
+        foreach ($documents as $document) {
+            $this->auditDeleted($document);
+            $this->entityManager->remove($document);
+        }
+
+        $this->entityManager->flush();
+
+        return count($documents);
     }
 
     protected function createDocument(): DocumentInterface

@@ -13,6 +13,7 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
 use Aurora\Module\Ged\Document\Manager\DocumentManager;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
@@ -58,6 +59,7 @@ final class DocumentManagerTest extends TestCase
             $this->tagRepository,
             $this->folderRepository,
             $this->versionRepository,
+            $this->createStub(DocumentRepository::class),
         );
     }
 
