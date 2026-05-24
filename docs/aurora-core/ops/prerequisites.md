@@ -49,8 +49,15 @@ rien en les omettant.
 | Binaire | Module | Dégradation si absent | Install |
 |---------|--------|-----------------------|---------|
 | `pdftk` (ou `pdftk-java`) | PDF Forms | Documents créés en statut *Brouillon* | `sudo apt install pdftk-java` |
+| `pdftoppm` (poppler-utils) | GED — aperçus PDF | Recours auto à `gs` (qualité moindre) ; si ni l'un ni l'autre n'est présent, fallback sur l'icône | `sudo apt install poppler-utils` |
+| `gs` (Ghostscript) | GED — aperçus PDF (fallback) | Même chose que ci-dessus quand `pdftoppm` est aussi absent | `sudo apt install ghostscript` |
 | `ssh` (OpenSSH client) | MountPoint | Tunnels SSH KO → erreur de connexion | Pré-installé sur Linux/macOS |
 | `ollama` | Billing OCR + Assistant IA | OCR met les jobs en erreur ; Assistant renvoie *Ollama HTTP transport error* | [Section 4](#4-ollama--mod%C3%A8les) |
+
+> **GED PDF thumbnails** : `PdfThumbnailGenerator` essaie d'abord `pdftoppm`,
+> puis `gs`, puis renvoie `null` (icône fallback côté Vue). Pour
+> re-générer les aperçus après une install :
+> `php bin/console aurora:ged:thumbnails:generate --force`.
 
 ---
 
