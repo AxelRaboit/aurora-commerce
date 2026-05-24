@@ -53,6 +53,9 @@ backend:
       create: Nouveau document
       edit: "Modifier le document {title}"
       searchPlaceholder: Rechercher un document…
+      picker_title: Choisir un document
+      picker_empty: Aucun document disponible
+      picker_confirm: Sélectionner
       created: Document créé avec succès
       updated: Document mis à jour
       deleted: Document supprimé
