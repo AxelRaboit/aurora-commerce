@@ -579,9 +579,5 @@ const {
                 </AppModalFooter>
             </template>
         </AppModal>
-
-        <!-- Media pickers -->
-        <MediaPickerModal :show="showMediaPickerCreate" :list-path="mediaPickerPath" v-on:close="showMediaPickerCreate = false" v-on:select="onFilePickedCreate" />
-        <MediaPickerModal :show="showMediaPickerEdit" :list-path="mediaPickerPath" v-on:close="showMediaPickerEdit = false" v-on:select="onFilePickedEdit" />
     </div>
 </template>

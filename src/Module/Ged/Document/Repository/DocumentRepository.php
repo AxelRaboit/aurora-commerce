@@ -33,9 +33,8 @@ class DocumentRepository extends ResolveTargetEntityRepository
     ): array {
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.category', 'c')
-            ->leftJoin('d.file', 'f')
             ->leftJoin('d.folder', 'folder')
-            ->addSelect('c', 'f', 'folder')
+            ->addSelect('c', 'folder')
             ->orderBy('d.createdAt', Order::Descending->value);
         $countQb = $this->createQueryBuilder('d')->select('COUNT(d.id)');
 
