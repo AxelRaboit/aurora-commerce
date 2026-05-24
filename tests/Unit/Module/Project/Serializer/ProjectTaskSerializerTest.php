@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Serializer;
 
 use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
-use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\AbstractProjectTask;
 use Aurora\Module\Project\Entity\AbstractProjectTaskComment;
@@ -35,7 +35,7 @@ final class ProjectTaskSerializerTest extends TestCase
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
-        $this->serializer = new ProjectTaskSerializer($translator, new ProjectTaskCommentSerializer(), $this->makeMediaUrlGenerator());
+        $this->serializer = new ProjectTaskSerializer($translator, new ProjectTaskCommentSerializer(), $this->makeUploadUrlGenerator());
     }
 
     private function makeTask(): ProjectTask
@@ -128,10 +128,10 @@ final class ProjectTaskSerializerTest extends TestCase
         (new ReflectionProperty(User::class, 'id'))->setValue($watcher, 22);
         $task->addWatcher($watcher);
 
-        $media = new Media();
-        $media->setOriginalName('plan.pdf')->setPath('plan.pdf')->setMimeType('application/pdf');
-        (new ReflectionProperty(Media::class, 'id'))->setValue($media, 33);
-        $task->addAttachment($media);
+        $document = new Document();
+        $document->setTitle('Plan')->setOriginalName('plan.pdf')->setFilePath('ged/plan.pdf')->setMimeType('application/pdf');
+        (new ReflectionProperty(Document::class, 'id'))->setValue($document, 33);
+        $task->addAttachment($document);
 
         $sprint = new ProjectSprint();
         $sprint->setProject($task->getProject())->setName('Sprint 1');

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -16,14 +16,14 @@ class ProjectTaskAttachmentManager implements ProjectTaskAttachmentManagerInterf
 {
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
-        protected readonly MediaRepository $mediaRepository,
+        protected readonly DocumentRepository $documentRepository,
         protected readonly AuditLogger $auditLogger,
     ) {}
 
-    /** @param list<int> $mediaIds */
-    public function attach(ProjectTaskInterface $task, array $mediaIds): int
+    /** @param list<int> $documentIds */
+    public function attach(ProjectTaskInterface $task, array $documentIds): int
     {
-        if ([] === $mediaIds) {
+        if ([] === $documentIds) {
             return 0;
         }
 
@@ -33,12 +33,12 @@ class ProjectTaskAttachmentManager implements ProjectTaskAttachmentManagerInterf
         }
 
         $added = 0;
-        foreach ($this->mediaRepository->findBy(['id' => $mediaIds]) as $media) {
-            if (isset($existingIds[(int) $media->getId()])) {
+        foreach ($this->documentRepository->findBy(['id' => $documentIds]) as $document) {
+            if (isset($existingIds[(int) $document->getId()])) {
                 continue;
             }
 
-            $task->addAttachment($media);
+            $task->addAttachment($document);
             ++$added;
         }
 
@@ -53,18 +53,18 @@ class ProjectTaskAttachmentManager implements ProjectTaskAttachmentManagerInterf
         return $added;
     }
 
-    public function detach(ProjectTaskInterface $task, MediaInterface $media): void
+    public function detach(ProjectTaskInterface $task, DocumentInterface $document): void
     {
-        if (!$task->getAttachments()->contains($media)) {
+        if (!$task->getAttachments()->contains($document)) {
             return;
         }
 
-        $task->removeAttachment($media);
+        $task->removeAttachment($document);
         $this->entityManager->flush();
 
         $this->auditLogger->log('project', 'task.attachment.removed', 'ProjectTask', $task->getId(), [
             'projectId' => $task->getProject()->getId(),
-            'mediaId' => $media->getId(),
+            'documentId' => $document->getId(),
         ]);
     }
 }

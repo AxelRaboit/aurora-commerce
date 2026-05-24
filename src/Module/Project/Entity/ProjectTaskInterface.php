@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;
@@ -75,12 +75,12 @@ interface ProjectTaskInterface extends TimestampableInterface
     /** @return Collection<int, ProjectTaskCommentInterface> */
     public function getComments(): Collection;
 
-    /** @return Collection<int, MediaInterface> */
+    /** @return Collection<int, DocumentInterface> */
     public function getAttachments(): Collection;
 
-    public function addAttachment(MediaInterface $media): static;
+    public function addAttachment(DocumentInterface $document): static;
 
-    public function removeAttachment(MediaInterface $media): static;
+    public function removeAttachment(DocumentInterface $document): static;
 
     /** @return Collection<int, CoreUserInterface> */
     public function getWatchers(): Collection;

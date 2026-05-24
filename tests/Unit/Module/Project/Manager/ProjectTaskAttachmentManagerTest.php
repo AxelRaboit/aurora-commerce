@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Manager;
 
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectTask;
 use Aurora\Module\Project\Manager\ProjectTaskAttachmentManager;
@@ -15,12 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 final class ProjectTaskAttachmentManagerTest extends TestCase
 {
-    private function makeMedia(int $id): MediaInterface
+    private function makeDocument(int $id): DocumentInterface
     {
-        $media = $this->createStub(MediaInterface::class);
-        $media->method('getId')->willReturn($id);
+        $document = $this->createStub(DocumentInterface::class);
+        $document->method('getId')->willReturn($id);
 
-        return $media;
+        return $document;
     }
 
     public function testAttachReturnsZeroForEmptyArray(): void
@@ -28,7 +28,7 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::never())->method('flush');
 
-        $repo = $this->createStub(MediaRepository::class);
+        $repo = $this->createStub(DocumentRepository::class);
         $audit = $this->createMock(AuditLogger::class);
         $audit->expects(self::never())->method('log');
 
@@ -38,13 +38,13 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
         self::assertSame(0, $manager->attach($task, []));
     }
 
-    public function testAttachAddsNewMedia(): void
+    public function testAttachAddsNewDocuments(): void
     {
-        $media1 = $this->makeMedia(1);
-        $media2 = $this->makeMedia(2);
+        $document1 = $this->makeDocument(1);
+        $document2 = $this->makeDocument(2);
 
-        $repo = $this->createStub(MediaRepository::class);
-        $repo->method('findBy')->willReturn([$media1, $media2]);
+        $repo = $this->createStub(DocumentRepository::class);
+        $repo->method('findBy')->willReturn([$document1, $document2]);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())->method('flush');
@@ -63,12 +63,12 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
         self::assertCount(2, $task->getAttachments());
     }
 
-    public function testAttachSkipsExistingMedia(): void
+    public function testAttachSkipsExistingDocuments(): void
     {
-        $existing = $this->makeMedia(1);
-        $new = $this->makeMedia(2);
+        $existing = $this->makeDocument(1);
+        $new = $this->makeDocument(2);
 
-        $repo = $this->createStub(MediaRepository::class);
+        $repo = $this->createStub(DocumentRepository::class);
         $repo->method('findBy')->willReturn([$existing, $new]);
 
         $em = $this->createStub(EntityManagerInterface::class);
@@ -80,10 +80,10 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
         $manager = new ProjectTaskAttachmentManager($em, $repo, $audit);
         $added = $manager->attach($task, [1, 2]);
 
-        self::assertSame(1, $added, 'only new media counted');
+        self::assertSame(1, $added, 'only new documents counted');
     }
 
-    public function testDetachDoesNothingForUnknownMedia(): void
+    public function testDetachDoesNothingForUnknownDocument(): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::never())->method('flush');
@@ -93,13 +93,13 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
 
         $task = (new ProjectTask())->setProject(new Project());
 
-        $manager = new ProjectTaskAttachmentManager($em, $this->createStub(MediaRepository::class), $audit);
-        $manager->detach($task, $this->makeMedia(1));
+        $manager = new ProjectTaskAttachmentManager($em, $this->createStub(DocumentRepository::class), $audit);
+        $manager->detach($task, $this->makeDocument(1));
     }
 
-    public function testDetachRemovesMediaAndAudits(): void
+    public function testDetachRemovesDocumentAndAudits(): void
     {
-        $media = $this->makeMedia(1);
+        $document = $this->makeDocument(1);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())->method('flush');
@@ -110,10 +110,10 @@ final class ProjectTaskAttachmentManagerTest extends TestCase
             ->with('project', 'task.attachment.removed', 'ProjectTask', self::anything(), self::anything());
 
         $task = (new ProjectTask())->setProject(new Project());
-        $task->addAttachment($media);
+        $task->addAttachment($document);
 
-        $manager = new ProjectTaskAttachmentManager($em, $this->createStub(MediaRepository::class), $audit);
-        $manager->detach($task, $media);
+        $manager = new ProjectTaskAttachmentManager($em, $this->createStub(DocumentRepository::class), $audit);
+        $manager->detach($task, $document);
 
         self::assertCount(0, $task->getAttachments());
     }

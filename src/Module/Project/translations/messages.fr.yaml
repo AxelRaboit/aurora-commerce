@@ -106,7 +106,8 @@ backend:
       deleteWarning: Cette action est irréversible.
       commentPlaceholder: Écrire un commentaire…
       timeEntryNote: Note…
-      attachmentsHint: Glissez-déposez des fichiers depuis le module Médias.
+      attachmentsHint: Sélectionnez un document existant dans la GED.
+      attachmentsAdd: Ajouter un document
       fields:
         title: Titre
         description: Description

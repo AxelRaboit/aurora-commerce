@@ -177,22 +177,22 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
     }
 
     // ── Attachments ──────────────────────────────────────────────────────────
-    /** Attach an array of media IDs (already uploaded somewhere — e.g. a media picker). */
-    async function attachMedia(mediaIds) {
-        if (!editingTask.value || !mediaIds.length) return;
+    /** Attach an array of GED document IDs (picked via DocumentPickerModal). */
+    async function attachDocument(documentIds) {
+        if (!editingTask.value || !documentIds.length) return;
         const url = buildPath(paths.attachmentsAttach, {
             taskId: editingTask.value.id,
         });
-        const data = await request(url, { mediaIds });
+        const data = await request(url, { documentIds });
         if (!data) return;
         await reloadDetail();
     }
 
-    async function detachMedia(media) {
+    async function detachDocument(document) {
         if (!editingTask.value) return;
         const url = buildPath(paths.attachmentDetach, {
             taskId: editingTask.value.id,
-            mediaId: media.id,
+            documentId: document.id,
         });
         const data = await request(url);
         if (!data) return;
@@ -219,7 +219,7 @@ export function useTaskExtras(paths, editingTask, reloadDetail) {
         logTime,
         deleteTimeEntry,
 
-        attachMedia,
-        detachMedia,
+        attachDocument,
+        detachDocument,
     };
 }

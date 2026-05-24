@@ -15,7 +15,7 @@ const PATHS = {
     timeEntryDelete: "/backend/projects/time-entries/__entryId__/delete",
     attachmentsAttach: "/backend/projects/tasks/__taskId__/attachments",
     attachmentDetach:
-        "/backend/projects/tasks/__taskId__/attachments/__mediaId__",
+        "/backend/projects/tasks/__taskId__/attachments/__documentId__",
 };
 
 function mountWithComposable(setupFn) {
@@ -146,36 +146,36 @@ describe("useTaskExtras — time tracking", () => {
 });
 
 describe("useTaskExtras — attachments", () => {
-    it("attachMedia POSTs media IDs", async () => {
+    it("attachDocument POSTs document IDs", async () => {
         const editingTask = ref({ id: 8, items: [] });
         const api = mountWithComposable(() =>
             useTaskExtras(PATHS, editingTask, vi.fn()),
         );
 
-        await api.attachMedia([3, 4, 5]);
+        await api.attachDocument([3, 4, 5]);
 
         const [url, options] = fetch.mock.calls[0];
         expect(url).toBe("/backend/projects/tasks/8/attachments");
-        expect(JSON.parse(options.body)).toEqual({ mediaIds: [3, 4, 5] });
+        expect(JSON.parse(options.body)).toEqual({ documentIds: [3, 4, 5] });
     });
 
-    it("attachMedia is a no-op for an empty list", async () => {
+    it("attachDocument is a no-op for an empty list", async () => {
         const editingTask = ref({ id: 1, items: [] });
         const api = mountWithComposable(() =>
             useTaskExtras(PATHS, editingTask, vi.fn()),
         );
 
-        await api.attachMedia([]);
+        await api.attachDocument([]);
         expect(fetch).not.toHaveBeenCalled();
     });
 
-    it("detachMedia POSTs to the per-media endpoint", async () => {
+    it("detachDocument POSTs to the per-document endpoint", async () => {
         const editingTask = ref({ id: 9, items: [] });
         const api = mountWithComposable(() =>
             useTaskExtras(PATHS, editingTask, vi.fn()),
         );
 
-        await api.detachMedia({ id: 33 });
+        await api.detachDocument({ id: 33 });
 
         const [url] = fetch.mock.calls[0];
         expect(url).toBe("/backend/projects/tasks/9/attachments/33");

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use DateTimeInterface;
@@ -17,7 +17,7 @@ class ProjectTaskSerializer implements ProjectTaskSerializerInterface
     public function __construct(
         protected readonly TranslatorInterface $translator,
         protected readonly ProjectTaskCommentSerializerInterface $commentSerializer,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly UploadUrlGenerator $uploadUrlGenerator,
     ) {}
 
     public function serialize(ProjectTaskInterface $task): array
@@ -63,11 +63,11 @@ class ProjectTaskSerializer implements ProjectTaskSerializerInterface
             'itemsDone' => $itemsDoneCount,
             'comments' => array_map($this->commentSerializer->serialize(...), $task->getComments()->toArray()),
             'commentCount' => $task->getComments()->count(),
-            'attachments' => array_map(fn ($media): array => [
-                'id' => $media->getId(),
-                'name' => $media->getOriginalName(),
-                'url' => $this->mediaUrlGenerator->publicUrl($media),
-                'mime' => $media->getMimeType(),
+            'attachments' => array_map(fn ($document): array => [
+                'id' => $document->getId(),
+                'name' => $document->getOriginalName() ?? $document->getTitle(),
+                'url' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
+                'mime' => $document->getMimeType(),
             ], $task->getAttachments()->toArray()),
             'watcherIds' => array_map(static fn ($watcher): int => (int) $watcher->getId(), $task->getWatchers()->toArray()),
             'sprintId' => $task->getSprint()?->getId(),

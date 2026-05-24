@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
@@ -132,15 +132,15 @@ final class ProjectTaskTest extends TestCase
     public function testAddAndRemoveAttachment(): void
     {
         $task = new ProjectTask();
-        $media = $this->createStub(MediaInterface::class);
+        $document = $this->createStub(DocumentInterface::class);
 
-        $task->addAttachment($media);
+        $task->addAttachment($document);
         self::assertCount(1, $task->getAttachments());
 
-        $task->addAttachment($media);
+        $task->addAttachment($document);
         self::assertCount(1, $task->getAttachments(), 'duplicate ignored');
 
-        $task->removeAttachment($media);
+        $task->removeAttachment($document);
         self::assertCount(0, $task->getAttachments());
     }
 

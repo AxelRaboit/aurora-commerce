@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use DateTimeImmutable;
@@ -74,7 +74,7 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     protected Collection $comments;
 
-    /** @var Collection<int, MediaInterface> */
+    /** @var Collection<int, DocumentInterface> */
     protected Collection $attachments;
 
     /** @var Collection<int, CoreUserInterface> */
@@ -267,18 +267,18 @@ abstract class AbstractProjectTask implements ProjectTaskInterface
         return $this->attachments;
     }
 
-    public function addAttachment(MediaInterface $media): static
+    public function addAttachment(DocumentInterface $document): static
     {
-        if (!$this->attachments->contains($media)) {
-            $this->attachments->add($media);
+        if (!$this->attachments->contains($document)) {
+            $this->attachments->add($document);
         }
 
         return $this;
     }
 
-    public function removeAttachment(MediaInterface $media): static
+    public function removeAttachment(DocumentInterface $document): static
     {
-        $this->attachments->removeElement($media);
+        $this->attachments->removeElement($document);
 
         return $this;
     }

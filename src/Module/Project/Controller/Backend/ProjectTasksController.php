@@ -8,7 +8,7 @@ use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
-use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectTaskCommentInputFactoryInterface;
 use Aurora\Module\Project\Dto\ProjectTaskInputFactoryInterface;
@@ -37,7 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Project tasks sub-domain — task CRUD, reorder, checklist items, time
- * entries, comments and media attachments. Split from `ProjectsController`
+ * entries, comments and GED document attachments. Split from `ProjectsController`
  * to keep each controller focused on one sub-domain.
  *
  * All route names preserved (`backend_projects_task_*`,
@@ -193,24 +193,24 @@ final class ProjectTasksController extends AbstractController
 
     #[Route('/tasks/{taskId}/attachments', name: '_task_attachments_attach', methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('project.tasks.manage')]
-    public function attachMedia(#[MapEntity(id: 'taskId')] ProjectTask $task, Request $request): JsonResponse
+    public function attachDocument(#[MapEntity(id: 'taskId')] ProjectTask $task, Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);
-        $mediaIds = array_map(intval(...), (array) ($data['mediaIds'] ?? []));
-        $count = $this->attachmentManager->attach($task, $mediaIds);
+        $documentIds = array_map(intval(...), (array) ($data['documentIds'] ?? []));
+        $count = $this->attachmentManager->attach($task, $documentIds);
 
         return $this->jsonSuccess(['count' => $count]);
     }
 
-    #[Route('/tasks/{taskId}/attachments/{mediaId}', name: '_task_attachment_detach', methods: [HttpMethodEnum::Post->value])]
+    #[Route('/tasks/{taskId}/attachments/{documentId}', name: '_task_attachment_detach', methods: [HttpMethodEnum::Post->value])]
     #[IsGranted('project.tasks.manage')]
-    public function detachMedia(
+    public function detachDocument(
         #[MapEntity(id: 'taskId')]
         ProjectTask $task,
-        #[MapEntity(id: 'mediaId')]
-        Media $media,
+        #[MapEntity(id: 'documentId')]
+        Document $document,
     ): JsonResponse {
-        $this->attachmentManager->detach($task, $media);
+        $this->attachmentManager->detach($task, $document);
 
         return $this->jsonSuccess();
     }

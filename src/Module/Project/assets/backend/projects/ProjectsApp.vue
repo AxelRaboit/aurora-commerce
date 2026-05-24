@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { VueDraggable } from "vue-draggable-plus";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
@@ -37,6 +38,7 @@ import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
+import DocumentPickerModal from "@ged/backend/documents/components/DocumentPickerModal.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import { Plus, Pencil, Trash2, Activity, X, MessageSquare, CheckSquare, Square, Clock, Paperclip, Tag, Calendar, Bookmark, FileText, Eye, Save, Send, ArrowLeft, FolderKanban } from "lucide-vue-next";
@@ -69,6 +71,7 @@ const props = defineProps({
     taskCommentDeletePath: { type: String, default: "" },
     taskAttachmentsAttachPath: { type: String, default: "" },
     taskAttachmentDetachPath: { type: String, default: "" },
+    gedDocumentsListPath: { type: String, default: "" },
     sprintCreatePath: { type: String, default: "" },
     sprintUpdatePath: { type: String, default: "" },
     sprintDeletePath: { type: String, default: "" },
@@ -224,6 +227,12 @@ const taskExtras = useTaskExtras(
     editingTask,
     reloadProject,
 );
+
+const showAttachmentPicker = ref(false);
+async function onAttachmentPicked(doc) {
+    await taskExtras.attachDocument([doc.id]);
+    showAttachmentPicker.value = false;
+}
 
 const sprintsManage = useSprintsManage(
     { create: props.sprintCreatePath, update: props.sprintUpdatePath, delete: props.sprintDeletePath },
@@ -981,14 +990,23 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                         <span v-if="editingTask.attachments?.length" class="text-xs text-muted">{{ editingTask.attachments.length }}</span>
                     </div>
                     <ul v-if="editingTask.attachments?.length" class="space-y-1">
-                        <li v-for="media in editingTask.attachments" :key="media.id" class="flex items-center gap-2 text-xs group">
+                        <li v-for="doc in editingTask.attachments" :key="doc.id" class="flex items-center gap-2 text-xs group">
                             <Paperclip class="w-3 h-3 text-muted shrink-0" :stroke-width="2" />
-                            <a :href="media.url" target="_blank" rel="noopener" class="text-accent-400 hover:underline truncate flex-1">{{ media.name }}</a>
-                            <AppIconButton color="rose" :title="t('shared.common.delete')" class="opacity-0 group-hover:opacity-100" v-on:click="taskExtras.detachMedia(media)">
+                            <a :href="doc.url" target="_blank" rel="noopener" class="text-accent-400 hover:underline truncate flex-1">{{ doc.name }}</a>
+                            <AppIconButton color="rose" :title="t('shared.common.delete')" class="opacity-0 group-hover:opacity-100" v-on:click="taskExtras.detachDocument(doc)">
                                 <X class="w-3 h-3" :stroke-width="2" />
                             </AppIconButton>
                         </li>
                     </ul>
+                    <AppButton
+                        v-if="gedDocumentsListPath"
+                        variant="ghost"
+                        size="sm"
+                        class="w-full"
+                        v-on:click="showAttachmentPicker = true"
+                    >
+                        <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.attachmentsAdd') }}
+                    </AppButton>
                     <p class="text-xs text-muted italic">{{ t('backend.projects.task.attachmentsHint') }}</p>
                 </div>
 
@@ -1124,9 +1142,9 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                             <h4 class="text-sm font-semibold text-primary">{{ t('backend.projects.task.fields.attachments') }}</h4>
                         </div>
                         <ul class="space-y-1">
-                            <li v-for="media in editingTask.attachments" :key="media.id" class="flex items-center gap-2 text-xs">
+                            <li v-for="doc in editingTask.attachments" :key="doc.id" class="flex items-center gap-2 text-xs">
                                 <Paperclip class="w-3 h-3 text-muted shrink-0" :stroke-width="2" />
-                                <a :href="media.url" target="_blank" rel="noopener" class="text-accent-400 hover:underline truncate">{{ media.name }}</a>
+                                <a :href="doc.url" target="_blank" rel="noopener" class="text-accent-400 hover:underline truncate">{{ doc.name }}</a>
                             </li>
                         </ul>
                     </div>
@@ -1455,5 +1473,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 </AppModalFooter>
             </template>
         </AppModal>
+
+        <DocumentPickerModal
+            v-if="gedDocumentsListPath"
+            :show="showAttachmentPicker"
+            :list-path="gedDocumentsListPath"
+            v-on:close="showAttachmentPicker = false"
+            v-on:select="onAttachmentPicked"
+        />
     </div>
 </template>

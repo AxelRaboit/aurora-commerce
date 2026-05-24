@@ -106,7 +106,8 @@ backend:
       deleteWarning: This action cannot be undone.
       commentPlaceholder: Write a comment…
       timeEntryNote: Note…
-      attachmentsHint: Drag and drop files from the Media module.
+      attachmentsHint: Pick an existing document from the GED.
+      attachmentsAdd: Attach a document
       fields:
         title: Title
         description: Description
