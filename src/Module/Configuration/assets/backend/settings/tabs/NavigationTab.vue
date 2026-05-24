@@ -47,14 +47,14 @@ const navAliases = useNavAliases({
             <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
             <VueDraggable
                 v-else
-                :model-value="navAliases.orderedSections.value"
+                :model-value="navAliases.orderedSections"
                 handle=".section-drag-handle"
                 :animation="150"
                 class="space-y-2"
                 v-on:update:model-value="navAliases.applySectionOrder"
             >
                 <div
-                    v-for="section in navAliases.orderedSections.value"
+                    v-for="section in navAliases.orderedSections"
                     :key="section.id"
                     class="border border-line rounded-lg overflow-hidden"
                 >
@@ -154,7 +154,7 @@ const navAliases = useNavAliases({
             </VueDraggable>
 
             <div class="pt-2 border-t border-line flex justify-end">
-                <AppButton variant="primary" size="md" :loading="navAliases.saving.value" v-on:click="navAliases.saveAll">
+                <AppButton variant="primary" size="md" :loading="navAliases.saving" v-on:click="navAliases.saveAll">
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t('backend.settings.navAliases.save') }}
                 </AppButton>
