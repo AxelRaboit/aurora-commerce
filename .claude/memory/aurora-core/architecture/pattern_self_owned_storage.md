@@ -112,6 +112,19 @@ Le serializer lit `$entity->getDocument()->getFilePath()` puis appelle
 `UploadUrlGenerator->publicUrl(...)`. C'est la stratégie "W3" appliquée
 dans la refacto Welding → GED.
 
+**Consommateurs actuels du W3 vers GED `Document`** :
+- `WeldingPdfTemplate.document` (W3, refacto initiale)
+- `BillingInvoice.document` + `BillingOcrJob.document` (mêmes Document
+  partagé entre OcrJob et Invoice produit)
+- `ProjectTask.attachments` (`ManyToMany<DocumentInterface>` via
+  `core_project_task_documents` — refacto 2026-05-24, commit `ba6b55c5`)
+
+**Règle d'arbitrage** : un module qui veut "attacher un fichier" à une
+entité métier doit FK-référencer un GED `Document` (= ce pattern), pas
+créer son propre stockage. Les `var/uploads/<module>/` self-owned sont
+réservés aux modules dont le fichier **est** l'entité (PdfDocument
+Welding, Document GED, MarkdownNote image, profile photo…).
+
 ## Migration depuis un couplage Media
 
 Pattern de migration testé :
