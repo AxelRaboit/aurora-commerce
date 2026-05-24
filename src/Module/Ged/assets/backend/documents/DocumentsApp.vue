@@ -32,6 +32,7 @@ import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
+import AppFilePreview from "@/shared/components/display/AppFilePreview.vue";
 import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 import DocumentTagChip from "@ged/backend/documents/components/DocumentTagChip.vue";
@@ -567,6 +568,15 @@ async function doBulkDelete() {
             v-on:close="showEdit = false"
         >
             <div class="space-y-4">
+                <!-- File preview -->
+                <AppFilePreview
+                    v-if="editingDoc?.fileUrl"
+                    :url="editingDoc.fileUrl"
+                    :mime="editingDoc.fileMime"
+                    :name="editingDoc.fileName"
+                    :alt="editingDoc.alt ?? editingDoc.title"
+                />
+
                 <AppInput
                     v-model="editForm.title"
                     :label="t('backend.ged.documents.title')"
