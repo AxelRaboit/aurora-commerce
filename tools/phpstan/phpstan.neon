@@ -7,6 +7,10 @@ parameters:
         - %currentWorkingDirectory%/config
         - %currentWorkingDirectory%/src
     tmpDir: %currentWorkingDirectory%/var/cache/phpstan
+    # Shared config — some ignore rules target files that exist in
+    # aurora-core but not in client projects (e.g. src/Core/Testing/).
+    # PHPStan would otherwise complain about unmatched ignores in clients.
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: property.unusedType
         # Test-only utility traits live under src/Core/Testing/ so client
