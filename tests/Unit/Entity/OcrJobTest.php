@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Billing\Ocr\Entity\OcrJob;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
@@ -36,12 +36,12 @@ final class OcrJobTest extends TestCase
         self::assertSame([], $job->getLogs());
     }
 
-    public function testMediaGetterAndSetter(): void
+    public function testDocumentGetterAndSetter(): void
     {
-        $media = $this->createStub(MediaInterface::class);
-        $job = (new OcrJob())->setMedia($media);
+        $document = $this->createStub(DocumentInterface::class);
+        $job = (new OcrJob())->setDocument($document);
 
-        self::assertSame($media, $job->getMedia());
+        self::assertSame($document, $job->getDocument());
     }
 
     public function testStatusGetterAndSetter(): void

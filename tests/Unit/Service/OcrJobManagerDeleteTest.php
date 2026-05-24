@@ -15,21 +15,22 @@ use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Manager\OcrJobManager;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
+use Aurora\Module\Ged\Document\Entity\Document;
+use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[AllowMockObjectsWithoutExpectations]
 final class OcrJobManagerDeleteTest extends TestCase
 {
     private EntityManagerInterface&MockObject $em;
-    private MediaManagerInterface&MockObject $mediaManager;
     private TiersManagerInterface&MockObject $tiersManager;
     private InvoiceRepository&MockObject $invoiceRepository;
     private AuditLogger&MockObject $auditLogger;
@@ -38,14 +39,18 @@ final class OcrJobManagerDeleteTest extends TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->mediaManager = $this->createMock(MediaManagerInterface::class);
         $this->tiersManager = $this->createMock(TiersManagerInterface::class);
         $this->invoiceRepository = $this->createMock(InvoiceRepository::class);
         $this->auditLogger = $this->createMock(AuditLogger::class);
 
+        // GedDocumentUploader is final — instantiate it with real deps.
+        // These tests never call its `upload()` method (they exercise the
+        // delete path), so the concrete instance is harmless.
+        $uploader = new GedDocumentUploader(new Filesystem(), new AsciiSlugger(), '/tmp');
+
         $this->manager = new OcrJobManager(
             $this->em,
-            $this->mediaManager,
+            $uploader,
             $this->createMock(MessageBusInterface::class),
             $this->auditLogger,
             new SequenceGenerator($this->createMock(Connection::class)),
@@ -57,10 +62,10 @@ final class OcrJobManagerDeleteTest extends TestCase
 
     private function makeJob(): OcrJob
     {
-        $media = $this->createStub(Media::class);
+        $document = $this->createStub(Document::class);
 
         $job = new OcrJob();
-        $job->setMedia($media);
+        $job->setDocument($document);
         $job->setStatus(OcrJobStatusEnum::Completed);
         (new ReflectionProperty(OcrJob::class, 'id'))->setValue($job, 42);
 
@@ -94,12 +99,17 @@ final class OcrJobManagerDeleteTest extends TestCase
 
         $this->invoiceRepository->method('findOneBy')->willReturn(null);
 
-        $this->em->expects($this->once())->method('remove')->with($job);
+        $removeCalls = [];
+        $this->em->method('remove')->willReturnCallback(function (object $entity) use (&$removeCalls): void {
+            $removeCalls[] = $entity;
+        });
         $this->em->expects($this->once())->method('flush');
-        $this->mediaManager->expects($this->once())->method('delete')->with($job->getMedia());
         $this->tiersManager->expects($this->never())->method('delete');
 
         $this->manager->delete($job);
+
+        $this->assertContains($job, $removeCalls);
+        $this->assertContains($job->getDocument(), $removeCalls);
     }
 
     public function testDeleteJobAndLinkedDraftInvoice(): void
@@ -110,17 +120,17 @@ final class OcrJobManagerDeleteTest extends TestCase
         $this->invoiceRepository->method('findOneBy')->willReturn($invoice);
 
         $removeCalls = [];
-        $this->em->method('remove')->willReturnCallback(function (object $entity) use (&$removeCalls) {
+        $this->em->method('remove')->willReturnCallback(function (object $entity) use (&$removeCalls): void {
             $removeCalls[] = $entity;
         });
         $this->em->expects($this->exactly(2))->method('flush');
-        $this->mediaManager->expects($this->once())->method('delete');
         $this->tiersManager->expects($this->never())->method('delete');
 
         $this->manager->delete($job);
 
         $this->assertContains($invoice, $removeCalls);
         $this->assertContains($job, $removeCalls);
+        $this->assertContains($job->getDocument(), $removeCalls);
     }
 
     public function testSkipsInvoiceDeletionWhenNotDeletable(): void
@@ -130,11 +140,16 @@ final class OcrJobManagerDeleteTest extends TestCase
 
         $this->invoiceRepository->method('findOneBy')->willReturn($invoice);
 
-        $this->em->expects($this->once())->method('remove')->with($job);
+        $removeCalls = [];
+        $this->em->method('remove')->willReturnCallback(function (object $entity) use (&$removeCalls): void {
+            $removeCalls[] = $entity;
+        });
         $this->em->expects($this->once())->method('flush');
-        $this->mediaManager->expects($this->once())->method('delete');
 
         $this->manager->delete($job);
+
+        $this->assertContains($job, $removeCalls);
+        $this->assertNotContains($invoice, $removeCalls);
     }
 
     public function testDeletesTiersWhenFlagSetAndInvoiceDeletable(): void
@@ -172,7 +187,7 @@ final class OcrJobManagerDeleteTest extends TestCase
 
         $loggedEvents = [];
         $this->auditLogger->method('log')->willReturnCallback(
-            function (string $module, string $event) use (&$loggedEvents) {
+            function (string $module, string $event) use (&$loggedEvents): void {
                 $loggedEvents[] = $event;
             }
         );
@@ -191,7 +206,7 @@ final class OcrJobManagerDeleteTest extends TestCase
 
         $loggedEvents = [];
         $this->auditLogger->method('log')->willReturnCallback(
-            function (string $module, string $event) use (&$loggedEvents) {
+            function (string $module, string $event) use (&$loggedEvents): void {
                 $loggedEvents[] = $event;
             }
         );

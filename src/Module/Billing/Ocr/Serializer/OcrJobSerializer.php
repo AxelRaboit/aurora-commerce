@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Serializer;
 
+use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -18,18 +18,24 @@ class OcrJobSerializer implements OcrJobSerializerInterface
     public function __construct(
         protected readonly TranslatorInterface $translator,
         protected readonly InvoiceRepository $invoiceRepository,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly UploadUrlGenerator $uploadUrlGenerator,
     ) {}
 
     public function serialize(OcrJobInterface $job): array
     {
         $status = $job->getStatus();
+        $document = $job->getDocument();
 
         return [
             'id' => $job->getId(),
-            'fileName' => $job->getMedia()->getOriginalName(),
-            'mediaUrl' => $this->mediaUrlGenerator->publicUrl($job->getMedia()),
-            'mediaMime' => $job->getMedia()->getMimeType(),
+            // File metadata sourced from the linked GED Document. The keys
+            // are kept as `fileName / mediaUrl / mediaMime` for Vue
+            // backwards-compat — the consumer doesn't care that the
+            // underlying source switched from Media to GED.
+            'fileName' => $document->getOriginalName(),
+            'mediaUrl' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
+            'mediaMime' => $document->getMimeType(),
+            'documentId' => $document->getId(),
             'status' => $status->value,
             'statusLabel' => $this->translator->trans($status->getLabelKey()),
             'statusColor' => $status->getBadgeColor(),

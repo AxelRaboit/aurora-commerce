@@ -44,7 +44,11 @@ final readonly class OcrPipeline
 
     public function run(OcrJobInterface $job): void
     {
-        $sourcePath = $this->mediaPathResolver->resolveAbsolutePath($job->getMedia());
+        $document = $job->getDocument();
+        // GED Document files live under var/uploads/<filePath>. The MediaPathResolver
+        // helper is still used for legacy paths but we resolve directly here since
+        // the GED Document carries the relative path verbatim.
+        $sourcePath = $this->mediaPathResolver->resolveByRelativePath((string) $document->getFilePath());
         $this->logger->info('OCR pipeline starting', ['job_id' => $job->getId(), 'path' => $sourcePath]);
 
         $log = static function (string $level, string $message, array $ctx = []) use ($job): void {
@@ -52,12 +56,11 @@ final readonly class OcrPipeline
         };
 
         // Stage 1 — docTR (text + layout)
-        $media = $job->getMedia();
         $log('info', sprintf(
             'Fichier source : %s (%s, %s)',
-            $media->getOriginalName(),
-            $media->getMimeType(),
-            $this->formatBytes($media->getSize()),
+            $document->getOriginalName(),
+            $document->getMimeType(),
+            $this->formatBytes($document->getSize()),
         ));
 
         $log('info', 'Étape 1/2 : extraction docTR en cours…');

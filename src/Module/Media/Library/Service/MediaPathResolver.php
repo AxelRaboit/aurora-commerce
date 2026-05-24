@@ -29,10 +29,20 @@ final readonly class MediaPathResolver
 
     public function resolveAbsolutePath(MediaInterface $media): string
     {
-        $absolutePath = Path::join($this->uploadDir, $media->getPath());
+        return $this->resolveByRelativePath($media->getPath());
+    }
+
+    /**
+     * Resolves any relative `var/uploads/` path (Media, GED Document,
+     * Welding PdfDocument…) without needing the full Media entity.
+     * Same missing-file guard as `resolveAbsolutePath()`.
+     */
+    public function resolveByRelativePath(string $relativePath): string
+    {
+        $absolutePath = Path::join($this->uploadDir, $relativePath);
 
         if (!is_file($absolutePath)) {
-            throw new RuntimeException(sprintf('Media file missing on disk: %s', $absolutePath));
+            throw new RuntimeException(sprintf('File missing on disk: %s', $absolutePath));
         }
 
         return $absolutePath;

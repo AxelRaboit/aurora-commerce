@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Serializer;
 
+use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
 use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Invoice\Repository\InvoiceRepository;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,6 +22,7 @@ class InvoiceSerializer implements InvoiceSerializerInterface
         private readonly TranslatorInterface $translator,
         private readonly TiersSerializer $tiersSerializer,
         private readonly InvoiceRepository $invoiceRepository,
+        private readonly UploadUrlGenerator $uploadUrlGenerator,
     ) {}
 
     public function serialize(InvoiceInterface $invoice): array
@@ -91,9 +93,9 @@ class InvoiceSerializer implements InvoiceSerializerInterface
             'buyerInvoiceCount' => $invoice->getBuyerTiers() instanceof TiersInterface
                 ? $this->invoiceRepository->countAsBuyerForTiers($invoice->getBuyerTiers()->getId())
                 : 0,
-            'document' => $document instanceof MediaInterface ? [
+            'document' => $document instanceof DocumentInterface ? [
                 'id' => $document->getId(),
-                'url' => '/uploads/'.$document->getPath(),
+                'url' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
                 'originalName' => $document->getOriginalName(),
                 'mimeType' => $document->getMimeType(),
             ] : null,

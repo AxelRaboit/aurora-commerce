@@ -8,7 +8,7 @@ use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 
@@ -124,9 +124,9 @@ interface InvoiceInterface extends TimestampableInterface
 
     public function setNotes(?string $notes): self;
 
-    public function getDocument(): ?MediaInterface;
+    public function getDocument(): ?DocumentInterface;
 
-    public function setDocument(?MediaInterface $document): self;
+    public function setDocument(?DocumentInterface $document): self;
 
     public function getOcrJob(): ?OcrJobInterface;
 

@@ -218,7 +218,10 @@ class InvoiceManager implements InvoiceManagerInterface
     {
         $invoice = $this->createInvoice();
         $invoice->setOcrJob($job);
-        $invoice->setDocument($job->getMedia());
+        // Same GED Document as the OcrJob — single file, single storage,
+        // single audit trail. The Document's status can transition to
+        // `Published` later once the invoice is validated.
+        $invoice->setDocument($job->getDocument());
         $invoice->setStatus(InvoiceStatusEnum::NeedsReview);
         $invoice->setSupplierNumber($draft->invoiceNumber);
         $this->applyDraft($invoice, $draft);

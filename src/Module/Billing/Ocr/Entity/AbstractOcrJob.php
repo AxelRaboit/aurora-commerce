@@ -6,7 +6,7 @@ namespace Aurora\Module\Billing\Ocr\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -22,9 +22,13 @@ abstract class AbstractOcrJob implements OcrJobInterface
     #[ORM\Column(length: 64, unique: true, nullable: true)]
     protected ?string $reference = null;
 
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
+    // Uploaded source document — lives in the GED with its own metadata
+    // (category, folder, tags). The OcrJob just references it; the
+    // resulting Invoice will reference the SAME Document (single file,
+    // single storage, single audit trail). Cf. pattern_self_owned_storage.
+    #[ORM\ManyToOne(targetEntity: DocumentInterface::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    protected MediaInterface $media;
+    protected DocumentInterface $document;
 
     #[ORM\Column(length: 32, enumType: OcrJobStatusEnum::class, options: ['default' => 'queued'])]
     protected OcrJobStatusEnum $status = OcrJobStatusEnum::Queued;
@@ -74,14 +78,14 @@ abstract class AbstractOcrJob implements OcrJobInterface
         return $this;
     }
 
-    public function getMedia(): MediaInterface
+    public function getDocument(): DocumentInterface
     {
-        return $this->media;
+        return $this->document;
     }
 
-    public function setMedia(MediaInterface $media): self
+    public function setDocument(DocumentInterface $document): self
     {
-        $this->media = $media;
+        $this->document = $document;
 
         return $this;
     }

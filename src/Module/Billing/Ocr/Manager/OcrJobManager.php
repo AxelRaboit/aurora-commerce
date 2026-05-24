@@ -17,8 +17,9 @@ use Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage;
 use Aurora\Module\Billing\Setting\BillingSettingEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
-use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
+use Aurora\Module\Ged\Document\Entity\Document;
+use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
+use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,7 +32,7 @@ class OcrJobManager implements OcrJobManagerInterface
 {
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
-        protected readonly MediaManagerInterface $mediaManager,
+        protected readonly GedDocumentUploader $documentUploader,
         protected readonly MessageBusInterface $bus,
         protected readonly AuditLogger $auditLogger,
         protected readonly SequenceGenerator $sequenceGenerator,
@@ -42,10 +43,24 @@ class OcrJobManager implements OcrJobManagerInterface
 
     public function createFromUpload(UploadedFile $file, ?User $createdBy): OcrJobInterface
     {
-        $media = $this->mediaManager->upload($file, null, StorageAreaEnum::Ocr);
+        // Create a GED Document directly — the same Document will be
+        // referenced by the Invoice that gets produced from this OCR draft
+        // later. Single file, single storage, single audit trail. Cf.
+        // pattern_self_owned_storage + the welding W3 strategy.
+        $meta = $this->documentUploader->upload($file);
+
+        $document = new Document();
+        $document->setTitle($meta['originalName'])
+            ->setStatus(DocumentStatusEnum::Draft)
+            ->setFilePath($meta['filePath'])
+            ->setFileName($meta['fileName'])
+            ->setOriginalName($meta['originalName'])
+            ->setMimeType($meta['mimeType'])
+            ->setSize($meta['size']);
+        $this->entityManager->persist($document);
 
         $job = $this->createOcrJob();
-        $job->setMedia($media);
+        $job->setDocument($document);
         $job->setStatus(OcrJobStatusEnum::Queued);
         $job->setCreatedBy($createdBy);
 
@@ -60,8 +75,8 @@ class OcrJobManager implements OcrJobManagerInterface
 
         $this->auditLogger->log('billing', 'ocr.job.created', 'OcrJob', $job->getId(), [
             ...$this->auditPayload($job),
-            'mediaId' => $media->getId(),
-            'fileName' => $media->getOriginalName(),
+            'documentId' => $document->getId(),
+            'fileName' => $document->getOriginalName(),
         ]);
 
         return $job;
@@ -85,7 +100,7 @@ class OcrJobManager implements OcrJobManagerInterface
     {
         $id = $job->getId();
         $payload = $this->auditPayload($job);
-        $media = $job->getMedia();
+        $document = $job->getDocument();
         $tiers = null;
         $invoiceId = null;
         $invoiceNumber = null;
@@ -104,12 +119,12 @@ class OcrJobManager implements OcrJobManagerInterface
         }
 
         $this->entityManager->remove($job);
+        // Cascade-remove the GED Document this OcrJob owns. The Invoice
+        // referenced the same Document — already removed above if there
+        // was one. The on-disk file lives in GED storage and stays
+        // (intentional: orphan files are safer than dangling DB rows).
+        $this->entityManager->remove($document);
         $this->entityManager->flush();
-
-        // Delete the uploaded file and its Media record — it was created solely
-        // for this OCR job and has no other owner once the job is gone.
-        // Invoice.document is SET NULL by the DB cascade if it referenced the same media.
-        $this->mediaManager->delete($media);
 
         if (null !== $invoiceId) {
             $this->auditLogger->log('billing', 'invoice.deleted', 'Invoice', $invoiceId, [

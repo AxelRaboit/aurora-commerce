@@ -6,7 +6,7 @@ namespace Aurora\Module\Billing\Ocr\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 
@@ -18,9 +18,9 @@ interface OcrJobInterface extends TimestampableInterface
 
     public function setReference(?string $reference): self;
 
-    public function getMedia(): MediaInterface;
+    public function getDocument(): DocumentInterface;
 
-    public function setMedia(MediaInterface $media): self;
+    public function setDocument(DocumentInterface $document): self;
 
     public function getStatus(): OcrJobStatusEnum;
 

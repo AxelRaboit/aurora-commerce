@@ -8,7 +8,7 @@ use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -115,10 +115,14 @@ abstract class AbstractInvoice implements InvoiceInterface
     #[ORM\OneToOne(targetEntity: InvoiceInterface::class, mappedBy: 'creditNote')]
     protected ?InvoiceInterface $cancelledInvoice = null;
 
-    /** Original document (PDF/image) — owned by Core/Media. */
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
+    /**
+     * Original document (PDF/image) — references the GED Document the
+     * OcrJob also points to. Single file, single storage, single audit
+     * trail. Cf. pattern_self_owned_storage.
+     */
+    #[ORM\ManyToOne(targetEntity: DocumentInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?MediaInterface $document = null;
+    protected ?DocumentInterface $document = null;
 
     /** Traceability link to the OCR job that produced this draft. */
     #[ORM\ManyToOne(targetEntity: OcrJobInterface::class)]
@@ -487,12 +491,12 @@ abstract class AbstractInvoice implements InvoiceInterface
         return $this;
     }
 
-    public function getDocument(): ?MediaInterface
+    public function getDocument(): ?DocumentInterface
     {
         return $this->document;
     }
 
-    public function setDocument(?MediaInterface $document): self
+    public function setDocument(?DocumentInterface $document): self
     {
         $this->document = $document;
 
