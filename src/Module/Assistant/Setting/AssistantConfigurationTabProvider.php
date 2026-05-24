@@ -30,8 +30,8 @@ final readonly class AssistantConfigurationTabProvider implements ConfigurationT
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
-                placeholderKey: $case->getPlaceholder(),
                 options: AssistantSettingEnum::Provider === $case ? self::PROVIDER_OPTIONS : null,
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

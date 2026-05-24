@@ -16,6 +16,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+use function is_object;
+
 #[AllowMockObjectsWithoutExpectations]
 final class ModuleRegistryOrderOverrideTest extends TestCase
 {
@@ -137,8 +139,8 @@ final class ModuleRegistryOrderOverrideTest extends TestCase
         $settingRepository = $this->createMock(SettingRepository::class);
         $settingRepository->method('getOrDefault')->willReturnCallback(
             static fn ($key): string => match (true) {
-                $key === ApplicationParameterEnum::NavSectionOrder || (\is_object($key) && $key->value === 'nav_section_order') => $sectionOrder,
-                $key === ApplicationParameterEnum::NavItemOrder || (\is_object($key) && $key->value === 'nav_item_order') => $itemOrder,
+                ApplicationParameterEnum::NavSectionOrder === $key || (is_object($key) && 'nav_section_order' === $key->value) => $sectionOrder,
+                ApplicationParameterEnum::NavItemOrder === $key || (is_object($key) && 'nav_item_order' === $key->value) => $itemOrder,
                 default => '',
             },
         );
@@ -157,8 +159,16 @@ final class ModuleRegistryOrderOverrideTest extends TestCase
     {
         return [
             new class implements ModuleInterface {
-                public function getId(): string { return 'crm'; }
-                public function getPermissions(): array { return []; }
+                public function getId(): string
+                {
+                    return 'crm';
+                }
+
+                public function getPermissions(): array
+                {
+                    return [];
+                }
+
                 public function getNavSections(): array
                 {
                     return [new NavSection('crm', [
@@ -167,29 +177,57 @@ final class ModuleRegistryOrderOverrideTest extends TestCase
                         new NavItem('backend_crm_deals', 'backend.nav.crm_deals', 'handshake'),
                     ], priority: 40)];
                 }
-                public function getCatalogNavSections(): array { return $this->getNavSections(); }
+
+                public function getCatalogNavSections(): array
+                {
+                    return $this->getNavSections();
+                }
             },
             new class implements ModuleInterface {
-                public function getId(): string { return 'billing'; }
-                public function getPermissions(): array { return []; }
+                public function getId(): string
+                {
+                    return 'billing';
+                }
+
+                public function getPermissions(): array
+                {
+                    return [];
+                }
+
                 public function getNavSections(): array
                 {
                     return [new NavSection('billing', [
                         new NavItem('backend_billing_invoices', 'backend.nav.billing_invoices', 'file-text'),
                     ], priority: 50)];
                 }
-                public function getCatalogNavSections(): array { return $this->getNavSections(); }
+
+                public function getCatalogNavSections(): array
+                {
+                    return $this->getNavSections();
+                }
             },
             new class implements ModuleInterface {
-                public function getId(): string { return 'notes'; }
-                public function getPermissions(): array { return []; }
+                public function getId(): string
+                {
+                    return 'notes';
+                }
+
+                public function getPermissions(): array
+                {
+                    return [];
+                }
+
                 public function getNavSections(): array
                 {
                     return [new NavSection('notes', [
                         new NavItem('backend_notes', 'backend.nav.notes', 'sticky-note'),
                     ], priority: 60)];
                 }
-                public function getCatalogNavSections(): array { return $this->getNavSections(); }
+
+                public function getCatalogNavSections(): array
+                {
+                    return $this->getNavSections();
+                }
             },
         ];
     }

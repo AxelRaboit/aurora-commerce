@@ -18,7 +18,7 @@ use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
  * register their own settings by implementing this interface and
  * yielding their custom enum's cases.
  *
-
+ *
  * Example (client side, after declaring a custom `<Module>SettingEnum`):
  *
  *     final readonly class <Module>ApplicationParameterProvider

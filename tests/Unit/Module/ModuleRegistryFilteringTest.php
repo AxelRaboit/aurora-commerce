@@ -8,6 +8,7 @@ use Aurora\Core\Module\Contract\ModuleInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleRegistry;
+use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
@@ -102,7 +103,7 @@ final class ModuleRegistryFilteringTest extends TestCase
         // Empty order overrides — these tests exercise the priority sort,
         // hide-filter, and privilege-filter paths, not the user-ordered
         // override path (covered by ModuleRegistryOrderOverrideTest).
-        $settingRepository = $this->createMock(\Aurora\Module\Configuration\Setting\Repository\SettingRepository::class);
+        $settingRepository = $this->createMock(SettingRepository::class);
         $settingRepository->method('getOrDefault')->willReturn('[]');
 
         return new ModuleRegistry(

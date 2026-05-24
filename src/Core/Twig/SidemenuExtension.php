@@ -36,7 +36,7 @@ final readonly class SidemenuExtension
 
     /**
      * @return list<string> ordered section IDs (any not in the list lands after
-     *                     the explicit entries, keeping their natural priority)
+     *                      the explicit entries, keeping their natural priority)
      */
     #[AsTwigFunction(name: 'nav_section_order')]
     public function getNavSectionOrder(): array
@@ -46,7 +46,7 @@ final readonly class SidemenuExtension
             true,
         );
 
-        return is_array($decoded) ? array_values(array_filter($decoded, 'is_string')) : [];
+        return is_array($decoded) ? array_values(array_filter($decoded, is_string(...))) : [];
     }
 
     /**
@@ -66,10 +66,15 @@ final readonly class SidemenuExtension
 
         $clean = [];
         foreach ($decoded as $sectionId => $items) {
-            if (!is_string($sectionId) || !is_array($items)) {
+            if (!is_string($sectionId)) {
                 continue;
             }
-            $clean[$sectionId] = array_values(array_filter($items, 'is_string'));
+
+            if (!is_array($items)) {
+                continue;
+            }
+
+            $clean[$sectionId] = array_values(array_filter($items, is_string(...)));
         }
 
         return $clean;

@@ -235,8 +235,8 @@ final readonly class ModuleRegistry
      * Same logic as `applySectionOrder` but per-section: each section in the
      * result has its `items` reordered if its id appears as a key in $order.
      *
-     * @param list<array<string, mixed>>     $sections
-     * @param array<string, list<string>>    $order  sectionId → list of NavItem route names
+     * @param list<array<string, mixed>>  $sections
+     * @param array<string, list<string>> $order    sectionId → list of NavItem route names
      *
      * @return list<array<string, mixed>>
      */
@@ -248,7 +248,11 @@ final readonly class ModuleRegistry
 
         foreach ($sections as &$section) {
             $sectionOrder = $order[$section['id']] ?? null;
-            if (null === $sectionOrder || [] === $sectionOrder) {
+            if (null === $sectionOrder) {
+                continue;
+            }
+
+            if ([] === $sectionOrder) {
                 continue;
             }
 
@@ -268,6 +272,7 @@ final readonly class ModuleRegistry
 
             $section['items'] = array_merge($ordered, array_values($byKey));
         }
+
         unset($section);
 
         return $sections;
@@ -302,10 +307,15 @@ final readonly class ModuleRegistry
 
         $clean = [];
         foreach ($decoded as $sectionId => $items) {
-            if (!is_string($sectionId) || !is_array($items)) {
+            if (!is_string($sectionId)) {
                 continue;
             }
-            $clean[$sectionId] = array_values(array_filter($items, 'is_string'));
+
+            if (!is_array($items)) {
+                continue;
+            }
+
+            $clean[$sectionId] = array_values(array_filter($items, is_string(...)));
         }
 
         return $clean;
@@ -326,6 +336,6 @@ final readonly class ModuleRegistry
             return [];
         }
 
-        return array_values(array_filter($decoded, 'is_string'));
+        return array_values(array_filter($decoded, is_string(...)));
     }
 }
