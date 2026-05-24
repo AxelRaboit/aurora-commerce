@@ -387,6 +387,9 @@ sync-jsconfig: ## Regenerate jsconfig.json from aurora module aliases
 sync-env: ## Add any missing `###> aurora/* ###` block to .env (never overwrites existing values)
 	@bash $(AURORA)/bin/sync-client-env
 
+sync-readme: ## Sync the aurora-canonical block of README.md (between markers); preserves title + 'Spécifique à ce projet'
+	@bash $(AURORA)/bin/sync-client-readme
+
 make-frontend: ## Scaffold a new frontend module (header, footer, layout, home). Usage: make make-frontend name=MyModule
 	@if [ -z "$(name)" ]; then \
 		read -p "Module name (PascalCase, e.g. Billing): " name && \
@@ -417,6 +420,7 @@ pull-update: _no-recent-aurora-update ## After a regular `git pull`: install dep
 	make migrate-f
 	make sync-jsconfig
 	make sync-env
+	make sync-readme
 	make sync-security
 	make sync-claude-md
 	make sync-makefile
@@ -442,6 +446,7 @@ aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-
 	$(CONSOLE) aurora:privileges:sync
 	make sync-jsconfig
 	make sync-env
+	make sync-readme
 	make sync-security
 	make sync-claude-md
 	make sync-makefile

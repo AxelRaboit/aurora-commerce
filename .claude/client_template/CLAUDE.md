@@ -217,13 +217,18 @@ Voici exactement ce qui est écrasé vs ce qui appartient au client.
 | `.claude/memory/aurora-shared/` | symlink vers vendor |
 | `.claude/skills/<nom>/` (avec `scope: shared`) | symlink par skill vers vendor |
 
+### Sync partiel — bloc encadré écrasé, le reste du fichier client-owned
+
+| Fichier | Mécanisme |
+|---|---|
+| `README.md` | **bloc entre `<!-- aurora-canonical:start -->` et `<!-- aurora-canonical:end -->` écrasé** par `make sync-readme` (intégré à `aurora-update` / `pull-update`). Titre, intro et section "Spécifique à ce projet" préservés. Si les markers manquent (legacy README), le fichier est laissé tel quel avec un warning suggérant de les ajouter. |
+| `.env` blocs `###> aurora/* ###` | **ajoutés** si absents (`make sync-env`), insérés **au-dessus** du divider `# === CLIENT CUSTOM ===`. Valeurs existantes jamais touchées. |
+
 ### Seed once — créé si absent, jamais écrasé
 
 | Fichier | Mécanisme |
 |---|---|
-| `README.md` | copié depuis le template au 1er install. Une fois présent = client-owned. |
-| `.claude/settings.json` | idem |
-| `.env` blocs `###> aurora/* ###` | **ajoutés** si absents (`make sync-env`), insérés **au-dessus** du divider `# === CLIENT CUSTOM ===`. Valeurs existantes jamais touchées. |
+| `.claude/settings.json` | copié depuis le template au 1er install. Une fois présent = client-owned. |
 
 #### Layout d'un `.env` aurora-client
 
@@ -241,6 +246,29 @@ WHATEVER_TOKEN=…         ← À toi
 
 `sync-env` ajoute le divider tout seul au premier run et insère les
 nouveaux blocs aurora juste au-dessus.
+
+#### Layout d'un `README.md` aurora-client
+
+```markdown
+# <Project name>                    ← client-owned (titre)
+<intro paragraph>                   ← client-owned
+
+<!-- aurora-canonical:start -->     ← marker (ne pas toucher)
+## 🚀 Quickstart                    ← bloc géré par sync-readme
+## Le quotidien
+## Intégration continue
+## Comment utiliser Aurora ?
+## Customisation projet
+<!-- aurora-canonical:end -->       ← marker (ne pas toucher)
+
+## Spécifique à ce projet           ← client-owned
+<URL staging, contacts équipe, etc.>
+```
+
+`sync-readme` détecte la paire de markers et remplace **uniquement** le
+contenu entre les deux. Sans markers (READMEs legacy), le fichier est
+laissé tel quel — le client doit ajouter les markers manuellement une
+fois pour opter dans le sync.
 
 ### 100% client-owned — jamais touché par les sync
 

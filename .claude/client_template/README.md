@@ -1,17 +1,17 @@
-# aurora-client — base README
+# <Project name — to rename>
 
 > 📦 **Template d'amorçage**. Ce fichier vit dans aurora-core à
 > `vendor/axelraboit/aurora/.claude/client_template/README.md`. À la
-> première installation, `make aurora-update` le copie à la racine du
-> projet client comme `README.md`. **Une fois copié, le client en est
-> propriétaire** : libre à lui de réécrire le titre, ajouter logo / URL
-> de staging / contacts équipe / etc. — les `make aurora-update`
-> suivants ne l'écrasent **plus jamais**. La référence canonique reste
-> ici, pointable via le chemin vendor depuis n'importe quel doc client.
+> première installation, `make aurora-update` (ou `make sync-readme`)
+> le copie à la racine du projet client comme `README.md`. Renomme le
+> titre + adapte l'intro au-dessus du marker `aurora-canonical:start`,
+> et complète la section "Spécifique à ce projet" en bas du fichier.
 
 A client application built on [Aurora](https://github.com/AxelRaboit/aurora-core).
 Aurora is installed as a Composer dependency at `vendor/axelraboit/aurora/`
 and provides the full backend (CRUD, auth, modules, Vue admin SPA, etc.).
+
+<!-- aurora-canonical:start — managed by `make sync-readme`. Don't edit between markers; changes will be overwritten. -->
 
 ## 🚀 Tu rejoins le projet ? Quickstart 10 min
 
@@ -99,14 +99,29 @@ chaque session.
 ## Customisation projet
 
 Trois fichiers permettent d'ajouter du contenu spécifique au projet client
-qui ne sera **jamais écrasé** par `make aurora-update` ou `make pull-update` :
+qui ne sera **jamais écrasé** par `make aurora-update` / `make sync-readme` :
 
-- **`README.local.md`** — section ajoutée au README pour les nouveaux arrivants
-  (URL staging, particularités métier, contacts équipe)
-- **`CLAUDE.local.md`** — instructions Claude spécifiques au projet (conventions
-  internes, intégrations tierces)
+- **Tout ce qui est au-dessus de `<!-- aurora-canonical:start -->` ou en
+  dessous de `<!-- aurora-canonical:end -->`** dans **ce README** — le
+  titre, l'intro, la section "Spécifique à ce projet"
+- **`CLAUDE.local.md`** — instructions Claude spécifiques au projet
+  (conventions internes, intégrations tierces)
 - **`Makefile.local`** — targets Makefile custom (déploiement, intégrations
   CI/CD spécifiques)
 
 Ces fichiers sont gitignorés/listés dans `.gitignore` côté client — vérifier
 selon vos pratiques d'équipe si vous voulez les commit ou non.
+
+<!-- aurora-canonical:end -->
+
+## Spécifique à ce projet
+
+<!--
+  À remplir par le client. Exemples :
+  - URL de staging / prod
+  - Contacts équipe / chefs de projet
+  - Choix d'archi spécifiques au projet (jamais redondants avec aurora-core)
+  - Particularités métier qui ne tiennent dans aucun doc générique
+-->
+
+_TODO : compléter avec les informations propres au projet._
