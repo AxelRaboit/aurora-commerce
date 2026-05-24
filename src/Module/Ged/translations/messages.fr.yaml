@@ -84,6 +84,8 @@ backend:
       caption: Légende
       caption_placeholder: Légende affichée sous l'image…
       permalink: Lien permanent
+      dimensions: Dimensions
+      type: Type
       preview: Aperçu
       choose_file: Choisir un fichier
       choose_file_library: Médiathèque

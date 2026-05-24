@@ -24,6 +24,8 @@ class DocumentInput implements DocumentInputInterface
         public readonly ?string $originalName = null,
         public readonly ?string $mimeType = null,
         public readonly ?int $size = null,
+        public readonly ?int $width = null,
+        public readonly ?int $height = null,
         public readonly ?string $thumbnailPath = null,
         public readonly ?string $alt = null,
         public readonly ?string $caption = null,
@@ -74,6 +76,16 @@ class DocumentInput implements DocumentInputInterface
     public function getSize(): ?int
     {
         return $this->size;
+    }
+
+    public function getWidth(): ?int
+    {
+        return $this->width;
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->height;
     }
 
     public function getThumbnailPath(): ?string

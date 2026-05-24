@@ -55,6 +55,14 @@ interface DocumentInterface extends TimestampableInterface
 
     public function setSize(?int $size): static;
 
+    public function getWidth(): ?int;
+
+    public function setWidth(?int $width): static;
+
+    public function getHeight(): ?int;
+
+    public function setHeight(?int $height): static;
+
     public function getThumbnailPath(): ?string;
 
     public function setThumbnailPath(?string $thumbnailPath): static;

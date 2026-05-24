@@ -42,6 +42,8 @@ class DocumentSerializer implements DocumentSerializerInterface
             'fileUrl' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
             'fileMime' => $document->getMimeType(),
             'fileSize' => $document->getSize(),
+            'width' => $document->getWidth(),
+            'height' => $document->getHeight(),
             'alt' => $document->getAlt(),
             'caption' => $document->getCaption(),
             // Server-side rendered thumbnail for opaque formats (PDFs).

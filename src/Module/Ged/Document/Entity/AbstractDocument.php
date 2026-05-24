@@ -60,6 +60,13 @@ abstract class AbstractDocument implements DocumentInterface
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     protected ?int $size = null;
 
+    /** Pixel dimensions — populated at upload for image documents only. */
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    protected ?int $width = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    protected ?int $height = null;
+
     /**
      * Relative path of a generated thumbnail (e.g. ged/thumbnails/2026/05/contract-abc.jpg).
      * For PDFs and similar opaque formats, produced server-side at upload time so
@@ -206,6 +213,30 @@ abstract class AbstractDocument implements DocumentInterface
     public function setSize(?int $size): static
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getWidth(): ?int
+    {
+        return $this->width;
+    }
+
+    public function setWidth(?int $width): static
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->height;
+    }
+
+    public function setHeight(?int $height): static
+    {
+        $this->height = $height;
 
         return $this;
     }

@@ -156,6 +156,8 @@ class DocumentManager implements DocumentManagerInterface
             $document->setOriginalName($input->getOriginalName());
             $document->setMimeType($input->getMimeType());
             $document->setSize($input->getSize());
+            $document->setWidth($input->getWidth());
+            $document->setHeight($input->getHeight());
             $document->setThumbnailPath($input->getThumbnailPath());
         }
 

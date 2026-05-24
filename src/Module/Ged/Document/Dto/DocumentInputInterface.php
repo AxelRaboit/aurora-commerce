@@ -26,6 +26,10 @@ interface DocumentInputInterface
 
     public function getSize(): ?int;
 
+    public function getWidth(): ?int;
+
+    public function getHeight(): ?int;
+
     public function getThumbnailPath(): ?string;
 
     public function getAlt(): ?string;

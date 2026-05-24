@@ -36,7 +36,7 @@ final readonly class GedDocumentUploader
     ) {}
 
     /**
-     * @return array{filePath: string, fileName: string, originalName: string, mimeType: string, size: int, thumbnailPath: string|null}
+     * @return array{filePath: string, fileName: string, originalName: string, mimeType: string, size: int, thumbnailPath: string|null, width: int|null, height: int|null}
      */
     public function upload(UploadedFile $file): array
     {
@@ -61,6 +61,8 @@ final readonly class GedDocumentUploader
             $thumbnailPath = $this->pdfThumbnailGenerator->generate($relativePath, $thumbDir, $thumbBasename);
         }
 
+        [$width, $height] = $this->readImageDimensions(Path::join($this->uploadDir, $relativePath), $mimeType);
+
         return [
             'filePath' => $relativePath,
             'fileName' => $newFilename,
@@ -68,6 +70,28 @@ final readonly class GedDocumentUploader
             'mimeType' => $mimeType,
             'size' => $size,
             'thumbnailPath' => $thumbnailPath,
+            'width' => $width,
+            'height' => $height,
         ];
+    }
+
+    /**
+     * Reads pixel dimensions for raster images. Returns [null, null] for
+     * non-images or unreadable files — never throws.
+     *
+     * @return array{0: int|null, 1: int|null}
+     */
+    private function readImageDimensions(string $absolutePath, string $mimeType): array
+    {
+        if (!str_starts_with($mimeType, 'image/')) {
+            return [null, null];
+        }
+
+        $info = @getimagesize($absolutePath);
+        if (false === $info) {
+            return [null, null];
+        }
+
+        return [$info[0], $info[1]];
     }
 }

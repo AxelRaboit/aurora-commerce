@@ -28,6 +28,8 @@ function emptyForm() {
         originalName: null,
         mimeType: null,
         size: null,
+        width: null,
+        height: null,
         // Image-only metadata (alt for a11y/SEO, caption shown alongside).
         alt: "",
         caption: "",
@@ -106,6 +108,8 @@ export function useDocumentsForm(
             newDoc.value.originalName = data.originalName;
             newDoc.value.mimeType = data.mimeType;
             newDoc.value.size = data.size;
+            newDoc.value.width = data.width;
+            newDoc.value.height = data.height;
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -156,6 +160,8 @@ export function useDocumentsForm(
             originalName: doc.originalName ?? null,
             mimeType: doc.fileMime ?? null,
             size: doc.fileSize ?? null,
+            width: doc.width ?? null,
+            height: doc.height ?? null,
             alt: doc.alt ?? "",
             caption: doc.caption ?? "",
         };
@@ -177,6 +183,8 @@ export function useDocumentsForm(
             editForm.value.originalName = data.originalName;
             editForm.value.mimeType = data.mimeType;
             editForm.value.size = data.size;
+            editForm.value.width = data.width;
+            editForm.value.height = data.height;
         } else {
             toast.error(t("shared.common.error"));
         }

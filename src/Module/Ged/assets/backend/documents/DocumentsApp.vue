@@ -683,6 +683,22 @@ async function doBulkDelete() {
                             <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.folder") }}</dt>
                             <dd class="text-primary flex items-center gap-1"><Folder class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" /> {{ viewingDoc.folderName }}</dd>
                         </div>
+                        <div v-if="viewingDoc.fileName">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.file") }}</dt>
+                            <dd class="text-secondary truncate" :title="viewingDoc.fileName">{{ viewingDoc.fileName }}</dd>
+                        </div>
+                        <div v-if="viewingDoc.fileSize">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.size") }}</dt>
+                            <dd class="text-secondary tabular-nums">{{ formatSize(viewingDoc.fileSize) }}</dd>
+                        </div>
+                        <div v-if="viewingDoc.width && viewingDoc.height">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.dimensions") }}</dt>
+                            <dd class="text-secondary tabular-nums">{{ viewingDoc.width }}×{{ viewingDoc.height }}</dd>
+                        </div>
+                        <div v-if="viewingDoc.fileMime">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.type") }}</dt>
+                            <dd class="text-secondary">{{ viewingDoc.fileMime }}</dd>
+                        </div>
                         <div>
                             <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.created") }}</dt>
                             <dd class="text-secondary">{{ formatDate(viewingDoc.createdAt) }}</dd>
