@@ -49,6 +49,9 @@ assistant:
 backend:
   modules:
     assistant: Assistant IA
+    assistant_backend: Assistant
+    assistant_backend_description: Section Assistant — chat IA local (Ollama,
+      tool-calling) et points de montage pour lire des fichiers du serveur.
   audit:
     actions:
       assistant:

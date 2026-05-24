@@ -49,6 +49,9 @@ assistant:
 backend:
   modules:
     assistant: AI Assistant
+    assistant_backend: Assistant
+    assistant_backend_description: Assistant section — local AI chat (Ollama,
+      tool-calling) and mount points to expose server files to the assistant.
   audit:
     actions:
       assistant:
