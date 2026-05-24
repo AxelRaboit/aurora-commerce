@@ -9,6 +9,7 @@ use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsAlias(DocumentSerializerInterface::class)]
@@ -17,6 +18,7 @@ class DocumentSerializer implements DocumentSerializerInterface
     public function __construct(
         protected readonly TranslatorInterface $translator,
         protected readonly UploadUrlGenerator $uploadUrlGenerator,
+        protected readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     public function serialize(DocumentInterface $document): array
@@ -40,6 +42,11 @@ class DocumentSerializer implements DocumentSerializerInterface
             'fileName' => $document->getFileName(),
             'originalName' => $document->getOriginalName(),
             'fileUrl' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
+            // Stable canonical URL that survives file renames/re-uploads —
+            // /document/{id} redirects to the current file (cf. MediaViewController).
+            'permalink' => null === $document->getId()
+                ? null
+                : $this->urlGenerator->generate('ged_document_view', ['id' => $document->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             'fileMime' => $document->getMimeType(),
             'fileSize' => $document->getSize(),
             'width' => $document->getWidth(),
