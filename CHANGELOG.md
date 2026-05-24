@@ -142,6 +142,29 @@ Plus aucun `<X>Module.php` à la racine de `src/Core/`.
 **Aucune migration Doctrine** — les tables (`core_user`, `core_agency`,
 `core_audit_log`, `core_media`, `core_setting`, etc.) gardent leur nom.
 
+### ⚠️ Cassant — `ApplicationParameterEnumInterface::getPlaceholder(): ?string`
+
+Nouvelle méthode obligatoire sur l'interface. Tous les enums clients
+implémentant `ApplicationParameterEnumInterface` (settings module) doivent
+ajouter une implémentation par défaut :
+
+```php
+public function getPlaceholder(): ?string
+{
+    return null;
+}
+```
+
+Override par case quand un exemple concret est plus parlant que la
+description (`'INV-2026-000042'` pour un préfixe, `'admin@example.com'`
+pour un email). Les 13 enums core ont déjà été migrés en interne.
+
+Comportement runtime : si `getPlaceholder()` renvoie `null` ET que le
+`defaultValue` du setting est non-trivial (non-vide, non-`'0'`),
+`SettingsViewBuilder` utilise le défaut comme placeholder. Couvre la
+mer de préfixes (`'INV'`, `'DEAL'`, `'ORD'`, …) et les défauts
+Notes/Assistant (`'qwen3:8b'`, `'2048'`, …) sans wirage par-case.
+
 ### Dans aurora-client
 
 Lancer après `make aurora-update` :
@@ -153,26 +176,82 @@ git mv src/Module/Core/Agency src/Module/Core/Platform/Agency
 # 2. Renommer les namespaces (sed bulk — voir MIGRATION_0.4.md pour la commande complète)
 grep -rl 'Aurora\\Core\\Agency\\' src tests config | xargs sed -i 's|Aurora\\Core\\Agency\\|Aurora\\Core\\Platform\\Agency\\|g'
 
-# 3. Re-générer + valider
+# 3. Ajouter getPlaceholder() sur les enums clients implémentant
+#    ApplicationParameterEnumInterface (au minimum un `return null;`)
+grep -rl "implements ApplicationParameterEnumInterface" src | xargs -I{} echo "Patch {} — add getPlaceholder(): ?string { return null; }"
+
+# 4. (Optionnel) Câbler `placeholderKey: $case->getPlaceholder()` sur les
+#    ConfigurationTabProvider clients pour forwarder les placeholders au
+#    SettingFieldDescriptor.
+
+# 5. Re-générer + valider
 composer dump-autoload && make cc && make ft
 ```
 
+Côté welding : `WeldingSettingEnum::getPlaceholder()` câblé avec 7 vrais
+placeholders (`'WLD'`, `'WPDF'`, `'inspecteur@example.com'`, …) et
+`WeldingModuleParameterEnum::getPlaceholder() => null` puisque les
+toggles modules rendent en switch (pas d'input).
+
 ### Ajouté
-- Skills Claude Code `/add-module` et `/add-submodule` (scaffold de nouveaux
-  modules / sous-features).
-- Doc consolidée `docs/aurora-client/extending/extend_module.md` (remplace
-  `extend_entity.md` + `custom_permissions.md` + `dev/overriding.md`).
-- Convention `process_doc_audit_before_commit.md` (audit des docs/mémoires
-  liées à un changement avant chaque commit).
-- Glob translations élargi à depth 2 (`src/Core/*/*/translations`) pour
-  supporter le nesting.
+
+#### Settings
+- `ConfigurationTab::$moduleToggle` (`ModuleParameterEnum|string|null`) —
+  cache l'onglet de `/backend/settings` quand le module est désactivé
+  dans `/dev/dashboard/modules`. 5 tab providers core déjà câblés (Crm,
+  Ecommerce, Notes, PersonalFinance, Assistant).
+- `SettingFieldDescriptor::$placeholderKey` (`?string`) — clé i18n
+  optionnelle pour le placeholder de l'input. `SettingsViewBuilder`
+  traduit + transmet dans le payload Vue ; `SettingsApp.vue` consomme
+  via `parameter.placeholder`. Si null + type `text`/`int`/`textarea`,
+  fallback automatique sur `defaultValue` (couvre les ~20 préfixes
+  sequences sans wirage par-case).
+- `aurora:make:entity` — wizard CLI pour le scaffold 5 couches Sylius
+  (Entity triplet + DTO quartet + Manager pair + Serializer pair +
+  Repository + Controller), 13 templates `.tpl`. Patche
+  `AuroraBundle::$resolve_target_entities` automatiquement. Symétrique
+  à `aurora:make:module`. Flags : `--no-crud`, `--skip-controller`,
+  `--plural=`, `--permission=`, `--audit-channel=`.
+
+#### Skills Claude
+- `/audit-module-toggles` — audit read-only de tous les modules contre
+  la convention toggle (20 critères : enum case, getToggles(), Context
+  isBackendEnabled, NavSection gating, getCatalogNavSections unfiltered,
+  sous-toggles, translations, ConfigurationTab.moduleToggle). Allowlist
+  d'infra (Configuration / Platform / Dev / Media / General).
+- Skills `/add-module` et `/add-entity` refactorés en **thin
+  orchestrateurs** qui drivent le wizard CLI correspondant
+  (`aurora:make:module` / `aurora:make:entity`) puis font les edits
+  délicats (patch `ModuleParameterEnum`, `aliases.js`, fleshing-out
+  AbstractX). Single source of truth = les templates `.tpl`. Les
+  conventions (`moduleToggle:`, `getPlaceholder()`, etc.) n'ont plus
+  besoin d'être maintenues à 2 endroits.
+
+#### Templates wizard
+- `src/Core/Module/Command/templates/entity/*.tpl` (13 fichiers) — le
+  pattern 5 couches Sylius vit là, plus en markdown dans le skill.
+- `SettingEnum.php.tpl` et `ConfigurationTabProvider.php.tpl` du wizard
+  `make:module` câblent désormais `getPlaceholder() => null` et
+  `placeholderKey: $case->getPlaceholder()` + `moduleToggle:`
+  context-aware (core enum case / client `BACKEND_KEY` / `null`).
 
 ### Changé
-- `extend-aurora-entity` skill : clarifie le Repository optionnel +
-  rappel User-style hooks obligatoires.
-- `check-extensibility` skill : ajoute check 17b (vérifier que l'absence
-  d'`applyInput()` est légitimement User-style) + check 26 (audit des
-  toggles de sous-modules).
+- `extend-aurora-entity` skill : namespaces mis à jour
+  (`Aurora\Module\Platform\Agency`, plus l'ancien `Aurora\Core\Agency`)
+  + asset paths post-0.5 (`src/Module/<X>/assets/backend/`) + alias
+  Vite par-module (`@platform/...` au lieu de `@aurora/Core/...`).
+- `add-submodule` skill : asset paths post-0.5 alignés CORE+CLIENT.
+- `check-extensibility` skill : check 17b (User-style `applyInput`
+  absence légitime) + check 26 (audit des toggles de sous-modules).
+- `make aurora-update` (Makefile distribué via `sync-makefile`) :
+  enchaîne désormais `make translation && make build` à la fin pour
+  régénérer le bundle Vite avec les i18n du nouveau core — plus de
+  clés `backend.foo.bar` brutes affichées après bump.
+- Commentaires aurora-core nettoyés de tous les exemples
+  welding-internes (`WLD`, `modules_welding_backend`, `WeldingFoo`,
+  etc.) — welding vit en client depuis 05e374ec, les exemples
+  utilisent maintenant des valeurs neutres (`INV`,
+  `modules_<module_id>_backend`, `MyEntity`).
 
 ---
 
