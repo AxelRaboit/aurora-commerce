@@ -50,10 +50,11 @@ pnpm install                                    # deps JS client (Vue, axios, �
 (cd vendor/axelraboit/aurora && pnpm install)   # tooling Vite/Vitest (vendor)
 ```
 
-> ⚠️ `make install-dev` existe et fait tout ça en un raccourci, **MAIS**
-> il enchaîne aussi `make migrate` qui plante sur une DB fresh à cause
-> d'un quirk multi-namespace Doctrine. Sur un projet existant en DB
-> vierge : suivre les étapes manuelles ici + le §4 ci-dessous.
+> ✅ `make install-dev` fait tout ça en un raccourci — composer +
+> pnpm install + drop/recrée DB + schema:create + fixtures + Vite.
+> C'est le chemin recommandé en pratique. Les étapes manuelles
+> ci-dessous (§3 + §4) sont la version détaillée si tu veux
+> comprendre ou si tu fais juste un re-setup partiel.
 
 ---
 
@@ -102,9 +103,9 @@ psql -h 127.0.0.1 -U <user> -d postgres -c "CREATE DATABASE <db_name>;"
 
 ### Init schéma + state migrations (les deux options)
 
-> ⚠️ Ne PAS faire `make migrate` directement sur une DB fresh. Sur
-> projet vierge multi-namespace, ça plante. Utiliser la procédure
-> `schema:create + mark all applied` à la place :
+Le plus simple : `make install-dev` (déjà mentionné §2) le fait pour
+toi. Si tu veux le faire à la main, ou si tu setup juste la DB sans
+l'install complet :
 
 ```bash
 php bin/console doctrine:schema:create                       # schéma depuis entités
@@ -117,8 +118,12 @@ php bin/console aurora:menus:sync
 php bin/console doctrine:fixtures:load --no-interaction      # données dev
 ```
 
-Détails dans [`../dev/database.md`](../dev/database.md) section
-"DB fresh : `make migrate` ne marche pas".
+> ⚠️ Ne PAS faire `make migrate` directement sur une DB fresh — il
+> plante à cause du quirk multi-namespace. Utiliser `make install-dev`
+> (qui contient le workaround) ou la séquence manuelle ci-dessus.
+> `make migrate` reste correct pour l'incrémental (pull d'un collègue).
+> Détails dans [`../dev/database.md`](../dev/database.md) section
+> "DB fresh : `make migrate` ne marche pas".
 
 ---
 

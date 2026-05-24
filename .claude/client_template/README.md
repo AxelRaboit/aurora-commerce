@@ -18,9 +18,9 @@ and provides the full backend (CRUD, auth, modules, Vue admin SPA, etc.).
 Pour faire tourner ce projet en local après `git clone` :
 **[`vendor/axelraboit/aurora/docs/aurora-client/getting-started/joining_a_project.md`](vendor/axelraboit/aurora/docs/aurora-client/getting-started/joining_a_project.md)**
 
-C'est la procédure recommandée — `make install-dev` plante sur une DB
-fresh à cause d'un quirk multi-namespace de Doctrine Migrations, le
-quickstart contourne ça proprement (10 min, copier-coller direct).
+TL;DR : `cp .env.local.example .env.local` + édite-le, puis
+`make install-dev` (drop + reset + fixtures + Vite). Le quickstart
+détaille les prérequis (PHP/Node/Postgres) et la procédure complète.
 
 > 📋 **Checklist complète** des prérequis (PHP, Node, Postgres, binaires CLI, modèles Ollama, vars d'env, prod) : [`vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md`](vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md) — à lire avant l'install initial.
 >

@@ -57,7 +57,7 @@ doctrine_migrations:
 `make migrate` joue les deux ensembles dans l'ordre. Il ne faut **jamais**
 modifier les migrations Aurora sous `vendor/`.
 
-### ⚠️ DB fresh : `make migrate` ne marche pas, utiliser `schema:create`
+### ⚠️ DB fresh : `make migrate` ne marche pas, utiliser `make install-dev` (ou `make fixtures`)
 
 **Symptôme** : sur une DB *vierge* (fresh dev clone, CI runner, nouveau
 poste), `make migrate-f` plante au cours de la chaîne avec un message du
@@ -71,9 +71,19 @@ dans leur ordre de déclaration. Quand une `ClientMigrations\Version202605081239
 `DoctrineMigrations\Version20260508122957` (création de la table —
 version timestamp plus petite, devrait passer avant), ça plante.
 
-**Workaround pour fresh DB** : générer le schéma depuis l'état actuel
-des entités Doctrine et marquer toutes les migrations comme déjà
-appliquées :
+**Solution** : utiliser **`make install-dev`** (full reset depuis
+zéro) ou **`make fixtures`** (drop DB + reload data). Les deux
+contournent le problème en interne via `schema:create + version
+--add --all` au lieu de `migrations:migrate`.
+
+```bash
+make install-dev   # full reset : composer + pnpm + drop DB + schema:create + fixtures + Vite
+# ou
+make fixtures      # drop DB + schema:create + fixtures (sans toucher aux deps ni lancer Vite)
+```
+
+**Procédure manuelle équivalente** (si tu veux comprendre, ou setup
+juste la DB sans installer le reste) :
 
 ```bash
 # 1. Drop + recreate la DB si elle existe déjà

@@ -170,10 +170,15 @@ about: ## Show app info
 	$(CONSOLE) about
 
 # === Fixtures & Dev ===
-fixtures: _require-dev-env ## Drop DB, re-run migrations, load fixtures and sync all (DEV ONLY)
+fixtures: _require-dev-env ## Drop DB, schema:create from entities, load fixtures and sync all (DEV ONLY)
 	$(CONSOLE) doctrine:database:drop --force --if-exists
 	$(CONSOLE) doctrine:database:create --if-not-exists
-	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+	# schema:create + mark all migrations applied — workaround for the
+	# multi-namespace Doctrine Migrations interleave (see install-dev for
+	# rationale, or vendor/axelraboit/aurora/docs/aurora-client/dev/database.md).
+	$(CONSOLE) doctrine:schema:create
+	$(CONSOLE) doctrine:migrations:sync-metadata-storage --no-interaction
+	$(CONSOLE) doctrine:migrations:version --add --all --no-interaction
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	$(CONSOLE) aurora:application-parameter
 	$(CONSOLE) aurora:menus:sync
@@ -336,7 +341,7 @@ help: ## Show this help message
 
 install: install-dev ## Install the project (alias for install-dev)
 
-install-dev: _require-dev-env ## Install for local development — wipes DB via fixtures-load (DEV ONLY)
+install-dev: _require-dev-env ## Install for local development — full reset: drops DB, schema:create, fixtures (DEV ONLY)
 	$(COMPOSER) install --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA) --no-scripts
 	$(COMPOSER) install --working-dir=$(AURORA)/tools/php-cs-fixer
@@ -346,10 +351,22 @@ install-dev: _require-dev-env ## Install for local development — wipes DB via 
 	$(PNPM) --dir=$(AURORA) install
 	$(PNPM) install
 	make setup-dirs
-	make db-create
-	make migrate
+	# Wipe + recreate DB unconditionally — install-dev is "from scratch" by
+	# contract (fixtures-load below would purge anyway).
+	$(CONSOLE) doctrine:database:drop --force --if-exists
+	$(CONSOLE) doctrine:database:create
+	# schema:create + mark all migrations applied — workaround for the
+	# multi-namespace Doctrine Migrations interleave issue. `make migrate`
+	# would plant here on fresh DB (ClientMigrations + DoctrineMigrations
+	# don't merge strictly by timestamp). Cf.
+	# vendor/axelraboit/aurora/docs/aurora-client/dev/database.md
+	# ("DB fresh : make migrate ne marche pas").
+	$(CONSOLE) doctrine:schema:create
+	$(CONSOLE) doctrine:migrations:sync-metadata-storage --no-interaction
+	$(CONSOLE) doctrine:migrations:version --add --all --no-interaction
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	$(CONSOLE) aurora:application-parameter
+	$(CONSOLE) aurora:privileges:sync
 	$(CONSOLE) aurora:menus:sync
 	make dev
 	@echo "✅ Admin user: admin@aurora.app / password"

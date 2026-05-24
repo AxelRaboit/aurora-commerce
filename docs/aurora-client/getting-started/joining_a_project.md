@@ -78,18 +78,13 @@ en mode test).
 
 ---
 
-## 3. Setup base de données
-
-> ⚠️ **Ne PAS faire `make install-dev` ni `make migrate` directement**
-> sur une DB fresh — les migrations multi-namespace
-> (`ClientMigrations` + `DoctrineMigrations` du vendor) ne s'interleavent
-> pas bien sur DB vierge. Procédure ci-dessous = équivalent fonctionnel
-> en plus court et fiable.
+## 3. Setup base de données + lancer le dev
 
 ### Option A — PostgreSQL local
 
+Vérifier que ta DB ciblée par `DATABASE_URL` existe (ou la créer) :
+
 ```bash
-# Vérifier que ta DB ciblée par DATABASE_URL existe (ou la créer)
 psql -h 127.0.0.1 -U <user> -d postgres -c "CREATE DATABASE <db_name>;"
 ```
 
@@ -99,47 +94,50 @@ psql -h 127.0.0.1 -U <user> -d postgres -c "CREATE DATABASE <db_name>;"
 make docker-up      # docker-compose up postgres
 ```
 
-### Init du schéma + state migrations + données
-
-Quelle que soit l'option, ensuite :
+### Tout en une commande
 
 ```bash
-# 1. Schéma depuis les entités Doctrine (vendor + client)
-php bin/console doctrine:schema:create
-
-# 2. Init metadata storage + marquer toutes les migrations comme appliquées
-php bin/console doctrine:migrations:sync-metadata-storage --no-interaction
-php bin/console doctrine:migrations:version --add --all --no-interaction
-
-# 3. Sanity check
-php bin/console doctrine:schema:validate
-
-# 4. Settings + privileges + menus du registre Aurora
-php bin/console aurora:application-parameter
-php bin/console aurora:privileges:sync
-php bin/console aurora:menus:sync
-
-# 5. Optionnel : charger les fixtures de dev (users, données démo)
-php bin/console doctrine:fixtures:load --no-interaction
+make install-dev
 ```
 
-Détails du *pourquoi* dans [`../dev/database.md`](../dev/database.md)
-section "DB fresh : `make migrate` ne marche pas".
+Cette cible enchaîne (sur DB *fresh* ou existante — elle drop + recrée
+unconditionnellement) :
+
+1. Composer + pnpm install (idempotent)
+2. `doctrine:database:drop --force --if-exists` + `database:create`
+3. `doctrine:schema:create` depuis les annotations d'entité (vendor + client)
+4. `doctrine:migrations:sync-metadata-storage` + `migrations:version --add --all`
+   (marque toutes les migrations comme appliquées — workaround multi-namespace)
+5. `doctrine:fixtures:load` (charge les users + données dev)
+6. `aurora:application-parameter` + `aurora:privileges:sync` + `aurora:menus:sync`
+7. `make dev` → lance Vite
+
+> ⚠️ `make install-dev` est explicitement **"from scratch"** — il
+> WIPE ta DB. Si tu veux juste sync du code d'un collègue **sans
+> perdre tes données locales**, utiliser `make pull-update` à la place.
+
+> Détails techniques sur le workaround multi-namespace :
+> [`../dev/database.md`](../dev/database.md) section
+> "DB fresh : `make migrate` ne marche pas".
 
 ---
 
-## 4. Build initial des assets
+## 4. Accéder à l'app
+
+`make install-dev` se termine par `make dev` qui lance Vite en
+foreground. Dans un autre terminal :
 
 ```bash
-make build
+make start-d            # serveur Symfony en background
+# ouvrir https://localhost:8000 (ou le port affiché)
 ```
 
-Premier `make build` après clone → écrit `public/build/entrypoints.json` +
-le manifest Vite. Sans ce build initial, le serveur Symfony rendrait
-des pages sans `<script>` ni `<link>` (assets pas inclus).
+Ou si tu préfères tout dans une seule fenêtre :
+- Ctrl+C pour stopper Vite après install-dev
+- `make start` → relance Symfony + Vite ensemble
 
-> ⚠️ Si `make build` réussit mais que `ls public/build/` retourne
-> "No such file or directory", vérifier le symlink :
+> ⚠️ Si la page se charge sans CSS/JS, vérifier le symlink
+> `public/build` :
 > ```bash
 > ls -la public/build
 > # doit pointer vers: public/build -> ../vendor/axelraboit/aurora/public/build
@@ -147,19 +145,7 @@ des pages sans `<script>` ni `<link>` (assets pas inclus).
 > Si manquant, le restaurer : `ln -s ../vendor/axelraboit/aurora/public/build public/build`.
 > Cf. [`../dev/assets_vue.md`](../dev/assets_vue.md) §Symlink pour le contexte.
 
----
-
-## 5. Démarrer le dev serveur
-
-```bash
-make start
-```
-
-Lance en parallèle :
-- Serveur Symfony sur https://localhost:8000 (ou le port libre dispo)
-- Vite en mode watch (HMR sur les Vue components)
-
-Ouvrir le navigateur sur l'URL affichée. Login admin via les fixtures :
+Login admin via les fixtures :
 
 | Champ | Valeur |
 |---|---|
@@ -204,8 +190,13 @@ qui ne matchent pas ta PG locale. Mettre tes vrais creds.
 
 ### `relation "core_<table>" does not exist` pendant les migrations
 
-Tu as lancé `make migrate` au lieu du workaround du §3. Drop la DB et
-recommence le §3 du début.
+Tu as lancé `make migrate` (incremental) sur une DB fresh — il plante
+à cause du quirk multi-namespace. Pour repartir de zéro, utilise
+`make install-dev` à la place (drop + recrée + schema:create + fixtures).
+
+`make migrate` est uniquement pour l'incrémental — quand tu sync le
+boulot d'un collègue qui a ajouté une migration et que ta DB est déjà
+à jour sur tout le reste. `make pull-update` l'inclut.
 
 ### `make ft` plante sur `make db-test`
 
