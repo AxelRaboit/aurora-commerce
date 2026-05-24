@@ -66,6 +66,17 @@ ensuite être ajustés sans redéploiement via `/backend/settings` → onglet
 ⚠️ **Ne JAMAIS faire `make install-dev` sur un projet déjà setup** — il purge
 la BDD via `doctrine:fixtures:load`. Les données locales sont écrasées.
 
+## Intégration continue (GitHub Actions)
+
+Le template embarque `.github/workflows/ci.yml` qui run lint + build +
+tests à chaque push/PR. **Étape obligatoire au premier setup** : créer
+un *fine-grained PAT* avec accès lecture à `aurora-core` et l'ajouter en
+secret repo `AURORA_CORE_READ_TOKEN` (sinon `composer install` plante
+en CI sur le clone du vendor privé).
+
+Setup complet (5 min, une fois pour la vie du projet) :
+[`vendor/axelraboit/aurora/docs/aurora-client/deployment/github_actions_ci.md`](vendor/axelraboit/aurora/docs/aurora-client/deployment/github_actions_ci.md)
+
 ## Comment utiliser Aurora ?
 
 Toutes les conventions client-side (où mettre le code, comment override

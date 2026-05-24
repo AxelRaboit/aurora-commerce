@@ -13,6 +13,7 @@ minimaliste de séquence locale-vers-prod, à reproduire dans votre infra.
 > - [`worker_systemd.md`](worker_systemd.md) — service systemd pour le worker Messenger
 > - [`apache_xsendfile.md`](apache_xsendfile.md) — `mod_xsendfile` pour servir `var/uploads/`
 > - [`ocr_setup.md`](ocr_setup.md) — pipeline OCR (docTR + Ollama vision)
+> - [`github_actions_ci.md`](github_actions_ci.md) — setup du workflow CI GitHub Actions (PAT pour le vendor privé, init DB de test)
 
 ---
 
