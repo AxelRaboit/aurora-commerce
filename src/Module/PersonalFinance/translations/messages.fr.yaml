@@ -27,6 +27,10 @@ backend:
   modules:
     personal_finance_backend: Finance personnelle
     personal_finance_backend_description: 'Gestion financière personnelle : portefeuilles, budget mensuel, transactions, virements, objectifs d''épargne, transactions récurrentes, catégories, statistiques.'
+  settings:
+    tabs:
+      personal_finance: Finance perso
+      personal_finance_description: Paramètres du module Finance personnelle (devise par défaut, règles de catégorisation, etc.).
   nav:
     sections:
       personal_finance: Finance perso

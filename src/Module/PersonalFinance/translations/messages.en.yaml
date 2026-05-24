@@ -27,6 +27,10 @@ backend:
   modules:
     personal_finance_backend: Personal Finance
     personal_finance_backend_description: 'Personal finance management: wallets, monthly budget, transactions, transfers, savings goals, recurring transactions, categories, statistics.'
+  settings:
+    tabs:
+      personal_finance: Personal Finance
+      personal_finance_description: Personal Finance module settings (default currency, categorization rules, etc.).
   nav:
     sections:
       personal_finance: Personal Finance
