@@ -80,7 +80,7 @@ async function save() {
 
 <template>
     <AppModal :show="!!media" max-width="5xl" :closeable="false" v-on:close="close">
-        <h3 class="text-sm font-semibold text-primary mb-3">{{ t("backend.media.cropTitle") }} — {{ media?.originalName }}</h3>
+        <h3 class="text-sm font-semibold text-primary mb-3">{{ t("backend.media.crop_title") }} — {{ media?.originalName }}</h3>
         <div style="height: 65vh; width: 100%; overflow: hidden;">
             <img
                 v-if="media"
@@ -94,7 +94,7 @@ async function save() {
             <AppModalFooter>
                 <AppButton variant="ghost" size="md" v-on:click="close"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>
                 <AppButton variant="primary" size="md" :loading="saving" v-on:click="save">
-                    <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.applyCrop") }}
+                    <Save class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.media.apply_crop") }}
                 </AppButton>
             </AppModalFooter>
         </template>

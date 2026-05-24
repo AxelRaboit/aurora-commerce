@@ -34,7 +34,7 @@ export function useMediaBulkActions(
         media.value = media.value.filter((m) => !selectedIds.value.has(m.id));
         clearSelection();
         pendingBulkDelete.value = false;
-        toast.success(t("backend.media.bulkDeleted"));
+        toast.success(t("backend.media.bulk_deleted"));
     }
 
     const bulkMoveTargetId = ref(null);
@@ -60,7 +60,7 @@ export function useMediaBulkActions(
         }
         clearSelection();
         bulkMoveTargetId.value = null;
-        toast.success(t("backend.media.bulkMoved"));
+        toast.success(t("backend.media.bulk_moved"));
     }
 
     return {

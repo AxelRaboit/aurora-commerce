@@ -1,66 +1,64 @@
 backend:
   media:
     usage:
-      postFeatured: Image principale
-      postContent: Bloc image
-      brandingLogo: Logo du site
-      brandingFavicon: Favicon
-      brandingDetail: Identité visuelle
+      post_featured: Image principale
+      post_content: Bloc image
+      branding_logo: Logo du site
+      branding_favicon: Favicon
+      branding_detail: Identité visuelle
     upload: Téléverser
     uploaded: '{count} fichier(s) téléversé(s)'
     uploaded_one: Fichier téléversé
     empty: Aucun média dans ce dossier
-    altWarning: Certains médias n'ont pas de texte alternatif
-    missingAlt: Alt manquant
-    editMedia: Modifier le média
+    alt_warning: Certains médias n'ont pas de texte alternatif
+    missing_alt: Alt manquant
+    edit_media: Modifier le média
     moved: Média déplacé
-    rootFolder: Racine
-    allMedia: Tous les médias
+    root_folder: Racine
+    all_media: Tous les médias
     expand: Déplier
     collapse: Replier
-    dropToUpload: Déposer les fichiers pour les téléverser
-    filterAll: Tous
-    filterImages: Images
-    filterVideos: Vidéos
-    filterPdf: PDF
-    filterOther: Autres
-    sortDate: Date
-    sortName: Nom
-    sortSize: Taille
-    sortPositionHint: Ordre personnalisé (glisser-déposer)
+    drop_to_upload: Déposer les fichiers pour les téléverser
+    filter_all: Tous
+    filter_images: Images
+    filter_videos: Vidéos
+    filter_pdf: PDF
+    filter_other: Autres
+    sort_date: Date
+    sort_name: Nom
+    sort_size: Taille
+    sort_position_hint: Ordre personnalisé (glisser-déposer)
     selected: sélectionné(s)
-    selectAll: Tout sélectionner
-    bulkDeleted: Médias supprimés
-    bulkMoved: Médias déplacés
-    bulkDeleteConfirm: 'Supprimer {count} média(s) ?'
-    bulkMove: 'Déplacer {count} média(s)'
-    urlCopied: URL copiée
-    copyUrl: Copier l'URL
+    select_all: Tout sélectionner
+    bulk_deleted: Médias supprimés
+    bulk_moved: Médias déplacés
+    bulk_delete_confirm: 'Supprimer {count} média(s) ?'
+    bulk_move: 'Déplacer {count} média(s)'
+    url_copied: URL copiée
+    copy_url: Copier l'URL
     preview: Aperçu
     open: Ouvrir
-    qrCode: QR Code
-    downloadQr: Télécharger le QR
     storage: Stockage utilisé
     move: Déplacer
-    uploadedBy: Téléversé par
-    createdAt: Créé le
-    updatedAt: Modifié le
+    uploaded_by: Téléversé par
+    created_at: Créé le
+    updated_at: Modifié le
     permalink: Lien permanent
     crop: Recadrer
-    cropTitle: Recadrer l'image
-    applyCrop: Appliquer le recadrage
+    crop_title: Recadrer l'image
+    apply_crop: Appliquer le recadrage
     cropped: Image recadrée
-    captionPlaceholder: Décrivez ce média…
+    caption_placeholder: Décrivez ce média…
     favourites: Favoris
-    tabEdit: Édition
-    tabHistory: Historique
-    tabUsage: Utilisation
-    usageTotal: Total
-    usageDirect: Image principale
-    usageContent: Dans le contenu
-    usageNone: Ce média n'est utilisé nulle part
-    noHistory: Aucune modification enregistrée
-    historyAction:
+    tab_edit: Édition
+    tab_history: Historique
+    tab_usage: Utilisation
+    usage_total: Total
+    usage_direct: Image principale
+    usage_content: Dans le contenu
+    usage_none: Ce média n'est utilisé nulle part
+    no_history: Aucune modification enregistrée
+    history_action:
       uploaded: Téléversé
       updated: Modifié
       moved: Déplacé
@@ -78,23 +76,23 @@ backend:
     folders: Dossiers
     subfolders: Sous-dossiers
     files: Fichiers
-    newFolder: Nouveau
-    searchPlaceholder: Rechercher…
+    new_folder: Nouveau
+    search_placeholder: Rechercher…
     alt: Texte alternatif
-    altPlaceholder: Décris l'image pour les lecteurs d'écran…
+    alt_placeholder: Décris l'image pour les lecteurs d'écran…
     caption: Légende
     folder: Dossier
     filename: Fichier
     size: Taille
     dimensions: Dimensions
-    mimeType: Type
-    focalHint: Clique sur l'image pour définir le point focal.
-    resetFocal: Réinitialiser
-    deleteConfirm: 'Supprimer « {name} » ? Cette action est irréversible.'
-    checkingUsage: Vérification des utilisations…
-    usageWarning: 'Ce média est actuellement utilisé à {count} endroit(s). Le supprimer cassera ces emplacements :'
-    deleteAnyway: Supprimer quand même
-    usageGroups:
+    mime_type: Type
+    focal_hint: Clique sur l'image pour définir le point focal.
+    reset_focal: Réinitialiser
+    delete_confirm: 'Supprimer « {name} » ? Cette action est irréversible.'
+    checking_usage: Vérification des utilisations…
+    usage_warning: 'Ce média est actuellement utilisé à {count} endroit(s). Le supprimer cassera ces emplacements :'
+    delete_anyway: Supprimer quand même
+    usage_groups:
       post:
         featured: Articles (image principale)
         content: Articles (dans le contenu)
@@ -104,14 +102,14 @@ backend:
       branding:
         setting: Identité visuelle
       other: Autres
-    bulkDelete: 'Supprimer la sélection ({count})'
-    bulkDeleteConfirmDesc: Cette action est irréversible. Les fichiers seront définitivement supprimés.
-    createFolder: Créer un dossier
-    editFolder: Renommer le dossier
-    folderName: Nom du dossier
-    folderNamePlaceholder: ex. Photos vacances 2024
-    parentFolder: Dossier parent
-    deleteFolderConfirm: 'Supprimer le dossier « {name} » ? Son contenu sera déplacé à la racine.'
+    bulk_delete: 'Supprimer la sélection ({count})'
+    bulk_delete_confirm_desc: Cette action est irréversible. Les fichiers seront définitivement supprimés.
+    create_folder: Créer un dossier
+    edit_folder: Renommer le dossier
+    folder_name: Nom du dossier
+    folder_name_placeholder: ex. Photos vacances 2024
+    parent_folder: Dossier parent
+    delete_folder_confirm: 'Supprimer le dossier « {name} » ? Son contenu sera déplacé à la racine.'
 shared:
   media:
     choose: Choisir une image
@@ -120,12 +118,12 @@ shared:
     picker:
       title: Choisir un média
       search: Rechercher par nom ou alt…
-      allFolders: Tous les médias
-      rootFolder: Racine
+      all_folders: Tous les médias
+      root_folder: Racine
       empty: Aucun média trouvé
       select: Sélectionner
-      addSelected: Ajouter la sélection
-      selectedCount: sélectionné(s)
+      add_selected: Ajouter la sélection
+      selected_count: sélectionné(s)
       in: Dans
       items: résultats
       dimensions: Dimensions
@@ -133,12 +131,12 @@ shared:
       uploaded: Mis en ligne
       folder: Dossier
       alt: Texte alternatif
-      altPlaceholder: Décrivez l'image pour les lecteurs d'écran et le SEO
+      alt_placeholder: Décrivez l'image pour les lecteurs d'écran et le SEO
       caption: Légende
-      captionPlaceholder: Légende affichée sous l'image
-      openInLibrary: Ouvrir dans la médiathèque
+      caption_placeholder: Légende affichée sous l'image
+      open_in_library: Ouvrir dans la médiathèque
       upload: Téléverser
-      dropHere: Déposer pour téléverser
+      drop_here: Déposer pour téléverser
       subfolders: Sous-dossiers
       files: Fichiers
     filters:
@@ -146,7 +144,7 @@ shared:
       image: Images
       video: Vidéos
       document: Documents
-  dropZone:
+  drop_zone:
     cta: Choisir un fichier
     drop: Déposez votre fichier ici
     uploading: Envoi…

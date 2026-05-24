@@ -51,6 +51,8 @@ shared:
     select_to_pick: Appuyez sur Entrée pour sélectionner
     select_selected: Sélectionné
     download: Télécharger
+    qr_code: QR Code
+    download_qr: Télécharger le QR Code
     dates: Dates
     created: Créé le
     updated: Modifié le

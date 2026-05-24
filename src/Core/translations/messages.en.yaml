@@ -51,6 +51,8 @@ shared:
     select_to_pick: Press enter to select
     select_selected: Selected
     download: Download
+    qr_code: QR Code
+    download_qr: Download QR Code
     dates: Dates
     created: Created
     updated: Updated

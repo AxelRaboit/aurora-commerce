@@ -1,6 +1,7 @@
 <script setup>
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
+import { useQrCode } from "@/shared/composables/overlay/useQrCode.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentsForm, DOCUMENT_STATUS_BADGE } from "./composables/useDocumentsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -12,6 +13,7 @@ import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppListToolbar from "@/shared/components/list/AppListToolbar.vue";
 import AppModal from "@/shared/components/overlay/AppModal.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
+import AppQrCodeModal from "@/shared/components/overlay/AppQrCodeModal.vue";
 import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
@@ -22,7 +24,7 @@ import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 import { useDocumentFilters } from "./composables/useDocumentFilters.js";
 import { useDocumentDetail } from "./composables/useDocumentDetail.js";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
-import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download } from "lucide-vue-next";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
 
@@ -51,6 +53,8 @@ const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }))
 
 // ── Detail modal ─────────────────────────────────────────────────────────────
 const { viewingDoc, viewingDocVersions, viewDoc, closeDetail } = useDocumentDetail(props.versionsPath);
+
+const { qrItem: qrDoc, openQr, closeQr } = useQrCode();
 
 function openEditFromDetail() {
     const doc = viewingDoc.value;
@@ -205,6 +209,7 @@ const {
                         >
                             <Download class="w-4 h-4" :stroke-width="2" />
                         </AppIconButton>
+                        <AppIconButton v-if="doc.fileUrl" color="default" :title="t('shared.common.qr_code')" v-on:click="openQr(doc)"><QrCode class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                         <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                     </div>
@@ -278,6 +283,7 @@ const {
                                     >
                                         <Download class="w-4 h-4" :stroke-width="2" />
                                     </AppIconButton>
+                                    <AppIconButton v-if="doc.fileUrl" color="default" :title="t('shared.common.qr_code')" v-on:click="openQr(doc)"><QrCode class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     <AppIconButton v-if="can('ged.documents.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEdit(doc)"><Pencil class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                     <AppIconButton v-if="can('ged.documents.delete')" color="rose" :title="t('shared.common.delete')" v-on:click="confirmDelete(doc)"><Trash2 class="w-4 h-4" :stroke-width="2" /></AppIconButton>
                                 </div>
@@ -577,5 +583,7 @@ const {
                 </AppModalFooter>
             </template>
         </AppModal>
+
+        <AppQrCodeModal :item="qrDoc" v-on:close="closeQr" />
     </div>
 </template>
