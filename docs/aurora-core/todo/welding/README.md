@@ -1,9 +1,12 @@
 # Welding — nouveau module Aurora
 
-> **Statut V1 livrée (mai 2026)** : sprints -1 à 5 tous livrés. Le module
-> est fonctionnel de bout en bout — template editor, runner soudeur,
-> validation tierce, notifications email, voter d'autorisation, audit
-> trail. Seul le V2 (cf. point 9 du plan ci-dessous) reste ouvert.
+> **Statut V1 livrée + hardening (mai 2026)** : sprints -1 à 5 livrés,
+> puis post-V1 (sprints 6–10) — fusion PdfForm → Welding, storage migré
+> sous `var/uploads/welding/`, table Aurora standard, audit conventions,
+> task checklist par step. Le module est fonctionnel de bout en bout —
+> template editor, runner soudeur, validation tierce, notifications email,
+> voter d'autorisation, audit trail, tasks gating step submission. Seul
+> le V2 (cf. point 11 du plan ci-dessous) reste ouvert.
 
 Module pour piloter des **workflows de soudure réglementée** (cible
 initiale : nucléaire — RCC-M, ASME III, normes ISO 15614). Un superviseur
@@ -14,9 +17,11 @@ qu'avec la signature d'un tiers (inspecteur, QA). Le soudeur traverse les
 leur tour ; le dossier complet est archivable.
 
 Ce module est aussi le **banc d'essai** du pipeline complet
-« import PDF → définir champs → remplir → signer → archiver » que
-[`PdfForm`](../../../../src/Module/PdfForm/) a outillé en briques mais
-pas encore mis en scène dans un cas d'usage de bout en bout.
+« import PDF → définir champs → remplir → signer → archiver ».
+**Note post-V1** : l'ancien module `PdfForm` a été fusionné dans
+`Welding` (cf. sprint 6 ci-dessous). Les classes `PdfTemplate`,
+`PdfTemplateField`, `PdfDocument` vivent désormais sous
+`src/Module/Welding/` avec préfixe `Welding*`.
 
 ---
 
@@ -47,8 +52,9 @@ Implications du choix `Welding` :
 - Twig namespace : `@Welding/`
 - Translations : `translations/welding.<locale>.yaml`
 - Storage : `var/uploads/welding/<workflow_ref>/` pour les pièces jointes
-  spécifiques (photos de cordon, radios, etc.) — les PDFs générés
-  restent sous `var/uploads/pdf-form/` (gérés par PdfForm)
+  spécifiques (photos de cordon, radios, etc.) — les PDFs générés vivent
+  sous `var/uploads/welding/pdf-documents/` (post-fusion PdfForm,
+  cf. sprint 7)
 
 ---
 
@@ -182,7 +188,7 @@ Pattern Aurora existant : voir [`per_user_module_access.md`](../../dev/per_user_
 
 | Module | Lien | V1 ? |
 |---|---|---|
-| **`PdfForm`** | Dépendance dure : `WorkflowStepPdfTemplate` référence `PdfTemplateInterface` ; les PDFs remplis sont des `PdfDocument` | ✅ V1 |
+| **`PdfForm`** | ~~Dépendance dure~~ → **fusionné dans Welding** (sprint 6, mai 2026). `WeldingPdfTemplate`, `WeldingPdfDocument`, `WeldingPdfTemplateField` vivent sous `src/Module/Welding/` | ✅ V1 (intégré) |
 | **`Hr/Employee`** | `Workflow.assignee` = `Employee` (le soudeur). Permet d'avoir nom/prénom/matricule du soudeur sur les PDFs générés | ✅ V1 |
 | **`Configuration`** | Settings du module (refs auto-numbering pattern, durée de conservation, etc.) | ✅ V1 |
 | **`Notifications`** *(à confirmer)* | Notif validator quand step passe `AwaitingValidation` | ✅ V1 si dispo, V2 sinon |
@@ -417,7 +423,44 @@ suit simplement la même convention.
    l'auteur via Security ; les timestamps `created/updated/validated/
    completed/rejectedAt` sont immutables côté code (jamais réécrits
    sauf reset explicite sur reject où l'audit log préserve l'historique).
-9. ⏸ **V2 (post-V1)** : archive Ged auto, multi-validation par step,
-   rattachement Project/Affaire (`contextType`/`contextId` sur `Workflow`),
-   notifications email routées par `validatorRole`, page dédiée
-   "Validations en attente pour moi" pour les validateurs.
+9. ✅ **Sprint 6 — fusion PdfForm → Welding** : l'ancien module `PdfForm`
+   (top-level) absorbé dans `Welding`. Classes renommées avec préfixe
+   `Welding*` (`WeldingPdfTemplate`, `WeldingPdfDocument`,
+   `WeldingPdfTemplateField`, `WeldingPdfCanvasEditor`, `WeldingSignaturePad`,
+   `WeldingSignatureDisplay`, etc.). Translations
+   `backend.pdfform.*` repliées sous `backend.welding.{pdf_templates,
+   pdf_documents, pdf_template_fields, pdf_pdftk}` (FR + EN). Nav-section
+   top-level `pdfform` retirée. Cf. commits `cc5b1f98` (WIP) + `1bb4d983`
+   (finalize). PHP 2925/2925 + JS 877/877 verts.
+10. ✅ **Sprint 7 — storage migré** : `var/pdfform/` (sibling de
+    `var/uploads/`, violait la convention CLAUDE.md §5bis) déplacé vers
+    `var/uploads/welding/pdf-documents/`. `WeldingPdfDocumentStorage::
+    STORAGE_SUBDIR`, `CleanTempFilesHandler`, prefixes tmp
+    (`aurora_welding_pdf_*`) tous alignés. Cf. commit `1752353b`.
+11. ✅ **Sprint 8 — table Aurora standard** : `WeldingWorkflowTemplatesApp`
+    + `WeldingWorkflowsApp` alignés sur le pattern admin canonique
+    (table sm+, card-stack mobile, `AppIconButton` action column,
+    `AppMultiselect` pour le status filter et les pickers). Cf. commit
+    `e1a7ee7d`.
+12. ✅ **Sprint 9 — audit conventions** : test layout miroir de `src/`
+    (`tests/Unit/Module/Welding/<Entity>/<Layer>/...`), PSR-4 réaligné,
+    raw `<select>` et `confirm()` natifs remplacés par
+    `AppMultiselect`/`AppModal` dans l'éditeur. Backend hygiene
+    re-vérifiée (Managers non-final, `#[AsAlias]` sur interfaces,
+    `public readonly` per-property, audit logger sur chaque méthode
+    mutante). Cf. commit `cebd849a`.
+13. ✅ **Sprint 10 — workflow step task checklist + UX polish** : feature
+    de checklist par step (admin définit `WorkflowStepTaskTemplate`,
+    soudeur tique `WorkflowStepTask` au runtime, tâches `required`
+    gatent la soumission via `RequiredTasksUndoneException`). Stack
+    Sylius 5-couches complète + snapshot at workflow start. UX sweep :
+    nav nettoyée (Templates PDF + Documents générés gérés inline),
+    `AppBadge`/`AppIconButton` partout, modales de confirmation sur
+    Publish/Clone/Archive, `AppModal :close-on-overlay` prop, composables
+    Vue extraits (~45-95 lignes par page). Migrations
+    `core_welding_workflow_step_task_templates` + `_step_tasks`. Cf.
+    commit `62568805`.
+14. ⏸ **V2 (post-V1)** : archive Ged auto, multi-validation par step,
+    rattachement Project/Affaire (`contextType`/`contextId` sur `Workflow`),
+    notifications email routées par `validatorRole`, page dédiée
+    "Validations en attente pour moi" pour les validateurs.
