@@ -31,7 +31,7 @@ Do NOT invent — read these patterns and apply them literally.
    default, validation constraints (`#[Assert\*]`). Ask explicitly; do not
    invent fields.
 3. **Module path mirror** — derive from the Aurora namespace. Aurora
-   `Aurora\Core\Agency` → client `App\Module\Core\Agency\`. Aurora
+   `Aurora\Module\Platform\Agency` → client `App\Module\Platform\Agency\`. Aurora
    `Aurora\Module\Editorial\Post` → client `App\Module\Editorial\Post\`.
    Confirm with the user if the project uses a different convention (some
    clients put extensions directly under `App\Entity\` — ask once).
@@ -46,20 +46,20 @@ Do NOT invent — read these patterns and apply them literally.
 ## What gets generated
 
 For `<Name>` (e.g., `Agency`) with field `code`, namespace mirror
-`App\Module\Core\Agency`:
+`App\Module\Platform\Agency`:
 
 ### Layer 1 — Concrete entity
 
 ```
-src/Module/Core/Agency/Entity/Agency.php
+src/Module/Platform/Agency/Entity/Agency.php
 ```
 
 ```php
-namespace App\Module\Core\Agency\Entity;
+namespace App\Module\Platform\Agency\Entity;
 
-use Aurora\Core\Agency\Entity\AbstractAgency;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use App\Module\Core\Agency\Repository\AgencyRepository; // only if a custom repo
+use Aurora\Module\Platform\Agency\Entity\AbstractAgency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use App\Module\Platform\Agency\Repository\AgencyRepository; // only if a custom repo
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
@@ -94,7 +94,7 @@ Edit `config/packages/doctrine.yaml`:
 doctrine:
     orm:
         resolve_target_entities:
-            Aurora\Core\Agency\Entity\AgencyInterface: App\Module\Core\Agency\Entity\Agency
+            Aurora\Module\Platform\Agency\Entity\AgencyInterface: App\Module\Platform\Agency\Entity\Agency
 ```
 
 Read the file first to find the existing block; append, don't replace.
@@ -110,15 +110,15 @@ go to your `app_agencies` table automatically.
 In that case :
 
 ```
-src/Module/Core/Agency/Repository/AgencyRepository.php
+src/Module/Platform/Agency/Repository/AgencyRepository.php
 ```
 
 ```php
-namespace App\Module\Core\Agency\Repository;
+namespace App\Module\Platform\Agency\Repository;
 
-use App\Module\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Repository\AgencyRepository as AuroraAgencyRepository;
+use App\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Repository\AgencyRepository as AuroraAgencyRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 class AgencyRepository extends AuroraAgencyRepository
@@ -133,7 +133,7 @@ class AgencyRepository extends AuroraAgencyRepository
 ```
 
 Then point the entity's `repositoryClass` to **your** repo :
-`#[ORM\Entity(repositoryClass: \App\Module\Core\Agency\Repository\AgencyRepository::class)]`.
+`#[ORM\Entity(repositoryClass: \App\Module\Platform\Agency\Repository\AgencyRepository::class)]`.
 
 No interface to create (Aurora doesn't expose `AgencyRepositoryInterface` —
 limite assumée).
@@ -141,15 +141,15 @@ limite assumée).
 ### Layer 2 — DTO + Factory extension
 
 ```
-src/Module/Core/Agency/Dto/AgencyInput.php
-src/Module/Core/Agency/Dto/AgencyInputFactory.php
+src/Module/Platform/Agency/Dto/AgencyInput.php
+src/Module/Platform/Agency/Dto/AgencyInputFactory.php
 ```
 
 ```php
 // AgencyInput.php
-namespace App\Module\Core\Agency\Dto;
+namespace App\Module\Platform\Agency\Dto;
 
-use Aurora\Core\Agency\Dto\AgencyInput as AuroraAgencyInput;
+use Aurora\Module\Platform\Agency\Dto\AgencyInput as AuroraAgencyInput;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AgencyInput extends AuroraAgencyInput
@@ -168,11 +168,11 @@ class AgencyInput extends AuroraAgencyInput
 
 ```php
 // AgencyInputFactory.php
-namespace App\Module\Core\Agency\Dto;
+namespace App\Module\Platform\Agency\Dto;
 
-use Aurora\Core\Agency\Dto\AgencyInputFactory as AuroraAgencyInputFactory;
-use Aurora\Core\Agency\Dto\AgencyInputFactoryInterface;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactory as AuroraAgencyInputFactory;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputFactoryInterface;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
 use Aurora\Core\Support\Str;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -192,17 +192,17 @@ class AgencyInputFactory extends AuroraAgencyInputFactory
 ### Layer 3 — Manager extension
 
 ```
-src/Module/Core/Agency/Manager/AgencyManager.php
+src/Module/Platform/Agency/Manager/AgencyManager.php
 ```
 
 ```php
-namespace App\Module\Core\Agency\Manager;
+namespace App\Module\Platform\Agency\Manager;
 
-use App\Module\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Dto\AgencyInputInterface;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Manager\AgencyManager as AuroraAgencyManager;
-use Aurora\Core\Agency\Manager\AgencyManagerInterface;
+use App\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Dto\AgencyInputInterface;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Manager\AgencyManager as AuroraAgencyManager;
+use Aurora\Module\Platform\Agency\Manager\AgencyManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencyManagerInterface::class)]
@@ -218,7 +218,7 @@ class AgencyManager extends AuroraAgencyManager
     {
         parent::applyInput($agency, $input); // CRITICAL — call parent FIRST so Aurora fields are hydrated.
 
-        if ($agency instanceof Agency && $input instanceof \App\Module\Core\Agency\Dto\AgencyInput) {
+        if ($agency instanceof Agency && $input instanceof \App\Module\Platform\Agency\Dto\AgencyInput) {
             $agency->setCode($input->getCode());
         }
     }
@@ -252,16 +252,16 @@ to the user and ask which ones to override. Each override starts with
 ### Layer 4 — Serializer extension
 
 ```
-src/Module/Core/Agency/Serializer/AgencySerializer.php
+src/Module/Platform/Agency/Serializer/AgencySerializer.php
 ```
 
 ```php
-namespace App\Module\Core\Agency\Serializer;
+namespace App\Module\Platform\Agency\Serializer;
 
-use App\Module\Core\Agency\Entity\Agency;
-use Aurora\Core\Agency\Entity\AgencyInterface;
-use Aurora\Core\Agency\Serializer\AgencySerializer as AuroraAgencySerializer;
-use Aurora\Core\Agency\Serializer\AgencySerializerInterface;
+use App\Module\Platform\Agency\Entity\Agency;
+use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
+use Aurora\Module\Platform\Agency\Serializer\AgencySerializer as AuroraAgencySerializer;
+use Aurora\Module\Platform\Agency\Serializer\AgencySerializerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
 #[AsAlias(AgencySerializerInterface::class)]
@@ -280,12 +280,18 @@ class AgencySerializer extends AuroraAgencySerializer
 ### Layer 5 — Vue wrapper
 
 ```
-assets/client/Module/Core/Agency/AppAgenciesApp.vue
+src/Module/Platform/Agency/assets/backend/AppAgenciesApp.vue
 ```
+
+> Convention 0.5+ : assets are **co-located** under
+> `src/Module/<Module>/assets/backend/` next to the PHP classes of the
+> module. The old root `assets/client/Module/<...>` layout was dropped
+> in aurora-client commit `9d77f67`. Vite picks the new path up via
+> the alias chain configured in `aliases.js` + `jsconfig.json`.
 
 ```vue
 <script setup>
-import AgenciesApp from "@aurora/Core/backend/agencies/AgenciesApp.vue";
+import AgenciesApp from "@platform/backend/agencies/AgenciesApp.vue";
 
 const extraFields = {
     code: {
@@ -312,8 +318,11 @@ const extraFields = {
 </template>
 ```
 
-Note the alias `@aurora/...` — clients use the Vite alias that points at
-`vendor/axelraboit/aurora/assets/`.
+Note the alias chain — clients import via the per-module shorthand
+(`@<module>/...`) configured in `aliases.js` and resolved by Vite. The
+`@<module>/...` entries point at
+`vendor/axelraboit/aurora/src/Module/<Module>/assets/` since 0.5 (assets
+moved under each module's PHP folder; the legacy root `assets/` is gone).
 
 For the Post editor full-page variant: wrap `PostEditor.vue` and place the
 `extra-form-fields` slot near a semantically related panel (cf. convention
@@ -321,17 +330,21 @@ For the Post editor full-page variant: wrap `PostEditor.vue` and place the
 
 ### Twig override (optional)
 
-If the controller mounts the Aurora Vue component by name, override the
-Twig template that does the mounting:
+If the controller mounts the Aurora Vue component by name and the client
+needs to swap in its wrapper, mirror the Aurora template path under the
+client's source tree. Aurora's per-module Twig namespaces
+(`@Platform`, `@Crm`, `@Editorial`, …) prepend the client's path first,
+so the override is picked up automatically.
+
+Example — Agency lives under the Platform module in aurora-core
+(`src/Module/Platform/templates/backend/agencies/index.html.twig`).
+The client mirror:
 
 ```
-src/Core/templates/Core/backend/agencies/index.html.twig  (new, recommended)
-# or — legacy backward-compat:
-templates/Core/backend/agencies/index.html.twig
+src/Module/Platform/templates/backend/agencies/index.html.twig
 ```
 
-Point the Vue mount to `AppAgenciesApp` instead of `AgenciesApp`. Aurora's
-Twig namespace prepending handles the resolution from either location.
+Point the Vue mount to `AppAgenciesApp` instead of `AgenciesApp`.
 
 ## Procedure
 
