@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
@@ -58,6 +59,7 @@ use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Notes\Markdown\Entity\AbstractMarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
@@ -144,6 +146,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         private readonly SettingsService $settingsManager,
         #[Autowire('%app.upload_dir%')]
         private readonly string $uploadDir,
+        private readonly PdfThumbnailGenerator $pdfThumbnailGenerator,
         private readonly Filesystem $fs = new Filesystem(),
         protected readonly ?MediaUrlGenerator $mediaUrlGenerator = null,
         private readonly ?PersonalFinanceGoalManagerInterface $goalManager = null,
@@ -2053,11 +2056,25 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                     $destFile = $gedDir.'/'.$fileName;
                     $this->fs->copy($src, $destFile, true);
 
+                    $mimeType = $mimeByExt[$ext] ?? 'application/octet-stream';
                     $d->setFilePath('ged/'.$gedMonth.'/'.$fileName)
                       ->setFileName($fileName)
                       ->setOriginalName($def['title'].'.'.$ext)
-                      ->setMimeType($mimeByExt[$ext] ?? 'application/octet-stream')
+                      ->setMimeType($mimeType)
                       ->setSize((int) filesize($destFile));
+
+                    if (MimeTypeEnum::Pdf->value === $mimeType) {
+                        $thumbDir = 'ged/thumbnails/'.$gedMonth;
+                        $thumbBasename = pathinfo($fileName, PATHINFO_FILENAME);
+                        $thumbnailPath = $this->pdfThumbnailGenerator->generate(
+                            'ged/'.$gedMonth.'/'.$fileName,
+                            $thumbDir,
+                            $thumbBasename,
+                        );
+                        if (null !== $thumbnailPath) {
+                            $d->setThumbnailPath($thumbnailPath);
+                        }
+                    }
                 }
             }
 
