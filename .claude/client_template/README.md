@@ -69,12 +69,10 @@ la BDD via `doctrine:fixtures:load`. Les données locales sont écrasées.
 ## Intégration continue (GitHub Actions)
 
 Le template embarque `.github/workflows/ci.yml` qui run lint + build +
-tests à chaque push/PR. **Étape obligatoire au premier setup** : créer
-un *fine-grained PAT* avec accès lecture à `aurora-core` et l'ajouter en
-secret repo `AURORA_CORE_READ_TOKEN` (sinon `composer install` plante
-en CI sur le clone du vendor privé).
+tests à chaque push/PR. Aucune config supplémentaire requise — aurora-core
+est public, donc `composer install` se débrouille tout seul en CI.
 
-Setup complet (5 min, une fois pour la vie du projet) :
+Détails du workflow (matrix, customisation, init DB de test) :
 [`vendor/axelraboit/aurora/docs/aurora-client/deployment/github_actions_ci.md`](vendor/axelraboit/aurora/docs/aurora-client/deployment/github_actions_ci.md)
 
 ## Comment utiliser Aurora ?

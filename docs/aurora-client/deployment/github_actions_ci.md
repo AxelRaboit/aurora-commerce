@@ -9,67 +9,31 @@ long-lived (`master`, `develop`) et sur chaque PR :
 - Linters : `make lint-php`, `make lint-twig`, `make lint-js`, `make rector`
 - Static analysis : `make stan` (PHPStan)
 - Setup DB de test (schema:create from entity metadata + mark all
-  migrations applied — workaround multi-namespace, cf. §3 ci-dessous)
+  migrations applied — workaround multi-namespace, cf. §2 ci-dessous)
 - Tests : `make test-frontend` + `make test-backend-unit`
 
 Le workflow utilise un **PostgreSQL 18** en service GitHub Actions, **PHP
 8.4**, **Node 24** et **pnpm 10** (matrix à 1 entrée).
 
----
-
-## 1. Pré-requis CI — Personal Access Token (PAT)
-
-aurora-core est un repo **privé**. Le `GITHUB_TOKEN` auto-fourni par
-GitHub Actions sur le repo client n'a **pas** accès à d'autres repos
-privés du même propriétaire — c'est une frontière de sécurité par
-défaut. Sans config supplémentaire, `composer install` plante à l'étape
-de clone de `axelraboit/aurora` avec :
-
-```
-fatal: Authentication failed for 'https://github.com/AxelRaboit/aurora-core.git/'
-```
-
-**Setup en 2 étapes :**
-
-### Étape 1 — Créer un fine-grained PAT
-
-1. Aller sur https://github.com/settings/personal-access-tokens/new
-2. **Token name** : ex. `aurora-core read-only for CI of <projet>`
-3. **Expiration** : 90 jours (à renouveler) ou + selon ta tolérance
-4. **Repository access** → *Only select repositories* → cocher
-   `<owner>/aurora-core`
-5. **Repository permissions** :
-   - **Contents** → `Read-only`
-6. Cliquer *Generate token* et **copier la valeur** immédiatement
-   (GitHub ne la ré-affiche plus ensuite).
-
-### Étape 2 — Ajouter le PAT en repo secret
-
-Sur le repo client (ex: `<owner>/welding-app`) :
-
-1. *Settings → Secrets and variables → Actions → New repository secret*
-2. **Name** : `AURORA_CORE_READ_TOKEN`
-3. **Value** : coller le PAT
-
-Re-run le workflow depuis l'onglet *Actions* — `composer install` doit
-maintenant passer.
+**aurora-core étant un repo public**, aucun setup supplémentaire n'est
+requis : `composer install` clone le vendor sans authentification, le
+workflow tourne directement.
 
 ---
 
-## 2. Renouvellement du PAT
+## 1. Setup initial — rien à faire 🎉
 
-Les fine-grained PATs expirent. Pour renouveler :
+1. Cloner aurora-client (ou ton fork) pour démarrer un projet
+2. Pousser sur GitHub
+3. Premier push → la CI démarre automatiquement
 
-1. Créer un nouveau PAT (même config — cf. §1.1)
-2. Sur le repo client, *Secrets → Actions → `AURORA_CORE_READ_TOKEN`* →
-   *Update*
-3. Coller la nouvelle valeur
-
-Pas besoin de redéployer ou de modifier le workflow.
+Branches déclencheuses configurées par défaut : `master`, `develop`,
+toutes les PRs. À adapter dans le `on:` block du workflow si ton projet
+utilise `main` au lieu de `master`.
 
 ---
 
-## 3. Setup DB de test — pourquoi `schema:create` au lieu de `migrations:migrate`
+## 2. Setup DB de test — pourquoi `schema:create` au lieu de `migrations:migrate`
 
 Le workflow CI initialise la DB de test via :
 
@@ -119,7 +83,7 @@ d'opérations, et **sans dépendre de l'ordre de migrations**.
 
 ---
 
-## 4. Modifier le workflow CI
+## 3. Modifier le workflow CI
 
 Le fichier `.github/workflows/ci.yml` est **owned par le projet
 client** — pas synchronisé par `make aurora-update`. Libre à toi de :
@@ -131,21 +95,10 @@ client** — pas synchronisé par `make aurora-update`. Libre à toi de :
   fois que tu en as
 - Désactiver le workflow temporairement (commenter le bloc `on:`)
 
-> 💡 Pour qu'aurora-core (le bundle) puisse fournir des **mises à jour**
-> du workflow CI à tous ses clients à l'avenir, on pourrait introduire
-> un `sync-github-actions` Make target qui copie `.github/workflows/ci.yml`
-> depuis le vendor à chaque `aurora-update`. Pas encore en place — pour
-> l'instant chaque client maintient son CI manuellement.
-
 ---
 
-## 5. Pièges connus
+## 4. Pièges connus
 
-- **PAT expiré** : la build CI plante avec le même message
-  d'authentification que sans PAT du tout. Re-générer (cf. §2).
-- **Mauvaise expiration de token** : un PAT *classique* (legacy) doit
-  avoir le scope `repo` au minimum. Privilégier les *fine-grained*
-  (plus restrictifs, plus auditable).
 - **Cache pnpm/composer périmé** : la clé de cache contient le hash
   du lockfile correspondant — un changement de lockfile invalide le
   cache automatiquement. Si tu suspectes un cache corrompu, supprime
@@ -156,14 +109,14 @@ client** — pas synchronisé par `make aurora-update`. Libre à toi de :
 
 ---
 
-## 6. Variants — autres CI providers
+## 5. Variants — autres CI providers
 
 Le workflow GitHub Actions est le seul fourni dans le template. Pour
 GitLab CI / Bitbucket Pipelines / Jenkins, recréer la même séquence
 d'étapes :
 
 ```
-composer install (avec auth vendor aurora-core)
+composer install
 pnpm install (vendor aurora + client root)
 make build
 make lint-php lint-twig lint-js rector stan
@@ -171,6 +124,44 @@ schema:create + migrations:version --add --all
 make test-frontend test-backend-unit
 ```
 
-L'authentification au vendor `axelraboit/aurora` varie par provider —
-Deploy Key SSH (GitLab CI) ou variable secrète avec PAT (équivalent
-GitHub Actions). Adapter selon ta cible.
+---
+
+## Annexe — si vous forkez aurora-core et le rendez privé
+
+Le `GITHUB_TOKEN` auto-fourni par GitHub Actions sur le repo client
+n'a **pas** accès à d'autres repos privés du même propriétaire (frontière
+de sécurité par défaut). Si vous décidez de forker aurora-core et de
+garder le fork privé :
+
+### Setup en 2 étapes
+
+#### Étape A — Créer un fine-grained PAT
+
+1. Aller sur https://github.com/settings/personal-access-tokens/new
+2. **Token name** : ex. `aurora-core read-only for CI of <projet>`
+3. **Expiration** : 90 jours (à renouveler) ou + selon ta tolérance
+4. **Repository access** → *Only select repositories* → cocher
+   `<owner>/aurora-core` (ton fork privé)
+5. **Repository permissions** :
+   - **Contents** → `Read-only`
+6. Cliquer *Generate token* et **copier la valeur** immédiatement
+
+#### Étape B — Ajouter le PAT en repo secret
+
+Sur le repo client :
+
+1. *Settings → Secrets and variables → Actions → New repository secret*
+2. **Name** : `AURORA_CORE_READ_TOKEN`
+3. **Value** : coller le PAT
+
+#### Étape C — Réactiver l'étape composer auth dans le workflow
+
+Avant `Install PHP dependencies`, ajouter :
+
+```yaml
+- name: Configure composer GitHub auth for aurora-core
+  run: composer config --global --auth github-oauth.github.com ${{ secrets.AURORA_CORE_READ_TOKEN }}
+```
+
+Les PATs expirent. Pour renouveler : créer un nouveau PAT (même config),
+puis *Settings → Secrets → AURORA_CORE_READ_TOKEN → Update*.
