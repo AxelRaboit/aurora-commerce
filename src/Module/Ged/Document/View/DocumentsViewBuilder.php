@@ -59,8 +59,10 @@ final readonly class DocumentsViewBuilder
             'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => '__id__']),
             'listPath' => $this->urlGenerator->generate('backend_ged_documents_list'),
-            'mediaPickerPath' => $this->urlGenerator->generate('backend_media_list'),
-            'mediaUploadPath' => $this->urlGenerator->generate('backend_media_upload'),
+            // GED-owned upload endpoint — no coupling to the Media library.
+            // The form POSTs the file here, gets back the metadata, then
+            // submits the regular JSON create/update with that metadata.
+            'uploadPath' => $this->urlGenerator->generate('backend_ged_documents_upload'),
         ];
     }
 

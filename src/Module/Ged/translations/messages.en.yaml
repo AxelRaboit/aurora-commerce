@@ -84,6 +84,7 @@ backend:
       status_archived: Archived
       errors:
         title_required: Title is required
+        upload_required: No file received
     categories:
       name: Name
       slug: Identifier

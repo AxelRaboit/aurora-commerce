@@ -18,7 +18,11 @@ final class DocumentInputTest extends TestCase
         self::assertNull($input->getDescription());
         self::assertSame(DocumentStatusEnum::Draft, $input->getStatus());
         self::assertNull($input->getCategoryId());
-        self::assertNull($input->getFileId());
+        self::assertNull($input->getFilePath());
+        self::assertNull($input->getFileName());
+        self::assertNull($input->getOriginalName());
+        self::assertNull($input->getMimeType());
+        self::assertNull($input->getSize());
         self::assertSame([], $input->getTagIds());
         self::assertNull($input->getFolderId());
     }
@@ -30,7 +34,11 @@ final class DocumentInputTest extends TestCase
             description: 'Q1 report',
             status: DocumentStatusEnum::Published,
             categoryId: 1,
-            fileId: 99,
+            filePath: 'ged/2026/05/file.pdf',
+            fileName: 'file.pdf',
+            originalName: 'Original.pdf',
+            mimeType: 'application/pdf',
+            size: 4567,
             tagIds: [1, 2, 3],
             folderId: 7,
         );
@@ -39,7 +47,11 @@ final class DocumentInputTest extends TestCase
         self::assertSame('Q1 report', $input->getDescription());
         self::assertSame(DocumentStatusEnum::Published, $input->getStatus());
         self::assertSame(1, $input->getCategoryId());
-        self::assertSame(99, $input->getFileId());
+        self::assertSame('ged/2026/05/file.pdf', $input->getFilePath());
+        self::assertSame('file.pdf', $input->getFileName());
+        self::assertSame('Original.pdf', $input->getOriginalName());
+        self::assertSame('application/pdf', $input->getMimeType());
+        self::assertSame(4567, $input->getSize());
         self::assertSame([1, 2, 3], $input->getTagIds());
         self::assertSame(7, $input->getFolderId());
     }

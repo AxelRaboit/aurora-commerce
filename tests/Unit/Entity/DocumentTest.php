@@ -9,7 +9,6 @@ use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use PHPUnit\Framework\TestCase;
 
 final class DocumentTest extends TestCase
@@ -27,7 +26,11 @@ final class DocumentTest extends TestCase
         self::assertNull($document->getDescription());
         self::assertSame(DocumentStatusEnum::Draft, $document->getStatus());
         self::assertNull($document->getCategory());
-        self::assertNull($document->getFile());
+        self::assertNull($document->getFilePath());
+        self::assertNull($document->getFileName());
+        self::assertNull($document->getOriginalName());
+        self::assertNull($document->getMimeType());
+        self::assertNull($document->getSize());
         self::assertNull($document->getFolder());
     }
 
@@ -71,12 +74,20 @@ final class DocumentTest extends TestCase
         self::assertNull($document->getCategory());
     }
 
-    public function testFileGetterAndSetter(): void
+    public function testFileFieldsGettersAndSetters(): void
     {
-        $file = $this->createStub(MediaInterface::class);
-        $document = (new Document())->setFile($file);
+        $document = (new Document())
+            ->setFilePath('ged/2026/05/abc.pdf')
+            ->setFileName('abc.pdf')
+            ->setOriginalName('Original Name.pdf')
+            ->setMimeType('application/pdf')
+            ->setSize(12345);
 
-        self::assertSame($file, $document->getFile());
+        self::assertSame('ged/2026/05/abc.pdf', $document->getFilePath());
+        self::assertSame('abc.pdf', $document->getFileName());
+        self::assertSame('Original Name.pdf', $document->getOriginalName());
+        self::assertSame('application/pdf', $document->getMimeType());
+        self::assertSame(12345, $document->getSize());
     }
 
     public function testFolderGetterAndSetter(): void

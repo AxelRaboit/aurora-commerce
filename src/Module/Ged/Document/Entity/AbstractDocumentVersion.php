@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,9 +15,25 @@ abstract class AbstractDocumentVersion implements DocumentVersionInterface
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     protected DocumentInterface $document;
 
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    protected MediaInterface $file;
+    // ── Self-owned file storage (mirror of AbstractDocument) ─────────────
+    // Each version snapshots its own file under
+    // `var/uploads/ged/documents/Y/m/<reference>-v<n>.<ext>`. No coupling
+    // to the Media library.
+
+    #[ORM\Column(length: 255)]
+    protected string $filePath;
+
+    #[ORM\Column(length: 255)]
+    protected string $fileName;
+
+    #[ORM\Column(length: 255)]
+    protected string $originalName;
+
+    #[ORM\Column(length: 100)]
+    protected string $mimeType;
+
+    #[ORM\Column(type: Types::INTEGER)]
+    protected int $size;
 
     #[ORM\Column]
     protected int $versionNumber;
@@ -46,14 +61,62 @@ abstract class AbstractDocumentVersion implements DocumentVersionInterface
         return $this;
     }
 
-    public function getFile(): MediaInterface
+    public function getFilePath(): string
     {
-        return $this->file;
+        return $this->filePath;
     }
 
-    public function setFile(MediaInterface $file): static
+    public function setFilePath(string $filePath): static
     {
-        $this->file = $file;
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getFileName(): string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(string $fileName): static
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    public function getOriginalName(): string
+    {
+        return $this->originalName;
+    }
+
+    public function setOriginalName(string $originalName): static
+    {
+        $this->originalName = $originalName;
+
+        return $this;
+    }
+
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(string $mimeType): static
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
+    }
+
+    public function setSize(int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }

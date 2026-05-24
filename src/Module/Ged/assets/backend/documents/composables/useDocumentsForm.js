@@ -21,8 +21,13 @@ function emptyForm() {
         categoryId: null,
         tagIds: [],
         folderId: null,
-        fileId: null,
+        // File metadata returned by the /upload endpoint after a local
+        // upload. Carried along on the form submit. No more Media coupling.
+        filePath: null,
         fileName: null,
+        originalName: null,
+        mimeType: null,
+        size: null,
     };
 }
 
@@ -31,7 +36,7 @@ export function useDocumentsForm(
     updatePath,
     deletePath,
     reset,
-    mediaUploadPath = "",
+    uploadPath = "",
 ) {
     const { t } = useI18n();
     const { request } = useRequest();
@@ -50,7 +55,6 @@ export function useDocumentsForm(
 
     const showCreate = ref(false);
     const newDoc = ref(emptyForm());
-    const showMediaPickerCreate = ref(false);
     const uploadingCreate = ref(false);
 
     const {
@@ -79,22 +83,26 @@ export function useDocumentsForm(
         clearCreate();
         showCreate.value = true;
     }
-    function onFilePickedCreate(media) {
-        newDoc.value.fileId = media.id;
-        newDoc.value.fileName = media.fileName;
-        showMediaPickerCreate.value = false;
-    }
+
+    /**
+     * Uploads a local file to /backend/ged/documents/upload, then hydrates
+     * the form with the returned metadata. Two-step pattern: the actual
+     * Document row is created later on form submit.
+     */
     async function onLocalFileCreate(file) {
-        if (!mediaUploadPath || !file) return;
+        if (!uploadPath || !file) return;
         uploadingCreate.value = true;
         const rawBody = new FormData();
-        rawBody.append("image", file);
-        const data = await request(mediaUploadPath, null, { rawBody });
+        rawBody.append("file", file);
+        const data = await request(uploadPath, null, { rawBody });
         uploadingCreate.value = false;
         if (!data) return;
-        if (data.success && data.media) {
-            newDoc.value.fileId = data.media.id;
-            newDoc.value.fileName = data.media.fileName;
+        if (data.success && data.filePath) {
+            newDoc.value.filePath = data.filePath;
+            newDoc.value.fileName = data.fileName;
+            newDoc.value.originalName = data.originalName;
+            newDoc.value.mimeType = data.mimeType;
+            newDoc.value.size = data.size;
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -103,7 +111,6 @@ export function useDocumentsForm(
     const showEdit = ref(false);
     const editingDoc = ref(null);
     const editForm = ref(emptyForm());
-    const showMediaPickerEdit = ref(false);
     const uploadingEdit = ref(false);
 
     const {
@@ -136,28 +143,35 @@ export function useDocumentsForm(
             categoryId: doc.categoryId ?? null,
             tagIds: doc.tagIds ?? [],
             folderId: doc.folderId ?? null,
-            fileId: doc.fileId,
-            fileName: doc.fileName,
+            // On edit, file metadata is round-tripped but only sent back to
+            // the server if the user uploads a new one (the manager checks
+            // for filePath !== current to decide whether to record a new
+            // version). So passing the existing values keeps the form in
+            // sync visually without forcing a re-snapshot.
+            filePath: doc.filePath ?? null,
+            fileName: doc.fileName ?? null,
+            originalName: doc.originalName ?? null,
+            mimeType: doc.fileMime ?? null,
+            size: doc.fileSize ?? null,
         };
         clearEdit();
         showEdit.value = true;
     }
-    function onFilePickedEdit(media) {
-        editForm.value.fileId = media.id;
-        editForm.value.fileName = media.fileName;
-        showMediaPickerEdit.value = false;
-    }
+
     async function onLocalFileEdit(file) {
-        if (!mediaUploadPath || !file) return;
+        if (!uploadPath || !file) return;
         uploadingEdit.value = true;
         const rawBody = new FormData();
-        rawBody.append("image", file);
-        const data = await request(mediaUploadPath, null, { rawBody });
+        rawBody.append("file", file);
+        const data = await request(uploadPath, null, { rawBody });
         uploadingEdit.value = false;
         if (!data) return;
-        if (data.success && data.media) {
-            editForm.value.fileId = data.media.id;
-            editForm.value.fileName = data.media.fileName;
+        if (data.success && data.filePath) {
+            editForm.value.filePath = data.filePath;
+            editForm.value.fileName = data.fileName;
+            editForm.value.originalName = data.originalName;
+            editForm.value.mimeType = data.mimeType;
+            editForm.value.size = data.size;
         } else {
             toast.error(t("shared.common.error"));
         }
@@ -174,23 +188,19 @@ export function useDocumentsForm(
         statusOptions,
         showCreate,
         newDoc,
-        showMediaPickerCreate,
         uploadingCreate,
         createErrors,
         createLoading,
         openCreate,
-        onFilePickedCreate,
         onLocalFileCreate,
         submitCreate,
         showEdit,
         editingDoc,
         editForm,
-        showMediaPickerEdit,
         uploadingEdit,
         editErrors,
         editLoading,
         openEdit,
-        onFilePickedEdit,
         onLocalFileEdit,
         submitEdit,
         pendingDelete,

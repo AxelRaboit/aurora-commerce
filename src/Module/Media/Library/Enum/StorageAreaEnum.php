@@ -10,4 +10,5 @@ enum StorageAreaEnum: string
     case Ocr = 'ocr';
     case Photo = 'photo';
     case Users = 'users';
+    case Ged = 'ged';
 }

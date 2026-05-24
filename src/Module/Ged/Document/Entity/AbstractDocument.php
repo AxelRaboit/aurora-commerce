@@ -9,7 +9,6 @@ use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -37,10 +36,29 @@ abstract class AbstractDocument implements DocumentInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?DocumentCategoryInterface $category = null;
 
-    /** Physical file stored via Core/Media. */
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?MediaInterface $file = null;
+    // ── Self-owned file storage ──────────────────────────────────────────
+    // Documents are stored under `var/uploads/ged/documents/Y/m/<file>`
+    // and served via the `/uploads/{path}` catch-all. No coupling to the
+    // Media library — GED owns its own physical files so it can evolve
+    // its own retention / encryption / versioning policies later.
+
+    /** Relative path within var/uploads/ (e.g. ged/documents/2026/05/contract-abc.pdf). */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $filePath = null;
+
+    /** Filename on disk (slug + extension). */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $fileName = null;
+
+    /** Filename the user originally uploaded — kept for the Content-Disposition header on download. */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $originalName = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    protected ?string $mimeType = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    protected ?int $size = null;
 
     /** @var Collection<int, DocumentTagInterface> */
     protected Collection $tags;
@@ -114,14 +132,62 @@ abstract class AbstractDocument implements DocumentInterface
         return $this;
     }
 
-    public function getFile(): ?MediaInterface
+    public function getFilePath(): ?string
     {
-        return $this->file;
+        return $this->filePath;
     }
 
-    public function setFile(?MediaInterface $file): static
+    public function setFilePath(?string $filePath): static
     {
-        $this->file = $file;
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): static
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    public function getOriginalName(): ?string
+    {
+        return $this->originalName;
+    }
+
+    public function setOriginalName(?string $originalName): static
+    {
+        $this->originalName = $originalName;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(?string $mimeType): static
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }

@@ -2025,10 +2025,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 $d->addTag($tags[$tagIndex]);
             }
 
-            if (null !== $def['file'] && isset($media[$def['file']])) {
-                $d->setFile($media[$def['file']]);
-            }
-
+            // NOTE: file attachment removed in this fixture path — GED
+            // documents now own their own storage (var/uploads/ged/) and
+            // are no longer backed by the Media library. The demo set
+            // intentionally creates docs without files; users attach PDFs
+            // from the UI after `make demo` to exercise the upload flow.
             $em->persist($d);
         }
     }

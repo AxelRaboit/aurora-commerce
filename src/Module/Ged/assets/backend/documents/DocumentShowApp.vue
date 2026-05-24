@@ -40,7 +40,7 @@ function onDeleted() {
 
 const {
     statusOptions,
-    showEdit, editingDoc, editForm, showMediaPickerEdit, editErrors, editLoading, openEdit, onFilePickedEdit, submitEdit,
+    showEdit, editingDoc, editForm, editErrors, editLoading, openEdit, submitEdit,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
 } = useDocumentsForm(
     '',

@@ -15,9 +15,11 @@ use Aurora\Module\Ged\Document\Manager\DocumentManagerInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
 use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializerInterface;
+use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,6 +43,7 @@ final class DocumentsController extends AbstractController
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly DocumentVersionRepository $versionRepository,
         private readonly DocumentVersionSerializerInterface $versionSerializer,
+        private readonly GedDocumentUploader $uploader,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -121,5 +124,24 @@ final class DocumentsController extends AbstractController
         $this->manager->delete($document);
 
         return $this->jsonSuccess();
+    }
+
+    /**
+     * Uploads a file to GED storage (`var/uploads/ged/Y/m/<slug>-<uniq>.<ext>`)
+     * without persisting any DB row yet. Returns the file metadata the form
+     * carries into the `create` / `update` submit. Two-step pattern keeps
+     * the form submit a regular JSON post.
+     */
+    #[Route('/upload', name: '_upload', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.create')]
+    public function upload(Request $request): JsonResponse
+    {
+        /** @var UploadedFile|null $file */
+        $file = $request->files->get('file');
+        if (null === $file) {
+            return $this->jsonFailure('backend.ged.documents.errors.upload_required');
+        }
+
+        return $this->jsonSuccess($this->uploader->upload($file));
     }
 }

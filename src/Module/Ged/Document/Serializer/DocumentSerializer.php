@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Serializer;
 
+use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -15,14 +15,12 @@ class DocumentSerializer implements DocumentSerializerInterface
 {
     public function __construct(
         protected readonly TranslatorInterface $translator,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly UploadUrlGenerator $uploadUrlGenerator,
     ) {}
 
     public function serialize(DocumentInterface $document): array
     {
-        $file = $document->getFile();
         $category = $document->getCategory();
-
         $folder = $document->getFolder();
 
         return [
@@ -34,11 +32,15 @@ class DocumentSerializer implements DocumentSerializerInterface
             'statusLabel' => $this->translator->trans($document->getStatus()->getLabelKey()),
             'categoryId' => $category?->getId(),
             'categoryName' => $category?->getName(),
-            'fileId' => $file?->getId(),
-            'fileName' => $file?->getFileName(),
-            'fileUrl' => $this->mediaUrlGenerator->publicUrl($file),
-            'fileMime' => $file?->getMimeType(),
-            'fileSize' => $file?->getSize(),
+            // Self-owned file fields — no Media coupling. URL is built via
+            // the canonical `uploads_serve` route through UploadUrlGenerator
+            // (no hardcoded `/uploads/` prefix).
+            'filePath' => $document->getFilePath(),
+            'fileName' => $document->getFileName(),
+            'originalName' => $document->getOriginalName(),
+            'fileUrl' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
+            'fileMime' => $document->getMimeType(),
+            'fileSize' => $document->getSize(),
             'tagIds' => $document->getTags()->map(static fn ($tag): ?int => $tag->getId())->toArray(),
             'tags' => $document->getTags()->map(static fn ($tag): array => ['id' => $tag->getId(), 'name' => $tag->getName(), 'color' => $tag->getColor()])->toArray(),
             'folderId' => $folder?->getId(),

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use DateTimeImmutable;
 
 interface DocumentVersionInterface
@@ -15,9 +14,25 @@ interface DocumentVersionInterface
 
     public function setDocument(DocumentInterface $document): static;
 
-    public function getFile(): MediaInterface;
+    public function getFilePath(): string;
 
-    public function setFile(MediaInterface $file): static;
+    public function setFilePath(string $filePath): static;
+
+    public function getFileName(): string;
+
+    public function setFileName(string $fileName): static;
+
+    public function getOriginalName(): string;
+
+    public function setOriginalName(string $originalName): static;
+
+    public function getMimeType(): string;
+
+    public function setMimeType(string $mimeType): static;
+
+    public function getSize(): int;
+
+    public function setSize(int $size): static;
 
     public function getVersionNumber(): int;
 

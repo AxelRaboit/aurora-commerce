@@ -21,8 +21,6 @@ use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\DocumentTag\Repository\DocumentTagRepository;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,7 +31,6 @@ use PHPUnit\Framework\TestCase;
 final class DocumentManagerTest extends TestCase
 {
     private EntityManagerInterface $entityManager;
-    private MediaRepository $mediaRepository;
     private DocumentCategoryRepository $categoryRepository;
     private DocumentTagRepository $tagRepository;
     private DocumentFolderRepository $folderRepository;
@@ -43,7 +40,6 @@ final class DocumentManagerTest extends TestCase
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->mediaRepository = $this->createMock(MediaRepository::class);
         $this->categoryRepository = $this->createMock(DocumentCategoryRepository::class);
         $this->tagRepository = $this->createMock(DocumentTagRepository::class);
         $this->folderRepository = $this->createMock(DocumentFolderRepository::class);
@@ -56,7 +52,6 @@ final class DocumentManagerTest extends TestCase
         $this->manager = new DocumentManager(
             $this->entityManager,
             $this->categoryRepository,
-            $this->mediaRepository,
             $this->makeSequenceGenerator(),
             $settingRepository,
             $this->createStub(AuditLogger::class),
@@ -82,7 +77,11 @@ final class DocumentManagerTest extends TestCase
         ?string $description = null,
         DocumentStatusEnum $status = DocumentStatusEnum::Draft,
         ?int $categoryId = null,
-        ?int $fileId = null,
+        ?string $filePath = null,
+        ?string $fileName = null,
+        ?string $originalName = null,
+        ?string $mimeType = null,
+        ?int $size = null,
         array $tagIds = [],
         ?int $folderId = null,
     ): DocumentInputInterface {
@@ -91,7 +90,11 @@ final class DocumentManagerTest extends TestCase
         $input->method('getDescription')->willReturn($description);
         $input->method('getStatus')->willReturn($status);
         $input->method('getCategoryId')->willReturn($categoryId);
-        $input->method('getFileId')->willReturn($fileId);
+        $input->method('getFilePath')->willReturn($filePath);
+        $input->method('getFileName')->willReturn($fileName);
+        $input->method('getOriginalName')->willReturn($originalName);
+        $input->method('getMimeType')->willReturn($mimeType);
+        $input->method('getSize')->willReturn($size);
         $input->method('getTagIds')->willReturn($tagIds);
         $input->method('getFolderId')->willReturn($folderId);
 
@@ -163,13 +166,16 @@ final class DocumentManagerTest extends TestCase
 
     public function testCreateRecordsVersionWhenFileIsAttached(): void
     {
-        $file = $this->createStub(MediaInterface::class);
-        $this->mediaRepository->method('find')->willReturn($file);
-
         $capturedVersion = null;
         $this->captureDocumentVersion($capturedVersion);
 
-        $this->manager->create($this->makeInput(fileId: 5));
+        $this->manager->create($this->makeInput(
+            filePath: 'ged/2026/05/abc.pdf',
+            fileName: 'abc.pdf',
+            originalName: 'Original.pdf',
+            mimeType: 'application/pdf',
+            size: 1234,
+        ));
 
         self::assertInstanceOf(DocumentVersion::class, $capturedVersion);
     }
@@ -179,7 +185,7 @@ final class DocumentManagerTest extends TestCase
         $capturedVersion = null;
         $this->captureDocumentVersion($capturedVersion);
 
-        $this->manager->create($this->makeInput(fileId: null));
+        $this->manager->create($this->makeInput(filePath: null));
 
         self::assertNull($capturedVersion);
     }
@@ -266,55 +272,56 @@ final class DocumentManagerTest extends TestCase
 
     public function testUpdateRecordsVersionWhenFileChanges(): void
     {
-        $oldFile = $this->createStub(MediaInterface::class);
-        $oldFile->method('getId')->willReturn(1);
-
-        $newFile = $this->createStub(MediaInterface::class);
-        $newFile->method('getId')->willReturn(2);
-
         $document = new Document();
-        $document->setTitle('Doc')->setStatus(DocumentStatusEnum::Draft)->setFile($oldFile);
-
-        $this->mediaRepository->method('find')->willReturn($newFile);
+        $document->setTitle('Doc')
+            ->setStatus(DocumentStatusEnum::Draft)
+            ->setFilePath('ged/old.pdf')
+            ->setFileName('old.pdf')
+            ->setOriginalName('Old.pdf')
+            ->setMimeType('application/pdf')
+            ->setSize(100);
 
         $capturedVersion = null;
         $this->captureDocumentVersion($capturedVersion);
 
-        $this->manager->update($document, $this->makeInput(fileId: 2));
+        $this->manager->update($document, $this->makeInput(
+            filePath: 'ged/new.pdf',
+            fileName: 'new.pdf',
+            originalName: 'New.pdf',
+            mimeType: 'application/pdf',
+            size: 200,
+        ));
 
         self::assertInstanceOf(DocumentVersion::class, $capturedVersion);
     }
 
     public function testUpdateDoesNotRecordVersionWhenFileUnchanged(): void
     {
-        $file = $this->createStub(MediaInterface::class);
-        $file->method('getId')->willReturn(10);
-
         $document = new Document();
-        $document->setTitle('Doc')->setStatus(DocumentStatusEnum::Draft)->setFile($file);
-
-        $this->mediaRepository->method('find')->willReturn($file);
+        $document->setTitle('Doc')
+            ->setStatus(DocumentStatusEnum::Draft)
+            ->setFilePath('ged/same.pdf')
+            ->setFileName('same.pdf');
 
         $capturedVersion = null;
         $this->captureDocumentVersion($capturedVersion);
 
-        $this->manager->update($document, $this->makeInput(fileId: 10));
+        $this->manager->update($document, $this->makeInput(filePath: 'ged/same.pdf'));
 
         self::assertNull($capturedVersion);
     }
 
     public function testUpdateDoesNotRecordVersionWhenNewFileIdIsNull(): void
     {
-        $file = $this->createStub(MediaInterface::class);
-        $file->method('getId')->willReturn(5);
-
         $document = new Document();
-        $document->setTitle('Doc')->setStatus(DocumentStatusEnum::Draft)->setFile($file);
+        $document->setTitle('Doc')
+            ->setStatus(DocumentStatusEnum::Draft)
+            ->setFilePath('ged/keep.pdf');
 
         $capturedVersion = null;
         $this->captureDocumentVersion($capturedVersion);
 
-        $this->manager->update($document, $this->makeInput(fileId: null));
+        $this->manager->update($document, $this->makeInput(filePath: null));
 
         self::assertNull($capturedVersion);
     }

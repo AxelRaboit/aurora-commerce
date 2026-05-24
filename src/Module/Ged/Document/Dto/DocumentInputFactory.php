@@ -21,7 +21,11 @@ class DocumentInputFactory implements DocumentInputFactoryInterface
             description: Str::trimOrNullFromArray($data, 'description'),
             status: DocumentStatusEnum::tryFrom($data['status'] ?? '') ?? DocumentStatusEnum::Draft,
             categoryId: isset($data['categoryId']) ? (int) $data['categoryId'] : null,
-            fileId: isset($data['fileId']) ? (int) $data['fileId'] : null,
+            filePath: Str::trimOrNullFromArray($data, 'filePath'),
+            fileName: Str::trimOrNullFromArray($data, 'fileName'),
+            originalName: Str::trimOrNullFromArray($data, 'originalName'),
+            mimeType: Str::trimOrNullFromArray($data, 'mimeType'),
+            size: isset($data['size']) ? (int) $data['size'] : null,
             tagIds: $tagIds,
             folderId: isset($data['folderId']) ? (int) $data['folderId'] : null,
         );

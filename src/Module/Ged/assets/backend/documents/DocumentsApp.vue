@@ -16,7 +16,6 @@ import AppPagination from "@/shared/components/nav/AppPagination.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
-import MediaPickerModal from "@media/backend/media/MediaPickerModal.vue";
 import AppFileInput from "@/shared/components/form/file/AppFileInput.vue";
 import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useFileSize } from "@/shared/composables/format/useFileSize.js";
@@ -43,8 +42,7 @@ const props = defineProps({
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
     listPath: { type: String, required: true },
-    mediaPickerPath: { type: String, default: "" },
-    mediaUploadPath: { type: String, default: "" },
+    uploadPath: { type: String, required: true },
 });
 
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
@@ -77,10 +75,10 @@ const { items, loading, page, totalPages, search: searchInput, onSearch, goToPag
 
 const {
     statusOptions,
-    showCreate, newDoc, showMediaPickerCreate, uploadingCreate, createErrors, createLoading, openCreate, onFilePickedCreate, onLocalFileCreate, submitCreate,
-    showEdit, editingDoc, editForm, showMediaPickerEdit, uploadingEdit, editErrors, editLoading, openEdit, onFilePickedEdit, onLocalFileEdit, submitEdit,
+    showCreate, newDoc, uploadingCreate, createErrors, createLoading, openCreate, onLocalFileCreate, submitCreate,
+    showEdit, editingDoc, editForm, uploadingEdit, editErrors, editLoading, openEdit, onLocalFileEdit, submitEdit,
     pendingDelete, deleteLoading, confirmDelete, doDelete,
-} = useDocumentsForm(props.createPath, props.updatePath, props.deletePath, reset, props.mediaUploadPath);
+} = useDocumentsForm(props.createPath, props.updatePath, props.deletePath, reset, props.uploadPath);
 </script>
 
 <template>
@@ -346,9 +344,6 @@ const {
                     :searchable="false"
                 />
                 <div class="flex items-center gap-2 flex-wrap">
-                    <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerCreate = true">
-                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLibrary") }}
-                    </AppButton>
                     <AppFileInput v-on:change="onLocalFileCreate">
                         <template #default="{ trigger }">
                             <AppButton
@@ -358,11 +353,11 @@ const {
                                 :loading="uploadingCreate"
                                 v-on:click="trigger"
                             >
-                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLocal") }}
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
                             </AppButton>
                         </template>
                     </AppFileInput>
-                    <span v-if="newDoc.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ newDoc.fileName }}</span>
+                    <span v-if="newDoc.originalName ?? newDoc.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ newDoc.originalName ?? newDoc.fileName }}</span>
                 </div>
             </div>
             <template #footer>
@@ -422,9 +417,6 @@ const {
                     :searchable="false"
                 />
                 <div class="flex items-center gap-2 flex-wrap">
-                    <AppButton variant="ghost" size="sm" type="button" v-on:click="showMediaPickerEdit = true">
-                        <Paperclip class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLibrary") }}
-                    </AppButton>
                     <AppFileInput v-on:change="onLocalFileEdit">
                         <template #default="{ trigger }">
                             <AppButton
@@ -434,7 +426,7 @@ const {
                                 :loading="uploadingEdit"
                                 v-on:click="trigger"
                             >
-                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFileLocal") }}
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
                             </AppButton>
                         </template>
                     </AppFileInput>

@@ -6,7 +6,6 @@ namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -40,12 +39,20 @@ final class DocumentVersionTest extends TestCase
         self::assertSame($document, $version->getDocument());
     }
 
-    public function testFileGetterAndSetter(): void
+    public function testFileFieldsGettersAndSetters(): void
     {
-        $file = $this->createStub(MediaInterface::class);
-        $version = (new DocumentVersion())->setFile($file);
+        $version = (new DocumentVersion())
+            ->setFilePath('ged/2026/05/v2.pdf')
+            ->setFileName('v2.pdf')
+            ->setOriginalName('Original.pdf')
+            ->setMimeType('application/pdf')
+            ->setSize(99);
 
-        self::assertSame($file, $version->getFile());
+        self::assertSame('ged/2026/05/v2.pdf', $version->getFilePath());
+        self::assertSame('v2.pdf', $version->getFileName());
+        self::assertSame('Original.pdf', $version->getOriginalName());
+        self::assertSame('application/pdf', $version->getMimeType());
+        self::assertSame(99, $version->getSize());
     }
 
     public function testVersionNumberGetterAndSetter(): void
@@ -70,7 +77,11 @@ final class DocumentVersionTest extends TestCase
         $version = new DocumentVersion();
 
         self::assertSame($version, $version->setDocument($this->createStub(DocumentInterface::class)));
-        self::assertSame($version, $version->setFile($this->createStub(MediaInterface::class)));
+        self::assertSame($version, $version->setFilePath('p'));
+        self::assertSame($version, $version->setFileName('n'));
+        self::assertSame($version, $version->setOriginalName('o'));
+        self::assertSame($version, $version->setMimeType('m'));
+        self::assertSame($version, $version->setSize(1));
         self::assertSame($version, $version->setVersionNumber(1));
         self::assertSame($version, $version->setNote('n'));
     }

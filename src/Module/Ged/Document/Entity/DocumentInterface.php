@@ -9,7 +9,6 @@ use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface DocumentInterface extends TimestampableInterface
@@ -36,9 +35,25 @@ interface DocumentInterface extends TimestampableInterface
 
     public function setCategory(?DocumentCategoryInterface $category): static;
 
-    public function getFile(): ?MediaInterface;
+    public function getFilePath(): ?string;
 
-    public function setFile(?MediaInterface $file): static;
+    public function setFilePath(?string $filePath): static;
+
+    public function getFileName(): ?string;
+
+    public function setFileName(?string $fileName): static;
+
+    public function getOriginalName(): ?string;
+
+    public function setOriginalName(?string $originalName): static;
+
+    public function getMimeType(): ?string;
+
+    public function setMimeType(?string $mimeType): static;
+
+    public function getSize(): ?int;
+
+    public function setSize(?int $size): static;
 
     /** @return Collection<int, DocumentTagInterface> */
     public function getTags(): Collection;

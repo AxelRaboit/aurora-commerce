@@ -18,8 +18,6 @@ use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\DocumentTag\Repository\DocumentTagRepository;
 use Aurora\Module\Ged\Setting\GedSettingEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -29,7 +27,6 @@ class DocumentManager implements DocumentManagerInterface
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly DocumentCategoryRepository $categoryRepository,
-        protected readonly MediaRepository $mediaRepository,
         protected readonly SequenceGenerator $sequenceGenerator,
         protected readonly SettingRepository $settingRepository,
         protected readonly AuditLogger $auditLogger,
@@ -47,7 +44,7 @@ class DocumentManager implements DocumentManagerInterface
         $this->entityManager->persist($document);
         $this->entityManager->flush();
 
-        if ($document->getFile() instanceof MediaInterface) {
+        if (null !== $document->getFilePath()) {
             $this->recordVersion($document);
         }
 
@@ -58,9 +55,13 @@ class DocumentManager implements DocumentManagerInterface
 
     public function update(DocumentInterface $document, DocumentInputInterface $input): void
     {
-        $newFileId = $input->getFileId();
-        $currentFileId = $document->getFile()?->getId();
-        $fileChanged = null !== $newFileId && $newFileId !== $currentFileId;
+        $newFilePath = $input->getFilePath();
+        $currentFilePath = $document->getFilePath();
+        // File "changed" when the incoming path is non-null AND differs from
+        // the current one. The upload endpoint always returns a fresh
+        // relative path on a new upload (timestamped + unique slug), so a
+        // string compare is enough to detect a swap.
+        $fileChanged = null !== $newFilePath && $newFilePath !== $currentFilePath;
 
         $this->applyInput($document, $input);
         $this->entityManager->flush();
@@ -90,11 +91,23 @@ class DocumentManager implements DocumentManagerInterface
         return new DocumentVersion();
     }
 
+    /**
+     * Snapshots the current physical file metadata onto a new version row.
+     * The file itself is not duplicated on disk — both the live document and
+     * the historical version row point at the same `filePath`. If the doc's
+     * file is later swapped, the old version row still references the prior
+     * path (which the upload endpoint keeps untouched, since it writes new
+     * paths per upload).
+     */
     protected function recordVersion(DocumentInterface $document): void
     {
         $version = $this->createDocumentVersion();
         $version->setDocument($document)
-            ->setFile($document->getFile())
+            ->setFilePath((string) $document->getFilePath())
+            ->setFileName((string) $document->getFileName())
+            ->setOriginalName((string) $document->getOriginalName())
+            ->setMimeType((string) $document->getMimeType())
+            ->setSize((int) $document->getSize())
             ->setVersionNumber($this->versionRepository->getNextVersionNumber($document));
         $this->entityManager->persist($version);
         $this->entityManager->flush();
@@ -106,7 +119,17 @@ class DocumentManager implements DocumentManagerInterface
         $document->setDescription($input->getDescription());
         $document->setStatus($input->getStatus());
         $document->setCategory(null !== $input->getCategoryId() ? $this->categoryRepository->find($input->getCategoryId()) : null);
-        $document->setFile(null !== $input->getFileId() ? $this->mediaRepository->find($input->getFileId()) : null);
+
+        // File metadata is only overwritten when the input carries a fresh
+        // upload (filePath set). An update without a new upload keeps the
+        // existing file unchanged — null inputs are ignored.
+        if (null !== $input->getFilePath()) {
+            $document->setFilePath($input->getFilePath());
+            $document->setFileName($input->getFileName());
+            $document->setOriginalName($input->getOriginalName());
+            $document->setMimeType($input->getMimeType());
+            $document->setSize($input->getSize());
+        }
 
         $document->clearTags();
         foreach ($input->getTagIds() as $tagId) {

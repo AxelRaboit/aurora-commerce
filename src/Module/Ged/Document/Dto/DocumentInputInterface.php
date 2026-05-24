@@ -16,7 +16,15 @@ interface DocumentInputInterface
 
     public function getCategoryId(): ?int;
 
-    public function getFileId(): ?int;
+    public function getFilePath(): ?string;
+
+    public function getFileName(): ?string;
+
+    public function getOriginalName(): ?string;
+
+    public function getMimeType(): ?string;
+
+    public function getSize(): ?int;
 
     /** @return int[] */
     public function getTagIds(): array;

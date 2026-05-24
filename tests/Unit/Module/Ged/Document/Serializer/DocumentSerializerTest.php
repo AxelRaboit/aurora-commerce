@@ -10,7 +10,6 @@ use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
 use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,7 +27,7 @@ final class DocumentSerializerTest extends TestCase
     {
         $this->translator = $this->createStub(TranslatorInterface::class);
         $this->translator->method('trans')->willReturnArgument(0);
-        $this->serializer = new DocumentSerializer($this->translator, $this->makeMediaUrlGenerator());
+        $this->serializer = new DocumentSerializer($this->translator, $this->makeUploadUrlGenerator());
     }
 
     private function makeDocument(
@@ -38,7 +37,11 @@ final class DocumentSerializerTest extends TestCase
         ?string $description = 'Year 2025',
         DocumentStatusEnum $status = DocumentStatusEnum::Published,
         ?DocumentCategoryInterface $category = null,
-        ?MediaInterface $file = null,
+        ?string $filePath = null,
+        ?string $fileName = null,
+        ?string $originalName = null,
+        ?string $mimeType = null,
+        ?int $size = null,
         array $tags = [],
         ?DocumentFolderInterface $folder = null,
         string $createdAt = '2025-01-01T00:00:00+00:00',
@@ -51,7 +54,11 @@ final class DocumentSerializerTest extends TestCase
         $document->method('getDescription')->willReturn($description);
         $document->method('getStatus')->willReturn($status);
         $document->method('getCategory')->willReturn($category);
-        $document->method('getFile')->willReturn($file);
+        $document->method('getFilePath')->willReturn($filePath);
+        $document->method('getFileName')->willReturn($fileName);
+        $document->method('getOriginalName')->willReturn($originalName);
+        $document->method('getMimeType')->willReturn($mimeType);
+        $document->method('getSize')->willReturn($size);
         $document->method('getTags')->willReturn(new ArrayCollection($tags));
         $document->method('getFolder')->willReturn($folder);
         $document->method('getCreatedAt')->willReturn(new DateTimeImmutable($createdAt));
@@ -71,8 +78,9 @@ final class DocumentSerializerTest extends TestCase
         self::assertSame(DocumentStatusEnum::Published->value, $result['status']);
         self::assertNull($result['categoryId']);
         self::assertNull($result['categoryName']);
-        self::assertNull($result['fileId']);
+        self::assertNull($result['filePath']);
         self::assertNull($result['fileName']);
+        self::assertNull($result['originalName']);
         self::assertNull($result['fileUrl']);
         self::assertNull($result['fileMime']);
         self::assertNull($result['fileSize']);
@@ -105,18 +113,18 @@ final class DocumentSerializerTest extends TestCase
 
     public function testSerializeWithFileIncludesFileData(): void
     {
-        $file = $this->createStub(MediaInterface::class);
-        $file->method('getId')->willReturn(10);
-        $file->method('getFileName')->willReturn('report.pdf');
-        $file->method('getPath')->willReturn('report.pdf');
-        $file->method('getMimeType')->willReturn('application/pdf');
-        $file->method('getSize')->willReturn(98765);
+        $result = $this->serializer->serialize($this->makeDocument(
+            filePath: 'ged/2026/05/report.pdf',
+            fileName: 'report.pdf',
+            originalName: 'Annual Report.pdf',
+            mimeType: 'application/pdf',
+            size: 98765,
+        ));
 
-        $result = $this->serializer->serialize($this->makeDocument(file: $file));
-
-        self::assertSame(10, $result['fileId']);
+        self::assertSame('ged/2026/05/report.pdf', $result['filePath']);
         self::assertSame('report.pdf', $result['fileName']);
-        self::assertSame('/uploads/report.pdf', $result['fileUrl']);
+        self::assertSame('Annual Report.pdf', $result['originalName']);
+        self::assertSame('/uploads/ged/2026/05/report.pdf', $result['fileUrl']);
         self::assertSame('application/pdf', $result['fileMime']);
         self::assertSame(98765, $result['fileSize']);
     }
