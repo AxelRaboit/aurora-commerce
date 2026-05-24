@@ -7,6 +7,7 @@ namespace Aurora\Module\Notes\Markdown\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Surfaces the Markdown-notes module's settings as a dedicated tab on
@@ -33,7 +34,12 @@ final readonly class NotesMarkdownConfigurationTabProvider implements Configurat
         }
 
         return [
-            new ConfigurationTab(id: 'notes', priority: 110, fields: $fields),
+            new ConfigurationTab(
+                id: 'notes',
+                priority: 110,
+                fields: $fields,
+                moduleToggle: ModuleParameterEnum::NotesBackend,
+            ),
         ];
     }
 }

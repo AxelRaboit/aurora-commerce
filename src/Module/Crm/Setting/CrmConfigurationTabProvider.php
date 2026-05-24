@@ -7,6 +7,7 @@ namespace Aurora\Module\Crm\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Contributes to two tabs of the admin Settings page:
@@ -19,6 +20,16 @@ final readonly class CrmConfigurationTabProvider implements ConfigurationTabProv
     private const array TAB_PRIORITY = [
         'crm' => 120,
         'sequences' => 90,
+    ];
+
+    /**
+     * Only the `crm` tab is gated on the CRM module toggle. The
+     * `sequences` tab is shared with other modules and is left
+     * unrestricted so disabling CRM doesn't pull the rug from other
+     * modules' prefix settings.
+     */
+    private const array TAB_MODULE_TOGGLE = [
+        'crm' => ModuleParameterEnum::CrmBackend,
     ];
 
     public function getTabs(): array
@@ -40,6 +51,7 @@ final readonly class CrmConfigurationTabProvider implements ConfigurationTabProv
                 id: $group,
                 priority: self::TAB_PRIORITY[$group] ?? 200,
                 fields: $fields,
+                moduleToggle: self::TAB_MODULE_TOGGLE[$group] ?? null,
             );
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\View;
 
+use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Module\Configuration\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
@@ -31,6 +32,7 @@ final readonly class SettingsViewBuilder
         private TranslatorInterface $translator,
         private SettingDefinitionRegistry $definitionRegistry,
         private MediaUrlGenerator $mediaUrlGenerator,
+        private ModuleAccessChecker $moduleAccessChecker,
     ) {}
 
     /**
@@ -43,6 +45,14 @@ final readonly class SettingsViewBuilder
 
         foreach ($this->definitionRegistry->getTabs() as $tab) {
             if ($tab->devOnly && !$isDev) {
+                continue;
+            }
+
+            // Hide tabs whose owning module is currently disabled. The
+            // settings remain writable through the controller (so an admin
+            // re-enabling the module won't have lost their configuration),
+            // but the UI stays consistent with what's actually reachable.
+            if (null !== $tab->moduleToggle && !$this->moduleAccessChecker->isEnabled($tab->moduleToggle)) {
                 continue;
             }
 

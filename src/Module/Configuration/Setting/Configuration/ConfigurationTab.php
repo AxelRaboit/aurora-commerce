@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\Configuration;
 
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+
 /**
  * One tab in the admin Settings page. The `$id` is both the persisted
  * "group" identifier (matching the legacy `ApplicationParameterEnum::getGroup()`
@@ -45,5 +47,21 @@ class ConfigurationTab
          * carries the string so the Vue layer can look it up.
          */
         public readonly ?string $componentName = null,
+        /**
+         * When set, the tab is only rendered while the module toggle is
+         * enabled (resolved through `ModuleAccessChecker::isEnabled()`).
+         * Disabling the module via `/dev/dashboard/modules` immediately
+         * hides the tab from `/backend/settings` so the UI stays consistent
+         * with what's actually accessible. Pass a `ModuleParameterEnum`
+         * case for core modules or a raw toggle key string for client
+         * modules whose top-level toggle isn't part of aurora-core's enum
+         * (e.g. `'modules_welding_backend'`).
+         *
+         * Shared tabs that aggregate fields across modules (notably
+         * `sequences`) MUST leave this null — they should remain visible
+         * as long as at least one contributing module is enabled, and the
+         * merged-field semantics already handle that.
+         */
+        public readonly ModuleParameterEnum|string|null $moduleToggle = null,
     ) {}
 }

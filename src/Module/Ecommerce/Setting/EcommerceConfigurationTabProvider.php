@@ -7,6 +7,7 @@ namespace Aurora\Module\Ecommerce\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Contributes to two tabs of the admin Settings page:
@@ -19,6 +20,10 @@ final readonly class EcommerceConfigurationTabProvider implements ConfigurationT
     private const array TAB_PRIORITY = [
         'ecommerce' => 110,
         'sequences' => 90,
+    ];
+
+    private const array TAB_MODULE_TOGGLE = [
+        'ecommerce' => ModuleParameterEnum::EcommerceBackend,
     ];
 
     public function getTabs(): array
@@ -40,6 +45,7 @@ final readonly class EcommerceConfigurationTabProvider implements ConfigurationT
                 id: $group,
                 priority: self::TAB_PRIORITY[$group] ?? 200,
                 fields: $fields,
+                moduleToggle: self::TAB_MODULE_TOGGLE[$group] ?? null,
             );
         }
 

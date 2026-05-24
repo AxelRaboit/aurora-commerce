@@ -7,6 +7,7 @@ namespace Aurora\Module\PersonalFinance\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 final readonly class PersonalFinanceConfigurationTabProvider implements ConfigurationTabProviderInterface
 {
@@ -33,6 +34,7 @@ final readonly class PersonalFinanceConfigurationTabProvider implements Configur
                 id: $group,
                 priority: self::TAB_PRIORITY[$group] ?? 200,
                 fields: $fields,
+                moduleToggle: ModuleParameterEnum::PersonalFinanceBackend,
             );
         }
 

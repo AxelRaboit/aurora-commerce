@@ -366,12 +366,28 @@ src/Module/<Module>/Setting/<Module>ConfigurationTabProvider.php
 Pattern reference : `src/Module/Crm/Setting/CrmConfigurationTabProvider.php`.
 Use the **CrmConfigurationTabProvider as the canonical template** — read it
 before generating to copy the exact `getTabs()` shape with `TAB_PRIORITY`
-array, fields-by-group, `SettingFieldDescriptor` construction.
+array, fields-by-group, `SettingFieldDescriptor` construction, and the
+`TAB_MODULE_TOGGLE` map.
+
+**Module-toggle gating (`moduleToggle`)** : the module's own tab (e.g.
+`crm`, `notes`, `personal_finance`) MUST pass its top-level
+`ModuleParameterEnum::<Module>Backend` case as `moduleToggle:` on
+`ConfigurationTab`. Settings tabs auto-hide from `/backend/settings`
+when the corresponding module is disabled in `/dev/dashboard/modules`,
+matching the nav-item behaviour. Shared tabs (most notably `sequences`)
+MUST leave `moduleToggle` null — they aggregate fields across modules
+and stay visible as long as at least one contributor's settings exist.
+Pattern: build a const map keyed by tab id (see `TAB_MODULE_TOGGLE` in
+`CrmConfigurationTabProvider`) and pass
+`self::TAB_MODULE_TOGGLE[$group] ?? null`.
 
 For CLIENT : also ensure `_instanceof:
 Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface: tags:
 [aurora.configuration_tab_provider]` exists in `config/services.yaml` (if
-not, instruct the user to add it).
+not, instruct the user to add it). For client modules whose top-level
+toggle isn't part of aurora-core's `ModuleParameterEnum`, pass the
+raw toggle key string instead (e.g. `'modules_welding_backend'`) —
+`ConfigurationTab::$moduleToggle` accepts `ModuleParameterEnum|string|null`.
 
 ## Auto-discovery — what you DON'T need to wire (core)
 

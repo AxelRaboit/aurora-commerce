@@ -7,6 +7,7 @@ namespace Aurora\Module\Notes\Block\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
+use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Contributes the block-notes settings to the same "notes" tab on
@@ -32,7 +33,12 @@ final readonly class NotesBlockConfigurationTabProvider implements Configuration
         }
 
         return [
-            new ConfigurationTab(id: 'notes', priority: 111, fields: $fields),
+            new ConfigurationTab(
+                id: 'notes',
+                priority: 111,
+                fields: $fields,
+                moduleToggle: ModuleParameterEnum::NotesBackend,
+            ),
         ];
     }
 }

@@ -72,6 +72,14 @@ final class SettingDefinitionRegistry
                     alwaysVisible: $existing->alwaysVisible || $tab->alwaysVisible,
                     devOnly: $existing->devOnly || $tab->devOnly,
                     componentName: $existing->componentName ?? $tab->componentName,
+                    // Module gating is a property of the tab as a whole, not
+                    // a per-provider opinion. Two providers contributing to
+                    // the same tab id are expected to either both gate on
+                    // the same module or both leave it null. We keep the
+                    // first non-null value so providers don't need to
+                    // coordinate the moduleToggle when one of them might
+                    // be the lone gatekeeper.
+                    moduleToggle: $existing->moduleToggle ?? $tab->moduleToggle,
                 );
             }
         }
