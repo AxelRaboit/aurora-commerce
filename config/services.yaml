@@ -108,6 +108,10 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
 
+    Aurora\Core\Module\Command\MakeEntityCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
     Aurora\Core\Module\Service\ModuleRegistry:
         arguments:
             $modules: !tagged_iterator aurora.module
