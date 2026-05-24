@@ -7,6 +7,7 @@ namespace Aurora\Module\Ged\Document\Controller\Backend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Frontend\Controller\JsonRequestTrait;
 use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Storage\Enum\MimeGroupEnum;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Ged\Document\Dto\DocumentInputFactoryInterface;
@@ -60,8 +61,10 @@ final class DocumentsController extends AbstractController
         $folderId = $request->query->getInt('folderId') ?: null;
         $statusValue = $request->query->getString('status');
         $status = '' !== $statusValue ? DocumentStatusEnum::tryFrom($statusValue) : null;
+        $mimeGroupValue = $request->query->getString('mimeGroup');
+        $mimeGroup = '' !== $mimeGroupValue ? MimeGroupEnum::tryFrom($mimeGroupValue) : null;
 
-        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId, $status));
+        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId, $status, $mimeGroup));
     }
 
     #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]

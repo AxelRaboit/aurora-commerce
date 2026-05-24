@@ -5,6 +5,7 @@ export function useDocumentFilters(reload) {
     const filterTagId = ref(null);
     const filterFolderId = ref(null);
     const filterStatus = ref(null);
+    const filterMimeGroup = ref(null);
 
     const hasActiveFilter = computed(
         () =>
@@ -12,7 +13,8 @@ export function useDocumentFilters(reload) {
                 filterCategoryId.value ||
                 filterTagId.value ||
                 filterFolderId.value ||
-                filterStatus.value
+                filterStatus.value ||
+                filterMimeGroup.value
             ),
     );
 
@@ -21,6 +23,7 @@ export function useDocumentFilters(reload) {
         tagId: filterTagId.value || undefined,
         folderId: filterFolderId.value || undefined,
         status: filterStatus.value || undefined,
+        mimeGroup: filterMimeGroup.value || undefined,
     });
 
     function applyFilter() {
@@ -32,6 +35,7 @@ export function useDocumentFilters(reload) {
         filterTagId.value = null;
         filterFolderId.value = null;
         filterStatus.value = null;
+        filterMimeGroup.value = null;
         reload();
     }
 
@@ -40,6 +44,7 @@ export function useDocumentFilters(reload) {
         filterTagId,
         filterFolderId,
         filterStatus,
+        filterMimeGroup,
         hasActiveFilter,
         extraParams,
         applyFilter,

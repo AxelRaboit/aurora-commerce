@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\View;
 
+use Aurora\Core\Storage\Enum\MimeGroupEnum;
 use Aurora\Core\Validation\Dto\PaginationRequest;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
@@ -73,6 +74,7 @@ final readonly class DocumentsViewBuilder
         ?int $tagId = null,
         ?int $folderId = null,
         ?DocumentStatusEnum $status = null,
+        ?MimeGroupEnum $mimeGroup = null,
     ): array {
         $result = $this->documentRepository->findPaginated(
             $pagination->page,
@@ -81,6 +83,7 @@ final readonly class DocumentsViewBuilder
             tagId: $tagId,
             folderId: $folderId,
             status: $status,
+            mimeGroup: $mimeGroup,
         );
 
         return [

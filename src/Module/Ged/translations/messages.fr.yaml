@@ -74,6 +74,11 @@ backend:
       filter_by_category: Filtrer par catégorie
       filter_by_tag: Filtrer par étiquette
       filter_by_folder: Filtrer par dossier
+      filter_by_type: Filtrer par type
+      type_image: Images
+      type_video: Vidéos
+      type_pdf: PDF
+      type_other: Autres
       preview: Aperçu
       choose_file: Choisir un fichier
       choose_file_library: Médiathèque

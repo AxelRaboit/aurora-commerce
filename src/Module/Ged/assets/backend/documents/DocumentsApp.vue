@@ -68,9 +68,16 @@ function openEditFromDetail() {
 
 // ── Filters ──────────────────────────────────────────────────────────────────
 const {
-    filterCategoryId, filterTagId, filterFolderId, filterStatus,
+    filterCategoryId, filterTagId, filterFolderId, filterStatus, filterMimeGroup,
     hasActiveFilter, extraParams, applyFilter, resetFilters,
 } = useDocumentFilters(() => reset());
+
+const mimeGroupOptions = [
+    { value: "image", label: t("backend.ged.documents.type_image") },
+    { value: "video", label: t("backend.ged.documents.type_video") },
+    { value: "pdf", label: t("backend.ged.documents.type_pdf") },
+    { value: "other", label: t("backend.ged.documents.type_other") },
+];
 
 const { items, loading, page, totalPages, search: searchInput, onSearch, goToPage, reload: reset } = useListPage(
     props.listPath,
@@ -159,6 +166,15 @@ async function doBulkDelete() {
                 :allow-empty="true"
                 :searchable="false"
                 :placeholder="t('backend.ged.documents.filter_by_status')"
+                class="min-w-44"
+                v-on:update:model-value="applyFilter"
+            />
+            <AppMultiselect
+                v-model="filterMimeGroup"
+                :options="mimeGroupOptions"
+                :allow-empty="true"
+                :searchable="false"
+                :placeholder="t('backend.ged.documents.filter_by_type')"
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />

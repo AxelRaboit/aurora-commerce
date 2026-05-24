@@ -6,6 +6,7 @@ namespace Aurora\Module\Ged\Document\Repository;
 
 use Aurora\Core\Repository\ResolveTargetEntityRepository;
 use Aurora\Core\Repository\Trait\PaginationTrait;
+use Aurora\Core\Storage\Enum\MimeGroupEnum;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
@@ -30,6 +31,7 @@ class DocumentRepository extends ResolveTargetEntityRepository
         ?int $tagId = null,
         ?int $folderId = null,
         ?DocumentStatusEnum $status = null,
+        ?MimeGroupEnum $mimeGroup = null,
     ): array {
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.category', 'c')
@@ -62,6 +64,11 @@ class DocumentRepository extends ResolveTargetEntityRepository
         if ($status instanceof DocumentStatusEnum) {
             $qb->andWhere('d.status = :status')->setParameter('status', $status);
             $countQb->andWhere('d.status = :status')->setParameter('status', $status);
+        }
+
+        if ($mimeGroup instanceof MimeGroupEnum) {
+            $mimeGroup->applyTo($qb, 'd');
+            $mimeGroup->applyTo($countQb, 'd');
         }
 
         $result = $this->paginate($qb, $countQb, $page, $limit);

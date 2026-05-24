@@ -74,6 +74,11 @@ backend:
       filter_by_category: Filter by category
       filter_by_tag: Filter by tag
       filter_by_folder: Filter by folder
+      filter_by_type: Filter by type
+      type_image: Images
+      type_video: Videos
+      type_pdf: PDF
+      type_other: Other
       preview: Preview
       choose_file: Choose a file
       choose_file_library: Media library
