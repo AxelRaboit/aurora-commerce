@@ -187,6 +187,7 @@ const {
                             <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
                                 <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
                                 <span v-if="doc.categoryName" class="text-xs text-muted">{{ doc.categoryName }}</span>
+                                <span v-if="doc.fileSize" class="text-xs text-muted tabular-nums">{{ formatSize(doc.fileSize) }}</span>
                             </div>
                             <div v-if="doc.tags?.length" class="flex flex-wrap gap-1 mt-1.5">
                                 <span
@@ -225,6 +226,7 @@ const {
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.ged.documents.category") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.status") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.file") }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.ged.documents.size") }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t("backend.ged.documents.preview") }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                         </tr>
@@ -255,6 +257,10 @@ const {
                             <td class="px-6 py-3 hidden lg:table-cell">
                                 <span v-if="doc.fileName" class="flex items-center gap-1 text-xs text-muted"><Paperclip class="w-3 h-3" :stroke-width="2" /> {{ doc.fileName }}</span>
                                 <span v-else class="text-muted text-xs">—</span>
+                            </td>
+                            <td class="px-6 py-3 text-right hidden lg:table-cell text-xs text-muted tabular-nums">
+                                <span v-if="doc.fileSize">{{ formatSize(doc.fileSize) }}</span>
+                                <span v-else>—</span>
                             </td>
                             <td class="px-6 py-3 hidden xl:table-cell">
                                 <AppThumbnail

@@ -49,6 +49,7 @@ backend:
       status: Statut
       category: Catégorie
       file: Fichier
+      size: Taille
       add: Ajouter un document
       create: Nouveau document
       edit: "Modifier le document {title}"

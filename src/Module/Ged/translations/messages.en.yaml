@@ -49,6 +49,7 @@ backend:
       status: Status
       category: Category
       file: File
+      size: Size
       add: Add document
       create: New document
       edit: "Edit document {title}"
