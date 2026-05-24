@@ -13,14 +13,14 @@ A client application built on [Aurora](https://github.com/AxelRaboit/aurora-core
 Aurora is installed as a Composer dependency at `vendor/axelraboit/aurora/`
 and provides the full backend (CRUD, auth, modules, Vue admin SPA, etc.).
 
-## Setup initial
+## 🚀 Tu rejoins le projet ? Quickstart 10 min
 
-```bash
-cp .env.local.example .env.local       # fill in your DB credentials + AURORA_*_KEY
-make install-dev                        # composer + pnpm + DB create + migrate + fixtures + dev server
-```
+Pour faire tourner ce projet en local après `git clone` :
+**[`vendor/axelraboit/aurora/docs/aurora-client/getting-started/joining_a_project.md`](vendor/axelraboit/aurora/docs/aurora-client/getting-started/joining_a_project.md)**
 
-**Identifiants par défaut** : `admin@aurora.app` / `password`
+C'est la procédure recommandée — `make install-dev` plante sur une DB
+fresh à cause d'un quirk multi-namespace de Doctrine Migrations, le
+quickstart contourne ça proprement (10 min, copier-coller direct).
 
 > 📋 **Checklist complète** des prérequis (PHP, Node, Postgres, binaires CLI, modèles Ollama, vars d'env, prod) : [`vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md`](vendor/axelraboit/aurora/docs/aurora-core/ops/prerequisites.md) — à lire avant l'install initial.
 >

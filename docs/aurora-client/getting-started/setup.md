@@ -1,8 +1,17 @@
 # Setup — Installation locale
 
-> **Nouveau projet ?** Aurora-client est le template à dupliquer. Voir la
-> section [Démarrer un nouveau projet](#démarrer-un-nouveau-projet) pour les
-> étapes après le clone.
+> 🚀 **Tu rejoins un projet existant ?** Voir le quickstart 10 min :
+> [`joining_a_project.md`](joining_a_project.md). Procédure
+> copier-coller qui marche du premier coup (contourne le piège
+> multi-namespace de Doctrine Migrations).
+>
+> **Tu démarres un nouveau projet ?** Aurora-client est le template à
+> dupliquer. Voir la section
+> [Démarrer un nouveau projet](#démarrer-un-nouveau-projet) plus bas.
+>
+> Ce doc-ci = **référence longue** (env vars exhaustives, options
+> Docker, troubleshooting détaillé). Pour le démarrage rapide, voir
+> les liens ci-dessus.
 
 ## Prérequis
 
@@ -36,17 +45,15 @@ cd aurora-client
 ## 2. Installer les dépendances
 
 ```bash
-make install-dev
+composer install                                # vendor PHP
+pnpm install                                    # deps JS client (Vue, axios, …)
+(cd vendor/axelraboit/aurora && pnpm install)   # tooling Vite/Vitest (vendor)
 ```
 
-Cette commande fait en séquence :
-1. `composer install` — installe aurora-core et toutes ses dépendances PHP
-2. `pnpm install` — installe les dépendances JS côté client
-3. `make fixtures` — crée la base de données, joue les migrations, charge les fixtures
-4. `make sync-privileges` — synchronise les droits des modules
-5. `make sync-menus` — synchronise les menus
-
-> Si tu préfères tout faire manuellement, voir les sections ci-dessous.
+> ⚠️ `make install-dev` existe et fait tout ça en un raccourci, **MAIS**
+> il enchaîne aussi `make migrate` qui plante sur une DB fresh à cause
+> d'un quirk multi-namespace Doctrine. Sur un projet existant en DB
+> vierge : suivre les étapes manuelles ici + le §4 ci-dessous.
 
 ---
 
@@ -83,18 +90,35 @@ APP_NAME=aurora-client
 
 ```bash
 make docker-up     # démarre PostgreSQL en conteneur
-make migrate       # crée les tables
-make fixtures      # charge les données de dev
 ```
 
 ### Option B — PostgreSQL local
 
-Crée la base manuellement, puis :
+Crée la base manuellement :
 
 ```bash
-make migrate
-make fixtures
+psql -h 127.0.0.1 -U <user> -d postgres -c "CREATE DATABASE <db_name>;"
 ```
+
+### Init schéma + state migrations (les deux options)
+
+> ⚠️ Ne PAS faire `make migrate` directement sur une DB fresh. Sur
+> projet vierge multi-namespace, ça plante. Utiliser la procédure
+> `schema:create + mark all applied` à la place :
+
+```bash
+php bin/console doctrine:schema:create                       # schéma depuis entités
+php bin/console doctrine:migrations:sync-metadata-storage --no-interaction
+php bin/console doctrine:migrations:version --add --all --no-interaction
+php bin/console doctrine:schema:validate                     # sanity check
+php bin/console aurora:application-parameter
+php bin/console aurora:privileges:sync
+php bin/console aurora:menus:sync
+php bin/console doctrine:fixtures:load --no-interaction      # données dev
+```
+
+Détails dans [`../dev/database.md`](../dev/database.md) section
+"DB fresh : `make migrate` ne marche pas".
 
 ---
 
