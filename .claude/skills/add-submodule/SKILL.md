@@ -25,7 +25,7 @@ Same detection as `/add-module` (composer.json check). Adapts :
 | Toggle key | `ModuleParameterEnum::<Parent><Sub>` enum case | constant on `<Parent>Context` (`app_<parent>_<sub>`) |
 | Sub-folder | `src/Core/<Parent>/<Sub>/` or `src/Module/<Parent>/<Sub>/` | `src/Module/<Parent>/<Sub>/` (assuming `<Parent>` is a client module — for extending an Aurora module, use `/extend-aurora-entity` instead) |
 | Sequence prefix (if entity) | `seq_core_<sub>_id` | `seq_app_<sub>_id` |
-| Asset path | `src/Module/<Parent>/assets/backend/<sub>/` or `src/Core/Frontend/<parent>/<sub>/` | `assets/client/Module/<Parent>/backend/<sub>/` |
+| Asset path | `src/Module/<Parent>/assets/backend/<sub>/` or `src/Core/Frontend/<parent>/<sub>/` | `src/Module/<Parent>/assets/backend/<sub>/` (co-located since 0.5) |
 
 ## Required inputs (ask upfront if missing)
 
@@ -197,8 +197,7 @@ src/Module/<Parent>/<Sub>/
 
 src/Module/<Parent>/templates/backend/<sub_id>/index.html.twig
 
-src/Module/<Parent>/assets/backend/<sub_id>/<Sub>App.vue       # CORE
-assets/client/Module/<Parent>/backend/<sub_id>/<Sub>App.vue  # CLIENT
+src/Module/<Parent>/assets/backend/<sub_id>/<Sub>App.vue       # CORE + CLIENT (since 0.5)
 ```
 
 For Core sub-modules under `src/Core/<Parent>/<Sub>/`, the paths use
@@ -259,8 +258,8 @@ sub-module benefits from :
 - Twig namespace `@<Parent>` already mounted (new sub-template resolves
   automatically)
 - Translations glob (depth 1 + 2 since 0.4.0 — cf. AuroraBundle.php)
-- Vue component glob (`src/Module/*/assets/**/*.vue` or
-  `assets/client/Module/**/*.vue` côté client)
+- Vue component glob (`src/Module/*/assets/**/*.vue`) — same path
+  convention CORE + CLIENT since 0.5
 
 ## Post-generation steps
 
