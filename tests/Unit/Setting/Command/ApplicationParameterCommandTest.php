@@ -17,45 +17,6 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * Tiny enum used to simulate a client-side custom enum that gets
- * exposed via a custom ApplicationParameterProviderInterface.
- */
-enum FakeClientSettingEnum: string implements ApplicationParameterEnumInterface
-{
-    case SomeClientKey = 'backend_client_custom_setting';
-
-    public function getKey(): string
-    {
-        return $this->value;
-    }
-
-    public function getLabel(): string
-    {
-        return 'fake.label';
-    }
-
-    public function getDescription(): string
-    {
-        return 'fake description';
-    }
-
-    public function getDefaultValue(): string
-    {
-        return '';
-    }
-
-    public function getType(): string
-    {
-        return 'string';
-    }
-
-    public function getGroup(): string
-    {
-        return 'fake_group';
-    }
-}
-
 #[AllowMockObjectsWithoutExpectations]
 final class ApplicationParameterCommandTest extends TestCase
 {
@@ -181,46 +142,65 @@ final class ApplicationParameterCommandTest extends TestCase
 
         $repository->method('findAll')->willReturn([]);
 
-        // Custom enum + provider exposed by the client project.
-        $customProvider = new class implements ApplicationParameterProviderInterface {
-            public function getParameters(): iterable
-            {
-                yield FakeClientSettingEnum::SomeClientKey;
-            }
-        };
+        $customKey = 'backend_extension_custom_setting';
+        $customProvider = $this->makeProviderWith($this->stubParameterEnum($customKey));
 
         $tester = $this->makeTester($repository, $em, [$customProvider]);
         $tester->execute(['--dry-run' => true]);
 
-        $display = $tester->getDisplay();
-        // The custom key appears in the "to-create" list
-        self::assertStringContainsString(FakeClientSettingEnum::SomeClientKey->getKey(), $display);
+        // The custom key from an extension provider appears in the "to-create" list
+        self::assertStringContainsString($customKey, $tester->getDisplay());
     }
 
-    public function testClientSettingKeptWhenItsProviderIsRegistered(): void
+    public function testSettingKeptWhenItsProviderIsRegistered(): void
     {
         $repository = $this->createMock(SettingRepository::class);
         $em = $this->createMock(EntityManagerInterface::class);
 
-        // Existing client-side setting already in DB (admin saved a value)
-        $clientSetting = $this->makeSettingStub(FakeClientSettingEnum::SomeClientKey->getKey());
-        $repository->method('findAll')->willReturn([$clientSetting]);
+        $customKey = 'backend_extension_custom_setting';
+        // Existing setting already in DB (admin saved a value via the UI)
+        $existing = $this->makeSettingStub($customKey);
+        $repository->method('findAll')->willReturn([$existing]);
 
-        // EM should NOT remove the client setting — the provider claims its key
+        // EM should NOT remove the setting — the provider claims its key
         $em->expects(self::never())->method('remove');
 
-        $customProvider = new class implements ApplicationParameterProviderInterface {
-            public function getParameters(): iterable
-            {
-                yield FakeClientSettingEnum::SomeClientKey;
-            }
-        };
+        $customProvider = $this->makeProviderWith($this->stubParameterEnum($customKey));
 
         $tester = $this->makeTester($repository, $em, [$customProvider]);
         $tester->execute([]);
 
-        $display = $tester->getDisplay();
-        // No "obsolète" line for our custom key
-        self::assertStringNotContainsString(FakeClientSettingEnum::SomeClientKey->getKey().' (obsolète)', $display);
+        // No "obsolète" line for the provider-claimed key
+        self::assertStringNotContainsString($customKey.' (obsolète)', $tester->getDisplay());
+    }
+
+    /**
+     * Stubs `ApplicationParameterEnumInterface` to simulate an enum case
+     * exposed by an extension provider, without needing a concrete enum
+     * declaration just for the test.
+     */
+    private function stubParameterEnum(string $key): ApplicationParameterEnumInterface
+    {
+        $stub = $this->createStub(ApplicationParameterEnumInterface::class);
+        $stub->method('getKey')->willReturn($key);
+        $stub->method('getLabel')->willReturn('stub.label');
+        $stub->method('getDescription')->willReturn('stub description');
+        $stub->method('getDefaultValue')->willReturn('');
+        $stub->method('getType')->willReturn('string');
+        $stub->method('getGroup')->willReturn('stub_group');
+
+        return $stub;
+    }
+
+    private function makeProviderWith(ApplicationParameterEnumInterface $case): ApplicationParameterProviderInterface
+    {
+        return new class($case) implements ApplicationParameterProviderInterface {
+            public function __construct(private readonly ApplicationParameterEnumInterface $case) {}
+
+            public function getParameters(): iterable
+            {
+                yield $this->case;
+            }
+        };
     }
 }
