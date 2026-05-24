@@ -47,6 +47,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case CoreMenuItemPrefix = 'core_menu_item_prefix';
     case NavSectionAliases = 'nav_section_aliases';
     case NavItemAliases = 'nav_item_aliases';
+    case NavSectionOrder = 'nav_section_order';
+    case NavItemOrder = 'nav_item_order';
     case ColorPickerPresets = 'color_picker_presets';
 
     /**
@@ -106,6 +108,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CoreMenuItemPrefix => 'backend.parameters.core_menu_item_prefix.label',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.label',
             self::NavItemAliases => 'backend.parameters.nav_item_aliases.label',
+            self::NavSectionOrder => 'backend.parameters.nav_section_order.label',
+            self::NavItemOrder => 'backend.parameters.nav_item_order.label',
             self::ColorPickerPresets => 'backend.parameters.color_picker_presets.label',
         };
     }
@@ -150,6 +154,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CoreMenuItemPrefix => 'backend.parameters.core_menu_item_prefix.description',
             self::NavSectionAliases => 'backend.parameters.nav_section_aliases.description',
             self::NavItemAliases => 'backend.parameters.nav_item_aliases.description',
+            self::NavSectionOrder => 'backend.parameters.nav_section_order.description',
+            self::NavItemOrder => 'backend.parameters.nav_item_order.description',
             self::ColorPickerPresets => 'backend.parameters.color_picker_presets.description',
         };
     }
@@ -194,6 +200,8 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::CoreMenuItemPrefix => SequencePrefixEnum::MenuItem->value,
             self::NavSectionAliases => '{}',
             self::NavItemAliases => '{}',
+            self::NavSectionOrder => '[]',
+            self::NavItemOrder => '{}',
             self::ColorPickerPresets => json_encode(self::DEFAULT_COLOR_PICKER_PRESETS, JSON_THROW_ON_ERROR),
         };
     }
@@ -231,7 +239,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SeoTitleTemplate, self::SeoDefaultDescription, self::SeoDefaultOgImage, self::SeoTwitterHandle => 'seo',
             self::CoreUserPrefix, self::CoreMediaPrefix, self::CoreAccessRequestPrefix, self::CoreAuditLogPrefix, self::CoreResetPasswordPrefix, self::CoreMediaFolderPrefix, self::CoreMenuItemPrefix => 'sequences',
             self::EmailLocale => 'email',
-            self::NavSectionAliases, self::NavItemAliases => 'navigation',
+            self::NavSectionAliases, self::NavItemAliases, self::NavSectionOrder, self::NavItemOrder => 'navigation',
             self::ColorPickerPresets => 'appearance',
         };
     }

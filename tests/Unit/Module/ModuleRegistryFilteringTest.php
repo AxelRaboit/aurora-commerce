@@ -99,11 +99,18 @@ final class ModuleRegistryFilteringTest extends TestCase
         $security = $this->createMock(Security::class);
         $security->method('getUser')->willReturn($user);
 
+        // Empty order overrides — these tests exercise the priority sort,
+        // hide-filter, and privilege-filter paths, not the user-ordered
+        // override path (covered by ModuleRegistryOrderOverrideTest).
+        $settingRepository = $this->createMock(\Aurora\Module\Configuration\Setting\Repository\SettingRepository::class);
+        $settingRepository->method('getOrDefault')->willReturn('[]');
+
         return new ModuleRegistry(
             modules: [new StubNavModule()],
             security: $authChecker,
             urlGenerator: $urlGenerator,
             userSecurity: $security,
+            settingRepository: $settingRepository,
         );
     }
 

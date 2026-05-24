@@ -1,8 +1,16 @@
 <script setup>
 import { useI18n } from "vue-i18n";
+import { VueDraggable } from "vue-draggable-plus";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppInput from "@/shared/components/form/input/AppInput.vue";
-import { Save, X, RotateCcw, ChevronDown, ChevronRight } from "lucide-vue-next";
+import {
+    Save,
+    X,
+    RotateCcw,
+    ChevronDown,
+    ChevronRight,
+    GripVertical,
+} from "lucide-vue-next";
 import { useNavAliases } from "../composables/useNavAliases.js";
 
 const props = defineProps({
@@ -13,7 +21,11 @@ const props = defineProps({
 
 const { t } = useI18n();
 
-const navAliases = useNavAliases({ groups: props.groups, updatePath: props.updatePath });
+const navAliases = useNavAliases({
+    groups: props.groups,
+    navSections: props.navSections,
+    updatePath: props.updatePath,
+});
 </script>
 
 <template>
@@ -33,14 +45,28 @@ const navAliases = useNavAliases({ groups: props.groups, updatePath: props.updat
             </div>
 
             <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
-            <div v-else class="space-y-2">
+            <VueDraggable
+                v-else
+                :model-value="navAliases.orderedSections.value"
+                handle=".section-drag-handle"
+                :animation="150"
+                class="space-y-2"
+                v-on:update:model-value="navAliases.applySectionOrder"
+            >
                 <div
-                    v-for="section in navSections"
+                    v-for="section in navAliases.orderedSections.value"
                     :key="section.id"
                     class="border border-line rounded-lg overflow-hidden"
                 >
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 px-3 py-2 bg-surface-2">
-                        <div class="flex items-center gap-2 sm:w-48 sm:shrink-0">
+                        <div class="flex items-center gap-2 sm:w-52 sm:shrink-0">
+                            <button
+                                type="button"
+                                class="section-drag-handle flex items-center justify-center text-muted hover:text-primary cursor-grab active:cursor-grabbing shrink-0 w-5 h-5"
+                                :title="t('backend.settings.navAliases.dragHandle')"
+                            >
+                                <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
+                            </button>
                             <button
                                 type="button"
                                 class="flex items-center justify-center text-muted hover:text-primary transition-colors shrink-0 w-5 h-5"
@@ -80,34 +106,52 @@ const navAliases = useNavAliases({ groups: props.groups, updatePath: props.updat
                         <div v-if="!section.items?.length" class="text-xs text-muted italic">
                             {{ t('backend.settings.navAliases.itemsEmpty') }}
                         </div>
-                        <div
-                            v-for="item in section.items"
-                            :key="item.route"
-                            class="flex flex-col sm:flex-row sm:items-center gap-2"
+                        <VueDraggable
+                            v-else
+                            :model-value="navAliases.orderedItems(section)"
+                            :handle="`.item-drag-handle-${section.id}`"
+                            :animation="150"
+                            class="space-y-2"
+                            v-on:update:model-value="(items) => navAliases.applyItemOrder(section.id, items)"
                         >
-                            <span class="text-xs text-secondary truncate sm:w-40 sm:shrink-0" :title="navAliases.itemDefaultLabel(item)">
-                                {{ navAliases.itemDefaultLabel(item) }}
-                            </span>
-                            <div class="flex items-center gap-2 flex-1 min-w-0">
-                                <AppInput
-                                    v-model="navAliases.itemAliases[item.route]"
-                                    :placeholder="navAliases.itemDefaultLabel(item)"
-                                    class="flex-1"
-                                />
-                                <AppButton
-                                    variant="ghost"
-                                    size="sm"
-                                    :disabled="!navAliases.itemAliases[item.route]"
-                                    :title="t('backend.settings.navAliases.resetItem')"
-                                    v-on:click="navAliases.resetItem(item.route)"
-                                >
-                                    <X class="w-3.5 h-3.5" :stroke-width="2" />
-                                </AppButton>
+                            <div
+                                v-for="item in navAliases.orderedItems(section)"
+                                :key="item.route ?? item.key"
+                                class="flex flex-col sm:flex-row sm:items-center gap-2"
+                            >
+                                <div class="flex items-center gap-2 sm:w-48 sm:shrink-0">
+                                    <button
+                                        type="button"
+                                        :class="['flex items-center justify-center text-muted hover:text-primary cursor-grab active:cursor-grabbing shrink-0 w-5 h-5', `item-drag-handle-${section.id}`]"
+                                        :title="t('backend.settings.navAliases.dragHandle')"
+                                    >
+                                        <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
+                                    </button>
+                                    <span class="text-xs text-secondary truncate flex-1" :title="navAliases.itemDefaultLabel(item)">
+                                        {{ navAliases.itemDefaultLabel(item) }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                    <AppInput
+                                        v-model="navAliases.itemAliases[item.route ?? item.key]"
+                                        :placeholder="navAliases.itemDefaultLabel(item)"
+                                        class="flex-1"
+                                    />
+                                    <AppButton
+                                        variant="ghost"
+                                        size="sm"
+                                        :disabled="!navAliases.itemAliases[item.route ?? item.key]"
+                                        :title="t('backend.settings.navAliases.resetItem')"
+                                        v-on:click="navAliases.resetItem(item.route ?? item.key)"
+                                    >
+                                        <X class="w-3.5 h-3.5" :stroke-width="2" />
+                                    </AppButton>
+                                </div>
                             </div>
-                        </div>
+                        </VueDraggable>
                     </div>
                 </div>
-            </div>
+            </VueDraggable>
 
             <div class="pt-2 border-t border-line flex justify-end">
                 <AppButton variant="primary" size="md" :loading="navAliases.saving.value" v-on:click="navAliases.saveAll">

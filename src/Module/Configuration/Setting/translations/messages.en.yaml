@@ -38,11 +38,12 @@ backend:
     navAliasesEmpty: No navigation sections available.
     navAliases:
       title: Side menu
-      help: Rename sidemenu group headings and individual modules. Click a section to expand its items.
+      help: Rename and reorder sidemenu group headings and individual modules. Drag the handle to move a section or module. Click a section to expand its items.
       itemsEmpty: No items in this section.
       resetItem: Reset
       resetAll: Reset all
       save: Save
+      dragHandle: Drag to reorder
     cascadeLocked: 'Enable "{parent}" first to edit this setting.'
     mediaSquareHint: 'Recommended: square image (1:1).'
     modulesIntro: Enable or disable application modules. Changes are saved immediately.

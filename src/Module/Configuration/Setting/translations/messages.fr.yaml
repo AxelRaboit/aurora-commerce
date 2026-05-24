@@ -38,11 +38,12 @@ backend:
     navAliasesEmpty: Aucune section de navigation disponible.
     navAliases:
       title: Menu latéral
-      help: 'Renommez les regroupements et les modules du menu latéral. Cliquez sur une section pour développer ses items.'
+      help: 'Renommez et réordonnez les regroupements et les modules du menu latéral. Glissez la poignée pour déplacer une section ou un module. Cliquez sur une section pour développer ses items.'
       itemsEmpty: Aucun item dans cette section.
       resetItem: Réinitialiser
       resetAll: Tout réinitialiser
       save: Enregistrer
+      dragHandle: Glisser pour réordonner
     cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
     mediaSquareHint: 'Recommandé : image carrée (1:1).'
     modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
