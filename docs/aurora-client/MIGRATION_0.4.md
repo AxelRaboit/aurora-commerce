@@ -22,25 +22,25 @@ miroir de la structure PHP.
 | Avant | Après |
 |---|---|
 | `assets/Module/<X>/...` | `src/Module/<X>/assets/...` |
-| `assets/Core/backend/...` | `src/Core/Frontend/backend/...` |
-| `assets/Core/frontend/...` | `src/Core/Frontend/frontend/...` |
-| `assets/Core/utils/...` | `src/Core/Frontend/utils/...` |
-| `assets/shared/...` | `src/Core/Frontend/shared/...` |
-| `assets/locales/generated/...` | `src/Core/Frontend/locales/generated/...` |
-| `assets/css/...` (sauf modules) | `src/Core/Frontend/css/...` |
+| `assets/Core/backend/...` | `src/Core/assets/backend/...` |
+| `assets/Core/frontend/...` | `src/Core/assets/frontend/...` |
+| `assets/Core/utils/...` | `src/Core/assets/utils/...` |
+| `assets/shared/...` | `src/Core/assets/shared/...` |
+| `assets/locales/generated/...` | `src/Core/assets/locales/generated/...` |
+| `assets/css/...` (sauf modules) | `src/Core/assets/css/...` |
 | `assets/css/modules/notes/markdown/preview.css` | `src/Module/Notes/assets/backend/markdown/components/preview.css` |
 | `assets/css/modules/editorial/prose.css` | `src/Module/Editorial/assets/backend/posts/prose.css` |
-| `assets/css/core/sidemenu.css` | `src/Core/Frontend/backend/sidemenu/sidemenu.css` |
-| `assets/controllers/` | `src/Core/Frontend/stimulus/` (renommé pour éviter le clash avec `Controller/` PHP) |
-| `assets/controllers.json` | `src/Core/Frontend/stimulus.json` (override Symfony : `config/packages/stimulus.yaml`) |
-| `assets/tests/` | `src/Core/Frontend/tests/` |
-| `assets/.client-fallback/` | `src/Core/Frontend/.client-fallback/` |
-| `assets/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` | `src/Core/Frontend/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` |
+| `assets/css/core/sidemenu.css` | `src/Core/assets/backend/sidemenu/sidemenu.css` |
+| `assets/controllers/` | `src/Core/assets/stimulus/` (renommé pour éviter le clash avec `Controller/` PHP) |
+| `assets/controllers.json` | `src/Core/assets/stimulus.json` (override Symfony : `config/packages/stimulus.yaml`) |
+| `assets/tests/` | `src/Core/assets/tests/` |
+| `assets/.client-fallback/` | `src/Core/assets/.client-fallback/` |
+| `assets/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` | `src/Core/assets/{app,flash,theme,guest,i18n,stimulus_bootstrap}.js` |
 
 - Les **aliases Vite** (`@vault`, `@editorial`, `@platform`, `@configuration`,
   `@media`, `@general`, `@dev`, …) continuent de fonctionner ; leurs cibles
   pointent désormais vers `src/Module/<X>/assets/`. `@core`, `@`, `@shared`
-  résolvent sous `src/Core/Frontend/`.
+  résolvent sous `src/Core/assets/`.
 - Les imports `@/css/...` ont été remplacés par des **chemins relatifs**
   (`./preview.css`, `./prose.css`, `./sidemenu.css`) puisque les CSS sont
   désormais co-localisés avec leur SFC.
@@ -48,8 +48,8 @@ miroir de la structure PHP.
   `controllers.json` → `stimulus.json`) pour éviter la confusion avec les
   controllers PHP. La convention par défaut Symfony (`assets/controllers/`)
   est overridée via `config/packages/stimulus.yaml`.
-- **Translations dump path** : `src/Core/Frontend/locales/generated/`.
-- **Entry points Vite** : `./assets/app.js` → `./src/Core/Frontend/app.js`
+- **Translations dump path** : `src/Core/assets/locales/generated/`.
+- **Entry points Vite** : `./assets/app.js` → `./src/Core/assets/app.js`
   (et de même pour `flash`, `theme`, `guest`, `i18n`, `stimulus_bootstrap`).
 
 **Côté client** (aurora-client) : **rien ne change**. Votre layout
@@ -111,8 +111,8 @@ aussi été déplacés vers les modules promus :
 
 **Restent à `Core/backend/`** (templates) : `layout.html.twig`,
 `base_guest.html.twig`. Côté assets, l'équivalent sidemenu/notifications a
-été déplacé sous `src/Core/Frontend/backend/sidemenu/` et
-`src/Core/Frontend/backend/notifications/` lors de la suppression du root
+été déplacé sous `src/Core/assets/backend/sidemenu/` et
+`src/Core/assets/backend/notifications/` lors de la suppression du root
 `assets/` (voir section "Assets co-location" plus bas).
 
 ### Refs côté client à mettre à jour

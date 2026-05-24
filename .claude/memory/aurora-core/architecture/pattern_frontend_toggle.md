@@ -105,11 +105,11 @@ avec `v-if="hasEnabledFronts"`.
 
 ## Lieux clés
 
-- Interface : `src/Core/Frontend/Contract/FrontendInterface.php`
-- Registry : `src/Core/Frontend/Service/Registry.php`
-- Route gate : `src/Core/Frontend/EventSubscriber/FrontendRouteGateSubscriber.php`
-- Root dispatch + redirect cascade : `src/Core/Frontend/Controller/RootDispatchController.php`
-- Twig helper : `src/Core/Frontend/Twig/FrontendExtension.php` (`has_enabled_fronts()`)
+- Interface : `src/Core/assets/Contract/FrontendInterface.php`
+- Registry : `src/Core/assets/Service/Registry.php`
+- Route gate : `src/Core/assets/EventSubscriber/FrontendRouteGateSubscriber.php`
+- Root dispatch + redirect cascade : `src/Core/assets/Controller/RootDispatchController.php`
+- Twig helper : `src/Core/assets/Twig/FrontendExtension.php` (`has_enabled_fronts()`)
 - Implémentations actuelles : `Aurora\Module\Editorial\EditorialFrontendDescriptor`,
   `Aurora\Module\Ecommerce\EcommerceFrontendDescriptor`,
   `Aurora\Module\Photo\PhotoFrontendDescriptor`,

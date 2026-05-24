@@ -9,8 +9,8 @@ metadata:
 d'un autre module sibling. Les seules dépendances permises depuis
 `src/Module/X/` ou `src/Module/X/assets/` sont :
 
-- `Core` (`src/Core/`, `src/Core/Frontend/`, `@core/`)
-- `Shared` (`src/Core/Frontend/shared/`, `@shared/`)
+- `Core` (`src/Core/`, `src/Core/assets/`, `@core/`)
+- `Shared` (`src/Core/assets/shared/`, `@shared/`)
 - ses propres sous-dossiers
 
 Toute dépendance "Editorial → Ecommerce", "Notes → Editorial",

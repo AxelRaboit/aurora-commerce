@@ -8,7 +8,7 @@ metadata:
 ## Règle
 
 CSS organisé pour **mirror la structure `src/`** (co-localisée avec le
-PHP depuis 0.5) : `src/Core/Frontend/css/{base,shared,core,modules}/`.
+PHP depuis 0.5) : `src/Core/assets/css/{base,shared,core,modules}/`.
 CSS spécifique à un SFC vit à côté du SFC sous
 `src/Module/<Name>/assets/`. Documentation complète :
 [`docs/aurora-core/dev/css_conventions.md`](../../../../docs/aurora-core/dev/css_conventions.md).
@@ -64,7 +64,7 @@ avant rendu JS).
 ## Comment l'appliquer
 
 1. Nouveau CSS pour une feature → créer
-   `src/Core/Frontend/css/modules/<module>/<feature>.css`.
+   `src/Core/assets/css/modules/<module>/<feature>.css`.
 2. L'importer **dans le `<script setup>` du SFC** qui le consomme, en
    tête, séparé du JS par une ligne vide.
 3. Si vraiment global (réutilisé partout) → ajouter à `app.css`.

@@ -26,7 +26,7 @@ Tailwind directement dans le markup.
 ## Pourquoi
 
 - Convention historique du projet : utility-first Tailwind partout, jamais de
-  CSS custom hors `src/Core/Frontend/css/` (CSS partagé) ou co-localisé avec un
+  CSS custom hors `src/Core/assets/css/` (CSS partagé) ou co-localisé avec un
   SFC sous `src/Module/<X>/assets/`.
 - Pas de feuille de style à maintenir, pas de drift entre classes et styles.
 - Les sous-tâches/agents tendent à introduire du BEM par habitude → le code

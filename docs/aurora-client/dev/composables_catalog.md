@@ -3,8 +3,8 @@
 > À lire quand vous écrivez de la logique réutilisable côté client (form, HTTP,
 > liste paginée, tree, slug, …) et que vous voulez savoir s'il existe déjà un
 > composable Aurora à brancher au lieu de réécrire. Tout ce qui est documenté
-> ici vit dans `vendor/axelraboit/aurora/src/Core/Frontend/shared/composables/` (alias Vite
-> `@shared/composables`) ou `src/Core/Frontend/shared/utils/` (alias `@shared/utils`).
+> ici vit dans `vendor/axelraboit/aurora/src/Core/assets/shared/composables/` (alias Vite
+> `@shared/composables`) ou `src/Core/assets/shared/utils/` (alias `@shared/utils`).
 > Pour les `App*` composants, voir
 > [shared_components_catalog.md](shared_components_catalog.md).
 
@@ -763,6 +763,6 @@ Volontairement omis (utilitaires de niche ou plombérie interne) :
 Pour découvrir ce qui existe à un instant T :
 
 ```bash
-ls vendor/axelraboit/aurora/src/Core/Frontend/shared/composables/**/*.js
-ls vendor/axelraboit/aurora/src/Core/Frontend/shared/utils/**/*.js
+ls vendor/axelraboit/aurora/src/Core/assets/shared/composables/**/*.js
+ls vendor/axelraboit/aurora/src/Core/assets/shared/utils/**/*.js
 ```

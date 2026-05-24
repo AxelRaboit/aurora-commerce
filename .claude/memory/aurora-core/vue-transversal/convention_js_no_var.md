@@ -22,11 +22,11 @@ moderne et expriment l'intention de mutation (`let`) vs immuabilité (`const`).
 - Nouveaux fichiers JS : `const` par défaut, `let` quand réassignation requise.
 - Scripts inline dans des templates Twig : pareil, même si le navigateur cible
   supporte `var`. Préférer encore mieux : extraire vers un fichier `.js`
-  importé depuis `app.js` (cf. `src/Core/Frontend/shared/utils/loader.js` pour le pattern
+  importé depuis `app.js` (cf. `src/Core/assets/shared/utils/loader.js` pour le pattern
   side-effect module).
 - Refacto de code existant : remplacer les `var` quand on touche le fichier.
 
-Exemple pattern propre (extrait `src/Core/Frontend/shared/utils/loader.js`) :
+Exemple pattern propre (extrait `src/Core/assets/shared/utils/loader.js`) :
 ```js
 const LOADER_ID = "aurora-loader";
 

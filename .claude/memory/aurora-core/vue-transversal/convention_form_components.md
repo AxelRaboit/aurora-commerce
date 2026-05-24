@@ -2,7 +2,7 @@
 
 ## Règle 1 — Toujours utiliser les composants `App*`, jamais les éléments HTML bruts
 
-**❌ Interdit** dans tout fichier `.vue` métier (sous `src/Core/Frontend/` ou
+**❌ Interdit** dans tout fichier `.vue` métier (sous `src/Core/assets/` ou
 `src/Module/`) :
 
 - `<button>` brut → utiliser `AppButton`, `AppIconButton`, `AppTab`,
@@ -54,7 +54,7 @@ ou la couleur primaire ne propage pas).
 ### Audit
 ```bash
 # Trouver les éléments HTML bruts là où il faudrait du App*
-grep -rEn "<button\\b|<input\\b|<select\\b" src/Core/Frontend/ src/Module/ \
+grep -rEn "<button\\b|<input\\b|<select\\b" src/Core/assets/ src/Module/ \
     --include="*.vue" \
   | grep -v ".test." | grep -v "node_modules"
 ```

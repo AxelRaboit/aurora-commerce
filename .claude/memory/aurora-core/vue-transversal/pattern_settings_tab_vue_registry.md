@@ -8,7 +8,7 @@ metadata:
 ## Règle
 
 La page admin Settings dispatche le rendu d'un onglet via le registre Vue
-`src/Core/Frontend/backend/settings/tabRegistry.js` :
+`src/Core/assets/backend/settings/tabRegistry.js` :
 
 - **Côté PHP** : un `ConfigurationTab` peut déclarer `componentName: 'foo'`.
 - **Côté Vue** : `tabRegistry.js` mappe `'foo'` → un composant Vue.
@@ -80,7 +80,7 @@ return [
 
 **Anatomie d'un composant tab** : prendre comme template
 `NavigationTab.vue` ou `AppearanceTab.vue` dans
-`src/Core/Frontend/backend/settings/tabs/`. Définir les props attendues, encapsuler
+`src/Core/assets/backend/settings/tabs/`. Définir les props attendues, encapsuler
 toute la logique de save via un composable local consommant `updatePath`,
 ne pas leak d'état dans `SettingsApp.vue`.
 

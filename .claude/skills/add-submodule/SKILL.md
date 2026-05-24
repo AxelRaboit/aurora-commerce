@@ -25,7 +25,7 @@ Same detection as `/add-module` (composer.json check). Adapts :
 | Toggle key | `ModuleParameterEnum::<Parent><Sub>` enum case | constant on `<Parent>Context` (`app_<parent>_<sub>`) |
 | Sub-folder | `src/Core/<Parent>/<Sub>/` or `src/Module/<Parent>/<Sub>/` | `src/Module/<Parent>/<Sub>/` (assuming `<Parent>` is a client module — for extending an Aurora module, use `/extend-aurora-entity` instead) |
 | Sequence prefix (if entity) | `seq_core_<sub>_id` | `seq_app_<sub>_id` |
-| Asset path | `src/Module/<Parent>/assets/backend/<sub>/` or `src/Core/Frontend/<parent>/<sub>/` | `src/Module/<Parent>/assets/backend/<sub>/` (co-located since 0.5) |
+| Asset path | `src/Module/<Parent>/assets/backend/<sub>/` or `src/Core/assets/<parent>/<sub>/` | `src/Module/<Parent>/assets/backend/<sub>/` (co-located since 0.5) |
 
 ## Required inputs (ask upfront if missing)
 
@@ -53,7 +53,7 @@ Same detection as `/add-module` (composer.json check). Adapts :
 5. **Permission(s)** — single (`<parent>.<sub>.use`) or granular
    (`view`/`create`/`edit`/`delete`) ? Ask the user.
 6. **Icon** for the NavItem (kebab-case Lucide). Add to `ICON_MAP` in
-   `src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js` if missing.
+   `src/Core/assets/backend/sidemenu/composables/useSidemenuNav.js` if missing.
 7. **Optional inputs** if the sub-module ships an entity :
    - Entity name (PascalCase)
    - Whether to scaffold the entity now (suggest `/add-entity` after)
@@ -201,7 +201,7 @@ src/Module/<Parent>/assets/backend/<sub_id>/<Sub>App.vue       # CORE + CLIENT (
 ```
 
 For Core sub-modules under `src/Core/<Parent>/<Sub>/`, the paths use
-`src/Core/<Parent>/<Sub>/...` and `src/Core/Frontend/<parent_lc>/<sub_lc>/...`
+`src/Core/<Parent>/<Sub>/...` and `src/Core/assets/<parent_lc>/<sub_lc>/...`
 following the existing Core convention.
 
 **Controller skeleton** :

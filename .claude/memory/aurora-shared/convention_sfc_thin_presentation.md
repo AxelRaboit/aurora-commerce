@@ -114,7 +114,7 @@ src/Module/Notes/assets/backend/markdown/
 ```
 
 Si plus tard un autre module veut réutiliser → **promote** vers
-`src/Core/Frontend/shared/composables/` (voir `useAutoSave`, `useRelativeTime`).
+`src/Core/assets/shared/composables/` (voir `useAutoSave`, `useRelativeTime`).
 
 ## Anti-patterns observés
 

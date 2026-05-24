@@ -62,6 +62,6 @@ des utilisateurs non-techniques.
 
 Toute logique métier (fetch, parse, save, mutation d'état) liée à un
 formulaire Settings doit aller dans un composable dans
-`src/Core/Frontend/backend/settings/composables/`. Le SFC `SettingsApp.vue` reste
+`src/Core/assets/backend/settings/composables/`. Le SFC `SettingsApp.vue` reste
 un orchestrateur de template (cf. `useSettingsForm`, `useSettingsPostPicker`,
 `useSettingsSequenceFilter`, `useNavAliases`).

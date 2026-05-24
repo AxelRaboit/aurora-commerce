@@ -82,7 +82,7 @@ change.
 
 ## Variants disponibles dans AppButton
 
-Source : `src/Core/Frontend/shared/components/action/AppButton.vue`.
+Source : `src/Core/assets/shared/components/action/AppButton.vue`.
 
 | Variant | Usage type | Style |
 |---|---|---|

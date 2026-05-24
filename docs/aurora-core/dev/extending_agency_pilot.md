@@ -333,7 +333,7 @@ class AgencySerializer extends AuroraAgencySerializer
 
 ### 5.1 Composant client — chemin et alias
 
-Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/src/Core/Frontend/app.js`) :
+Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/src/Core/assets/app.js`) :
 
 - `@client/src/Module/**/assets/**/*.vue` — composants des modules client
   (vraies features comme Tracking, OU overrides co-localisés avec une
@@ -342,7 +342,7 @@ Aurora expose **deux** globs côté Vue (cf. `vendor/aurora/src/Core/Frontend/ap
   comme `<name>/<rest>` (ex: `tracking/backend/dashboard/...` ou
   `platform/backend/agencies/AgenciesApp` quand on shadow Aurora)
 - `@client/src/Overrides/**/*.vue` — escape hatch pour shadow des
-  composants non-module (e.g. `src/Core/Frontend/...` d'aurora-core).
+  composants non-module (e.g. `src/Core/assets/...` d'aurora-core).
   Rare ; préférer la co-localisation sous `Module/<X>/<Feature>/assets/`
   quand on shadow un composant qui vit dans un module Aurora.
 
@@ -402,7 +402,7 @@ Aliases utilisés (déclarés dans `vendor/aurora/vite.config.js`) :
 
 | Alias | Pointe vers |
 |---|---|
-| `@core` | `vendor/aurora/src/Core/Frontend` |
+| `@core` | `vendor/aurora/src/Core/assets` |
 | `@` | `vendor/aurora/assets` (composants `shared/`, etc.) |
 | `@client` | `aurora-client/assets/client` (votre dossier) |
 

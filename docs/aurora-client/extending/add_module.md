@@ -184,7 +184,7 @@ Sans `--no-interaction`, deux confirms + deux inputs textuels :
 L'icône du NavItem est **hardcodée à `flame`** (Lucide). Change la string
 dans `<X>Module.php` après scaffold si tu veux autre chose, en piochant
 dans
-`vendor/.../src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`
+`vendor/.../src/Core/assets/backend/sidemenu/composables/useSidemenuNav.js`
 ICON_MAP (~33 icônes pré-importées — toute icône hors map → fallback FileText).
 
 ### 3.5 Next steps après scaffold

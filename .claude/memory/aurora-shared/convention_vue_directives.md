@@ -50,7 +50,7 @@ Les modifiers suivent la même règle :
 
 ```bash
 # Audit : trouver les @ restants dans les .vue
-# Côté core : src/Core/Frontend/ + src/Module/*/assets/
+# Côté core : src/Core/assets/ + src/Module/*/assets/
 # Côté client : assets/client/
 grep -rEn '@(click|submit|change|input|keydown|keyup|close|focus|blur|update)' \
     src/ assets/ --include="*.vue" \

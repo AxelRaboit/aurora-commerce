@@ -3,7 +3,7 @@
 ## Règle
 
 ```
-src/Core/Frontend/                          ← cross-cutting JS/Vue (depuis 0.5)
+src/Core/assets/                          ← cross-cutting JS/Vue (depuis 0.5)
 ├── backend/
 │   ├── <plural>/                           ← un dossier par entité Core (au pluriel)
 │   │   ├── <Plural>App.vue                  ← composant principal monté par Stimulus
@@ -115,7 +115,7 @@ et [`client/pattern_extend_vue.md`](client/pattern_extend_vue.md).
 
 ### Localisation
 `src/Module/<Module>/assets/<scope>/<plural>/composables/use<Plural><Action>.js`
-(ou `src/Core/Frontend/<scope>/<plural>/composables/...` pour les Core).
+(ou `src/Core/assets/<scope>/<plural>/composables/...` pour les Core).
 
 ### Naming
 - `use<Plural>Form.js` : composable unifié create+edit (le plus courant).
@@ -176,7 +176,7 @@ export function useAgenciesForm(agencyList, createPath, updatePath, options = {}
 ## Stimulus controllers
 
 Le projet utilise Stimulus comme bridge Twig → Vue. Controllers dans
-`src/Core/Frontend/stimulus/` (un controller par usage : `vue-mount`,
+`src/Core/assets/stimulus/` (un controller par usage : `vue-mount`,
 `form-validation`, `notification-bell`, etc.).
 
 Pattern principal : `data-controller="vue-mount" data-vue-mount-component-value="…"`

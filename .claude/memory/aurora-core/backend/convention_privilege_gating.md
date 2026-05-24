@@ -151,7 +151,7 @@ laisser l'utilisateur croire qu'il peut faire l'action.
 
 ```bash
 # Trouver les composants App* qui ne gate aucune action visible
-grep -rL "usePrivileges\|can(" src/Core/Frontend/backend/ src/Module/*/assets/backend/ \
+grep -rL "usePrivileges\|can(" src/Core/assets/backend/ src/Module/*/assets/backend/ \
   --include="*App.vue"
 ```
 

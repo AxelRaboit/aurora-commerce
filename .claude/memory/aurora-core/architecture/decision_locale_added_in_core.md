@@ -44,7 +44,7 @@ Workflow pour ajouter une locale (ex: espagnol) :
      `messages.es.yaml` (peut démarrer comme copie de `messages.en.yaml`
      à traduire ensuite).
 2. **Build assets** : `make translation` regénère
-   `src/Core/Frontend/locales/generated/es.json`.
+   `src/Core/assets/locales/generated/es.json`.
 3. **Tests** : `LocaleEnum::values()` est déjà consommé dans les tests,
    rien à modifier en cascade.
 

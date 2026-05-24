@@ -88,13 +88,13 @@ Conséquence :
 | Module client autonome (Tracking, Loyalty, ...) | `src/Module/<Module>/assets/backend/<Module>App.vue` | `clientModules` |
 | Override d'une entité Aurora (Agency, Post, Deal, ...) | `src/Module/<AuroraModule>/<Feature>/assets/backend/<plural>/<Name>App.vue` | `clientModules` (co-localisé avec l'extension PHP) |
 | Extension PHP seule (pas de Vue à override) | `src/Module/<AuroraModule>/<Feature>/` sans `assets/` | _(n/a)_ |
-| Override d'un composant non-module (e.g. dans `src/Core/Frontend/`) | `src/Overrides/<full-path>/<Name>.vue` | `clientOverrides` (escape hatch) |
+| Override d'un composant non-module (e.g. dans `src/Core/assets/`) | `src/Overrides/<full-path>/<Name>.vue` | `clientOverrides` (escape hatch) |
 
 ## `src/Overrides/` reste là, mais en escape hatch
 
 Le bucket `src/Overrides/` continue de fonctionner — son glob `Overrides/**/*.vue`
 expose le path tel quel. Utile pour **shadow des composants non-module**
-d'aurora-core (ceux sous `src/Core/Frontend/backend/...`, exposés sous la clé
+d'aurora-core (ceux sous `src/Core/assets/backend/...`, exposés sous la clé
 `./core/backend/...`). Pour ces cas-là, mettre le fichier à
 `src/Overrides/core/backend/<X>.vue` shadow directement la clé `./core/backend/<X>`.
 
@@ -115,7 +115,7 @@ l'extension PHP.
 
 ## Source
 
-- `src/Core/Frontend/app.js` — les 3 globs `auroraModules`, `clientModules`,
+- `src/Core/assets/app.js` — les 3 globs `auroraModules`, `clientModules`,
   `clientOverrides` (cf. commentaires + constante `MODULE_PATH_RE`)
 - Aurora-core commit qui a introduit le `**/` dans les globs (cherche
   "co-localisation PHP+Vue" dans `git log`)

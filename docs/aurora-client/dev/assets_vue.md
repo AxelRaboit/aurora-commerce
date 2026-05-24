@@ -50,9 +50,9 @@ par Vite et Vitest). Côté client, `make sync-jsconfig` régénère
 
 | Alias | Chemin (côté client : préfixer par `vendor/axelraboit/aurora/`) |
 |---|---|
-| `@` | `src/Core/Frontend/` |
-| `@core` | `src/Core/Frontend/` |
-| `@shared` | `src/Core/Frontend/shared/` |
+| `@` | `src/Core/assets/` |
+| `@core` | `src/Core/assets/` |
+| `@shared` | `src/Core/assets/shared/` |
 | `@editorial` | `src/Module/Editorial/assets/` |
 | `@crm` | `src/Module/Crm/assets/` |
 | `@erp` | `src/Module/Erp/assets/` |

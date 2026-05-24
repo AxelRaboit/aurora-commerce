@@ -10,7 +10,7 @@ Les composants form (`AppInput`, `AppTextarea`, `AppMultiselect`, …)
 affichent leur prop `:error` **littéralement** : sans transformation,
 l'utilisateur voit la clé brute sous le champ au lieu du libellé FR/EN.
 
-Le helper [`translateServerErrors`](../../../src/Core/Frontend/shared/utils/validation/translateServerErrors.js)
+Le helper [`translateServerErrors`](../../../src/Core/assets/shared/utils/validation/translateServerErrors.js)
 existe pour transformer le map `{ field: cleI18n }` → `{ field: texteTraduit }`,
 mais sur les ~30 fichiers qui manipulent `data.errors`, ~12 seulement
 l'utilisent. Le reste est un mix de **vrais bugs d'affichage** et de
@@ -39,7 +39,7 @@ l'utilisent. Le reste est un mix de **vrais bugs d'affichage** et de
 
 ## Pointeurs code
 
-- Helper : `src/Core/Frontend/shared/utils/validation/translateServerErrors.js`
+- Helper : `src/Core/assets/shared/utils/validation/translateServerErrors.js`
 - Convention domaine PHP côté complémentaire :
   `.claude/memory/aurora-shared/convention_domain_exception_translation_key.md`
   (même philosophie côté exceptions PHP, via `DomainException::TRANSLATION_KEY`)

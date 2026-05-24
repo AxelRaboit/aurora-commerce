@@ -92,7 +92,7 @@ config/services.yaml              # ajout path translations pour DumpJsTranslati
 L'icône du NavItem est **hardcodée à `flame`** (le seul prompt sur l'icône
 serait friction inutile — change la string dans `<Module>Module.php` après
 scaffold si tu veux autre chose, en piochant dans
-`src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js` ICON_MAP).
+`src/Core/assets/backend/sidemenu/composables/useSidemenuNav.js` ICON_MAP).
 
 ### 2.3 Prompts interactifs
 
@@ -236,7 +236,7 @@ final class MyModuleController extends AbstractController
   résout vers le composant Vue chargé via le glob `src/Module/**/assets/**/*.vue`
   (le `**` accepte les feature folders intermédiaires — cf. règle de
   co-localisation Vue + PHP sous `<Module>/<Feature>/assets/`)
-  (`src/Core/Frontend/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
+  (`src/Core/assets/app.js:33+57-65` — lowercase conversion appliquée au nom du module).
 
 ### 3.4 Traductions
 
@@ -300,7 +300,7 @@ Vérifié dans `AuroraBundle.php` (Symfony 7) et `config/services.yaml`.
 | Namespace Twig `@MyModule` | glob `src/Module/*` + `src/Module/MyModule/templates/` | `AuroraBundle.php` (`prependExtension`) |
 | Paths traductions | glob `src/Module/*/translations/` | `AuroraBundle.php` (`prependExtension`, bloc `framework.translator.paths`) |
 | `DumpJsTranslationsCommand` | même glob | idem |
-| Composants Vue | glob `import.meta.glob('./Module/**/*.vue')` + lowercase | `src/Core/Frontend/app.js:33,57-65` |
+| Composants Vue | glob `import.meta.glob('./Module/**/*.vue')` + lowercase | `src/Core/assets/app.js:33,57-65` |
 
 **Seul wiring manuel restant** : `resolve_target_entities` dans
 `AuroraBundle.php` — uniquement si le module a des entités Doctrine
@@ -602,13 +602,13 @@ Doc référence :
 ## 9. Icônes de navigation
 
 Les icônes nav sont des **chaînes kebab-case** résolues via `ICON_MAP` dans
-`src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js`. Si l'icône
+`src/Core/assets/backend/sidemenu/composables/useSidemenuNav.js`. Si l'icône
 manque → fallback automatique sur `FileText`.
 
 Pour ajouter une nouvelle icône :
 
 ```js
-// src/Core/Frontend/backend/sidemenu/composables/useSidemenuNav.js
+// src/Core/assets/backend/sidemenu/composables/useSidemenuNav.js
 import { KeyRound } from 'lucide-vue-next';
 
 const ICON_MAP = {

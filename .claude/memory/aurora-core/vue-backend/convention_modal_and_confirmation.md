@@ -4,7 +4,7 @@
 
 ### 1. AppModal — API à respecter
 
-`AppModal` (`src/Core/Frontend/shared/components/overlay/AppModal.vue`) attend :
+`AppModal` (`src/Core/assets/shared/components/overlay/AppModal.vue`) attend :
 
 - `:show` (Boolean) — visibilité contrôlée par le parent
 - `v-on:close` (event) — émis quand l'utilisateur veut fermer (ESC, clic overlay, bouton X)
@@ -184,11 +184,11 @@ Refacto :
 
 ```bash
 # Trouver les confirm() restants côté Vue
-grep -rn "confirm(" src/Core/Frontend/ src/Module/*/assets/ --include="*.vue" --include="*.js" \
+grep -rn "confirm(" src/Core/assets/ src/Module/*/assets/ --include="*.vue" --include="*.js" \
     | grep -v node_modules | grep -v ".test."
 ```
 
-Devrait retourner 0 résultat dans `src/Module/` et `src/Core/Frontend/`.
+Devrait retourner 0 résultat dans `src/Module/` et `src/Core/assets/`.
 
 ## Source
 

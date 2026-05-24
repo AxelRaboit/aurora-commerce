@@ -248,7 +248,7 @@ module-sync: ## After scaffolding a new module: sync privileges + menus + params
 	make translation
 	make build
 
-translation: ## Dump Symfony YAML translations to src/Core/Frontend/locales/generated/*.json + clear cache so changes show up immediately in dev
+translation: ## Dump Symfony YAML translations to src/Core/assets/locales/generated/*.json + clear cache so changes show up immediately in dev
 	$(CONSOLE) app:translations:dump-js
 	$(CONSOLE) cache:clear
 

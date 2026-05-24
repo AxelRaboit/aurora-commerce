@@ -41,7 +41,7 @@ aurora-client/
 aurora-client  ──uses──►  vendor/axelraboit/aurora  (aurora-core)
                                 │
                                 ├── src/              bundle PHP + JS/Vue co-localisés
-                                │   ├── Core/Frontend/  cross-cutting JS/Vue/CSS
+                                │   ├── Core/assets/  cross-cutting JS/Vue/CSS
                                 │   └── Module/<X>/assets/  per-module JS/Vue
                                 ├── templates/        templates Twig
                                 ├── docs/             documentation
@@ -119,7 +119,7 @@ src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue
 ```
 
 `src/Overrides/` reste comme escape hatch pour shadow des composants
-non-module (e.g. `src/Core/Frontend/...` d'aurora-core). Convention
+non-module (e.g. `src/Core/assets/...` d'aurora-core). Convention
 complète + règle des deux mirrors (PHP vs URL) :
 [`convention_overrides_vs_modules.md`](../../../.claude/memory/aurora-client/convention_overrides_vs_modules.md).
 
@@ -164,5 +164,5 @@ App\Core\Command\DumpJsTranslationsCommand:
 Après avoir modifié un YAML de traduction :
 
 ```bash
-make translation   # régénère src/Core/Frontend/locales/generated/*.json + clear cache
+make translation   # régénère src/Core/assets/locales/generated/*.json + clear cache
 ```

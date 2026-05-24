@@ -77,7 +77,7 @@ inutile (le scope module les protège déjà) et ajoute du bruit visuel.
 
 ```bash
 # Trouver les usages du _-prefix dans des classes
-grep -rEn "class\\s+\\w+|^\\s+_[a-z]" src/Core/Frontend/ src/Module/*/assets/ --include="*.js" --include="*.vue" \
+grep -rEn "class\\s+\\w+|^\\s+_[a-z]" src/Core/assets/ src/Module/*/assets/ --include="*.js" --include="*.vue" \
   | grep -v node_modules | grep -v ".test."
 ```
 

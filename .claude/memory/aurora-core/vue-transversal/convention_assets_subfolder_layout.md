@@ -7,7 +7,7 @@ metadata:
 
 ## Règle
 
-Chaque `src/Module/<M>/assets/backend/` (et `src/Core/Frontend/backend/<section>/`) doit être compartimenté en **sous-dossiers par feature** dès qu'il contient plusieurs features distinctes (≥ 2 App.vue ou ≥ 8 fichiers au total).
+Chaque `src/Module/<M>/assets/backend/` (et `src/Core/assets/backend/<section>/`) doit être compartimenté en **sous-dossiers par feature** dès qu'il contient plusieurs features distinctes (≥ 2 App.vue ou ≥ 8 fichiers au total).
 
 ### Structure cible par sous-dossier
 

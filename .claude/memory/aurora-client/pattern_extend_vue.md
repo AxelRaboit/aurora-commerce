@@ -70,7 +70,7 @@ const extraFields = {
 Le glob `@client/src/Module/**/assets/**/*.vue` expose ton wrapper sous
 la **même clé** que le composant Aurora original
 (`platform/backend/agencies/AgenciesApp`). Comme `clientModules` est spread
-APRÈS `auroraModules` dans `vueContext` (cf. `src/Core/Frontend/app.js`),
+APRÈS `auroraModules` dans `vueContext` (cf. `src/Core/assets/app.js`),
 ton fichier wins. Le template Aurora
 `@Platform/backend/agencies/index.html.twig` qui appelle
 `vue_component('platform/backend/agencies/AgenciesApp', ...)` résout
