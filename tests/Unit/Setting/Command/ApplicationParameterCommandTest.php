@@ -7,18 +7,63 @@ namespace Aurora\Tests\Unit\Setting\Command;
 use Aurora\Module\Configuration\Setting\Command\ApplicationParameterCommand;
 use Aurora\Module\Configuration\Setting\Entity\Setting;
 use Aurora\Module\Configuration\Setting\Entity\SettingInterface;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Module\Configuration\Setting\Provider\ApplicationParameterProviderInterface;
+use Aurora\Module\Configuration\Setting\Provider\CoreApplicationParameterProvider;
+use Aurora\Module\Configuration\Setting\Provider\CoreModuleParameterProvider;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * Tiny enum used to simulate a client-side custom enum that gets
+ * exposed via a custom ApplicationParameterProviderInterface.
+ */
+enum FakeClientSettingEnum: string implements ApplicationParameterEnumInterface
+{
+    case SomeClientKey = 'backend_client_custom_setting';
+
+    public function getKey(): string
+    {
+        return $this->value;
+    }
+
+    public function getLabel(): string
+    {
+        return 'fake.label';
+    }
+
+    public function getDescription(): string
+    {
+        return 'fake description';
+    }
+
+    public function getDefaultValue(): string
+    {
+        return '';
+    }
+
+    public function getType(): string
+    {
+        return 'string';
+    }
+
+    public function getGroup(): string
+    {
+        return 'fake_group';
+    }
+}
+
 #[AllowMockObjectsWithoutExpectations]
 final class ApplicationParameterCommandTest extends TestCase
 {
-    private function makeTester(SettingRepository $repository, EntityManagerInterface $em): CommandTester
+    /** @param iterable<ApplicationParameterProviderInterface>|null $providers */
+    private function makeTester(SettingRepository $repository, EntityManagerInterface $em, ?iterable $providers = null): CommandTester
     {
-        $command = new ApplicationParameterCommand($repository, $em);
+        $providers ??= [new CoreApplicationParameterProvider(), new CoreModuleParameterProvider()];
+        $command = new ApplicationParameterCommand($repository, $em, $providers);
 
         return new CommandTester($command);
     }
@@ -127,5 +172,55 @@ final class ApplicationParameterCommandTest extends TestCase
 
         $display = $tester->getDisplay();
         self::assertStringContainsString('+', $display);
+    }
+
+    public function testCustomProviderContributesItsEnumCases(): void
+    {
+        $repository = $this->createMock(SettingRepository::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $repository->method('findAll')->willReturn([]);
+
+        // Custom enum + provider exposed by the client project.
+        $customProvider = new class implements ApplicationParameterProviderInterface {
+            public function getParameters(): iterable
+            {
+                yield FakeClientSettingEnum::SomeClientKey;
+            }
+        };
+
+        $tester = $this->makeTester($repository, $em, [$customProvider]);
+        $tester->execute(['--dry-run' => true]);
+
+        $display = $tester->getDisplay();
+        // The custom key appears in the "to-create" list
+        self::assertStringContainsString(FakeClientSettingEnum::SomeClientKey->getKey(), $display);
+    }
+
+    public function testClientSettingKeptWhenItsProviderIsRegistered(): void
+    {
+        $repository = $this->createMock(SettingRepository::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        // Existing client-side setting already in DB (admin saved a value)
+        $clientSetting = $this->makeSettingStub(FakeClientSettingEnum::SomeClientKey->getKey());
+        $repository->method('findAll')->willReturn([$clientSetting]);
+
+        // EM should NOT remove the client setting — the provider claims its key
+        $em->expects(self::never())->method('remove');
+
+        $customProvider = new class implements ApplicationParameterProviderInterface {
+            public function getParameters(): iterable
+            {
+                yield FakeClientSettingEnum::SomeClientKey;
+            }
+        };
+
+        $tester = $this->makeTester($repository, $em, [$customProvider]);
+        $tester->execute([]);
+
+        $display = $tester->getDisplay();
+        // No "obsolète" line for our custom key
+        self::assertStringNotContainsString(FakeClientSettingEnum::SomeClientKey->getKey().' (obsolète)', $display);
     }
 }

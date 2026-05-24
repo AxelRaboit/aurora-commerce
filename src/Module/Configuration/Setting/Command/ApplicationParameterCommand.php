@@ -6,9 +6,8 @@ namespace Aurora\Module\Configuration\Setting\Command;
 
 use Aurora\Module\Configuration\Setting\Entity\Setting;
 use Aurora\Module\Configuration\Setting\Entity\SettingInterface;
-use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Configuration\Setting\Provider\ApplicationParameterProviderInterface;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -17,6 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 #[AsCommand(
     name: 'aurora:application-parameter',
@@ -25,9 +25,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ApplicationParameterCommand extends Command
 {
+    /** @param iterable<ApplicationParameterProviderInterface> $providers */
     public function __construct(
         private readonly SettingRepository $repository,
         private readonly EntityManagerInterface $entityManager,
+        #[AutowireIterator('aurora.application_parameter_provider')]
+        private readonly iterable $providers,
     ) {
         parent::__construct();
     }
@@ -47,7 +50,7 @@ class ApplicationParameterCommand extends Command
         }
 
         /** @var ApplicationParameterEnumInterface[] $enumCases */
-        $enumCases = [...ApplicationParameterEnum::cases(), ...ModuleParameterEnum::cases()];
+        $enumCases = $this->collectEnumCases();
         $enumKeys = array_map(fn (ApplicationParameterEnumInterface $enumCase): string => $enumCase->getKey(), $enumCases);
         $existing = [];
 
@@ -141,6 +144,25 @@ class ApplicationParameterCommand extends Command
         }
 
         return $synced;
+    }
+
+    /**
+     * Flattens enum cases yielded by every tagged provider, deduplicating
+     * by key in case two providers expose the same enum (defensive — the
+     * sync logic itself is key-keyed anyway).
+     *
+     * @return ApplicationParameterEnumInterface[]
+     */
+    private function collectEnumCases(): array
+    {
+        $cases = [];
+        foreach ($this->providers as $provider) {
+            foreach ($provider->getParameters() as $case) {
+                $cases[$case->getKey()] = $case;
+            }
+        }
+
+        return array_values($cases);
     }
 
     /**
