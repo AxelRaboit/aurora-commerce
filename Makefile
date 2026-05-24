@@ -262,7 +262,7 @@ sync-privileges: ## Purge obsolete privileges from users after module changes
 sync-sequences: ## Resync all PostgreSQL sequences to MAX(id)+1 (run after fixture loads or data imports)
 	$(CONSOLE) aurora:sequences:resync
 
-module-sync: ## After scaffolding a new module: sync privileges + menus + params, dump JSON translations, rebuild Vite bundle. Run once after `aurora:make:module`.
+module-sync: ## After scaffolding a new module: sync privileges + menus + params, dump JSON translations, rebuild Vite bundle. Run once after the `/add-module` skill finishes.
 	make sync-privileges
 	make sync-menus
 	make sync-params

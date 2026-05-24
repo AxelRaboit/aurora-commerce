@@ -142,6 +142,36 @@ Plus aucun `<X>Module.php` à la racine de `src/Core/`.
 **Aucune migration Doctrine** — les tables (`core_user`, `core_agency`,
 `core_audit_log`, `core_media`, `core_setting`, etc.) gardent leur nom.
 
+### ⚠️ Cassant — CLI wizards `aurora:make:module` + `aurora:make:entity` supprimés
+
+Les deux commandes Symfony ajoutées plus tôt dans Unreleased ont été
+**retirées**. Tout scaffolding passe désormais par les skills Claude
+`/add-module` et `/add-entity`. Motivation : un dev pressé pouvait
+exécuter le wizard CLI directement (`bin/console aurora:make:module
+Loyalty`) et zapper les edits post-scaffold qui ne peuvent pas être
+mécaniques :
+
+- Patch sur `ModuleParameterEnum` (5 match arms à étendre côté core)
+- Append sur `aliases.js` (côté core)
+- Choix d'une icône Lucide pertinente (au lieu de `'flame'` par défaut)
+- Polish des labels FR/EN (au lieu de `{{MODULE_LABEL}}`)
+- Fleshing-out des fields sur `Abstract<Name>` (`make:entity`)
+
+Le wizard CLI imprimait des hints textuels pour ces étapes — facilement
+ignorés. Le skill Claude les exécute systématiquement, donc on supprime
+l'entrée CLI pour fermer la porte aux dérives.
+
+**Source de vérité unique** : les templates `.tpl` ont juste été
+déplacés depuis `src/Core/Module/Command/templates/` vers
+`.claude/skills/add-module/templates/` et `.claude/skills/add-entity/templates/`.
+Le skill lit les `.tpl` via `Read`, substitue les `{{KEY}}` tokens, et
+écrit le résultat via `Write` — aucune duplication.
+
+**Migration** : si vous avez un script CI qui appelait
+`bin/console aurora:make:*`, remplacez par une invocation Claude (par
+ex. dans un agent CI), ou déclenchez le skill via le harness Claude
+Code en mode batch.
+
 ### ⚠️ Cassant — `ApplicationParameterEnumInterface::getPlaceholder(): ?string`
 
 Nouvelle méthode obligatoire sur l'interface. Tous les enums clients
@@ -206,12 +236,11 @@ toggles modules rendent en switch (pas d'input).
   via `parameter.placeholder`. Si null + type `text`/`int`/`textarea`,
   fallback automatique sur `defaultValue` (couvre les ~20 préfixes
   sequences sans wirage par-case).
-- `aurora:make:entity` — wizard CLI pour le scaffold 5 couches Sylius
+- 13 templates `.tpl` pour le scaffold entity 5 couches Sylius
   (Entity triplet + DTO quartet + Manager pair + Serializer pair +
-  Repository + Controller), 13 templates `.tpl`. Patche
-  `AuroraBundle::$resolve_target_entities` automatiquement. Symétrique
-  à `aurora:make:module`. Flags : `--no-crud`, `--skip-controller`,
-  `--plural=`, `--permission=`, `--audit-channel=`.
+  Repository + Controller) sous `.claude/skills/add-entity/templates/`.
+  Le skill `/add-entity` les lit + applique les substitutions + patche
+  `AuroraBundle::$resolve_target_entities` + flesh-out des fields.
 
 #### Skills Claude
 - `/audit-module-toggles` — audit read-only de tous les modules contre
@@ -219,13 +248,12 @@ toggles modules rendent en switch (pas d'input).
   isBackendEnabled, NavSection gating, getCatalogNavSections unfiltered,
   sous-toggles, translations, ConfigurationTab.moduleToggle). Allowlist
   d'infra (Configuration / Platform / Dev / Media / General).
-- Skills `/add-module` et `/add-entity` refactorés en **thin
-  orchestrateurs** qui drivent le wizard CLI correspondant
-  (`aurora:make:module` / `aurora:make:entity`) puis font les edits
-  délicats (patch `ModuleParameterEnum`, `aliases.js`, fleshing-out
-  AbstractX). Single source of truth = les templates `.tpl`. Les
-  conventions (`moduleToggle:`, `getPlaceholder()`, etc.) n'ont plus
-  besoin d'être maintenues à 2 endroits.
+- Skills `/add-module` et `/add-entity` lisent désormais les templates
+  `.tpl` co-localisés sous `.claude/skills/<skill>/templates/` et
+  scaffoldent les fichiers directement (Read + substitution + Write),
+  puis font les edits délicats (patch `ModuleParameterEnum`,
+  `aliases.js`, fleshing-out AbstractX). Plus de CLI wizard
+  intermédiaire — un seul point d'entrée, zéro risque de dérive.
 
 #### Templates wizard
 - `src/Core/Module/Command/templates/entity/*.tpl` (13 fichiers) — le
