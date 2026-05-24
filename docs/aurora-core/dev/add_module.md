@@ -564,11 +564,14 @@ final readonly class MyModuleConfigurationTabProvider implements ConfigurationTa
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 
         // Construire les ConfigurationTab à partir des fields groupés
-        // (cf. CrmConfigurationTabProvider pour le pattern complet)
+        // (cf. CrmConfigurationTabProvider pour le pattern complet — et le
+        // ConfigurationTab `moduleToggle:` pour gater l'onglet sur l'état
+        // du toggle module dans /dev/dashboard/modules)
     }
 }
 ```
@@ -579,7 +582,17 @@ final readonly class MyModuleConfigurationTabProvider implements ConfigurationTa
   tous les modules).
 - `SettingDefinitionRegistry` agrège tous les providers et merge par `id`
   d'onglet — pas de patch sur core nécessaire.
-- Enum dédié `MyModuleSettingEnum` (cases avec `getKey/getType/getLabel/getDescription/getDefaultValue/getGroup`).
+- Enum dédié `MyModuleSettingEnum` (cases avec `getKey/getType/getLabel/
+  getDescription/getDefaultValue/getGroup/getPlaceholder`). `getPlaceholder()`
+  retourne `null` par défaut — surcharge `match` sur les cases où un
+  exemple concret est plus parlant que la description seule (préfixe,
+  email, template SEO…).
+- Pour gater l'onglet sur l'état du module : passer
+  `moduleToggle: ModuleParameterEnum::<Module>Backend` sur le
+  `ConfigurationTab` du module (ou la clé string pour un toggle client).
+  L'onglet disparaît automatiquement quand le module est désactivé
+  dans `/dev/dashboard/modules`. Les onglets partagés (`sequences`)
+  laissent `moduleToggle: null`.
 
 Doc référence :
 [`pattern_configuration_tab_provider.md`](../../../.claude/memory/aurora-core/architecture/pattern_configuration_tab_provider.md).

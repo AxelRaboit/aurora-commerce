@@ -381,6 +381,18 @@ Pattern: build a const map keyed by tab id (see `TAB_MODULE_TOGGLE` in
 `CrmConfigurationTabProvider`) and pass
 `self::TAB_MODULE_TOGGLE[$group] ?? null`.
 
+**Input placeholders (`placeholderKey`)** : every setting enum must
+implement `getPlaceholder(): ?string` from
+`ApplicationParameterEnumInterface`. Return `null` for cases where the
+description below the input is enough (the default in the scaffold
+template), or return a translation key for cases where a concrete
+example would help the admin (`'WLD'`, `'admin@example.com'`,
+`'{title} · {siteName}'`). The provider then forwards
+`placeholderKey: $case->getPlaceholder()` on `SettingFieldDescriptor`;
+the Vue layer renders the translated value inside the input. Place
+the matching `backend.parameters.<key>.placeholder` entry in the
+translation catalog next to the existing `.label` and `.description`.
+
 For CLIENT : also ensure `_instanceof:
 Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface: tags:
 [aurora.configuration_tab_provider]` exists in `config/services.yaml` (if

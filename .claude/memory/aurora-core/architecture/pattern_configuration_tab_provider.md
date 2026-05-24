@@ -13,9 +13,15 @@ La page admin Settings est extensible : tout service implémentant
 `aurora.configuration_tab_provider`). Aucun patch sur `SettingsViewBuilder` ou
 `SettingsController` n'est nécessaire pour ajouter un onglet.
 
-- DTOs : `ConfigurationTab { id, priority, fields, alwaysVisible }` +
-  `SettingFieldDescriptor { key, type, labelKey, descriptionKey, defaultValue, options? }`.
-  Tous deux non-`final` (extensibles côté client si besoin).
+- DTOs : `ConfigurationTab { id, priority, fields, alwaysVisible, devOnly?,
+  componentName?, moduleToggle? }` +
+  `SettingFieldDescriptor { key, type, labelKey, descriptionKey, defaultValue,
+  options?, placeholderKey? }`. Tous deux non-`final` (extensibles côté
+  client si besoin). Le champ `moduleToggle` (depuis bf8bd2fe) accepte un
+  `ModuleParameterEnum|string|null` et masque l'onglet quand le module
+  est désactivé. Le champ `placeholderKey` (depuis 5ee3b1b9) est une
+  clé i18n qui apparaît dans le placeholder de l'input — `null` =
+  champ vide (le label + la description suffisent).
 - Registry méthodes : `getTabs()` (triées par priority), `getField($key)`,
   `isAdminAccessible($key)`.
 - L'implémentation built-in `CoreConfigurationTabProvider` wrappe la legacy
@@ -98,6 +104,7 @@ final readonly class MyModuleConfigurationTabProvider implements ConfigurationTa
                         labelKey: 'backend.parameters.my_module_foo.label',
                         descriptionKey: 'backend.parameters.my_module_foo.description',
                         defaultValue: '0',
+                        placeholderKey: 'backend.parameters.my_module_foo.placeholder', // optional
                     ),
                 ],
             ),
