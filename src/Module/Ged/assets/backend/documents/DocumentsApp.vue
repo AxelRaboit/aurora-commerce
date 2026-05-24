@@ -29,7 +29,10 @@ import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
 import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
+import AppImage from "@/shared/components/display/AppImage.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
+import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
+import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -244,9 +247,72 @@ async function doBulkDelete() {
         </div>
 
         <div class="relative space-y-4">
-            <!-- Mobile cards / grid view -->
-            <div :class="viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3' : 'sm:hidden space-y-2'">
-                <AppNoData v-if="!displayedItems?.length" :message="t('backend.ged.documents.empty')" />
+            <AppNoData v-if="!displayedItems?.length" :message="t('backend.ged.documents.empty')" />
+
+            <!-- Grid view (Media-style cards on all sizes) -->
+            <div v-if="viewMode === 'grid' && displayedItems?.length" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                <div
+                    v-for="doc in displayedItems"
+                    :key="doc.id"
+                    class="group relative bg-surface border rounded-lg overflow-hidden transition-colors cursor-pointer"
+                    :class="[
+                        selectedIds.has(doc.id) ? 'border-accent-400 ring-2 ring-accent-500' : 'border-line/60 hover:border-accent-400',
+                    ]"
+                    v-on:click="isSelecting ? toggleSelect(doc.id) : viewDoc(doc)"
+                >
+                    <div v-if="isSelecting" class="absolute top-1.5 left-1.5 z-10" v-on:click.stop="toggleSelect(doc.id)">
+                        <AppSelectionCheck :active="selectedIds.has(doc.id)" />
+                    </div>
+                    <div class="relative aspect-square bg-surface-2 flex items-center justify-center overflow-hidden">
+                        <AppImage
+                            v-if="doc.thumbnailUrl"
+                            :src="doc.thumbnailUrl"
+                            :alt="doc.fileName ?? doc.title"
+                            object-fit="cover"
+                        />
+                        <FileText v-else-if="doc.fileMime === 'application/pdf'" class="w-12 h-12 text-rose-400" :stroke-width="1.5" />
+                        <Paperclip v-else-if="doc.fileUrl" class="w-10 h-10 text-muted" :stroke-width="1.5" />
+                        <FileText v-else class="w-10 h-10 text-muted" :stroke-width="1.5" />
+                        <AppBadge v-if="doc.status" :color="DOCUMENT_STATUS_BADGE[doc.status]" class="absolute top-1 right-1">{{ doc.statusLabel }}</AppBadge>
+                        <div v-if="!isSelecting" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                            <AppOverlayIconButton size="sm" variant="light" :title="t('shared.common.view')" v-on:click.stop="viewDoc(doc)">
+                                <Eye class="w-4 h-4" :stroke-width="2" />
+                            </AppOverlayIconButton>
+                            <AppOverlayIconButton
+                                v-if="can('ged.documents.edit')"
+                                size="sm"
+                                variant="light"
+                                :title="t('shared.common.edit')"
+                                v-on:click.stop="openEdit(doc)"
+                            >
+                                <Pencil class="w-4 h-4" :stroke-width="2" />
+                            </AppOverlayIconButton>
+                            <AppOverlayIconButton
+                                v-if="doc.fileUrl"
+                                size="sm"
+                                variant="light"
+                                :title="t('shared.common.qr_code')"
+                                v-on:click.stop="openQr(doc)"
+                            >
+                                <QrCode class="w-4 h-4" :stroke-width="2" />
+                            </AppOverlayIconButton>
+                        </div>
+                    </div>
+                    <div class="p-2 space-y-0.5">
+                        <div class="text-xs font-medium text-primary truncate" :title="doc.title">{{ doc.title }}</div>
+                        <div class="text-xs text-muted">
+                            <span v-if="doc.fileSize">{{ formatSize(doc.fileSize) }}</span>
+                            <span v-if="doc.categoryName"><span v-if="doc.fileSize"> · </span>{{ doc.categoryName }}</span>
+                        </div>
+                        <div v-if="doc.folderName" class="text-xs text-accent-400/80 truncate flex items-center gap-1">
+                            <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ doc.folderName }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile cards (list view fallback on mobile) -->
+            <div v-else-if="viewMode === 'list' && displayedItems?.length" class="sm:hidden space-y-2">
                 <div
                     v-for="doc in displayedItems"
                     :key="doc.id"
@@ -259,7 +325,6 @@ async function doBulkDelete() {
                         <Square v-else class="w-4 h-4 text-muted" :stroke-width="2" />
                     </div>
                     <div class="flex items-start gap-3 p-4">
-                        <!-- Thumbnail or file icon -->
                         <div class="shrink-0 mt-0.5">
                             <AppThumbnail
                                 v-if="doc.thumbnailUrl"
@@ -277,7 +342,6 @@ async function doBulkDelete() {
                                 <FileText class="w-4 h-4 text-muted" :stroke-width="1.5" />
                             </div>
                         </div>
-                        <!-- Content -->
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-primary text-sm truncate">{{ doc.title }}</p>
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
