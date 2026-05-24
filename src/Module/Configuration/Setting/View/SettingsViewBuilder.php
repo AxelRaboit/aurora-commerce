@@ -6,6 +6,7 @@ namespace Aurora\Module\Configuration\Setting\View;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Module\Configuration\Setting\Configuration\SettingDefinitionRegistry;
+use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
@@ -64,7 +65,7 @@ final readonly class SettingsViewBuilder
                     'key' => $field->key,
                     'label' => $this->translator->trans($field->labelKey),
                     'description' => $this->translator->trans($field->descriptionKey),
-                    'placeholder' => null !== $field->placeholderKey ? $this->translator->trans($field->placeholderKey) : null,
+                    'placeholder' => $this->resolvePlaceholder($field),
                     'type' => $field->type,
                     'group' => $tab->id,
                     'value' => $value,
@@ -89,6 +90,39 @@ final readonly class SettingsViewBuilder
             'mediaPickerPath' => $this->urlGenerator->generate('backend_media'),
             'postSearchPath' => $this->urlGenerator->generate('backend_posts_search'),
         ];
+    }
+
+    /**
+     * Resolves the placeholder shown inside the Settings input. Priority:
+     *   1. Explicit `placeholderKey` from the enum → translated value.
+     *   2. Auto-fallback on `defaultValue` for `text` / `int` / `textarea`
+     *      fields where the default is genuinely a usable example
+     *      (non-empty, non-`'0'`). Covers the sequence-prefix sea
+     *      (`'INV'`, `'WLD'`, …) and the Notes / Assistant text defaults
+     *      (`'qwen3:8b'`, `'2048'`, …) without forcing every enum to
+     *      wire a per-case translation key.
+     *   3. `null` — input renders with a blank placeholder.
+     *
+     * `bool` / `select` / `media` / `post` fields never get a fallback:
+     * they render as their own controls (checkbox, dropdown, picker)
+     * where the placeholder slot doesn't exist or wouldn't help.
+     */
+    private function resolvePlaceholder(SettingFieldDescriptor $field): ?string
+    {
+        if (null !== $field->placeholderKey) {
+            return $this->translator->trans($field->placeholderKey);
+        }
+
+        if (!in_array($field->type, ['text', 'int', 'textarea'], true)) {
+            return null;
+        }
+
+        $default = $field->defaultValue;
+        if ('' === $default || '0' === $default) {
+            return null;
+        }
+
+        return $default;
     }
 
     public function resolveMediaUrl(?string $rawId): ?string
