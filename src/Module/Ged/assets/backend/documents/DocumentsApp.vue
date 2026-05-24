@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useQrCode } from "@/shared/composables/overlay/useQrCode.js";
+import { useClipboard } from "@/shared/composables/useClipboard.js";
 import { usePrivileges } from "@/shared/composables/usePrivileges.js";
 import { useDocumentsForm, DOCUMENT_STATUS_BADGE } from "./composables/useDocumentsForm.js";
 import AppButton from "@/shared/components/action/AppButton.vue";
@@ -27,7 +28,7 @@ import { useDocumentsDisplay, DOCUMENT_SORT_FIELDS } from "./composables/useDocu
 import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
-import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square } from "lucide-vue-next";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, Copy } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
@@ -63,6 +64,11 @@ const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }))
 const { viewingDoc, viewingDocVersions, viewDoc, closeDetail } = useDocumentDetail(props.versionsPath);
 
 const { qrItem: qrDoc, openQr, closeQr } = useQrCode();
+const { copy } = useClipboard();
+
+function permalinkFor(doc) {
+    return doc.permalink ?? (doc.fileUrl ? window.location.origin + doc.fileUrl : "");
+}
 
 function openEditFromDetail() {
     const doc = viewingDoc.value;
@@ -492,6 +498,10 @@ async function doBulkDelete() {
                     required
                 />
                 <AppInput v-model="newDoc.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.description_placeholder')" />
+                <template v-if="newDoc.mimeType?.startsWith('image/')">
+                    <AppInput v-model="newDoc.alt" :label="t('backend.ged.documents.alt')" :placeholder="t('backend.ged.documents.alt_placeholder')" />
+                    <AppInput v-model="newDoc.caption" :label="t('backend.ged.documents.caption')" :placeholder="t('backend.ged.documents.caption_placeholder')" />
+                </template>
                 <AppMultiselect
                     v-model="newDoc.categoryId"
                     :label="t('backend.ged.documents.category')"
@@ -565,6 +575,10 @@ async function doBulkDelete() {
                     required
                 />
                 <AppInput v-model="editForm.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.description_placeholder')" />
+                <template v-if="editForm.mimeType?.startsWith('image/')">
+                    <AppInput v-model="editForm.alt" :label="t('backend.ged.documents.alt')" :placeholder="t('backend.ged.documents.alt_placeholder')" />
+                    <AppInput v-model="editForm.caption" :label="t('backend.ged.documents.caption')" :placeholder="t('backend.ged.documents.caption_placeholder')" />
+                </template>
                 <AppMultiselect
                     v-model="editForm.categoryId"
                     :label="t('backend.ged.documents.category')"
@@ -678,6 +692,29 @@ async function doBulkDelete() {
                             <dd class="text-secondary">{{ formatDate(viewingDoc.updatedAt) }}</dd>
                         </div>
                     </dl>
+
+                    <!-- Image metadata (alt / caption) -->
+                    <dl v-if="viewingDoc.fileMime?.startsWith('image/') && (viewingDoc.alt || viewingDoc.caption)" class="space-y-3 text-sm">
+                        <div v-if="viewingDoc.alt">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.alt") }}</dt>
+                            <dd class="text-primary">{{ viewingDoc.alt }}</dd>
+                        </div>
+                        <div v-if="viewingDoc.caption">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.caption") }}</dt>
+                            <dd class="text-primary">{{ viewingDoc.caption }}</dd>
+                        </div>
+                    </dl>
+
+                    <!-- Permalink -->
+                    <div v-if="viewingDoc.fileUrl">
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.permalink") }}</dt>
+                        <div class="flex items-center gap-2">
+                            <code class="text-xs text-secondary bg-surface-2 rounded px-2 py-1 truncate flex-1">{{ permalinkFor(viewingDoc) }}</code>
+                            <AppIconButton color="default" :title="t('shared.common.copy')" v-on:click="copy(permalinkFor(viewingDoc))">
+                                <Copy class="w-4 h-4" :stroke-width="2" />
+                            </AppIconButton>
+                        </div>
+                    </div>
 
                     <!-- Tags -->
                     <div v-if="viewingDoc.tags?.length" class="flex flex-wrap gap-1.5">

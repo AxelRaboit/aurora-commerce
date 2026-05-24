@@ -28,6 +28,9 @@ function emptyForm() {
         originalName: null,
         mimeType: null,
         size: null,
+        // Image-only metadata (alt for a11y/SEO, caption shown alongside).
+        alt: "",
+        caption: "",
     };
 }
 
@@ -153,6 +156,8 @@ export function useDocumentsForm(
             originalName: doc.originalName ?? null,
             mimeType: doc.fileMime ?? null,
             size: doc.fileSize ?? null,
+            alt: doc.alt ?? "",
+            caption: doc.caption ?? "",
         };
         clearEdit();
         showEdit.value = true;

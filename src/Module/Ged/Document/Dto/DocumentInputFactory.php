@@ -27,6 +27,8 @@ class DocumentInputFactory implements DocumentInputFactoryInterface
             mimeType: Str::trimOrNullFromArray($data, 'mimeType'),
             size: isset($data['size']) ? (int) $data['size'] : null,
             thumbnailPath: Str::trimOrNullFromArray($data, 'thumbnailPath'),
+            alt: Str::trimOrNullFromArray($data, 'alt'),
+            caption: Str::trimOrNullFromArray($data, 'caption'),
             tagIds: $tagIds,
             folderId: isset($data['folderId']) ? (int) $data['folderId'] : null,
         );

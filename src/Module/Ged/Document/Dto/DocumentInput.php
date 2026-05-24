@@ -25,6 +25,8 @@ class DocumentInput implements DocumentInputInterface
         public readonly ?string $mimeType = null,
         public readonly ?int $size = null,
         public readonly ?string $thumbnailPath = null,
+        public readonly ?string $alt = null,
+        public readonly ?string $caption = null,
         public readonly array $tagIds = [],
         public readonly ?int $folderId = null,
     ) {}
@@ -77,6 +79,16 @@ class DocumentInput implements DocumentInputInterface
     public function getThumbnailPath(): ?string
     {
         return $this->thumbnailPath;
+    }
+
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
+
+    public function getCaption(): ?string
+    {
+        return $this->caption;
     }
 
     public function getTagIds(): array

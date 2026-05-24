@@ -59,6 +59,14 @@ interface DocumentInterface extends TimestampableInterface
 
     public function setThumbnailPath(?string $thumbnailPath): static;
 
+    public function getAlt(): ?string;
+
+    public function setAlt(?string $alt): static;
+
+    public function getCaption(): ?string;
+
+    public function setCaption(?string $caption): static;
+
     /** @return Collection<int, DocumentTagInterface> */
     public function getTags(): Collection;
 

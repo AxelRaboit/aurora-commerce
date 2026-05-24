@@ -70,6 +70,14 @@ abstract class AbstractDocument implements DocumentInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $thumbnailPath = null;
 
+    /** Alternative text — accessibility/SEO, only meaningful for image documents. */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $alt = null;
+
+    /** Optional caption shown alongside the document (image documents). */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    protected ?string $caption = null;
+
     /** @var Collection<int, DocumentTagInterface> */
     protected Collection $tags;
 
@@ -210,6 +218,30 @@ abstract class AbstractDocument implements DocumentInterface
     public function setThumbnailPath(?string $thumbnailPath): static
     {
         $this->thumbnailPath = $thumbnailPath;
+
+        return $this;
+    }
+
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
+
+    public function setAlt(?string $alt): static
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getCaption(): ?string
+    {
+        return $this->caption;
+    }
+
+    public function setCaption(?string $caption): static
+    {
+        $this->caption = $caption;
 
         return $this;
     }

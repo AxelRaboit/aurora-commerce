@@ -143,6 +143,8 @@ class DocumentManager implements DocumentManagerInterface
         $document->setTitle($input->getTitle());
         $document->setDescription($input->getDescription());
         $document->setStatus($input->getStatus());
+        $document->setAlt($input->getAlt());
+        $document->setCaption($input->getCaption());
         $document->setCategory(null !== $input->getCategoryId() ? $this->categoryRepository->find($input->getCategoryId()) : null);
 
         // File metadata is only overwritten when the input carries a fresh

@@ -28,6 +28,10 @@ interface DocumentInputInterface
 
     public function getThumbnailPath(): ?string;
 
+    public function getAlt(): ?string;
+
+    public function getCaption(): ?string;
+
     /** @return int[] */
     public function getTagIds(): array;
 

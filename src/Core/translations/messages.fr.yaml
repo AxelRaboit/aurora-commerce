@@ -53,6 +53,8 @@ shared:
     download: Télécharger
     qr_code: QR Code
     download_qr: Télécharger le QR Code
+    copied: Copié.
+    copy: Copier
     dates: Dates
     created: Créé le
     updated: Modifié le

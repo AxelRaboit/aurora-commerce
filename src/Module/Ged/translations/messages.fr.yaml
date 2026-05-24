@@ -79,6 +79,11 @@ backend:
       type_video: Vidéos
       type_pdf: PDF
       type_other: Autres
+      alt: Texte alternatif
+      alt_placeholder: Décris l'image pour les lecteurs d'écran et le SEO…
+      caption: Légende
+      caption_placeholder: Légende affichée sous l'image…
+      permalink: Lien permanent
       preview: Aperçu
       choose_file: Choisir un fichier
       choose_file_library: Médiathèque
