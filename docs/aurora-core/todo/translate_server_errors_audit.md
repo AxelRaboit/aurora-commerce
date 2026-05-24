@@ -4,8 +4,7 @@
 
 Par convention Aurora, `Aurora\Core\Validation\Service\PayloadValidator`
 retourne des **clés i18n** dans le payload d'erreur JSON (ex.
-`backend.welding.workflow_step_tasks.errors.label_required`), pas du
-texte traduit.
+`backend.editorial.posts.errors.title_required`), pas du texte traduit.
 
 Les composants form (`AppInput`, `AppTextarea`, `AppMultiselect`, …)
 affichent leur prop `:error` **littéralement** : sans transformation,
@@ -44,5 +43,6 @@ l'utilisent. Le reste est un mix de **vrais bugs d'affichage** et de
 - Convention domaine PHP côté complémentaire :
   `.claude/memory/aurora-shared/convention_domain_exception_translation_key.md`
   (même philosophie côté exceptions PHP, via `DomainException::TRANSLATION_KEY`)
-- Usage de référence : `src/Module/Welding/assets/backend/workflow_templates/WeldingWorkflowTemplatesApp.vue`
-  (modal Nouveau modèle, hydrate `formErrors` via `translateServerErrors`)
+- Usage de référence : chercher `translateServerErrors` dans
+  `src/Module/Editorial/` ou `src/Module/Crm/` — convention appliquée
+  partout depuis l'audit forms de mai 2026.

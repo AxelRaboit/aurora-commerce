@@ -26,7 +26,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case PlanningBackend = 'modules_planning_backend';
     case HrBackend = 'modules_hr_backend';
     case VaultBackend = 'modules_vault_backend';
-    case WeldingBackend = 'modules_welding_backend';
     case NotesBackend = 'modules_notes_backend';
     case PersonalFinanceBackend = 'modules_personal_finance_backend';
 
@@ -99,10 +98,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case VaultSafe = 'modules_vault_safe';
     case VaultPasswordGenerator = 'modules_vault_password_generator';
 
-    // Sub-modules — Welding (PDF templates + generated documents)
-    case WeldingPdfTemplates = 'modules_welding_pdf_templates';
-    case WeldingPdfDocuments = 'modules_welding_pdf_documents';
-
     // Sub-modules — Notes
     case NotesMarkdown = 'modules_notes_markdown';
     case NotesBlock = 'modules_notes_block';
@@ -154,9 +149,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::HrBackend => 'backend.modules.hr_backend',
             self::VaultBackend => 'backend.modules.vault_backend',
 
-            self::WeldingPdfTemplates => 'backend.nav.welding_pdf_templates',
-            self::WeldingPdfDocuments => 'backend.nav.welding_pdf_documents',
-            self::WeldingBackend => 'backend.modules.welding_backend',
             self::BillingTiers => 'backend.nav.tiers',
             self::BillingInvoices => 'backend.nav.invoices',
             self::BillingCompliance => 'backend.nav.ocr_import',
@@ -232,9 +224,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::HrBackend => 'backend.modules.hr_backend_description',
             self::VaultBackend => 'backend.modules.vault_backend_description',
 
-            self::WeldingPdfTemplates => 'backend.nav.welding_pdf_templates_description',
-            self::WeldingPdfDocuments => 'backend.nav.welding_pdf_documents_description',
-            self::WeldingBackend => 'backend.modules.welding_backend_description',
             self::BillingTiers => 'backend.nav.tiers_description',
             self::BillingInvoices => 'backend.nav.invoices_description',
             self::BillingCompliance => 'backend.nav.ocr_import_description',
@@ -322,7 +311,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningPlannings => self::PlanningBackend,
             self::ProjectProjects => self::ProjectBackend,
             self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
-            self::WeldingPdfTemplates, self::WeldingPdfDocuments => self::WeldingBackend,
             self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
             self::PersonalFinanceWallets, self::PersonalFinanceCategories, self::PersonalFinanceTransactions, self::PersonalFinanceBudgets, self::PersonalFinanceGoals, self::PersonalFinanceRecurring, self::PersonalFinanceCategorization, self::PersonalFinanceOverview, self::PersonalFinanceStatistics, self::PersonalFinanceBudgetPresets, self::PersonalFinanceImport => self::PersonalFinanceBackend,
             default => null,
@@ -391,8 +379,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // Vault sub-modules
             self::VaultSafe => self::VaultBackend->value,
             self::VaultPasswordGenerator => self::VaultBackend->value,
-            self::WeldingPdfTemplates => self::WeldingBackend->value,
-            self::WeldingPdfDocuments => self::WeldingBackend->value,
             // Notes sub-modules
             self::NotesMarkdown => self::NotesBackend->value,
             self::NotesBlock => self::NotesBackend->value,

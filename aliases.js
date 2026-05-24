@@ -31,5 +31,4 @@ export const aliases = {
     "@vault": moduleAlias("Vault"),
     "@password-generator": moduleAlias("PasswordGenerator"),
     "@personal-finance": moduleAlias("PersonalFinance"),
-    "@welding": moduleAlias("Welding"),
 };

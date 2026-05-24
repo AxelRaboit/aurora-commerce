@@ -18,9 +18,9 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | HR (fiches employés) | ✅ Core (entité `Employee` avec lien `User`, CRUD complet) |
 | Notes (Markdown + Block / EditorJS) | ✅ Core |
 | Vault (Safe + PasswordGenerator) | ✅ Core |
-| PdfForm (formulaires PDF) | ✅ Core |
 | Assistant (Ollama / chat IA) | ✅ Core |
-| Welding (workflows de soudure réglementée) | ✅ Core (V1 sealed mai 2026) |
+| ~~PdfForm (formulaires PDF)~~ | Absorbé dans Welding (sprint 6, mai 2026), puis extrait en client `aurora-welding` |
+| ~~Welding (workflows de soudure réglementée)~~ | Extrait en client `aurora-welding/` (mai 2026, cf. [dev/extraction_welding_to_client.md](../dev/extraction_welding_to_client.md)) |
 
 ---
 

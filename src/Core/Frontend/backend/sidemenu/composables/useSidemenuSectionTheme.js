@@ -37,7 +37,6 @@ const SECTION_THEMES = {
     media: makeTheme("pink"),
     project: makeTheme("blue"),
     hr: makeTheme("green"),
-    pdfform: makeTheme("red"),
     dev: makeTheme("orange"),
     assistant: makeTheme("violet"),
 };

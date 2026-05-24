@@ -199,26 +199,6 @@ use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
 use Aurora\Module\Vault\VaultFolder\Entity\VaultFolderInterface;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfig;
 use Aurora\Module\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
-use Aurora\Module\Welding\PdfDocument\Entity\WeldingPdfDocument;
-use Aurora\Module\Welding\PdfDocument\Entity\WeldingPdfDocumentInterface;
-use Aurora\Module\Welding\PdfTemplate\Entity\WeldingPdfTemplate;
-use Aurora\Module\Welding\PdfTemplate\Entity\WeldingPdfTemplateInterface;
-use Aurora\Module\Welding\PdfTemplateField\Entity\WeldingPdfTemplateField;
-use Aurora\Module\Welding\PdfTemplateField\Entity\WeldingPdfTemplateFieldInterface;
-use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflow;
-use Aurora\Module\Welding\Workflow\Entity\WeldingWorkflowInterface;
-use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStep;
-use Aurora\Module\Welding\WorkflowStep\Entity\WeldingWorkflowStepInterface;
-use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplate;
-use Aurora\Module\Welding\WorkflowStepPdfTemplate\Entity\WeldingWorkflowStepPdfTemplateInterface;
-use Aurora\Module\Welding\WorkflowStepTask\Entity\WeldingWorkflowStepTask;
-use Aurora\Module\Welding\WorkflowStepTask\Entity\WeldingWorkflowStepTaskInterface;
-use Aurora\Module\Welding\WorkflowStepTaskTemplate\Entity\WeldingWorkflowStepTaskTemplate;
-use Aurora\Module\Welding\WorkflowStepTaskTemplate\Entity\WeldingWorkflowStepTaskTemplateInterface;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplate;
-use Aurora\Module\Welding\WorkflowStepTemplate\Entity\WeldingWorkflowStepTemplateInterface;
-use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplate;
-use Aurora\Module\Welding\WorkflowTemplate\Entity\WeldingWorkflowTemplateInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -346,9 +326,6 @@ class AuroraBundle extends AbstractBundle
                     DocumentCategoryInterface::class => DocumentCategory::class,
                     DocumentTagInterface::class => DocumentTag::class,
                     DocumentFolderInterface::class => DocumentFolder::class,
-                    WeldingPdfTemplateInterface::class => WeldingPdfTemplate::class,
-                    WeldingPdfTemplateFieldInterface::class => WeldingPdfTemplateField::class,
-                    WeldingPdfDocumentInterface::class => WeldingPdfDocument::class,
                     VaultEntryInterface::class => VaultEntry::class,
                     VaultFolderInterface::class => VaultFolder::class,
                     VaultUserConfigInterface::class => VaultUserConfig::class,
@@ -372,13 +349,6 @@ class AuroraBundle extends AbstractBundle
                     PersonalFinanceRecurringTransactionInterface::class => PersonalFinanceRecurringTransaction::class,
                     PersonalFinanceScheduledTransactionInterface::class => PersonalFinanceScheduledTransaction::class,
                     PersonalFinanceCategorizationRuleInterface::class => PersonalFinanceCategorizationRule::class,
-                    WeldingWorkflowTemplateInterface::class => WeldingWorkflowTemplate::class,
-                    WeldingWorkflowStepTemplateInterface::class => WeldingWorkflowStepTemplate::class,
-                    WeldingWorkflowStepPdfTemplateInterface::class => WeldingWorkflowStepPdfTemplate::class,
-                    WeldingWorkflowStepTaskTemplateInterface::class => WeldingWorkflowStepTaskTemplate::class,
-                    WeldingWorkflowInterface::class => WeldingWorkflow::class,
-                    WeldingWorkflowStepInterface::class => WeldingWorkflowStep::class,
-                    WeldingWorkflowStepTaskInterface::class => WeldingWorkflowStepTask::class,
                 ],
                 'mappings' => array_merge(
                     [

@@ -180,7 +180,6 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
-        $this->createPdfForm($manager);
         $this->createHr($manager, $users);
         $this->createPlanning($manager, $users);
         $this->createProjects($manager, $users, $companies, $contacts);
@@ -2032,33 +2031,6 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
             $em->persist($d);
         }
-    }
-
-    // ── PDF Forms ─────────────────────────────────────────────────────────────
-
-    private function createPdfForm(EntityManagerInterface $em): void
-    {
-        $month = new DateTimeImmutable()->format('Y/m');
-        $destDir = $this->uploadDir.'/media/'.$month;
-        $this->fs->mkdir($destDir);
-
-        $src = dirname(__DIR__, 3).'/test_files/files/pdfs/pdfform_sample.pdf';
-        $dest = $destDir.'/pdfform-sample.pdf';
-
-        if (file_exists($src)) {
-            $this->fs->copy($src, $dest, true);
-
-            $m = new Media();
-            $m->setFilename('pdfform-sample.pdf')
-              ->setOriginalName('PDF Form.pdf')
-              ->setMimeType('application/pdf')
-              ->setSize((int) filesize($dest))
-              ->setPath('media/'.$month.'/pdfform-sample.pdf')
-              ->setVariants([]);
-            $em->persist($m);
-        }
-
-        $em->flush();
     }
 
     // ── HR ────────────────────────────────────────────────────────────────────

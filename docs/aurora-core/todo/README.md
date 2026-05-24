@@ -26,17 +26,14 @@ Liste des modules à venir, classés par priorité et impact.
 
 - [Roadmap modules](module_roadmap.md)
 
-### ~~Welding — workflows de soudure réglementée~~ — ✅ V1 livrée
+### ~~Welding — workflows de soudure réglementée~~ — ✅ V1 livrée puis extrait en client (mai 2026)
 
-Module pour piloter des workflows de soudure réglementée (cible initiale :
-nucléaire — RCC-M, ASME III, ISO 15614). V1 sealed mai 2026 : 5 entités
-(WorkflowTemplate / Step / StepPdf / Workflow / WorkflowStep), state machine,
-runner soudeur, validateur, notifications email, voter d'autorisation,
-audit trail réglementaire. Code sous `src/Module/Welding/`. Cf.
-[`welding/README.md`](welding/README.md) pour l'historique sprint-by-sprint
-et le scope V2 restant ouvert.
-
-- [Welding — historique + V2 backlog](welding/README.md)
+V1 livrée dans aurora-core (sprints -1 à 5 + post-V1 sprints 6-10), puis
+le module entier a été extrait vers le projet client `aurora-welding`
+(spécifique soudure réglementée — nucléaire RCC-M, ASME III, ISO 15614).
+La doc Welding et le backlog V2 vivent maintenant dans
+`aurora-welding/docs/welding/README.md`. Détails de l'extraction :
+[`../dev/extraction_welding_to_client.md`](../dev/extraction_welding_to_client.md).
 
 ### Ecommerce — gaps vs Sylius
 
