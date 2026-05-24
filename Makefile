@@ -340,8 +340,8 @@ fix: ## Run all fixers + stan
 fd: ## Fix code and build dev assets
 	make fix && make dev
 
-ft: ## Fix code and run all tests
-	make fix && make test && make migrate-check
+ft: ## Fix, test, build assets, then migrate-check
+	make fix && make test && make build && make migrate-check
 
 # === Claude Memory ===
 sync-claude-memory: ## Sync .claude/memory/ + docs/aurora-{core,client}/ into the global Claude memory for this project
