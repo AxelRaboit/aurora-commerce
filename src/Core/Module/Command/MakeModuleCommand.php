@@ -146,6 +146,26 @@ final class MakeModuleCommand extends Command
 
         $priority = (int) $io->ask('NavSection priority (lower = higher in sidemenu)', '60');
 
+        // Module-toggle wiring for ConfigurationTabProvider — the tab is
+        // gated on the toggle so the tab disappears from /backend/settings
+        // when the admin disables the module. Three shapes:
+        //   - core + toggle   : ModuleParameterEnum::<Module>Backend
+        //   - client + toggle : <Module>Context::BACKEND_KEY
+        //   - no toggle       : null (the tab stays always visible)
+        if ($withToggle && 'core' === $context) {
+            $moduleToggleLiteral = sprintf('ModuleParameterEnum::%sBackend', $derived['module']);
+            $moduleToggleUse = "use Aurora\\Module\\Configuration\\Setting\\Enum\\ModuleParameterEnum;\n";
+        } elseif ($withToggle && 'client' === $context) {
+            $moduleToggleLiteral = sprintf('%sContext::BACKEND_KEY', $derived['module']);
+            // The Context is in the parent namespace (App\Module\<X>) and
+            // the provider lives in <X>\Setting — emit the relative-import
+            // so the constant ref resolves at runtime.
+            $moduleToggleUse = sprintf("use App\\Module\\%s\\%sContext;\n", $derived['module'], $derived['module']);
+        } else {
+            $moduleToggleLiteral = 'null';
+            $moduleToggleUse = '';
+        }
+
         $vars = [
             '{{MODULE}}' => $derived['module'],
             '{{MODULE_ID}}' => $derived['snake'],
@@ -155,6 +175,8 @@ final class MakeModuleCommand extends Command
             '{{ICON}}' => $icon,
             '{{PRIORITY}}' => (string) $priority,
             '{{NAMESPACE}}' => sprintf('%s\\Module\\%s', 'core' === $context ? 'Aurora' : 'App', $derived['module']),
+            '{{MODULE_TOGGLE_LITERAL}}' => $moduleToggleLiteral,
+            '{{MODULE_TOGGLE_USE}}' => $moduleToggleUse,
         ];
 
         // 6. Confirm
@@ -482,6 +504,18 @@ final class MakeModuleCommand extends Command
                 $d['module'],
                 $d['module'],
                 $d['snake']
+            );
+        }
+
+        // Settings tab — placeholder examples + i18n keys to wire by hand.
+        if ($withSettings) {
+            $hints[] = sprintf(
+                'Edit src/Module/%s/Setting/%sSettingEnum.php — override `getPlaceholder()` per case for any setting where a concrete example value would help (returns null = blank placeholder).',
+                $d['module'],
+                $d['module']
+            );
+            $hints[] = sprintf(
+                'Add label + description + (optional) placeholder keys under `backend.parameters.<setting_key>.*` in messages.{fr,en}.yaml for each setting you declare.',
             );
         }
 
