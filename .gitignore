@@ -48,7 +48,7 @@ yarn.lock
 /tools/*/composer.lock
 
 # Generated translation catalogues (run `pnpm i18n` to rebuild)
-/src/Core/Frontend/locales/generated/
+/src/Core/assets/locales/generated/
 
 # Claude Code runtime locks
 .claude/scheduled_tasks.lock

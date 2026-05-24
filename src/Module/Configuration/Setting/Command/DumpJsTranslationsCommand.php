@@ -21,10 +21,10 @@ use Symfony\Component\Yaml\Yaml;
  * - Scans messages.{locale}.yaml in every aurora module translations directory and deep-merges them.
  * - Also scans any extra source dirs supplied by client projects (custom modules).
  * - Converts Symfony-style `%var%` placeholders to vue-i18n-style `{var}`.
- * - Writes {auroraDir}/src/Core/Frontend/locales/generated/{locale}.json (gitignored).
+ * - Writes {auroraDir}/src/Core/assets/locales/generated/{locale}.json (gitignored).
  *
- * `src/Core/Frontend/i18n.js` deep-merges these generated catalogues with manual JS source files
- * (src/Core/Frontend/locales/source/{locale}.js), with YAML winning on conflicts.
+ * `src/Core/assets/i18n.js` deep-merges these generated catalogues with manual JS source files
+ * (src/Core/assets/locales/source/{locale}.js), with YAML winning on conflicts.
  *
  * Standalone aurora-core: $auroraDir = $projectDir, $extraSourceDirs = [].
  * Aurora-client project:  $auroraDir = vendor/axelraboit/aurora, $extraSourceDirs = client module translations.
@@ -32,7 +32,7 @@ use Symfony\Component\Yaml\Yaml;
 #[AsCommand(name: 'app:translations:dump-js', description: 'Dump Symfony YAML translations as JSON for vue-i18n')]
 final class DumpJsTranslationsCommand extends Command
 {
-    private const string OUTPUT_DIR = 'src/Core/Frontend/locales/generated';
+    private const string OUTPUT_DIR = 'src/Core/assets/locales/generated';
 
     /**
      * @param list<string> $extraSourceDirs absolute paths to additional translation dirs

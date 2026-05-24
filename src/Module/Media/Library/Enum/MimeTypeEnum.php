@@ -7,7 +7,7 @@ namespace Aurora\Module\Media\Library\Enum;
 /**
  * Document mime types known to Aurora.
  *
- * @see src/Core/Frontend/utils/enums/media/mimeType.js — JavaScript mirror used by
+ * @see src/Core/assets/utils/enums/media/mimeType.js — JavaScript mirror used by
  *      Vue components. **Keep the two in sync**: every case added here must be
  *      reflected there (and vice-versa) so the front-end and back-end agree on
  *      what's supported.

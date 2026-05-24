@@ -8,9 +8,9 @@ export function moduleAlias(name) {
 }
 
 export const aliases = {
-    "@": path.resolve(__dirname, "src/Core/Frontend"),
-    "@core": path.resolve(__dirname, "src/Core/Frontend"),
-    "@shared": path.resolve(__dirname, "src/Core/Frontend/shared"),
+    "@": path.resolve(__dirname, "src/Core/assets"),
+    "@core": path.resolve(__dirname, "src/Core/assets"),
+    "@shared": path.resolve(__dirname, "src/Core/assets/shared"),
     "@platform": moduleAlias("Platform"),
     "@configuration": moduleAlias("Configuration"),
     "@media": moduleAlias("Media"),

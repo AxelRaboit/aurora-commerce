@@ -423,7 +423,7 @@ class AuroraBundle extends AbstractBundle
         // for Symfony's third-party override convention).
         $twigPaths[$dir.'/src/Core/templates'] = null;
         $twigPaths[$dir.'/templates'] = null;
-        $twigPaths[$dir.'/src/Core/Frontend/css'] = 'styles';
+        $twigPaths[$dir.'/src/Core/assets/css'] = 'styles';
         foreach (['Core', 'Shared'] as $namespace) {
             $bundleColocated = $dir.'/src/Core/templates/'.$namespace;
             if (is_dir($bundleColocated)) {

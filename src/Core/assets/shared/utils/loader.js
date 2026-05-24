@@ -10,7 +10,7 @@
  * The window.load fallback handles error/timeout cases.
  *
  * Markup: templates/Shared/components/app_loader.html.twig
- * Styles: src/Core/Frontend/css/base/loader.css
+ * Styles: src/Core/assets/css/base/loader.css
  */
 
 import { AppEvents } from "@/shared/utils/enums/appEvents.js";
