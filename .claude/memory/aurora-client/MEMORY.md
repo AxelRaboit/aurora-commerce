@@ -49,6 +49,9 @@ client.
   l'override Vue d'Agency vit dans `src/Overrides/`, pas dans `src/Module/Platform/Agency/assets/`
 - [convention_table_naming.md](convention_table_naming.md) — préfixer les
   tables `app_` et séquences `seq_app_*` (jamais `core_` ni `client_`)
+- [convention_fixture_group_demo.md](convention_fixture_group_demo.md) —
+  fixtures client doivent implémenter `FixtureGroupInterface` avec
+  `getGroups(): ['demo']` sinon `make demo` les ignore silencieusement
 
 ## Index — pièges côté client
 
