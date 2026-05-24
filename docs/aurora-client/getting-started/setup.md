@@ -175,7 +175,67 @@ Ensuite :
 
 1. Mettre à jour `composer.json` (name, description).
 2. Mettre à jour `.env` (`APP_NAME`, `DATABASE_URL`).
-3. Supprimer le code showcase qui ne te sert pas (module Tracking, extension Agency,
-   overrides Vue, templates showcase, migrations).
-4. `make install-dev` puis `make migrate` pour repartir d'une base propre.
+3. Supprimer le code showcase qui ne te sert pas (cf. checklist ci-dessous).
+4. Setup DB fresh — **ne pas faire `make install-dev` directement** sur
+   un fresh clone (cf. note ci-dessous).
 5. `git commit -m "chore: init project from aurora-client template"`.
+
+> ⚠️ **Conserver `public/build`** durant le cleanup. C'est un symlink
+> versionné (`public/build → ../vendor/axelraboit/aurora/public/build`)
+> indispensable au chargement des assets. Si tu fais un `rm -rf
+> public/*` en cleanup, recrée-le après. Détails dans
+> [`../dev/assets_vue.md`](../dev/assets_vue.md) §Symlink.
+
+### Checklist — retirer un module showcase (Tracking, Agency, autres)
+
+Pour chaque module à retirer :
+
+```bash
+# 1. Code source du module
+rm -rf src/Module/<X>/
+
+# 2. Tests s'il y en a
+rm -rf tests/Unit/Module/<X>/
+
+# 3. Migrations qui touchent UNIQUEMENT ce module
+#    (vérifier ce qu'elles font avant de supprimer)
+rm migrations/Version<YYYYMMDD>_<X>_*.php
+
+# 4. Configs qui référencent le module
+#    Retirer manuellement la ligne pour <X> dans :
+#    - config/packages/doctrine.yaml      (resolve_target_entities)
+#    - config/packages/twig.yaml          (namespace @X)
+#    - config/packages/framework.yaml     (translator.paths)
+#    - config/services.yaml               (DumpJsTranslationsCommand $extraSourceDirs)
+#    - jsconfig.json                      (@x alias)
+#    - src/locales/{en,fr}.js             (labels du module)
+
+# 5. Si la DB existe déjà : nettoyer les tables / sequences orphelines
+psql -d <db_name> -c "DROP TABLE IF EXISTS <table> CASCADE;"
+psql -d <db_name> -c "DROP SEQUENCE IF EXISTS seq_<x>_id CASCADE;"
+psql -d <db_name> -c "DELETE FROM doctrine_migration_versions WHERE version LIKE 'ClientMigrations\Version<YYYY...>';"
+
+# 6. Cache + verify
+php bin/console cache:clear --env=dev
+php bin/console doctrine:schema:validate
+```
+
+### Setup DB fresh (au lieu de `make install-dev`)
+
+Sur une DB *vierge*, `make migrate` plante à cause de l'interleaving
+multi-namespace de Doctrine Migrations. Procédure recommandée :
+
+```bash
+php bin/console doctrine:database:create
+php bin/console doctrine:schema:create                       # schéma depuis entités
+php bin/console doctrine:migrations:sync-metadata-storage --no-interaction
+php bin/console doctrine:migrations:version --add --all --no-interaction
+php bin/console doctrine:schema:validate                     # sanity check
+php bin/console aurora:application-parameter
+php bin/console aurora:privileges:sync
+php bin/console aurora:menus:sync
+php bin/console doctrine:fixtures:load --no-interaction      # optionnel — dev data
+```
+
+Détails techniques dans [`../dev/database.md`](../dev/database.md)
+section "DB fresh : `make migrate` ne marche pas".

@@ -227,3 +227,44 @@ make build   # Build de production
 ```
 
 En développement, Vite est lancé automatiquement par `make start`.
+
+---
+
+## ⚠️ Symlink `public/build` → vendor
+
+Vite (lancé depuis `vendor/axelraboit/aurora/` via `make build` / `make
+dev`) écrit ses chunks dans
+`vendor/axelraboit/aurora/public/build/`. Mais le bundle
+`pentatrion/vite-bundle` côté Symfony cherche `entrypoints.json` /
+`manifest.json` dans `public/build/` à la racine du projet.
+
+Le template aurora-client résout ce mismatch via un **symlink relatif
+versionné en git** :
+
+```
+public/build → ../vendor/axelraboit/aurora/public/build
+```
+
+Le symlink est trackés dans aurora-client (`git ls-files public/build`
+le montre, mode `120000`). Sur un clone direct → c'est en place
+automatiquement.
+
+### Symptômes si le symlink manque
+
+- Page HTML rendue sans aucun `<script>` / `<link>` (assets pas inclus)
+- Ou erreur Symfony : `vite manifest not found at public/build/manifest.json`
+- Le `make build` rapporte un succès, mais `ls public/build/` retourne
+  "No such file or directory"
+
+### Restaurer le symlink
+
+```bash
+cd <project-root>
+ln -s ../vendor/axelraboit/aurora/public/build public/build
+```
+
+### Pourquoi le symlink survit-il à `.gitignore` ?
+
+Le `.gitignore` aurora-client a `/public/build/` (avec trailing slash)
+— qui ne matche que les **directories**. Git voit le symlink comme un
+fichier (mode 120000), donc il échappe à la règle et reste trackable.

@@ -3,6 +3,11 @@
 Trace de la décision et de la procédure d'extraction du module `Welding`
 d'aurora-core vers le projet client `aurora-welding`.
 
+> 📘 **Playbook générique** pour ce type d'extraction :
+> [`extracting_a_module.md`](extracting_a_module.md). Cette note-ci est
+> le **cas concret Welding** — détails de notre extraction réelle, à
+> utiliser comme exemple de référence quand on suit le playbook.
+
 ## Pourquoi
 
 Le module Welding (workflows de soudure réglementée + PDF templates +

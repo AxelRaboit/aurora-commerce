@@ -57,6 +57,57 @@ doctrine_migrations:
 `make migrate` joue les deux ensembles dans l'ordre. Il ne faut **jamais**
 modifier les migrations Aurora sous `vendor/`.
 
+### ⚠️ DB fresh : `make migrate` ne marche pas, utiliser `schema:create`
+
+**Symptôme** : sur une DB *vierge* (fresh dev clone, CI runner, nouveau
+poste), `make migrate-f` plante au cours de la chaîne avec un message du
+genre `relation "core_<table>" does not exist` ou `index "idx_xxx" does
+not exist`.
+
+**Cause** : Doctrine Migrations 3.x ne mélange **pas** strictement par
+version timestamp à travers les namespaces. Il traite les namespaces
+dans leur ordre de déclaration. Quand une `ClientMigrations\Version20260508123924`
+(extension d'une table Aurora) s'exécute avant
+`DoctrineMigrations\Version20260508122957` (création de la table —
+version timestamp plus petite, devrait passer avant), ça plante.
+
+**Workaround pour fresh DB** : générer le schéma depuis l'état actuel
+des entités Doctrine et marquer toutes les migrations comme déjà
+appliquées :
+
+```bash
+# 1. Drop + recreate la DB si elle existe déjà
+php bin/console doctrine:database:drop --force --if-exists
+php bin/console doctrine:database:create
+
+# 2. Schema depuis les annotations d'entité (vendor + client)
+php bin/console doctrine:schema:create
+
+# 3. Init la metadata storage de doctrine-migrations
+php bin/console doctrine:migrations:sync-metadata-storage --no-interaction
+
+# 4. Marquer toutes les migrations comme appliquées (sans les ré-exécuter)
+php bin/console doctrine:migrations:version --add --all --no-interaction
+
+# 5. Vérifier que tout est aligné
+php bin/console doctrine:schema:validate
+```
+
+À partir de là, `make migrate` fonctionne **normalement** pour les
+migrations à venir — vous n'ajoutez qu'une seule migration par fois,
+pas un mélange historique entier.
+
+> ⚠️ Cette approche fonctionne **uniquement** parce que les migrations
+> sont structurelles (CREATE / ALTER / RENAME) — pas de migration de
+> données qui modifie des rows. Si votre projet ajoute une migration de
+> données (`UPDATE …` ou `INSERT …`), elle sera *sautée* par cette
+> méthode. Dans ce cas, soit exécuter manuellement la donnée concernée,
+> soit déclencher la donnée via les fixtures.
+
+> Pour la CI, ces mêmes étapes sont déjà intégrées au workflow GitHub
+> Actions par défaut. Cf.
+> [`../deployment/github_actions_ci.md`](../deployment/github_actions_ci.md) §2.
+
 ---
 
 ## Fixtures
