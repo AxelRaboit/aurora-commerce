@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Crm\ContactTag\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Crm\ContactTag\Dto\ContactTagInputFactoryInterface;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;

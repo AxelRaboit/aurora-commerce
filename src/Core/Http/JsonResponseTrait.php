@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Frontend\Controller;
+namespace Aurora\Core\Http;
 
 use Aurora\Core\Enum\HttpStatusEnum;
 use Symfony\Component\HttpFoundation\JsonResponse;

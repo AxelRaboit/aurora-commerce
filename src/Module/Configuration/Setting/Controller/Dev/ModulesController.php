@@ -6,7 +6,7 @@ namespace Aurora\Module\Configuration\Setting\Controller\Dev;
 
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Core\Enum\HttpStatusEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Module\Configuration\Setting\Enum\SettingErrorCodeEnum;
 use Aurora\Module\Configuration\Setting\Exception\CascadeViolationException;

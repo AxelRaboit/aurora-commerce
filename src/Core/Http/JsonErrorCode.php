@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Core\Frontend\Controller;
+namespace Aurora\Core\Http;
 
 /**
  * Universal JSON error codes used across endpoints. Domain-specific codes

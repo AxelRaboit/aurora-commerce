@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Transaction\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Module\PersonalFinance\Transaction\Attachment\Service\PersonalFinanceTransactionAttachmentServiceInterface;
 use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;

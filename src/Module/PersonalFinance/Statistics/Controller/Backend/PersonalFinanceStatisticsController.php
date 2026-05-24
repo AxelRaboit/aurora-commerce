@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\PersonalFinance\Statistics\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Module\PersonalFinance\Statistics\Service\PersonalFinanceStatisticsServiceInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Planning\Event\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonRequestTrait;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Http\JsonRequestTrait;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Planning\Event\Dto\PlanningEventInputFactoryInterface;
 use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;

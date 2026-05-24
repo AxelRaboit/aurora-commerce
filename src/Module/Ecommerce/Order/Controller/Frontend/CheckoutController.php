@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Order\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Core\Locale\Enum\CountryEnum;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Configuration\Theme\Service\ThemeResolver;

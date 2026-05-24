@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Module\Ged\Document\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
 use Aurora\Core\Frontend\Controller\LocaleTrait;
 use Aurora\Core\Frontend\Service\Context;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Module\Configuration\Theme\Service\ThemeResolver;
 use Aurora\Module\Ged\Document\View\Frontend\DocumentsViewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Media\Library\Controller\Backend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Core\Frontend\Controller\JsonRequestTrait;
-use Aurora\Core\Frontend\Controller\JsonResponseTrait;
+use Aurora\Core\Http\JsonRequestTrait;
+use Aurora\Core\Http\JsonResponseTrait;
 use Aurora\Core\Validation\Service\PayloadValidator;
 use Aurora\Module\Media\Library\Dto\MediaFolderInputFactoryInterface;
 use Aurora\Module\Media\Library\Entity\MediaFolder;
