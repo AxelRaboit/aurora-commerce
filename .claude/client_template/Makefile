@@ -467,6 +467,13 @@ aurora-update: ## Bump aurora-core to its latest tag (composer update + all sub-
 	make sync-security
 	make sync-claude-md
 	make sync-makefile
+	# Refresh the vue-i18n JSON dumps + production bundle. Without this,
+	# new translation keys shipped by the bumped aurora-core would still
+	# render as raw `backend.foo.bar` until the next manual `make build`.
+	# (Dev mode with `make dev` running picks up the new JSON via Vite
+	# HMR — but a stale `public/build/` would still serve stale strings.)
+	make translation
+	make build
 	@mkdir -p var && touch $(AURORA_UPDATE_MARKER)
 	@echo "✅ aurora-core bumped. Run 'make ft' to verify."
 
