@@ -98,9 +98,9 @@ final readonly class SettingsViewBuilder
      *   2. Auto-fallback on `defaultValue` for `text` / `int` / `textarea`
      *      fields where the default is genuinely a usable example
      *      (non-empty, non-`'0'`). Covers the sequence-prefix sea
-     *      (`'INV'`, `'WLD'`, …) and the Notes / Assistant text defaults
-     *      (`'qwen3:8b'`, `'2048'`, …) without forcing every enum to
-     *      wire a per-case translation key.
+     *      (`'INV'`, `'DEAL'`, `'ORD'`, …) and the Notes / Assistant
+     *      text defaults (`'qwen3:8b'`, `'2048'`, …) without forcing
+     *      every enum to wire a per-case translation key.
      *   3. `null` — input renders with a blank placeholder.
      *
      * `bool` / `select` / `media` / `post` fields never get a fallback:

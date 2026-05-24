@@ -30,8 +30,8 @@ class SettingFieldDescriptor
         public readonly ?array $options = null,
         /**
          * Optional translation key for the input placeholder — a concrete
-         * example hint shown inside the input (e.g. "WLD-2026-000042" for a
-         * reference prefix, "admin@example.com" for an email recipient).
+         * example hint shown inside the input (e.g. "INV-2026-000042" for
+         * a reference prefix, "admin@example.com" for an email recipient).
          *
          * Leave null when the field has no useful sample value. The label
          * sits above the input and the description renders below, so an

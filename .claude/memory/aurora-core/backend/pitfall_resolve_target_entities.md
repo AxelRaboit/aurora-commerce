@@ -85,13 +85,13 @@ de résoudre la classe substituée via les metadata Doctrine.
 // ❌ erreur Symfony à l'instanciation : "Too few arguments..."
 public function __construct(ManagerRegistry $registry)
 {
-    parent::__construct($registry, WeldingFoo::class);
+    parent::__construct($registry, MyEntity::class);
 }
 
 // ✅ correct
 public function __construct(ManagerRegistry $registry)
 {
-    parent::__construct($registry, WeldingFoo::class, WeldingFooInterface::class);
+    parent::__construct($registry, MyEntity::class, MyEntityInterface::class);
 }
 ```
 

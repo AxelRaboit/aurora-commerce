@@ -20,10 +20,11 @@ Le controller catche **l'exception typée** et renvoie
 **Exemples existants** (tous suivent ce pattern) :
 - `Aurora\Module\Photo\Gallery\Exception\MaxPicksReachedException`
 - `Aurora\Module\Configuration\Setting\Exception\CascadeViolationException`
-- `Aurora\Module\Welding\WorkflowStep\Exception\RequiredTasksUndoneException`
+- Côté client `aurora-welding` : `App\Module\Welding\WorkflowStep\Exception\RequiredTasksUndoneException`
+  (le module a été extrait d'aurora-core, l'exception vit maintenant dans le client)
 
 **Why** : sans typage, on est tenté de faire
-`if (str_starts_with($e->getMessage(), 'welding.'))` pour identifier les
+`if (str_starts_with($e->getMessage(), 'mymodule.'))` pour identifier les
 erreurs "i18n-friendly". C'est fragile : ça mélange la sémantique du
 message (debug humain) avec un canal de communication (clé de traduction),
 casse à la moindre refacto du wording, et ne se voit pas dans le typage.

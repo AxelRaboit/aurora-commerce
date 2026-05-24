@@ -59,7 +59,7 @@ enum {{MODULE}}SettingEnum: string implements ApplicationParameterEnumInterface
     /**
      * Sample value shown inside the input on the Settings page. Return a
      * translation key for cases where an example is genuinely clearer
-     * than the description (e.g. a prefix like `'WLD-2026-000042'`, an
+     * than the description (e.g. a prefix like `'INV-2026-000042'`, an
      * email like `'admin@example.com'`). Return null for the rest.
      */
     public function getPlaceholder(): ?string

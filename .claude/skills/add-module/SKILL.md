@@ -386,7 +386,7 @@ implement `getPlaceholder(): ?string` from
 `ApplicationParameterEnumInterface`. Return `null` for cases where the
 description below the input is enough (the default in the scaffold
 template), or return a translation key for cases where a concrete
-example would help the admin (`'WLD'`, `'admin@example.com'`,
+example would help the admin (`'INV'`, `'admin@example.com'`,
 `'{title} · {siteName}'`). The provider then forwards
 `placeholderKey: $case->getPlaceholder()` on `SettingFieldDescriptor`;
 the Vue layer renders the translated value inside the input. Place
@@ -398,7 +398,7 @@ Aurora\Core\Setting\Configuration\ConfigurationTabProviderInterface: tags:
 [aurora.configuration_tab_provider]` exists in `config/services.yaml` (if
 not, instruct the user to add it). For client modules whose top-level
 toggle isn't part of aurora-core's `ModuleParameterEnum`, pass the
-raw toggle key string instead (e.g. `'modules_welding_backend'`) —
+raw toggle key string instead (e.g. `'modules_<module_id>_backend'`) —
 `ConfigurationTab::$moduleToggle` accepts `ModuleParameterEnum|string|null`.
 
 ## Auto-discovery — what you DON'T need to wire (core)

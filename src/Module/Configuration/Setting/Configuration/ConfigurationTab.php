@@ -55,7 +55,7 @@ class ConfigurationTab
          * with what's actually accessible. Pass a `ModuleParameterEnum`
          * case for core modules or a raw toggle key string for client
          * modules whose top-level toggle isn't part of aurora-core's enum
-         * (e.g. `'modules_welding_backend'`).
+         * (e.g. `'modules_<module_id>_backend'`).
          *
          * Shared tabs that aggregate fields across modules (notably
          * `sequences`) MUST leave this null — they should remain visible
