@@ -86,6 +86,7 @@ final readonly class CoreConfigurationTabProvider implements ConfigurationTabPro
                 labelKey: $parameter->getLabel(),
                 descriptionKey: $parameter->getDescription(),
                 defaultValue: $parameter->getDefaultValue(),
+                placeholderKey: $parameter->getPlaceholder(),
                 options: $this->resolveSelectOptions($parameter),
             );
         }

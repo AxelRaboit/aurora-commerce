@@ -20,6 +20,7 @@ final readonly class BillingConfigurationTabProvider implements ConfigurationTab
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

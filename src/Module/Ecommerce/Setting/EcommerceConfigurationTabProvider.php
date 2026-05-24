@@ -36,6 +36,7 @@ final readonly class EcommerceConfigurationTabProvider implements ConfigurationT
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

@@ -25,6 +25,7 @@ final readonly class PersonalFinanceConfigurationTabProvider implements Configur
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

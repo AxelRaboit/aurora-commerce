@@ -55,4 +55,17 @@ enum {{MODULE}}SettingEnum: string implements ApplicationParameterEnumInterface
     {
         return '{{MODULE_ID}}';
     }
+
+    /**
+     * Sample value shown inside the input on the Settings page. Return a
+     * translation key for cases where an example is genuinely clearer
+     * than the description (e.g. a prefix like `'WLD-2026-000042'`, an
+     * email like `'admin@example.com'`). Return null for the rest.
+     */
+    public function getPlaceholder(): ?string
+    {
+        return match ($this) {
+            self::ExampleFlag => null,
+        };
+    }
 }

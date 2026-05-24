@@ -67,15 +67,19 @@ backend:
     site_name:
       label: Site name
       description: Name displayed on the public site and in emails
+      placeholder: Aurora — Application de gestion
     site_description:
       label: Site description
       description: Short description used as the default meta description
+      placeholder: Multi-module business management platform
     site_url:
       label: Public site URL
       description: 'Absolute URL of the site (no trailing slash), used in emails and the sitemap'
+      placeholder: 'https://app.example.com'
     admin_email:
       label: Administrator email
       description: Email address of the administrator
+      placeholder: 'admin@example.com'
     default_locale:
       label: Default locale
       description: 'Default language of the site (public display, fallback email locale).'
@@ -85,12 +89,15 @@ backend:
     posts_per_page:
       label: Posts per page
       description: Number of posts displayed per page on public lists
+      placeholder: 10
     max_upload_size_mb:
       label: Max upload size (MB)
       description: 'Maximum allowed size for a media upload, in megabytes'
+      placeholder: 8
     allowed_upload_extensions:
       label: Allowed extensions
       description: 'Comma-separated list of allowed extensions (jpg,png,pdf,…)'
+      placeholder: jpg,jpeg,png,gif,webp,pdf
     timezone:
       label: Timezone
       description: PHP timezone (e.g. Europe/Paris)
@@ -136,15 +143,18 @@ backend:
     seo_title_template:
       label: SEO title template
       description: 'Template for page titles. Use {title} and {siteName}. E.g. {title} · {siteName}'
+      placeholder: '{title} · {siteName}'
     seo_default_description:
       label: Default SEO description
       description: Meta description used when no specific description is defined
+      placeholder: Business management platform — CRM, sales, document management…
     seo_default_og_image:
       label: Default Open Graph image
       description: Image used for social previews (Facebook, LinkedIn, Twitter…) when the page doesn't define one. 1200×630 px recommended.
     seo_twitter_handle:
       label: Twitter / X handle
       description: 'Twitter handle of the site (with @, e.g.: @aurora_app). Used in the twitter:site Twitter Cards meta tag.'
+      placeholder: '@aurora_app'
     email_locale:
       label: Forced email locale
       description: 'Language used for all outgoing emails. "Follow default locale" applies the site default locale.'

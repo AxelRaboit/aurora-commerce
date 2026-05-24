@@ -67,15 +67,19 @@ backend:
     site_name:
       label: Nom du site
       description: Nom affiché sur le site public et dans les emails
+      placeholder: Aurora — Application de gestion
     site_description:
       label: Description du site
       description: Courte description utilisée comme meta description par défaut
+      placeholder: Plateforme de gestion d'entreprise multi-modules
     site_url:
       label: URL publique du site
       description: 'URL absolue du site (sans slash final), utilisée dans les emails et le sitemap'
+      placeholder: 'https://app.example.com'
     admin_email:
       label: Email administrateur
       description: Adresse email de l'administrateur
+      placeholder: 'admin@example.com'
     default_locale:
       label: Langue par défaut
       description: 'Langue par défaut du site (affichage public, emails par défaut).'
@@ -85,12 +89,15 @@ backend:
     posts_per_page:
       label: Articles par page
       description: Nombre d'articles affichés par page sur les listes publiques
+      placeholder: 10
     max_upload_size_mb:
       label: Taille max d'upload (Mo)
       description: 'Taille maximale autorisée pour un upload média, en mégaoctets'
+      placeholder: 8
     allowed_upload_extensions:
       label: Extensions autorisées
       description: "Liste d'extensions autorisées séparées par virgule (jpg,png,pdf,…)"
+      placeholder: jpg,jpeg,png,gif,webp,pdf
     timezone:
       label: Fuseau horaire
       description: 'Fuseau horaire PHP (ex: Europe/Paris)'
@@ -136,15 +143,18 @@ backend:
     seo_title_template:
       label: Template de titre SEO
       description: 'Template pour le titre des pages. Utilisez {title} et {siteName}. Ex. : {title} · {siteName}'
+      placeholder: '{title} · {siteName}'
     seo_default_description:
       label: Description SEO par défaut
       description: Meta description utilisée quand aucune description spécifique n'est définie
+      placeholder: Plateforme de gestion d'entreprise — modules CRM, ventes, GED…
     seo_default_og_image:
       label: Image Open Graph par défaut
       description: Image utilisée pour les previews sociaux (Facebook, LinkedIn, Twitter…) quand la page n'en définit pas. 1200×630 px recommandé.
     seo_twitter_handle:
       label: Handle Twitter / X
       description: 'Handle Twitter du site (avec @, ex : @aurora_app). Utilisé pour la balise twitter:site dans les Twitter Cards.'
+      placeholder: '@aurora_app'
     email_locale:
       label: Langue forcée pour les emails
       description: "Langue à utiliser pour tous les emails sortants. « Suivre la langue par défaut » applique la langue par défaut du site."

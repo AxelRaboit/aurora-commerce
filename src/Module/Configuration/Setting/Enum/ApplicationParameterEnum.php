@@ -235,4 +235,26 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::ColorPickerPresets => 'appearance',
         };
     }
+
+    /**
+     * Sample value shown inside the input. Only set on the fields where
+     * an example is meaningfully clearer than the description alone —
+     * the rest fall through to the `default => null` arm.
+     */
+    public function getPlaceholder(): ?string
+    {
+        return match ($this) {
+            self::SiteName => 'backend.parameters.site_name.placeholder',
+            self::SiteDescription => 'backend.parameters.site_description.placeholder',
+            self::SiteUrl => 'backend.parameters.site_url.placeholder',
+            self::AdminEmail => 'backend.parameters.admin_email.placeholder',
+            self::PostsPerPage => 'backend.parameters.posts_per_page.placeholder',
+            self::SeoTitleTemplate => 'backend.parameters.seo_title_template.placeholder',
+            self::SeoDefaultDescription => 'backend.parameters.seo_default_description.placeholder',
+            self::SeoTwitterHandle => 'backend.parameters.seo_twitter_handle.placeholder',
+            self::MaxUploadSizeMb => 'backend.parameters.max_upload_size_mb.placeholder',
+            self::AllowedUploadExtensions => 'backend.parameters.allowed_upload_extensions.placeholder',
+            default => null,
+        };
+    }
 }

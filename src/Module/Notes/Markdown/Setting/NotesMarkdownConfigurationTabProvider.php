@@ -30,6 +30,7 @@ final readonly class NotesMarkdownConfigurationTabProvider implements Configurat
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

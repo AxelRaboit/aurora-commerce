@@ -17,4 +17,12 @@ interface ApplicationParameterEnumInterface
     public function getType(): string;
 
     public function getGroup(): string;
+
+    /**
+     * Translation key for an optional placeholder example shown inside the
+     * settings input (e.g. `'backend.parameters.site_name.placeholder'` →
+     * "Mon site"). Return `null` when no useful example exists and the
+     * description below the field is enough.
+     */
+    public function getPlaceholder(): ?string;
 }

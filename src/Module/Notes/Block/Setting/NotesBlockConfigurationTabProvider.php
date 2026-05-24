@@ -29,6 +29,7 @@ final readonly class NotesBlockConfigurationTabProvider implements Configuration
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

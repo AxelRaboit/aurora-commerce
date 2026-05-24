@@ -29,6 +29,7 @@ final readonly class {{MODULE}}ConfigurationTabProvider implements Configuration
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

@@ -42,6 +42,7 @@ final readonly class CrmConfigurationTabProvider implements ConfigurationTabProv
                 labelKey: $case->getLabel(),
                 descriptionKey: $case->getDescription(),
                 defaultValue: $case->getDefaultValue(),
+                placeholderKey: $case->getPlaceholder(),
             );
         }
 

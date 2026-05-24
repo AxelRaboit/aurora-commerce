@@ -64,6 +64,7 @@ final readonly class SettingsViewBuilder
                     'key' => $field->key,
                     'label' => $this->translator->trans($field->labelKey),
                     'description' => $this->translator->trans($field->descriptionKey),
+                    'placeholder' => null !== $field->placeholderKey ? $this->translator->trans($field->placeholderKey) : null,
                     'type' => $field->type,
                     'group' => $tab->id,
                     'value' => $value,

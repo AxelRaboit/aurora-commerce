@@ -76,4 +76,13 @@ enum EcommerceSettingEnum: string implements ApplicationParameterEnumInterface
             self::OrderPrefix, self::ListingPrefix, self::CartPrefix, self::CartItemPrefix, self::OrderLinePrefix => 'sequences',
         };
     }
+
+    /**
+     * No placeholder by default — override on a per-case basis when an
+     * example value is genuinely clearer than the description alone.
+     */
+    public function getPlaceholder(): ?string
+    {
+        return null;
+    }
 }
