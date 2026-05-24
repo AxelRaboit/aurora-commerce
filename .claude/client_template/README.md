@@ -66,6 +66,13 @@ ensuite être ajustés sans redéploiement via `/backend/settings` → onglet
 ⚠️ **Ne JAMAIS faire `make install-dev` sur un projet déjà setup** — il purge
 la BDD via `doctrine:fixtures:load`. Les données locales sont écrasées.
 
+| Pour... | Utiliser |
+|---|---|
+| Reload les fixtures **sans** drop la DB (tables purgées + réinsérées) | `make fixtures-load` |
+| Ajouter les fixtures **sans** purger les tables existantes | `make fixtures-append` |
+| Reset complet (drop DB + schema + fixtures + syncs) | `make fixtures` |
+| Reset complet **et** reinstall deps + lancer Vite | `make install-dev` |
+
 ## Intégration continue (GitHub Actions)
 
 Le template embarque `.github/workflows/ci.yml` qui run lint + build +
