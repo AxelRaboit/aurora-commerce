@@ -564,77 +564,83 @@ async function doBulkDelete() {
             :show="showEdit"
             :title="t('backend.ged.documents.edit', { title: editingDoc?.title ?? '' })"
             :icon="Pencil"
+            max-width="4xl"
             :closeable="false"
             v-on:close="showEdit = false"
         >
-            <div class="space-y-4">
-                <!-- File preview -->
+            <div :class="editingDoc?.fileUrl ? 'grid grid-cols-1 md:grid-cols-2 gap-5 items-start' : 'space-y-4'">
+                <!-- File preview (left column) -->
                 <AppFilePreview
                     v-if="editingDoc?.fileUrl"
                     :url="editingDoc.fileUrl"
                     :mime="editingDoc.fileMime"
                     :name="editingDoc.fileName"
                     :alt="editingDoc.alt ?? editingDoc.title"
+                    max-height="28rem"
+                    class="md:sticky md:top-0"
                 />
 
-                <AppInput
-                    v-model="editForm.title"
-                    :label="t('backend.ged.documents.title')"
-                    :placeholder="t('backend.ged.documents.title_placeholder')"
-                    :error="editErrors.title"
-                    required
-                />
-                <AppInput v-model="editForm.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.description_placeholder')" />
-                <template v-if="editForm.mimeType?.startsWith('image/')">
-                    <AppInput v-model="editForm.alt" :label="t('backend.ged.documents.alt')" :placeholder="t('backend.ged.documents.alt_placeholder')" />
-                    <AppInput v-model="editForm.caption" :label="t('backend.ged.documents.caption')" :placeholder="t('backend.ged.documents.caption_placeholder')" />
-                </template>
-                <AppMultiselect
-                    v-model="editForm.categoryId"
-                    :label="t('backend.ged.documents.category')"
-                    :options="categoryOptions"
-                    :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.no_category')"
-                />
-                <AppMultiselect
-                    v-if="tags.length"
-                    v-model="editForm.tagIds"
-                    :label="t('backend.ged.documents.tags')"
-                    :options="tagOptions"
-                    :multiple="true"
-                    :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.no_tags')"
-                />
-                <AppMultiselect
-                    v-if="folders.length"
-                    v-model="editForm.folderId"
-                    :label="t('backend.ged.documents.folder')"
-                    :options="folderOptions"
-                    :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.no_folder')"
-                />
-                <AppMultiselect
-                    v-model="editForm.status"
-                    :label="t('backend.ged.documents.status')"
-                    :options="statusOptions"
-                    :allow-empty="false"
-                    :searchable="false"
-                />
-                <div class="flex items-center gap-2 flex-wrap">
-                    <AppFileInput v-on:change="onLocalFileEdit">
-                        <template #default="{ trigger }">
-                            <AppButton
-                                variant="ghost"
-                                size="sm"
-                                type="button"
-                                :loading="uploadingEdit"
-                                v-on:click="trigger"
-                            >
-                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.choose_file") }}
-                            </AppButton>
-                        </template>
-                    </AppFileInput>
-                    <span v-if="editForm.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ editForm.fileName }}</span>
+                <!-- Form fields (right column) -->
+                <div class="space-y-4">
+                    <AppInput
+                        v-model="editForm.title"
+                        :label="t('backend.ged.documents.title')"
+                        :placeholder="t('backend.ged.documents.title_placeholder')"
+                        :error="editErrors.title"
+                        required
+                    />
+                    <AppInput v-model="editForm.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.description_placeholder')" />
+                    <template v-if="editForm.mimeType?.startsWith('image/')">
+                        <AppInput v-model="editForm.alt" :label="t('backend.ged.documents.alt')" :placeholder="t('backend.ged.documents.alt_placeholder')" />
+                        <AppInput v-model="editForm.caption" :label="t('backend.ged.documents.caption')" :placeholder="t('backend.ged.documents.caption_placeholder')" />
+                    </template>
+                    <AppMultiselect
+                        v-model="editForm.categoryId"
+                        :label="t('backend.ged.documents.category')"
+                        :options="categoryOptions"
+                        :allow-empty="true"
+                        :placeholder="t('backend.ged.documents.no_category')"
+                    />
+                    <AppMultiselect
+                        v-if="tags.length"
+                        v-model="editForm.tagIds"
+                        :label="t('backend.ged.documents.tags')"
+                        :options="tagOptions"
+                        :multiple="true"
+                        :allow-empty="true"
+                        :placeholder="t('backend.ged.documents.no_tags')"
+                    />
+                    <AppMultiselect
+                        v-if="folders.length"
+                        v-model="editForm.folderId"
+                        :label="t('backend.ged.documents.folder')"
+                        :options="folderOptions"
+                        :allow-empty="true"
+                        :placeholder="t('backend.ged.documents.no_folder')"
+                    />
+                    <AppMultiselect
+                        v-model="editForm.status"
+                        :label="t('backend.ged.documents.status')"
+                        :options="statusOptions"
+                        :allow-empty="false"
+                        :searchable="false"
+                    />
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <AppFileInput v-on:change="onLocalFileEdit">
+                            <template #default="{ trigger }">
+                                <AppButton
+                                    variant="ghost"
+                                    size="sm"
+                                    type="button"
+                                    :loading="uploadingEdit"
+                                    v-on:click="trigger"
+                                >
+                                    <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.choose_file") }}
+                                </AppButton>
+                            </template>
+                        </AppFileInput>
+                        <span v-if="editForm.fileName" class="text-sm text-muted flex items-center gap-1"><FileText class="w-4 h-4" :stroke-width="2" /> {{ editForm.fileName }}</span>
+                    </div>
                 </div>
             </div>
             <template #footer>
@@ -669,135 +675,121 @@ async function doBulkDelete() {
             :show="!!viewingDoc"
             :title="viewingDoc?.title ?? ''"
             :icon="FileText"
+            max-width="5xl"
             :closeable="false"
             v-on:close="viewingDoc = null"
         >
             <template v-if="viewingDoc">
-                <div class="space-y-4">
-                    <!-- Status + reference -->
-                    <div class="flex items-center gap-3 flex-wrap">
-                        <AppBadge :color="DOCUMENT_STATUS_BADGE[viewingDoc.status]">{{ viewingDoc.statusLabel }}</AppBadge>
-                        <span v-if="viewingDoc.reference" class="text-xs text-muted font-mono">{{ viewingDoc.reference }}</span>
-                    </div>
-
-                    <!-- Description -->
-                    <p v-if="viewingDoc.description" class="text-sm text-secondary leading-relaxed">{{ viewingDoc.description }}</p>
-
-                    <!-- Metadata -->
-                    <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-                        <div v-if="viewingDoc.categoryName">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.category") }}</dt>
-                            <dd class="text-primary">{{ viewingDoc.categoryName }}</dd>
-                        </div>
-                        <div v-if="viewingDoc.folderName">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.folder") }}</dt>
-                            <dd class="text-primary flex items-center gap-1"><Folder class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" /> {{ viewingDoc.folderName }}</dd>
-                        </div>
-                        <div v-if="viewingDoc.fileName">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.file") }}</dt>
-                            <dd class="text-secondary truncate" :title="viewingDoc.fileName">{{ viewingDoc.fileName }}</dd>
-                        </div>
-                        <div v-if="viewingDoc.fileSize">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.size") }}</dt>
-                            <dd class="text-secondary tabular-nums">{{ formatSize(viewingDoc.fileSize) }}</dd>
-                        </div>
-                        <div v-if="viewingDoc.width && viewingDoc.height">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.dimensions") }}</dt>
-                            <dd class="text-secondary tabular-nums">{{ viewingDoc.width }}×{{ viewingDoc.height }}</dd>
-                        </div>
-                        <div v-if="viewingDoc.fileMime">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.type") }}</dt>
-                            <dd class="text-secondary">{{ viewingDoc.fileMime }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.created") }}</dt>
-                            <dd class="text-secondary">{{ formatDate(viewingDoc.createdAt) }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.updated") }}</dt>
-                            <dd class="text-secondary">{{ formatDate(viewingDoc.updatedAt) }}</dd>
-                        </div>
-                    </dl>
-
-                    <!-- Image metadata (alt / caption) -->
-                    <dl v-if="viewingDoc.fileMime?.startsWith('image/') && (viewingDoc.alt || viewingDoc.caption)" class="space-y-3 text-sm">
-                        <div v-if="viewingDoc.alt">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.alt") }}</dt>
-                            <dd class="text-primary">{{ viewingDoc.alt }}</dd>
-                        </div>
-                        <div v-if="viewingDoc.caption">
-                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.caption") }}</dt>
-                            <dd class="text-primary">{{ viewingDoc.caption }}</dd>
-                        </div>
-                    </dl>
-
-                    <!-- Permalink -->
-                    <div v-if="viewingDoc.fileUrl">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.permalink") }}</dt>
-                        <div class="flex items-center gap-2">
-                            <code class="text-xs text-secondary bg-surface-2 rounded px-2 py-1 truncate flex-1">{{ permalinkFor(viewingDoc) }}</code>
-                            <AppIconButton color="default" :title="t('shared.common.copy')" v-on:click="copy(permalinkFor(viewingDoc))">
-                                <Copy class="w-4 h-4" :stroke-width="2" />
-                            </AppIconButton>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+                    <!-- Document preview (left, prominent) -->
+                    <div v-if="viewingDoc.fileUrl" class="lg:col-span-3 rounded-lg border border-line overflow-hidden">
+                        <AppImagePreview v-if="viewingDoc.fileMime?.startsWith('image/')" :src="viewingDoc.fileUrl" :alt="viewingDoc.alt ?? viewingDoc.fileName" full />
+                        <iframe
+                            v-else-if="viewingDoc.fileMime === 'application/pdf'"
+                            :src="viewingDoc.fileUrl"
+                            class="w-full h-[36rem]"
+                            :title="viewingDoc.fileName"
+                        />
+                        <div v-else class="flex flex-col items-center justify-center gap-3 px-4 py-16 bg-surface-2">
+                            <FileText class="w-16 h-16 text-muted" :stroke-width="1.25" />
+                            <p class="text-sm font-medium text-primary truncate max-w-full">{{ viewingDoc.fileName }}</p>
+                            <p v-if="viewingDoc.fileMime" class="text-xs text-muted">{{ viewingDoc.fileMime }}</p>
                         </div>
                     </div>
 
-                    <!-- Tags -->
-                    <div v-if="viewingDoc.tags?.length" class="flex flex-wrap gap-1.5">
-                        <DocumentTagChip v-for="tag in viewingDoc.tags" :key="tag.id" :tag="tag" />
-                    </div>
+                    <!-- Metadata (right) -->
+                    <div :class="viewingDoc.fileUrl ? 'lg:col-span-2 space-y-4' : 'lg:col-span-5 space-y-4'">
+                        <!-- Status + reference -->
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <AppBadge :color="DOCUMENT_STATUS_BADGE[viewingDoc.status]">{{ viewingDoc.statusLabel }}</AppBadge>
+                            <span v-if="viewingDoc.reference" class="text-xs text-muted font-mono">{{ viewingDoc.reference }}</span>
+                        </div>
 
-                    <!-- Version history -->
-                    <div v-if="viewingDocVersions.length > 1" class="space-y-2">
-                        <p class="text-xs text-muted uppercase tracking-wide">{{ t("backend.ged.documents.versions") }}</p>
-                        <div class="divide-y divide-line/40 rounded-lg border border-line overflow-hidden">
-                            <div
-                                v-for="version in viewingDocVersions"
-                                :key="version.id"
-                                class="flex items-center gap-3 px-3 py-2 text-sm"
-                                :class="version.versionNumber === viewingDocVersions[0].versionNumber ? 'bg-accent/5' : 'bg-surface'"
-                            >
-                                <span class="shrink-0 text-xs font-mono font-medium px-1.5 py-0.5 rounded bg-surface-2 text-secondary">v{{ version.versionNumber }}</span>
-                                <span class="flex-1 truncate text-primary text-xs">{{ version.fileName }}</span>
-                                <span class="text-xs text-muted shrink-0">{{ formatDate(version.createdAt) }}</span>
-                                <a :href="version.fileUrl" target="_blank" download class="shrink-0 text-xs text-accent hover:underline flex items-center gap-0.5">
-                                    <Download class="w-3 h-3" :stroke-width="2" />
-                                </a>
+                        <!-- Description -->
+                        <p v-if="viewingDoc.description" class="text-sm text-secondary leading-relaxed">{{ viewingDoc.description }}</p>
+
+                        <!-- Metadata -->
+                        <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                            <div v-if="viewingDoc.categoryName">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.category") }}</dt>
+                                <dd class="text-primary">{{ viewingDoc.categoryName }}</dd>
+                            </div>
+                            <div v-if="viewingDoc.folderName">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.folder") }}</dt>
+                                <dd class="text-primary flex items-center gap-1"><Folder class="w-3.5 h-3.5 text-muted shrink-0" :stroke-width="2" /> {{ viewingDoc.folderName }}</dd>
+                            </div>
+                            <div v-if="viewingDoc.fileName">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.file") }}</dt>
+                                <dd class="text-secondary truncate" :title="viewingDoc.fileName">{{ viewingDoc.fileName }}</dd>
+                            </div>
+                            <div v-if="viewingDoc.fileSize">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.size") }}</dt>
+                                <dd class="text-secondary tabular-nums">{{ formatSize(viewingDoc.fileSize) }}</dd>
+                            </div>
+                            <div v-if="viewingDoc.width && viewingDoc.height">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.dimensions") }}</dt>
+                                <dd class="text-secondary tabular-nums">{{ viewingDoc.width }}×{{ viewingDoc.height }}</dd>
+                            </div>
+                            <div v-if="viewingDoc.fileMime">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.type") }}</dt>
+                                <dd class="text-secondary">{{ viewingDoc.fileMime }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.created") }}</dt>
+                                <dd class="text-secondary">{{ formatDate(viewingDoc.createdAt) }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("shared.common.updated") }}</dt>
+                                <dd class="text-secondary">{{ formatDate(viewingDoc.updatedAt) }}</dd>
+                            </div>
+                        </dl>
+
+                        <!-- Image metadata (alt / caption) -->
+                        <dl v-if="viewingDoc.fileMime?.startsWith('image/') && (viewingDoc.alt || viewingDoc.caption)" class="space-y-3 text-sm">
+                            <div v-if="viewingDoc.alt">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.alt") }}</dt>
+                                <dd class="text-primary">{{ viewingDoc.alt }}</dd>
+                            </div>
+                            <div v-if="viewingDoc.caption">
+                                <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.caption") }}</dt>
+                                <dd class="text-primary">{{ viewingDoc.caption }}</dd>
+                            </div>
+                        </dl>
+
+                        <!-- Permalink -->
+                        <div v-if="viewingDoc.fileUrl">
+                            <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t("backend.ged.documents.permalink") }}</dt>
+                            <div class="flex items-center gap-2">
+                                <code class="text-xs text-secondary bg-surface-2 rounded px-2 py-1 truncate flex-1">{{ permalinkFor(viewingDoc) }}</code>
+                                <AppIconButton color="default" :title="t('shared.common.copy')" v-on:click="copy(permalinkFor(viewingDoc))">
+                                    <Copy class="w-4 h-4" :stroke-width="2" />
+                                </AppIconButton>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- File -->
-                    <div v-if="viewingDoc.fileUrl" class="rounded-lg border border-line overflow-hidden">
-                        <template v-if="viewingDoc.fileMime?.startsWith('image/')">
-                            <AppImagePreview :src="viewingDoc.fileUrl" :alt="viewingDoc.fileName" full />
-                            <div class="flex justify-end px-3 py-2 border-t border-line bg-surface">
-                                <a :href="viewingDoc.fileUrl" download class="flex items-center gap-1 text-xs text-accent hover:underline">
-                                    <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}
-                                </a>
+                        <!-- Tags -->
+                        <div v-if="viewingDoc.tags?.length" class="flex flex-wrap gap-1.5">
+                            <DocumentTagChip v-for="tag in viewingDoc.tags" :key="tag.id" :tag="tag" />
+                        </div>
+
+                        <!-- Version history -->
+                        <div v-if="viewingDocVersions.length > 1" class="space-y-2">
+                            <p class="text-xs text-muted uppercase tracking-wide">{{ t("backend.ged.documents.versions") }}</p>
+                            <div class="divide-y divide-line/40 rounded-lg border border-line overflow-hidden">
+                                <div
+                                    v-for="version in viewingDocVersions"
+                                    :key="version.id"
+                                    class="flex items-center gap-3 px-3 py-2 text-sm"
+                                    :class="version.versionNumber === viewingDocVersions[0].versionNumber ? 'bg-accent/5' : 'bg-surface'"
+                                >
+                                    <span class="shrink-0 text-xs font-mono font-medium px-1.5 py-0.5 rounded bg-surface-2 text-secondary">v{{ version.versionNumber }}</span>
+                                    <span class="flex-1 truncate text-primary text-xs">{{ version.fileName }}</span>
+                                    <span class="text-xs text-muted shrink-0">{{ formatDate(version.createdAt) }}</span>
+                                    <a :href="version.fileUrl" target="_blank" download class="shrink-0 text-xs text-accent hover:underline flex items-center gap-0.5">
+                                        <Download class="w-3 h-3" :stroke-width="2" />
+                                    </a>
+                                </div>
                             </div>
-                        </template>
-                        <template v-else-if="viewingDoc.fileMime === 'application/pdf'">
-                            <iframe
-                                :src="viewingDoc.fileUrl"
-                                class="w-full h-64"
-                                :title="viewingDoc.fileName"
-                            />
-                            <div class="flex justify-end px-3 py-2 border-t border-line bg-surface">
-                                <a :href="viewingDoc.fileUrl" download class="flex items-center gap-1 text-xs text-accent hover:underline">
-                                    <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}
-                                </a>
-                            </div>
-                        </template>
-                        <div v-else class="flex items-center gap-3 px-4 py-3 bg-surface-2">
-                            <FileText class="w-6 h-6 text-muted shrink-0" :stroke-width="1.5" />
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-primary truncate">{{ viewingDoc.fileName }}</p>
-                                <p v-if="viewingDoc.fileSize" class="text-xs text-muted">{{ formatSize(viewingDoc.fileSize) }}</p>
-                            </div>
-                            <a :href="viewingDoc.fileUrl" target="_blank" download class="text-xs text-accent hover:underline flex items-center gap-1 shrink-0">
-                                <Download class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.download") }}
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -805,6 +797,14 @@ async function doBulkDelete() {
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="viewingDoc = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
+                    <AppButton
+                        v-if="viewingDoc?.fileUrl"
+                        variant="ghost"
+                        size="md"
+                        v-on:click="openQr(viewingDoc)"
+                    >
+                        <QrCode class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.qr_code") }}
+                    </AppButton>
                     <AppButton
                         v-if="viewingDoc?.fileUrl"
                         variant="secondary"
