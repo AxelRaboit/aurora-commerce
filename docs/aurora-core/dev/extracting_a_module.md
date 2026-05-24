@@ -28,11 +28,13 @@ Garder en core si :
 - Le coût d'extraction (1-2 jours) dépasse le coût de la maintenance
   partagée
 
-> Référence : voir le commit série
+> Référence concrète : la branche
 > [`feat/extract-welding-to-client`](https://github.com/AxelRaboit/aurora-core/commits/feat/extract-welding-to-client)
-> et la note d'extraction de Welding
-> [`extraction_welding_to_client.md`](extraction_welding_to_client.md)
-> pour un cas concret. Welding est l'extraction de référence canonique.
+> sur aurora-core porte l'extraction du module Welding (premier
+> usage du playbook, mai 2026). Le commit `refactor(core): extract
+> Welding module to aurora-welding client project` donne la diff
+> complète et le projet [`aurora-welding`](https://github.com/AxelRaboit/aurora-welding)
+> est le résultat.
 
 ---
 

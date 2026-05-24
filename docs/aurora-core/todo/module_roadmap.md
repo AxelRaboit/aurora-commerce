@@ -20,7 +20,7 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | Vault (Safe + PasswordGenerator) | ✅ Core |
 | Assistant (Ollama / chat IA) | ✅ Core |
 | ~~PdfForm (formulaires PDF)~~ | Absorbé dans Welding (sprint 6, mai 2026), puis extrait en client `aurora-welding` |
-| ~~Welding (workflows de soudure réglementée)~~ | Extrait en client `aurora-welding/` (mai 2026, cf. [dev/extraction_welding_to_client.md](../dev/extraction_welding_to_client.md)) |
+| ~~Welding (workflows de soudure réglementée)~~ | Extrait en client `aurora-welding/` (mai 2026 — premier usage du playbook [dev/extracting_a_module.md](../dev/extracting_a_module.md)) |
 
 ---
 

@@ -32,8 +32,9 @@ V1 livrée dans aurora-core (sprints -1 à 5 + post-V1 sprints 6-10), puis
 le module entier a été extrait vers le projet client `aurora-welding`
 (spécifique soudure réglementée — nucléaire RCC-M, ASME III, ISO 15614).
 La doc Welding et le backlog V2 vivent maintenant dans
-`aurora-welding/docs/welding/README.md`. Détails de l'extraction :
-[`../dev/extraction_welding_to_client.md`](../dev/extraction_welding_to_client.md).
+`aurora-welding/docs/welding/README.md`. Procédure d'extraction
+généralisée :
+[`../dev/extracting_a_module.md`](../dev/extracting_a_module.md).
 
 ### Ecommerce — gaps vs Sylius
 
