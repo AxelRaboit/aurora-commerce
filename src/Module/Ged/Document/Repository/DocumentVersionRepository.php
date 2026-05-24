@@ -23,8 +23,6 @@ class DocumentVersionRepository extends ResolveTargetEntityRepository
     public function findByDocument(DocumentInterface $document): array
     {
         return $this->createQueryBuilder('v')
-            ->leftJoin('v.file', 'f')
-            ->addSelect('f')
             ->andWhere('v.document = :doc')
             ->setParameter('doc', $document)
             ->orderBy('v.versionNumber', Order::Descending->value)
