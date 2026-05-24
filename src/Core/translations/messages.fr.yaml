@@ -60,7 +60,7 @@ shared:
     select_to_remove: Appuyez sur Entrée pour retirer
     remove: Retirer
     all: Tous
-    loadMore: Charger plus
+    load_more: Charger plus
     send: Envoyer
     next: Suivant
   pagination:
@@ -85,8 +85,8 @@ shared:
     prev: Retour
     success: 'Merci, votre message a bien été envoyé !'
     error: Une erreur est survenue. Veuillez réessayer.
-    fieldRequired: Ce champ est obligatoire.
-    selectPlaceholder: Choisir…
+    field_required: Ce champ est obligatoire.
+    select_placeholder: Choisir…
   locales:
     fr: Français
     en: English
@@ -100,12 +100,12 @@ shared:
 backend:
   editor:
     placeholder: Commencez à rédiger…
-    toolNames:
+    tool_names:
       text: Texte
       heading: Titre
       list: Liste
-      orderedList: Liste ordonnée
-      unorderedList: Liste non ordonnée
+      ordered_list: Liste ordonnée
+      unordered_list: Liste non ordonnée
       checklist: Liste de cases
       quote: Citation
       code: Code
@@ -114,22 +114,22 @@ backend:
       image: Image
       embed: Intégration
       marker: Marqueur
-      inlineCode: Code inline
+      inline_code: Code inline
       underline: Souligné
       strikethrough: Barré
-      textColor: Couleur du texte
-      textBackground: Couleur de fond
-      fontSize: Taille du texte
-      clearFormatting: Effacer le formatage
+      text_color: Couleur du texte
+      text_background: Couleur de fond
+      font_size: Taille du texte
+      clear_formatting: Effacer le formatage
       callout: Callout
-      mediaText: Image + Texte
-      twoColumn: 2 Colonnes
+      media_text: Image + Texte
+      two_column: 2 Colonnes
     ui:
-      blockTunes:
+      block_tunes:
         toggler:
           Click to tune: Configurer
           or drag to move: ou glisser pour déplacer
-      inlineToolbar:
+      inline_toolbar:
         converter:
           Convert to: Convertir en
       toolbar:
@@ -138,40 +138,40 @@ backend:
       popover:
         Filter: Filtrer
         Nothing found: Aucun résultat
-        nothingFoundExtended: Aucun résultat. Essayez un autre terme.
-    blockTunes:
+        nothing_found_extended: Aucun résultat. Essayez un autre terme.
+    block_tunes:
       delete:
         Delete: Supprimer
         Click to delete: Cliquez pour supprimer
-      moveUp:
+      move_up:
         Move up: Déplacer vers le haut
-      moveDown:
+      move_down:
         Move down: Déplacer vers le bas
     image:
-      captionPlaceholder: Légende…
+      caption_placeholder: Légende…
     quote:
       placeholder: Citation…
-      captionPlaceholder: Auteur…
-    mediaText:
-      flipLeft: ⇄ Image à gauche
-      flipRight: ⇄ Image à droite
-      captionPlaceholder: Légende…
-      textPlaceholder: Votre texte…
-      urlPlaceholder: URL de l'image…
-      changeUrl: Changer l'URL
+      caption_placeholder: Auteur…
+    media_text:
+      flip_left: ⇄ Image à gauche
+      flip_right: ⇄ Image à droite
+      caption_placeholder: Légende…
+      text_placeholder: Votre texte…
+      url_placeholder: URL de l'image…
+      change_url: Changer l'URL
       confirm: Valider
       browse: Parcourir
       actions: Actions
       or: ou
-      mediaIdPlaceholder: ID média existant…
-      mediaIdNotFound: Média introuvable
-    mediaPicker:
+      media_id_placeholder: ID média existant…
+      media_id_not_found: Média introuvable
+    media_picker:
       title: Choisir un média
       search: Rechercher par nom ou alt…
-      allFolders: Tous les dossiers
+      all_folders: Tous les dossiers
       empty: Aucun média trouvé
       loading: Chargement…
       select: Sélectionner
     callout:
-      titlePlaceholder: Titre…
-      messagePlaceholder: Message…
+      title_placeholder: Titre…
+      message_placeholder: Message…

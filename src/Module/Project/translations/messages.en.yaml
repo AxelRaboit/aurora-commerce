@@ -10,8 +10,8 @@ backend:
         tasks:
           manage: Manage project tasks
   notifications:
-    taskAssigned: You have been assigned to a task.
-    taskCommented: '%name% commented: %content%'
+    task_assigned: You have been assigned to a task.
+    task_commented: '%name% commented: %content%'
   modules:
     project: Project
     project_backend: Project
@@ -55,19 +55,19 @@ backend:
           deleted: Label deleted
   projects:
     add: New project
-    backToList: Back to projects
+    back_to_list: Back to projects
     empty: No projects found.
-    searchPlaceholder: Search a project…
-    columnWidth: 'Width:'
+    search_placeholder: Search a project…
+    column_width: 'Width:'
     tasks: Tasks
-    deleteConfirm: 'Delete project "{name}"?'
-    deleteWarning: This action cannot be undone.
+    delete_confirm: 'Delete project "{name}"?'
+    delete_warning: This action cannot be undone.
     fields:
       title: Title
       description: Description
       status: Status
-      startDate: Start date
-      endDate: End date
+      start_date: Start date
+      end_date: End date
       responsible: Responsible
       contact: Contact
       contacts: Contacts
@@ -75,11 +75,11 @@ backend:
       deal: CRM deal
       start: "Start:"
       end: "End:"
-      contactLabel: "Contact:"
-      contactsLabel: "Contacts:"
-      companyLabel: "Company:"
-      dealLabel: "Deal:"
-      responsibleLabel: "Responsible:"
+      contact_label: "Contact:"
+      contacts_label: "Contacts:"
+      company_label: "Company:"
+      deal_label: "Deal:"
+      responsible_label: "Responsible:"
     placeholders:
       title: e.g. Website redesign
       description: Describe the project's goal…
@@ -88,26 +88,26 @@ backend:
       contacts: Select one or more contacts
       company: Select a company
       deal: Link to a deal
-      taskTitle: e.g. Homepage mockups
-      taskDescription: Describe the task…
+      task_title: e.g. Homepage mockups
+      task_description: Describe the task…
       assignee: Select a user
-      estimateMinutes: Estimated duration in minutes
-      storyPoints: e.g. 3
+      estimate_minutes: Estimated duration in minutes
+      story_points: e.g. 3
     status_draft: Draft
     status_active: Active
     status_completed: Completed
     status_cancelled: Cancelled
-    statusFilter:
+    status_filter:
       all: All
     task:
       add: New task
       empty: No tasks
-      deleteConfirm: 'Delete task "{name}"?'
-      deleteWarning: This action cannot be undone.
-      commentPlaceholder: Write a comment…
-      timeEntryNote: Note…
-      attachmentsHint: Pick an existing document from the GED.
-      attachmentsAdd: Attach a document
+      delete_confirm: 'Delete task "{name}"?'
+      delete_warning: This action cannot be undone.
+      comment_placeholder: Write a comment…
+      time_entry_note: Note…
+      attachments_hint: Pick an existing document from the GED.
+      attachments_add: Attach a document
       fields:
         title: Title
         description: Description
@@ -115,14 +115,14 @@ backend:
         status: Status
         priority: Priority
         assignee: Assignee
-        dueDate: Due date
+        due_date: Due date
         labels: Labels
-        storyPoints: Story points
-        storyPointsShort: pts
-        estimateMinutes: Estimate (min)
-        loggedMinutes: Logged time (min)
+        story_points: Story points
+        story_points_short: pts
+        estimate_minutes: Estimate (min)
+        logged_minutes: Logged time (min)
         items: Subtasks
-        addItem: Add a subtask
+        add_item: Add a subtask
         comments: Comments
         attachments: Attachments
         sprint: Sprint
@@ -139,44 +139,44 @@ backend:
       created: Project created.
       updated: Project updated.
       deleted: Project deleted.
-      taskCreated: Task created.
-      taskUpdated: Task updated.
-      taskDeleted: Task deleted.
+      task_created: Task created.
+      task_updated: Task updated.
+      task_deleted: Task deleted.
     activity:
       title: Project activity
       empty: No activity recorded for this project yet.
       system: System
-      justNow: just now
-      minutesAgo: '{n} min ago'
-      hoursAgo: '{n} h ago'
-    confirmGenerateInvoice: Create a draft invoice from this project?
-    generateInvoice: Generate invoice
+      just_now: just now
+      minutes_ago: '{n} min ago'
+      hours_ago: '{n} h ago'
+    confirm_generate_invoice: Create a draft invoice from this project?
+    generate_invoice: Generate invoice
     labels:
       manage: Manage labels
       add: New label
       edit: Edit label
-      nameField: Name
-      namePlaceholder: e.g. Urgent
-      colorField: Color
+      name_field: Name
+      name_placeholder: e.g. Urgent
+      color_field: Color
     sprints:
       manage: Manage sprints
       add: New sprint
       edit: Edit sprint
       active: Active
-      activeField: Current sprint
-      nameField: Name
-      namePlaceholder: e.g. Sprint 1
-    savedViews:
+      active_field: Current sprint
+      name_field: Name
+      name_placeholder: e.g. Sprint 1
+    saved_views:
       save: Save view
-      nameField: View name
-      namePlaceholder: e.g. My overdue tasks
+      name_field: View name
+      name_placeholder: e.g. My overdue tasks
     columns:
       add: Add a column
-      addPlaceholder: Column name
+      add_placeholder: Column name
       rename: Rename column
       delete: Delete column
-      deleteConfirm: 'Delete column "{label}"?'
-      deleteWarning: Tasks in this column will be moved to the first column.
+      delete_confirm: 'Delete column "{label}"?'
+      delete_warning: Tasks in this column will be moved to the first column.
       defaults:
         todo: To do
         in_progress: In progress

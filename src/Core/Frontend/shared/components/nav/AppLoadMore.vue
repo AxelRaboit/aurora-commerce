@@ -22,6 +22,6 @@ const { t } = useI18n();
         :loading="loading"
         v-on:click="$emit('load')"
     >
-        {{ label || t('shared.common.loadMore') }}
+        {{ label || t('shared.common.load_more') }}
     </AppButton>
 </template>

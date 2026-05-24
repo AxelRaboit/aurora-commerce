@@ -76,7 +76,7 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
             <AppInput
                 v-model="form.title"
                 :label="t('vault.entries.title')"
-                :placeholder="t('vault.entries.titlePlaceholder')"
+                :placeholder="t('vault.entries.title_placeholder')"
                 :error="errors.title"
                 required
             />
@@ -85,7 +85,7 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
                 v-if="currentRecordType.fields.includes('url') || form.url"
                 v-model="form.url"
                 :label="t('vault.entries.url')"
-                :placeholder="t('vault.entries.urlPlaceholder')"
+                :placeholder="t('vault.entries.url_placeholder')"
             />
 
             <AppSelect
@@ -136,7 +136,7 @@ const currentRecordType = computed(() => getRecordType(form.value.type));
                         <AppTextarea
                             v-model="form.fields.notes"
                             :label="t('vault.fields.notes')"
-                            :placeholder="t('vault.fields.notesPlaceholder')"
+                            :placeholder="t('vault.fields.notes_placeholder')"
                             rows="3"
                         />
                     </template>

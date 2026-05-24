@@ -114,7 +114,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                         <dd class="text-primary font-medium">{{ formatProductPrice(listing.product) }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.frontUrl') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.front_url') }}</dt>
                         <dd>
                             <AppLink :href="frontUrl" target="_blank" class="text-accent-400 hover:underline inline-flex items-center gap-1 text-sm">
                                 {{ frontUrl }}
@@ -123,7 +123,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                         </dd>
                     </div>
                     <div v-if="listing.marketingDescription" class="sm:col-span-2">
-                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.marketingDescription') }}</dt>
+                        <dt class="text-xs text-muted uppercase tracking-wide mb-1">{{ t('backend.ecommerce.listings.marketing_description') }}</dt>
                         <dd class="text-secondary text-sm whitespace-pre-wrap break-words">{{ listing.marketingDescription }}</dd>
                     </div>
                     <div v-if="listing.seoTitle || listing.seoDescription" class="sm:col-span-2 pt-3 border-t border-line">
@@ -142,11 +142,11 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <div class="aspect-square bg-surface-2">
                     <AppImage :src="listing.displayImage.url" :alt="listing.displayImage.alt ?? listing.displayTitle" object-fit="cover" />
                 </div>
-                <p v-if="listing.featuredImage" class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('backend.ecommerce.listings.featuredImageHint') }}</p>
-                <p v-else class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('backend.ecommerce.listings.productImageHint') }}</p>
+                <p v-if="listing.featuredImage" class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('backend.ecommerce.listings.featured_image_hint') }}</p>
+                <p v-else class="text-xs text-muted px-3 py-2 border-t border-line">{{ t('backend.ecommerce.listings.product_image_hint') }}</p>
             </div>
 
-            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('backend.ecommerce.listings.linkedProduct') }}</h3>
+            <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">{{ t('backend.ecommerce.listings.linked_product') }}</h3>
             <div class="bg-surface border border-line/60 rounded-lg p-4 space-y-2">
                 <p class="font-medium text-primary">{{ listing.product.name }}</p>
                 <p class="text-xs font-mono text-muted">{{ listing.product.reference }}</p>
@@ -166,17 +166,17 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
         >
             <form class="space-y-4" v-on:submit.prevent="submitEdit">
                 <AppInput v-model="editForm.slug" :label="t('backend.ecommerce.listings.slug')" :error="editErrors.slug" required />
-                <AppInput v-model="editForm.marketingTitle" :label="t('backend.ecommerce.listings.marketingTitle')" />
+                <AppInput v-model="editForm.marketingTitle" :label="t('backend.ecommerce.listings.marketing_title')" />
                 <AppTextarea v-model="editForm.marketingDescription" :rows="4" />
                 <AppImagePickerField
                     v-model="featuredImageValue"
-                    :label="t('backend.ecommerce.listings.featuredImage')"
-                    :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
+                    :label="t('backend.ecommerce.listings.featured_image')"
+                    :hint="t('backend.ecommerce.listings.featured_image_override_hint')"
                 />
-                <AppInput v-model="editForm.seoTitle" :label="t('backend.ecommerce.listings.seoTitle')" />
-                <AppTextarea v-model="editForm.seoDescription" :rows="2" :placeholder="t('backend.ecommerce.listings.seoDescription')" />
+                <AppInput v-model="editForm.seoTitle" :label="t('backend.ecommerce.listings.seo_title')" />
+                <AppTextarea v-model="editForm.seoDescription" :rows="2" :placeholder="t('backend.ecommerce.listings.seo_description')" />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visible_on_shop') }}</span>
                     <AppToggle v-model="editForm.isVisibleOnShop" />
                 </div>
             </form>
@@ -189,8 +189,8 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
         </AppModal>
 
         <AppModal :show="showDelete" max-width="sm" :closeable="false" v-on:close="showDelete = false">
-            <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: listing.displayTitle }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.delete_confirm', { name: listing.displayTitle }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

@@ -40,7 +40,7 @@ const {
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.categories.searchPlaceholder')" v-on:search="onSearch" />
+            <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.categories.search_placeholder')" v-on:search="onSearch" />
             <template #actions>
                 <AppButton
                     v-if="can('ged.categories.create')"
@@ -112,11 +112,11 @@ const {
                 <AppInput
                     v-model="newCategory.name"
                     :label="t('backend.ged.categories.name')"
-                    :placeholder="t('backend.ged.categories.namePlaceholder')"
+                    :placeholder="t('backend.ged.categories.name_placeholder')"
                     :error="createErrors.name"
                     required
                 />
-                <AppInput v-model="newCategory.description" :label="t('backend.ged.categories.description')" :placeholder="t('backend.ged.categories.descriptionPlaceholder')" />
+                <AppInput v-model="newCategory.description" :label="t('backend.ged.categories.description')" :placeholder="t('backend.ged.categories.description_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -137,11 +137,11 @@ const {
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.ged.categories.name')"
-                    :placeholder="t('backend.ged.categories.namePlaceholder')"
+                    :placeholder="t('backend.ged.categories.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
-                <AppInput v-model="editForm.description" :label="t('backend.ged.categories.description')" :placeholder="t('backend.ged.categories.descriptionPlaceholder')" />
+                <AppInput v-model="editForm.description" :label="t('backend.ged.categories.description')" :placeholder="t('backend.ged.categories.description_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -159,8 +159,8 @@ const {
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.ged.categories.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
-            <p class="text-sm text-secondary">{{ t("backend.ged.categories.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.categories.delete_confirm", { name: pendingDelete?.name ?? "" }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.categories.delete_warning") }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

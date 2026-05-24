@@ -12,7 +12,7 @@ final class TranslationConsistencyTest extends TestCase
 {
     private const PLACEHOLDER_EXCEPTIONS = [
         // ICU plural syntax — accolades imbriquées contiennent du texte traduit, pas des placeholders
-        'photo.galleries.usage.itemCount',
+        'photo.galleries.usage.item_count',
     ];
 
     private const PARITY_EXCEPTIONS = [

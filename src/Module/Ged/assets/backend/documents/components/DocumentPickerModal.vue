@@ -124,7 +124,7 @@ function isSelected(doc) {
         <div class="space-y-4">
             <AppSearchInput
                 v-model="search"
-                :placeholder="t('backend.ged.documents.searchPlaceholder')"
+                :placeholder="t('backend.ged.documents.search_placeholder')"
                 v-on:search="onSearch"
             />
 

@@ -133,7 +133,7 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
                     <AppSearchInput
                         v-if="groupName === 'sequences'"
                         v-model="sequenceSearch"
-                        :placeholder="t('backend.settings.sequenceSearch')"
+                        :placeholder="t('backend.settings.sequence_search')"
                     />
 
                     <div
@@ -171,12 +171,12 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
                             </div>
                             <div v-else class="flex items-center gap-1.5 text-sm text-muted italic mb-2">
                                 <FileText class="w-3.5 h-3.5 opacity-60" :stroke-width="1.5" />
-                                {{ t("backend.settings.noPageSelected") }}
+                                {{ t("backend.settings.no_page_selected") }}
                             </div>
                             <div class="relative">
                                 <AppInput
                                     type="text"
-                                    :placeholder="t('backend.settings.searchPost')"
+                                    :placeholder="t('backend.settings.search_post')"
                                     :model-value="postPickerSearch[parameter.key] ?? ''"
                                     v-on:update:model-value="postPickerSearch[parameter.key] = $event; searchPosts(parameter.key, $event)"
                                     v-on:blur="onPostPickerBlur(parameter.key)"
@@ -199,7 +199,7 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
                                 </div>
                             </div>
                             <div class="mt-2 flex items-center gap-2">
-                                <span class="text-xs text-muted shrink-0">{{ t("backend.settings.orId") }}</span>
+                                <span class="text-xs text-muted shrink-0">{{ t("backend.settings.or_id") }}</span>
                                 <div class="w-28">
                                     <AppInput
                                         type="number"
@@ -214,7 +214,7 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
                         <template v-else-if="parameter.type === ParameterType.Media">
                             <AppImagePickerField
                                 :label="parameter.label"
-                                :hint="parameter.description ? parameter.description + ' — ' + t('backend.settings.mediaSquareHint') : t('backend.settings.mediaSquareHint')"
+                                :hint="parameter.description ? parameter.description + ' — ' + t('backend.settings.media_square_hint') : t('backend.settings.media_square_hint')"
                                 :model-value="mediaState[parameter.key]"
                                 :size="96"
                                 v-on:update:model-value="onMediaChange(parameter, $event)"

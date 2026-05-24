@@ -58,7 +58,7 @@ class ProjectTaskManager implements ProjectTaskManagerInterface
                 $assignee,
                 'project.task.assigned',
                 $task->getTitle(),
-                $this->translator->trans('backend.notifications.taskAssigned', [], null, $assignee->getLocale()->value),
+                $this->translator->trans('backend.notifications.task_assigned', [], null, $assignee->getLocale()->value),
                 null,
                 ['projectId' => $project->getId(), 'taskId' => $task->getId()],
             );
@@ -82,7 +82,7 @@ class ProjectTaskManager implements ProjectTaskManagerInterface
                 $newAssignee,
                 'project.task.assigned',
                 $task->getTitle(),
-                $this->translator->trans('backend.notifications.taskAssigned', [], null, $newAssignee->getLocale()->value),
+                $this->translator->trans('backend.notifications.task_assigned', [], null, $newAssignee->getLocale()->value),
                 null,
                 ['projectId' => $task->getProject()->getId(), 'taskId' => $task->getId()],
             );

@@ -19,7 +19,7 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
                       {
                           status: OrderStatus.Shipped,
                           label: t(
-                              "backend.ecommerce.orders.actions.markShipped",
+                              "backend.ecommerce.orders.actions.mark_shipped",
                           ),
                           icon: Truck,
                           color: "accent",
@@ -29,7 +29,7 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
                       {
                           status: OrderStatus.Delivered,
                           label: t(
-                              "backend.ecommerce.orders.actions.markFulfilled",
+                              "backend.ecommerce.orders.actions.mark_fulfilled",
                           ),
                           icon: PackageCheck,
                           color: "emerald",
@@ -38,7 +38,7 @@ export function useOrderStatusManagement(updateStatusPath, order, activity) {
             [OrderStatus.Shipped]: [
                 {
                     status: OrderStatus.Delivered,
-                    label: t("backend.ecommerce.orders.actions.markDelivered"),
+                    label: t("backend.ecommerce.orders.actions.mark_delivered"),
                     icon: PackageCheck,
                     color: "emerald",
                 },

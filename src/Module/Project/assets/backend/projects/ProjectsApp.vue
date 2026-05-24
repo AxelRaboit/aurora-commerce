@@ -267,7 +267,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.projects.searchPlaceholder')"
+                :placeholder="t('backend.projects.search_placeholder')"
                 v-on:search="onSearch"
             />
             <template #actions>
@@ -291,7 +291,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 :active="statusFilter === ''"
                 v-on:click="setStatusFilter('')"
             >
-                {{ t('backend.projects.statusFilter.all') }}
+                {{ t('backend.projects.status_filter.all') }}
             </AppTab>
             <AppTab
                 v-for="opt in statusOptions"
@@ -344,7 +344,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <div class="flex items-center gap-2 flex-wrap">
                         <AppButton variant="ghost" size="sm" v-on:click="closeDetail">
                             <ArrowLeft class="w-4 h-4" :stroke-width="2" />
-                            {{ t('backend.projects.backToList') }}
+                            {{ t('backend.projects.back_to_list') }}
                         </AppButton>
                         <h2 class="text-lg font-semibold text-primary truncate">{{ activeProject.title }}</h2>
                         <AppBadge :color="PROJECT_STATUS_TONE[activeProject.status] ?? 'slate'">
@@ -355,10 +355,10 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <div class="flex flex-wrap gap-3 mt-2 text-xs text-muted">
                         <span v-if="activeProject.startDate">{{ t('backend.projects.fields.start') }} {{ activeProject.startDate }}</span>
                         <span v-if="activeProject.endDate">{{ t('backend.projects.fields.end') }} {{ activeProject.endDate }}</span>
-                        <span v-if="activeProject.responsibleUser">{{ t('backend.projects.fields.responsibleLabel') }} {{ activeProject.responsibleUser.name }}</span>
-                        <span v-if="activeProject.crmContacts && activeProject.crmContacts.length">{{ t('backend.projects.fields.contactsLabel') }} {{ activeProject.crmContacts.map((contact) => contact.name).join(', ') }}</span>
-                        <span v-if="activeProject.crmCompany">{{ t('backend.projects.fields.companyLabel') }} {{ activeProject.crmCompany.name }}</span>
-                        <span v-if="activeProject.crmDeal">{{ t('backend.projects.fields.dealLabel') }} {{ activeProject.crmDeal.name }}</span>
+                        <span v-if="activeProject.responsibleUser">{{ t('backend.projects.fields.responsible_label') }} {{ activeProject.responsibleUser.name }}</span>
+                        <span v-if="activeProject.crmContacts && activeProject.crmContacts.length">{{ t('backend.projects.fields.contacts_label') }} {{ activeProject.crmContacts.map((contact) => contact.name).join(', ') }}</span>
+                        <span v-if="activeProject.crmCompany">{{ t('backend.projects.fields.company_label') }} {{ activeProject.crmCompany.name }}</span>
+                        <span v-if="activeProject.crmDeal">{{ t('backend.projects.fields.deal_label') }} {{ activeProject.crmDeal.name }}</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-0.5 shrink-0">
@@ -374,7 +374,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <AppIconButton
                         v-if="activeProject.status === 'completed' && can('project.projects.edit') && generateInvoicePath"
                         color="emerald"
-                        :title="t('backend.projects.generateInvoice')"
+                        :title="t('backend.projects.generate_invoice')"
                         v-on:click="generateInvoice"
                     >
                         <FileText class="w-4 h-4" :stroke-width="2" />
@@ -447,13 +447,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     v-on:click="savedViews.showSaveModal.value = true"
                 >
                     <Plus class="w-3 h-3" :stroke-width="2" />
-                    {{ t('backend.projects.savedViews.save') }}
+                    {{ t('backend.projects.saved_views.save') }}
                 </button>
             </div>
 
             <!-- Kanban columns with drag&drop — dynamic per project -->
             <div class="flex items-center justify-end gap-1 mb-1">
-                <span class="text-xs text-muted mr-1">{{ t('backend.projects.columnWidth') }}</span>
+                <span class="text-xs text-muted mr-1">{{ t('backend.projects.column_width') }}</span>
                 <button
                     v-for="(width, index) in COLUMN_WIDTHS"
                     :key="width"
@@ -565,7 +565,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                                     <AppBadge v-if="task.sprintName" color="violet" size="sm">
                                         {{ task.sprintName }}
                                     </AppBadge>
-                                    <span v-if="task.storyPoints" class="text-xs text-accent-400 font-medium">{{ task.storyPoints }} {{ t('backend.projects.task.fields.storyPointsShort') }}</span>
+                                    <span v-if="task.storyPoints" class="text-xs text-accent-400 font-medium">{{ task.storyPoints }} {{ t('backend.projects.task.fields.story_points_short') }}</span>
                                     <span v-if="task.itemsTotal" class="text-xs text-muted">☑ {{ task.itemsDone }}/{{ task.itemsTotal }}</span>
                                     <span v-if="task.assignee" class="text-xs text-muted">{{ task.assignee.name }}</span>
                                     <span v-if="task.dueDate" class="text-xs text-muted">{{ task.dueDate }}</span>
@@ -616,8 +616,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppDatePicker v-model="newProject.startDate" :label="t('backend.projects.fields.startDate')" />
-                    <AppDatePicker v-model="newProject.endDate" :label="t('backend.projects.fields.endDate')" />
+                    <AppDatePicker v-model="newProject.startDate" :label="t('backend.projects.fields.start_date')" />
+                    <AppDatePicker v-model="newProject.endDate" :label="t('backend.projects.fields.end_date')" />
                 </div>
                 <AppMultiselect
                     v-model="newProject.responsibleUserId"
@@ -691,8 +691,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppDatePicker v-model="editProjectForm.startDate" :label="t('backend.projects.fields.startDate')" />
-                    <AppDatePicker v-model="editProjectForm.endDate" :label="t('backend.projects.fields.endDate')" />
+                    <AppDatePicker v-model="editProjectForm.startDate" :label="t('backend.projects.fields.start_date')" />
+                    <AppDatePicker v-model="editProjectForm.endDate" :label="t('backend.projects.fields.end_date')" />
                 </div>
                 <AppMultiselect
                     v-model="editProjectForm.responsibleUserId"
@@ -753,14 +753,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <AppInput
                     v-model="newTask.title"
                     :label="t('backend.projects.task.fields.title')"
-                    :placeholder="t('backend.projects.placeholders.taskTitle')"
+                    :placeholder="t('backend.projects.placeholders.task_title')"
                     :required="true"
                     :error="createTaskErrors.title"
                 />
                 <AppTextarea
                     v-model="newTask.description"
                     :label="t('backend.projects.task.fields.description')"
-                    :placeholder="t('backend.projects.placeholders.taskDescription')"
+                    :placeholder="t('backend.projects.placeholders.task_description')"
                     :rows="3"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -787,13 +787,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :allow-empty="true"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppDatePicker v-model="newTask.dueDate" :label="t('backend.projects.task.fields.dueDate')" />
+                    <AppDatePicker v-model="newTask.dueDate" :label="t('backend.projects.task.fields.due_date')" />
                     <AppInput
                         v-model.number="newTask.storyPoints"
                         type="number"
                         min="0"
-                        :label="t('backend.projects.task.fields.storyPoints')"
-                        :placeholder="t('backend.projects.placeholders.storyPoints')"
+                        :label="t('backend.projects.task.fields.story_points')"
+                        :placeholder="t('backend.projects.placeholders.story_points')"
                         :error="createTaskErrors.storyPoints"
                     />
                 </div>
@@ -801,8 +801,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     v-model.number="newTask.estimateMinutes"
                     type="number"
                     min="0"
-                    :label="t('backend.projects.task.fields.estimateMinutes')"
-                    :placeholder="t('backend.projects.placeholders.estimateMinutes')"
+                    :label="t('backend.projects.task.fields.estimate_minutes')"
+                    :placeholder="t('backend.projects.placeholders.estimate_minutes')"
                     :error="createTaskErrors.estimateMinutes"
                 />
                 <AppSelect
@@ -837,14 +837,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <AppInput
                     v-model="editTaskForm.title"
                     :label="t('backend.projects.task.fields.title')"
-                    :placeholder="t('backend.projects.placeholders.taskTitle')"
+                    :placeholder="t('backend.projects.placeholders.task_title')"
                     :required="true"
                     :error="editTaskErrors.title"
                 />
                 <AppTextarea
                     v-model="editTaskForm.description"
                     :label="t('backend.projects.task.fields.description')"
-                    :placeholder="t('backend.projects.placeholders.taskDescription')"
+                    :placeholder="t('backend.projects.placeholders.task_description')"
                     :rows="3"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -871,13 +871,13 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     :allow-empty="true"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <AppDatePicker v-model="editTaskForm.dueDate" :label="t('backend.projects.task.fields.dueDate')" />
+                    <AppDatePicker v-model="editTaskForm.dueDate" :label="t('backend.projects.task.fields.due_date')" />
                     <AppInput
                         v-model.number="editTaskForm.storyPoints"
                         type="number"
                         min="0"
-                        :label="t('backend.projects.task.fields.storyPoints')"
-                        :placeholder="t('backend.projects.placeholders.storyPoints')"
+                        :label="t('backend.projects.task.fields.story_points')"
+                        :placeholder="t('backend.projects.placeholders.story_points')"
                         :error="editTaskErrors.storyPoints"
                     />
                 </div>
@@ -885,8 +885,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     v-model.number="editTaskForm.estimateMinutes"
                     type="number"
                     min="0"
-                    :label="t('backend.projects.task.fields.estimateMinutes')"
-                    :placeholder="t('backend.projects.placeholders.estimateMinutes')"
+                    :label="t('backend.projects.task.fields.estimate_minutes')"
+                    :placeholder="t('backend.projects.placeholders.estimate_minutes')"
                     :error="editTaskErrors.estimateMinutes"
                 />
                 <AppSelect
@@ -929,12 +929,12 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <div class="space-y-2">
                         <AppInput
                             v-model="taskExtras.newItemLabel.value"
-                            :placeholder="t('backend.projects.task.fields.addItem')"
+                            :placeholder="t('backend.projects.task.fields.add_item')"
                             :error="taskExtras.itemErrors.value.label"
                             v-on:keydown.enter.prevent="taskExtras.addItem"
                         />
                         <AppButton variant="ghost" size="sm" class="w-full" v-on:click="taskExtras.addItem">
-                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.fields.addItem') }}
+                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.fields.add_item') }}
                         </AppButton>
                     </div>
                 </div>
@@ -943,7 +943,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <div v-if="editingTask" class="border-t border-line/40 pt-4 space-y-2">
                     <div class="flex items-center gap-2">
                         <Clock class="w-4 h-4 text-secondary" :stroke-width="2" />
-                        <h4 class="text-sm font-semibold text-primary">{{ t('backend.projects.task.fields.loggedMinutes') }}</h4>
+                        <h4 class="text-sm font-semibold text-primary">{{ t('backend.projects.task.fields.logged_minutes') }}</h4>
                         <span class="text-xs text-muted">
                             {{ Math.floor((editingTask.loggedMinutes ?? 0) / 60) }}h {{ (editingTask.loggedMinutes ?? 0) % 60 }}m
                         </span>
@@ -963,12 +963,12 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                             v-model.number="taskExtras.newTimeEntry.value.minutes"
                             type="number"
                             min="1"
-                            :placeholder="t('backend.projects.task.fields.estimateMinutes')"
+                            :placeholder="t('backend.projects.task.fields.estimate_minutes')"
                             :error="taskExtras.timeErrors.value.minutes"
                         />
                         <AppInput
                             v-model="taskExtras.newTimeEntry.value.note"
-                            :placeholder="t('backend.projects.task.timeEntryNote')"
+                            :placeholder="t('backend.projects.task.time_entry_note')"
                         />
                         <AppButton
                             variant="ghost"
@@ -977,7 +977,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                             :loading="taskExtras.timeLoading.value"
                             v-on:click="taskExtras.logTime"
                         >
-                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.fields.loggedMinutes') }}
+                            <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.fields.logged_minutes') }}
                         </AppButton>
                     </div>
                 </div>
@@ -1005,9 +1005,9 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                         class="w-full"
                         v-on:click="showAttachmentPicker = true"
                     >
-                        <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.attachmentsAdd') }}
+                        <Plus class="w-3.5 h-3.5" :stroke-width="2" />{{ t('backend.projects.task.attachments_add') }}
                     </AppButton>
-                    <p class="text-xs text-muted italic">{{ t('backend.projects.task.attachmentsHint') }}</p>
+                    <p class="text-xs text-muted italic">{{ t('backend.projects.task.attachments_hint') }}</p>
                 </div>
 
                 <!-- ── Comments ─────────────────────────────────────── -->
@@ -1037,7 +1037,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                         <AppTextarea
                             v-model="taskExtras.newCommentContent.value"
                             :rows="2"
-                            :placeholder="t('backend.projects.task.commentPlaceholder')"
+                            :placeholder="t('backend.projects.task.comment_placeholder')"
                             :error="taskExtras.commentErrors.value.content"
                         />
                         <AppButton
@@ -1087,7 +1087,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                         </div>
                         <div v-if="editingTask.storyPoints" class="flex items-center gap-1.5 text-muted">
                             <Bookmark class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
-                            <span class="text-primary">{{ editingTask.storyPoints }} {{ t('backend.projects.task.fields.storyPointsShort') }}</span>
+                            <span class="text-primary">{{ editingTask.storyPoints }} {{ t('backend.projects.task.fields.story_points_short') }}</span>
                         </div>
                         <div v-if="editingTask.estimateMinutes" class="flex items-center gap-1.5 text-muted">
                             <Clock class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
@@ -1123,7 +1123,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <div v-if="editingTask.timeEntries?.length" class="border-t border-line/40 pt-4 space-y-2">
                         <div class="flex items-center gap-2">
                             <Clock class="w-4 h-4 text-secondary" :stroke-width="2" />
-                            <h4 class="text-sm font-semibold text-primary">{{ t('backend.projects.task.fields.loggedMinutes') }}</h4>
+                            <h4 class="text-sm font-semibold text-primary">{{ t('backend.projects.task.fields.logged_minutes') }}</h4>
                             <span class="text-xs text-muted">{{ Math.floor((editingTask.loggedMinutes ?? 0) / 60) }}h {{ (editingTask.loggedMinutes ?? 0) % 60 }}m</span>
                         </div>
                         <ul class="space-y-1">
@@ -1166,14 +1166,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                             <p class="text-sm text-primary mt-1 whitespace-pre-wrap">{{ comment.content }}</p>
                         </li>
                         <li v-if="!editingTask.comments?.length" class="text-xs text-muted text-center py-4">
-                            {{ t('backend.projects.task.commentPlaceholder') }}
+                            {{ t('backend.projects.task.comment_placeholder') }}
                         </li>
                     </ul>
                     <div class="space-y-2 shrink-0 border-t border-line/40 pt-3">
                         <AppTextarea
                             v-model="taskExtras.newCommentContent.value"
                             :rows="4"
-                            :placeholder="t('backend.projects.task.commentPlaceholder')"
+                            :placeholder="t('backend.projects.task.comment_placeholder')"
                             :error="taskExtras.commentErrors.value.content"
                         />
                         <AppButton
@@ -1203,8 +1203,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             :icon="Trash2"
             v-on:close="confirmDeleteProject(null)"
         >
-            <p class="text-sm text-primary">{{ t('backend.projects.deleteConfirm', { name: pendingDeleteProject?.title ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.projects.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.projects.delete_confirm', { name: pendingDeleteProject?.title ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.projects.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="confirmDeleteProject(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -1215,8 +1215,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
 
         <!-- Delete task confirm -->
         <AppModal :show="!!pendingDeleteTask" max-width="sm" v-on:close="confirmDeleteTask(null)">
-            <p class="text-sm text-primary">{{ t('backend.projects.task.deleteConfirm', { name: pendingDeleteTask?.title ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.projects.task.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.projects.task.delete_confirm', { name: pendingDeleteTask?.title ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.projects.task.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="confirmDeleteTask(null)"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -1238,7 +1238,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <AppInput
                     v-model="newColumn.label"
                     :label="t('backend.projects.task.fields.column')"
-                    :placeholder="t('backend.projects.columns.addPlaceholder')"
+                    :placeholder="t('backend.projects.columns.add_placeholder')"
                     :required="true"
                     :error="createColumnErrors.label"
                 />
@@ -1264,7 +1264,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                 <AppInput
                     v-model="renameForm.label"
                     :label="t('backend.projects.task.fields.column')"
-                    :placeholder="t('backend.projects.columns.addPlaceholder')"
+                    :placeholder="t('backend.projects.columns.add_placeholder')"
                     :required="true"
                     :error="renameErrors.label"
                 />
@@ -1279,8 +1279,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
 
         <!-- Delete column confirm -->
         <AppModal :show="!!pendingDeleteColumn" max-width="sm" v-on:close="pendingDeleteColumn = null">
-            <p class="text-sm text-primary">{{ t('backend.projects.columns.deleteConfirm', { label: pendingDeleteColumn?.label ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.projects.columns.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.projects.columns.delete_confirm', { label: pendingDeleteColumn?.label ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.projects.columns.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDeleteColumn = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -1321,12 +1321,12 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     </p>
                     <AppInput
                         v-model="labelsManage.labelForm.value.name"
-                        :label="t('backend.projects.labels.nameField')"
-                        :placeholder="t('backend.projects.labels.namePlaceholder')"
+                        :label="t('backend.projects.labels.name_field')"
+                        :placeholder="t('backend.projects.labels.name_placeholder')"
                         :error="labelsManage.labelErrors.value.name ?? ''"
                     />
                     <div>
-                        <p class="text-xs text-secondary mb-1">{{ t('backend.projects.labels.colorField') }}</p>
+                        <p class="text-xs text-secondary mb-1">{{ t('backend.projects.labels.color_field') }}</p>
                         <div class="flex flex-wrap gap-2">
                             <button
                                 v-for="color in LABEL_COLORS"
@@ -1404,14 +1404,14 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     <p class="text-xs font-semibold text-secondary uppercase tracking-wide">
                         {{ sprintsManage.editingSprint.value ? t('backend.projects.sprints.edit') : t('backend.projects.sprints.add') }}
                     </p>
-                    <AppInput v-model="sprintsManage.sprintForm.value.name" :label="t('backend.projects.sprints.nameField')" :placeholder="t('backend.projects.sprints.namePlaceholder')" :error="sprintsManage.sprintErrors.value.name ?? ''" />
+                    <AppInput v-model="sprintsManage.sprintForm.value.name" :label="t('backend.projects.sprints.name_field')" :placeholder="t('backend.projects.sprints.name_placeholder')" :error="sprintsManage.sprintErrors.value.name ?? ''" />
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <AppDatePicker v-model="sprintsManage.sprintForm.value.startDate" :label="t('backend.projects.fields.startDate')" />
-                        <AppDatePicker v-model="sprintsManage.sprintForm.value.endDate" :label="t('backend.projects.fields.endDate')" />
+                        <AppDatePicker v-model="sprintsManage.sprintForm.value.startDate" :label="t('backend.projects.fields.start_date')" />
+                        <AppDatePicker v-model="sprintsManage.sprintForm.value.endDate" :label="t('backend.projects.fields.end_date')" />
                     </div>
                     <AppCheckbox
                         v-model="sprintsManage.sprintForm.value.isActive"
-                        :label="t('backend.projects.sprints.activeField')"
+                        :label="t('backend.projects.sprints.active_field')"
                     />
                 </div>
             </div>
@@ -1451,7 +1451,7 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
         <AppModal
             :show="savedViews.showSaveModal.value"
             max-width="sm"
-            :title="t('backend.projects.savedViews.save')"
+            :title="t('backend.projects.saved_views.save')"
             :icon="Bookmark"
             :closeable="false"
             v-on:close="savedViews.showSaveModal.value = false"
@@ -1459,8 +1459,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <div class="space-y-4">
                 <AppInput
                     v-model="savedViews.newViewName.value"
-                    :label="t('backend.projects.savedViews.nameField')"
-                    :placeholder="t('backend.projects.savedViews.namePlaceholder')"
+                    :label="t('backend.projects.savedViews.name_field')"
+                    :placeholder="t('backend.projects.savedViews.name_placeholder')"
                     :error="savedViews.viewErrors.value.name"
                 />
             </div>

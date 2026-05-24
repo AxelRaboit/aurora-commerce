@@ -84,7 +84,7 @@ export function useModules(
             ? parameterByKey[parameter.requires]
             : null;
         return parent
-            ? t("backend.settings.cascadeLocked", { parent: parent.label })
+            ? t("backend.settings.cascade_locked", { parent: parent.label })
             : "";
     }
 
@@ -138,7 +138,7 @@ export function useModules(
                     if (result.error === SettingErrorCode.CascadeViolation) {
                         const parent = parameterByKey[result.parentKey];
                         toast.error(
-                            t("backend.settings.cascadeLocked", {
+                            t("backend.settings.cascade_locked", {
                                 parent: parent?.label ?? result.parentKey,
                             }),
                         );
@@ -178,7 +178,9 @@ export function useModules(
         verifying.value = false;
 
         if (!result) {
-            passwordError.value = t("backend.settings.confirmPasswordInvalid");
+            passwordError.value = t(
+                "backend.settings.confirm_password_invalid",
+            );
             return;
         }
 

@@ -46,7 +46,7 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
         <AppListToolbar>
             <AppSearchInput
                 v-model="folderSearch"
-                :placeholder="t('backend.ged.folders.searchPlaceholder')"
+                :placeholder="t('backend.ged.folders.search_placeholder')"
             />
             <template #actions>
                 <AppButton
@@ -140,7 +140,7 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
                 <AppInput
                     v-model="newFolder.name"
                     :label="t('backend.ged.folders.name')"
-                    :placeholder="t('backend.ged.folders.namePlaceholder')"
+                    :placeholder="t('backend.ged.folders.name_placeholder')"
                     :error="createErrors.name"
                     required
                 />
@@ -170,7 +170,7 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.ged.folders.name')"
-                    :placeholder="t('backend.ged.folders.namePlaceholder')"
+                    :placeholder="t('backend.ged.folders.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
@@ -197,8 +197,8 @@ const { draggingId, dropTarget, onDragStart, onDragOver, onDragLeave, onDragEnd,
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.ged.folders.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
-            <p class="text-sm text-secondary">{{ t("backend.ged.folders.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.folders.delete_confirm", { name: pendingDelete?.name ?? "" }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.folders.delete_warning") }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

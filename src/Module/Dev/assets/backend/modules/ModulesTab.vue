@@ -38,13 +38,13 @@ onMounted(() => {
 
 <template>
     <div class="space-y-3">
-        <p class="text-sm text-secondary">{{ t("backend.settings.modulesIntro") }}</p>
+        <p class="text-sm text-secondary">{{ t("backend.settings.modules_intro") }}</p>
         <AppSearchInput
             v-model="modules.searchInput.value"
-            :placeholder="t('backend.settings.modulesSearchPlaceholder')"
+            :placeholder="t('backend.settings.modules_search_placeholder')"
         />
 
-        <AppNoData v-if="!modules.filteredParameters.value.length" :message="t('backend.settings.modulesEmpty')" />
+        <AppNoData v-if="!modules.filteredParameters.value.length" :message="t('backend.settings.modules_empty')" />
 
         <div
             v-for="parameter in modules.filteredParameters.value"
@@ -126,15 +126,15 @@ onMounted(() => {
 
         <AppModal
             :show="modules.showPasswordModal.value"
-            :title="t('backend.settings.confirmPassword')"
+            :title="t('backend.settings.confirm_password')"
             max-width="sm"
             v-on:close="modules.showPasswordModal.value = false"
         >
-            <p class="text-sm text-muted">{{ t("backend.settings.confirmPasswordDescription") }}</p>
+            <p class="text-sm text-muted">{{ t("backend.settings.confirm_password_description") }}</p>
             <AppInput
                 v-model="modules.password.value"
                 type="password"
-                :placeholder="t('backend.settings.confirmPasswordPlaceholder')"
+                :placeholder="t('backend.settings.confirm_password_placeholder')"
                 :error="modules.passwordError.value"
                 v-on:keydown.enter="modules.confirmPassword"
             />
@@ -144,7 +144,7 @@ onMounted(() => {
                         {{ t("shared.common.cancel") }}
                     </AppButton>
                     <AppButton variant="primary" size="md" :loading="modules.verifying.value" v-on:click="modules.confirmPassword">
-                        {{ t("backend.settings.confirmPasswordConfirm") }}
+                        {{ t("backend.settings.confirm_password_confirm") }}
                     </AppButton>
                 </AppModalFooter>
             </template>

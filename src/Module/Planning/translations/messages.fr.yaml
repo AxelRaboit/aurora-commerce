@@ -41,33 +41,33 @@ backend:
     sidemenu:
       users: Utilisateurs
       agencies: Agences
-      selectAll: Tout sélectionner
-      deselectAll: Tout désélectionner
+      select_all: Tout sélectionner
+      deselect_all: Tout désélectionner
       clear: Réinitialiser
-      noUsers: Aucun utilisateur
-      noAgencies: Aucune agence
-      noResults: Aucun résultat
-      searchUsersPlaceholder: Rechercher un utilisateur…
-      searchAgenciesPlaceholder: Rechercher une agence…
-    viewMode:
+      no_users: Aucun utilisateur
+      no_agencies: Aucune agence
+      no_results: Aucun résultat
+      search_users_placeholder: Rechercher un utilisateur…
+      search_agencies_placeholder: Rechercher une agence…
+    view_mode:
       calendar: Calendrier
       resource: Ressources
-    resourceView:
+    resource_view:
       user: Utilisateur
-      userCount: '{n} utilisateur(s)'
-      noUsers: Aucun utilisateur sélectionné. Coche un utilisateur dans la sidemenu à gauche.
+      user_count: '{n} utilisateur(s)'
+      no_users: Aucun utilisateur sélectionné. Coche un utilisateur dans la sidemenu à gauche.
       unassigned: Sans participant
       previous: Semaine précédente
       next: Semaine suivante
       today: Aujourd'hui
     fields:
       name: Nom
-      namePlaceholder: ex. Planning équipe support
+      name_placeholder: ex. Planning équipe support
       description: Description
-      descriptionPlaceholder: Notes ou objectif du planning
+      description_placeholder: Notes ou objectif du planning
       color: Couleur
       timezone: Fuseau horaire
-      timezonePlaceholder: Europe/Paris
+      timezone_placeholder: Europe/Paris
       visibility: Visibilité
       owner: Propriétaire
       agency: Agence
@@ -92,19 +92,19 @@ backend:
     count: '{n} événement(s)'
     fields:
       title: Titre
-      titlePlaceholder: ex. Réunion équipe, RDV client…
+      title_placeholder: ex. Réunion équipe, RDV client…
       description: Description
-      descriptionPlaceholder: Détails de l'événement
+      description_placeholder: Détails de l'événement
       location: Lieu
-      locationPlaceholder: Salle, adresse ou lien visio
-      startAt: Début
-      startAtPlaceholder: Choisir la date et l'heure
-      endAt: Fin
-      endAtPlaceholder: Choisir la date et l'heure
-      allDay: Toute la journée
+      location_placeholder: Salle, adresse ou lien visio
+      start_at: Début
+      start_at_placeholder: Choisir la date et l'heure
+      end_at: Fin
+      end_at_placeholder: Choisir la date et l'heure
+      all_day: Toute la journée
       status: Statut
       attendees: Participants
-      attendeesPlaceholder: Choisir un ou plusieurs participants
+      attendees_placeholder: Choisir un ou plusieurs participants
     status:
       tentative: Provisoire
       confirmed: Confirmé

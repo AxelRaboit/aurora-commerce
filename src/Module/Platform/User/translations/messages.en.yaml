@@ -5,31 +5,31 @@ backend:
     email: Email
     created: Created
     actions: Actions
-    searchPlaceholder: Search a user…
-    allRoles: All roles
+    search_placeholder: Search a user…
+    all_roles: All roles
     empty: No users found
     you: (You)
     invite: Invite user
-    sendInvite: Send invite
-    inviteMessage: Message
-    inviteMessagePlaceholder: Add a message...
+    send_invite: Send invite
+    invite_message: Message
+    invite_message_placeholder: Add a message...
     edit_title: 'Edit {name}'
-    deleteConfirm: 'Delete {name}?'
+    delete_confirm: 'Delete {name}?'
     detail:
       type: Type
       locale: Locale
-      createdAt: Created at
-      invitedAt: Invited at
-    roleLabel: Role
+      created_at: Created at
+      invited_at: Invited at
+    role_label: Role
     role:
       user: User
       admin: Administrator
       dev: Developer
-    typeLabel: Type
+    type_label: Type
     type:
       backend: Backend
       frontend: Frontend
-    statusLabel: Status
+    status_label: Status
     status:
       active: Active
       invited: Invited
@@ -54,21 +54,21 @@ backend:
       manager_not_found: The selected manager does not exist.
       manager_cycle: This assignment would create a reporting loop.
       cannot_manage_target: You cannot edit the access of a user with a higher rank.
-    newPassword: New password
-    newPasswordPlaceholder: Leave empty to keep current
+    new_password: New password
+    new_password_placeholder: Leave empty to keep current
     toast:
       created: User created successfully.
       updated: User updated.
       deleted: User deleted.
     add: Add user
-    invitationSent: Invitation sent.
-    invitationResent: Invitation resent.
-    resendInvitation: Resend invitation
+    invitation_sent: Invitation sent.
+    invitation_resent: Invitation resent.
+    resend_invitation: Resend invitation
     enable: Enable
     disable: Disable
     edit: Edit
-    namePlaceholder: John Doe
-    emailPlaceholder: "john@example.com"
+    name_placeholder: John Doe
+    email_placeholder: "john@example.com"
     password: Password
     password_optional: Password (leave empty to keep)
     locale: Language
@@ -76,12 +76,12 @@ backend:
     role_user: User
     grant_dev: Grant Dev role
     revoke_dev: Revoke Dev role
-    grantDevConfirm: 'Grant Dev role to {name}?'
-    revokeDevConfirm: 'Revoke Dev role from {name}?'
+    grant_dev_confirm: 'Grant Dev role to {name}?'
+    revoke_dev_confirm: 'Revoke Dev role from {name}?'
     impersonate: 'Impersonate {name}'
-    impersonateFront: 'View frontend as {name}'
-    disableConfirm: "Disable {name}'s account? They will no longer be able to sign in."
-    enableConfirm: "Re-enable {name}'s account?"
+    impersonate_front: 'View frontend as {name}'
+    disable_confirm: "Disable {name}'s account? They will no longer be able to sign in."
+    enable_confirm: "Re-enable {name}'s account?"
     view: View profile
     manager:
       label: Manager
@@ -114,12 +114,12 @@ backend:
     sent: 'Invitation sent to {email}.'
     description: Send an email invitation to allow someone to join the administration.
     email: Recipient email address
-    emailPlaceholder: "example@domain.com"
+    email_placeholder: "example@domain.com"
     message: Custom message (optional)
-    messagePlaceholder: Add a message to accompany the invitation…
-    credentialsHint: You can include login credentials in the email.
-    credentialEmail: Login email
-    credentialPassword: Password
+    message_placeholder: Add a message to accompany the invitation…
+    credentials_hint: You can include login credentials in the email.
+    credential_email: Login email
+    credential_password: Password
     send: Send invitation
     sending: Sending…
   access_requests:
@@ -139,10 +139,10 @@ backend:
     approve: Approve
     reject: Reject
     purge: Purge
-    approveConfirm: 'Approve the request from {name}? They will receive an email.'
-    rejectConfirm: 'Reject the request from {name}?'
-    purgeConfirm: Delete all approved and rejected requests? This action cannot be undone.
+    approve_confirm: 'Approve the request from {name}? They will receive an email.'
+    reject_confirm: 'Reject the request from {name}?'
+    purge_confirm: Delete all approved and rejected requests? This action cannot be undone.
     approved_toast: Access request approved.
     rejected_toast: Access request rejected.
     purged_toast: Processed requests deleted.
-    searchPlaceholder: 'Search by email, name or message…'
+    search_placeholder: 'Search by email, name or message…'

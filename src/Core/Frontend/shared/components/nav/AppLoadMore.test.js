@@ -43,7 +43,7 @@ describe("AppLoadMore", () => {
             props: { hasMore: true },
             global: { stubs: { AppButton: stubAppButton } },
         });
-        expect(wrapper.find("button").text()).toBe("shared.common.loadMore");
+        expect(wrapper.find("button").text()).toBe("shared.common.load_more");
     });
 
     it("emits load event on click", async () => {

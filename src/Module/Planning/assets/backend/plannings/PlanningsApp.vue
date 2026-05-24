@@ -173,8 +173,8 @@ onMounted(() => {
                     <AppSearchInput
                         v-model="peopleSidemenu.searchQuery.value"
                         :placeholder="peopleSidemenu.mode.value === 'users'
-                            ? t('backend.plannings.sidemenu.searchUsersPlaceholder')
-                            : t('backend.plannings.sidemenu.searchAgenciesPlaceholder')"
+                            ? t('backend.plannings.sidemenu.search_users_placeholder')
+                            : t('backend.plannings.sidemenu.search_agencies_placeholder')"
                     />
 
                     <div class="flex flex-col gap-1.5">
@@ -197,8 +197,8 @@ onMounted(() => {
                                 :stroke-width="2"
                             />
                             {{ peopleSidemenu.allVisibleSelected.value
-                                ? t("backend.plannings.sidemenu.deselectAll")
-                                : t("backend.plannings.sidemenu.selectAll") }}
+                                ? t("backend.plannings.sidemenu.deselect_all")
+                                : t("backend.plannings.sidemenu.select_all") }}
                         </AppButton>
                         <AppButton
                             v-if="peopleSidemenu.hasFilter.value"
@@ -218,8 +218,8 @@ onMounted(() => {
                             class="text-xs text-muted py-3 text-center"
                         >
                             {{ peopleSidemenu.searchQuery.value
-                                ? t("backend.plannings.sidemenu.noResults")
-                                : t("backend.plannings.sidemenu.noUsers") }}
+                                ? t("backend.plannings.sidemenu.no_results")
+                                : t("backend.plannings.sidemenu.no_users") }}
                         </p>
                         <label
                             v-for="user in peopleSidemenu.filteredUsers.value"
@@ -240,8 +240,8 @@ onMounted(() => {
                             class="text-xs text-muted py-3 text-center"
                         >
                             {{ peopleSidemenu.searchQuery.value
-                                ? t("backend.plannings.sidemenu.noResults")
-                                : t("backend.plannings.sidemenu.noAgencies") }}
+                                ? t("backend.plannings.sidemenu.no_results")
+                                : t("backend.plannings.sidemenu.no_agencies") }}
                         </p>
                         <label
                             v-for="agency in peopleSidemenu.filteredAgencies.value"
@@ -293,7 +293,7 @@ onMounted(() => {
                                         v-on:click="resourceMode.viewMode.value = 'calendar'"
                                     >
                                         <LayoutGrid class="w-3.5 h-3.5" :stroke-width="2" />
-                                        {{ t("backend.plannings.viewMode.calendar") }}
+                                        {{ t("backend.plannings.view_mode.calendar") }}
                                     </AppTab>
                                     <AppTab
                                         size="xs"
@@ -302,7 +302,7 @@ onMounted(() => {
                                         v-on:click="resourceMode.viewMode.value = 'resource'"
                                     >
                                         <Rows3 class="w-3.5 h-3.5" :stroke-width="2" />
-                                        {{ t("backend.plannings.viewMode.resource") }}
+                                        {{ t("backend.plannings.view_mode.resource") }}
                                     </AppTab>
                                 </div>
                                 <span class="text-xs text-secondary hidden sm:inline">
@@ -363,14 +363,14 @@ onMounted(() => {
                 <AppInput
                     v-model="planningForm.form.name"
                     :label="t('backend.plannings.fields.name')"
-                    :placeholder="t('backend.plannings.fields.namePlaceholder')"
+                    :placeholder="t('backend.plannings.fields.name_placeholder')"
                     :error="planningForm.errors.name ?? ''"
                     :required="true"
                 />
                 <AppTextarea
                     v-model="planningForm.form.description"
                     :label="t('backend.plannings.fields.description')"
-                    :placeholder="t('backend.plannings.fields.descriptionPlaceholder')"
+                    :placeholder="t('backend.plannings.fields.description_placeholder')"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppColorField
@@ -451,7 +451,7 @@ onMounted(() => {
                 <AppInput
                     v-model="eventForm.editForm.title"
                     :label="t('backend.planning_events.fields.title')"
-                    :placeholder="t('backend.planning_events.fields.titlePlaceholder')"
+                    :placeholder="t('backend.planning_events.fields.title_placeholder')"
                     :error="eventForm.editModal.errors.title ?? ''"
                     :disabled="eventForm.editModal.readOnly"
                     :required="true"
@@ -459,33 +459,33 @@ onMounted(() => {
                 <AppTextarea
                     v-model="eventForm.editForm.description"
                     :label="t('backend.planning_events.fields.description')"
-                    :placeholder="t('backend.planning_events.fields.descriptionPlaceholder')"
+                    :placeholder="t('backend.planning_events.fields.description_placeholder')"
                     :disabled="eventForm.editModal.readOnly"
                 />
                 <AppInput
                     v-model="eventForm.editForm.location"
                     :label="t('backend.planning_events.fields.location')"
-                    :placeholder="t('backend.planning_events.fields.locationPlaceholder')"
+                    :placeholder="t('backend.planning_events.fields.location_placeholder')"
                     :disabled="eventForm.editModal.readOnly"
                 />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppDatePicker
                         v-model="eventForm.editForm.startAt"
-                        :label="t('backend.planning_events.fields.startAt')"
-                        :placeholder="t('backend.planning_events.fields.startAtPlaceholder')"
+                        :label="t('backend.planning_events.fields.start_at')"
+                        :placeholder="t('backend.planning_events.fields.start_at_placeholder')"
                         :error="eventForm.editModal.errors.startAt ?? ''"
                         :enable-time="!eventForm.editForm.allDay"
                     />
                     <AppDatePicker
                         v-model="eventForm.editForm.endAt"
-                        :label="t('backend.planning_events.fields.endAt')"
-                        :placeholder="t('backend.planning_events.fields.endAtPlaceholder')"
+                        :label="t('backend.planning_events.fields.end_at')"
+                        :placeholder="t('backend.planning_events.fields.end_at_placeholder')"
                         :error="eventForm.editModal.errors.endAt ?? ''"
                         :enable-time="!eventForm.editForm.allDay"
                     />
                 </div>
                 <div>
-                    <AppFieldLabel :label="t('backend.planning_events.fields.allDay')" />
+                    <AppFieldLabel :label="t('backend.planning_events.fields.all_day')" />
                     <AppCheckbox
                         v-model="eventForm.editForm.allDay"
                         :disabled="eventForm.editModal.readOnly"
@@ -500,7 +500,7 @@ onMounted(() => {
                 <AppMultiselect
                     v-model="eventForm.editForm.attendeeIds"
                     :label="t('backend.planning_events.fields.attendees')"
-                    :placeholder="t('backend.planning_events.fields.attendeesPlaceholder')"
+                    :placeholder="t('backend.planning_events.fields.attendees_placeholder')"
                     :options="peopleSidemenu.userOptions.value"
                     :multiple="true"
                     :allow-empty="true"

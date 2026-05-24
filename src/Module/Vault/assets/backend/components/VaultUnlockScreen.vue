@@ -39,8 +39,8 @@ function submit() {
                 <AppInput
                     v-model="masterPassword"
                     type="password"
-                    :label="t('vault.unlock.masterPassword')"
-                    :placeholder="t('vault.unlock.masterPasswordPlaceholder')"
+                    :label="t('vault.unlock.master_password')"
+                    :placeholder="t('vault.unlock.master_password_placeholder')"
                     :error="errors.masterPassword"
                     required
                     autofocus

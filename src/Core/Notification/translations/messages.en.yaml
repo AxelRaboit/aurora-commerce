@@ -4,8 +4,8 @@ backend:
     empty: No notifications.
     close: Close
     delete: Delete this notification
-    deleteAll: Delete all
-    markAllRead: Mark all as read
-    justNow: just now
-    minutesAgo: '{n} min ago'
-    hoursAgo: '{n} h ago'
+    delete_all: Delete all
+    mark_all_read: Mark all as read
+    just_now: just now
+    minutes_ago: '{n} min ago'
+    hours_ago: '{n} h ago'

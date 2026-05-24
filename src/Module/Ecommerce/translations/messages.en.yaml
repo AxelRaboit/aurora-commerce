@@ -95,7 +95,7 @@ backend:
         refunded: Refunded
       title: Order
       empty: No orders yet.
-      searchPlaceholder: 'Search by number, email or name…'
+      search_placeholder: 'Search by number, email or name…'
       number: Number
       customer: Customer
       date: Date
@@ -116,9 +116,9 @@ backend:
         all: All
       actions:
         title: Actions
-        markShipped: Mark as shipped
-        markDelivered: Mark as delivered
-        markFulfilled: Mark as fulfilled
+        mark_shipped: Mark as shipped
+        mark_delivered: Mark as delivered
+        mark_fulfilled: Mark as fulfilled
         cancel: Cancel order
         confirm: 'Confirm: {label}?'
         no_transitions: No transitions available.
@@ -145,37 +145,37 @@ backend:
       create: New listing
       edit: 'Edit {name}'
       empty: No listings.
-      searchPlaceholder: 'Search by title, slug or reference…'
+      search_placeholder: 'Search by title, slug or reference…'
       title: Title
       slug: Slug
-      slugPlaceholder: e.g. my-beautiful-chair
+      slug_placeholder: e.g. my-beautiful-chair
       product: Linked product
-      selectProduct: Select a product…
-      marketingTitle: Marketing title (optional)
-      marketingTitlePlaceholder: Override the product name
-      marketingDescription: Marketing description
-      marketingDescriptionPlaceholder: 'Long description, key benefits…'
-      featuredImage: Featured image
-      chooseImage: Choose an image
-      featuredImageHint: Listing-specific marketing image.
-      productImageHint: Inherited from the product.
-      featuredImageOverrideHint: Optional — overrides the product image on the shop page.
+      select_product: Select a product…
+      marketing_title: Marketing title (optional)
+      marketing_title_placeholder: Override the product name
+      marketing_description: Marketing description
+      marketing_description_placeholder: 'Long description, key benefits…'
+      featured_image: Featured image
+      choose_image: Choose an image
+      featured_image_hint: Listing-specific marketing image.
+      product_image_hint: Inherited from the product.
+      featured_image_override_hint: Optional — overrides the product image on the shop page.
       price: Price
       visibility: Visibility
       visible: Visible
       hidden: Hidden
-      visibleOnShop: Visible on shop
+      visible_on_shop: Visible on shop
       seo: SEO
-      seoTitle: SEO title
-      seoDescription: SEO description
-      frontUrl: Public URL
-      linkedProduct: Linked product
+      seo_title: SEO title
+      seo_description: SEO description
+      front_url: Public URL
+      linked_product: Linked product
       categories: Categories
-      categoriesPlaceholder: Pick one or more categories…
+      categories_placeholder: Pick one or more categories…
       tags: Tags
-      tagsPlaceholder: Pick one or more tags…
-      deleteConfirm: 'Delete listing "{name}"?'
-      deleteWarning: 'The linked product is not deleted, only the shop page.'
+      tags_placeholder: Pick one or more tags…
+      delete_confirm: 'Delete listing "{name}"?'
+      delete_warning: 'The linked product is not deleted, only the shop page.'
     listing_categories:
       errors:
         parent_not_found: Parent category not found.
@@ -223,7 +223,7 @@ backend:
       create: New tag
       edit: 'Edit {name}'
       empty: No tags yet.
-      searchPlaceholder: 'Search by name or slug…'
+      search_placeholder: 'Search by name or slug…'
       name: Name
       name_placeholder: 'e.g. New, Sale, Featured'
       slug: Slug
@@ -239,13 +239,13 @@ backend:
   # Editor.js — ProductGrid tool (Ecommerce-owned). Generic editor
   # keys live in src/Core/translations/messages.en.yaml.
   editor:
-    productGrid:
-      titleLabel: Title (optional)
-      columnsLabel: Columns
-      searchPlaceholderLabel: Search a product…
-      selectedLabel: Selected products
-      emptyLabel: No product selected
-      noResultsLabel: No results
+    product_grid:
+      title_label: Title (optional)
+      columns_label: Columns
+      search_placeholder_label: Search a product…
+      selected_label: Selected products
+      empty_label: No product selected
+      no_results_label: No results
 ecommerce:
   mail:
     subject:

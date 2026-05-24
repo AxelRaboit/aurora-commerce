@@ -46,31 +46,31 @@ backend:
       create: Nouveau produit
       edit: 'Modifier {name}'
       empty: Aucun produit.
-      searchPlaceholder: Rechercher par nom ou référence…
+      search_placeholder: Rechercher par nom ou référence…
       name: Nom
-      namePlaceholder: 'ex : Chaise ergonomique'
+      name_placeholder: 'ex : Chaise ergonomique'
       reference: Référence
-      referencePlaceholder: 'ex : CHAISE-001'
-      referenceAutoPlaceholder: Auto-générée si vide
+      reference_placeholder: 'ex : CHAISE-001'
+      reference_auto_placeholder: Auto-générée si vide
       image: Image
-      chooseImage: Choisir une image
+      choose_image: Choisir une image
       stock: Stock disponible
-      stockPlaceholder: Vide = stock non tracké
-      stockUntracked: Non tracké
-      stockOut: Rupture
+      stock_placeholder: Vide = stock non tracké
+      stock_untracked: Non tracké
+      stock_out: Rupture
       description: Description
-      descriptionPlaceholder: Description libre…
+      description_placeholder: Description libre…
       price: Prix
-      pricePlaceholder: 'ex : 19,99'
+      price_placeholder: 'ex : 19,99'
       currency: Devise
-      statusLabel: Statut
-      typeLabel: Type
+      status_label: Statut
+      type_label: Type
       types:
         physical: Physique
         digital: Numérique
         service: Service
-      deleteConfirm: 'Supprimer {name} ?'
-      deleteWarning: Cette action est irréversible.
+      delete_confirm: 'Supprimer {name} ?'
+      delete_warning: Cette action est irréversible.
       back: ← Retour à la liste
     activity:
       title: Activité
@@ -78,4 +78,4 @@ backend:
       created: Produit créé
       updated: Produit modifié
       deleted: Produit supprimé
-      loadMore: Charger plus
+      load_more: Charger plus

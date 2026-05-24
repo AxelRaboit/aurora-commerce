@@ -58,16 +58,16 @@ const {
         <div class="bg-surface border border-line rounded-xl p-4 sm:p-6 space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div class="min-w-0">
-                    <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.navAliases.title') }}</h3>
-                    <p class="text-xs text-muted mt-1">{{ t('backend.settings.navAliases.help') }}</p>
+                    <h3 class="text-sm font-semibold text-primary">{{ t('backend.settings.nav_aliases.title') }}</h3>
+                    <p class="text-xs text-muted mt-1">{{ t('backend.settings.nav_aliases.help') }}</p>
                 </div>
                 <AppButton variant="ghost" size="sm" class="self-start sm:self-auto shrink-0" v-on:click="resetAll">
                     <RotateCcw class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('backend.settings.navAliases.resetAll') }}
+                    {{ t('backend.settings.navAliases.reset_all') }}
                 </AppButton>
             </div>
 
-            <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.navAliasesEmpty') }}</div>
+            <div v-if="!navSections.length" class="text-sm text-muted">{{ t('backend.settings.nav_aliases_empty') }}</div>
             <VueDraggable
                 v-else
                 :model-value="orderedSections"
@@ -86,7 +86,7 @@ const {
                             <button
                                 type="button"
                                 class="section-drag-handle flex items-center justify-center text-muted hover:text-primary cursor-grab active:cursor-grabbing shrink-0 w-5 h-5"
-                                :title="t('backend.settings.navAliases.dragHandle')"
+                                :title="t('backend.settings.navAliases.drag_handle')"
                             >
                                 <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
                             </button>
@@ -117,7 +117,7 @@ const {
                                 variant="ghost"
                                 size="sm"
                                 :disabled="!sectionAliases[section.id]"
-                                :title="t('backend.settings.navAliases.resetItem')"
+                                :title="t('backend.settings.navAliases.reset_item')"
                                 v-on:click="resetSection(section.id)"
                             >
                                 <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -127,7 +127,7 @@ const {
                     </div>
                     <div v-show="isSectionExpanded(section.id)" class="p-3 space-y-2">
                         <div v-if="!section.items?.length" class="text-xs text-muted italic">
-                            {{ t('backend.settings.navAliases.itemsEmpty') }}
+                            {{ t('backend.settings.navAliases.items_empty') }}
                         </div>
                         <VueDraggable
                             v-else
@@ -146,7 +146,7 @@ const {
                                     <button
                                         type="button"
                                         :class="['flex items-center justify-center text-muted hover:text-primary cursor-grab active:cursor-grabbing shrink-0 w-5 h-5', `item-drag-handle-${section.id}`]"
-                                        :title="t('backend.settings.navAliases.dragHandle')"
+                                        :title="t('backend.settings.navAliases.drag_handle')"
                                     >
                                         <GripVertical class="w-3.5 h-3.5" :stroke-width="2" />
                                     </button>
@@ -164,7 +164,7 @@ const {
                                         variant="ghost"
                                         size="sm"
                                         :disabled="!itemAliases[item.route ?? item.key]"
-                                        :title="t('backend.settings.navAliases.resetItem')"
+                                        :title="t('backend.settings.navAliases.reset_item')"
                                         v-on:click="resetItem(item.route ?? item.key)"
                                     >
                                         <X class="w-3.5 h-3.5" :stroke-width="2" />
@@ -179,7 +179,7 @@ const {
             <div class="pt-2 border-t border-line flex justify-end">
                 <AppButton variant="primary" size="md" :loading="saving" v-on:click="saveAll">
                     <Save class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('backend.settings.navAliases.save') }}
+                    {{ t('backend.settings.nav_aliases.save') }}
                 </AppButton>
             </div>
         </div>

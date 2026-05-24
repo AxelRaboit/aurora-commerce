@@ -95,7 +95,7 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             </div>
 
             <div v-if="!contacts.length" class="text-sm text-muted py-4">
-                {{ t('backend.crm.companies.noContacts') }}
+                {{ t('backend.crm.companies.no_contacts') }}
             </div>
 
             <template v-else>
@@ -162,14 +162,14 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.crm.companies.name')"
-                    :placeholder="t('backend.crm.companies.namePlaceholder')"
+                    :placeholder="t('backend.crm.companies.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
-                <AppInput v-model="editForm.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industryPlaceholder')" />
-                <AppInput v-model="editForm.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.websitePlaceholder')" :error="editErrors.website" />
-                <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
-                <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
+                <AppInput v-model="editForm.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industry_placeholder')" />
+                <AppInput v-model="editForm.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.website_placeholder')" :error="editErrors.website" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phone_placeholder')" />
+                <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.address_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -186,8 +186,8 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             :icon="Trash2"
             v-on:close="showDelete = false"
         >
-            <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: company.name }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.companies.delete_confirm', { name: company.name }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.companies.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -207,15 +207,15 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <AppInput
                     v-model="newContact.firstName"
-                    :label="t('backend.crm.contacts.firstName')"
-                    :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
+                    :label="t('backend.crm.contacts.first_name')"
+                    :placeholder="t('backend.crm.contacts.first_name_placeholder')"
                     :error="contactErrors.firstName"
                     required
                 />
                 <AppInput
                     v-model="newContact.lastName"
-                    :label="t('backend.crm.contacts.lastName')"
-                    :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
+                    :label="t('backend.crm.contacts.last_name')"
+                    :placeholder="t('backend.crm.contacts.last_name_placeholder')"
                     :error="contactErrors.lastName"
                     required
                 />
@@ -224,12 +224,12 @@ const { showCreateContact, newContact, contactErrors, contactLoading, openCreate
                 v-model="newContact.email"
                 type="email"
                 :label="t('backend.crm.contacts.email')"
-                :placeholder="t('backend.crm.contacts.emailPlaceholder')"
+                :placeholder="t('backend.crm.contacts.email_placeholder')"
                 :error="contactErrors.email"
             />
-            <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
-            <AppTextarea v-model="newContact.notes" :rows="2" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
-            <p class="text-xs text-muted">{{ t('backend.crm.companies.contactLinked', { name: company.name }) }}</p>
+            <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phone_placeholder')" />
+            <AppTextarea v-model="newContact.notes" :rows="2" :placeholder="t('backend.crm.contacts.notes_placeholder')" />
+            <p class="text-xs text-muted">{{ t('backend.crm.companies.contact_linked', { name: company.name }) }}</p>
         </form>
         <template #footer>
             <AppModalFooter>

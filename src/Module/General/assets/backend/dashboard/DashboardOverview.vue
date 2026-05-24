@@ -31,7 +31,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
     <div class="space-y-6">
         <div v-if="visibleModules.length === 0" class="flex flex-col items-center justify-center py-24 text-center text-secondary">
             <Package class="w-10 h-10 mb-3 opacity-30" :stroke-width="1.5" />
-            <p class="text-sm">{{ t('backend.stats.noModuleEnabled') }}</p>
+            <p class="text-sm">{{ t('backend.stats.no_module_enabled') }}</p>
         </div>
 
         <template v-else>
@@ -78,7 +78,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                     </div>
                     <div class="bg-surface border border-line rounded-xl p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.editorial.pendingComments') }}</span>
+                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.editorial.pending_comments') }}</span>
                             <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
                                 <MenuIcon class="w-4 h-4 text-amber-400" :stroke-width="2" />
                             </div>
@@ -98,20 +98,20 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         <p class="text-2xl font-bold text-emerald-400">{{ stats.users?.total ?? 0 }}</p>
                         <p class="text-xs text-muted mt-0.5">
                             {{ stats.posts?.scheduled ?? 0 }} {{ t('backend.stats.editorial.scheduled') }} ·
-                            {{ stats.posts?.pendingReview ?? 0 }} {{ t('backend.stats.editorial.pendingReview') }}
+                            {{ stats.posts?.pendingReview ?? 0 }} {{ t('backend.stats.editorial.pending_review') }}
                         </p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div v-if="stats.postsByMonth?.length" class="lg:col-span-2 bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.postsByMonth') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.posts_by_month') }}</h3>
                         <div class="h-56">
                             <AppChart type="line" :data="postsByMonthData" />
                         </div>
                     </div>
                     <div v-if="stats.posts?.byType?.length" class="bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.byType') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.by_type') }}</h3>
                         <div class="space-y-2">
                             <div v-for="item in stats.posts.byType" :key="item.slug" class="flex items-center justify-between text-sm">
                                 <span class="text-secondary">{{ item.label }}</span>
@@ -141,15 +141,15 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <Users class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.editorial.postsByAuthor') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.editorial.posts_by_author') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                     <div class="bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <ImageIcon class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.editorial.mediaByType') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.editorial.media_by_type') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                 </div>
             </section>
@@ -197,7 +197,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div v-if="stats.crm?.recentDeals?.length" class="lg:col-span-2 bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.crm.recentDeals') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.crm.recent_deals') }}</h3>
                         <div class="divide-y divide-line/40">
                             <div v-for="deal in stats.crm.recentDeals" :key="deal.id" class="flex items-start justify-between gap-3 py-2.5 text-sm first:pt-0 last:pb-0">
                                 <div class="min-w-0 flex-1">
@@ -212,7 +212,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         </div>
                     </div>
                     <div v-if="hasDeals" class="bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.dealsByStage') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.deals_by_stage') }}</h3>
                         <div class="h-48">
                             <AppChart type="doughnut" :data="dealsByStageData" />
                         </div>
@@ -224,15 +224,15 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <BarChart3 class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.crm.conversionRate') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.crm.conversion_rate') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                     <div class="bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <Clock class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.crm.recentActivity') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.crm.recent_activity') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                 </div>
             </section>
@@ -269,7 +269,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                     </div>
                     <div class="bg-surface border border-line rounded-xl p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.erp.outOfStock') }}</span>
+                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.erp.out_of_stock') }}</span>
                             <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
                                 <Package class="w-4 h-4 text-red-400" :stroke-width="2" />
                             </div>
@@ -280,13 +280,13 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div v-if="hasProducts" class="bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.productsByStatus') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.products_by_status') }}</h3>
                         <div class="h-48">
                             <AppChart type="doughnut" :data="productsByStatusData" />
                         </div>
                     </div>
                     <div v-if="stats.erp?.byType" class="lg:col-span-2 bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.erp.byType') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.erp.by_type') }}</h3>
                         <div class="space-y-3">
                             <div v-for="(count, type) in stats.erp.byType" :key="type" class="flex items-center gap-3">
                                 <div class="flex-1">
@@ -308,15 +308,15 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <BarChart3 class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.erp.catalogEvolution') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.erp.catalog_evolution') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                     <div class="bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <TrendingUp class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.erp.topSelling') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.erp.top_selling') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                 </div>
             </section>
@@ -334,7 +334,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                     </div>
                     <div class="bg-surface border border-line rounded-xl p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.billing.totalGross') }}</span>
+                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.billing.total_gross') }}</span>
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                                 <TrendingUp class="w-4 h-4 text-emerald-400" :stroke-width="2" />
                             </div>
@@ -343,7 +343,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                     </div>
                     <div class="bg-surface border border-line rounded-xl p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.billing.needingReview') }}</span>
+                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.billing.needing_review') }}</span>
                             <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
                                 <Receipt class="w-4 h-4 text-amber-400" :stroke-width="2" />
                             </div>
@@ -364,7 +364,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div v-if="hasInvoices" class="bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.billing.invoices.statusLabel') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.billing.invoices.status_label') }}</h3>
                         <div class="h-48">
                             <AppChart type="doughnut" :data="invoicesByStatusData" />
                         </div>
@@ -375,21 +375,21 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                                 <Clock class="w-4 h-4 text-muted" :stroke-width="1.5" />
                             </div>
                             <p class="text-sm font-medium text-secondary">{{ t('backend.stats.billing.overdue') }}</p>
-                            <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                            <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                         </div>
                         <div class="bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                             <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                                 <Building2 class="w-4 h-4 text-muted" :stroke-width="1.5" />
                             </div>
-                            <p class="text-sm font-medium text-secondary">{{ t('backend.stats.billing.topSuppliers') }}</p>
-                            <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                            <p class="text-sm font-medium text-secondary">{{ t('backend.stats.billing.top_suppliers') }}</p>
+                            <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                         </div>
                         <div class="md:col-span-2 bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                             <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                                 <BarChart3 class="w-4 h-4 text-muted" :stroke-width="1.5" />
                             </div>
-                            <p class="text-sm font-medium text-secondary">{{ t('backend.stats.billing.monthlyEvolution') }}</p>
-                            <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                            <p class="text-sm font-medium text-secondary">{{ t('backend.stats.billing.monthly_evolution') }}</p>
+                            <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                         </div>
                     </div>
                 </div>
@@ -426,11 +426,11 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                             </div>
                         </div>
                         <p class="text-2xl font-bold text-violet-400">{{ formatCurrency(stats.ecommerce?.revenueCents) }}</p>
-                        <p class="text-xs text-muted mt-0.5">{{ t('backend.stats.ecommerce.revenueSubtitle') }}</p>
+                        <p class="text-xs text-muted mt-0.5">{{ t('backend.stats.ecommerce.revenue_subtitle') }}</p>
                     </div>
                     <div class="bg-surface border border-line rounded-xl p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.ecommerce.averageOrder') }}</span>
+                            <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t('backend.stats.ecommerce.average_order') }}</span>
                             <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center">
                                 <Receipt class="w-4 h-4 text-sky-400" :stroke-width="2" />
                             </div>
@@ -441,7 +441,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div v-if="stats.ecommerce?.recentOrders?.length" class="lg:col-span-2 bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.ecommerce.recentOrders') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.ecommerce.recent_orders') }}</h3>
                         <div class="divide-y divide-line/40">
                             <div v-for="order in stats.ecommerce.recentOrders" :key="order.id" class="flex items-start justify-between gap-3 py-2.5 text-sm first:pt-0 last:pb-0">
                                 <div class="min-w-0 flex-1">
@@ -456,7 +456,7 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         </div>
                     </div>
                     <div v-if="hasOrders" class="bg-surface border border-line/60 rounded-xl p-5">
-                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.ecommerce.byStatus') }}</h3>
+                        <h3 class="text-sm font-semibold text-primary mb-4">{{ t('backend.stats.ecommerce.by_status') }}</h3>
                         <div class="h-48">
                             <AppChart type="doughnut" :data="ordersByStatusData" />
                         </div>
@@ -468,15 +468,15 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <BarChart3 class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.ecommerce.revenueChart') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.ecommerce.revenue_chart') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                     <div class="bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <Clock class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.ecommerce.topProducts') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.ecommerce.top_products') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                 </div>
             </section>
@@ -529,15 +529,15 @@ const { postsByMonthData, dealsByStageData, hasDeals, productsByStatusData, hasP
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <Users class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.photo.clientSelections') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.photo.client_selections') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                     <div class="bg-surface border border-dashed border-line rounded-xl p-5 flex flex-col items-center justify-center gap-2 text-center min-h-32">
                         <div class="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center">
                             <BarChart3 class="w-4 h-4 text-muted" :stroke-width="1.5" />
                         </div>
-                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.photo.byClient') }}</p>
-                        <p class="text-xs text-muted">{{ t('backend.stats.comingSoon') }}</p>
+                        <p class="text-sm font-medium text-secondary">{{ t('backend.stats.photo.by_client') }}</p>
+                        <p class="text-xs text-muted">{{ t('backend.stats.coming_soon') }}</p>
                     </div>
                 </div>
             </section>

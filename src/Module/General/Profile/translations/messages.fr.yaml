@@ -29,11 +29,11 @@ backend:
       title: Informations du profil
       subtitle: Mettez à jour votre nom et adresse e-mail.
       name: Nom complet
-      listView: Vue liste
-      kanbanView: Vue Kanban
-      namePlaceholder: Jean Dupont
+      list_view: Vue liste
+      kanban_view: Vue Kanban
+      name_placeholder: Jean Dupont
       email: Adresse e-mail
-      emailPlaceholder: "vous@exemple.com"
+      email_placeholder: "vous@exemple.com"
       saved: Profil mis à jour avec succès.
     password:
       title: Modifier le mot de passe

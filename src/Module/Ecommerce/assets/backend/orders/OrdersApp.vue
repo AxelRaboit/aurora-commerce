@@ -64,7 +64,7 @@ const formatTotal = (order) => formatOrderTotal(order);
 
         <AppSearchInput
             v-model="searchInput"
-            :placeholder="t('backend.ecommerce.orders.searchPlaceholder')"
+            :placeholder="t('backend.ecommerce.orders.search_placeholder')"
             v-on:search="onSearch"
         />
 

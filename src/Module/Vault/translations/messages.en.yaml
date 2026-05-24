@@ -35,10 +35,10 @@ vault:
   setup:
     title: Set up your vault
     description: Choose a master password to encrypt your vault. It will never be sent to the server.
-    masterPassword: Master password
-    masterPasswordPlaceholder: Choose a strong password
-    confirmPassword: Confirm password
-    confirmPasswordPlaceholder: Confirm your password
+    master_password: Master password
+    master_password_placeholder: Choose a strong password
+    confirm_password: Confirm password
+    confirm_password_placeholder: Confirm your password
     submit: Create vault
     warning: Warning — if you lose this password, your data will be unrecoverable.
     strength:
@@ -52,8 +52,8 @@ vault:
       passwords_mismatch: Passwords do not match.
   unlock:
     title: Unlock your vault
-    masterPassword: Master password
-    masterPasswordPlaceholder: Enter your master password
+    master_password: Master password
+    master_password_placeholder: Enter your master password
     submit: Unlock
     error: Incorrect password.
     lock: Lock
@@ -62,27 +62,27 @@ vault:
     create: New entry
     edit: Edit entry
     empty: No entries in this vault.
-    emptyFolder: No entries in this folder.
-    emptyFavorites: No favourites.
+    empty_folder: No entries in this folder.
+    empty_favorites: No favourites.
     created: Entry created.
     updated: Entry updated.
     deleted: Entry deleted.
     moved: Entry moved.
     count: entry(s)
     all_entries_label: All entries
-    searchPlaceholder: Search vault…
+    search_placeholder: Search vault…
     title: Title
-    titlePlaceholder: E.g. Gmail, GitHub…
+    title_placeholder: E.g. Gmail, GitHub…
     url: URL
-    urlPlaceholder: https://example.com
+    url_placeholder: https://example.com
     folder: Folder
-    folderNone: No folder
+    folder_none: No folder
     type: Type
     favorite: Favourite
-    favoriteAdded: Added to favourites.
-    favoriteRemoved: Removed from favourites.
-    deleteConfirm: 'Delete entry "{title}"?'
-    deleteWarning: This action is irreversible. The encrypted data will be permanently deleted.
+    favorite_added: Added to favourites.
+    favorite_removed: Removed from favourites.
+    delete_confirm: 'Delete entry "{title}"?'
+    delete_warning: This action is irreversible. The encrypted data will be permanently deleted.
     errors:
       title_required: Title is required.
       encrypted_data_required: Encrypted data is required.
@@ -104,12 +104,12 @@ vault:
     folders: Folders
     root: Root
     name: Name
-    namePlaceholder: Folder name
+    name_placeholder: Folder name
     color: Colour
-    deleteConfirm: 'Delete folder "{name}"?'
-    deleteWarning: Entries in the folder will be kept (without folder).
+    delete_confirm: 'Delete folder "{name}"?'
+    delete_warning: Entries in the folder will be kept (without folder).
     parent: Parent folder
-    noParent: Root (no parent)
+    no_parent: Root (no parent)
     errors:
       name_required: Name is required.
       color_invalid: Colour must be in hex format (#RRGGBB).
@@ -168,42 +168,42 @@ vault:
     copied: "{field} copied."
     reveal: Reveal
     hide: Hide
-    noFields: No data recorded.
+    no_fields: No data recorded.
   fields:
-    usePassword: Use this password
+    use_password: Use this password
     username: Username
-    usernamePlaceholder: Username or email
+    username_placeholder: Username or email
     password: Password
-    passwordPlaceholder: Password
+    password_placeholder: Password
     notes: Notes
-    notesPlaceholder: Notes…
-    cardNumber: Card number
-    cardHolder: Card holder
-    expiryDate: Expiry date
+    notes_placeholder: Notes…
+    card_number: Card number
+    card_holder: Card holder
+    expiry_date: Expiry date
     cvv: CVV
     pin: PIN
-    bankName: Bank
+    bank_name: Bank
     iban: IBAN
     bic: BIC
-    publicKey: Public key
-    privateKey: Private key
+    public_key: Public key
+    private_key: Private key
     passphrase: Passphrase
     issuer: Issuer
-    passportNumber: Passport number
-    licenseNumber: Licence number
-    licenseKey: Licence key
+    passport_number: Passport number
+    license_number: Licence number
+    license_key: Licence key
     host: Host
     port: Port
     database: Database
-    apiKey: API key
-    apiSecret: API secret
-    walletAddress: Wallet address
-    seedPhrase: Seed phrase
+    api_key: API key
+    api_secret: API secret
+    wallet_address: Wallet address
+    seed_phrase: Seed phrase
     ssid: SSID
-    wifiPassword: Wi-Fi password
-    firstName: First name
-    lastName: Last name
-    birthDate: Date of birth
+    wifi_password: Wi-Fi password
+    first_name: First name
+    last_name: Last name
+    birth_date: Date of birth
     email: Email
     phone: Phone
     address: Address

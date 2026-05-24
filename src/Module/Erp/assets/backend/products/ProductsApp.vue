@@ -56,7 +56,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.erp.products.searchPlaceholder')"
+                :placeholder="t('backend.erp.products.search_placeholder')"
                 v-on:search="onSearch"
             />
             <template #actions>
@@ -82,7 +82,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.reference') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.erp.products.price') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.erp.products.stock') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.statusLabel') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.erp.products.status_label') }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                         </tr>
                     </thead>
@@ -99,8 +99,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                             <td class="px-6 py-3 font-mono text-xs text-secondary">{{ product.reference }}</td>
                             <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ formatProductPrice(product) }}</td>
                             <td class="px-6 py-3 hidden lg:table-cell">
-                                <span v-if="!product.stockTracked" class="text-xs text-muted">{{ t('backend.erp.products.stockUntracked') }}</span>
-                                <AppBadge v-else-if="product.stockQuantity === 0" color="rose">{{ t('backend.erp.products.stockOut') }}</AppBadge>
+                                <span v-if="!product.stockTracked" class="text-xs text-muted">{{ t('backend.erp.products.stock_untracked') }}</span>
+                                <AppBadge v-else-if="product.stockQuantity === 0" color="rose">{{ t('backend.erp.products.stock_out') }}</AppBadge>
                                 <AppBadge v-else-if="product.isLowStock" color="amber">{{ product.stockQuantity }}</AppBadge>
                                 <span v-else class="text-secondary tabular-nums">{{ product.stockQuantity }}</span>
                             </td>
@@ -158,7 +158,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput
                     v-model="newProduct.name"
                     :label="t('backend.erp.products.name')"
-                    :placeholder="t('backend.erp.products.namePlaceholder')"
+                    :placeholder="t('backend.erp.products.name_placeholder')"
                     :error="createErrors.name"
                     required
                 />
@@ -166,14 +166,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     <AppInput
                         v-model="newProduct.reference"
                         :label="t('backend.erp.products.reference')"
-                        :placeholder="t('backend.erp.products.referenceAutoPlaceholder')"
+                        :placeholder="t('backend.erp.products.reference_auto_placeholder')"
                         :error="createErrors.reference"
                     />
-                    <AppSelect v-model="newProduct.status" :label="t('backend.erp.products.statusLabel')">
+                    <AppSelect v-model="newProduct.status" :label="t('backend.erp.products.status_label')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>
                 </div>
-                <AppSelect v-model="newProduct.type" :label="t('backend.erp.products.typeLabel')">
+                <AppSelect v-model="newProduct.type" :label="t('backend.erp.products.type_label')">
                     <option v-for="opt in TYPE_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
                 <div class="grid grid-cols-[1fr_8rem] gap-3">
@@ -183,14 +183,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                         min="0"
                         step="0.01"
                         :label="`${t('backend.erp.products.price')} (${symbolFor(newProduct.currency)})`"
-                        :placeholder="t('backend.erp.products.pricePlaceholder')"
+                        :placeholder="t('backend.erp.products.price_placeholder')"
                         :error="createErrors.price ?? createErrors.priceCents"
                     />
                     <AppSelect v-model="newProduct.currency" :label="t('backend.erp.products.currency')">
                         <option v-for="opt in CURRENCY_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.value }} — {{ opt.symbol }}</option>
                     </AppSelect>
                 </div>
-                <AppTextarea v-model="newProduct.description" :rows="3" :placeholder="t('backend.erp.products.descriptionPlaceholder')" />
+                <AppTextarea v-model="newProduct.description" :rows="3" :placeholder="t('backend.erp.products.description_placeholder')" />
                 <AppImagePickerField
                     v-model="newProductImage"
                     :label="t('backend.erp.products.image')"
@@ -200,7 +200,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     type="number"
                     min="0"
                     :label="t('backend.erp.products.stock')"
-                    :placeholder="t('backend.erp.products.stockPlaceholder')"
+                    :placeholder="t('backend.erp.products.stock_placeholder')"
                 />
             </form>
             <template #footer>
@@ -222,11 +222,11 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput v-model="editForm.name" :label="t('backend.erp.products.name')" :error="editErrors.name" required />
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput v-model="editForm.reference" :label="t('backend.erp.products.reference')" :error="editErrors.reference" />
-                    <AppSelect v-model="editForm.status" :label="t('backend.erp.products.statusLabel')">
+                    <AppSelect v-model="editForm.status" :label="t('backend.erp.products.status_label')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>
                 </div>
-                <AppSelect v-model="editForm.type" :label="t('backend.erp.products.typeLabel')">
+                <AppSelect v-model="editForm.type" :label="t('backend.erp.products.type_label')">
                     <option v-for="opt in TYPE_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
                 <div class="grid grid-cols-[1fr_8rem] gap-3">
@@ -252,7 +252,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     type="number"
                     min="0"
                     :label="t('backend.erp.products.stock')"
-                    :placeholder="t('backend.erp.products.stockPlaceholder')"
+                    :placeholder="t('backend.erp.products.stock_placeholder')"
                 />
             </form>
             <template #footer>
@@ -271,8 +271,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.erp.products.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.erp.products.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.erp.products.delete_confirm', { name: pendingDelete?.name ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.erp.products.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

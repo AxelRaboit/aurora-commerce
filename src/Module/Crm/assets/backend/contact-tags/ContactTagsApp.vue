@@ -74,7 +74,7 @@ function displayLabel(tag) {
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.crm.contact_tags.searchPlaceholder')"
+                :placeholder="t('backend.crm.contact_tags.search_placeholder')"
             />
             <template #actions>
                 <AppButton

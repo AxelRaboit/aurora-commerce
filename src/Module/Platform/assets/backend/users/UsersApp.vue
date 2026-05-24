@@ -80,11 +80,11 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
 <template>
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <AppSearchInput v-model="search" :placeholder="t('backend.users.searchPlaceholder')" class="flex-1" />
+            <AppSearchInput v-model="search" :placeholder="t('backend.users.search_placeholder')" class="flex-1" />
             <AppMultiselect
                 v-model="roleFilter"
                 :options="roles"
-                :placeholder="t('backend.users.allRoles')"
+                :placeholder="t('backend.users.all_roles')"
                 :allow-empty="true"
                 class="sm:w-48 shrink-0"
             />
@@ -150,9 +150,9 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                         <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.name') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.email') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.roleLabel') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.typeLabel') }}</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.statusLabel') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.role_label') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.type_label') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.status_label') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
                             <slot name="extra-headers" />
                             <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
@@ -229,7 +229,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                 <AppInput
                     v-model="inviteForm.name"
                     :label="t('backend.users.name')"
-                    :placeholder="t('backend.users.namePlaceholder')"
+                    :placeholder="t('backend.users.name_placeholder')"
                     :error="inviteModal.errors.name ?? ''"
                     required
                 />
@@ -237,24 +237,24 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                     v-model="inviteForm.email"
                     :label="t('backend.users.email')"
                     type="email"
-                    :placeholder="t('backend.users.emailPlaceholder')"
+                    :placeholder="t('backend.users.email_placeholder')"
                     :error="inviteModal.errors.email ?? ''"
                     required
                 />
                 <AppMultiselect
                     v-model="inviteForm.role"
                     :options="roles"
-                    :label="t('backend.users.roleLabel')"
+                    :label="t('backend.users.role_label')"
                     :error="inviteModal.errors.role ?? ''"
                     required
                 />
                 <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.users.inviteMessage') }}</label>
+                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('backend.users.invite_message') }}</label>
                     <textarea
                         v-model="inviteForm.message"
                         rows="3"
                         class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition resize-none"
-                        :placeholder="t('backend.users.inviteMessagePlaceholder')"
+                        :placeholder="t('backend.users.invite_message_placeholder')"
                     />
                 </div>
                 <slot name="extra-invite-form-fields" :form="inviteForm" :errors="inviteModal.errors" />
@@ -262,7 +262,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="inviteModal.open = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
-                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving"><Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.users.sendInvite') }}</AppButton>
+                    <AppButton type="submit" variant="primary" size="md" :loading="inviteModal.saving"><Send class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('backend.users.send_invite') }}</AppButton>
                 </AppModalFooter>
             </template>
         </AppModal>
@@ -283,13 +283,13 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
 
                 <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.statusLabel') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.status_label') }}</dt>
                         <dd class="mt-1">
                             <AppBadge :color="statusBadgeColor(viewingUser.status)">{{ viewingUser.statusLabel }}</AppBadge>
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.roleLabel') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.role_label') }}</dt>
                         <dd class="mt-1 flex items-center gap-1 flex-wrap">
                             <AppBadge v-if="viewingUser.isDev" color="rose">Dev</AppBadge>
                             <AppBadge v-if="viewingUser.roleLabel" color="accent">{{ viewingUser.roleLabel }}</AppBadge>
@@ -305,11 +305,11 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                         <dd class="mt-1 text-primary">{{ t('shared.locales.' + viewingUser.locale) }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.createdAt') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.created_at') }}</dt>
                         <dd class="mt-1 text-primary">{{ formatDate(viewingUser.createdAt) }}</dd>
                     </div>
                     <div v-if="viewingUser.invitedAt">
-                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.invitedAt') }}</dt>
+                        <dt class="text-xs text-secondary uppercase tracking-wide">{{ t('backend.users.detail.invited_at') }}</dt>
                         <dd class="mt-1 text-primary">{{ formatDate(viewingUser.invitedAt) }}</dd>
                     </div>
                 </dl>
@@ -389,7 +389,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                     <AppMultiselect
                         v-model="editForm.role"
                         :options="roles"
-                        :label="t('backend.users.roleLabel')"
+                        :label="t('backend.users.role_label')"
                         :allow-empty="false"
                         :error="editModal.errors.role ?? ''"
                         open-direction="top"
@@ -426,9 +426,9 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
                 </div>
                 <AppInput
                     v-model="editForm.password"
-                    :label="t('backend.users.newPassword')"
+                    :label="t('backend.users.new_password')"
                     type="password"
-                    :placeholder="t('backend.users.newPasswordPlaceholder')"
+                    :placeholder="t('backend.users.new_password_placeholder')"
                     :error="editModal.errors.password ?? ''"
                 />
                 <slot name="extra-edit-form-fields" :form="editForm" :errors="editModal.errors" />
@@ -512,7 +512,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
         </AppModal>
 
         <AppModal :show="!!deletingUser" max-width="sm" :closeable="false" v-on:close="deletingUser = null">
-            <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', {name: deletingUser?.name ?? ''}) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.users.delete_confirm', {name: deletingUser?.name ?? ''}) }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="deletingUser = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

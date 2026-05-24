@@ -54,7 +54,7 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="users.searchInput.value"
-                :placeholder="t('backend.users.searchPlaceholder')"
+                :placeholder="t('backend.users.search_placeholder')"
                 v-on:search="users.performSearch"
             />
             <AppButton variant="primary" size="md" class="w-full sm:w-auto" v-on:click="users.openCreate">
@@ -95,7 +95,7 @@ onMounted(() => {
                     <tr class="bg-surface-2/50 border-b border-line/40">
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.name') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.email') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.roleLabel') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.users.role_label') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.locale') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.users.created') }}</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.users.actions') }}</th>
@@ -148,7 +148,7 @@ onMounted(() => {
             :icon="Trash2"
             v-on:close="users.pendingDelete.value = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.users.deleteConfirm', { name: users.pendingDelete.value?.name }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.users.delete_confirm', { name: users.pendingDelete.value?.name }) }}</p>
             <div class="flex justify-end gap-2">
                 <AppButton variant="ghost" size="md" v-on:click="users.pendingDelete.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
                 <AppButton variant="danger" size="md" v-on:click="users.doDelete"><Trash2 class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.delete') }}</AppButton>
@@ -241,8 +241,8 @@ onMounted(() => {
         <AppModal :show="!!users.pendingToggleRole.value" max-width="sm" :closeable="false" v-on:close="users.pendingToggleRole.value = null">
             <p class="text-sm text-primary">
                 {{ users.pendingToggleRole.value?.isDevRole
-                    ? t('backend.users.revokeDevConfirm', { name: users.pendingToggleRole.value?.name })
-                    : t('backend.users.grantDevConfirm', { name: users.pendingToggleRole.value?.name }) }}
+                    ? t('backend.users.revoke_dev_confirm', { name: users.pendingToggleRole.value?.name })
+                    : t('backend.users.grant_dev_confirm', { name: users.pendingToggleRole.value?.name }) }}
             </p>
             <template #footer>
                 <AppModalFooter>

@@ -47,7 +47,7 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
             <AppSearchInput
                 v-model="accessRequests.searchInput.value"
-                :placeholder="t('backend.access_requests.searchPlaceholder')"
+                :placeholder="t('backend.access_requests.search_placeholder')"
                 v-on:search="accessRequests.performSearch"
             />
             <AppButton variant="danger" size="md" class="w-full sm:w-auto" v-on:click="accessRequests.confirmPurge.value = true">
@@ -141,7 +141,7 @@ onMounted(() => {
         </div>
 
         <AppModal :show="!!accessRequests.pendingApprove.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingApprove.value = null">
-            <p class="text-sm text-primary">{{ t('backend.access_requests.approveConfirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.access_requests.approve_confirm', { name: accessRequests.pendingApprove.value?.requesterName ?? accessRequests.pendingApprove.value?.requesterEmail }) }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingApprove.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -151,7 +151,7 @@ onMounted(() => {
         </AppModal>
 
         <AppModal :show="!!accessRequests.pendingReject.value" max-width="sm" :closeable="false" v-on:close="accessRequests.pendingReject.value = null">
-            <p class="text-sm text-primary">{{ t('backend.access_requests.rejectConfirm', { name: accessRequests.pendingReject.value?.requesterName ?? accessRequests.pendingReject.value?.requesterEmail }) }}</p>
+            <p class="text-sm text-primary">{{ t('backend.access_requests.reject_confirm', { name: accessRequests.pendingReject.value?.requesterName ?? accessRequests.pendingReject.value?.requesterEmail }) }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="accessRequests.pendingReject.value = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
@@ -168,7 +168,7 @@ onMounted(() => {
             :icon="Trash2"
             v-on:close="accessRequests.confirmPurge.value = false"
         >
-            <p class="text-sm text-primary">{{ t('backend.access_requests.purgeConfirm') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.access_requests.purge_confirm') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="accessRequests.confirmPurge.value = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

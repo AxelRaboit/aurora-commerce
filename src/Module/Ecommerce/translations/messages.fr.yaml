@@ -95,7 +95,7 @@ backend:
         refunded: Remboursée
       title: Commande
       empty: Aucune commande pour l'instant.
-      searchPlaceholder: 'Rechercher par numéro, e-mail ou nom…'
+      search_placeholder: 'Rechercher par numéro, e-mail ou nom…'
       number: Numéro
       customer: Client
       date: Date
@@ -116,9 +116,9 @@ backend:
         all: Toutes
       actions:
         title: Actions
-        markShipped: Marquer comme expédiée
-        markDelivered: Marquer comme livrée
-        markFulfilled: Marquer comme fournie
+        mark_shipped: Marquer comme expédiée
+        mark_delivered: Marquer comme livrée
+        mark_fulfilled: Marquer comme fournie
         cancel: Annuler la commande
         confirm: 'Confirmer : {label} ?'
         no_transitions: Aucune transition disponible.
@@ -145,37 +145,37 @@ backend:
       create: Nouveau listing
       edit: 'Modifier {name}'
       empty: Aucun listing.
-      searchPlaceholder: 'Rechercher par titre, slug ou référence…'
+      search_placeholder: 'Rechercher par titre, slug ou référence…'
       title: Titre
       slug: Slug
-      slugPlaceholder: 'ex : ma-belle-chaise'
+      slug_placeholder: 'ex : ma-belle-chaise'
       product: Produit lié
-      selectProduct: Sélectionner un produit…
-      marketingTitle: Titre marketing
-      marketingTitlePlaceholder: Surcharge le nom du produit
-      marketingDescription: Description marketing
-      marketingDescriptionPlaceholder: 'Description longue, mise en avant des avantages…'
-      featuredImage: Image principale
-      chooseImage: Choisir une image
-      featuredImageHint: Image marketing spécifique au listing.
-      productImageHint: Image héritée du produit.
-      featuredImageOverrideHint: Optionnel — surcharge l'image du produit pour la fiche shop.
+      select_product: Sélectionner un produit…
+      marketing_title: Titre marketing
+      marketing_title_placeholder: Surcharge le nom du produit
+      marketing_description: Description marketing
+      marketing_description_placeholder: 'Description longue, mise en avant des avantages…'
+      featured_image: Image principale
+      choose_image: Choisir une image
+      featured_image_hint: Image marketing spécifique au listing.
+      product_image_hint: Image héritée du produit.
+      featured_image_override_hint: Optionnel — surcharge l'image du produit pour la fiche shop.
       price: Prix
       visibility: Visibilité
       visible: Visible
       hidden: Masqué
-      visibleOnShop: Visible sur la boutique
+      visible_on_shop: Visible sur la boutique
       seo: SEO
-      seoTitle: Titre SEO
-      seoDescription: Description SEO
-      frontUrl: URL publique
-      linkedProduct: Produit lié
+      seo_title: Titre SEO
+      seo_description: Description SEO
+      front_url: URL publique
+      linked_product: Produit lié
       categories: Catégories
-      categoriesPlaceholder: Choisir une ou plusieurs catégories…
+      categories_placeholder: Choisir une ou plusieurs catégories…
       tags: Tags
-      tagsPlaceholder: Choisir un ou plusieurs tags…
-      deleteConfirm: 'Supprimer le listing « {name} » ?'
-      deleteWarning: "Le produit lié n'est pas supprimé, seulement la fiche boutique."
+      tags_placeholder: Choisir un ou plusieurs tags…
+      delete_confirm: 'Supprimer le listing « {name} » ?'
+      delete_warning: "Le produit lié n'est pas supprimé, seulement la fiche boutique."
     listing_categories:
       errors:
         parent_not_found: Catégorie parente introuvable.
@@ -223,7 +223,7 @@ backend:
       create: Nouveau tag
       edit: 'Modifier {name}'
       empty: Aucun tag.
-      searchPlaceholder: 'Rechercher par nom ou slug…'
+      search_placeholder: 'Rechercher par nom ou slug…'
       name: Nom
       name_placeholder: 'ex. Nouveau, Promo, En vedette'
       slug: Slug
@@ -240,13 +240,13 @@ backend:
   # `backend.editor.*` (placeholder, toolkit standard) vit dans
   # src/Core/translations/messages.fr.yaml.
   editor:
-    productGrid:
-      titleLabel: Titre
-      columnsLabel: Colonnes
-      searchPlaceholderLabel: Rechercher un produit…
-      selectedLabel: Produits sélectionnés
-      emptyLabel: Aucun produit sélectionné
-      noResultsLabel: Aucun résultat
+    product_grid:
+      title_label: Titre
+      columns_label: Colonnes
+      search_placeholder_label: Rechercher un produit…
+      selected_label: Produits sélectionnés
+      empty_label: Aucun produit sélectionné
+      no_results_label: Aucun résultat
 ecommerce:
   mail:
     subject:

@@ -59,7 +59,7 @@ const { flatTags } = useContactsTags(props.tagsPath);
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.crm.contacts.searchPlaceholder')"
+                :placeholder="t('backend.crm.contacts.search_placeholder')"
                 v-on:search="onSearch"
             />
             <template #actions>
@@ -260,15 +260,15 @@ const { flatTags } = useContactsTags(props.tagsPath);
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="newContact.firstName"
-                        :label="t('backend.crm.contacts.firstName')"
-                        :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
+                        :label="t('backend.crm.contacts.first_name')"
+                        :placeholder="t('backend.crm.contacts.first_name_placeholder')"
                         :error="createErrors.firstName"
                         required
                     />
                     <AppInput
                         v-model="newContact.lastName"
-                        :label="t('backend.crm.contacts.lastName')"
-                        :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
+                        :label="t('backend.crm.contacts.last_name')"
+                        :placeholder="t('backend.crm.contacts.last_name_placeholder')"
                         :error="createErrors.lastName"
                         required
                     />
@@ -277,20 +277,20 @@ const { flatTags } = useContactsTags(props.tagsPath);
                     v-model="newContact.email"
                     type="email"
                     :label="t('backend.crm.contacts.email')"
-                    :placeholder="t('backend.crm.contacts.emailPlaceholder')"
+                    :placeholder="t('backend.crm.contacts.email_placeholder')"
                     :error="createErrors.email"
                 />
-                <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
-                <AppInput v-model="newContact.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppInput v-model="newContact.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phone_placeholder')" />
+                <AppInput v-model="newContact.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.company_placeholder')" />
                 <AppMultiselect
                     v-model="newContact.tagIds"
                     :options="flatTags"
                     :label="t('backend.crm.contacts.tags')"
-                    :placeholder="t('backend.crm.contacts.tagsPlaceholder')"
+                    :placeholder="t('backend.crm.contacts.tags_placeholder')"
                     track-by="id"
                     multiple
                 />
-                <AppTextarea v-model="newContact.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
+                <AppTextarea v-model="newContact.notes" :rows="3" :placeholder="t('backend.crm.contacts.notes_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -311,15 +311,15 @@ const { flatTags } = useContactsTags(props.tagsPath);
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.firstName"
-                        :label="t('backend.crm.contacts.firstName')"
-                        :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
+                        :label="t('backend.crm.contacts.first_name')"
+                        :placeholder="t('backend.crm.contacts.first_name_placeholder')"
                         :error="editErrors.firstName"
                         required
                     />
                     <AppInput
                         v-model="editForm.lastName"
-                        :label="t('backend.crm.contacts.lastName')"
-                        :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
+                        :label="t('backend.crm.contacts.last_name')"
+                        :placeholder="t('backend.crm.contacts.last_name_placeholder')"
                         :error="editErrors.lastName"
                         required
                     />
@@ -328,24 +328,24 @@ const { flatTags } = useContactsTags(props.tagsPath);
                     v-model="editForm.email"
                     type="email"
                     :label="t('backend.crm.contacts.email')"
-                    :placeholder="t('backend.crm.contacts.emailPlaceholder')"
+                    :placeholder="t('backend.crm.contacts.email_placeholder')"
                     :error="editErrors.email"
                 />
-                <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
-                <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phone_placeholder')" />
+                <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.company_placeholder')" />
                 <AppMultiselect
                     v-model="editForm.tagIds"
                     :options="flatTags"
                     :label="t('backend.crm.contacts.tags')"
-                    :placeholder="t('backend.crm.contacts.tagsPlaceholder')"
+                    :placeholder="t('backend.crm.contacts.tags_placeholder')"
                     track-by="id"
                     multiple
                 />
                 <div v-if="editingContact?.source" class="text-xs text-muted">
-                    {{ t('backend.crm.contacts.sourceLabel') }}
+                    {{ t('backend.crm.contacts.source_label') }}
                     <AppBadge :color="contactSourceColor(editingContact.source)">{{ t(`backend.crm.contacts.sources.${editingContact.source}`) }}</AppBadge>
                 </div>
-                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
+                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notes_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -363,8 +363,8 @@ const { flatTags } = useContactsTags(props.tagsPath);
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.crm.contacts.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.crm.contacts.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.contacts.delete_confirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.contacts.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

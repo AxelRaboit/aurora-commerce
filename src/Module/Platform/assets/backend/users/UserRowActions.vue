@@ -32,7 +32,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "modules", "to
         <AppIconButton
             v-if="user.status === 'invited' && canAct"
             color="amber"
-            :title="t('backend.users.resendInvitation')"
+            :title="t('backend.users.resend_invitation')"
             v-on:click="emit('resend', user)"
         >
             <Mail class="w-4 h-4" :stroke-width="2" />
@@ -48,7 +48,7 @@ const emit = defineEmits(["view", "resend", "edit", "privileges", "modules", "to
         <AppIconButton
             v-if="isDev && user.type === 'frontend' && impersonateFrontPath"
             color="violet"
-            :title="t('backend.users.impersonateFront', { name: user.name })"
+            :title="t('backend.users.impersonate_front', { name: user.name })"
             :href="buildPath(impersonateFrontPath, { id: user.id })"
         >
             <LogIn class="w-4 h-4" :stroke-width="2" />

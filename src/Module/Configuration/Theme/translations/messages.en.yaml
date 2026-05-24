@@ -6,17 +6,17 @@ backend:
     active: Active
     edit: Edit
     colors: Colors
-    resetColor: Reset
-    primaryColor: Primary color
-    primaryColorLabel: Accent colour
-    primaryColorHint: 'Used for buttons, links, badges and the logo. The full palette is generated automatically.'
+    reset_color: Reset
+    primary_color: Primary color
+    primary_color_label: Accent colour
+    primary_color_hint: 'Used for buttons, links, badges and the logo. The full palette is generated automatically.'
     sections:
       general: General
       header: Header
       footer: Footer
     vars:
       accent: Primary color
-      accentHover: Primary color (hover)
+      accent_hover: Primary color (hover)
       bg: Background
       surface: Surface
       surface2: Secondary surface
@@ -25,27 +25,27 @@ backend:
       muted: Muted text
       border: Border
       text: Text
-    headerContent: Content
-    headerModeDefault: Site name
-    headerModeText: Custom text
-    headerModeImage: Media image
-    headerCustomText: Custom text
-    headerLogoMediaId: Media ID
-    footerText: Footer text
-    slugLabel: Slug
-    headerMediaHint: Find the ID in Media → open a media → ID field.
-    headerTextPlaceholder: My site
-    configHint: 'Available variables: --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
-    configPlaceholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
-    configJsonError: The configuration JSON is invalid.
-    deleteConfirm: 'Delete theme "{name}"? This action is irreversible.'
-    cannotDeleteDefault: Cannot delete the default theme.
-    cannotDeleteActive: Cannot delete the active theme.
+    header_content: Content
+    header_mode_default: Site name
+    header_mode_text: Custom text
+    header_mode_image: Media image
+    header_custom_text: Custom text
+    header_logo_media_id: Media ID
+    footer_text: Footer text
+    slug_label: Slug
+    header_media_hint: Find the ID in Media → open a media → ID field.
+    header_text_placeholder: My site
+    config_hint: 'Available variables: --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
+    config_placeholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
+    config_json_error: The configuration JSON is invalid.
+    delete_confirm: 'Delete theme "{name}"? This action is irreversible.'
+    cannot_delete_default: Cannot delete the default theme.
+    cannot_delete_active: Cannot delete the active theme.
     created: Theme created.
     updated: Theme updated.
     activated: Theme activated.
     deleted: Theme deleted.
-    templateCount: '{count} template file(s)'
+    template_count: '{count} template file(s)'
     errors:
       slug_invalid: 'Slug may only contain lowercase letters, numbers, and hyphens.'
       slug_taken: This slug is already in use.

@@ -35,35 +35,35 @@ backend:
         remove: Retirer cette couleur
         reset: Réinitialiser aux couleurs par défaut
         invalid_hex: 'Code hexadécimal invalide. Format attendu : #rrggbb.'
-    navAliasesEmpty: Aucune section de navigation disponible.
-    navAliases:
+    nav_aliases_empty: Aucune section de navigation disponible.
+    nav_aliases:
       title: Menu latéral
       help: 'Renommez et réordonnez les regroupements et les modules du menu latéral. Glissez la poignée pour déplacer une section ou un module. Cliquez sur une section pour développer ses items.'
-      itemsEmpty: Aucun item dans cette section.
-      resetItem: Réinitialiser
-      resetAll: Tout réinitialiser
+      items_empty: Aucun item dans cette section.
+      reset_item: Réinitialiser
+      reset_all: Tout réinitialiser
       save: Enregistrer
-      dragHandle: Glisser pour réordonner
-    cascadeLocked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
-    mediaSquareHint: 'Recommandé : image carrée (1:1).'
-    modulesIntro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
-    modulesEmpty: Aucun module trouvé.
-    moduleType:
+      drag_handle: Glisser pour réordonner
+    cascade_locked: "Activez d'abord « {parent} » pour pouvoir modifier ce paramètre."
+    media_square_hint: 'Recommandé : image carrée (1:1).'
+    modules_intro: Activez ou désactivez les modules de l'application. Les modifications sont enregistrées immédiatement.
+    modules_empty: Aucun module trouvé.
+    module_type:
       backend: Backend
       frontend: Frontend
     save: Enregistrer
     saved: Réglages sauvegardés.
-    modulesSearchPlaceholder: Rechercher un module…
-    confirmPassword: Confirmer l'action
-    confirmPasswordDescription: Confirmez le mot de passe pour activer ou désactiver des modules.
-    confirmPasswordPlaceholder: Mot de passe…
-    confirmPasswordInvalid: Mot de passe incorrect.
-    confirmPasswordConfirm: Confirmer
-    browseMedia: Parcourir les médias
-    noPageSelected: Aucune page sélectionnée — affichage de la liste des articles par défaut.
-    searchPost: Rechercher une page…
-    orId: "ou saisir l'ID :"
-    sequenceSearch: Rechercher une séquence…
+    modules_search_placeholder: Rechercher un module…
+    confirm_password: Confirmer l'action
+    confirm_password_description: Confirmez le mot de passe pour activer ou désactiver des modules.
+    confirm_password_placeholder: Mot de passe…
+    confirm_password_invalid: Mot de passe incorrect.
+    confirm_password_confirm: Confirmer
+    browse_media: Parcourir les médias
+    no_page_selected: Aucune page sélectionnée — affichage de la liste des articles par défaut.
+    search_post: Rechercher une page…
+    or_id: "ou saisir l'ID :"
+    sequence_search: Rechercher une séquence…
   parameters:
     site_name:
       label: Nom du site
@@ -196,8 +196,8 @@ backend:
     description: Description
     empty: Aucun paramètre.
     saved: Paramètre enregistré.
-    searchPlaceholder: Rechercher par clé…
-    allGroups: Tous les groupes
+    search_placeholder: Rechercher par clé…
+    all_groups: Tous les groupes
   title: Administration
   stats:
     posts: Articles
@@ -206,52 +206,52 @@ backend:
     users: Utilisateurs
     published: publiés
     draft: brouillons
-    byType: Articles par type
+    by_type: Articles par type
     recent: Activité récente
-    postsByMonth: Articles publiés par mois
+    posts_by_month: Articles publiés par mois
     pipeline: pipeline
     won: Affaires gagnées
-    dealsByStage: Affaires par étape
-    productsByStatus: Produits par statut
+    deals_by_stage: Affaires par étape
+    products_by_status: Produits par statut
     inventory: Inventaire
-    noModuleEnabled: Aucun module de dashboard activé.
-    comingSoon: Bientôt disponible
+    no_module_enabled: Aucun module de dashboard activé.
+    coming_soon: Bientôt disponible
     editorial:
-      pendingReview: en attente de revue
+      pending_review: en attente de revue
       scheduled: planifiés
-      pendingComments: Commentaires en attente
-      recentActivity: Activité récente
-      postsByAuthor: Posts par auteur
-      mediaByType: Médias par type
+      pending_comments: Commentaires en attente
+      recent_activity: Activité récente
+      posts_by_author: Posts par auteur
+      media_by_type: Médias par type
     crm:
-      recentDeals: Affaires récentes
-      conversionRate: Taux de conversion
-      recentActivity: Activité contacts (7 j)
+      recent_deals: Affaires récentes
+      conversion_rate: Taux de conversion
+      recent_activity: Activité contacts (7 j)
     erp:
-      outOfStock: Rupture de stock
-      byType: Par type
-      catalogEvolution: Évolution du catalogue
-      topSelling: Produits les plus vendus
+      out_of_stock: Rupture de stock
+      by_type: Par type
+      catalog_evolution: Évolution du catalogue
+      top_selling: Produits les plus vendus
     billing:
-      needingReview: À traiter
-      totalGross: CA total facturé
+      needing_review: À traiter
+      total_gross: CA total facturé
       overdue: Factures en retard
-      topSuppliers: Top fournisseurs
-      monthlyEvolution: Évolution mensuelle
+      top_suppliers: Top fournisseurs
+      monthly_evolution: Évolution mensuelle
     photo:
       active: Galeries actives
       finalized: Finalisées
-      clientSelections: Sélections clients
-      byClient: Galeries par client
+      client_selections: Sélections clients
+      by_client: Galeries par client
     ecommerce:
       pending: en attente
       revenue: Chiffre d'affaires
-      revenueSubtitle: payées + expédiées + livrées
-      averageOrder: Panier moyen
-      recentOrders: Commandes récentes
-      byStatus: Répartition par statut
-      revenueChart: Évolution du CA
-      topProducts: Top produits vendus
+      revenue_subtitle: payées + expédiées + livrées
+      average_order: Panier moyen
+      recent_orders: Commandes récentes
+      by_status: Répartition par statut
+      revenue_chart: Évolution du CA
+      top_products: Top produits vendus
   forms:
     errors:
       slug_format: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'

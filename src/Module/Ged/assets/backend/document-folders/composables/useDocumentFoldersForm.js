@@ -105,7 +105,7 @@ export function useDocumentFoldersForm(
     return {
         items,
         parentOptions: computed(() => [
-            { value: null, label: t("backend.ged.folders.noParent") },
+            { value: null, label: t("backend.ged.folders.no_parent") },
             ...items.value.map((folder) => ({
                 value: folder.id,
                 label: folder.name,

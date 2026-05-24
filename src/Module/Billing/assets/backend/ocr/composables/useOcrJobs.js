@@ -96,7 +96,7 @@ export function useOcrJobs(
         }
         const idx = jobsRef.value.findIndex((j) => j.id === job.id);
         if (idx !== -1) jobsRef.value[idx] = data.job;
-        toast.success(t("backend.billing.ocr.retryQueued"));
+        toast.success(t("backend.billing.ocr.retry_queued"));
         start();
         return true;
     }

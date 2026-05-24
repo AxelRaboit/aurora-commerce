@@ -5,7 +5,7 @@ export function useGenerateInvoice(generateInvoicePath, activeProject) {
 
     async function generateInvoice() {
         if (!activeProject.value || !generateInvoicePath) return;
-        if (!confirm(t("backend.projects.confirmGenerateInvoice"))) return;
+        if (!confirm(t("backend.projects.confirm_generate_invoice"))) return;
         const url = generateInvoicePath.replace(
             "__id__",
             activeProject.value.id,

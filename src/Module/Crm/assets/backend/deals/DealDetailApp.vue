@@ -105,7 +105,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                     <dd class="text-primary text-sm font-medium">{{ Number(deal.value).toLocaleString() }} €</dd>
                 </div>
                 <div v-if="deal.closingDate">
-                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.deals.closingDate') }}</dt>
+                    <dt class="text-xs text-muted uppercase tracking-wide mb-0.5">{{ t('backend.crm.deals.closing_date') }}</dt>
                     <dd class="text-secondary text-sm">{{ deal.closingDate }}</dd>
                 </div>
                 <div v-if="deal.notes">
@@ -138,15 +138,15 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.crm.deals.name')"
-                    :placeholder="t('backend.crm.deals.namePlaceholder')"
+                    :placeholder="t('backend.crm.deals.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
                 <AppSelect v-model="editForm.stage" :label="t('backend.crm.deals.stage')">
                     <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </AppSelect>
-                <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
-                <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closingDate')" />
+                <AppInput v-model="editForm.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.value_placeholder')" />
+                <AppDatePicker v-model="editForm.closingDate" :label="t('backend.crm.deals.closing_date')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -164,8 +164,8 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             :icon="Trash2"
             v-on:close="showDelete = false"
         >
-            <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: deal.name }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.deals.delete_confirm', { name: deal.name }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.deals.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

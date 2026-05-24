@@ -57,7 +57,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
             ? parameterByKey[parameter.requires]
             : null;
         return parent
-            ? t("backend.settings.cascadeLocked", { parent: parent.label })
+            ? t("backend.settings.cascade_locked", { parent: parent.label })
             : "";
     }
 
@@ -102,7 +102,7 @@ export function useSettingsForm(groups, availableGroups, updatePath) {
                     if (result.error === SettingErrorCode.CascadeViolation) {
                         const parent = parameterByKey[result.parentKey];
                         toast.error(
-                            t("backend.settings.cascadeLocked", {
+                            t("backend.settings.cascade_locked", {
                                 parent: parent?.label ?? result.parentKey,
                             }),
                         );

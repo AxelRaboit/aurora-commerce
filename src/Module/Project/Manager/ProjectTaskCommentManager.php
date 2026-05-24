@@ -54,7 +54,7 @@ class ProjectTaskCommentManager implements ProjectTaskCommentManagerInterface
                 $recipient,
                 'project.task.commented',
                 $task->getTitle(),
-                $this->translator->trans('backend.notifications.taskCommented', [
+                $this->translator->trans('backend.notifications.task_commented', [
                     '%name%' => $author->getName(),
                     '%content%' => mb_substr($input->getContent(), 0, 200),
                 ], null, $recipient->getLocale()->value),

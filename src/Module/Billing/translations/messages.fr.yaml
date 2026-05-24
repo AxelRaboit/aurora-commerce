@@ -42,31 +42,31 @@ backend:
       billing: Facturation
   billing:
     list:
-      allStatuses: Tous les statuts
-      deleteWarning: Cette action est irréversible.
+      all_statuses: Tous les statuts
+      delete_warning: Cette action est irréversible.
     dashboard:
       stats:
-        thisMonth: Ce mois
-        thisYear: Cette année
-        needsReview: À vérifier
-        totalInvoices: Total factures
+        this_month: Ce mois
+        this_year: Cette année
+        needs_review: À vérifier
+        total_invoices: Total factures
     invoices:
-      searchPlaceholder: "N° facture, fournisseur…"
-      importOcr: Importer (OCR)
-      exportXlsx: Exporter Excel
+      search_placeholder: "N° facture, fournisseur…"
+      import_ocr: Importer (OCR)
+      export_xlsx: Exporter Excel
       empty: Aucune facture pour l'instant.
-      deleteConfirm: "Supprimer la facture {number} ?"
-      deleteTiersToo: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
-      deleteBuyerToo: "Supprimer aussi le client « {name} » (aucune autre facture liée)"
+      delete_confirm: "Supprimer la facture {number} ?"
+      delete_tiers_too: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
+      delete_buyer_too: "Supprimer aussi le client « {name} » (aucune autre facture liée)"
       deleted: Facture supprimée.
-      deleteError: "Suppression impossible (contraintes DB)."
+      delete_error: "Suppression impossible (contraintes DB)."
       number: "N°"
       supplier: Fournisseur
       buyer: Acheteur
-      issuedAt: Émise
-      dueAt: Échéance
-      totalGross: TTC
-      statusLabel: Statut
+      issued_at: Émise
+      due_at: Échéance
+      total_gross: TTC
+      status_label: Statut
       status:
         draft: Brouillon
         needs_review: À vérifier
@@ -79,105 +79,105 @@ backend:
         validate: Valider
         validated: Facture validée.
         document: Document source
-        noDocument: Aucun document attaché.
+        no_document: Aucun document attaché.
         supplier: Fournisseur
-        creditNoteCreated: "Avoir émis avec succès."
+        credit_note_created: "Avoir émis avec succès."
         rescan: "Relancer le scan OCR"
-        rescanQueued: "Scan OCR relancé — la facture sera mise à jour automatiquement."
-        createCreditNote: "Émettre un avoir"
-        creditNoteHelp: "Un avoir annule cette facture de façon légale et irréversible. Les montants seront négatifs."
-        creditNoteReasonPlaceholder: "Motif de l'avoir (facultatif)…"
-        confirmCreditNote: "Confirmer l'avoir"
-        cancelledBy: "Cette facture est annulée par l'avoir"
+        rescan_queued: "Scan OCR relancé — la facture sera mise à jour automatiquement."
+        create_credit_note: "Émettre un avoir"
+        credit_note_help: "Un avoir annule cette facture de façon légale et irréversible. Les montants seront négatifs."
+        credit_note_reason_placeholder: "Motif de l'avoir (facultatif)…"
+        confirm_credit_note: "Confirmer l'avoir"
+        cancelled_by: "Cette facture est annulée par l'avoir"
         cancels: "Cet avoir annule la facture"
         buyer: Acheteur
-        noBuyer: Aucun acheteur identifié.
-        numberPending: Généré à la validation
+        no_buyer: Aucun acheteur identifié.
+        number_pending: Généré à la validation
         ocr: OCR
-        ocrJob: Job
-        ocrAnomaly:
-          lowConfidence: "Confiance insuffisante ({pct}% < {threshold}%) — les données extraites peuvent être incorrectes."
-          uncertainFields: "Le modèle a signalé des incertitudes sur ces champs malgré une confiance globale suffisante."
-          totalsMismatch: "Écart de totaux : HT + TVA = {expected} {currency} ≠ TTC {actual} {currency} (diff. {diff} {currency})."
+        ocr_job: Job
+        ocr_anomaly:
+          low_confidence: "Confiance insuffisante ({pct}% < {threshold}%) — les données extraites peuvent être incorrectes."
+          uncertain_fields: "Le modèle a signalé des incertitudes sur ces champs malgré une confiance globale suffisante."
+          totals_mismatch: "Écart de totaux : HT + TVA = {expected} {currency} ≠ TTC {actual} {currency} (diff. {diff} {currency})."
         phone: Téléphone
         address: Adresse
         lines: Lignes
-        noLines: Aucune ligne extraite.
-        addLine: Ajouter une ligne
-        lineAdded: Ligne ajoutée.
-        lineDeleted: Ligne supprimée.
+        no_lines: Aucune ligne extraite.
+        add_line: Ajouter une ligne
+        line_added: Ligne ajoutée.
+        line_deleted: Ligne supprimée.
         fields:
           number: "N° interne"
-          supplierNumber: "N° facture fournisseur"
-          purchaseOrder: "N° commande"
-          issuedAt: Émise le
-          dueAt: Échéance
-          paymentMethod: Mode de paiement
-          paymentTerms: Conditions de paiement
+          supplier_number: "N° facture fournisseur"
+          purchase_order: "N° commande"
+          issued_at: Émise le
+          due_at: Échéance
+          payment_method: Mode de paiement
+          payment_terms: Conditions de paiement
           subtotal: Sous-total HT
-          totalNet: Total HT
-          totalVat: TVA
-          totalGross: Total TTC
+          total_net: Total HT
+          total_vat: TVA
+          total_gross: Total TTC
           discount: Remise globale
           freight: Frais de port
           insurance: Assurance
-          discountRate: "Taux de remise"
+          discount_rate: "Taux de remise"
           reference: "Référence interne"
           project: "Code projet"
           incoterms: Incoterms
-          deliveryDate: "Date de livraison"
-          reverseCharge: Autoliquidation TVA
-          bankDetails: "Coordonnées bancaires"
-        lineCols:
+          delivery_date: "Date de livraison"
+          reverse_charge: Autoliquidation TVA
+          bank_details: "Coordonnées bancaires"
+        line_cols:
           label: Libellé
           reference: "Réf. article"
           description: Description
-          productCode: Code produit
+          product_code: Code produit
           qty: Qté
           unit: Unité
-          unitPrice: PU HT
+          unit_price: PU HT
           discount: Remise
           vat: TVA
-          totalNet: Total HT
-          totalGross: Total TTC
+          total_net: Total HT
+          total_gross: Total TTC
           origin: Origine
       update:
         locked: Cette facture ne peut plus être modifiée.
-        unknownField: Champ inconnu.
-        fieldRequired: Champ requis.
-        invalidDate: Date invalide.
-        notNumeric: Valeur numérique requise.
+        unknown_field: Champ inconnu.
+        field_required: Champ requis.
+        invalid_date: Date invalide.
+        not_numeric: Valeur numérique requise.
     suppliers:
-      searchPlaceholder: "Nom, n° TVA…"
+      search_placeholder: "Nom, n° TVA…"
       empty: Aucun fournisseur. Ils apparaîtront ici au fil des imports OCR.
-      deleteConfirm: "Supprimer le fournisseur {name} ?"
+      delete_confirm: "Supprimer le fournisseur {name} ?"
       deleted: Fournisseur supprimé.
-      deleteError: "Suppression impossible (contraintes DB)."
+      delete_error: "Suppression impossible (contraintes DB)."
       show:
         details: Coordonnées
         invoices: Factures liées
-        totalInvoiced: Total facturé
-        invoiceCount: Nombre de factures
+        total_invoiced: Total facturé
+        invoice_count: Nombre de factures
       name: Nom
-      vatNumber: "N° TVA"
-      registrationNumber: SIRET / Reg.
+      vat_number: "N° TVA"
+      registration_number: SIRET / Reg.
       iban: IBAN
       email: Email
       country: Pays
       website: Site web
-      legalForm: Forme juridique
-      bankName: Banque
+      legal_form: Forme juridique
+      bank_name: Banque
       notes: Notes internes
     tiers:
-      searchPlaceholder: "Nom, n° TVA…"
+      search_placeholder: "Nom, n° TVA…"
       empty: Aucun tiers trouvé.
-      allTypes: Tous les types
-      deleteConfirm: "Supprimer le tiers « {name} » ?"
+      all_types: Tous les types
+      delete_confirm: "Supprimer le tiers « {name} » ?"
       deleted: Tiers supprimé.
-      deleteError: "Suppression impossible (contraintes DB)."
+      delete_error: "Suppression impossible (contraintes DB)."
       update:
-        unknownField: Champ inconnu.
-        fieldRequired: Champ requis.
+        unknown_field: Champ inconnu.
+        field_required: Champ requis.
       type:
         label: Type
         supplier: Fournisseur
@@ -196,24 +196,24 @@ backend:
         ok: "Toutes les vérifications sont passées — conforme loi anti-fraude TVA."
         warning: Des points d'attention ont été détectés.
         error: Des anomalies critiques ont été détectées.
-      generatedAt: "Généré le {date}"
-      statusLabels:
+      generated_at: "Généré le {date}"
+      status_labels:
         ok: OK
         warning: Attention
         error: Erreur
       stats:
-        totalIssued: Factures émises
+        total_issued: Factures émises
       checks:
         sequence:
           title: Séquence de numérotation
-          noGaps: Aucun trou détecté
+          no_gaps: Aucun trou détecté
           gaps: "{n} trou(s) détecté(s)"
-          noNumberedInvoices: Aucune facture numérotée trouvée.
+          no_numbered_invoices: Aucune facture numérotée trouvée.
           description: "Vérifie que la numérotation est continue et sans trou (art. 242 nonies A CGI)."
           year: "Exercice {year}"
-          invoiceCount: "{n} factures"
-          gapUnit: trou(s)
-          missingNumbers: Numéros manquants
+          invoice_count: "{n} factures"
+          gap_unit: trou(s)
+          missing_numbers: Numéros manquants
         archive:
           title: Archivage des factures
           ok: Toutes les factures sont archivées dans les délais.
@@ -228,40 +228,40 @@ backend:
           entity: "Entité"
           date: Date
           user: Utilisateur
-          noUser: "Système (non tracé)"
+          no_user: "Système (non tracé)"
     ocr:
       import: Importer une facture
       empty: Aucun job OCR.
       retry: Relancer
-      retryQueued: Job remis en file d'attente.
-      validateConfirm: "Valider la facture du job #{id} ?"
-      validateHelp: "La facture passera en statut « Validée » et ne pourra plus être modifiée."
-      deleteConfirm: "Supprimer le job #{id} ? Cela supprime aussi la facture liée (si elle existe) et le fichier source."
-      deleteTiersToo: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
+      retry_queued: Job remis en file d'attente.
+      validate_confirm: "Valider la facture du job #{id} ?"
+      validate_help: "La facture passera en statut « Validée » et ne pourra plus être modifiée."
+      delete_confirm: "Supprimer le job #{id} ? Cela supprime aussi la facture liée (si elle existe) et le fichier source."
+      delete_tiers_too: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
       deleted: Job supprimé.
-      deleteError: "Suppression impossible (contraintes DB)."
-      creditNote:
-        invalidStatus: "Seules les factures validées ou payées peuvent faire l'objet d'un avoir."
-        alreadyCancelled: "Un avoir a déjà été émis pour cette facture."
-      errorLog: Journal d'erreur
-      viewLogs: Voir les logs
-      logsTitle: Logs du job
-      logsEmpty: Aucun log disponible.
-      logsWaitingWorker: En attente du worker — le job est en file d'attente…
-      logsStarting: Le worker a pris en charge le job, les logs arrivent…
-      logsRunning: Traitement en cours…
-      noErrorLog: Aucun détail d'erreur disponible.
-      fileName: Fichier
-      statusLabel: Statut
+      delete_error: "Suppression impossible (contraintes DB)."
+      credit_note:
+        invalid_status: "Seules les factures validées ou payées peuvent faire l'objet d'un avoir."
+        already_cancelled: "Un avoir a déjà été émis pour cette facture."
+      error_log: Journal d'erreur
+      view_logs: Voir les logs
+      logs_title: Logs du job
+      logs_empty: Aucun log disponible.
+      logs_waiting_worker: En attente du worker — le job est en file d'attente…
+      logs_starting: Le worker a pris en charge le job, les logs arrivent…
+      logs_running: Traitement en cours…
+      no_error_log: Aucun détail d'erreur disponible.
+      file_name: Fichier
+      status_label: Statut
       confidence: Confiance
       model: Modèle
-      createdAt: Créé
+      created_at: Créé
       upload:
         title: Importer une facture
         help: "Charge une facture (JPG, PNG, WebP ou PDF). Pour un PDF, seule la 1ʳᵉ page est analysée par le modèle vision. Le job est mis en file d'attente et traité par le worker."
         success: "Facture envoyée — job #{id} en file d'attente."
         recent: 10 derniers jobs
-        allJobs: Tous les jobs
+        all_jobs: Tous les jobs
         errors:
           missing: Aucun fichier fourni.
           unsupported: "Format non supporté. Formats acceptés : JPG, PNG, WebP, PDF."
@@ -270,6 +270,6 @@ backend:
         extracting: Extraction
         parsing: Analyse
         completed: Terminé
-        readyToValidate: À valider
+        ready_to_validate: À valider
         failed: Échec
         needs_review: Anomalie détectée

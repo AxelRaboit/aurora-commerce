@@ -34,9 +34,9 @@ const {
 function formatDate(iso) {
     const date = new Date(iso);
     const diffSeconds = Math.round((Date.now() - date.getTime()) / 1000);
-    if (diffSeconds < 60) return t("backend.notifications.justNow");
-    if (diffSeconds < 3600) return t("backend.notifications.minutesAgo", { n: Math.floor(diffSeconds / 60) });
-    if (diffSeconds < 86400) return t("backend.notifications.hoursAgo", { n: Math.floor(diffSeconds / 3600) });
+    if (diffSeconds < 60) return t("backend.notifications.just_now");
+    if (diffSeconds < 3600) return t("backend.notifications.minutes_ago", { n: Math.floor(diffSeconds / 60) });
+    if (diffSeconds < 86400) return t("backend.notifications.hours_ago", { n: Math.floor(diffSeconds / 3600) });
     return date.toLocaleDateString();
 }
 
@@ -72,10 +72,10 @@ function onItemClick(entry) {
                     <div class="flex items-center justify-between px-4 py-3 border-b border-line shrink-0">
                         <span class="text-sm font-semibold text-primary">{{ t('backend.notifications.title') }}</span>
                         <div class="flex items-center gap-1">
-                            <AppIconButton v-if="unreadCount > 0" :title="t('backend.notifications.markAllRead')" v-on:click="markAllRead">
+                            <AppIconButton v-if="unreadCount > 0" :title="t('backend.notifications.mark_all_read')" v-on:click="markAllRead">
                                 <Check class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
-                            <AppIconButton v-if="deletePath && entries.length" :title="t('backend.notifications.deleteAll')" v-on:click="deleteAll">
+                            <AppIconButton v-if="deletePath && entries.length" :title="t('backend.notifications.delete_all')" v-on:click="deleteAll">
                                 <Trash2 class="w-4 h-4" :stroke-width="2" />
                             </AppIconButton>
                             <AppIconButton :title="t('backend.notifications.close')" v-on:click="toggle">

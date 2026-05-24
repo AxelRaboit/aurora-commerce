@@ -35,35 +35,35 @@ backend:
         remove: Remove this color
         reset: Reset to default colors
         invalid_hex: 'Invalid hex code. Expected format: #rrggbb.'
-    navAliasesEmpty: No navigation sections available.
-    navAliases:
+    nav_aliases_empty: No navigation sections available.
+    nav_aliases:
       title: Side menu
       help: Rename and reorder sidemenu group headings and individual modules. Drag the handle to move a section or module. Click a section to expand its items.
-      itemsEmpty: No items in this section.
-      resetItem: Reset
-      resetAll: Reset all
+      items_empty: No items in this section.
+      reset_item: Reset
+      reset_all: Reset all
       save: Save
-      dragHandle: Drag to reorder
-    cascadeLocked: 'Enable "{parent}" first to edit this setting.'
-    mediaSquareHint: 'Recommended: square image (1:1).'
-    modulesIntro: Enable or disable application modules. Changes are saved immediately.
-    modulesEmpty: No module found.
-    moduleType:
+      drag_handle: Drag to reorder
+    cascade_locked: 'Enable "{parent}" first to edit this setting.'
+    media_square_hint: 'Recommended: square image (1:1).'
+    modules_intro: Enable or disable application modules. Changes are saved immediately.
+    modules_empty: No module found.
+    module_type:
       backend: Backend
       frontend: Frontend
     save: Save
     saved: Settings saved.
-    modulesSearchPlaceholder: Search a module…
-    confirmPassword: Confirm action
-    confirmPasswordDescription: Confirm your password to enable or disable modules.
-    confirmPasswordPlaceholder: Password…
-    confirmPasswordInvalid: Incorrect password.
-    confirmPasswordConfirm: Confirm
-    browseMedia: Browse media
-    noPageSelected: No page selected — showing the article list by default.
-    searchPost: Search a page…
-    orId: 'or enter ID:'
-    sequenceSearch: Search a sequence…
+    modules_search_placeholder: Search a module…
+    confirm_password: Confirm action
+    confirm_password_description: Confirm your password to enable or disable modules.
+    confirm_password_placeholder: Password…
+    confirm_password_invalid: Incorrect password.
+    confirm_password_confirm: Confirm
+    browse_media: Browse media
+    no_page_selected: No page selected — showing the article list by default.
+    search_post: Search a page…
+    or_id: 'or enter ID:'
+    sequence_search: Search a sequence…
   parameters:
     site_name:
       label: Site name
@@ -196,8 +196,8 @@ backend:
     description: Description
     empty: No parameters.
     saved: Parameter saved.
-    searchPlaceholder: Search by key…
-    allGroups: All groups
+    search_placeholder: Search by key…
+    all_groups: All groups
   title: Administration
   stats:
     posts: Posts
@@ -206,52 +206,52 @@ backend:
     users: Users
     published: published
     draft: drafts
-    byType: Posts by type
+    by_type: Posts by type
     recent: Recent activity
-    postsByMonth: Posts published per month
+    posts_by_month: Posts published per month
     pipeline: pipeline
     won: Won deals
-    dealsByStage: Deals by stage
-    productsByStatus: Products by status
+    deals_by_stage: Deals by stage
+    products_by_status: Products by status
     inventory: Inventory
-    noModuleEnabled: No dashboard module is enabled.
-    comingSoon: Coming soon
+    no_module_enabled: No dashboard module is enabled.
+    coming_soon: Coming soon
     editorial:
-      pendingReview: pending review
+      pending_review: pending review
       scheduled: scheduled
-      pendingComments: Pending comments
-      recentActivity: Recent activity
-      postsByAuthor: Posts by author
-      mediaByType: Media by type
+      pending_comments: Pending comments
+      recent_activity: Recent activity
+      posts_by_author: Posts by author
+      media_by_type: Media by type
     crm:
-      recentDeals: Recent deals
-      conversionRate: Conversion rate
-      recentActivity: Contact activity (7 d)
+      recent_deals: Recent deals
+      conversion_rate: Conversion rate
+      recent_activity: Contact activity (7 d)
     erp:
-      outOfStock: Out of stock
-      byType: By type
-      catalogEvolution: Catalog evolution
-      topSelling: Top selling products
+      out_of_stock: Out of stock
+      by_type: By type
+      catalog_evolution: Catalog evolution
+      top_selling: Top selling products
     billing:
-      needingReview: Needs review
-      totalGross: Total invoiced
+      needing_review: Needs review
+      total_gross: Total invoiced
       overdue: Overdue invoices
-      topSuppliers: Top suppliers
-      monthlyEvolution: Monthly evolution
+      top_suppliers: Top suppliers
+      monthly_evolution: Monthly evolution
     photo:
       active: Active galleries
       finalized: Finalized
-      clientSelections: Client selections
-      byClient: Galleries by client
+      client_selections: Client selections
+      by_client: Galleries by client
     ecommerce:
       pending: pending
       revenue: Revenue
-      revenueSubtitle: paid + shipped + delivered
-      averageOrder: Average order
-      recentOrders: Recent orders
-      byStatus: By status
-      revenueChart: Revenue over time
-      topProducts: Top products sold
+      revenue_subtitle: paid + shipped + delivered
+      average_order: Average order
+      recent_orders: Recent orders
+      by_status: By status
+      revenue_chart: Revenue over time
+      top_products: Top products sold
   forms:
     errors:
       slug_format: 'The slug can only contain lowercase letters, numbers and hyphens.'

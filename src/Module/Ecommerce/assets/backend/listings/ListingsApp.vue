@@ -73,7 +73,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.ecommerce.listings.searchPlaceholder')"
+                :placeholder="t('backend.ecommerce.listings.search_placeholder')"
                 v-on:search="onSearch"
             />
             <template #actions>
@@ -203,32 +203,32 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     required
                     v-on:update:model-value="(v) => onProductChange(availableProducts.find(p => p.id == v), newListing)"
                 >
-                    <option value="" disabled>{{ t('backend.ecommerce.listings.selectProduct') }}</option>
+                    <option value="" disabled>{{ t('backend.ecommerce.listings.select_product') }}</option>
                     <option v-for="product in availableProducts" :key="product.id" :value="product.id">{{ product.name }} ({{ product.reference }})</option>
                 </AppSelect>
                 <AppInput
                     v-model="newListing.slug"
                     :label="t('backend.ecommerce.listings.slug')"
-                    :placeholder="t('backend.ecommerce.listings.slugPlaceholder')"
+                    :placeholder="t('backend.ecommerce.listings.slug_placeholder')"
                     :error="createErrors.slug"
                     required
                 />
                 <AppInput
                     v-model="newListing.marketingTitle"
-                    :label="t('backend.ecommerce.listings.marketingTitle')"
-                    :placeholder="t('backend.ecommerce.listings.marketingTitlePlaceholder')"
+                    :label="t('backend.ecommerce.listings.marketing_title')"
+                    :placeholder="t('backend.ecommerce.listings.marketing_title_placeholder')"
                 />
-                <AppTextarea v-model="newListing.marketingDescription" :rows="4" :placeholder="t('backend.ecommerce.listings.marketingDescriptionPlaceholder')" />
+                <AppTextarea v-model="newListing.marketingDescription" :rows="4" :placeholder="t('backend.ecommerce.listings.marketing_description_placeholder')" />
                 <AppImagePickerField
                     v-model="newListingImage"
-                    :label="t('backend.ecommerce.listings.featuredImage')"
-                    :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
+                    :label="t('backend.ecommerce.listings.featured_image')"
+                    :hint="t('backend.ecommerce.listings.featured_image_override_hint')"
                 />
                 <AppMultiselect
                     v-model="newListing.categoryIds"
                     :options="flatCategories"
                     :label="t('backend.ecommerce.listings.categories')"
-                    :placeholder="t('backend.ecommerce.listings.categoriesPlaceholder')"
+                    :placeholder="t('backend.ecommerce.listings.categories_placeholder')"
                     multiple
                     track-by="id"
                     option-label="label"
@@ -237,13 +237,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     v-model="newListing.tagIds"
                     :options="flatTags"
                     :label="t('backend.ecommerce.listings.tags')"
-                    :placeholder="t('backend.ecommerce.listings.tagsPlaceholder')"
+                    :placeholder="t('backend.ecommerce.listings.tags_placeholder')"
                     multiple
                     track-by="id"
                     option-label="label"
                 />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visible_on_shop') }}</span>
                     <AppToggle v-model="newListing.isVisibleOnShop" />
                 </div>
             </form>
@@ -271,19 +271,19 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 />
                 <AppInput
                     v-model="editForm.marketingTitle"
-                    :label="t('backend.ecommerce.listings.marketingTitle')"
+                    :label="t('backend.ecommerce.listings.marketing_title')"
                 />
                 <AppTextarea v-model="editForm.marketingDescription" :rows="4" />
                 <AppImagePickerField
                     v-model="editFormImage"
-                    :label="t('backend.ecommerce.listings.featuredImage')"
-                    :hint="t('backend.ecommerce.listings.featuredImageOverrideHint')"
+                    :label="t('backend.ecommerce.listings.featured_image')"
+                    :hint="t('backend.ecommerce.listings.featured_image_override_hint')"
                 />
                 <AppMultiselect
                     v-model="editForm.categoryIds"
                     :options="flatCategories"
                     :label="t('backend.ecommerce.listings.categories')"
-                    :placeholder="t('backend.ecommerce.listings.categoriesPlaceholder')"
+                    :placeholder="t('backend.ecommerce.listings.categories_placeholder')"
                     multiple
                     track-by="id"
                     option-label="label"
@@ -292,13 +292,13 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                     v-model="editForm.tagIds"
                     :options="flatTags"
                     :label="t('backend.ecommerce.listings.tags')"
-                    :placeholder="t('backend.ecommerce.listings.tagsPlaceholder')"
+                    :placeholder="t('backend.ecommerce.listings.tags_placeholder')"
                     multiple
                     track-by="id"
                     option-label="label"
                 />
                 <div class="flex items-center justify-between pt-2 border-t border-line">
-                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visibleOnShop') }}</span>
+                    <span class="text-sm text-secondary">{{ t('backend.ecommerce.listings.visible_on_shop') }}</span>
                     <AppToggle v-model="editForm.isVisibleOnShop" />
                 </div>
             </form>
@@ -318,8 +318,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.deleteConfirm', { name: pendingDelete?.displayTitle ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.ecommerce.listings.delete_confirm', { name: pendingDelete?.displayTitle ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.ecommerce.listings.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

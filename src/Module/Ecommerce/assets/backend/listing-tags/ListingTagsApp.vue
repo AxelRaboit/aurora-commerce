@@ -110,7 +110,7 @@ function displaySlug(tag) {
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.ecommerce.listing_tags.searchPlaceholder')"
+                :placeholder="t('backend.ecommerce.listing_tags.search_placeholder')"
             />
             <template #actions>
                 <AppButton

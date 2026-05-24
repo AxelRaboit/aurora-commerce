@@ -44,7 +44,7 @@ export function useUsersInvite(invitePath, roles, fetchUsers, options = {}) {
                 inviteModal.errors = data.errors ?? {};
                 return;
             }
-            toast.success(t("backend.users.invitationSent"));
+            toast.success(t("backend.users.invitation_sent"));
             inviteModal.open = false;
             fetchUsers();
         } catch {

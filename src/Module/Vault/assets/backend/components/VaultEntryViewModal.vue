@@ -149,7 +149,7 @@ function close() {
                     </div>
 
                     <div v-if="!visibleFields.length" class="py-6 text-center text-sm text-muted">
-                        {{ t('vault.view.noFields') }}
+                        {{ t('vault.view.no_fields') }}
                     </div>
                 </div>
             </div>

@@ -91,11 +91,11 @@ export function useMountPoints(
     function formValidationRules(form) {
         return {
             name: () =>
-                required(t("backend.mountPoints.errors.name_required"))(
+                required(t("backend.mount_points.errors.name_required"))(
                     form.name,
                 ),
             host: () =>
-                required(t("backend.mountPoints.errors.host_required"))(
+                required(t("backend.mount_points.errors.host_required"))(
                     form.host,
                 ),
         };

@@ -46,13 +46,13 @@ export function useVaultFilter(entries, folders, nav) {
     });
 
     const emptyMessage = computed(() => {
-        if (nav.showFavorites.value) return t("vault.entries.emptyFavorites");
+        if (nav.showFavorites.value) return t("vault.entries.empty_favorites");
         if (
             !nav.allView.value &&
             !nav.allFoldersView.value &&
             nav.currentFolderId.value !== null
         )
-            return t("vault.entries.emptyFolder");
+            return t("vault.entries.empty_folder");
         return t("vault.entries.empty");
     });
 

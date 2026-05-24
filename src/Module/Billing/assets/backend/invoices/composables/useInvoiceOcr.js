@@ -63,7 +63,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
         if (job.confidence !== null && job.confidence < 0.85) {
             reasons.push({
                 text: t(
-                    "backend.billing.invoices.show.ocrAnomaly.lowConfidence",
+                    "backend.billing.invoices.show.ocrAnomaly.low_confidence",
                     { pct: Math.round(job.confidence * 100), threshold: 85 },
                 ),
                 fields: (job.uncertainFields ?? []).map(fieldLabel),
@@ -79,7 +79,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
             if (diff > 200)
                 reasons.push({
                     text: t(
-                        "backend.billing.invoices.show.ocrAnomaly.totalsMismatch",
+                        "backend.billing.invoices.show.ocrAnomaly.totals_mismatch",
                         {
                             expected: ((net + vat) / 100).toFixed(2),
                             actual: (gross / 100).toFixed(2),
@@ -101,7 +101,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
         ) {
             reasons.push({
                 text: t(
-                    "backend.billing.invoices.show.ocrAnomaly.uncertainFields",
+                    "backend.billing.invoices.show.ocrAnomaly.uncertain_fields",
                 ),
                 fields: job.uncertainFields.map(fieldLabel),
             });

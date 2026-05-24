@@ -89,7 +89,7 @@ const {
     <div class="space-y-4">
         <!-- Search + add -->
         <AppListToolbar>
-            <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.documents.searchPlaceholder')" v-on:search="onSearch" />
+            <AppSearchInput v-model="searchInput" :placeholder="t('backend.ged.documents.search_placeholder')" v-on:search="onSearch" />
             <template #actions>
                 <AppButton
                     v-if="can('ged.documents.create')"
@@ -110,7 +110,7 @@ const {
                 v-model="filterCategoryId"
                 :options="categoryOptions"
                 :allow-empty="true"
-                :placeholder="t('backend.ged.documents.filterByCategory')"
+                :placeholder="t('backend.ged.documents.filter_by_category')"
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />
@@ -119,7 +119,7 @@ const {
                 v-model="filterTagId"
                 :options="tagOptions"
                 :allow-empty="true"
-                :placeholder="t('backend.ged.documents.filterByTag')"
+                :placeholder="t('backend.ged.documents.filter_by_tag')"
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />
@@ -128,7 +128,7 @@ const {
                 v-model="filterFolderId"
                 :options="folderOptions"
                 :allow-empty="true"
-                :placeholder="t('backend.ged.documents.filterByFolder')"
+                :placeholder="t('backend.ged.documents.filter_by_folder')"
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />
@@ -137,7 +137,7 @@ const {
                 :options="statusOptions"
                 :allow-empty="true"
                 :searchable="false"
-                :placeholder="t('backend.ged.documents.filterByStatus')"
+                :placeholder="t('backend.ged.documents.filter_by_status')"
                 class="min-w-44"
                 v-on:update:model-value="applyFilter"
             />
@@ -248,7 +248,7 @@ const {
                                     </span>
                                 </div>
                             </td>
-                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.noCategory") }}</td>
+                            <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.no_category") }}</td>
                             <td class="px-6 py-3 hidden lg:table-cell">
                                 <AppBadge :color="DOCUMENT_STATUS_BADGE[doc.status]">{{ doc.statusLabel }}</AppBadge>
                             </td>
@@ -311,17 +311,17 @@ const {
                 <AppInput
                     v-model="newDoc.title"
                     :label="t('backend.ged.documents.title')"
-                    :placeholder="t('backend.ged.documents.titlePlaceholder')"
+                    :placeholder="t('backend.ged.documents.title_placeholder')"
                     :error="createErrors.title"
                     required
                 />
-                <AppInput v-model="newDoc.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.descriptionPlaceholder')" />
+                <AppInput v-model="newDoc.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.description_placeholder')" />
                 <AppMultiselect
                     v-model="newDoc.categoryId"
                     :label="t('backend.ged.documents.category')"
                     :options="categoryOptions"
                     :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.noCategory')"
+                    :placeholder="t('backend.ged.documents.no_category')"
                 />
                 <AppMultiselect
                     v-if="tags.length"
@@ -330,7 +330,7 @@ const {
                     :options="tagOptions"
                     :multiple="true"
                     :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.noTags')"
+                    :placeholder="t('backend.ged.documents.no_tags')"
                 />
                 <AppMultiselect
                     v-if="folders.length"
@@ -338,7 +338,7 @@ const {
                     :label="t('backend.ged.documents.folder')"
                     :options="folderOptions"
                     :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.noFolder')"
+                    :placeholder="t('backend.ged.documents.no_folder')"
                 />
                 <AppMultiselect
                     v-model="newDoc.status"
@@ -357,7 +357,7 @@ const {
                                 :loading="uploadingCreate"
                                 v-on:click="trigger"
                             >
-                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.choose_file") }}
                             </AppButton>
                         </template>
                     </AppFileInput>
@@ -384,17 +384,17 @@ const {
                 <AppInput
                     v-model="editForm.title"
                     :label="t('backend.ged.documents.title')"
-                    :placeholder="t('backend.ged.documents.titlePlaceholder')"
+                    :placeholder="t('backend.ged.documents.title_placeholder')"
                     :error="editErrors.title"
                     required
                 />
-                <AppInput v-model="editForm.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.descriptionPlaceholder')" />
+                <AppInput v-model="editForm.description" :label="t('backend.ged.documents.description')" :placeholder="t('backend.ged.documents.description_placeholder')" />
                 <AppMultiselect
                     v-model="editForm.categoryId"
                     :label="t('backend.ged.documents.category')"
                     :options="categoryOptions"
                     :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.noCategory')"
+                    :placeholder="t('backend.ged.documents.no_category')"
                 />
                 <AppMultiselect
                     v-if="tags.length"
@@ -403,7 +403,7 @@ const {
                     :options="tagOptions"
                     :multiple="true"
                     :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.noTags')"
+                    :placeholder="t('backend.ged.documents.no_tags')"
                 />
                 <AppMultiselect
                     v-if="folders.length"
@@ -411,7 +411,7 @@ const {
                     :label="t('backend.ged.documents.folder')"
                     :options="folderOptions"
                     :allow-empty="true"
-                    :placeholder="t('backend.ged.documents.noFolder')"
+                    :placeholder="t('backend.ged.documents.no_folder')"
                 />
                 <AppMultiselect
                     v-model="editForm.status"
@@ -430,7 +430,7 @@ const {
                                 :loading="uploadingEdit"
                                 v-on:click="trigger"
                             >
-                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.chooseFile") }}
+                                <Upload class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.choose_file") }}
                             </AppButton>
                         </template>
                     </AppFileInput>
@@ -454,8 +454,8 @@ const {
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.ged.documents.deleteConfirm", { title: pendingDelete?.title ?? "" }) }}</p>
-            <p class="text-sm text-secondary">{{ t("backend.ged.documents.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.documents.delete_confirm", { title: pendingDelete?.title ?? "" }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.documents.delete_warning") }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

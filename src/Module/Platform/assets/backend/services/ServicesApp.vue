@@ -84,7 +84,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
                 <AppInput
                     v-model="form.name"
                     :label="t('backend.services.name')"
-                    :placeholder="t('backend.services.namePlaceholder')"
+                    :placeholder="t('backend.services.name_placeholder')"
                     :error="errors.name ?? ''"
                     :required="true"
                 />
@@ -109,7 +109,7 @@ const { deletingService, confirmDelete } = useServicesDelete(serviceList, props.
             :icon="Trash2"
             v-on:close="deletingService = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.services.deleteConfirm", { name: deletingService?.name ?? "" }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.services.delete_confirm", { name: deletingService?.name ?? "" }) }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="deletingService = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

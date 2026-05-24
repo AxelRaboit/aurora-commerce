@@ -35,7 +35,7 @@ const {
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput v-model="tagSearch" :placeholder="t('backend.ged.tags.searchPlaceholder')" />
+            <AppSearchInput v-model="tagSearch" :placeholder="t('backend.ged.tags.search_placeholder')" />
             <template #actions>
                 <AppButton
                     v-if="can('ged.tags.manage')"
@@ -109,7 +109,7 @@ const {
                 <AppInput
                     v-model="newTag.name"
                     :label="t('backend.ged.tags.name')"
-                    :placeholder="t('backend.ged.tags.namePlaceholder')"
+                    :placeholder="t('backend.ged.tags.name_placeholder')"
                     :error="createErrors.name"
                     required
                 />
@@ -137,7 +137,7 @@ const {
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.ged.tags.name')"
-                    :placeholder="t('backend.ged.tags.namePlaceholder')"
+                    :placeholder="t('backend.ged.tags.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
@@ -162,8 +162,8 @@ const {
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.ged.tags.deleteConfirm", { name: pendingDelete?.name ?? "" }) }}</p>
-            <p class="text-sm text-secondary">{{ t("backend.ged.tags.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.tags.delete_confirm", { name: pendingDelete?.name ?? "" }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.tags.delete_warning") }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

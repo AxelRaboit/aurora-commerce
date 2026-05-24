@@ -52,7 +52,7 @@ backend:
       add: Add document
       create: New document
       edit: "Edit document {title}"
-      searchPlaceholder: Search a document…
+      search_placeholder: Search a document…
       picker_title: Pick a document
       picker_empty: No document available
       picker_confirm: Select
@@ -60,25 +60,25 @@ backend:
       updated: Document updated
       deleted: Document deleted
       empty: No documents yet
-      deleteConfirm: "Are you sure you want to delete document « {title} »?"
-      deleteWarning: This action cannot be undone.
-      backToList: Back to documents
-      noCategory: No category
+      delete_confirm: "Are you sure you want to delete document « {title} »?"
+      delete_warning: This action cannot be undone.
+      back_to_list: Back to documents
+      no_category: No category
       tags: Tags
-      noTags: No tags
+      no_tags: No tags
       folder: Folder
-      noFolder: No folder
+      no_folder: No folder
       versions: Version history
-      filterByStatus: Filter by status
-      filterByCategory: Filter by category
-      filterByTag: Filter by tag
-      filterByFolder: Filter by folder
+      filter_by_status: Filter by status
+      filter_by_category: Filter by category
+      filter_by_tag: Filter by tag
+      filter_by_folder: Filter by folder
       preview: Preview
-      chooseFile: Choose a file
-      chooseFileLibrary: Media library
-      chooseFileLocal: From your computer
-      titlePlaceholder: Document title…
-      descriptionPlaceholder: Optional description…
+      choose_file: Choose a file
+      choose_file_library: Media library
+      choose_file_local: From your computer
+      title_placeholder: Document title…
+      description_placeholder: Optional description…
       status_draft: Draft
       status_published: Published
       status_archived: Archived
@@ -92,21 +92,21 @@ backend:
       add: Add category
       create: New category
       edit: "Edit category {name}"
-      searchPlaceholder: Search a category…
+      search_placeholder: Search a category…
       created: Category created successfully
       updated: Category updated
       deleted: Category deleted
       empty: No categories yet
-      deleteConfirm: "Are you sure you want to delete category « {name} »?"
-      deleteWarning: Linked documents will not be deleted.
-      namePlaceholder: Category name…
-      descriptionPlaceholder: Optional description…
+      delete_confirm: "Are you sure you want to delete category « {name} »?"
+      delete_warning: Linked documents will not be deleted.
+      name_placeholder: Category name…
+      description_placeholder: Optional description…
       errors:
         name_required: Name is required
     tags:
       name: Name
       color: Color
-      searchPlaceholder: Search a tag…
+      search_placeholder: Search a tag…
       add: Add tag
       create: New tag
       edit: "Edit tag {name}"
@@ -114,9 +114,9 @@ backend:
       updated: Tag updated
       deleted: Tag deleted
       empty: No tags yet
-      deleteConfirm: "Are you sure you want to delete tag « {name} »?"
-      deleteWarning: Linked documents will not be deleted.
-      namePlaceholder: Tag name…
+      delete_confirm: "Are you sure you want to delete tag « {name} »?"
+      delete_warning: Linked documents will not be deleted.
+      name_placeholder: Tag name…
       errors:
         name_required: Name is required
     folders:
@@ -130,11 +130,11 @@ backend:
       updated: Folder updated
       deleted: Folder deleted
       empty: No folders yet
-      deleteConfirm: "Are you sure you want to delete folder « {name} »?"
-      deleteWarning: Linked documents will not be deleted.
-      namePlaceholder: Folder name…
-      searchPlaceholder: Search a folder…
-      noParent: None (root)
+      delete_confirm: "Are you sure you want to delete folder « {name} »?"
+      delete_warning: Linked documents will not be deleted.
+      name_placeholder: Folder name…
+      search_placeholder: Search a folder…
+      no_parent: None (root)
       errors:
         name_required: Name is required
 ged:
@@ -142,7 +142,7 @@ ged:
     documents:
       title: Document Library
       empty: No documents available at the moment.
-      noCategory: No category
+      no_category: No category
       search_placeholder: Search documents…
       no_results: No documents match your search.
       result_count: '{count} document|{count} documents'

@@ -25,29 +25,29 @@ backend:
           deleted: Employee deleted
   employees:
     add: New employee
-    backToList: Back to employees
+    back_to_list: Back to employees
     empty: No employees found.
-    searchPlaceholder: Search an employee…
-    deleteConfirm: 'Delete employee "{name}"?'
-    deleteWarning: This action cannot be undone.
+    search_placeholder: Search an employee…
+    delete_confirm: 'Delete employee "{name}"?'
+    delete_warning: This action cannot be undone.
     name: Name
     fields:
-      firstName: First name
-      lastName: Last name
-      jobTitle: Job title
+      first_name: First name
+      last_name: Last name
+      job_title: Job title
       phone: Phone
-      workEmail: Work email
-      hiredAt: Hire date
-      leftAt: Leave date
+      work_email: Work email
+      hired_at: Hire date
+      left_at: Leave date
       user: User account
       service: Service
       agency: Agency
     placeholders:
-      firstName: e.g. John
-      lastName: e.g. Smith
-      jobTitle: e.g. Backend developer
+      first_name: e.g. John
+      last_name: e.g. Smith
+      job_title: e.g. Backend developer
       phone: e.g. +1 555 000 0000
-      workEmail: e.g. john.smith@company.com
+      work_email: e.g. john.smith@company.com
       user: Link to a user account
       service: Select a service
       agency: Select an agency

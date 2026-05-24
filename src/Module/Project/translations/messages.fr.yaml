@@ -10,8 +10,8 @@ backend:
         tasks:
           manage: Gérer les tâches des projets
   notifications:
-    taskAssigned: Vous avez été assigné à une tâche.
-    taskCommented: '%name% a commenté : %content%'
+    task_assigned: Vous avez été assigné à une tâche.
+    task_commented: '%name% a commenté : %content%'
   modules:
     project: Projet
     project_backend: Projet
@@ -55,19 +55,19 @@ backend:
           deleted: Étiquette supprimée
   projects:
     add: Nouveau projet
-    backToList: Retour aux projets
+    back_to_list: Retour aux projets
     empty: Aucun projet trouvé.
-    searchPlaceholder: Rechercher un projet…
-    columnWidth: 'Largeur :'
+    search_placeholder: Rechercher un projet…
+    column_width: 'Largeur :'
     tasks: Tâches
-    deleteConfirm: 'Supprimer le projet « {name} » ?'
-    deleteWarning: Cette action est irréversible.
+    delete_confirm: 'Supprimer le projet « {name} » ?'
+    delete_warning: Cette action est irréversible.
     fields:
       title: Titre
       description: Description
       status: Statut
-      startDate: Date de début
-      endDate: Date de fin
+      start_date: Date de début
+      end_date: Date de fin
       responsible: Responsable
       contact: Contact
       contacts: Contacts
@@ -75,11 +75,11 @@ backend:
       deal: Affaire CRM
       start: "Début :"
       end: "Fin :"
-      contactLabel: "Contact :"
-      contactsLabel: "Contacts :"
-      companyLabel: "Société :"
-      dealLabel: "Affaire :"
-      responsibleLabel: "Responsable :"
+      contact_label: "Contact :"
+      contacts_label: "Contacts :"
+      company_label: "Société :"
+      deal_label: "Affaire :"
+      responsible_label: "Responsable :"
     placeholders:
       title: Ex. Refonte du site
       description: Décrivez l'objectif du projet…
@@ -88,26 +88,26 @@ backend:
       contacts: Sélectionner un ou plusieurs contacts
       company: Sélectionner une société
       deal: Lier à une affaire
-      taskTitle: Ex. Maquettes homepage
-      taskDescription: Décrivez la tâche…
+      task_title: Ex. Maquettes homepage
+      task_description: Décrivez la tâche…
       assignee: Sélectionner un utilisateur
-      estimateMinutes: Durée estimée en minutes
-      storyPoints: Ex. 3
+      estimate_minutes: Durée estimée en minutes
+      story_points: Ex. 3
     status_draft: Brouillon
     status_active: En cours
     status_completed: Terminé
     status_cancelled: Annulé
-    statusFilter:
+    status_filter:
       all: Tous
     task:
       add: Nouvelle tâche
       empty: Aucune tâche
-      deleteConfirm: 'Supprimer la tâche « {name} » ?'
-      deleteWarning: Cette action est irréversible.
-      commentPlaceholder: Écrire un commentaire…
-      timeEntryNote: Note…
-      attachmentsHint: Sélectionnez un document existant dans la GED.
-      attachmentsAdd: Ajouter un document
+      delete_confirm: 'Supprimer la tâche « {name} » ?'
+      delete_warning: Cette action est irréversible.
+      comment_placeholder: Écrire un commentaire…
+      time_entry_note: Note…
+      attachments_hint: Sélectionnez un document existant dans la GED.
+      attachments_add: Ajouter un document
       fields:
         title: Titre
         description: Description
@@ -115,14 +115,14 @@ backend:
         status: Statut
         priority: Priorité
         assignee: Assigné à
-        dueDate: Échéance
+        due_date: Échéance
         labels: Étiquettes
-        storyPoints: Story points
-        storyPointsShort: pts
-        estimateMinutes: Estimation (min)
-        loggedMinutes: Temps passé (min)
+        story_points: Story points
+        story_points_short: pts
+        estimate_minutes: Estimation (min)
+        logged_minutes: Temps passé (min)
         items: Sous-tâches
-        addItem: Ajouter une sous-tâche
+        add_item: Ajouter une sous-tâche
         comments: Commentaires
         attachments: Pièces jointes
         sprint: Sprint
@@ -139,44 +139,44 @@ backend:
       created: Projet créé.
       updated: Projet mis à jour.
       deleted: Projet supprimé.
-      taskCreated: Tâche créée.
-      taskUpdated: Tâche mise à jour.
-      taskDeleted: Tâche supprimée.
+      task_created: Tâche créée.
+      task_updated: Tâche mise à jour.
+      task_deleted: Tâche supprimée.
     activity:
       title: Activité du projet
       empty: Aucune activité enregistrée pour ce projet.
       system: Système
-      justNow: à l'instant
-      minutesAgo: 'il y a {n} min'
-      hoursAgo: 'il y a {n} h'
-    confirmGenerateInvoice: Créer une facture brouillon depuis ce projet ?
-    generateInvoice: Générer une facture
+      just_now: à l'instant
+      minutes_ago: 'il y a {n} min'
+      hours_ago: 'il y a {n} h'
+    confirm_generate_invoice: Créer une facture brouillon depuis ce projet ?
+    generate_invoice: Générer une facture
     labels:
       manage: Gérer les étiquettes
       add: Nouvelle étiquette
       edit: Modifier l'étiquette
-      nameField: Nom
-      namePlaceholder: Ex. Urgent
-      colorField: Couleur
+      name_field: Nom
+      name_placeholder: Ex. Urgent
+      color_field: Couleur
     sprints:
       manage: Gérer les sprints
       add: Nouveau sprint
       edit: Modifier le sprint
       active: Actif
-      activeField: Sprint en cours
-      nameField: Nom
-      namePlaceholder: Ex. Sprint 1
-    savedViews:
+      active_field: Sprint en cours
+      name_field: Nom
+      name_placeholder: Ex. Sprint 1
+    saved_views:
       save: Enregistrer la vue
-      nameField: Nom de la vue
-      namePlaceholder: Ex. Mes tâches en retard
+      name_field: Nom de la vue
+      name_placeholder: Ex. Mes tâches en retard
     columns:
       add: Ajouter une colonne
-      addPlaceholder: Nom de la colonne
+      add_placeholder: Nom de la colonne
       rename: Renommer la colonne
       delete: Supprimer la colonne
-      deleteConfirm: 'Supprimer la colonne « {label} » ?'
-      deleteWarning: Les tâches de cette colonne seront déplacées vers la première colonne.
+      delete_confirm: 'Supprimer la colonne « {label} » ?'
+      delete_warning: Les tâches de cette colonne seront déplacées vers la première colonne.
       defaults:
         todo: À faire
         in_progress: En cours

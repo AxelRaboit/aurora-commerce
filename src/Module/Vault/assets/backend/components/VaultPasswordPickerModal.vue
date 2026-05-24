@@ -93,7 +93,7 @@ function usePassword() {
                     {{ t('password_generator.generate') }}
                 </AppButton>
                 <AppButton variant="primary" size="md" :disabled="!password" v-on:click="usePassword">
-                    {{ t('vault.fields.usePassword') }}
+                    {{ t('vault.fields.use_password') }}
                 </AppButton>
             </AppModalFooter>
         </template>

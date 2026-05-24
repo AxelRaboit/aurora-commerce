@@ -31,7 +31,7 @@ const { query, items, page, totalPages, total, loading, onSearch, goToPage } = u
             </div>
         </div>
 
-        <div v-if="loading" class="text-muted text-sm">{{ t('shared.common.loadMore') }}…</div>
+        <div v-if="loading" class="text-muted text-sm">{{ t('shared.common.load_more') }}…</div>
 
         <template v-else-if="items.length === 0">
             <p class="text-muted text-sm">

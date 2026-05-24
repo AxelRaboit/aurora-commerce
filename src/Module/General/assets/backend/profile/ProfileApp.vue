@@ -99,7 +99,7 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                         <AppInput
                             v-model="infoName"
                             :label="t('backend.profile.info.name')"
-                            :placeholder="t('backend.profile.info.namePlaceholder')"
+                            :placeholder="t('backend.profile.info.name_placeholder')"
                             :error="infoErrors.name"
                             autocomplete="name"
                             required
@@ -108,7 +108,7 @@ const { photoUrl, photoLoading, onPhotoSelected, removePhoto } = useProfilePhoto
                             v-model="infoEmail"
                             type="email"
                             :label="t('backend.profile.info.email')"
-                            :placeholder="t('backend.profile.info.emailPlaceholder')"
+                            :placeholder="t('backend.profile.info.email_placeholder')"
                             :error="infoErrors.email"
                             autocomplete="email"
                             required

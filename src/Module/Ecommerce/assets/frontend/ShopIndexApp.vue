@@ -73,7 +73,7 @@ function tagUrl(slug) {
             </div>
         </div>
 
-        <div v-if="loading" class="text-muted text-sm py-8 text-center">{{ t('shared.common.loadMore') }}…</div>
+        <div v-if="loading" class="text-muted text-sm py-8 text-center">{{ t('shared.common.load_more') }}…</div>
 
         <AppNoData v-else-if="!listings.length" :message="query ? t('frontend.shop.no_results') : t('frontend.shop.empty')" />
 

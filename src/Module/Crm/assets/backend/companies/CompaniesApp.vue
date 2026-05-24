@@ -47,7 +47,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
         <AppListToolbar>
             <AppSearchInput
                 v-model="searchInput"
-                :placeholder="t('backend.crm.companies.searchPlaceholder')"
+                :placeholder="t('backend.crm.companies.search_placeholder')"
                 v-on:search="onSearch"
             />
             <template #actions>
@@ -143,14 +143,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput
                     v-model="newCompany.name"
                     :label="t('backend.crm.companies.name')"
-                    :placeholder="t('backend.crm.companies.namePlaceholder')"
+                    :placeholder="t('backend.crm.companies.name_placeholder')"
                     :error="createErrors.name"
                     required
                 />
-                <AppInput v-model="newCompany.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industryPlaceholder')" />
-                <AppInput v-model="newCompany.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.websitePlaceholder')" :error="createErrors.website" />
-                <AppInput v-model="newCompany.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
-                <AppInput v-model="newCompany.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
+                <AppInput v-model="newCompany.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industry_placeholder')" />
+                <AppInput v-model="newCompany.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.website_placeholder')" :error="createErrors.website" />
+                <AppInput v-model="newCompany.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phone_placeholder')" />
+                <AppInput v-model="newCompany.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.address_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -171,14 +171,14 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.crm.companies.name')"
-                    :placeholder="t('backend.crm.companies.namePlaceholder')"
+                    :placeholder="t('backend.crm.companies.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
-                <AppInput v-model="editForm.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industryPlaceholder')" />
-                <AppInput v-model="editForm.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.websitePlaceholder')" :error="editErrors.website" />
-                <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phonePlaceholder')" />
-                <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.addressPlaceholder')" />
+                <AppInput v-model="editForm.industry" :label="t('backend.crm.companies.industry')" :placeholder="t('backend.crm.companies.industry_placeholder')" />
+                <AppInput v-model="editForm.website" :label="t('backend.crm.companies.website')" :placeholder="t('backend.crm.companies.website_placeholder')" :error="editErrors.website" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.companies.phone')" :placeholder="t('backend.crm.companies.phone_placeholder')" />
+                <AppInput v-model="editForm.address" :label="t('backend.crm.companies.address')" :placeholder="t('backend.crm.companies.address_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -196,8 +196,8 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.crm.companies.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.crm.companies.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.companies.delete_confirm', { name: pendingDelete?.name ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.companies.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

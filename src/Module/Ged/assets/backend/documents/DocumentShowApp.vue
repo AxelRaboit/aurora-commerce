@@ -71,7 +71,7 @@ function isPdf(mimeType) {
         <!-- Header actions -->
         <div class="flex items-center justify-between gap-4">
             <a :href="backPath" class="flex items-center gap-1.5 text-sm text-muted hover:text-primary transition">
-                <ArrowLeft class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.documents.backToList") }}
+                <ArrowLeft class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.documents.back_to_list") }}
             </a>
             <div class="flex items-center gap-2">
                 <AppButton v-if="can('ged.documents.edit')" variant="secondary" size="md" v-on:click="openEditDoc">
@@ -220,8 +220,8 @@ function isPdf(mimeType) {
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.ged.documents.deleteConfirm", { title: doc.title }) }}</p>
-            <p class="text-sm text-secondary">{{ t("backend.ged.documents.deleteWarning") }}</p>
+            <p class="text-sm text-primary">{{ t("backend.ged.documents.delete_confirm", { title: doc.title }) }}</p>
+            <p class="text-sm text-secondary">{{ t("backend.ged.documents.delete_warning") }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

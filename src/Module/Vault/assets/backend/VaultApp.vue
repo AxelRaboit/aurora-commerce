@@ -139,7 +139,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
 
         <template v-else>
             <div class="flex items-center gap-2">
-                <AppSearchInput v-model="searchQuery" class="flex-1 min-w-0" :placeholder="t('vault.entries.searchPlaceholder')" />
+                <AppSearchInput v-model="searchQuery" class="flex-1 min-w-0" :placeholder="t('vault.entries.search_placeholder')" />
                 <AppButton variant="primary" size="md" class="shrink-0" v-on:click="vaultForm.openCreate()">
                     <Plus class="w-4 h-4" :stroke-width="2" />
                     <span class="hidden sm:inline">{{ t('vault.entries.add') }}</span>
@@ -308,7 +308,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                                             v-on:toggle-favorite="toggleFavorite(entry)"
                                         />
                                     </div>
-                                    <p v-else class="px-4 py-3 text-sm text-muted">{{ t('vault.entries.emptyFolder') }}</p>
+                                    <p v-else class="px-4 py-3 text-sm text-muted">{{ t('vault.entries.empty_folder') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -381,7 +381,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                                             v-on:toggle-favorite="toggleFavorite(entry)"
                                         />
                                     </div>
-                                    <p v-else class="px-4 py-3 text-sm text-muted">{{ t('vault.entries.emptyFolder') }}</p>
+                                    <p v-else class="px-4 py-3 text-sm text-muted">{{ t('vault.entries.empty_folder') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -440,8 +440,8 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('vault.entries.deleteConfirm', { title: pendingDelete?.title ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('vault.entries.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('vault.entries.delete_confirm', { title: pendingDelete?.title ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('vault.entries.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">
@@ -472,7 +472,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                 <AppInput
                     v-model="folderForm.name"
                     :label="t('vault.folders.name')"
-                    :placeholder="t('vault.folders.namePlaceholder')"
+                    :placeholder="t('vault.folders.name_placeholder')"
                     :error="folderErrors.name"
                     required
                 />
@@ -490,7 +490,7 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
                     v-model="folderForm.parentId"
                     :options="folderParentSelectOptions"
                     :label="t('vault.folders.parent')"
-                    :placeholder="t('vault.folders.noParent')"
+                    :placeholder="t('vault.folders.no_parent')"
                     :allow-empty="true"
                     open-direction="top"
                     :use-teleport="false"
@@ -516,8 +516,8 @@ const { expandedFolderIds, toggleFolderExpanded, rootFolders, folderEntryCounts,
             :icon="Trash2"
             v-on:close="pendingFolderDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('vault.folders.deleteConfirm', { name: pendingFolderDelete?.name ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('vault.folders.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('vault.folders.delete_confirm', { name: pendingFolderDelete?.name ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('vault.folders.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingFolderDelete = null">

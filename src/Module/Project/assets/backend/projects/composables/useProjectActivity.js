@@ -46,13 +46,13 @@ export function useProjectActivity(activityPath, activeProject) {
     function formatRelativeDate(iso) {
         const date = new Date(iso);
         const diffSeconds = Math.round((Date.now() - date.getTime()) / 1000);
-        if (diffSeconds < 60) return t("backend.projects.activity.justNow");
+        if (diffSeconds < 60) return t("backend.projects.activity.just_now");
         if (diffSeconds < 3600)
-            return t("backend.projects.activity.minutesAgo", {
+            return t("backend.projects.activity.minutes_ago", {
                 n: Math.floor(diffSeconds / 60),
             });
         if (diffSeconds < 86400)
-            return t("backend.projects.activity.hoursAgo", {
+            return t("backend.projects.activity.hours_ago", {
                 n: Math.floor(diffSeconds / 3600),
             });
         return date.toLocaleDateString();

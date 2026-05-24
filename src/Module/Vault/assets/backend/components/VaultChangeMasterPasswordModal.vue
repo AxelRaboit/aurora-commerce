@@ -48,8 +48,8 @@ const title = computed(() => props.step === 3 ? t('vault.change_password.process
                 <AppInput
                     :model-value="currentPassword"
                     type="password"
-                    :label="t('vault.unlock.masterPassword')"
-                    :placeholder="t('vault.unlock.masterPasswordPlaceholder')"
+                    :label="t('vault.unlock.master_password')"
+                    :placeholder="t('vault.unlock.master_password_placeholder')"
                     :error="errors.currentPassword"
                     required
                     autofocus
@@ -63,7 +63,7 @@ const title = computed(() => props.step === 3 ? t('vault.change_password.process
                         :model-value="newPassword"
                         type="password"
                         :label="t('vault.change_password.new_password')"
-                        :placeholder="t('vault.setup.masterPasswordPlaceholder')"
+                        :placeholder="t('vault.setup.master_password_placeholder')"
                         :error="errors.newPassword"
                         required
                         v-on:update:model-value="emit('update:newPassword', $event)"
@@ -78,8 +78,8 @@ const title = computed(() => props.step === 3 ? t('vault.change_password.process
                 <AppInput
                     :model-value="confirmPassword"
                     type="password"
-                    :label="t('vault.setup.confirmPassword')"
-                    :placeholder="t('vault.setup.confirmPasswordPlaceholder')"
+                    :label="t('vault.setup.confirm_password')"
+                    :placeholder="t('vault.setup.confirm_password_placeholder')"
                     :error="errors.confirmPassword"
                     required
                     v-on:update:model-value="emit('update:confirmPassword', $event)"

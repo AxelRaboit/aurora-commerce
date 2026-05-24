@@ -147,15 +147,15 @@ const actionLabel = (action) => {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput
                         v-model="editForm.firstName"
-                        :label="t('backend.crm.contacts.firstName')"
-                        :placeholder="t('backend.crm.contacts.firstNamePlaceholder')"
+                        :label="t('backend.crm.contacts.first_name')"
+                        :placeholder="t('backend.crm.contacts.first_name_placeholder')"
                         :error="editErrors.firstName"
                         required
                     />
                     <AppInput
                         v-model="editForm.lastName"
-                        :label="t('backend.crm.contacts.lastName')"
-                        :placeholder="t('backend.crm.contacts.lastNamePlaceholder')"
+                        :label="t('backend.crm.contacts.last_name')"
+                        :placeholder="t('backend.crm.contacts.last_name_placeholder')"
                         :error="editErrors.lastName"
                         required
                     />
@@ -164,12 +164,12 @@ const actionLabel = (action) => {
                     v-model="editForm.email"
                     type="email"
                     :label="t('backend.crm.contacts.email')"
-                    :placeholder="t('backend.crm.contacts.emailPlaceholder')"
+                    :placeholder="t('backend.crm.contacts.email_placeholder')"
                     :error="editErrors.email"
                 />
-                <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phonePlaceholder')" />
-                <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.companyPlaceholder')" />
-                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notesPlaceholder')" />
+                <AppInput v-model="editForm.phone" :label="t('backend.crm.contacts.phone')" :placeholder="t('backend.crm.contacts.phone_placeholder')" />
+                <AppInput v-model="editForm.company" :label="t('backend.crm.contacts.company')" :placeholder="t('backend.crm.contacts.company_placeholder')" />
+                <AppTextarea v-model="editForm.notes" :rows="3" :placeholder="t('backend.crm.contacts.notes_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -187,8 +187,8 @@ const actionLabel = (action) => {
             :icon="Trash2"
             v-on:close="showDelete = false"
         >
-            <p class="text-sm text-primary">{{ t('backend.crm.contacts.deleteConfirm', { name: contact.fullName }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.crm.contacts.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.crm.contacts.delete_confirm', { name: contact.fullName }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.crm.contacts.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

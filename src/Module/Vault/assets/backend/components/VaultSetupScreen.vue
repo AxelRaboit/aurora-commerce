@@ -44,8 +44,8 @@ async function handleSubmit() {
                     <AppInput
                         v-model="masterPassword"
                         type="password"
-                        :label="t('vault.setup.masterPassword')"
-                        :placeholder="t('vault.setup.masterPasswordPlaceholder')"
+                        :label="t('vault.setup.master_password')"
+                        :placeholder="t('vault.setup.master_password_placeholder')"
                         :error="errors.masterPassword"
                         required
                     />
@@ -60,8 +60,8 @@ async function handleSubmit() {
                 <AppInput
                     v-model="confirmPassword"
                     type="password"
-                    :label="t('vault.setup.confirmPassword')"
-                    :placeholder="t('vault.setup.confirmPasswordPlaceholder')"
+                    :label="t('vault.setup.confirm_password')"
+                    :placeholder="t('vault.setup.confirm_password_placeholder')"
                     :error="errors.confirmPassword"
                     required
                 />

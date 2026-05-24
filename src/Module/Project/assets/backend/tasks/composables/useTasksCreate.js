@@ -44,7 +44,7 @@ export function useTasksCreate(taskCreatePath, activeProject, reloadDetail) {
         body: () => newTask.value,
         onSuccess: async () => {
             showCreateTask.value = false;
-            toast.success(t("backend.projects.toast.taskCreated"));
+            toast.success(t("backend.projects.toast.task_created"));
             await reloadDetail();
         },
     });

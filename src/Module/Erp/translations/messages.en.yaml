@@ -46,31 +46,31 @@ backend:
       create: New product
       edit: 'Edit {name}'
       empty: No products.
-      searchPlaceholder: Search by name or reference…
+      search_placeholder: Search by name or reference…
       name: Name
-      namePlaceholder: e.g. Ergonomic chair
+      name_placeholder: e.g. Ergonomic chair
       reference: Reference
-      referencePlaceholder: e.g. CHAIR-001
-      referenceAutoPlaceholder: Auto-generated if empty
+      reference_placeholder: e.g. CHAIR-001
+      reference_auto_placeholder: Auto-generated if empty
       image: Image
-      chooseImage: Choose an image
+      choose_image: Choose an image
       stock: Stock available
-      stockPlaceholder: Empty = stock not tracked
-      stockUntracked: Untracked
-      stockOut: Out
+      stock_placeholder: Empty = stock not tracked
+      stock_untracked: Untracked
+      stock_out: Out
       description: Description
-      descriptionPlaceholder: Free description…
+      description_placeholder: Free description…
       price: Price
-      pricePlaceholder: e.g. 19.99
+      price_placeholder: e.g. 19.99
       currency: Currency
-      statusLabel: Status
-      typeLabel: Type
+      status_label: Status
+      type_label: Type
       types:
         physical: Physical
         digital: Digital
         service: Service
-      deleteConfirm: 'Delete {name}?'
-      deleteWarning: This action is irreversible.
+      delete_confirm: 'Delete {name}?'
+      delete_warning: This action is irreversible.
       back: ← Back to list
     activity:
       title: Activity
@@ -78,4 +78,4 @@ backend:
       created: Product created
       updated: Product updated
       deleted: Product deleted
-      loadMore: Load more
+      load_more: Load more

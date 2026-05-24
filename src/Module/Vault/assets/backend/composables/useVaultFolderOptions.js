@@ -8,7 +8,7 @@ export function useVaultFolderOptions(folders) {
     const { t } = useI18n();
 
     const folderOptions = computed(() => [
-        { value: null, label: t("vault.entries.folderNone") },
+        { value: null, label: t("vault.entries.folder_none") },
         ...folders.value.map((folder) => ({
             value: folder.id,
             label: folder.name,

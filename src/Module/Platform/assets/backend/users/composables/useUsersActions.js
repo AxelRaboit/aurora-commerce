@@ -31,7 +31,7 @@ export function useUsersActions(props, fetchUsers) {
         );
         if (!data) return;
         if (data.success) {
-            toast.success(t("backend.users.invitationResent"));
+            toast.success(t("backend.users.invitation_resent"));
             fetchUsers();
         } else toast.error(t("shared.common.error"));
     }

@@ -128,7 +128,7 @@ export function useVaultFolders(
         };
 
         return [
-            { value: null, label: "— " + t("vault.folders.noParent") },
+            { value: null, label: "— " + t("vault.folders.no_parent") },
             ...withDepth(eligible),
         ];
     });

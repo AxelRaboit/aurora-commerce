@@ -60,7 +60,7 @@ shared:
     select_to_remove: Press enter to remove
     remove: Remove
     all: All
-    loadMore: Load more
+    load_more: Load more
     send: Send
     next: Next
   pagination:
@@ -85,8 +85,8 @@ shared:
     prev: Back
     success: 'Thank you, your message has been sent!'
     error: An error occurred. Please try again.
-    fieldRequired: This field is required.
-    selectPlaceholder: Choose…
+    field_required: This field is required.
+    select_placeholder: Choose…
   locales:
     fr: Français
     en: English
@@ -99,12 +99,12 @@ shared:
 backend:
   editor:
     placeholder: Start writing…
-    toolNames:
+    tool_names:
       text: Text
       heading: Heading
       list: List
-      orderedList: Ordered List
-      unorderedList: Unordered List
+      ordered_list: Ordered List
+      unordered_list: Unordered List
       checklist: Checklist
       quote: Quote
       code: Code
@@ -113,22 +113,22 @@ backend:
       image: Image
       embed: Embed
       marker: Marker
-      inlineCode: Inline Code
+      inline_code: Inline Code
       underline: Underline
       strikethrough: Strikethrough
-      textColor: Text Color
-      textBackground: Background Color
-      fontSize: Font Size
-      clearFormatting: Clear formatting
+      text_color: Text Color
+      text_background: Background Color
+      font_size: Font Size
+      clear_formatting: Clear formatting
       callout: Callout
-      mediaText: Image + Text
-      twoColumn: 2 Columns
+      media_text: Image + Text
+      two_column: 2 Columns
     ui:
-      blockTunes:
+      block_tunes:
         toggler:
           Click to tune: Click to tune
           or drag to move: or drag to move
-      inlineToolbar:
+      inline_toolbar:
         converter:
           Convert to: Convert to
       toolbar:
@@ -137,40 +137,40 @@ backend:
       popover:
         Filter: Filter
         Nothing found: Nothing found
-        nothingFoundExtended: Nothing found. Try searching for something else.
-    blockTunes:
+        nothing_found_extended: Nothing found. Try searching for something else.
+    block_tunes:
       delete:
         Delete: Delete
         Click to delete: Click to delete
-      moveUp:
+      move_up:
         Move up: Move up
-      moveDown:
+      move_down:
         Move down: Move down
     image:
-      captionPlaceholder: Caption…
+      caption_placeholder: Caption…
     quote:
       placeholder: Quote…
-      captionPlaceholder: Author…
-    mediaText:
-      flipLeft: ⇄ Image left
-      flipRight: ⇄ Image right
-      captionPlaceholder: Caption…
-      textPlaceholder: Your text…
-      urlPlaceholder: Image URL…
-      changeUrl: Change URL
+      caption_placeholder: Author…
+    media_text:
+      flip_left: ⇄ Image left
+      flip_right: ⇄ Image right
+      caption_placeholder: Caption…
+      text_placeholder: Your text…
+      url_placeholder: Image URL…
+      change_url: Change URL
       confirm: Confirm
       browse: Browse
       actions: Actions
       or: or
-      mediaIdPlaceholder: Existing media ID…
-      mediaIdNotFound: Media not found
-    mediaPicker:
+      media_id_placeholder: Existing media ID…
+      media_id_not_found: Media not found
+    media_picker:
       title: Choose a media
       search: Search by name or alt…
-      allFolders: All folders
+      all_folders: All folders
       empty: No media found
       loading: Loading…
       select: Select
     callout:
-      titlePlaceholder: Title…
-      messagePlaceholder: Message…
+      title_placeholder: Title…
+      message_placeholder: Message…

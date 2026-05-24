@@ -84,7 +84,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
                 <AppInput
                     v-model="form.name"
                     :label="t('backend.agencies.name')"
-                    :placeholder="t('backend.agencies.namePlaceholder')"
+                    :placeholder="t('backend.agencies.name_placeholder')"
                     :error="errors.name ?? ''"
                     :required="true"
                 />
@@ -109,7 +109,7 @@ const { deletingAgency, confirmDelete } = useAgenciesDelete(agencyList, props.de
             :icon="Trash2"
             v-on:close="deletingAgency = null"
         >
-            <p class="text-sm text-primary">{{ t("backend.agencies.deleteConfirm", { name: deletingAgency?.name ?? "" }) }}</p>
+            <p class="text-sm text-primary">{{ t("backend.agencies.delete_confirm", { name: deletingAgency?.name ?? "" }) }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="deletingAgency = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.cancel") }}</AppButton>

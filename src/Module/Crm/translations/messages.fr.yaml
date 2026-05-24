@@ -85,26 +85,26 @@ backend:
       created: Entreprise créée.
       updated: Entreprise mise à jour.
       deleted: Entreprise supprimée.
-      searchPlaceholder: Rechercher une entreprise…
+      search_placeholder: Rechercher une entreprise…
       name: Nom
-      namePlaceholder: Nom de l'entreprise
+      name_placeholder: Nom de l'entreprise
       industry: Secteur
-      industryPlaceholder: 'Ex. Logiciel, Conseil…'
+      industry_placeholder: 'Ex. Logiciel, Conseil…'
       website: Site web
-      websitePlaceholder: 'https://exemple.com'
+      website_placeholder: 'https://exemple.com'
       phone: Téléphone
-      phonePlaceholder: +33 1 23 45 67 89
+      phone_placeholder: +33 1 23 45 67 89
       address: Adresse
-      addressPlaceholder: Adresse complète
-      contactLinked: Contact rattaché
-      noContacts: Aucun contact rattaché.
-      deleteConfirm: "Supprimer l'entreprise « {name} » ?"
-      deleteWarning: Cette action est irréversible.
+      address_placeholder: Adresse complète
+      contact_linked: Contact rattaché
+      no_contacts: Aucun contact rattaché.
+      delete_confirm: "Supprimer l'entreprise « {name} » ?"
+      delete_warning: Cette action est irréversible.
       errors:
         name_required: Le nom est requis.
         website_invalid: Site web invalide.
-      listView: Vue liste
-      kanbanView: Vue Kanban
+      list_view: Vue liste
+      kanban_view: Vue Kanban
     contacts:
       add: Ajouter un contact
       create: Nouveau contact
@@ -112,32 +112,32 @@ backend:
       empty: Aucun contact.
       created: Contact créé.
       deleted: Contact supprimé.
-      searchPlaceholder: Rechercher un contact…
+      search_placeholder: Rechercher un contact…
       name: Nom
-      firstName: Prénom
-      firstNamePlaceholder: Prénom
-      lastName: Nom
-      lastNamePlaceholder: Nom de famille
+      first_name: Prénom
+      first_name_placeholder: Prénom
+      last_name: Nom
+      last_name_placeholder: Nom de famille
       email: Email
-      emailPlaceholder: 'contact@exemple.com'
+      email_placeholder: 'contact@exemple.com'
       phone: Téléphone
-      phonePlaceholder: +33 1 23 45 67 89
+      phone_placeholder: +33 1 23 45 67 89
       company: Entreprise
-      companyPlaceholder: Sélectionner une entreprise
+      company_placeholder: Sélectionner une entreprise
       notes: Notes
-      notesPlaceholder: Notes internes…
-      deleteConfirm: 'Supprimer le contact « {name} » ?'
-      deleteWarning: Cette action est irréversible.
+      notes_placeholder: Notes internes…
+      delete_confirm: 'Supprimer le contact « {name} » ?'
+      delete_warning: Cette action est irréversible.
       errors:
         first_name_required: Le prénom est requis.
         last_name_required: Le nom est requis.
         email_invalid: Email invalide.
       updated: Contact mis à jour.
-      noContacts: Aucun contact lié à cette entreprise.
-      contactLinked: 'Sera lié à {name}'
+      no_contacts: Aucun contact lié à cette entreprise.
+      contact_linked: 'Sera lié à {name}'
       tags: Étiquettes
-      tagsPlaceholder: 'Ajouter une étiquette puis Entrée…'
-      sourceLabel: 'Origine :'
+      tags_placeholder: 'Ajouter une étiquette puis Entrée…'
+      source_label: 'Origine :'
       sources:
         manual: Saisie manuelle
         form: Formulaire
@@ -153,7 +153,7 @@ backend:
       create: Nouvelle étiquette
       edit: 'Modifier {name}'
       empty: Aucune étiquette.
-      searchPlaceholder: 'Rechercher par libellé ou slug…'
+      search_placeholder: 'Rechercher par libellé ou slug…'
       label: Libellé
       label_placeholder: 'ex. VIP, Prospect, Partenaire'
       slug: Slug
@@ -167,18 +167,18 @@ backend:
       empty: Aucune affaire.
       updated: Affaire mise à jour.
       kanban: Pipeline Kanban
-      kanbanView: Vue Kanban
-      listView: Vue liste
-      searchPlaceholder: Rechercher une affaire…
+      kanban_view: Vue Kanban
+      list_view: Vue liste
+      search_placeholder: Rechercher une affaire…
       name: Nom
-      namePlaceholder: Nom de l'affaire
+      name_placeholder: Nom de l'affaire
       value: Valeur
-      valuePlaceholder: Montant en €
+      value_placeholder: Montant en €
       stage: Étape
       contact: Contact
-      closingDate: Date de clôture
-      deleteConfirm: "Supprimer l'affaire « {name} » ?"
-      deleteWarning: Cette action est irréversible.
+      closing_date: Date de clôture
+      delete_confirm: "Supprimer l'affaire « {name} » ?"
+      delete_warning: Cette action est irréversible.
       errors:
         name_required: Le nom est requis.
       stages:
@@ -193,18 +193,18 @@ backend:
       listView_description: Affaires en tableau paginé.
       kanbanView_description: 'Affaires organisées par étape, déplaçables.'
       company: Entreprise
-      noContacts: Aucun contact lié à cette entreprise.
-      contactLinked: 'Sera lié à {name}'
+      no_contacts: Aucun contact lié à cette entreprise.
+      contact_linked: 'Sera lié à {name}'
   agencies:
     title: Agences
     add: Ajouter une agence
     create: Nouvelle agence
     empty: Aucune agence.
-    searchPlaceholder: Rechercher une agence…
+    search_placeholder: Rechercher une agence…
     name: Nom
-    namePlaceholder: Nom de l'agence
+    name_placeholder: Nom de l'agence
     edit_title: 'Modifier {name}'
-    deleteConfirm: "Supprimer l'agence {name} ?"
+    delete_confirm: "Supprimer l'agence {name} ?"
     errors:
       name_required: Le nom est requis.
       name_too_long: Le nom ne peut pas dépasser 150 caractères.
@@ -213,11 +213,11 @@ backend:
     add: Ajouter un service
     create: Nouveau service
     empty: Aucun service.
-    searchPlaceholder: Rechercher un service…
+    search_placeholder: Rechercher un service…
     name: Nom
-    namePlaceholder: Nom du service
+    name_placeholder: Nom du service
     edit_title: 'Modifier {name}'
-    deleteConfirm: 'Supprimer le service {name} ?'
+    delete_confirm: 'Supprimer le service {name} ?'
     errors:
       name_required: Le nom est requis.
       name_too_long: Le nom ne peut pas dépasser 150 caractères.

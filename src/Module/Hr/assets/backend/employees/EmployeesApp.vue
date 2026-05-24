@@ -74,7 +74,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
 <template>
     <div class="space-y-4">
         <AppListToolbar>
-            <AppSearchInput v-model="searchInput" :placeholder="t('backend.employees.searchPlaceholder')" v-on:search="onSearch" />
+            <AppSearchInput v-model="searchInput" :placeholder="t('backend.employees.search_placeholder')" v-on:search="onSearch" />
             <template #actions>
                 <AppButton
                     v-if="can('hr.employees.create')"
@@ -118,7 +118,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                     <thead>
                         <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.employees.name') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.employees.fields.jobTitle') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.employees.fields.job_title') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.employees.fields.service') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.employees.fields.agency') }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
@@ -164,7 +164,7 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
         >
             <dl v-if="viewingEmployee" class="space-y-3">
                 <div v-if="viewingEmployee.jobTitle" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.jobTitle') }}</dt>
+                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.job_title') }}</dt>
                     <dd class="text-sm text-primary sm:col-span-2">{{ viewingEmployee.jobTitle }}</dd>
                 </div>
                 <div v-if="viewingEmployee.service" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
@@ -180,15 +180,15 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                     <dd class="text-sm text-primary sm:col-span-2">{{ viewingEmployee.phone }}</dd>
                 </div>
                 <div v-if="viewingEmployee.workEmail" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.workEmail') }}</dt>
+                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.work_email') }}</dt>
                     <dd class="text-sm text-primary sm:col-span-2">{{ viewingEmployee.workEmail }}</dd>
                 </div>
                 <div v-if="viewingEmployee.hiredAt" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.hiredAt') }}</dt>
+                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.hired_at') }}</dt>
                     <dd class="text-sm text-primary sm:col-span-2">{{ viewingEmployee.hiredAt }}</dd>
                 </div>
                 <div v-if="viewingEmployee.leftAt" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.leftAt') }}</dt>
+                    <dt class="text-sm font-medium text-muted">{{ t('backend.employees.fields.left_at') }}</dt>
                     <dd class="text-sm text-primary sm:col-span-2">{{ viewingEmployee.leftAt }}</dd>
                 </div>
                 <div v-if="viewingEmployee.user" class="grid grid-cols-1 sm:grid-cols-3 gap-1">
@@ -229,17 +229,17 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
             <form class="space-y-4" v-on:submit.prevent="submit">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <AppFieldLabel :label="t('backend.employees.fields.firstName')" required />
-                        <AppInput v-model="form.firstName" :placeholder="t('backend.employees.placeholders.firstName')" :error="errors.firstName" />
+                        <AppFieldLabel :label="t('backend.employees.fields.first_name')" required />
+                        <AppInput v-model="form.firstName" :placeholder="t('backend.employees.placeholders.first_name')" :error="errors.firstName" />
                     </div>
                     <div>
-                        <AppFieldLabel :label="t('backend.employees.fields.lastName')" required />
-                        <AppInput v-model="form.lastName" :placeholder="t('backend.employees.placeholders.lastName')" :error="errors.lastName" />
+                        <AppFieldLabel :label="t('backend.employees.fields.last_name')" required />
+                        <AppInput v-model="form.lastName" :placeholder="t('backend.employees.placeholders.last_name')" :error="errors.lastName" />
                     </div>
                 </div>
                 <div>
-                    <AppFieldLabel :label="t('backend.employees.fields.jobTitle')" />
-                    <AppInput v-model="form.jobTitle" :placeholder="t('backend.employees.placeholders.jobTitle')" :error="errors.jobTitle" />
+                    <AppFieldLabel :label="t('backend.employees.fields.job_title')" />
+                    <AppInput v-model="form.jobTitle" :placeholder="t('backend.employees.placeholders.job_title')" :error="errors.jobTitle" />
                 </div>
                 <div>
                     <AppFieldLabel :label="t('backend.employees.fields.service')" />
@@ -255,17 +255,17 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
                         <AppInput v-model="form.phone" :placeholder="t('backend.employees.placeholders.phone')" :error="errors.phone" />
                     </div>
                     <div>
-                        <AppFieldLabel :label="t('backend.employees.fields.workEmail')" />
-                        <AppInput v-model="form.workEmail" type="email" :placeholder="t('backend.employees.placeholders.workEmail')" :error="errors.workEmail" />
+                        <AppFieldLabel :label="t('backend.employees.fields.work_email')" />
+                        <AppInput v-model="form.workEmail" type="email" :placeholder="t('backend.employees.placeholders.work_email')" :error="errors.workEmail" />
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <AppFieldLabel :label="t('backend.employees.fields.hiredAt')" />
+                        <AppFieldLabel :label="t('backend.employees.fields.hired_at')" />
                         <AppDatePicker v-model="form.hiredAt" />
                     </div>
                     <div>
-                        <AppFieldLabel :label="t('backend.employees.fields.leftAt')" />
+                        <AppFieldLabel :label="t('backend.employees.fields.left_at')" />
                         <AppDatePicker v-model="form.leftAt" />
                     </div>
                 </div>
@@ -304,8 +304,8 @@ const { serviceOptions, agencyOptions, userOptions } = useEmployeeFormOptions(pr
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.employees.deleteConfirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.employees.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.employees.delete_confirm', { name: pendingDelete?.fullName ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.employees.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null">

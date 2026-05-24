@@ -34,24 +34,24 @@ const { isSameDay, isToday, formatDayHeader, eventsFor, eventsWithoutAttendees, 
         <!-- Toolbar -->
         <div class="flex items-center justify-between gap-3 px-3 py-2 border-b border-line/40">
             <div class="flex items-center gap-1">
-                <AppIconButton :title="t('backend.plannings.resourceView.previous')" v-on:click="emit('previous-week')">
+                <AppIconButton :title="t('backend.plannings.resource_view.previous')" v-on:click="emit('previous-week')">
                     <ChevronLeft class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
-                <AppIconButton :title="t('backend.plannings.resourceView.next')" v-on:click="emit('next-week')">
+                <AppIconButton :title="t('backend.plannings.resource_view.next')" v-on:click="emit('next-week')">
                     <ChevronRight class="w-4 h-4" :stroke-width="2" />
                 </AppIconButton>
                 <AppButton variant="ghost" size="sm" v-on:click="emit('today')">
-                    {{ t("backend.plannings.resourceView.today") }}
+                    {{ t("backend.plannings.resource_view.today") }}
                 </AppButton>
             </div>
             <span class="text-sm font-medium text-primary">{{ weekLabel }}</span>
             <span class="text-xs text-secondary">
-                {{ t("backend.plannings.resourceView.userCount", { n: users.length }) }}
+                {{ t("backend.plannings.resourceView.user_count", { n: users.length }) }}
             </span>
         </div>
 
         <!-- Empty state -->
-        <AppNoData v-if="!users.length" :message="t('backend.plannings.resourceView.noUsers')" />
+        <AppNoData v-if="!users.length" :message="t('backend.plannings.resourceView.no_users')" />
 
         <!-- Grid -->
         <div v-else class="overflow-x-auto">
@@ -59,7 +59,7 @@ const { isSameDay, isToday, formatDayHeader, eventsFor, eventsWithoutAttendees, 
                 <thead>
                     <tr class="bg-surface-2/50">
                         <th class="sticky left-0 z-10 bg-surface-2/95 backdrop-blur min-w-45 px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted border-b border-line/40">
-                            {{ t("backend.plannings.resourceView.user") }}
+                            {{ t("backend.plannings.resource_view.user") }}
                         </th>
                         <th
                             v-for="day in weekDays"
@@ -97,7 +97,7 @@ const { isSameDay, isToday, formatDayHeader, eventsFor, eventsWithoutAttendees, 
                     </tr>
                     <tr v-if="hasUnassignedRow" class="bg-surface-2/20">
                         <td class="sticky left-0 z-10 bg-surface-2/95 backdrop-blur px-3 py-2 italic text-secondary border-r border-line/40 align-top">
-                            {{ t("backend.plannings.resourceView.unassigned") }}
+                            {{ t("backend.plannings.resource_view.unassigned") }}
                         </td>
                         <td
                             v-for="day in weekDays"

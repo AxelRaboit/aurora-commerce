@@ -43,7 +43,7 @@ const {
                 <p v-if="loading" class="text-sm text-muted">{{ t('shared.common.loading') }}</p>
                 <p v-else-if="report" class="text-sm text-secondary">
                     {{ t('backend.billing.compliance.overall.' + report.overall) }}
-                    <span class="text-muted ml-2 text-xs">{{ t('backend.billing.compliance.generatedAt', { date: new Date(report.generatedAt).toLocaleString() }) }}</span>
+                    <span class="text-muted ml-2 text-xs">{{ t('backend.billing.compliance.generated_at', { date: new Date(report.generatedAt).toLocaleString() }) }}</span>
                 </p>
                 <p v-else-if="error" class="text-sm text-rose-400">{{ t('shared.common.error') }}</p>
             </div>
@@ -91,7 +91,7 @@ const {
                         >
                             {{ report.checks.sequence.gapCount }}
                         </p>
-                        <p class="text-xs text-muted mt-0.5">{{ t('backend.billing.compliance.checks.sequence.gapUnit') }}</p>
+                        <p class="text-xs text-muted mt-0.5">{{ t('backend.billing.compliance.checks.sequence.gap_unit') }}</p>
                         <p class="text-sm font-medium text-primary mt-3">{{ t('backend.billing.compliance.checks.sequence.title') }}</p>
                     </div>
                     <button
@@ -179,16 +179,16 @@ const {
             <div v-if="expanded.sequence" class="bg-surface border border-line/60 rounded-xl px-6 py-4 space-y-4">
                 <p class="text-sm text-secondary">{{ t('backend.billing.compliance.checks.sequence.description') }}</p>
                 <div v-if="!report.checks.sequence.years.length" class="text-sm text-muted italic">
-                    {{ t('backend.billing.compliance.checks.sequence.noNumberedInvoices') }}
+                    {{ t('backend.billing.compliance.checks.sequence.no_numbered_invoices') }}
                 </div>
                 <div v-for="year in report.checks.sequence.years" :key="year.year" class="rounded-lg border border-line/40 overflow-hidden">
                     <div class="flex items-center gap-3 px-4 py-2 bg-surface-2/50">
-                        <AppBadge :color="statusColor(year.status)" size="sm">{{ year.status === 'ok' ? t('backend.billing.compliance.status.ok') : year.gaps.length + ' ' + t('backend.billing.compliance.checks.sequence.gapUnit') }}</AppBadge>
+                        <AppBadge :color="statusColor(year.status)" size="sm">{{ year.status === 'ok' ? t('backend.billing.compliance.status.ok') : year.gaps.length + ' ' + t('backend.billing.compliance.checks.sequence.gap_unit') }}</AppBadge>
                         <span class="font-medium text-primary text-sm">{{ t('backend.billing.compliance.checks.sequence.year', { year: year.year }) }}</span>
-                        <span class="text-xs text-muted ml-auto">{{ t('backend.billing.compliance.checks.sequence.invoiceCount', { n: year.total }) }}</span>
+                        <span class="text-xs text-muted ml-auto">{{ t('backend.billing.compliance.checks.sequence.invoice_count', { n: year.total }) }}</span>
                     </div>
                     <div v-if="year.gaps.length" class="px-4 py-3">
-                        <p class="text-xs text-muted mb-2">{{ t('backend.billing.compliance.checks.sequence.missingNumbers') }}</p>
+                        <p class="text-xs text-muted mb-2">{{ t('backend.billing.compliance.checks.sequence.missing_numbers') }}</p>
                         <div class="flex flex-wrap gap-1.5">
                             <code v-for="gap in year.gaps" :key="gap" class="text-xs bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded font-mono">{{ gap }}</code>
                         </div>
@@ -204,8 +204,8 @@ const {
                         <thead>
                             <tr class="bg-surface-2/50 border-b border-line/40">
                                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.number') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.issuedAt') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.statusLabel') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.issued_at') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.status_label') }}</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted" />
                             </tr>
                         </thead>
@@ -243,7 +243,7 @@ const {
                                 <td class="px-6 py-3 font-mono text-xs text-amber-400">{{ anomaly.action }}</td>
                                 <td class="px-6 py-3 text-xs text-secondary">#{{ anomaly.entityId }}</td>
                                 <td class="px-6 py-3 text-xs text-muted">{{ new Date(anomaly.createdAt).toLocaleString() }}</td>
-                                <td class="px-6 py-3 text-xs text-rose-400 italic">{{ t('backend.billing.compliance.checks.audit.noUser') }}</td>
+                                <td class="px-6 py-3 text-xs text-rose-400 italic">{{ t('backend.billing.compliance.checks.audit.no_user') }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -253,7 +253,7 @@ const {
             <!-- Stats -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-surface border border-line/60 rounded-xl p-5">
-                    <p class="text-xs text-muted mb-2">{{ t('backend.billing.compliance.stats.totalIssued') }}</p>
+                    <p class="text-xs text-muted mb-2">{{ t('backend.billing.compliance.stats.total_issued') }}</p>
                     <p class="text-2xl font-semibold text-primary tabular-nums">{{ report.stats.totalIssued }}</p>
                 </div>
                 <div v-for="(count, status) in report.stats.byStatus" :key="status" class="bg-surface border border-line/60 rounded-xl p-5">

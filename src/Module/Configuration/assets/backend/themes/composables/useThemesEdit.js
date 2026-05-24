@@ -41,7 +41,7 @@ export function useThemesEdit(themeList, updatePath, options = {}) {
                 { key: "--th-accent", label: t("backend.themes.vars.accent") },
                 {
                     key: "--th-accent-hover",
-                    label: t("backend.themes.vars.accentHover"),
+                    label: t("backend.themes.vars.accent_hover"),
                 },
                 { key: "--th-bg", label: t("backend.themes.vars.bg") },
                 {

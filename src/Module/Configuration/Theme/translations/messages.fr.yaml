@@ -6,17 +6,17 @@ backend:
     active: Actif
     edit: Modifier
     colors: Couleurs
-    resetColor: Réinitialiser
-    primaryColor: Couleur principale
-    primaryColorLabel: Couleur d'accent
-    primaryColorHint: 'Sert de base aux boutons, liens, badges et au logo. Toute la palette est dérivée automatiquement.'
+    reset_color: Réinitialiser
+    primary_color: Couleur principale
+    primary_color_label: Couleur d'accent
+    primary_color_hint: 'Sert de base aux boutons, liens, badges et au logo. Toute la palette est dérivée automatiquement.'
     sections:
       general: Général
       header: En-tête
       footer: Pied de page
     vars:
       accent: Couleur principale
-      accentHover: Couleur principale (hover)
+      accent_hover: Couleur principale (hover)
       bg: Fond
       surface: Surface
       surface2: Surface secondaire
@@ -25,27 +25,27 @@ backend:
       muted: Texte atténué
       border: Bordure
       text: Texte
-    headerContent: Contenu
-    headerModeDefault: Nom du site
-    headerModeText: Texte custom
-    headerModeImage: Image média
-    headerCustomText: Texte personnalisé
-    headerLogoMediaId: ID du média
-    footerText: Texte du pied de page
-    slugLabel: Slug
-    headerMediaHint: Trouvez l'ID dans Médias → ouvrez un média → champ ID.
-    headerTextPlaceholder: Mon site
-    configHint: 'Variables disponibles : --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
-    configPlaceholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
-    configJsonError: Le JSON de configuration est invalide.
-    deleteConfirm: 'Supprimer le thème "{name}" ? Cette action est irréversible.'
-    cannotDeleteDefault: Impossible de supprimer le thème par défaut.
-    cannotDeleteActive: Impossible de supprimer le thème actif.
+    header_content: Contenu
+    header_mode_default: Nom du site
+    header_mode_text: Texte custom
+    header_mode_image: Image média
+    header_custom_text: Texte personnalisé
+    header_logo_media_id: ID du média
+    footer_text: Texte du pied de page
+    slug_label: Slug
+    header_media_hint: Trouvez l'ID dans Médias → ouvrez un média → champ ID.
+    header_text_placeholder: Mon site
+    config_hint: 'Variables disponibles : --th-bg, --th-surface, --th-surface-2, --th-primary, --th-secondary, --th-muted, --th-accent, --th-accent-hover'
+    config_placeholder: "{\n  \"--th-accent\": \"#6366f1\"\n}"
+    config_json_error: Le JSON de configuration est invalide.
+    delete_confirm: 'Supprimer le thème "{name}" ? Cette action est irréversible.'
+    cannot_delete_default: Impossible de supprimer le thème par défaut.
+    cannot_delete_active: Impossible de supprimer le thème actif.
     created: Thème créé.
     updated: Thème mis à jour.
     activated: Thème activé.
     deleted: Thème supprimé.
-    templateCount: '{count} fichier(s) de template'
+    template_count: '{count} fichier(s) de template'
     errors:
       slug_invalid: 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets.'
       slug_taken: Ce slug est déjà utilisé.

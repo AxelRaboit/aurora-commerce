@@ -29,11 +29,11 @@ backend:
       title: Profile information
       subtitle: Update your name and email address.
       name: Full name
-      listView: List view
-      kanbanView: Kanban view
-      namePlaceholder: John Doe
+      list_view: List view
+      kanban_view: Kanban view
+      name_placeholder: John Doe
       email: Email address
-      emailPlaceholder: "you@example.com"
+      email_placeholder: "you@example.com"
       saved: Profile updated successfully.
     password:
       title: Change password

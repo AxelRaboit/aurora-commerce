@@ -126,7 +126,7 @@ describe("useVaultFilter", () => {
         const nav = makeNav({ allView: false, showFavorites: true });
         const { emptyMessage } = useVaultFilter(entries, folders, nav);
 
-        expect(emptyMessage.value).toBe("vault.entries.emptyFavorites");
+        expect(emptyMessage.value).toBe("vault.entries.empty_favorites");
     });
 
     it("emptyMessage returns folder key when viewing a specific folder", () => {
@@ -137,7 +137,7 @@ describe("useVaultFilter", () => {
         });
         const { emptyMessage } = useVaultFilter(entries, folders, nav);
 
-        expect(emptyMessage.value).toBe("vault.entries.emptyFolder");
+        expect(emptyMessage.value).toBe("vault.entries.empty_folder");
     });
 
     it("emptyMessage returns general empty key for allView", () => {

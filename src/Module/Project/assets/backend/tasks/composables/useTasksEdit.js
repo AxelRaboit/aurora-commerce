@@ -30,7 +30,7 @@ export function useTasksEdit(taskUpdatePath, reloadDetail) {
         body: () => editTaskForm.value,
         onSuccess: async () => {
             showEditTask.value = false;
-            toast.success(t("backend.projects.toast.taskUpdated"));
+            toast.success(t("backend.projects.toast.task_updated"));
             await reloadDetail();
         },
     });

@@ -85,26 +85,26 @@ backend:
       created: Company created.
       updated: Company updated.
       deleted: Company deleted.
-      searchPlaceholder: Search a company…
+      search_placeholder: Search a company…
       name: Name
-      namePlaceholder: Company name
+      name_placeholder: Company name
       industry: Industry
-      industryPlaceholder: 'e.g. Software, Consulting…'
+      industry_placeholder: 'e.g. Software, Consulting…'
       website: Website
-      websitePlaceholder: 'https://example.com'
+      website_placeholder: 'https://example.com'
       phone: Phone
-      phonePlaceholder: +1 555 123 4567
+      phone_placeholder: +1 555 123 4567
       address: Address
-      addressPlaceholder: Full address
-      contactLinked: Linked contact
-      noContacts: No linked contacts.
-      deleteConfirm: 'Delete company "{name}"?'
-      deleteWarning: This action cannot be undone.
+      address_placeholder: Full address
+      contact_linked: Linked contact
+      no_contacts: No linked contacts.
+      delete_confirm: 'Delete company "{name}"?'
+      delete_warning: This action cannot be undone.
       errors:
         name_required: Name is required.
         website_invalid: Invalid website.
-      listView: List view
-      kanbanView: Kanban view
+      list_view: List view
+      kanban_view: Kanban view
     contacts:
       add: Add contact
       create: New contact
@@ -112,32 +112,32 @@ backend:
       empty: No contacts.
       created: Contact created.
       deleted: Contact deleted.
-      searchPlaceholder: Search a contact…
+      search_placeholder: Search a contact…
       name: Name
-      firstName: First name
-      firstNamePlaceholder: First name
-      lastName: Last name
-      lastNamePlaceholder: Last name
+      first_name: First name
+      first_name_placeholder: First name
+      last_name: Last name
+      last_name_placeholder: Last name
       email: Email
-      emailPlaceholder: 'contact@example.com'
+      email_placeholder: 'contact@example.com'
       phone: Phone
-      phonePlaceholder: +1 555 123 4567
+      phone_placeholder: +1 555 123 4567
       company: Company
-      companyPlaceholder: Select a company
+      company_placeholder: Select a company
       notes: Notes
-      notesPlaceholder: Internal notes…
-      deleteConfirm: 'Delete contact "{name}"?'
-      deleteWarning: This action cannot be undone.
+      notes_placeholder: Internal notes…
+      delete_confirm: 'Delete contact "{name}"?'
+      delete_warning: This action cannot be undone.
       errors:
         first_name_required: First name is required.
         last_name_required: Last name is required.
         email_invalid: Invalid email.
       updated: Contact updated.
-      noContacts: No contacts linked to this company.
-      contactLinked: 'Will be linked to {name}'
+      no_contacts: No contacts linked to this company.
+      contact_linked: 'Will be linked to {name}'
       tags: Tags
-      tagsPlaceholder: 'Type a tag then press Enter…'
-      sourceLabel: 'Source:'
+      tags_placeholder: 'Type a tag then press Enter…'
+      source_label: 'Source:'
       sources:
         manual: Manual entry
         form: Form submission
@@ -153,7 +153,7 @@ backend:
       create: New tag
       edit: 'Edit {name}'
       empty: No tags.
-      searchPlaceholder: 'Search by label or slug…'
+      search_placeholder: 'Search by label or slug…'
       label: Label
       label_placeholder: 'e.g. VIP, Prospect, Partner'
       slug: Slug
@@ -167,18 +167,18 @@ backend:
       empty: No deals.
       updated: Deal updated.
       kanban: Kanban pipeline
-      kanbanView: Kanban view
-      listView: List view
-      searchPlaceholder: Search a deal…
+      kanban_view: Kanban view
+      list_view: List view
+      search_placeholder: Search a deal…
       name: Name
-      namePlaceholder: Deal name
+      name_placeholder: Deal name
       value: Value
-      valuePlaceholder: Amount
+      value_placeholder: Amount
       stage: Stage
       contact: Contact
-      closingDate: Closing date
-      deleteConfirm: 'Delete deal "{name}"?'
-      deleteWarning: This action cannot be undone.
+      closing_date: Closing date
+      delete_confirm: 'Delete deal "{name}"?'
+      delete_warning: This action cannot be undone.
       errors:
         name_required: Name is required.
       stages:
@@ -193,18 +193,18 @@ backend:
       listView_description: Deals in a paginated table.
       kanbanView_description: 'Deals organised by stage, draggable.'
       company: Company
-      noContacts: No contacts linked to this company.
-      contactLinked: 'Will be linked to {name}'
+      no_contacts: No contacts linked to this company.
+      contact_linked: 'Will be linked to {name}'
   agencies:
     title: Agencies
     add: Add agency
     create: New agency
     empty: No agencies.
-    searchPlaceholder: Search agencies…
+    search_placeholder: Search agencies…
     name: Name
-    namePlaceholder: Agency name
+    name_placeholder: Agency name
     edit_title: 'Edit {name}'
-    deleteConfirm: 'Delete agency {name}?'
+    delete_confirm: 'Delete agency {name}?'
     errors:
       name_required: Name is required.
       name_too_long: Name cannot exceed 150 characters.
@@ -213,11 +213,11 @@ backend:
     add: Add service
     create: New service
     empty: No services.
-    searchPlaceholder: Search services…
+    search_placeholder: Search services…
     name: Name
-    namePlaceholder: Service name
+    name_placeholder: Service name
     edit_title: 'Edit {name}'
-    deleteConfirm: 'Delete service {name}?'
+    delete_confirm: 'Delete service {name}?'
     errors:
       name_required: Name is required.
       name_too_long: Name cannot exceed 150 characters.

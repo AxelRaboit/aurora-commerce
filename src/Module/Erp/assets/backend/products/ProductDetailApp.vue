@@ -130,7 +130,7 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <AppInput
                     v-model="editForm.name"
                     :label="t('backend.erp.products.name')"
-                    :placeholder="t('backend.erp.products.namePlaceholder')"
+                    :placeholder="t('backend.erp.products.name_placeholder')"
                     :error="editErrors.name"
                     required
                 />
@@ -138,14 +138,14 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                     <AppInput
                         v-model="editForm.reference"
                         :label="t('backend.erp.products.reference')"
-                        :placeholder="t('backend.erp.products.referenceAutoPlaceholder')"
+                        :placeholder="t('backend.erp.products.reference_auto_placeholder')"
                         :error="editErrors.reference"
                     />
-                    <AppSelect v-model="editForm.status" :label="t('backend.erp.products.statusLabel')">
+                    <AppSelect v-model="editForm.status" :label="t('backend.erp.products.status_label')">
                         <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label() }}</option>
                     </AppSelect>
                 </div>
-                <AppSelect v-model="editForm.type" :label="t('backend.erp.products.typeLabel')">
+                <AppSelect v-model="editForm.type" :label="t('backend.erp.products.type_label')">
                     <option v-for="opt in TYPE_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label() }}</option>
                 </AppSelect>
                 <div class="grid grid-cols-[1fr_8rem] gap-3">
@@ -155,14 +155,14 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                         min="0"
                         step="0.01"
                         :label="`${t('backend.erp.products.price')} (${symbolFor(editForm.currency)})`"
-                        :placeholder="t('backend.erp.products.pricePlaceholder')"
+                        :placeholder="t('backend.erp.products.price_placeholder')"
                         :error="editErrors.price ?? editErrors.priceCents"
                     />
                     <AppSelect v-model="editForm.currency" :label="t('backend.erp.products.currency')">
                         <option v-for="opt in CURRENCY_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.value }} — {{ opt.symbol }}</option>
                     </AppSelect>
                 </div>
-                <AppTextarea v-model="editForm.description" :rows="3" :placeholder="t('backend.erp.products.descriptionPlaceholder')" />
+                <AppTextarea v-model="editForm.description" :rows="3" :placeholder="t('backend.erp.products.description_placeholder')" />
             </form>
             <template #footer>
                 <AppModalFooter>
@@ -180,8 +180,8 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
             :icon="Trash2"
             v-on:close="showDelete = false"
         >
-            <p class="text-sm text-primary">{{ t('backend.erp.products.deleteConfirm', { name: product.name }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.erp.products.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.erp.products.delete_confirm', { name: product.name }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.erp.products.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="showDelete = false"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

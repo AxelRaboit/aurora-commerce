@@ -5,31 +5,31 @@ backend:
     email: Email
     created: Créé le
     actions: Actions
-    searchPlaceholder: Rechercher un utilisateur…
-    allRoles: Tous les rôles
+    search_placeholder: Rechercher un utilisateur…
+    all_roles: Tous les rôles
     empty: Aucun utilisateur trouvé
     you: (Vous)
     invite: Inviter un utilisateur
-    sendInvite: Envoyer l'invitation
-    inviteMessage: Message
-    inviteMessagePlaceholder: Ajouter un message...
+    send_invite: Envoyer l'invitation
+    invite_message: Message
+    invite_message_placeholder: Ajouter un message...
     edit_title: 'Modifier {name}'
-    deleteConfirm: 'Supprimer {name} ?'
+    delete_confirm: 'Supprimer {name} ?'
     detail:
       type: Type
       locale: Langue
-      createdAt: Créé le
-      invitedAt: Invité le
-    roleLabel: Rôle
+      created_at: Créé le
+      invited_at: Invité le
+    role_label: Rôle
     role:
       user: Utilisateur
       admin: Administrateur
       dev: Développeur
-    typeLabel: Type
+    type_label: Type
     type:
       backend: Backend
       frontend: Frontend
-    statusLabel: Statut
+    status_label: Statut
     status:
       active: Actif
       invited: Invité
@@ -54,21 +54,21 @@ backend:
       manager_not_found: Le responsable sélectionné n'existe pas.
       manager_cycle: Cette assignation créerait une boucle hiérarchique.
       cannot_manage_target: Vous ne pouvez pas modifier les accès d'un utilisateur de rang supérieur.
-    newPassword: Nouveau mot de passe
-    newPasswordPlaceholder: Laisser vide pour ne pas modifier
+    new_password: Nouveau mot de passe
+    new_password_placeholder: Laisser vide pour ne pas modifier
     toast:
       created: Utilisateur créé avec succès.
       updated: Utilisateur mis à jour.
       deleted: Utilisateur supprimé.
     add: Ajouter un utilisateur
-    invitationSent: Invitation envoyée.
-    invitationResent: Invitation renvoyée.
-    resendInvitation: Renvoyer l'invitation
+    invitation_sent: Invitation envoyée.
+    invitation_resent: Invitation renvoyée.
+    resend_invitation: Renvoyer l'invitation
     enable: Réactiver
     disable: Désactiver
     edit: Modifier
-    namePlaceholder: Jean Dupont
-    emailPlaceholder: "jean@exemple.com"
+    name_placeholder: Jean Dupont
+    email_placeholder: "jean@exemple.com"
     password: Mot de passe
     password_optional: Mot de passe (laisser vide pour conserver)
     locale: Langue
@@ -76,12 +76,12 @@ backend:
     role_user: Utilisateur
     grant_dev: Attribuer le rôle Dev
     revoke_dev: Retirer le rôle Dev
-    grantDevConfirm: 'Attribuer le rôle Dev à {name} ?'
-    revokeDevConfirm: 'Retirer le rôle Dev de {name} ?'
+    grant_dev_confirm: 'Attribuer le rôle Dev à {name} ?'
+    revoke_dev_confirm: 'Retirer le rôle Dev de {name} ?'
     impersonate: 'Se connecter en tant que {name}'
-    impersonateFront: 'Voir le front en tant que {name}'
-    disableConfirm: "Désactiver le compte de {name} ? L'utilisateur ne pourra plus se connecter."
-    enableConfirm: 'Réactiver le compte de {name} ?'
+    impersonate_front: 'Voir le front en tant que {name}'
+    disable_confirm: "Désactiver le compte de {name} ? L'utilisateur ne pourra plus se connecter."
+    enable_confirm: 'Réactiver le compte de {name} ?'
     view: Voir le profil
     manager:
       label: Responsable
@@ -114,12 +114,12 @@ backend:
     sent: 'Invitation envoyée à {email}.'
     description: Envoyez une invitation par e-mail pour permettre à quelqu'un de rejoindre l'espace d'administration.
     email: Adresse e-mail du destinataire
-    emailPlaceholder: "exemple@domaine.com"
+    email_placeholder: "exemple@domaine.com"
     message: Message personnalisé
-    messagePlaceholder: Ajoutez un message pour accompagner l'invitation…
-    credentialsHint: Vous pouvez inclure des identifiants de connexion dans l'e-mail.
-    credentialEmail: Email de connexion
-    credentialPassword: Mot de passe
+    message_placeholder: Ajoutez un message pour accompagner l'invitation…
+    credentials_hint: Vous pouvez inclure des identifiants de connexion dans l'e-mail.
+    credential_email: Email de connexion
+    credential_password: Mot de passe
     send: Envoyer l'invitation
     sending: Envoi en cours…
   access_requests:
@@ -139,10 +139,10 @@ backend:
     approve: Approuver
     reject: Rejeter
     purge: Purger
-    approveConfirm: 'Approuver la demande de {name} ? Un e-mail lui sera envoyé.'
-    rejectConfirm: 'Rejeter la demande de {name} ?'
-    purgeConfirm: Supprimer toutes les demandes approuvées et rejetées ? Cette action est irréversible.
+    approve_confirm: 'Approuver la demande de {name} ? Un e-mail lui sera envoyé.'
+    reject_confirm: 'Rejeter la demande de {name} ?'
+    purge_confirm: Supprimer toutes les demandes approuvées et rejetées ? Cette action est irréversible.
     approved_toast: Demande d'accès approuvée.
     rejected_toast: Demande d'accès rejetée.
     purged_toast: Demandes traitées supprimées.
-    searchPlaceholder: 'Rechercher par e-mail, nom ou message…'
+    search_placeholder: 'Rechercher par e-mail, nom ou message…'

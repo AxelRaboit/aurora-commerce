@@ -144,10 +144,10 @@ function openSearchFromMobile() {
                 :href="frontPath"
                 target="_blank"
                 hover-color="emerald"
-                :tooltip-title="t('backend.nav.viewSite')"
+                :tooltip-title="t('backend.nav.view_site')"
             >
                 <Globe class="w-5 h-5 shrink-0 text-muted group-hover:text-emerald-400 transition-colors" :stroke-width="2" />
-                <span class="si-label truncate">{{ t("backend.nav.viewSite") }}</span>
+                <span class="si-label truncate">{{ t("backend.nav.view_site") }}</span>
             </AppNavLink>
         </div>
 
@@ -195,7 +195,7 @@ function openSearchFromMobile() {
                 <input
                     v-model="navFilter"
                     type="text"
-                    :placeholder="t('backend.nav.filterNav')"
+                    :placeholder="t('backend.nav.filter_nav')"
                     class="w-full pl-7 pr-6 py-1.5 rounded-md text-xs bg-surface-2/60 border border-line/40 text-primary placeholder:text-muted focus:outline-none focus:border-line focus:bg-surface-2 transition-colors"
                 >
                 <button v-if="navFilter" type="button" class="absolute right-2 text-muted hover:text-primary transition-colors" v-on:click="navFilter = ''">
@@ -206,7 +206,7 @@ function openSearchFromMobile() {
 
         <nav class="sidemenu-nav flex-1 min-h-0 overflow-y-auto scrollbar-thin py-4 space-y-3">
             <p v-if="navFilter && !displayedSections.length" class="sh-logo-expanded px-3 text-xs text-muted">
-                {{ t("backend.nav.filterNavEmpty") }}
+                {{ t("backend.nav.filter_nav_empty") }}
             </p>
             <div v-for="section in displayedSections" :key="section.id" class="space-y-0.5">
                 <button
@@ -300,12 +300,12 @@ function openSearchFromMobile() {
             </AppNavLink>
 
             <AppNavButton
-                :tooltip-title="theme === 'dark' ? t('backend.nav.lightMode') : t('backend.nav.darkMode')"
+                :tooltip-title="theme === 'dark' ? t('backend.nav.light_mode') : t('backend.nav.dark_mode')"
                 v-on:click="toggleTheme"
             >
                 <Moon v-if="theme !== 'dark'" class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                 <Sun v-else class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                <span class="si-label">{{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}</span>
+                <span class="si-label">{{ theme === "dark" ? t("backend.nav.light_mode") : t("backend.nav.dark_mode") }}</span>
             </AppNavButton>
 
             <AppNavLink
@@ -348,7 +348,7 @@ function openSearchFromMobile() {
         <div
             class="sidemenu-resize-handle"
             :class="{ 'is-dragging': sidemenuDragging }"
-            :title="t('backend.nav.resizeHint')"
+            :title="t('backend.nav.resize_hint')"
             v-on:pointerdown="startSidemenuResize"
             v-on:dblclick="resetSidemenuWidth"
         />
@@ -408,7 +408,7 @@ function openSearchFromMobile() {
                     class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
                 >
                     <Globe class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
-                    {{ t("backend.nav.viewSite") }}
+                    {{ t("backend.nav.view_site") }}
                 </a>
                 <hr class="border-line mt-1">
             </div>
@@ -478,7 +478,7 @@ function openSearchFromMobile() {
                 >
                     <Moon v-if="theme !== 'dark'" class="w-5 h-5 text-muted shrink-0" :stroke-width="2" />
                     <Sun v-else class="w-5 h-5 text-muted shrink-0" :stroke-width="2" />
-                    {{ theme === "dark" ? t("backend.nav.lightMode") : t("backend.nav.darkMode") }}
+                    {{ theme === "dark" ? t("backend.nav.light_mode") : t("backend.nav.dark_mode") }}
                 </button>
                 <a
                     :href="profilePath"
@@ -574,7 +574,7 @@ function openSearchFromMobile() {
                                 <!-- post -->
                                 <template v-else-if="section.kind === 'post'">
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium shrink-0" :class="statusBadge(item.status)">
-                                        {{ t("backend.stats.postStatus." + item.status) }}
+                                        {{ t("backend.stats.post_status." + item.status) }}
                                     </span>
                                     <div class="flex-1 min-w-0">
                                         <div class="text-sm font-medium text-primary truncate" v-html="highlightMatch(item.title ?? '(—)', searchQuery)" />

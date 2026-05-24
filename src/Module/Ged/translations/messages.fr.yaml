@@ -52,7 +52,7 @@ backend:
       add: Ajouter un document
       create: Nouveau document
       edit: "Modifier le document {title}"
-      searchPlaceholder: Rechercher un document…
+      search_placeholder: Rechercher un document…
       picker_title: Choisir un document
       picker_empty: Aucun document disponible
       picker_confirm: Sélectionner
@@ -60,25 +60,25 @@ backend:
       updated: Document mis à jour
       deleted: Document supprimé
       empty: Aucun document pour le moment
-      deleteConfirm: "Êtes-vous sûr de vouloir supprimer le document « {title} » ?"
-      deleteWarning: Cette action est irréversible.
-      backToList: Retour aux documents
-      noCategory: Sans catégorie
+      delete_confirm: "Êtes-vous sûr de vouloir supprimer le document « {title} » ?"
+      delete_warning: Cette action est irréversible.
+      back_to_list: Retour aux documents
+      no_category: Sans catégorie
       tags: Étiquettes
-      noTags: Aucune étiquette
+      no_tags: Aucune étiquette
       folder: Dossier
-      noFolder: Aucun dossier
+      no_folder: Aucun dossier
       versions: Historique des versions
-      filterByStatus: Filtrer par statut
-      filterByCategory: Filtrer par catégorie
-      filterByTag: Filtrer par étiquette
-      filterByFolder: Filtrer par dossier
+      filter_by_status: Filtrer par statut
+      filter_by_category: Filtrer par catégorie
+      filter_by_tag: Filtrer par étiquette
+      filter_by_folder: Filtrer par dossier
       preview: Aperçu
-      chooseFile: Choisir un fichier
-      chooseFileLibrary: Médiathèque
-      chooseFileLocal: Depuis l'ordinateur
-      titlePlaceholder: Titre du document…
-      descriptionPlaceholder: Description optionnelle…
+      choose_file: Choisir un fichier
+      choose_file_library: Médiathèque
+      choose_file_local: Depuis l'ordinateur
+      title_placeholder: Titre du document…
+      description_placeholder: Description optionnelle…
       status_draft: Brouillon
       status_published: Publié
       status_archived: Archivé
@@ -92,21 +92,21 @@ backend:
       add: Ajouter une catégorie
       create: Nouvelle catégorie
       edit: "Modifier la catégorie {name}"
-      searchPlaceholder: Rechercher une catégorie…
+      search_placeholder: Rechercher une catégorie…
       created: Catégorie créée avec succès
       updated: Catégorie mise à jour
       deleted: Catégorie supprimée
       empty: Aucune catégorie pour le moment
-      deleteConfirm: "Êtes-vous sûr de vouloir supprimer la catégorie « {name} » ?"
-      deleteWarning: Les documents liés ne seront pas supprimés.
-      namePlaceholder: Nom de la catégorie…
-      descriptionPlaceholder: Description optionnelle…
+      delete_confirm: "Êtes-vous sûr de vouloir supprimer la catégorie « {name} » ?"
+      delete_warning: Les documents liés ne seront pas supprimés.
+      name_placeholder: Nom de la catégorie…
+      description_placeholder: Description optionnelle…
       errors:
         name_required: Le nom est obligatoire
     tags:
       name: Nom
       color: Couleur
-      searchPlaceholder: Rechercher une étiquette…
+      search_placeholder: Rechercher une étiquette…
       add: Ajouter une étiquette
       create: Nouvelle étiquette
       edit: "Modifier l'étiquette {name}"
@@ -114,9 +114,9 @@ backend:
       updated: Étiquette mise à jour
       deleted: Étiquette supprimée
       empty: Aucune étiquette pour le moment
-      deleteConfirm: "Êtes-vous sûr de vouloir supprimer l'étiquette « {name} » ?"
-      deleteWarning: Les documents liés ne seront pas supprimés.
-      namePlaceholder: Nom de l'étiquette…
+      delete_confirm: "Êtes-vous sûr de vouloir supprimer l'étiquette « {name} » ?"
+      delete_warning: Les documents liés ne seront pas supprimés.
+      name_placeholder: Nom de l'étiquette…
       errors:
         name_required: Le nom est obligatoire
     folders:
@@ -130,11 +130,11 @@ backend:
       updated: Dossier mis à jour
       deleted: Dossier supprimé
       empty: Aucun dossier pour le moment
-      deleteConfirm: "Êtes-vous sûr de vouloir supprimer le dossier « {name} » ?"
-      deleteWarning: Les documents liés ne seront pas supprimés.
-      namePlaceholder: Nom du dossier…
-      searchPlaceholder: Rechercher un dossier…
-      noParent: Aucun (racine)
+      delete_confirm: "Êtes-vous sûr de vouloir supprimer le dossier « {name} » ?"
+      delete_warning: Les documents liés ne seront pas supprimés.
+      name_placeholder: Nom du dossier…
+      search_placeholder: Rechercher un dossier…
+      no_parent: Aucun (racine)
       errors:
         name_required: Le nom est obligatoire
 ged:
@@ -142,7 +142,7 @@ ged:
     documents:
       title: Bibliothèque de documents
       empty: Aucun document disponible pour le moment.
-      noCategory: Sans catégorie
+      no_category: Sans catégorie
       search_placeholder: Rechercher un document…
       no_results: Aucun document ne correspond à votre recherche.
       result_count: '{count} document|{count} documents'

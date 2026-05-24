@@ -61,8 +61,8 @@ export function useVaultEntryActions(
             entry.isFavorite = data.isFavorite;
             toast.success(
                 data.isFavorite
-                    ? t("vault.entries.favoriteAdded")
-                    : t("vault.entries.favoriteRemoved"),
+                    ? t("vault.entries.favorite_added")
+                    : t("vault.entries.favorite_removed"),
             );
         }
     }

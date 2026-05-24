@@ -1,7 +1,7 @@
 backend:
-  mountPoints:
+  mount_points:
     intro: 'Manage connections to external resources (databases, APIs, SFTP).'
-    searchPlaceholder: Search a mount point…
+    search_placeholder: Search a mount point…
     add: Add mount point
     edit: Edit
     empty: No mount points configured.
@@ -11,35 +11,35 @@ backend:
     port: Port
     username: Username
     password: Password
-    passwordPlaceholder: Leave empty to keep the current password
+    password_placeholder: Leave empty to keep the current password
     database: Database
-    sshPublicKey: SSH public key
-    sshPublicKeyPlaceholder: ssh-ed25519 AAAA…
-    sshTunnel: SSH tunnel
-    sshTunnelHint: Connect to the database through an SSH tunnel.
-    sshHost: SSH host
-    sshHostPlaceholder: e.g. 72.60.130.238
-    sshPort: SSH port
-    sshUser: SSH user
-    sshUserPlaceholder: e.g. ubuntu
-    sshPrivateKey: SSH private key
-    sshPrivateKeyPlaceholder: "-----BEGIN OPENSSH PRIVATE KEY-----\n…"
-    sshPrivateKeyHint: Leave empty to keep the current key.
-    namePlaceholder: e.g. Production DB
-    hostPlaceholder: e.g. 192.168.1.10 or db.example.com
-    portPlaceholder: e.g. 5432
-    usernamePlaceholder: e.g. aurora_user
-    databasePlaceholder: e.g. aurora_prod
+    ssh_public_key: SSH public key
+    ssh_public_key_placeholder: ssh-ed25519 AAAA…
+    ssh_tunnel: SSH tunnel
+    ssh_tunnel_hint: Connect to the database through an SSH tunnel.
+    ssh_host: SSH host
+    ssh_host_placeholder: e.g. 72.60.130.238
+    ssh_port: SSH port
+    ssh_user: SSH user
+    ssh_user_placeholder: e.g. ubuntu
+    ssh_private_key: SSH private key
+    ssh_private_key_placeholder: "-----BEGIN OPENSSH PRIVATE KEY-----\n…"
+    ssh_private_key_hint: Leave empty to keep the current key.
+    name_placeholder: e.g. Production DB
+    host_placeholder: e.g. 192.168.1.10 or db.example.com
+    port_placeholder: e.g. 5432
+    username_placeholder: e.g. aurora_user
+    database_placeholder: e.g. aurora_prod
     config: Advanced config (JSON)
     test: Test connection
     testing: Testing…
-    testSuccess: Connection successful.
-    testFailure: Connection failed.
-    testTitle: 'Connection test — {name}'
+    test_success: Connection successful.
+    test_failure: Connection failed.
+    test_title: 'Connection test — {name}'
     retry: Retry
-    lastTested: Last tested
+    last_tested: Last tested
     never: Never tested
-    deleteConfirm: Delete this mount point?
+    delete_confirm: Delete this mount point?
     types:
       database: Database
       api: API

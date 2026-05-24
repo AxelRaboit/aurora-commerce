@@ -35,10 +35,10 @@ vault:
   setup:
     title: Initialiser votre coffre-fort
     description: Choisissez un mot de passe maître pour chiffrer votre coffre-fort. Il ne sera jamais envoyé au serveur.
-    masterPassword: Mot de passe maître
-    masterPasswordPlaceholder: Choisissez un mot de passe fort
-    confirmPassword: Confirmer le mot de passe
-    confirmPasswordPlaceholder: Confirmez votre mot de passe
+    master_password: Mot de passe maître
+    master_password_placeholder: Choisissez un mot de passe fort
+    confirm_password: Confirmer le mot de passe
+    confirm_password_placeholder: Confirmez votre mot de passe
     submit: Créer le coffre-fort
     warning: Attention — si vous perdez ce mot de passe, vos données seront irrécupérables.
     strength:
@@ -52,8 +52,8 @@ vault:
       passwords_mismatch: Les mots de passe ne correspondent pas.
   unlock:
     title: Déverrouiller le coffre-fort
-    masterPassword: Mot de passe maître
-    masterPasswordPlaceholder: Entrez votre mot de passe maître
+    master_password: Mot de passe maître
+    master_password_placeholder: Entrez votre mot de passe maître
     submit: Déverrouiller
     error: Mot de passe incorrect.
     lock: Verrouiller
@@ -62,27 +62,27 @@ vault:
     create: Nouvelle entrée
     edit: Modifier l'entrée
     empty: Aucune entrée dans ce coffre-fort.
-    emptyFolder: Aucune entrée dans ce dossier.
-    emptyFavorites: Aucun favori.
+    empty_folder: Aucune entrée dans ce dossier.
+    empty_favorites: Aucun favori.
     created: Entrée créée.
     updated: Entrée mise à jour.
     deleted: Entrée supprimée.
     moved: Entrée déplacée.
     count: entrée(s)
     all_entries_label: Toutes les entrées
-    searchPlaceholder: Rechercher dans le coffre-fort…
+    search_placeholder: Rechercher dans le coffre-fort…
     title: Titre
-    titlePlaceholder: Ex. Gmail, GitHub…
+    title_placeholder: Ex. Gmail, GitHub…
     url: URL
-    urlPlaceholder: https://exemple.com
+    url_placeholder: https://exemple.com
     folder: Dossier
-    folderNone: Aucun dossier
+    folder_none: Aucun dossier
     type: Type
     favorite: Favori
-    favoriteAdded: Ajouté aux favoris.
-    favoriteRemoved: Retiré des favoris.
-    deleteConfirm: 'Supprimer l''entrée « {title} » ?'
-    deleteWarning: Cette action est irréversible. Les données chiffrées seront définitivement supprimées.
+    favorite_added: Ajouté aux favoris.
+    favorite_removed: Retiré des favoris.
+    delete_confirm: 'Supprimer l''entrée « {title} » ?'
+    delete_warning: Cette action est irréversible. Les données chiffrées seront définitivement supprimées.
     errors:
       title_required: Le titre est requis.
       encrypted_data_required: Les données chiffrées sont requises.
@@ -104,12 +104,12 @@ vault:
     folders: Dossiers
     root: Racine
     name: Nom
-    namePlaceholder: Nom du dossier
+    name_placeholder: Nom du dossier
     color: Couleur
-    deleteConfirm: 'Supprimer le dossier « {name} » ?'
-    deleteWarning: Les entrées du dossier seront conservées (sans dossier).
+    delete_confirm: 'Supprimer le dossier « {name} » ?'
+    delete_warning: Les entrées du dossier seront conservées (sans dossier).
     parent: Dossier parent
-    noParent: Racine (aucun parent)
+    no_parent: Racine (aucun parent)
     errors:
       name_required: Le nom est requis.
       color_invalid: La couleur doit être au format hexadécimal (#RRGGBB).
@@ -168,42 +168,42 @@ vault:
     copied: "{field} copié."
     reveal: Afficher
     hide: Masquer
-    noFields: Aucune donnée enregistrée.
+    no_fields: Aucune donnée enregistrée.
   fields:
-    usePassword: Utiliser ce mot de passe
+    use_password: Utiliser ce mot de passe
     username: Identifiant
-    usernamePlaceholder: Nom d'utilisateur ou email
+    username_placeholder: Nom d'utilisateur ou email
     password: Mot de passe
-    passwordPlaceholder: Mot de passe
+    password_placeholder: Mot de passe
     notes: Notes
-    notesPlaceholder: Notes…
-    cardNumber: Numéro de carte
-    cardHolder: Titulaire
-    expiryDate: Date d'expiration
+    notes_placeholder: Notes…
+    card_number: Numéro de carte
+    card_holder: Titulaire
+    expiry_date: Date d'expiration
     cvv: CVV
     pin: Code PIN
-    bankName: Banque
+    bank_name: Banque
     iban: IBAN
     bic: BIC
-    publicKey: Clé publique
-    privateKey: Clé privée
+    public_key: Clé publique
+    private_key: Clé privée
     passphrase: Phrase de passe
     issuer: Émetteur
-    passportNumber: Numéro de passeport
-    licenseNumber: Numéro de permis
-    licenseKey: Clé de licence
+    passport_number: Numéro de passeport
+    license_number: Numéro de permis
+    license_key: Clé de licence
     host: Hôte
     port: Port
     database: Base de données
-    apiKey: Clé API
-    apiSecret: Secret API
-    walletAddress: Adresse du portefeuille
-    seedPhrase: Phrase de récupération
+    api_key: Clé API
+    api_secret: Secret API
+    wallet_address: Adresse du portefeuille
+    seed_phrase: Phrase de récupération
     ssid: SSID
-    wifiPassword: Mot de passe Wi-Fi
-    firstName: Prénom
-    lastName: Nom
-    birthDate: Date de naissance
+    wifi_password: Mot de passe Wi-Fi
+    first_name: Prénom
+    last_name: Nom
+    birth_date: Date de naissance
     email: Email
     phone: Téléphone
     address: Adresse

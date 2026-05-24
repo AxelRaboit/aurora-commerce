@@ -33,7 +33,7 @@ const props = defineProps({
 const activeType = ref(props.typeFilter);
 
 const TYPE_SELECT = [
-    { value: "", label: t("backend.billing.tiers.allTypes") },
+    { value: "", label: t("backend.billing.tiers.all_types") },
     ...props.typeOptions.map(o => ({ value: o.value, label: t(o.labelKey) })),
 ];
 
@@ -65,7 +65,7 @@ const TYPE_BADGE = {
     <div class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2">
             <div class="flex-1">
-                <AppSearchInput v-model="search" :placeholder="t('backend.billing.tiers.searchPlaceholder')" v-on:search="onSearch" />
+                <AppSearchInput v-model="search" :placeholder="t('backend.billing.tiers.search_placeholder')" v-on:search="onSearch" />
             </div>
             <AppMultiselect
                 v-model="activeType"
@@ -84,7 +84,7 @@ const TYPE_BADGE = {
                         <tr class="bg-surface-2/50 border-b border-line/40">
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.tiers.type.label') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.name') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.vatNumber') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.vat_number') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.suppliers.email') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.suppliers.country') }}</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
@@ -126,8 +126,8 @@ const TYPE_BADGE = {
             :icon="Trash2"
             v-on:close="pendingDelete = null"
         >
-            <p class="text-sm text-primary">{{ t('backend.billing.tiers.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-            <p class="text-sm text-secondary">{{ t('backend.billing.list.deleteWarning') }}</p>
+            <p class="text-sm text-primary">{{ t('backend.billing.tiers.delete_confirm', { name: pendingDelete?.name ?? '' }) }}</p>
+            <p class="text-sm text-secondary">{{ t('backend.billing.list.delete_warning') }}</p>
             <template #footer>
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>

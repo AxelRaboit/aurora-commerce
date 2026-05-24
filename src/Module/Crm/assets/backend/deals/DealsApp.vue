@@ -74,31 +74,31 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
 <template>
     <div class="flex flex-col md:flex-row gap-6">
         <nav v-if="kanbanRoutePath" class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTooltip :title="t('backend.crm.deals.listView')" :description="t('backend.crm.deals.listView_description')" placement="right">
+            <AppTooltip :title="t('backend.crm.deals.list_view')" :description="t('backend.crm.deals.listView_description')" placement="right">
                 <AppTab :active="view === 'list'" v-on:click="setView('list')">
                     <List class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    {{ t('backend.crm.deals.listView') }}
+                    {{ t('backend.crm.deals.list_view') }}
                 </AppTab>
             </AppTooltip>
-            <AppTooltip :title="t('backend.crm.deals.kanbanView')" :description="t('backend.crm.deals.kanbanView_description')" placement="right">
+            <AppTooltip :title="t('backend.crm.deals.kanban_view')" :description="t('backend.crm.deals.kanbanView_description')" placement="right">
                 <AppTab :active="view === 'kanban'" v-on:click="setView('kanban')">
                     <Columns2 class="w-4 h-4 shrink-0" :stroke-width="2" />
-                    {{ t('backend.crm.deals.kanbanView') }}
+                    {{ t('backend.crm.deals.kanban_view') }}
                 </AppTab>
             </AppTooltip>
         </nav>
 
         <div v-if="kanbanRoutePath" class="flex md:hidden gap-1 flex-wrap w-full">
-            <AppTooltip :title="t('backend.crm.deals.listView')" :description="t('backend.crm.deals.listView_description')" placement="bottom">
+            <AppTooltip :title="t('backend.crm.deals.list_view')" :description="t('backend.crm.deals.listView_description')" placement="bottom">
                 <AppTab :active="view === 'list'" size="sm" v-on:click="setView('list')">
                     <List class="w-4 h-4" :stroke-width="2" />
-                    {{ t('backend.crm.deals.listView') }}
+                    {{ t('backend.crm.deals.list_view') }}
                 </AppTab>
             </AppTooltip>
-            <AppTooltip :title="t('backend.crm.deals.kanbanView')" :description="t('backend.crm.deals.kanbanView_description')" placement="bottom">
+            <AppTooltip :title="t('backend.crm.deals.kanban_view')" :description="t('backend.crm.deals.kanbanView_description')" placement="bottom">
                 <AppTab :active="view === 'kanban'" size="sm" v-on:click="setView('kanban')">
                     <Columns2 class="w-4 h-4" :stroke-width="2" />
-                    {{ t('backend.crm.deals.kanbanView') }}
+                    {{ t('backend.crm.deals.kanban_view') }}
                 </AppTab>
             </AppTooltip>
         </div>
@@ -109,7 +109,7 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 <AppListToolbar>
                     <AppSearchInput
                         v-model="searchInput"
-                        :placeholder="t('backend.crm.deals.searchPlaceholder')"
+                        :placeholder="t('backend.crm.deals.search_placeholder')"
                         v-on:search="onSearch"
                     />
                     <template #actions>
@@ -300,15 +300,15 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                     <AppInput
                         v-model="form.name"
                         :label="t('backend.crm.deals.name')"
-                        :placeholder="t('backend.crm.deals.namePlaceholder')"
+                        :placeholder="t('backend.crm.deals.name_placeholder')"
                         :error="errors.name"
                         required
                     />
                     <AppSelect v-model="form.stage" :label="t('backend.crm.deals.stage')">
                         <option v-for="opt in stageOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </AppSelect>
-                    <AppInput v-model="form.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.valuePlaceholder')" />
-                    <AppDatePicker v-model="form.closingDate" :label="t('backend.crm.deals.closingDate')" />
+                    <AppInput v-model="form.value" :label="t('backend.crm.deals.value')" :placeholder="t('backend.crm.deals.value_placeholder')" />
+                    <AppDatePicker v-model="form.closingDate" :label="t('backend.crm.deals.closing_date')" />
                     <slot name="extra-form-fields" :form="form" :errors="errors" :deal="modal.entity" />
                 </form>
                 <template #footer>
@@ -327,8 +327,8 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
                 :icon="Trash2"
                 v-on:close="pendingDelete = null"
             >
-                <p class="text-sm text-primary">{{ t('backend.crm.deals.deleteConfirm', { name: pendingDelete?.name ?? '' }) }}</p>
-                <p class="text-sm text-secondary">{{ t('backend.crm.deals.deleteWarning') }}</p>
+                <p class="text-sm text-primary">{{ t('backend.crm.deals.delete_confirm', { name: pendingDelete?.name ?? '' }) }}</p>
+                <p class="text-sm text-secondary">{{ t('backend.crm.deals.delete_warning') }}</p>
                 <template #footer>
                     <AppModalFooter>
                         <AppButton variant="ghost" size="md" v-on:click="pendingDelete = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t('shared.common.cancel') }}</AppButton>
