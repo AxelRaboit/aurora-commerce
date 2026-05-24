@@ -15,6 +15,7 @@ import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
 import { Pencil, Trash2, ArrowLeft, Download, FileText, Folder, Tag, Save, X, Paperclip } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
+import DocumentTagChip from "@ged/backend/documents/components/DocumentTagChip.vue";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -121,14 +122,7 @@ function isPdf(mimeType) {
                 <div v-if="doc.tags?.length">
                     <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("backend.ged.documents.tags") }}</p>
                     <div class="flex flex-wrap gap-1.5">
-                        <span
-                            v-for="tag in doc.tags"
-                            :key="tag.id"
-                            class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border"
-                            :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
-                        >
-                            {{ tag.name }}
-                        </span>
+                        <DocumentTagChip v-for="tag in doc.tags" :key="tag.id" :tag="tag" />
                     </div>
                 </div>
                 <div>

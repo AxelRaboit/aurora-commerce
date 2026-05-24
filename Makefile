@@ -343,6 +343,9 @@ fd: ## Fix code and build dev assets
 ft: ## Fix, test, build assets, then migrate-check
 	make fix && make test && make build && make migrate-check
 
+ftl: ## Light: fix + test + migrate-check (no asset build)
+	make fix && make test && make migrate-check
+
 # === Claude Memory ===
 sync-claude-memory: ## Sync .claude/memory/ + docs/aurora-{core,client}/ into the global Claude memory for this project
 	@DEST="$(HOME)/.claude/projects/$$(pwd | sed 's|/|-|g')/memory"; \

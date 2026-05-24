@@ -33,6 +33,7 @@ import AppImage from "@/shared/components/display/AppImage.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
 import AppOverlayIconButton from "@/shared/components/action/AppOverlayIconButton.vue";
 import AppSelectionCheck from "@/shared/components/feedback/AppSelectionCheck.vue";
+import DocumentTagChip from "@ged/backend/documents/components/DocumentTagChip.vue";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -298,14 +299,18 @@ async function doBulkDelete() {
                             </AppOverlayIconButton>
                         </div>
                     </div>
-                    <div class="p-2 space-y-0.5">
+                    <div class="p-2 space-y-1">
                         <div class="text-xs font-medium text-primary truncate" :title="doc.title">{{ doc.title }}</div>
+                        <div v-if="doc.reference" class="text-xs text-muted font-mono truncate">{{ doc.reference }}</div>
                         <div class="text-xs text-muted">
                             <span v-if="doc.fileSize">{{ formatSize(doc.fileSize) }}</span>
                             <span v-if="doc.categoryName"><span v-if="doc.fileSize"> · </span>{{ doc.categoryName }}</span>
                         </div>
                         <div v-if="doc.folderName" class="text-xs text-accent-400/80 truncate flex items-center gap-1">
                             <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ doc.folderName }}
+                        </div>
+                        <div v-if="doc.tags?.length" class="flex flex-wrap gap-1 pt-0.5">
+                            <DocumentTagChip v-for="tag in doc.tags" :key="tag.id" :tag="tag" />
                         </div>
                     </div>
                 </div>
@@ -356,12 +361,7 @@ async function doBulkDelete() {
                                 <span v-if="doc.fileSize" class="text-xs text-muted tabular-nums">{{ formatSize(doc.fileSize) }}</span>
                             </div>
                             <div v-if="doc.tags?.length" class="flex flex-wrap gap-1 mt-1.5">
-                                <span
-                                    v-for="tag in doc.tags"
-                                    :key="tag.id"
-                                    class="inline-flex items-center text-xs px-1.5 py-0.5 rounded-full border border-line/60"
-                                    :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
-                                >{{ tag.name }}</span>
+                                <DocumentTagChip v-for="tag in doc.tags" :key="tag.id" :tag="tag" />
                             </div>
                         </div>
                     </div>
@@ -417,14 +417,7 @@ async function doBulkDelete() {
                                     <span v-if="doc.folderName" class="text-xs text-muted flex items-center gap-0.5">
                                         <Folder class="w-3 h-3" :stroke-width="2" /> {{ doc.folderName }}
                                     </span>
-                                    <span
-                                        v-for="tag in doc.tags"
-                                        :key="tag.id"
-                                        class="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-full border border-line/60"
-                                        :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
-                                    >
-                                        {{ tag.name }}
-                                    </span>
+                                    <DocumentTagChip v-for="tag in doc.tags" :key="tag.id" :tag="tag" />
                                 </div>
                             </td>
                             <td class="px-6 py-3 text-secondary hidden md:table-cell">{{ doc.categoryName ?? t("backend.ged.documents.no_category") }}</td>
@@ -688,12 +681,7 @@ async function doBulkDelete() {
 
                     <!-- Tags -->
                     <div v-if="viewingDoc.tags?.length" class="flex flex-wrap gap-1.5">
-                        <span
-                            v-for="tag in viewingDoc.tags"
-                            :key="tag.id"
-                            class="inline-flex items-center text-xs px-2 py-0.5 rounded-full border"
-                            :style="tag.color ? { backgroundColor: tag.color + '22', borderColor: tag.color + '66', color: tag.color } : {}"
-                        >{{ tag.name }}</span>
+                        <DocumentTagChip v-for="tag in viewingDoc.tags" :key="tag.id" :tag="tag" />
                     </div>
 
                     <!-- Version history -->
