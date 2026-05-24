@@ -9,3 +9,10 @@ parameters:
     tmpDir: %currentWorkingDirectory%/var/cache/phpstan
     ignoreErrors:
         - identifier: property.unusedType
+        # Test-only utility traits live under src/Core/Testing/ so client
+        # projects can `use` them, but they're consumed exclusively from
+        # tests/ which PHPStan doesn't scan — hence the spurious unused
+        # warning.
+        -
+            identifier: trait.unused
+            path: %currentWorkingDirectory%/src/Core/Testing/Concern/*.php

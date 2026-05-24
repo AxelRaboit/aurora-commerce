@@ -1,0 +1,154 @@
+---
+name: pattern-self-owned-storage
+description: Convention pour les modules qui stockent leurs propres fichiers — 5 colonnes standard, UploadUrlGenerator, var/uploads/<module>/Y/m/, jamais de FK vers Media library.
+metadata:
+  type: project
+---
+
+## Règle
+
+Tout nouveau module aurora-core (ou client) qui doit stocker des fichiers
+propres à son domaine (PDFs métier, exports, attachements, etc.) **possède
+son propre stockage** sous `var/uploads/<module>/Y/m/<slug>-<uniq>.<ext>` —
+**jamais** une FK vers `MediaInterface`.
+
+**Why** : la Media library a un lifecycle, des thumbnails, des variants et
+une UX dédiés aux **assets contenu** (images/vidéos pour le frontend).
+Coupler un module métier à Media le force à hériter de ce lifecycle et crée
+une dépendance cross-module qu'on regrette ensuite (rétention, droits,
+chiffrement, versioning spécifiques au domaine ne peuvent plus évoluer
+indépendamment).
+
+**How to apply** : pour toute nouvelle entité-fichier, suivre le pattern
+documenté ci-dessous. Exemples vivants : `WeldingPdfDocument`,
+`Aurora\Module\Ged\Document` (depuis la refacto du 2026-05-24).
+
+## Schéma standard — 5 colonnes sur l'entité
+
+```php
+abstract class AbstractMyEntity implements MyEntityInterface
+{
+    use TimestampableTrait;
+
+    /** Path relatif sous `var/uploads/` (ex: my_module/2026/05/abc.pdf). */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $filePath = null;
+
+    /** Filename sur disque (slug + extension). */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $fileName = null;
+
+    /** Filename original uploadé (pour Content-Disposition au download). */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $originalName = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    protected ?string $mimeType = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    protected ?int $size = null;
+
+    // ... getters / setters standard
+}
+```
+
+Sur des entités où le fichier est **obligatoire** (ex: `DocumentVersion`),
+les colonnes sont en NOT NULL — sinon `nullable: true`.
+
+## Storage sur disque
+
+- **Path** : `var/uploads/<module>/Y/m/<slug>-<uniq>.<ext>`
+- **Module slug** : ajouter un case dans
+  `Aurora\Module\Media\Library\Enum\StorageAreaEnum` (oui, l'enum vit dans
+  Media par historique mais ne couple à rien). Cases existants : `Media`,
+  `Ocr`, `Photo`, `Users`, `Ged`.
+- **Upload** : créer un petit service `<Module>Uploader` qui slugifie le
+  nom, génère un uniqid, déplace le fichier via `Filesystem`, retourne les
+  5 champs comme array. Pattern de référence :
+  `Aurora\Module\Ged\Document\Service\GedDocumentUploader`.
+- **Endpoint** : `POST /backend/<module>/upload` qui reçoit un
+  `UploadedFile`, appelle le uploader, renvoie les 5 champs en JSON. Le
+  form Vue les stocke dans le state et les envoie avec le submit.
+
+## URLs publiques — toujours via UploadUrlGenerator
+
+```php
+use Aurora\Core\Storage\Service\UploadUrlGenerator;
+
+class MyEntitySerializer
+{
+    public function __construct(
+        protected readonly UploadUrlGenerator $uploadUrlGenerator,
+    ) {}
+
+    public function serialize(MyEntityInterface $entity): array
+    {
+        return [
+            // ...
+            'fileUrl' => $this->uploadUrlGenerator->publicUrl($entity->getFilePath()),
+        ];
+    }
+}
+```
+
+**Jamais** `'/uploads/'.$path` en hardcode. Le route name `uploads_serve`
+peut changer demain — `UploadUrlGenerator` encapsule cette dépendance.
+
+Pour les URLs absolues (emails, RSS) : `publicUrlAbsolute()`.
+
+## Référencer un fichier d'un autre module
+
+Si une entité a besoin de **référencer un fichier appartenant à un autre
+module** (ex: `WeldingPdfTemplate` référence un `Document` GED), ne PAS
+copier le fichier — stocker une FK vers l'entité propriétaire :
+
+```php
+#[ORM\ManyToOne(targetEntity: DocumentInterface::class)]
+#[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+protected ?DocumentInterface $document = null;
+```
+
+Le serializer lit `$entity->getDocument()->getFilePath()` puis appelle
+`UploadUrlGenerator->publicUrl(...)`. C'est la stratégie "W3" appliquée
+dans la refacto Welding → GED.
+
+## Migration depuis un couplage Media
+
+Pattern de migration testé :
+
+1. DROP la FK + DROP l'index
+2. `UPDATE table SET file_id = NULL` (les anciennes valeurs pointaient
+   vers Media — invalides après le swap de cible)
+3. Si on switch vers une autre FK : RENAME `file_id` → `<new>_id` + ADD
+   la nouvelle FK
+4. Si on switch vers self-owned : DROP `file_id`, ADD les 5 colonnes
+
+Exemple : `aurora-core/migrations/Version20260524160716.php` (GED).
+
+## Tests
+
+Pour stubber `UploadUrlGenerator` sans plumber la route :
+
+```php
+use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
+
+final class MySerializerTest extends TestCase
+{
+    use CreatesStorageUrlGenerators;
+
+    public function testIt(): void
+    {
+        $serializer = new MySerializer($this->makeUploadUrlGenerator());
+        // ...
+    }
+}
+```
+
+Le helper retourne `/uploads/<path>` pour toute route, donc les
+assertions de URL shape restent simples et stables.
+
+## Voir aussi
+
+- [[pattern-core-submodules-split]] — chaque module owne son domaine
+- [[decision-4-hard-rules]] — pas d'import `Core → Module`
+- Migration de référence : `aurora-core 2026-05-24` (commit `f66ffaf1`)

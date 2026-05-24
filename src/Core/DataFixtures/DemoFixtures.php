@@ -1998,23 +1998,33 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
 
         // ── Documents (cat, folder, tags) ─────────────────────────────────────
+        // `withFile` flags docs that should ship with an attached PDF —
+        // each gets its own copy of the sample under var/uploads/ged/Y/m/
+        // (one file per doc, mirroring real upload behavior). Docs without
+        // a file stay empty; users can attach one from the editor UI to
+        // exercise the new upload flow.
         $docDefs = [
-            // title                                                          cat  folder  tags        status                              desc                                                                                       file
-            ['title' => 'Contrat Tech Innovation SARL 2025',           'cat' => 0, 'folder' => 3, 'tags' => [0, 2],    'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de prestation de services signé le 15 janvier 2025. Durée : 12 mois renouvelable.', 'file' => 5],
-            ['title' => 'Contrat BioMed France — Maintenance 2025',    'cat' => 0, 'folder' => 3, 'tags' => [0, 2],    'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de maintenance et support niveau 2 pour la suite Aurora.', 'file' => null],
-            ['title' => 'Avenant Contrat Retail Connect — Jan 2025',   'cat' => 0, 'folder' => 3, 'tags' => [0, 1],    'status' => DocumentStatusEnum::Draft,     'desc' => 'Avenant tarifaire en cours de négociation pour le renouvellement 2025.', 'file' => null],
-            ['title' => "Guide d'installation Aurora v2.0",            'cat' => 1, 'folder' => 0, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Documentation complète pour installer et configurer Aurora en production.', 'file' => null],
-            ['title' => 'API Aurora — Documentation Développeur v2.1', 'cat' => 1, 'folder' => 0, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Référence complète de l\'API REST Aurora : endpoints, authentification, exemples.', 'file' => null],
-            ['title' => 'Architecture Technique Aurora — Whitepaper',  'cat' => 1, 'folder' => 0, 'tags' => [3],        'status' => DocumentStatusEnum::Archived,  'desc' => 'Document d\'architecture technique v1.x (archivé, remplacé par la version 2.x).', 'file' => null],
-            ['title' => 'Rapport Annuel 2024 — Aurora Tech',           'cat' => 4, 'folder' => 6, 'tags' => [0, 1],    'status' => DocumentStatusEnum::Draft,     'desc' => 'Bilan financier et opérationnel de l\'exercice 2024. En cours de validation.', 'file' => null],
-            ['title' => 'Budget Prévisionnel 2025 — Aurora Tech',      'cat' => 4, 'folder' => 6, 'tags' => [0],        'status' => DocumentStatusEnum::Published, 'desc' => 'Budget prévisionnel approuvé par le comité de direction le 10 janvier 2025.', 'file' => null],
-            ['title' => 'Charte Graphique Aurora — Brand Guidelines',  'cat' => 2, 'folder' => 4, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Couleurs, typographies, logos et règles d\'utilisation de la marque Aurora.', 'file' => 0],
-            ['title' => 'Kit Presse Aurora Tech Day 2025',             'cat' => 2, 'folder' => 4, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Communiqué de presse, visuels HD et biographies intervenants.', 'file' => null],
-            ['title' => 'Fiche de Poste — Développeur Full Stack',     'cat' => 3, 'folder' => 5, 'tags' => [4],        'status' => DocumentStatusEnum::Published, 'desc' => 'Description du poste, compétences requises et processus de recrutement.', 'file' => null],
-            ['title' => 'Politique de Télétravail — Aurora Tech',      'cat' => 3, 'folder' => 5, 'tags' => [4],        'status' => DocumentStatusEnum::Published, 'desc' => 'Règles et procédures applicables au travail à distance.', 'file' => null],
-            ['title' => 'Certification ISO 27001 — Audit 2024',        'cat' => 5, 'folder' => 2, 'tags' => [5, 0],    'status' => DocumentStatusEnum::Published, 'desc' => 'Rapport d\'audit de conformité ISO 27001 réalisé en novembre 2024.', 'file' => null],
+            ['title' => 'Contrat Tech Innovation SARL 2025',           'cat' => 0, 'folder' => 3, 'tags' => [0, 2],    'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de prestation de services signé le 15 janvier 2025. Durée : 12 mois renouvelable.', 'withFile' => true],
+            ['title' => 'Contrat BioMed France — Maintenance 2025',    'cat' => 0, 'folder' => 3, 'tags' => [0, 2],    'status' => DocumentStatusEnum::Published, 'desc' => 'Contrat de maintenance et support niveau 2 pour la suite Aurora.', 'withFile' => false],
+            ['title' => 'Avenant Contrat Retail Connect — Jan 2025',   'cat' => 0, 'folder' => 3, 'tags' => [0, 1],    'status' => DocumentStatusEnum::Draft,     'desc' => 'Avenant tarifaire en cours de négociation pour le renouvellement 2025.', 'withFile' => false],
+            ['title' => "Guide d'installation Aurora v2.0",            'cat' => 1, 'folder' => 0, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Documentation complète pour installer et configurer Aurora en production.', 'withFile' => true],
+            ['title' => 'API Aurora — Documentation Développeur v2.1', 'cat' => 1, 'folder' => 0, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Référence complète de l\'API REST Aurora : endpoints, authentification, exemples.', 'withFile' => false],
+            ['title' => 'Architecture Technique Aurora — Whitepaper',  'cat' => 1, 'folder' => 0, 'tags' => [3],        'status' => DocumentStatusEnum::Archived,  'desc' => 'Document d\'architecture technique v1.x (archivé, remplacé par la version 2.x).', 'withFile' => false],
+            ['title' => 'Rapport Annuel 2024 — Aurora Tech',           'cat' => 4, 'folder' => 6, 'tags' => [0, 1],    'status' => DocumentStatusEnum::Draft,     'desc' => 'Bilan financier et opérationnel de l\'exercice 2024. En cours de validation.', 'withFile' => false],
+            ['title' => 'Budget Prévisionnel 2025 — Aurora Tech',      'cat' => 4, 'folder' => 6, 'tags' => [0],        'status' => DocumentStatusEnum::Published, 'desc' => 'Budget prévisionnel approuvé par le comité de direction le 10 janvier 2025.', 'withFile' => true],
+            ['title' => 'Charte Graphique Aurora — Brand Guidelines',  'cat' => 2, 'folder' => 4, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Couleurs, typographies, logos et règles d\'utilisation de la marque Aurora.', 'withFile' => false],
+            ['title' => 'Kit Presse Aurora Tech Day 2025',             'cat' => 2, 'folder' => 4, 'tags' => [],         'status' => DocumentStatusEnum::Published, 'desc' => 'Communiqué de presse, visuels HD et biographies intervenants.', 'withFile' => false],
+            ['title' => 'Fiche de Poste — Développeur Full Stack',     'cat' => 3, 'folder' => 5, 'tags' => [4],        'status' => DocumentStatusEnum::Published, 'desc' => 'Description du poste, compétences requises et processus de recrutement.', 'withFile' => false],
+            ['title' => 'Politique de Télétravail — Aurora Tech',      'cat' => 3, 'folder' => 5, 'tags' => [4],        'status' => DocumentStatusEnum::Published, 'desc' => 'Règles et procédures applicables au travail à distance.', 'withFile' => false],
+            ['title' => 'Certification ISO 27001 — Audit 2024',        'cat' => 5, 'folder' => 2, 'tags' => [5, 0],    'status' => DocumentStatusEnum::Published, 'desc' => 'Rapport d\'audit de conformité ISO 27001 réalisé en novembre 2024.', 'withFile' => true],
         ];
-        foreach ($docDefs as $def) {
+
+        $sampleSrc = dirname(__DIR__, 3).'/test_files/files/pdfs/pdfform_sample.pdf';
+        $gedMonth = new DateTimeImmutable()->format('Y/m');
+        $gedDir = $this->uploadDir.'/ged/'.$gedMonth;
+        $this->fs->mkdir($gedDir);
+
+        foreach ($docDefs as $idx => $def) {
             $d = new Document();
             $d->setTitle($def['title'])
               ->setDescription($def['desc'])
@@ -2025,11 +2035,21 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 $d->addTag($tags[$tagIndex]);
             }
 
-            // NOTE: file attachment removed in this fixture path — GED
-            // documents now own their own storage (var/uploads/ged/) and
-            // are no longer backed by the Media library. The demo set
-            // intentionally creates docs without files; users attach PDFs
-            // from the UI after `make demo` to exercise the upload flow.
+            if ($def['withFile'] && file_exists($sampleSrc)) {
+                // One physical copy per doc so each Document carries a
+                // unique filePath — what a real upload through
+                // /backend/ged/documents/upload would produce.
+                $fileName = sprintf('demo-doc-%02d.pdf', $idx);
+                $destFile = $gedDir.'/'.$fileName;
+                $this->fs->copy($sampleSrc, $destFile, true);
+
+                $d->setFilePath('ged/'.$gedMonth.'/'.$fileName)
+                  ->setFileName($fileName)
+                  ->setOriginalName($def['title'].'.pdf')
+                  ->setMimeType('application/pdf')
+                  ->setSize((int) filesize($destFile));
+            }
+
             $em->persist($d);
         }
     }

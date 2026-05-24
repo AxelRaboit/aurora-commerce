@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Project\Serializer;
 
+use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Module\Media\Library\Entity\Media;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\AbstractProjectTask;
@@ -19,7 +20,6 @@ use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
 use Aurora\Module\Project\Serializer\ProjectTaskCommentSerializer;
 use Aurora\Module\Project\Serializer\ProjectTaskSerializer;
-use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;

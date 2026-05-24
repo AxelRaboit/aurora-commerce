@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Serializer;
 
+use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Media\Library\Entity\Media;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
@@ -20,7 +21,6 @@ use Aurora\Module\Photo\Gallery\Repository\GalleryPickRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
 use Aurora\Module\Photo\Gallery\Serializer\GallerySerializer;
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use DateTimeInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;

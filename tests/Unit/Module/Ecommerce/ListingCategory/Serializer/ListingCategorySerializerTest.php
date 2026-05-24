@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ecommerce\ListingCategory\Serializer;
 
+use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslationInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Serializer\ListingCategorySerializer;
 use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;

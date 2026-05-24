@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Concern;
+namespace Aurora\Core\Testing\Concern;
 
 use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
@@ -10,15 +10,22 @@ use Aurora\Module\Platform\User\Service\UserProfilePhotoUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Test helper: builds a `MediaUrlGenerator` /
- * `UploadUrlGenerator` / `UserProfilePhotoUrlGenerator` whose generated
- * URLs mirror the historical hardcoded `/uploads/<path>` shape. Keeps
- * URL-shape assertions in serializer tests focused on serialization
- * logic rather than route plumbing.
+ * Test helper: builds a `MediaUrlGenerator` / `UploadUrlGenerator` /
+ * `UserProfilePhotoUrlGenerator` whose generated URLs mirror the
+ * canonical `/uploads/<path>` shape. Keeps URL assertions in serializer
+ * tests focused on serialization logic rather than route plumbing.
  *
  * All helpers stub `UrlGeneratorInterface::generate()` to return
  * `/uploads/<path>` regardless of the route name (`uploads_serve` in
  * prod), so any test asserting on a URL just keeps working.
+ *
+ * Lives under `src/Core/Testing/` (rather than `tests/`) so client
+ * projects consuming aurora-core via composer can `use` the trait too
+ * — keeps the helper single-sourced across the ecosystem.
+ *
+ * @api Test-only utility consumed exclusively from `tests/` directories
+ *      across the ecosystem. PHPStan only scans `src/`, so without this
+ *      marker the trait would be flagged unused.
  */
 trait CreatesStorageUrlGenerators
 {

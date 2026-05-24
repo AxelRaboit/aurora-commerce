@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Serializer;
 
+use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Module\Platform\User\Entity\AbstractUser;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Platform\User\Serializer\UserSerializer;
-use Aurora\Tests\Concern\CreatesStorageUrlGenerators;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
