@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
@@ -46,7 +47,7 @@ final class OcrJobManagerDeleteTest extends TestCase
         // GedDocumentUploader is final — instantiate it with real deps.
         // These tests never call its `upload()` method (they exercise the
         // delete path), so the concrete instance is harmless.
-        $uploader = new GedDocumentUploader(new Filesystem(), new AsciiSlugger(), '/tmp');
+        $uploader = new GedDocumentUploader(new Filesystem(), new AsciiSlugger(), new PdfThumbnailGenerator('/tmp'), '/tmp');
 
         $this->manager = new OcrJobManager(
             $this->em,

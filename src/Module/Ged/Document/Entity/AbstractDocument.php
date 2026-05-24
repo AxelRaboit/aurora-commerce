@@ -60,6 +60,16 @@ abstract class AbstractDocument implements DocumentInterface
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     protected ?int $size = null;
 
+    /**
+     * Relative path of a generated thumbnail (e.g. ged/thumbnails/2026/05/contract-abc.jpg).
+     * For PDFs and similar opaque formats, produced server-side at upload time so
+     * the list/preview UIs can render a real image instead of a generic icon.
+     * For native image MIMEs (jpg/png/webp), this stays null and the serializer
+     * falls back on `filePath` itself.
+     */
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $thumbnailPath = null;
+
     /** @var Collection<int, DocumentTagInterface> */
     protected Collection $tags;
 
@@ -188,6 +198,18 @@ abstract class AbstractDocument implements DocumentInterface
     public function setSize(?int $size): static
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getThumbnailPath(): ?string
+    {
+        return $this->thumbnailPath;
+    }
+
+    public function setThumbnailPath(?string $thumbnailPath): static
+    {
+        $this->thumbnailPath = $thumbnailPath;
 
         return $this;
     }

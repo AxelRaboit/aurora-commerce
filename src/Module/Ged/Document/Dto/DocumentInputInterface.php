@@ -26,6 +26,8 @@ interface DocumentInputInterface
 
     public function getSize(): ?int;
 
+    public function getThumbnailPath(): ?string;
+
     /** @return int[] */
     public function getTagIds(): array;
 

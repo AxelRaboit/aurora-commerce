@@ -42,6 +42,7 @@ final class DocumentSerializerTest extends TestCase
         ?string $originalName = null,
         ?string $mimeType = null,
         ?int $size = null,
+        ?string $thumbnailPath = null,
         array $tags = [],
         ?DocumentFolderInterface $folder = null,
         string $createdAt = '2025-01-01T00:00:00+00:00',
@@ -59,6 +60,7 @@ final class DocumentSerializerTest extends TestCase
         $document->method('getOriginalName')->willReturn($originalName);
         $document->method('getMimeType')->willReturn($mimeType);
         $document->method('getSize')->willReturn($size);
+        $document->method('getThumbnailPath')->willReturn($thumbnailPath);
         $document->method('getTags')->willReturn(new ArrayCollection($tags));
         $document->method('getFolder')->willReturn($folder);
         $document->method('getCreatedAt')->willReturn(new DateTimeImmutable($createdAt));
@@ -84,6 +86,7 @@ final class DocumentSerializerTest extends TestCase
         self::assertNull($result['fileUrl']);
         self::assertNull($result['fileMime']);
         self::assertNull($result['fileSize']);
+        self::assertNull($result['thumbnailUrl']);
         self::assertSame([], $result['tagIds']);
         self::assertSame([], $result['tags']);
         self::assertNull($result['folderId']);
@@ -148,6 +151,37 @@ final class DocumentSerializerTest extends TestCase
             ['id' => 7, 'name' => 'Urgent', 'color' => '#f00'],
             ['id' => 8, 'name' => 'Draft', 'color' => null],
         ], $result['tags']);
+    }
+
+    public function testSerializeUsesThumbnailPathWhenPresent(): void
+    {
+        $result = $this->serializer->serialize($this->makeDocument(
+            filePath: 'ged/2026/05/contract.pdf',
+            mimeType: 'application/pdf',
+            thumbnailPath: 'ged/thumbnails/2026/05/contract.jpg',
+        ));
+
+        self::assertSame('/uploads/ged/thumbnails/2026/05/contract.jpg', $result['thumbnailUrl']);
+    }
+
+    public function testSerializeFallsBackToImageItselfForNativeImageMimes(): void
+    {
+        $result = $this->serializer->serialize($this->makeDocument(
+            filePath: 'ged/2026/05/photo.webp',
+            mimeType: 'image/webp',
+        ));
+
+        self::assertSame('/uploads/ged/2026/05/photo.webp', $result['thumbnailUrl']);
+    }
+
+    public function testSerializeNoThumbnailForUnsupportedMime(): void
+    {
+        $result = $this->serializer->serialize($this->makeDocument(
+            filePath: 'ged/2026/05/data.zip',
+            mimeType: 'application/zip',
+        ));
+
+        self::assertNull($result['thumbnailUrl']);
     }
 
     public function testSerializeWithFolderIncludesFolderData(): void

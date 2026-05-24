@@ -6,6 +6,7 @@ namespace Aurora\Module\Ged\Document\Serializer;
 
 use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -41,6 +42,10 @@ class DocumentSerializer implements DocumentSerializerInterface
             'fileUrl' => $this->uploadUrlGenerator->publicUrl($document->getFilePath()),
             'fileMime' => $document->getMimeType(),
             'fileSize' => $document->getSize(),
+            // Server-side rendered thumbnail for opaque formats (PDFs).
+            // For native image MIMEs, fall back to the source file itself
+            // so the list UI can always show *something*.
+            'thumbnailUrl' => $this->resolveThumbnailUrl($document),
             'tagIds' => $document->getTags()->map(static fn ($tag): ?int => $tag->getId())->toArray(),
             'tags' => $document->getTags()->map(static fn ($tag): array => ['id' => $tag->getId(), 'name' => $tag->getName(), 'color' => $tag->getColor()])->toArray(),
             'folderId' => $folder?->getId(),
@@ -48,5 +53,19 @@ class DocumentSerializer implements DocumentSerializerInterface
             'createdAt' => $document->getCreatedAt()->format(DateTimeInterface::ATOM),
             'updatedAt' => $document->getUpdatedAt()->format(DateTimeInterface::ATOM),
         ];
+    }
+
+    private function resolveThumbnailUrl(DocumentInterface $document): ?string
+    {
+        if (null !== $document->getThumbnailPath()) {
+            return $this->uploadUrlGenerator->publicUrl($document->getThumbnailPath());
+        }
+
+        $mime = MimeTypeEnum::tryFrom($document->getMimeType() ?? '');
+        if (null !== $mime && str_starts_with($mime->value, 'image/')) {
+            return $this->uploadUrlGenerator->publicUrl($document->getFilePath());
+        }
+
+        return null;
     }
 }

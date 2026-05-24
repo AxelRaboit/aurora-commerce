@@ -129,6 +129,7 @@ class DocumentManager implements DocumentManagerInterface
             $document->setOriginalName($input->getOriginalName());
             $document->setMimeType($input->getMimeType());
             $document->setSize($input->getSize());
+            $document->setThumbnailPath($input->getThumbnailPath());
         }
 
         $document->clearTags();

@@ -156,8 +156,8 @@ const {
                         <!-- Thumbnail or file icon -->
                         <div class="shrink-0 mt-0.5">
                             <AppThumbnail
-                                v-if="doc.fileMime?.startsWith('image/')"
-                                :src="doc.fileUrl"
+                                v-if="doc.thumbnailUrl"
+                                :src="doc.thumbnailUrl"
                                 :alt="doc.fileName"
                                 size="sm"
                             />
@@ -252,20 +252,18 @@ const {
                                 <span v-else class="text-muted text-xs">—</span>
                             </td>
                             <td class="px-6 py-3 hidden xl:table-cell">
-                                <template v-if="doc.fileUrl">
-                                    <AppThumbnail
-                                        v-if="doc.fileMime?.startsWith('image/')"
-                                        :src="doc.fileUrl"
-                                        :alt="doc.fileName"
-                                        size="landscape"
-                                    />
-                                    <div v-else-if="doc.fileMime === 'application/pdf'" class="flex items-center gap-1.5 text-xs text-muted">
-                                        <FileText class="w-5 h-5 shrink-0 text-rose-400" :stroke-width="1.5" /> PDF
-                                    </div>
-                                    <div v-else class="flex items-center gap-1.5 text-xs text-muted">
-                                        <FileText class="w-5 h-5 shrink-0" :stroke-width="1.5" /> {{ doc.fileMime ?? '—' }}
-                                    </div>
-                                </template>
+                                <AppThumbnail
+                                    v-if="doc.thumbnailUrl"
+                                    :src="doc.thumbnailUrl"
+                                    :alt="doc.fileName"
+                                    size="landscape"
+                                />
+                                <div v-else-if="doc.fileMime === 'application/pdf'" class="flex items-center gap-1.5 text-xs text-muted">
+                                    <FileText class="w-5 h-5 shrink-0 text-rose-400" :stroke-width="1.5" /> PDF
+                                </div>
+                                <div v-else-if="doc.fileUrl" class="flex items-center gap-1.5 text-xs text-muted">
+                                    <FileText class="w-5 h-5 shrink-0" :stroke-width="1.5" /> {{ doc.fileMime ?? '—' }}
+                                </div>
                                 <span v-else class="text-muted text-xs">—</span>
                             </td>
                             <td class="px-6 py-3">

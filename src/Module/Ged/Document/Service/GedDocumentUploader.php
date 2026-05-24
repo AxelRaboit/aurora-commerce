@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Service;
 
+use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
+use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -28,12 +30,13 @@ final readonly class GedDocumentUploader
     public function __construct(
         private Filesystem $filesystem,
         private SluggerInterface $slugger,
+        private PdfThumbnailGenerator $pdfThumbnailGenerator,
         #[Autowire('%app.upload_dir%')]
         private string $uploadDir,
     ) {}
 
     /**
-     * @return array{filePath: string, fileName: string, originalName: string, mimeType: string, size: int}
+     * @return array{filePath: string, fileName: string, originalName: string, mimeType: string, size: int, thumbnailPath: string|null}
      */
     public function upload(UploadedFile $file): array
     {
@@ -51,12 +54,20 @@ final readonly class GedDocumentUploader
         $this->filesystem->mkdir(Path::join($this->uploadDir, $relativeDir));
         $file->move(Path::join($this->uploadDir, $relativeDir), $newFilename);
 
+        $thumbnailPath = null;
+        if (MimeTypeEnum::Pdf->value === $mimeType) {
+            $thumbDir = sprintf('%s/thumbnails/%s', StorageAreaEnum::Ged->value, $dateSlug);
+            $thumbBasename = pathinfo($newFilename, PATHINFO_FILENAME);
+            $thumbnailPath = $this->pdfThumbnailGenerator->generate($relativePath, $thumbDir, $thumbBasename);
+        }
+
         return [
             'filePath' => $relativePath,
             'fileName' => $newFilename,
             'originalName' => $clientName,
             'mimeType' => $mimeType,
             'size' => $size,
+            'thumbnailPath' => $thumbnailPath,
         ];
     }
 }
