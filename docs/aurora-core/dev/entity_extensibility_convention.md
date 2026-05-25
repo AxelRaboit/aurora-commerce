@@ -84,7 +84,7 @@ Pour ces 3 entités, **seule la couche 1 est requise** — déjà en place.
 |---|---|
 | Translations (gérées via parent) | toutes les `*Translation` |
 | Items / lignes inline | `CartItem`, `OrderLine`, `InvoiceLine`, `FormField`, `PostTypeField`, `ProjectTaskItem`, `ProjectTaskComment`, `ProjectTaskTimeEntry`, `ProjectTaskAttachment`, `GalleryItem`, `GalleryItemComment`, `GalleryPick`, `GalleryFinalization`, `GalleryInvite`, `CommentReaction` |
-| Audit / historique auto-générés | `AuditLog`, `PostRevision`, `PostSlugHistory`, `FormSubmission`, `DocumentVersion` |
+| Audit / historique auto-générés | `AuditLog`, `PostRevision`, `PostSlugHistory`, `FormSubmission`, `DocumentVersion`, `MediaVersion` |
 | Auth tunnel sans page admin | `AccessRequest`, `ResetPasswordRequest` |
 | Configs gérées inline dans le parent | `MenuItem`, `TaxonomyTerm`, `ProjectColumn`, `ProjectLabel`, `ProjectSprint`, `ProjectSavedView` |
 | Sessions runtime (pas de page admin) | `Cart`, `Conversation`, `Message`, `VaultUserConfig` |

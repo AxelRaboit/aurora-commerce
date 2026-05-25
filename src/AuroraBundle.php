@@ -117,6 +117,8 @@ use Aurora\Module\Media\Library\Entity\Media;
 use Aurora\Module\Media\Library\Entity\MediaFolder;
 use Aurora\Module\Media\Library\Entity\MediaFolderInterface;
 use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaVersion;
+use Aurora\Module\Media\Library\Entity\MediaVersionInterface;
 use Aurora\Module\Notes\Block\Entity\BlockNote;
 use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
@@ -261,6 +263,7 @@ class AuroraBundle extends AbstractBundle
                     LocaleInterface::class => Locale::class,
                     MediaInterface::class => Media::class,
                     MediaFolderInterface::class => MediaFolder::class,
+                    MediaVersionInterface::class => MediaVersion::class,
                     MenuInterface::class => Menu::class,
                     MenuItemInterface::class => MenuItem::class,
                     MenuItemTranslationInterface::class => MenuItemTranslation::class,
