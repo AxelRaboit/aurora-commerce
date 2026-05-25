@@ -29,7 +29,7 @@ import { useDocumentsDisplay, DOCUMENT_SORT_FIELDS } from "./composables/useDocu
 import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
-import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, Copy, Crop } from "lucide-vue-next";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, Copy, Crop, ExternalLink } from "lucide-vue-next";
 import ImageCropperModal from "@/shared/components/overlay/ImageCropperModal.vue";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
@@ -51,6 +51,7 @@ const props = defineProps({
     search: { type: String, default: "" },
     showPath: { type: String, default: "" },
     versionsPath: { type: String, default: "" },
+    usagePath: { type: String, default: "" },
     createPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
@@ -65,7 +66,7 @@ const tagOptions = props.tags.map((tag) => ({ value: tag.id, label: tag.name }))
 const folderOptions = props.folders.map((f) => ({ value: f.id, label: f.name }));
 
 // ── Detail modal ─────────────────────────────────────────────────────────────
-const { viewingDoc, viewingDocVersions, viewDoc, closeDetail } = useDocumentDetail(props.versionsPath);
+const { viewingDoc, viewingDocVersions, viewingDocUsage, viewDoc, closeDetail } = useDocumentDetail(props.versionsPath, props.usagePath);
 
 const { qrItem: qrDoc, openQr, closeQr } = useQrCode();
 const { copy } = useClipboard();
@@ -802,6 +803,27 @@ async function doBulkDelete() {
                                         <Download class="w-3 h-3" :stroke-width="2" />
                                     </a>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Usage: where this document is referenced -->
+                        <div v-if="viewingDocUsage && viewingDocUsage.total > 0" class="space-y-2">
+                            <p class="text-xs text-muted uppercase tracking-wide">{{ t("backend.ged.documents.usage_title") }} ({{ viewingDocUsage.total }})</p>
+                            <div class="divide-y divide-line/40 rounded-lg border border-line overflow-hidden">
+                                <template v-for="group in viewingDocUsage.groups" :key="group.type">
+                                    <component
+                                        :is="item.href ? 'a' : 'div'"
+                                        v-for="(item, index) in group.items"
+                                        :key="group.type + '-' + index"
+                                        :href="item.href || undefined"
+                                        class="flex items-center gap-3 px-3 py-2 text-xs"
+                                        :class="item.href ? 'hover:bg-surface-2 transition' : ''"
+                                    >
+                                        <span class="shrink-0 text-muted">{{ item.detail }}</span>
+                                        <span class="flex-1 truncate text-primary">{{ item.label }}</span>
+                                        <ExternalLink v-if="item.href" class="w-3 h-3 text-muted shrink-0" :stroke-width="2" />
+                                    </component>
+                                </template>
                             </div>
                         </div>
                     </div>
