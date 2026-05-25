@@ -6,6 +6,7 @@ namespace Aurora\Module\Ged\Document\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Storage\Enum\MimeTypeEnum;
+use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
@@ -177,6 +178,35 @@ class DocumentManager implements DocumentManagerInterface
             ->setSize((int) $document->getSize())
             ->setVersionNumber($this->versionRepository->getNextVersionNumber($document));
         $this->entityManager->persist($version);
+        $this->entityManager->flush();
+
+        $this->pruneVersions($document);
+    }
+
+    /**
+     * Keeps at most `file_versions_limit` versions per document (rolling
+     * window): older versions are removed along with their physical files.
+     * The current file is always the newest version, so it is never pruned.
+     */
+    protected function pruneVersions(DocumentInterface $document): void
+    {
+        $limit = (int) $this->settingRepository->get(
+            ApplicationParameterEnum::FileVersionsLimit->value,
+            ApplicationParameterEnum::FileVersionsLimit->getDefaultValue(),
+        );
+
+        $prunable = $this->versionRepository->findPrunable($document, $limit);
+        if ([] === $prunable) {
+            return;
+        }
+
+        $currentPath = $document->getFilePath();
+        foreach ($prunable as $version) {
+            if ($version->getFilePath() !== $currentPath) {
+                $this->uploader->deleteFile($version->getFilePath());
+            }
+            $this->entityManager->remove($version);
+        }
         $this->entityManager->flush();
     }
 

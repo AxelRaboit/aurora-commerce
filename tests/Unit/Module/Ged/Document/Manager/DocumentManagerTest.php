@@ -14,6 +14,7 @@ use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
+use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use Aurora\Module\Ged\Document\Manager\DocumentManager;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
@@ -422,6 +423,34 @@ final class DocumentManagerTest extends TestCase
         $this->manager->cropImage($document, 0, 0, 10, 10);
 
         self::assertSame('ged/2026/05/contract.pdf', $document->getFilePath());
+    }
+
+    public function testRecordingVersionPrunesVersionsBeyondTheLimit(): void
+    {
+        $old1 = $this->createStub(DocumentVersionInterface::class);
+        $old1->method('getFilePath')->willReturn('ged/2026/05/old-1.pdf');
+        $old2 = $this->createStub(DocumentVersionInterface::class);
+        $old2->method('getFilePath')->willReturn('ged/2026/05/old-2.pdf');
+        $this->versionRepository->method('findPrunable')->willReturn([$old1, $old2]);
+
+        $removed = [];
+        $this->entityManager->method('remove')->willReturnCallback(
+            static function (object $entity) use (&$removed): void {
+                $removed[] = $entity;
+            }
+        );
+
+        // create() with a file records a version, which triggers pruning.
+        $this->manager->create($this->makeInput(
+            filePath: 'ged/2026/05/current.pdf',
+            fileName: 'current.pdf',
+            originalName: 'Current.pdf',
+            mimeType: 'application/pdf',
+            size: 1000,
+        ));
+
+        self::assertContains($old1, $removed);
+        self::assertContains($old2, $removed);
     }
 
     private function makeImageDocument(string $filePath): Document

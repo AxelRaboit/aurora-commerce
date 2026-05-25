@@ -125,6 +125,19 @@ final readonly class GedDocumentUploader
     }
 
     /**
+     * Removes a file owned by the GED storage area (relative to var/uploads/).
+     * Silently no-ops on a missing file. Used when pruning old versions.
+     */
+    public function deleteFile(string $relativePath): void
+    {
+        if ('' === $relativePath) {
+            return;
+        }
+
+        $this->filesystem->remove(Path::join($this->uploadDir, $relativePath));
+    }
+
+    /**
      * Reads pixel dimensions for raster images. Returns [null, null] for
      * non-images or unreadable files — never throws.
      *

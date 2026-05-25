@@ -30,6 +30,27 @@ class MediaVersionRepository extends ResolveTargetEntityRepository
             ->getResult();
     }
 
+    /**
+     * Versions beyond the most recent $limit (oldest first to delete), so the
+     * caller can drop their rows and physical files. Empty when limit <= 0.
+     *
+     * @return list<MediaVersionInterface>
+     */
+    public function findPrunable(MediaInterface $media, int $limit): array
+    {
+        if ($limit <= 0) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.media = :media')
+            ->setParameter('media', $media)
+            ->orderBy('v.versionNumber', Order::Descending->value)
+            ->setFirstResult($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getNextVersionNumber(MediaInterface $media): int
     {
         $max = $this->createQueryBuilder('v')

@@ -156,17 +156,29 @@ Implémentation de référence (2026-05-25, commit `2616e07e`) :
 - `GedDocumentUploader::cropToNewFile()` → build du nouveau path + crop
 - Pixel work : `Aurora\Core\Storage\Service\ImageCropper` (service Core
   partagé, `crop(sourceAbs, destAbs, mime, x,y,w,h): ?[w,h]`, clamp +
-  alpha PNG/WebP). Aussi consommé par `MediaManager::crop` (in-place :
-  `destAbs === sourceAbs`).
+  alpha PNG/WebP). Aussi consommé par `MediaManager::crop`.
 
 > **Media vs GED** : les deux cropent **vers une nouvelle version** (nouveau
-> fichier, original gardé via la ligne de version précédente). Différence :
-> Media régénère ses **variants** (thumbnail/medium/large) sur le fichier
-> courant — les versions ne stockent que le fichier brut (pas de variants par
-> version) ; GED n'a pas de variants. Même `ImageCropper`. Entités d'historique :
-> `DocumentVersion` (`core_ged_document_versions`) et `MediaVersion`
-> (`core_media_versions`), toutes deux dans la catégorie « audit/historique
-> auto-généré » de la convention (hors 5-couches CRUD).
+> fichier `destAbs !== sourceAbs`, original gardé via la ligne de version
+> précédente). Différence : Media régénère ses **variants**
+> (thumbnail/medium/large) sur le fichier courant — les versions ne stockent
+> que le fichier brut (pas de variants par version) ; GED n'a pas de variants.
+> Même `ImageCropper`. Entités d'historique : `DocumentVersion`
+> (`core_ged_document_versions`) et `MediaVersion` (`core_media_versions`),
+> toutes deux dans la catégorie « audit/historique auto-généré » de la
+> convention (hors 5-couches CRUD).
+
+**Rétention (cap rolling, 2026-05-25)** : l'historique est plafonné par le
+setting **`ApplicationParameterEnum::FileVersionsLimit`** (`file_versions_limit`,
+groupe `media`, défaut **3**, éditable en admin, `0` = illimité). Un setting
+unique gouverne **les deux** modules. Chaque `recordVersion()` appelle
+`pruneVersions()` qui supprime les versions au-delà de la limite (les plus
+anciennes) **avec leur fichier sur disque** via `<repo>::findPrunable(entity, limit)`
+(`setFirstResult($limit)` sur l'ordre DESC). Le fichier courant est toujours la
+version la plus récente → jamais purgé. Côté GED le fichier est supprimé via
+`GedDocumentUploader::deleteFile()` (le manager n'a pas de `Filesystem`) ;
+côté Media directement (il a `Filesystem` + `uploadDir`). Pattern calqué sur
+`post_revisions_limit` / `PostRevisionRepository::pruneOlderThanLimit`.
 
 ## Migration depuis un couplage Media
 

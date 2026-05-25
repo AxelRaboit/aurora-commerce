@@ -270,6 +270,34 @@ final class MediaActionsTest extends IntegrationTestCase
         self::assertCount(1, $deleteEntries);
     }
 
+    public function testVersionHistoryIsCappedAtTheConfiguredLimit(): void
+    {
+        // Default file_versions_limit is 3. Upload (v1) + 3 crops (v2..v4) ⇒
+        // the oldest (v1) is pruned with its file, leaving exactly 3 versions.
+        $media = $this->uploadAndPersist('capped.png', 200, 200);
+        $mediaId = $media->getId();
+        $firstVersionFile = Path::join($this->uploadDir, $media->getPath());
+        self::assertFileExists($firstVersionFile);
+
+        for ($i = 0; $i < 3; ++$i) {
+            [$status] = $this->postJson('backend_media_crop', ['id' => $mediaId], [
+                'x' => 0, 'y' => 0, 'width' => 100, 'height' => 100,
+            ]);
+            self::assertSame(200, $status);
+        }
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->clear();
+        $current = static::getContainer()->get(MediaRepository::class)->find($mediaId);
+        $this->trackForCleanup(Path::join($this->uploadDir, $current->getPath()));
+
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_media_versions', ['id' => $mediaId]));
+        $versions = json_decode((string) $this->client->getResponse()->getContent(), true)['versions'];
+
+        self::assertCount(3, $versions);
+        self::assertFileDoesNotExist($firstVersionFile);
+    }
+
     public function testUsageEndpointRunsEveryProviderWithoutError(): void
     {
         // Exercises all MediaUsageProviders' raw SQL against the real schema —

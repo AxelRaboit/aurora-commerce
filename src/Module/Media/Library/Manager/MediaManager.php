@@ -324,6 +324,35 @@ class MediaManager implements MediaManagerInterface
             ->setVersionNumber($this->versionRepository->getNextVersionNumber($media));
         $this->entityManager->persist($version);
         $this->entityManager->flush();
+
+        $this->pruneVersions($media);
+    }
+
+    /**
+     * Keeps at most `file_versions_limit` versions per media (rolling window):
+     * older versions are removed along with their physical files. The current
+     * file is always the newest version, so it is never pruned.
+     */
+    protected function pruneVersions(MediaInterface $media): void
+    {
+        $limit = (int) $this->settingRepository->get(
+            ApplicationParameterEnum::FileVersionsLimit->value,
+            ApplicationParameterEnum::FileVersionsLimit->getDefaultValue(),
+        );
+
+        $prunable = $this->versionRepository->findPrunable($media, $limit);
+        if ([] === $prunable) {
+            return;
+        }
+
+        $currentPath = $media->getPath();
+        foreach ($prunable as $version) {
+            if ($version->getPath() !== $currentPath) {
+                $this->filesystem->remove(Path::join($this->uploadDir, $version->getPath()));
+            }
+            $this->entityManager->remove($version);
+        }
+        $this->entityManager->flush();
     }
 
     // ── Hooks: instanciation ──────────────────────────────────────────────────

@@ -30,6 +30,27 @@ class DocumentVersionRepository extends ResolveTargetEntityRepository
             ->getResult();
     }
 
+    /**
+     * Versions beyond the most recent $limit (oldest first to delete), so the
+     * caller can drop their rows and physical files. Empty when limit <= 0.
+     *
+     * @return list<DocumentVersionInterface>
+     */
+    public function findPrunable(DocumentInterface $document, int $limit): array
+    {
+        if ($limit <= 0) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.document = :doc')
+            ->setParameter('doc', $document)
+            ->orderBy('v.versionNumber', Order::Descending->value)
+            ->setFirstResult($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getNextVersionNumber(DocumentInterface $document): int
     {
         $max = $this->createQueryBuilder('v')

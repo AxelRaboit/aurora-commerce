@@ -19,6 +19,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case PostsPerPage = 'posts_per_page';
     case MaxUploadSizeMb = 'max_upload_size_mb';
     case AllowedUploadExtensions = 'allowed_upload_extensions';
+    case FileVersionsLimit = 'file_versions_limit';
     case Timezone = 'timezone';
     case DateFormat = 'date_format';
     case CommentsEnabled = 'comments_enabled';
@@ -89,6 +90,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::AdminAccessRequestEnabled => 'backend.parameters.admin_access_request_enabled.label',
             self::FrontRegistrationEnabled => 'backend.parameters.front_registration_enabled.label',
             self::PostRevisionsLimit => 'backend.parameters.post_revisions_limit.label',
+            self::FileVersionsLimit => 'backend.parameters.file_versions_limit.label',
             self::TrashAutoPurgeDays => 'backend.parameters.trash_auto_purge_days.label',
             self::HomepagePostId => 'backend.parameters.homepage_post_id.label',
             self::DefaultFront => 'backend.parameters.default_front.label',
@@ -135,6 +137,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::AdminAccessRequestEnabled => 'backend.parameters.admin_access_request_enabled.description',
             self::FrontRegistrationEnabled => 'backend.parameters.front_registration_enabled.description',
             self::PostRevisionsLimit => 'backend.parameters.post_revisions_limit.description',
+            self::FileVersionsLimit => 'backend.parameters.file_versions_limit.description',
             self::TrashAutoPurgeDays => 'backend.parameters.trash_auto_purge_days.description',
             self::HomepagePostId => 'backend.parameters.homepage_post_id.description',
             self::DefaultFront => 'backend.parameters.default_front.description',
@@ -181,6 +184,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::AdminAccessRequestEnabled => '1',
             self::FrontRegistrationEnabled => '0',
             self::PostRevisionsLimit => '20',
+            self::FileVersionsLimit => '3',
             self::TrashAutoPurgeDays => '30',
             self::HomepagePostId => '',
             self::DefaultFront => 'editorial',
@@ -209,7 +213,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     public function getType(): string
     {
         return match ($this) {
-            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays => 'int',
+            self::PostsPerPage, self::MaxUploadSizeMb, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::FileVersionsLimit => 'int',
             self::HomepagePostId => 'post',
             self::DefaultFront, self::DefaultLocale, self::EmailLocale, self::Timezone => 'select',
             self::CommentsEnabled, self::CommentModerationEnabled, self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled, self::SingleLocaleMode => 'bool',
@@ -233,7 +237,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
             self::SiteName, self::SiteDescription, self::SiteUrl, self::AdminEmail => 'general',
             self::DefaultLocale, self::SingleLocaleMode, self::Timezone, self::DateFormat => 'localization',
             self::PostsPerPage, self::CommentsEnabled, self::CommentModerationEnabled, self::PostRevisionsLimit, self::TrashAutoPurgeDays, self::HomepagePostId, self::DefaultFront => 'reading',
-            self::MaxUploadSizeMb, self::AllowedUploadExtensions => 'media',
+            self::MaxUploadSizeMb, self::AllowedUploadExtensions, self::FileVersionsLimit => 'media',
             self::MaintenanceMode, self::AdminRegistrationEnabled, self::AdminAccessRequestEnabled, self::FrontRegistrationEnabled => 'system',
             self::LogoMediaId, self::FaviconMediaId => 'branding',
             self::SeoTitleTemplate, self::SeoDefaultDescription, self::SeoDefaultOgImage, self::SeoTwitterHandle => 'seo',
