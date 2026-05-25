@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useListPage } from "@/shared/composables/list/useListPage.js";
 import { useQrCode } from "@/shared/composables/overlay/useQrCode.js";
@@ -28,7 +29,8 @@ import { useDocumentsDisplay, DOCUMENT_SORT_FIELDS } from "./composables/useDocu
 import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
 import AppTab from "@/shared/components/nav/AppTab.vue";
 import AppLoader from "@/shared/components/feedback/AppLoader.vue";
-import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, Copy } from "lucide-vue-next";
+import { Plus, Eye, Pencil, Trash2, Save, FileText, Paperclip, Upload, X, Folder, Download, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, Copy, Crop } from "lucide-vue-next";
+import ImageCropperModal from "@/shared/components/overlay/ImageCropperModal.vue";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
 import AppThumbnail from "@/shared/components/display/AppThumbnail.vue";
@@ -55,6 +57,7 @@ const props = defineProps({
     bulkDeletePath: { type: String, default: "" },
     listPath: { type: String, required: true },
     uploadPath: { type: String, required: true },
+    cropPath: { type: String, default: "" },
 });
 
 const categoryOptions = props.categories.map((c) => ({ value: c.id, label: c.name }));
@@ -108,6 +111,15 @@ const {
 
 const { viewMode, setViewMode, sortBy, sortDir, setSort, displayedItems } = useDocumentsDisplay(items);
 const { selectedIds, isSelecting, toggle: toggleSelect, clear: clearSelection } = useMultiSelection();
+
+// ── Crop ───────────────────────────────────────────────────────────────────
+const cropTarget = ref(null);
+
+function onCropped(updatedDoc) {
+    if (!updatedDoc) return;
+    if (viewingDoc.value?.id === updatedDoc.id) viewingDoc.value = updatedDoc;
+    reset();
+}
 
 async function doBulkDelete() {
     if (!props.bulkDeletePath || selectedIds.value.size === 0) return;
@@ -799,6 +811,14 @@ async function doBulkDelete() {
                 <AppModalFooter>
                     <AppButton variant="ghost" size="md" v-on:click="viewingDoc = null"><X class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("shared.common.close") }}</AppButton>
                     <AppButton
+                        v-if="cropPath && can('ged.documents.edit') && viewingDoc?.fileMime?.startsWith('image/')"
+                        variant="ghost"
+                        size="md"
+                        v-on:click="cropTarget = viewingDoc"
+                    >
+                        <Crop class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.crop") }}
+                    </AppButton>
+                    <AppButton
                         v-if="viewingDoc?.fileUrl"
                         variant="ghost"
                         size="md"
@@ -820,5 +840,16 @@ async function doBulkDelete() {
         </AppModal>
 
         <AppQrCodeModal :item="qrDoc" v-on:close="closeQr" />
+
+        <ImageCropperModal
+            :item="cropTarget"
+            :src="cropTarget?.fileUrl"
+            :alt="cropTarget?.alt ?? ''"
+            :name="cropTarget?.fileName"
+            :crop-path="cropPath"
+            entity-key="document"
+            v-on:close="cropTarget = null"
+            v-on:cropped="onCropped"
+        />
     </div>
 </template>
