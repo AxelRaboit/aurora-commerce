@@ -42,9 +42,9 @@ function onDrop(event) {
 }
 
 const displayLabel = computed(() => {
-    if (dragOver.value) return props.dropLabel ?? t("shared.dropZone.drop");
-    if (props.uploading) return props.uploadingLabel ?? t("shared.dropZone.uploading");
-    return props.label ?? t("shared.dropZone.cta");
+    if (dragOver.value) return props.dropLabel ?? t("shared.drop_zone.drop");
+    if (props.uploading) return props.uploadingLabel ?? t("shared.drop_zone.uploading");
+    return props.label ?? t("shared.drop_zone.cta");
 });
 </script>
 

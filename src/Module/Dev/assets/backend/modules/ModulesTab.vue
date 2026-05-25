@@ -69,7 +69,7 @@ onMounted(() => {
                     <p class="text-sm font-medium text-primary flex items-center gap-1.5 flex-wrap">
                         {{ parameter.label }}
                         <AppBadge v-if="parameter.type" :color="parameter.type === 'frontend' ? 'emerald' : 'slate'">
-                            {{ t(`backend.settings.moduleType.${parameter.type}`) }}
+                            {{ t(`backend.settings.module_type.${parameter.type}`) }}
                         </AppBadge>
                         <Lock v-if="modules.isLocked(parameter)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                     </p>
@@ -108,7 +108,7 @@ onMounted(() => {
                         <p class="text-sm text-primary flex items-center gap-1.5 flex-wrap">
                             {{ sub.label }}
                             <AppBadge v-if="sub.type" :color="sub.type === 'frontend' ? 'emerald' : 'slate'">
-                                {{ t(`backend.settings.moduleType.${sub.type}`) }}
+                                {{ t(`backend.settings.module_type.${sub.type}`) }}
                             </AppBadge>
                             <Lock v-if="modules.isLocked(sub)" class="w-3.5 h-3.5 text-muted" :stroke-width="2" />
                         </p>

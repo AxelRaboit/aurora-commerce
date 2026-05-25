@@ -34,7 +34,7 @@ const baseMessages = {
             select_placeholder: "Sélectionner…",
             add_tag_hint: "Ajouter un tag",
         },
-        dropZone: {
+        drop_zone: {
             cta: "Cliquez ou déposez un fichier ici",
             drop: "Déposez pour téléverser",
             uploading: "Téléversement…",
