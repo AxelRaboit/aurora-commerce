@@ -75,6 +75,7 @@ final class DocumentsController extends AbstractController
             'backPath' => $this->urlGenerator->generate('backend_ged_documents'),
             'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => $document->getId()]),
             'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => $document->getId()]),
+            'cropPath' => $this->urlGenerator->generate('backend_ged_documents_crop', ['id' => $document->getId()]),
             'listPath' => $this->urlGenerator->generate('backend_ged_documents'),
         ]);
     }
@@ -127,6 +128,22 @@ final class DocumentsController extends AbstractController
         $this->manager->delete($document);
 
         return $this->jsonSuccess();
+    }
+
+    #[Route('/{id}/crop', name: '_crop', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.edit')]
+    public function crop(Document $document, Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $this->manager->cropImage(
+            $document,
+            (int) ($data['x'] ?? 0),
+            (int) ($data['y'] ?? 0),
+            (int) ($data['width'] ?? 1),
+            (int) ($data['height'] ?? 1),
+        );
+
+        return $this->jsonSuccess(['document' => $this->serializer->serialize($document)]);
     }
 
     #[Route('/bulk-delete', name: '_bulk_delete', methods: [HttpMethodEnum::Post->value])]

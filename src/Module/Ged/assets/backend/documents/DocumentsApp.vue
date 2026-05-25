@@ -311,7 +311,8 @@ async function doBulkDelete() {
                         <div v-if="doc.reference" class="text-xs text-muted font-mono truncate">{{ doc.reference }}</div>
                         <div class="text-xs text-muted">
                             <span v-if="doc.fileSize">{{ formatSize(doc.fileSize) }}</span>
-                            <span v-if="doc.categoryName"><span v-if="doc.fileSize"> · </span>{{ doc.categoryName }}</span>
+                            <span v-if="doc.width && doc.height"><span v-if="doc.fileSize"> · </span>{{ doc.width }}×{{ doc.height }}</span>
+                            <span v-if="doc.categoryName"><span v-if="doc.fileSize || doc.width"> · </span>{{ doc.categoryName }}</span>
                         </div>
                         <div v-if="doc.folderName" class="text-xs text-accent-400/80 truncate flex items-center gap-1">
                             <Folder class="w-2.5 h-2.5 shrink-0" :stroke-width="2" />{{ doc.folderName }}

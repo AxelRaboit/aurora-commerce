@@ -13,8 +13,9 @@ import AppMultiselect from "@/shared/components/form/select/AppMultiselect.vue";
 import AppSelect from "@/shared/components/form/select/AppSelect.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
 import { buildPath } from "@/shared/utils/http/buildPath.js";
-import { Pencil, Trash2, ArrowLeft, Download, FileText, Folder, Tag, Save, X, Paperclip } from "lucide-vue-next";
+import { Pencil, Trash2, ArrowLeft, Download, FileText, Folder, Tag, Save, X, Paperclip, Crop } from "lucide-vue-next";
 import AppImagePreview from "@/shared/components/display/AppImagePreview.vue";
+import ImageCropperModal from "@/shared/components/overlay/ImageCropperModal.vue";
 import DocumentTagChip from "@ged/backend/documents/components/DocumentTagChip.vue";
 
 const { t } = useI18n();
@@ -26,10 +27,16 @@ const props = defineProps({
     backPath: { type: String, required: true },
     updatePath: { type: String, required: true },
     deletePath: { type: String, required: true },
+    cropPath: { type: String, required: true },
     listPath: { type: String, required: true },
 });
 
 const doc = ref({ ...props.document });
+const cropTarget = ref(null);
+
+function onCropped(updatedDoc) {
+    if (updatedDoc) doc.value = { ...updatedDoc };
+}
 
 function onSaved() {
     window.location.reload();
@@ -125,6 +132,10 @@ function isPdf(mimeType) {
                         <DocumentTagChip v-for="tag in doc.tags" :key="tag.id" :tag="tag" />
                     </div>
                 </div>
+                <div v-if="doc.width && doc.height">
+                    <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("backend.ged.documents.dimensions") }}</p>
+                    <p class="text-sm text-primary">{{ doc.width }} × {{ doc.height }} px</p>
+                </div>
                 <div>
                     <p class="text-xs text-muted uppercase tracking-wide mb-1">{{ t("shared.common.dates") }}</p>
                     <p class="text-xs text-secondary">{{ t("shared.common.created") }} {{ formatDate(doc.createdAt) }}</p>
@@ -137,7 +148,15 @@ function isPdf(mimeType) {
                 <p class="text-xs text-muted uppercase tracking-wide mb-3">{{ t("backend.ged.documents.file") }}</p>
                 <template v-if="isImage(doc.fileMime)">
                     <AppImagePreview :src="doc.fileUrl" :alt="doc.fileName" size="lg" />
-                    <div class="flex justify-end mt-2">
+                    <div class="flex justify-end items-center gap-4 mt-2">
+                        <button
+                            v-if="can('ged.documents.edit')"
+                            type="button"
+                            class="flex items-center gap-1.5 text-sm text-accent hover:underline"
+                            v-on:click="cropTarget = doc"
+                        >
+                            <Crop class="w-4 h-4" :stroke-width="2" /> {{ t("backend.ged.documents.crop") }}
+                        </button>
                         <a :href="doc.fileUrl" download class="flex items-center gap-1.5 text-sm text-accent hover:underline">
                             <Download class="w-4 h-4" :stroke-width="2" /> {{ t("shared.common.download") }}
                         </a>
@@ -223,5 +242,17 @@ function isPdf(mimeType) {
                 </AppModalFooter>
             </template>
         </AppModal>
+
+        <!-- Crop modal -->
+        <ImageCropperModal
+            :item="cropTarget"
+            :src="cropTarget?.fileUrl"
+            :alt="cropTarget?.alt ?? ''"
+            :name="cropTarget?.fileName"
+            :crop-path="cropPath"
+            entity-key="document"
+            v-on:close="cropTarget = null"
+            v-on:cropped="onCropped"
+        />
     </div>
 </template>

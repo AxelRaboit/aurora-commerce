@@ -85,6 +85,7 @@ backend:
       caption_placeholder: Caption shown below the image…
       permalink: Permalink
       dimensions: Dimensions
+      crop: Crop
       type: Type
       preview: Preview
       choose_file: Choose a file

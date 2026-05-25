@@ -6,6 +6,7 @@ namespace Aurora\Module\Ged\Document\Service;
 
 use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Core\Storage\Enum\StorageAreaEnum;
+use Aurora\Core\Storage\Service\ImageCropper;
 use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -31,6 +32,7 @@ final readonly class GedDocumentUploader
         private Filesystem $filesystem,
         private SluggerInterface $slugger,
         private PdfThumbnailGenerator $pdfThumbnailGenerator,
+        private ImageCropper $imageCropper,
         #[Autowire('%app.upload_dir%')]
         private string $uploadDir,
     ) {}
@@ -72,6 +74,53 @@ final readonly class GedDocumentUploader
             'thumbnailPath' => $thumbnailPath,
             'width' => $width,
             'height' => $height,
+        ];
+    }
+
+    /**
+     * Crops a source image to a brand-new file under `ged/Y/m/…` (the source
+     * is left untouched on disk, so the previous version's bytes survive) and
+     * returns the metadata the manager persists on the document. Returns null
+     * when the source is not a croppable raster image.
+     *
+     * @return array{filePath: string, fileName: string, size: int, width: int, height: int}|null
+     */
+    public function cropToNewFile(
+        string $sourceRelativePath,
+        string $mimeType,
+        string $baseName,
+        int $x,
+        int $y,
+        int $width,
+        int $height,
+    ): ?array {
+        $extension = MimeTypeEnum::tryFrom($mimeType)?->extension()
+            ?? pathinfo($sourceRelativePath, PATHINFO_EXTENSION);
+        $safeFilename = $this->slugger->slug(pathinfo($baseName, PATHINFO_FILENAME))->lower();
+        $dateSlug = new DateTimeImmutable()->format('Y/m');
+        $newFilename = sprintf('%s-%s.%s', $safeFilename, uniqid(), $extension);
+        $relativePath = sprintf('%s/%s/%s', StorageAreaEnum::Ged->value, $dateSlug, $newFilename);
+
+        $dimensions = $this->imageCropper->crop(
+            Path::join($this->uploadDir, $sourceRelativePath),
+            Path::join($this->uploadDir, $relativePath),
+            $mimeType,
+            $x,
+            $y,
+            $width,
+            $height,
+        );
+
+        if (null === $dimensions) {
+            return null;
+        }
+
+        return [
+            'filePath' => $relativePath,
+            'fileName' => $newFilename,
+            'size' => (int) (@filesize(Path::join($this->uploadDir, $relativePath)) ?: 0),
+            'width' => $dimensions[0],
+            'height' => $dimensions[1],
         ];
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ged\Document\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
@@ -14,6 +15,7 @@ use Aurora\Module\Ged\Document\Entity\DocumentVersion;
 use Aurora\Module\Ged\Document\Entity\DocumentVersionInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
+use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
@@ -35,6 +37,7 @@ class DocumentManager implements DocumentManagerInterface
         protected readonly DocumentFolderRepository $folderRepository,
         protected readonly DocumentVersionRepository $versionRepository,
         protected readonly DocumentRepository $documentRepository,
+        protected readonly GedDocumentUploader $uploader,
     ) {}
 
     public function create(DocumentInputInterface $input): DocumentInterface
@@ -104,6 +107,45 @@ class DocumentManager implements DocumentManagerInterface
         $this->entityManager->flush();
 
         return count($documents);
+    }
+
+    public function cropImage(DocumentInterface $document, int $x, int $y, int $width, int $height): void
+    {
+        $mime = MimeTypeEnum::tryFrom($document->getMimeType() ?? '');
+        $filePath = $document->getFilePath();
+        if (!$mime?->isRasterImage() || null === $filePath) {
+            return;
+        }
+
+        // Crop writes to a fresh path, leaving the source bytes (referenced by
+        // the prior version row) intact. Mirrors update(): mutate to the new
+        // file, flush, then record it as the new current version.
+        $result = $this->uploader->cropToNewFile(
+            $filePath,
+            $mime->value,
+            $document->getOriginalName() ?? (string) $document->getFileName(),
+            $x,
+            $y,
+            $width,
+            $height,
+        );
+
+        if (null === $result) {
+            return;
+        }
+
+        $document->setFilePath($result['filePath']);
+        $document->setFileName($result['fileName']);
+        $document->setSize($result['size']);
+        $document->setWidth($result['width']);
+        $document->setHeight($result['height']);
+        // Native images carry no separate thumbnail — the serializer falls
+        // back to the file itself, so a stale PDF-style thumbnail must clear.
+        $document->setThumbnailPath(null);
+
+        $this->entityManager->flush();
+        $this->recordVersion($document);
+        $this->auditCropped($document);
     }
 
     protected function createDocument(): DocumentInterface
@@ -185,6 +227,11 @@ class DocumentManager implements DocumentManagerInterface
     protected function auditDeleted(DocumentInterface $document): void
     {
         $this->auditLogger->log('ged', 'document.deleted', 'Document', $document->getId(), $this->auditPayload($document));
+    }
+
+    protected function auditCropped(DocumentInterface $document): void
+    {
+        $this->auditLogger->log('ged', 'document.cropped', 'Document', $document->getId(), $this->auditPayload($document));
     }
 
     protected function auditPayload(DocumentInterface $document): array

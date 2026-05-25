@@ -6,6 +6,8 @@ namespace Aurora\Tests\Unit\Module\Ged\Document\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Storage\Service\ImageCropper;
+use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
@@ -15,6 +17,7 @@ use Aurora\Module\Ged\Document\Entity\DocumentVersion;
 use Aurora\Module\Ged\Document\Manager\DocumentManager;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
+use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategoryInterface;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
@@ -27,6 +30,10 @@ use Doctrine\DBAL\Result;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\String\Slugger\AsciiSlugger;
+
+use function dirname;
 
 #[AllowMockObjectsWithoutExpectations]
 final class DocumentManagerTest extends TestCase
@@ -37,6 +44,7 @@ final class DocumentManagerTest extends TestCase
     private DocumentFolderRepository $folderRepository;
     private DocumentVersionRepository $versionRepository;
     private DocumentManager $manager;
+    private string $workDir;
 
     protected function setUp(): void
     {
@@ -50,6 +58,9 @@ final class DocumentManagerTest extends TestCase
         $settingRepository = $this->createStub(SettingRepository::class);
         $settingRepository->method('getOrDefault')->willReturn(SequencePrefixEnum::GedDocument->value);
 
+        $this->workDir = sys_get_temp_dir().'/aurora-ged-manager-'.uniqid();
+        mkdir($this->workDir, 0o777, true);
+
         $this->manager = new DocumentManager(
             $this->entityManager,
             $this->categoryRepository,
@@ -60,7 +71,19 @@ final class DocumentManagerTest extends TestCase
             $this->folderRepository,
             $this->versionRepository,
             $this->createStub(DocumentRepository::class),
+            new GedDocumentUploader(
+                new Filesystem(),
+                new AsciiSlugger(),
+                new PdfThumbnailGenerator($this->workDir),
+                new ImageCropper(new Filesystem()),
+                $this->workDir,
+            ),
         );
+    }
+
+    protected function tearDown(): void
+    {
+        (new Filesystem())->remove($this->workDir);
     }
 
     private function makeSequenceGenerator(): SequenceGenerator
@@ -355,5 +378,74 @@ final class DocumentManagerTest extends TestCase
         $this->entityManager->expects(self::atLeastOnce())->method('flush');
 
         $this->manager->delete($document);
+    }
+
+    // --- cropImage() ---
+
+    public function testCropImageWritesNewFileAndKeepsOriginal(): void
+    {
+        $source = $this->writeSourceImage('ged/2026/05/orig.png', 40, 40);
+        $document = $this->makeImageDocument('ged/2026/05/orig.png');
+
+        $this->manager->cropImage($document, 0, 0, 20, 20);
+
+        // Document now points at a fresh file with the cropped dimensions…
+        self::assertNotSame('ged/2026/05/orig.png', $document->getFilePath());
+        self::assertSame(20, $document->getWidth());
+        self::assertSame(20, $document->getHeight());
+        // …and the original bytes are still on disk for the prior version.
+        self::assertFileExists($source);
+    }
+
+    public function testCropImageRecordsTheCroppedFileAsNewVersion(): void
+    {
+        $this->writeSourceImage('ged/2026/05/snap.png', 30, 30);
+        $document = $this->makeImageDocument('ged/2026/05/snap.png');
+
+        $capturedVersion = null;
+        $this->captureDocumentVersion($capturedVersion);
+
+        $this->manager->cropImage($document, 0, 0, 15, 15);
+
+        self::assertInstanceOf(DocumentVersion::class, $capturedVersion);
+        self::assertSame($document->getFilePath(), $capturedVersion->getFilePath());
+    }
+
+    public function testCropImageIsNoopForNonImageDocument(): void
+    {
+        $document = new Document();
+        $document->setTitle('Contract')
+            ->setStatus(DocumentStatusEnum::Draft)
+            ->setFilePath('ged/2026/05/contract.pdf')
+            ->setMimeType('application/pdf');
+
+        $this->manager->cropImage($document, 0, 0, 10, 10);
+
+        self::assertSame('ged/2026/05/contract.pdf', $document->getFilePath());
+    }
+
+    private function makeImageDocument(string $filePath): Document
+    {
+        $document = new Document();
+        $document->setTitle('Photo')
+            ->setStatus(DocumentStatusEnum::Draft)
+            ->setFilePath($filePath)
+            ->setFileName('orig.png')
+            ->setOriginalName('orig.png')
+            ->setMimeType('image/png')
+            ->setSize(100);
+
+        return $document;
+    }
+
+    private function writeSourceImage(string $relativePath, int $width, int $height): string
+    {
+        $absolute = $this->workDir.'/'.$relativePath;
+        mkdir(dirname($absolute), 0o777, true);
+        $image = imagecreatetruecolor($width, $height);
+        imagepng($image, $absolute);
+        imagedestroy($image);
+
+        return $absolute;
     }
 }
