@@ -125,6 +125,33 @@ créer son propre stockage. Les `var/uploads/<module>/` self-owned sont
 réservés aux modules dont le fichier **est** l'entité (PdfDocument
 Welding, Document GED, MarkdownNote image, profile photo…).
 
+## Re-traiter une image self-owned (crop/rotate/…) — toujours vers un NOUVEAU path
+
+**Piège** : `recordVersion()` ne duplique PAS le fichier sur disque — la
+ligne `DocumentVersion` pointe sur le **même** `filePath` que le document.
+Donc un crop/rotate **en place** (overwrite du fichier) écraserait aussi
+les bytes de la version précédente → original perdu.
+
+**Règle** : pour transformer une image en gardant l'original, écrire le
+résultat dans un **nouveau** path `ged/Y/m/<slug>-<uniq>.<ext>` (comme un
+ré-upload), laisser le fichier source intact, puis basculer le document
+dessus et `recordVersion()`. C'est exactement la sémantique de `update()`
+(snapshot du fichier qui devient courant). L'original reste récupérable
+via la ligne de version antérieure + ses bytes intacts à l'ancien path.
+
+Implémentation de référence (2026-05-25, commit `2616e07e`) :
+- `DocumentManager::cropImage()` → orchestration (mutate → flush →
+  `recordVersion` → audit `document.cropped`)
+- `GedDocumentUploader::cropToNewFile()` → build du nouveau path + crop
+- Pixel work : `Aurora\Core\Storage\Service\ImageCropper` (service Core
+  partagé, `crop(sourceAbs, destAbs, mime, x,y,w,h): ?[w,h]`, clamp +
+  alpha PNG/WebP). Aussi consommé par `MediaManager::crop` (in-place :
+  `destAbs === sourceAbs`).
+
+> **Media vs GED** : Media crope **en place** (pas de versions, mais
+> régénère ses variants). GED crope **vers une nouvelle version** (pas de
+> variants). Même `ImageCropper`, politique de persistance différente.
+
 ## Migration depuis un couplage Media
 
 Pattern de migration testé :
