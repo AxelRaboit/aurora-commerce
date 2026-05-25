@@ -25,7 +25,7 @@ import { useDateFormat } from "@/shared/composables/format/useDateFormat.js";
 import { useMultiSelection } from "@/shared/composables/list/useMultiSelection.js";
 import AppQrCodeModal from "@/shared/components/overlay/AppQrCodeModal.vue";
 import PdfThumbnail from "@media/backend/media/components/PdfThumbnail.vue";
-import MediaCropperModal from "@media/backend/media/MediaCropperModal.vue";
+import ImageCropperModal from "@/shared/components/overlay/ImageCropperModal.vue";
 import { useMediaNavigation } from "@media/backend/media/composables/useMediaNavigation.js";
 import { useMediaFolderTree } from "@media/backend/media/composables/useMediaFolderTree.js";
 import { useMediaDisplay, TYPE_FILTERS } from "@media/backend/media/composables/useMediaDisplay.js";
@@ -876,9 +876,13 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
             </template>
         </AppModal>
 
-        <MediaCropperModal
-            :media="cropMedia"
+        <ImageCropperModal
+            :item="cropMedia"
+            :src="cropMedia?.url"
+            :alt="cropMedia?.alt ?? ''"
+            :name="cropMedia?.originalName"
             :crop-path="cropPath"
+            entity-key="media"
             v-on:close="cropMedia = null"
             v-on:cropped="onCropped"
         />

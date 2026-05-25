@@ -45,9 +45,6 @@ backend:
     updated_at: Modifié le
     permalink: Lien permanent
     crop: Recadrer
-    crop_title: Recadrer l'image
-    apply_crop: Appliquer le recadrage
-    cropped: Image recadrée
     caption_placeholder: Décrivez ce média…
     favourites: Favoris
     tab_edit: Édition

@@ -94,11 +94,11 @@ Exemples concrets :
 ## Composants Vue
 
 ### Naming
-- **PascalCase** : `AgenciesApp.vue`, `PostEditor.vue`, `MediaCropperModal.vue`.
+- **PascalCase** : `AgenciesApp.vue`, `PostEditor.vue`, `ImageCropperModal.vue`.
 - **App suffixe** : composant top-level monté via Stimulus
   (`AgenciesApp.vue`, `MediaApp.vue`, `UsersApp.vue`).
 - **Modal/Overlay suffixe** : composant secondaire ouvert par l'App
-  (`MediaCropperModal.vue`, `RevisionsOverlay.vue`).
+  (`ImageCropperModal.vue`, `RevisionsOverlay.vue`).
 - **Panel suffixe** : section d'un editor (`PostSeoPanel.vue`,
   `PostFeaturedImagePanel.vue`).
 - **Tab suffixe** : onglet dans un AppTabs (`PermissionsTab.vue`).

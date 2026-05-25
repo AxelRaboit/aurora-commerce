@@ -45,9 +45,6 @@ backend:
     updated_at: Updated at
     permalink: Permalink
     crop: Crop
-    crop_title: Crop image
-    apply_crop: Apply crop
-    cropped: Image cropped
     caption_placeholder: Describe this media…
     favourites: Favourites
     tab_edit: Edit

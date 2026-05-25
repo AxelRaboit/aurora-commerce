@@ -94,6 +94,10 @@ shared:
     en: English
     es: Español
     de: Deutsch
+  image_cropper:
+    title: Recadrer l'image
+    apply: Appliquer le recadrage
+    cropped: Image recadrée
 
 # Editor.js — clés partagées par tous les modules consommateurs de
 # AppBlockEditor (Editorial Post, Notes/Block, …). Les libellés
