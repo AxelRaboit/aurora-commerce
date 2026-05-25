@@ -5,12 +5,13 @@ puis par topic.
 
 ## Index
 
-### Outillage / tooling
+### Architecture / refactos
 
-- [Commande CLI `aurora:make:entity`](make_entity_cli.md) — pendant de
-  `aurora:make:module` pour scaffold une entité CRUD (5 couches Sylius) ;
-  élimine ~700 lignes de boilerplate identique d'une entité à l'autre.
-  Staged en 3 phases (PHP → Vue → migration auto).
+- [Fusion Media → GED](media-ged-merge.md) — supprimer `/backend/media` et
+  faire de `Document` (GED) l'unique entité fichier. Plan en 5 phases
+  (parité de rendu sur Document → migration des consommateurs FK → contenu
+  embarqué → picker unifié → suppression de Media). **Décision prise, à
+  démarrer.**
 
 ### Frontend / Vue
 
