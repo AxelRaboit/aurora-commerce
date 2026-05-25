@@ -148,9 +148,14 @@ Implémentation de référence (2026-05-25, commit `2616e07e`) :
   alpha PNG/WebP). Aussi consommé par `MediaManager::crop` (in-place :
   `destAbs === sourceAbs`).
 
-> **Media vs GED** : Media crope **en place** (pas de versions, mais
-> régénère ses variants). GED crope **vers une nouvelle version** (pas de
-> variants). Même `ImageCropper`, politique de persistance différente.
+> **Media vs GED** : les deux cropent **vers une nouvelle version** (nouveau
+> fichier, original gardé via la ligne de version précédente). Différence :
+> Media régénère ses **variants** (thumbnail/medium/large) sur le fichier
+> courant — les versions ne stockent que le fichier brut (pas de variants par
+> version) ; GED n'a pas de variants. Même `ImageCropper`. Entités d'historique :
+> `DocumentVersion` (`core_ged_document_versions`) et `MediaVersion`
+> (`core_media_versions`), toutes deux dans la catégorie « audit/historique
+> auto-généré » de la convention (hors 5-couches CRUD).
 
 ## Migration depuis un couplage Media
 

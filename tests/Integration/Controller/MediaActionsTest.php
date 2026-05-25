@@ -128,6 +128,38 @@ final class MediaActionsTest extends IntegrationTestCase
         self::assertSame(300, $body['media']['height']);
     }
 
+    public function testCropRecordsAVersionAndKeepsTheOriginalFile(): void
+    {
+        $media = $this->uploadAndPersist('versioned.png', 800, 600);
+        $mediaId = $media->getId();
+        $originalPath = $media->getPath();
+        $originalAbsolute = Path::join($this->uploadDir, $originalPath);
+        self::assertFileExists($originalAbsolute);
+
+        [$status] = $this->postJson('backend_media_crop', ['id' => $mediaId], [
+            'x' => 0, 'y' => 0, 'width' => 400, 'height' => 300,
+        ]);
+        self::assertSame(200, $status);
+
+        // The media now points at a fresh file…
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->clear();
+        $refreshed = static::getContainer()->get(MediaRepository::class)->find($mediaId);
+        self::assertNotSame($originalPath, $refreshed->getPath());
+        $this->trackForCleanup(Path::join($this->uploadDir, $refreshed->getPath()));
+
+        // …while the original bytes survive on disk for the prior version.
+        self::assertFileExists($originalAbsolute);
+
+        // Two versions exist: v1 (upload) + v2 (crop), newest first.
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_media_versions', ['id' => $mediaId]));
+        self::assertSame(200, $this->client->getResponse()->getStatusCode());
+        $versions = json_decode((string) $this->client->getResponse()->getContent(), true)['versions'];
+        self::assertCount(2, $versions);
+        self::assertSame(2, $versions[0]['versionNumber']);
+        self::assertSame(1, $versions[1]['versionNumber']);
+    }
+
     public function testBulkDeleteRemovesMediaAndFiles(): void
     {
         $a = $this->uploadAndPersist('bulk-a.png', 100, 100);

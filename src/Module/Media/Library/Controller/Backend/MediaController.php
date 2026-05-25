@@ -17,8 +17,10 @@ use Aurora\Module\Media\Library\Entity\Media;
 use Aurora\Module\Media\Library\Manager\MediaManagerInterface;
 use Aurora\Module\Media\Library\Repository\MediaFolderRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Repository\MediaVersionRepository;
 use Aurora\Module\Media\Library\Serializer\MediaFolderSerializerInterface;
 use Aurora\Module\Media\Library\Serializer\MediaSerializerInterface;
+use Aurora\Module\Media\Library\Serializer\MediaVersionSerializerInterface;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Media\Library\Service\MediaUsageService;
 use Aurora\Module\Media\Library\View\MediaViewBuilder;
@@ -50,6 +52,8 @@ class MediaController extends AbstractController
         private readonly MediaViewBuilder $viewBuilder,
         private readonly MediaInputFactoryInterface $mediaInputFactory,
         protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        private readonly MediaVersionRepository $versionRepository,
+        private readonly MediaVersionSerializerInterface $versionSerializer,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -95,6 +99,15 @@ class MediaController extends AbstractController
             'items' => array_map($this->auditLogSerializer->serialize(...), $result['items']),
             'total' => $result['total'],
             'totalPages' => $result['totalPages'],
+        ]);
+    }
+
+    #[Route('/{id}/versions', name: '_versions', methods: [HttpMethodEnum::Get->value])]
+    public function versions(Media $media): JsonResponse
+    {
+        return $this->json([
+            'success' => true,
+            'versions' => array_map($this->versionSerializer->serialize(...), $this->versionRepository->findByMedia($media)),
         ]);
     }
 

@@ -18,8 +18,11 @@ use Aurora\Module\Media\Library\Entity\Media;
 use Aurora\Module\Media\Library\Entity\MediaFolder;
 use Aurora\Module\Media\Library\Entity\MediaFolderInterface;
 use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Media\Library\Entity\MediaVersion;
+use Aurora\Module\Media\Library\Entity\MediaVersionInterface;
 use Aurora\Module\Media\Library\Repository\MediaFolderRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Media\Library\Repository\MediaVersionRepository;
 use Aurora\Module\Media\Library\Service\ImageVariantGenerator;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
@@ -42,6 +45,7 @@ class MediaManager implements MediaManagerInterface
         protected readonly SluggerInterface $slugger,
         protected readonly MediaFolderRepository $folderRepository,
         protected readonly MediaRepository $mediaRepository,
+        protected readonly MediaVersionRepository $versionRepository,
         protected readonly ImageVariantGenerator $variantGenerator,
         protected readonly ImageCropper $imageCropper,
         protected readonly TranslatorInterface $translator,
@@ -96,6 +100,8 @@ class MediaManager implements MediaManagerInterface
         $this->entityManager->persist($media);
         $this->entityManager->flush();
 
+        $this->recordVersion($media);
+
         $this->auditLogger->log('media', 'uploaded', 'Media', $media->getId(), $this->auditMediaPayload($media));
 
         return $media;
@@ -120,8 +126,14 @@ class MediaManager implements MediaManagerInterface
 
     public function delete(MediaInterface $media): void
     {
-        $filePath = Path::join($this->uploadDir, $media->getPath());
-        $this->filesystem->remove($filePath);
+        // Remove the current file + every historical version file (each crop
+        // wrote a fresh path, so versions own distinct files on disk). The
+        // version rows themselves cascade-delete with the media.
+        $paths = [Path::join($this->uploadDir, $media->getPath())];
+        foreach ($this->versionRepository->findByMedia($media) as $version) {
+            $paths[] = Path::join($this->uploadDir, $version->getPath());
+        }
+        $this->filesystem->remove($paths);
 
         $this->variantGenerator->deleteVariants($media->getVariants());
 
@@ -249,25 +261,69 @@ class MediaManager implements MediaManagerInterface
             return;
         }
 
-        // In-place crop: source and destination are the same physical file.
-        $absolute = Path::join($this->uploadDir, $media->getPath());
-        $dimensions = $this->imageCropper->crop($absolute, $absolute, $mime->value, $x, $y, $width, $height);
+        $oldPath = $media->getPath();
+        $oldVariants = $media->getVariants();
+
+        // Version-preserving crop (like GED): write the result to a fresh file
+        // next to the source, leaving the original bytes intact for the prior
+        // version row. The current media then points at the new file.
+        $directory = Path::getDirectory($oldPath);
+        $extension = pathinfo($oldPath, PATHINFO_EXTENSION);
+        $base = $this->slugger->slug(pathinfo((string) $media->getOriginalName(), PATHINFO_FILENAME))->lower();
+        $newFilename = sprintf('%s-%s.%s', $base, uniqid(), $extension);
+        $newPath = '' !== $directory ? sprintf('%s/%s', $directory, $newFilename) : $newFilename;
+
+        $dimensions = $this->imageCropper->crop(
+            Path::join($this->uploadDir, $oldPath),
+            Path::join($this->uploadDir, $newPath),
+            $mime->value,
+            $x,
+            $y,
+            $width,
+            $height,
+        );
         if (null === $dimensions) {
             return;
         }
 
+        $media->setPath($newPath);
+        $media->setFilename($newFilename);
         $media->setWidth($dimensions[0]);
         $media->setHeight($dimensions[1]);
-
-        // Delete old variants and regenerate from the freshly cropped source.
-        $this->variantGenerator->deleteVariants($media->getVariants());
-        $media->setVariants($this->variantGenerator->generate($media->getPath(), $mime->value));
+        $media->setSize((int) (@filesize(Path::join($this->uploadDir, $newPath)) ?: $media->getSize()));
+        $media->setVariants($this->variantGenerator->generate($newPath, $mime->value));
 
         $this->entityManager->flush();
+
+        // The old file stays on disk (it backs the prior version); only its
+        // now-orphaned variants are dropped.
+        $this->variantGenerator->deleteVariants($oldVariants);
+
+        $this->recordVersion($media);
         $this->auditLogger->log('media', 'cropped', 'Media', $media->getId(), [
             ...$this->auditMediaPayload($media),
             'crop' => ['x' => $x, 'y' => $y, 'w' => $width, 'h' => $height],
         ]);
+    }
+
+    /**
+     * Snapshots the media's current file metadata onto a new version row.
+     * Called whenever a new physical file becomes current (upload, crop).
+     */
+    protected function recordVersion(MediaInterface $media): void
+    {
+        $version = $this->createMediaVersion();
+        $version->setMedia($media)
+            ->setPath((string) $media->getPath())
+            ->setFilename((string) $media->getFilename())
+            ->setOriginalName((string) $media->getOriginalName())
+            ->setMimeType((string) $media->getMimeType())
+            ->setSize((int) $media->getSize())
+            ->setWidth($media->getWidth())
+            ->setHeight($media->getHeight())
+            ->setVersionNumber($this->versionRepository->getNextVersionNumber($media));
+        $this->entityManager->persist($version);
+        $this->entityManager->flush();
     }
 
     // ── Hooks: instanciation ──────────────────────────────────────────────────
@@ -280,6 +336,11 @@ class MediaManager implements MediaManagerInterface
     protected function createMediaFolder(): MediaFolderInterface
     {
         return new MediaFolder();
+    }
+
+    protected function createMediaVersion(): MediaVersionInterface
+    {
+        return new MediaVersion();
     }
 
     // ── Hooks: hydratation ────────────────────────────────────────────────────
