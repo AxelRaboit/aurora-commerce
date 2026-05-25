@@ -19,32 +19,14 @@ Inspiré de Dolibarr, cette liste recense les modules manquants dans Aurora, cla
 | Notes (Markdown + Block / EditorJS) | ✅ Core |
 | Vault (Safe + PasswordGenerator) | ✅ Core |
 | Assistant (Ollama / chat IA) | ✅ Core |
+| PersonalFinance (Spendly) | ✅ Core (porté depuis Spendly, mai 2026) |
+| Media (médiathèque) | ✅ Core — fusion vers GED planifiée, cf. [media-ged-merge](media-ged-merge.md) |
 | ~~PdfForm (formulaires PDF)~~ | Absorbé dans Welding (sprint 6, mai 2026), puis extrait en client `aurora-welding` |
 | ~~Welding (workflows de soudure réglementée)~~ | Extrait en client `aurora-welding/` (mai 2026 — premier usage du playbook [dev/extracting_a_module.md](../dev/extracting_a_module.md)) |
 
 ---
 
 ## 🔴 Haute priorité
-
-### PersonalFinance (Spendly)
-**Port de :** [Spendly](https://github.com/AxelRaboit/spendly) (projet Laravel maison)
-**Pourquoi :** Module mature et complet à porter. Couvre la gestion financière
-personnelle de bout en bout — usage déjà éprouvé, design itéré, valeur immédiate
-pour tout client Aurora ayant besoin de tracking de dépenses.
-**Fonctionnalités cibles :**
-- Portefeuilles multiples (modes Budget vs Simple) + partage Owner/Editor/Viewer
-- Transactions Income/Expense + virements (2 tx liées) + splits + attachments
-- Budget mensuel avec sections, carry-over, copy-from-previous, presets
-- Objectifs d'épargne (auto-trackés via category)
-- Transactions récurrentes (mensuelles) + planifiées (one-off)
-- Catégories scope-wallet + auto-catégorisation par patterns appris
-- Statistiques multi-charts + projection année
-- Import Excel 2-steps
-**Cible :** module `src/Module/PersonalFinance/` — voir [TODO détaillé](spendly/README.md)
-**Hors scope :** Administration, plan Free/Pro/Stripe, guide de démarrage
-(décision utilisateur explicite mai 2026)
-
----
 
 ### Contrats / Abonnements
 **Inspiré de :** Dolibarr — Module Contrats  
@@ -132,5 +114,5 @@ pour tout client Aurora ayant besoin de tracking de dépenses.
 
 - Tous les nouveaux modules doivent préfixer leurs tables en `core_`
 - Les modules liés au CRM (Contrats, Tickets) doivent réutiliser les entités `CrmContact` et `CrmCompany` existantes
-- Chaque module doit implémenter `ModuleInterface` et être activable/désactivable via `ApplicationParameterEnum`
+- Chaque module doit implémenter `ModuleInterface` et, pour être activable/désactivable depuis `/dev/dashboard/modules`, déclarer un case `ModuleParameterEnum` + un `<Module>Context` + `ModuleToggleProviderInterface` (cf. skill `/register-module-toggle`)
 - Privilégier l'intégration dans le frontend via `FrontendInterface` si le module a une partie publique
