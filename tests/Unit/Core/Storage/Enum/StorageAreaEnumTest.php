@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Module\Media\Library\Enum;
+namespace Aurora\Tests\Unit\Core\Storage\Enum;
 
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
+use Aurora\Core\Storage\Enum\StorageAreaEnum;
 use PHPUnit\Framework\TestCase;
 
 final class StorageAreaEnumTest extends TestCase

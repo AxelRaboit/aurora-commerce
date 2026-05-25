@@ -6,6 +6,8 @@ namespace Aurora\Module\Media\Library\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
+use Aurora\Core\Storage\Enum\StorageAreaEnum;
 use Aurora\Core\Support\Num;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
@@ -16,8 +18,6 @@ use Aurora\Module\Media\Library\Entity\Media;
 use Aurora\Module\Media\Library\Entity\MediaFolder;
 use Aurora\Module\Media\Library\Entity\MediaFolderInterface;
 use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use Aurora\Module\Media\Library\Repository\MediaFolderRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Media\Library\Service\ImageVariantGenerator;

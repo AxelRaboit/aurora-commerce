@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Serializer;
 
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Core\Storage\Service\UploadUrlGenerator;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Media\Library\Enum;
+namespace Aurora\Core\Storage\Enum;
 
 /**
  * Document mime types known to Aurora.

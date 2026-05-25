@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Media\Library\Manager;
 
+use Aurora\Core\Storage\Enum\StorageAreaEnum;
 use Aurora\Module\Media\Library\Dto\MediaFolderInputInterface;
 use Aurora\Module\Media\Library\Dto\MediaInputInterface;
 use Aurora\Module\Media\Library\Entity\MediaFolderInterface;
 use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface MediaManagerInterface

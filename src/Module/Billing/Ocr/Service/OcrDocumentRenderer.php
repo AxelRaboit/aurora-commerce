@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Ocr\Service;
 
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Module\Billing\Ocr\Contract\DocTrClientInterface;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Path;

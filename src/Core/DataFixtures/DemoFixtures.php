@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
@@ -59,7 +60,6 @@ use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Aurora\Module\Hr\Employee\Entity\Employee;
 use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Notes\Markdown\Entity\AbstractMarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;

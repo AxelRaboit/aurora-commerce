@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Media\Library\Service;
 
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use GdImage;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;

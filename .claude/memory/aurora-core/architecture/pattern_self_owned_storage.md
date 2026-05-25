@@ -59,8 +59,8 @@ les colonnes sont en NOT NULL — sinon `nullable: true`.
 
 - **Path** : `var/uploads/<module>/Y/m/<slug>-<uniq>.<ext>`
 - **Module slug** : ajouter un case dans
-  `Aurora\Module\Media\Library\Enum\StorageAreaEnum` (oui, l'enum vit dans
-  Media par historique mais ne couple à rien). Cases existants : `Media`,
+  `Aurora\Core\Storage\Enum\StorageAreaEnum` (infra de stockage transverse,
+  vit dans Core — pas dans un module feature). Cases existants : `Media`,
   `Ocr`, `Photo`, `Users`, `Ged`.
 - **Upload** : créer un petit service `<Module>Uploader` qui slugifie le
   nom, génère un uniqid, déplace le fichier via `Filesystem`, retourne les

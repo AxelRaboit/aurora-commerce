@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Command;
 
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
+use Aurora\Core\Storage\Enum\StorageAreaEnum;
 use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

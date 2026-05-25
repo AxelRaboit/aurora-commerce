@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ged\Document\Service;
 
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
+use Aurora\Core\Storage\Enum\StorageAreaEnum;
 use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
-use Aurora\Module\Media\Library\Enum\StorageAreaEnum;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;

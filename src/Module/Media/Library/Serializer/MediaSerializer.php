@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Media\Library\Serializer;
 
+use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Enum\MimeTypeEnum;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
