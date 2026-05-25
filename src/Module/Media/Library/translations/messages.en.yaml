@@ -48,19 +48,12 @@ backend:
     caption_placeholder: Describe this media…
     favourites: Favourites
     tab_edit: Edit
-    tab_history: History
     tab_usage: Usage
+    versions: Versions
     usage_total: Total
     usage_direct: Featured image
     usage_content: In content
     usage_none: This media is not used anywhere
-    no_history: No changes recorded
-    history_action:
-      uploaded: Uploaded
-      updated: Updated
-      moved: Moved
-      deleted: Deleted
-      cropped: Cropped
     favourite: Add to favourites
     unfavourite: Remove from favourites
     errors:

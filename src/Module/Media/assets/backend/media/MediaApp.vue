@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, FileText, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers, Images } from "lucide-vue-next";
+import { Pencil, Trash2, Plus, Folder, Upload, Image as ImageIcon, Film, FileText, Play, ChevronRight, ChevronDown, Home, Copy, QrCode, LayoutGrid, List, SortAsc, SortDesc, CheckSquare, Square, X, Move, HardDrive, Eye, Save, Star, Crop, Layers, Images, Download } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppFilePickerButton from "@/shared/components/action/AppFilePickerButton.vue";
 import AppIconButton from "@/shared/components/action/AppIconButton.vue";
@@ -82,7 +82,7 @@ const { viewMode, setViewMode, typeFilter, sortBy, sortDir, setSort, displayedMe
 const { uploadInput, uploading, uploadProgress, filesDragOver, uploadFiles, onMainDragOver, onMainDragLeave, onMainDrop } =
     useMediaUpload(props, media, currentFolderId);
 
-const { editingMedia, editTab, mediaHistory, mediaUsage, historyLoading, editForm, editErrors, editSaving, openEditMedia, closeEditMedia, loadHistory, loadUsage, openHistoryTab, submitMediaEdit, onFocalPointClick, resetFocalPoint, previewMedia, cropMedia, openCrop, onCropped, qrMedia, openQr, copyUrl, mediaPermalink, historyActionLabel } =
+const { editingMedia, editTab, mediaVersions, mediaUsage, editForm, editErrors, editSaving, openEditMedia, closeEditMedia, loadUsage, submitMediaEdit, onFocalPointClick, resetFocalPoint, previewMedia, cropMedia, openCrop, onCropped, qrMedia, openQr, copyUrl, mediaPermalink } =
     useMediaEdit(props, media);
 
 const { deletingMedia, deletingMediaUsage, deletingMediaUsageLoading, askDeleteMedia, confirmDeleteMedia } =
@@ -538,7 +538,6 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                 <h3 class="text-lg font-semibold text-primary truncate">{{ t("backend.media.edit_media") }}</h3>
                 <div class="flex border border-line/60 rounded-lg p-0.5 shrink-0">
                     <AppTab size="xs" :active="editTab === 'edit'" v-on:click="editTab = 'edit'">{{ t("backend.media.tab_edit") }}</AppTab>
-                    <AppTab size="xs" :active="editTab === 'history'" v-on:click="openHistoryTab">{{ t("backend.media.tab_history") }}</AppTab>
                     <AppTab size="xs" :active="editTab === 'usage'" v-on:click="editTab = 'usage'; if (!mediaUsage) loadUsage()">{{ t("backend.media.tab_usage") }}</AppTab>
                 </div>
             </div>
@@ -562,20 +561,6 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                     </div>
                     <AppNoData v-if="mediaUsage.total === 0" :message="t('backend.media.usage_none')" />
                 </template>
-            </div>
-
-            <div v-if="editTab === 'history'" class="space-y-2 min-h-32">
-                <div v-if="historyLoading" class="text-center py-8 text-muted text-sm">{{ t("shared.common.loading") }}</div>
-                <AppNoData v-else-if="!mediaHistory.length" :message="t('backend.media.no_history')" />
-                <div v-else class="divide-y divide-line/40">
-                    <div v-for="entry in mediaHistory" :key="entry.id" class="py-2.5 flex items-start gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="text-sm font-medium text-primary">{{ historyActionLabel(entry.action) }}</div>
-                            <div class="text-xs text-muted">{{ entry.userName ?? entry.userEmail ?? t("shared.common.unknown") }}</div>
-                        </div>
-                        <div class="text-xs text-muted shrink-0">{{ formatDateTime(entry.createdAt) }}</div>
-                    </div>
-                </div>
             </div>
 
             <form v-else class="grid grid-cols-1 md:grid-cols-2 gap-4" v-on:submit.prevent="submitMediaEdit">
@@ -662,6 +647,30 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                             <dd class="font-mono text-xs text-accent-400 truncate cursor-pointer hover:underline" :title="editingMedia.permalink" v-on:click="copyUrl(editingMedia)">{{ editingMedia.permalink }}</dd>
                         </div>
                     </dl>
+
+                    <!-- File version history (GED-style, read-only) -->
+                    <div v-if="mediaVersions.length > 1" class="space-y-2 pt-2 border-t border-line">
+                        <p class="text-xs text-muted uppercase tracking-wide">{{ t("backend.media.versions") }}</p>
+                        <div class="divide-y divide-line/40 rounded-lg border border-line overflow-hidden">
+                            <div
+                                v-for="version in mediaVersions"
+                                :key="version.id"
+                                class="flex items-center gap-3 px-3 py-2 text-xs"
+                                :class="version.versionNumber === mediaVersions[0].versionNumber ? 'bg-accent/5' : 'bg-surface'"
+                            >
+                                <span class="font-mono text-muted shrink-0">v{{ version.versionNumber }}</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-secondary tabular-nums">
+                                        {{ formatSize(version.size) }}<span v-if="version.width"> · {{ version.width }}×{{ version.height }}</span>
+                                    </div>
+                                    <div class="text-muted">{{ formatDateTime(version.createdAt) }}</div>
+                                </div>
+                                <a :href="version.url" download class="text-accent hover:underline shrink-0" :title="t('shared.common.download')">
+                                    <Download class="w-3.5 h-3.5" :stroke-width="2" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
             <template #footer>

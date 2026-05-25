@@ -18,9 +18,9 @@ export function useMediaEdit(props, media) {
 
     const editingMedia = ref(null);
     const editTab = ref("edit");
-    const mediaHistory = ref([]);
+    const mediaVersions = ref([]);
     const mediaUsage = ref(null);
-    const historyLoading = ref(false);
+    const versionsLoading = ref(false);
     const editForm = reactive({
         alt: "",
         caption: "",
@@ -38,7 +38,7 @@ export function useMediaEdit(props, media) {
     const cropMedia = ref(null);
     const qrMedia = ref(null);
 
-    const { request: historyRequest } = useRequest();
+    const { request: versionsRequest } = useRequest();
     const { request: usageRequest } = useRequest();
     const { request: editRequest } = useRequest();
 
@@ -46,7 +46,7 @@ export function useMediaEdit(props, media) {
         editingMedia.value = item;
         editTab.value = "edit";
         editErrors.value = {};
-        mediaHistory.value = [];
+        mediaVersions.value = [];
         mediaUsage.value = null;
         Object.assign(editForm, {
             alt: item.alt ?? "",
@@ -63,24 +63,25 @@ export function useMediaEdit(props, media) {
                 ]),
             ),
         });
+        loadVersions();
     }
 
     function closeEditMedia() {
         editingMedia.value = null;
     }
 
-    async function loadHistory() {
-        if (!editingMedia.value || historyLoading.value) return;
-        historyLoading.value = true;
+    async function loadVersions() {
+        if (!editingMedia.value || versionsLoading.value) return;
+        versionsLoading.value = true;
         try {
-            const data = await historyRequest(
-                `/backend/media/${editingMedia.value.id}/history`,
+            const data = await versionsRequest(
+                `/backend/media/${editingMedia.value.id}/versions`,
                 null,
                 { method: HttpMethod.Get, noGuard: true },
             );
-            mediaHistory.value = data?.items ?? [];
+            mediaVersions.value = data?.versions ?? [];
         } finally {
-            historyLoading.value = false;
+            versionsLoading.value = false;
         }
     }
 
@@ -92,11 +93,6 @@ export function useMediaEdit(props, media) {
             { method: HttpMethod.Get, noGuard: true },
         );
         if (data) mediaUsage.value = data;
-    }
-
-    function openHistoryTab() {
-        editTab.value = "history";
-        if (!mediaHistory.value.length) loadHistory();
     }
 
     async function submitMediaEdit() {
@@ -142,8 +138,11 @@ export function useMediaEdit(props, media) {
     function onCropped(updatedMedia) {
         const idx = media.value.findIndex((m) => m.id === updatedMedia.id);
         if (idx !== -1) media.value[idx] = updatedMedia;
-        if (editingMedia.value?.id === updatedMedia.id)
+        if (editingMedia.value?.id === updatedMedia.id) {
             editingMedia.value = updatedMedia;
+            // A crop adds a new version — refresh the inline history.
+            loadVersions();
+        }
     }
 
     function mediaPermalink(item) {
@@ -161,23 +160,19 @@ export function useMediaEdit(props, media) {
         }
     }
 
-    const historyActionLabel = (action) =>
-        t(`backend.media.history_action.${action}`);
-
     return {
         editingMedia,
         editTab,
-        mediaHistory,
+        mediaVersions,
         mediaUsage,
-        historyLoading,
+        versionsLoading,
         editForm,
         editErrors,
         editSaving,
         openEditMedia,
         closeEditMedia,
-        loadHistory,
+        loadVersions,
         loadUsage,
-        openHistoryTab,
         submitMediaEdit,
         onFocalPointClick,
         resetFocalPoint,
@@ -189,6 +184,5 @@ export function useMediaEdit(props, media) {
         openQr,
         copyUrl,
         mediaPermalink,
-        historyActionLabel,
     };
 }
