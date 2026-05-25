@@ -46,12 +46,12 @@ const { isSameDay, isToday, formatDayHeader, eventsFor, eventsWithoutAttendees, 
             </div>
             <span class="text-sm font-medium text-primary">{{ weekLabel }}</span>
             <span class="text-xs text-secondary">
-                {{ t("backend.plannings.resourceView.user_count", { n: users.length }) }}
+                {{ t("backend.plannings.resource_view.user_count", { n: users.length }) }}
             </span>
         </div>
 
         <!-- Empty state -->
-        <AppNoData v-if="!users.length" :message="t('backend.plannings.resourceView.no_users')" />
+        <AppNoData v-if="!users.length" :message="t('backend.plannings.resource_view.no_users')" />
 
         <!-- Grid -->
         <div v-else class="overflow-x-auto">

@@ -713,14 +713,14 @@ const { formatDateNumeric } = useDateFormat();
                                 <tr class="bg-surface-2/50 border-b border-line/40">
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.line_cols.label') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('backend.billing.invoices.show.line_cols.reference') }}</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.invoices.show.lineCols.product_code') }}</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.invoices.show.line_cols.product_code') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.line_cols.qty') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t('backend.billing.invoices.show.line_cols.unit') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.lineCols.unit_price') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.line_cols.unit_price') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden xl:table-cell">{{ t('backend.billing.invoices.show.line_cols.discount') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.invoices.show.line_cols.vat') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.lineCols.total_net') }}</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.invoices.show.lineCols.total_gross') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('backend.billing.invoices.show.line_cols.total_net') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t('backend.billing.invoices.show.line_cols.total_gross') }}</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t('shared.common.actions') }}</th>
                                 </tr>
                             </thead>

@@ -1,42 +1,43 @@
 ---
-name: Convention casse des clés de traduction (camelCase vs snake_case)
-description: Les clés YAML de traduction utilisent deux styles selon leur origine — snake_case si construites par le code, camelCase si nommées manuellement
+name: Convention casse des clés de traduction (snake_case, jamais camelCase)
+description: Toutes les clés de traduction (YAML + références code) sont en snake_case, sans exception. Le camelCase est interdit et casse en silence (vue-i18n/Symfony font un lookup exact, aucune erreur, clé brute affichée).
 type: feedback
 ---
 
 ## Règle
 
-Deux styles coexistent **intentionnellement** dans les YAML de traduction Aurora :
+**Toutes les clés de traduction sont en `snake_case`, sans exception** — qu'elles
+soient construites par le code (enums, ids système) ou nommées manuellement pour
+l'UI. Le `camelCase` dans une clé i18n est **interdit** (CLAUDE.md §4).
 
-- **`snake_case`** → clés construites par le code à partir d'une valeur d'enum ou d'un identifiant système
-- **`camelCase`** → clés nommées manuellement pour les libellés UI
+> ⚠️ Cette mémoire **annule** une ancienne version qui prétendait que le
+> `camelCase` pour les libellés UI était intentionnel. C'était faux : ces clés
+> camelCase étaient cassées en silence (voir piège).
 
 ## Pourquoi
 
-Les labels de status sont construits programmatiquement :
-
-```php
-return 'backend.pdfform.templates.status_'.$this->value; // value = 'draft'
-// → 'backend.pdfform.templates.status_draft'
-```
-
-La casse est imposée par la valeur de l'enum PHP (toujours snake_case/lowercase).
-Forcer tout en camelCase obligerait une transformation dans `getLabelKey()` (fragile) ;
-forcer tout en snake_case irait à l'encontre de la convention UI du projet.
+- Clés construites par le code = à partir de valeurs d'enum (lowercase/snake) →
+  `'backend.pdfform.templates.status_'.$value` = `status_draft`. Naturellement snake.
+- Préfixe dynamique (`sprintf('backend.menus.target_types.%s', $value)`) ou
+  concaténation : le **segment fixe doit aussi être snake_case** (`target_types`,
+  pas `targetTypes` ; `field_type`, pas `fieldType`).
+- **Piège (cassé en silence)** : `src/Core/assets/i18n.js` = vue-i18n vanilla
+  **sans `messageResolver`** ; Symfony translator idem. Lookup **exact** : une
+  réf camelCase non-matchante n'erre pas — elle affiche la clé brute dans l'UI.
+  La dérive passe inaperçue jusqu'à ce qu'on regarde l'écran.
 
 ## Comment l'appliquer
 
-| Situation | Style | Exemples |
-|---|---|---|
-| Valeur d'enum comme suffixe | `snake_case` | `status_draft`, `status_active` |
-| Identifiant nav global | `snake_case` | `pdfform_templates`, `ged_categories` |
-| Clé de paramètre | `snake_case` | `ged_document_prefix` |
-| Libellé UI nommé à la main | `camelCase` | `searchPlaceholder`, `deleteConfirm`, `fieldCount` |
-
-**Règle de décision rapide** : la clé contient-elle une valeur d'enum ou un id système ? → `snake_case`. Sinon → `camelCase`.
-
-Ne jamais chercher à uniformiser en un seul style — le mixte est sans friction.
+- YAML : tout segment de clé en `snake_case`.
+- Builders dynamiques d'enum (`getLabelKey()`, `labelKey()`) : préfixe littéral snake.
+- **Audit** :
+  - YAML : grep segments matchant `[a-z0-9][A-Z]`.
+  - Code (`src/`, `templates/`, `tests/`) : grep littéraux `'backend…'`/`'frontend…'`
+    (clés complètes + préfixes sprintf/concat) avec `[a-z0-9][A-Z]`. Exclure les
+    faux positifs non-i18n commençant par `nav`/`mail`/`email` mais qui sont des
+    vars JS / champs d'entité (`navFilter`, `mailpitUrl`, `navSectionColors`).
 
 ## Référence
 
-Doc complète : `docs/aurora-shared/translations.md` § "Casse des clés"
+Doc : `docs/aurora-shared/translations.md` § "Casse des clés — toujours snake_case".
+Mémoire shared jumelle : `aurora-shared/convention_i18n_key_casing.md`.

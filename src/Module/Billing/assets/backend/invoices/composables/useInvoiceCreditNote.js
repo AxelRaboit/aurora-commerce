@@ -18,7 +18,7 @@ export function useInvoiceCreditNote(
             { reason: creditNoteReason.value || null },
             {
                 successMessage:
-                    "backend.billing.invoices.show.creditNoteCreated",
+                    "backend.billing.invoices.show.credit_note_created",
             },
         );
         creatingCreditNote.value = false;

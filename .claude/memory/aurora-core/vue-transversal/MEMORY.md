@@ -7,7 +7,7 @@
 - [convention_js_no_var.md](convention_js_no_var.md) — toujours `const`/`let`, jamais `var` (modules ES, scripts inline Twig, partout)
 - [convention_js_privacy.md](convention_js_privacy.md) — `#field` dans les classes (jamais `_field`), variable module-level non exportée
 - [convention_i18n_source_files.md](convention_i18n_source_files.md) — éditer les YAML sources, jamais le JSON généré. `make translation` régénère
-- [convention_i18n_key_casing.md](convention_i18n_key_casing.md) — `snake_case` si clé construite par le code, `camelCase` si nommée manuellement. Mixte intentionnel
+- [convention_i18n_key_casing.md](convention_i18n_key_casing.md) — **toutes** les clés de traduction en `snake_case`, sans exception. `camelCase` interdit, cassé en silence (lookup exact). Inclut méthode d'audit
 - [convention_i18n_plurals.md](convention_i18n_plurals.md) — **vue-i18n syntaxe pipe** (`'1 X | {count} Xs'`) jamais ICU `{count, plural, …}`. 3e arg de `t()` = count pour la sélection d'arm
 - [convention_no_raw_fetch.md](convention_no_raw_fetch.md) — jamais `await fetch()` brut → `useRequest` (admin) ou `useFrontendRequest` (public)
 - [structure_assets_vue.md](structure_assets_vue.md) — composants Vue, composables, naming, `frontend/components/` + `frontend/composables/`, anti-patterns

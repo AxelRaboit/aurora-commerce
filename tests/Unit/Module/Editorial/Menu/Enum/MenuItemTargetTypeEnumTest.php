@@ -11,9 +11,9 @@ final class MenuItemTargetTypeEnumTest extends TestCase
 {
     public function testLabelKey(): void
     {
-        self::assertSame('backend.menus.targetTypes.post', MenuItemTargetTypeEnum::Post->labelKey());
-        self::assertSame('backend.menus.targetTypes.term', MenuItemTargetTypeEnum::Term->labelKey());
-        self::assertSame('backend.menus.targetTypes.frontend_login', MenuItemTargetTypeEnum::FrontLogin->labelKey());
+        self::assertSame('backend.menus.target_types.post', MenuItemTargetTypeEnum::Post->labelKey());
+        self::assertSame('backend.menus.target_types.term', MenuItemTargetTypeEnum::Term->labelKey());
+        self::assertSame('backend.menus.target_types.frontend_login', MenuItemTargetTypeEnum::FrontLogin->labelKey());
     }
 
     public function testRequiresTargetIdOnlyForPostTermArchive(): void

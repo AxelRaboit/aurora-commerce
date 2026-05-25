@@ -51,6 +51,9 @@ backend:
         needs_review: À vérifier
         total_invoices: Total factures
     invoices:
+      credit_note:
+        invalid_status: "Seules les factures validées ou payées peuvent faire l'objet d'un avoir."
+        already_cancelled: "Un avoir a déjà été émis pour cette facture."
       search_placeholder: "N° facture, fournisseur…"
       import_ocr: Importer (OCR)
       export_xlsx: Exporter Excel
@@ -240,9 +243,6 @@ backend:
       delete_tiers_too: "Supprimer aussi le tiers « {name} » (aucune autre facture liée)"
       deleted: Job supprimé.
       delete_error: "Suppression impossible (contraintes DB)."
-      credit_note:
-        invalid_status: "Seules les factures validées ou payées peuvent faire l'objet d'un avoir."
-        already_cancelled: "Un avoir a déjà été émis pour cette facture."
       error_log: Journal d'erreur
       view_logs: Voir les logs
       logs_title: Logs du job

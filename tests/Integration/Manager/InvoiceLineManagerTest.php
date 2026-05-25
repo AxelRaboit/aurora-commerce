@@ -87,7 +87,7 @@ final class InvoiceLineManagerTest extends IntegrationTestCase
         $line = $this->manager->add($this->makeInvoice());
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('backend.billing.invoices.update.unknownField');
+        $this->expectExceptionMessage('backend.billing.invoices.update.unknown_field');
 
         $this->manager->updateField($line, 'invoice', 999);
     }

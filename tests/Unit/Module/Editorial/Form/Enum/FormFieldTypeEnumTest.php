@@ -11,8 +11,8 @@ final class FormFieldTypeEnumTest extends TestCase
 {
     public function testGetLabelKeyPrefixesCaseValue(): void
     {
-        self::assertSame('backend.editorial.forms.fieldType.text', FormFieldTypeEnum::Text->getLabelKey());
-        self::assertSame('backend.editorial.forms.fieldType.email', FormFieldTypeEnum::Email->getLabelKey());
+        self::assertSame('backend.editorial.forms.field_type.text', FormFieldTypeEnum::Text->getLabelKey());
+        self::assertSame('backend.editorial.forms.field_type.email', FormFieldTypeEnum::Email->getLabelKey());
     }
 
     public function testHasOptionsReturnsTrueOnlyForOptionTypes(): void

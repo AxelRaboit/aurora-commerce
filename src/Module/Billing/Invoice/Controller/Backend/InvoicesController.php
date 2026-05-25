@@ -79,7 +79,7 @@ final class InvoicesController extends AbstractController
     {
         $payload = json_decode($request->getContent(), true);
         if (!is_array($payload) || !isset($payload['field'])) {
-            return $this->jsonInvalidInput(['field' => 'backend.billing.invoices.update.fieldRequired']);
+            return $this->jsonInvalidInput(['field' => 'backend.billing.invoices.update.field_required']);
         }
 
         try {
@@ -96,7 +96,7 @@ final class InvoicesController extends AbstractController
     public function delete(Invoice $invoice, Request $request): JsonResponse
     {
         if (!$invoice->getStatus()->isDeletable()) {
-            return $this->jsonFailure('backend.billing.invoices.deleteError');
+            return $this->jsonFailure('backend.billing.invoices.delete_error');
         }
 
         $body = json_decode($request->getContent(), true) ?? [];
@@ -106,7 +106,7 @@ final class InvoicesController extends AbstractController
         try {
             $this->invoiceManager->delete($invoice, $deleteTiers, $deleteBuyer);
         } catch (Throwable $throwable) {
-            return $this->jsonFailure('backend.billing.invoices.deleteError', extra: ['detail' => $throwable->getMessage()]);
+            return $this->jsonFailure('backend.billing.invoices.delete_error', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();

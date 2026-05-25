@@ -90,9 +90,9 @@ Distribué via composer : les clients lisent ces mémoires depuis
 
 ## i18n
 
-- [convention_i18n_key_casing.md](convention_i18n_key_casing.md) — `snake_case`
-  pour les clés construites par le code (enums, ids système), `camelCase` pour
-  les libellés UI nommés à la main
+- [convention_i18n_key_casing.md](convention_i18n_key_casing.md) — **toutes** les
+  clés de traduction en `snake_case`, sans exception. `camelCase` interdit et
+  cassé en silence (lookup exact vue-i18n/Symfony). Inclut méthode d'audit
 - [convention_locale_options.md](convention_locale_options.md) — importer
   `LOCALE_OPTIONS` depuis `@core/utils/locales.js` ; locales supportées : `fr` et `en`
 - [convention_ui_copy_tone.md](convention_ui_copy_tone.md) — copy UI impersonnel

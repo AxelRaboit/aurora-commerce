@@ -190,8 +190,8 @@ backend:
         lost: Perdu
       created: Affaire créée.
       deleted: Affaire supprimée.
-      listView_description: Affaires en tableau paginé.
-      kanbanView_description: 'Affaires organisées par étape, déplaçables.'
+      list_view_description: Affaires en tableau paginé.
+      kanban_view_description: 'Affaires organisées par étape, déplaçables.'
       company: Entreprise
       no_contacts: Aucun contact lié à cette entreprise.
       contact_linked: 'Sera lié à {name}'

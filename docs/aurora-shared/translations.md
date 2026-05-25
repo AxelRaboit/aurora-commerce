@@ -175,14 +175,16 @@ backend:
 
 ---
 
-## Casse des clés — deux styles coexistent (intentionnel)
+## Casse des clés — toujours `snake_case`
 
-Le projet utilise **deux styles de casse selon l'origine de la clé** :
+**Toutes les clés de traduction sont en `snake_case`, sans exception** — qu'elles
+soient construites par le code ou nommées manuellement. C'est la convention
+d'identifiant interne du projet (cf. CLAUDE.md §4 : route, setting, colonne DB,
+i18n → `snake_case`). Le `camelCase` est **interdit** dans les clés.
 
-### `snake_case` — clés construites par le code machine
+### Clés construites par le code
 
-Utilisé quand la clé est construite **programmatiquement** à partir d'une valeur
-d'enum ou d'un identifiant système. La casse est imposée par la valeur PHP :
+La casse découle naturellement de la valeur d'enum (toujours lowercase/snake) :
 
 ```php
 // PdfTemplateStatusEnum::Draft->value === 'draft'
@@ -193,44 +195,54 @@ public function getLabelKey(): string
 ```
 
 ```yaml
-# ✅ snake_case obligatoire ici — suffixe vient de l'enum
 pdfform:
   templates:
     status_draft: Brouillon
     status_active: Actif
 ```
 
-Clés concernées : labels de status (`status_*`), identifiants de nav globaux
-(`pdfform_templates`, `ged_categories`), clés de paramètres (`ged_document_prefix`).
+Idem pour un préfixe construit dynamiquement (`sprintf('backend.menus.target_types.%s', …)`)
+ou par concaténation : le **segment fixe doit aussi être `snake_case`**
+(`target_types`, jamais `targetTypes` ; `field_type`, jamais `fieldType`).
 
-### `camelCase` — clés nommées manuellement dans l'UI
+### Clés nommées manuellement dans l'UI
 
-Utilisé pour toutes les clés **écrites explicitement** dans le YAML pour les
-libellés UI, messages, placeholders :
+Mêmes règles — `snake_case` :
 
 ```yaml
-# ✅ camelCase pour les clés UI nommées à la main
+# ✅ snake_case
 pdfform:
   templates:
-    searchPlaceholder: Rechercher un template…
-    deleteConfirm: "Supprimer le template « {name} » ?"
-    fieldCount: Champs
-    noFile: Aucun fichier
+    search_placeholder: Rechercher un template…
+    delete_confirm: "Supprimer le template « {name} » ?"
+    field_count: Champs
+    no_file: Aucun fichier
+
+# ❌ camelCase — interdit
+    searchPlaceholder: …
+    deleteConfirm: …
 ```
 
-### Règle de décision
+### Piège : le `camelCase` casse en silence
 
-> **La clé contient une valeur d'enum ou un identifiant système ?**
-> → `snake_case` (contraint par le code)
->
-> **La clé est nommée librement pour l'UI ?**
-> → `camelCase` (convention projet)
+Le résolveur Vue (`src/Core/assets/i18n.js` → vue-i18n **vanilla, sans
+`messageResolver`**) et le translator Symfony font tous deux un lookup **exact**.
+Une référence `camelCase` qui ne matche pas la clé YAML `snake_case` ne lève
+**aucune erreur** : elle affiche la clé brute (`backend.mountPoints.search_placeholder`)
+dans l'UI. Une dérive `camelCase` passe donc inaperçue jusqu'à ce qu'on regarde
+l'écran concerné — d'où l'importance de l'audit ci-dessous.
 
-Ne pas chercher à uniformiser : forcer tout en `snake_case` obligerait à
-transformer les valeurs d'enum dans `getLabelKey()` (fragile), et forcer tout
-en `camelCase` casserait la correspondance directe avec les valeurs d'enum
-(`status_draft` → `statusDraft` nécessiterait une transformation).
-Le mixte actuel est le seul format sans friction.
+### Audit (détection des dérives)
+
+Pour repérer toute clé `camelCase` résiduelle — côté YAML **et** côté références
+code (y compris les builders dynamiques d'enum `getLabelKey()` / `labelKey()`) :
+
+- **YAML** : grep des segments de clé matchant `[a-z0-9][A-Z]`.
+- **Code** (`src/`, `templates/`, `tests/`) : grep des littéraux `'backend…'` /
+  `'frontend…'` (clés complètes **et** préfixes `sprintf`/concaténation)
+  contenant `[a-z0-9][A-Z]`. Exclure les faux positifs non-i18n qui commencent
+  par `nav`/`mail`/`email` mais sont des vars JS / champs d'entité (`navFilter`,
+  `mailpitUrl`, `navSectionColors`, `emailVerificationToken`, …).
 
 ---
 

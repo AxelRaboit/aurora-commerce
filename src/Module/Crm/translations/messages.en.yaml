@@ -190,8 +190,8 @@ backend:
         lost: Lost
       created: Deal created.
       deleted: Deal deleted.
-      listView_description: Deals in a paginated table.
-      kanbanView_description: 'Deals organised by stage, draggable.'
+      list_view_description: Deals in a paginated table.
+      kanban_view_description: 'Deals organised by stage, draggable.'
       company: Company
       no_contacts: No contacts linked to this company.
       contact_linked: 'Will be linked to {name}'

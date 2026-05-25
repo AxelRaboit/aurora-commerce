@@ -35,7 +35,7 @@ export function useProjectsDelete({
                 (task) => task.id !== deletedId,
             );
         },
-        "backend.projects.toast.taskDeleted",
+        "backend.projects.toast.task_deleted",
     );
 
     return {

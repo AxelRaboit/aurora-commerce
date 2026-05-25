@@ -121,7 +121,7 @@ final class OcrImportController extends AbstractController
         try {
             $this->jobManager->delete($job, $deleteTiers);
         } catch (Throwable $throwable) {
-            return $this->jsonFailure('backend.billing.ocr.deleteError', extra: ['detail' => $throwable->getMessage()]);
+            return $this->jsonFailure('backend.billing.ocr.delete_error', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();

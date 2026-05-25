@@ -74,7 +74,7 @@ export function useInvoiceActions(
 
     async function addLine() {
         const data = await submit(props.lineCreatePath, null, {
-            successMessage: "backend.billing.invoices.show.lineAdded",
+            successMessage: "backend.billing.invoices.show.line_added",
         });
         if (data) invoice.value = data.invoice;
     }
@@ -92,7 +92,7 @@ export function useInvoiceActions(
         const data = await submit(
             buildPath(props.lineDeletePathTemplate, { lineId }),
             null,
-            { successMessage: "backend.billing.invoices.show.lineDeleted" },
+            { successMessage: "backend.billing.invoices.show.line_deleted" },
         );
         if (data) invoice.value = data.invoice;
     }

@@ -51,6 +51,9 @@ backend:
         needs_review: Needs review
         total_invoices: Total invoices
     invoices:
+      credit_note:
+        invalid_status: "Only validated or paid invoices can have a credit note."
+        already_cancelled: "A credit note has already been issued for this invoice."
       search_placeholder: "Invoice #, supplier…"
       import_ocr: Import (OCR)
       export_xlsx: Export Excel
@@ -240,9 +243,6 @@ backend:
       delete_tiers_too: "Also delete third party \"{name}\" (no other linked invoices)"
       deleted: Job deleted.
       delete_error: "Could not delete (DB constraint)."
-      credit_note:
-        invalid_status: "Only validated or paid invoices can have a credit note."
-        already_cancelled: "A credit note has already been issued for this invoice."
       error_log: Error log
       view_logs: View logs
       logs_title: Job logs

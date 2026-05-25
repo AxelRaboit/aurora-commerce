@@ -111,9 +111,9 @@ file_transfer:
       subject: "{sender} vous a envoyé des fichiers"
       title: "Vous avez reçu un transfert"
       body: "{sender} vous a envoyé {count} fichier(s)."
-      passwordHint: "Pour télécharger, utilisez ce mot de passe : {password}"
+      password_hint: "Pour télécharger, utilisez ce mot de passe : {password}"
       cta: "Télécharger"
-      expiresAt: "Disponible jusqu'au {date}"
+      expires_at: "Disponible jusqu'au {date}"
     downloaded:
       subject: "{email} a téléchargé votre transfert"
       title: "Téléchargement confirmé"

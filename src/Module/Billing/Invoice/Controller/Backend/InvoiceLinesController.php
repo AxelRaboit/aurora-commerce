@@ -60,7 +60,7 @@ final class InvoiceLinesController extends AbstractController
 
         $payload = json_decode($request->getContent(), true);
         if (!is_array($payload) || !isset($payload['field'])) {
-            return $this->jsonInvalidInput(['field' => 'backend.billing.invoices.update.fieldRequired']);
+            return $this->jsonInvalidInput(['field' => 'backend.billing.invoices.update.field_required']);
         }
 
         try {

@@ -49,7 +49,7 @@ onMounted(() => {
             <AppSearchInput
                 v-model="mp.searchInput.value"
                 class="flex-1"
-                :placeholder="t('backend.mountPoints.search_placeholder')"
+                :placeholder="t('backend.mount_points.search_placeholder')"
             />
             <AppButton variant="primary" size="md" v-on:click="mp.openCreate">
                 <Plus class="w-4 h-4" :stroke-width="2" />
@@ -68,7 +68,7 @@ onMounted(() => {
                         <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.mount_points.name") }}</th>
                         <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">{{ t("backend.mount_points.type") }}</th>
                         <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden md:table-cell">{{ t("backend.mount_points.host") }}</th>
-                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.mountPoints.last_tested") }}</th>
+                        <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted hidden lg:table-cell">{{ t("backend.mount_points.last_tested") }}</th>
                         <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted">{{ t("shared.common.actions") }}</th>
                     </tr>
                 </thead>
@@ -126,7 +126,7 @@ onMounted(() => {
                     <AppInput
                         v-model="mp.createForm.value.name"
                         :label="t('backend.mount_points.name')"
-                        :placeholder="t('backend.mountPoints.name_placeholder')"
+                        :placeholder="t('backend.mount_points.name_placeholder')"
                         :error="mp.createErrors.value.name"
                         required
                     />
@@ -138,14 +138,14 @@ onMounted(() => {
                     <AppInput
                         v-model="mp.createForm.value.host"
                         :label="t('backend.mount_points.host')"
-                        :placeholder="t('backend.mountPoints.host_placeholder')"
+                        :placeholder="t('backend.mount_points.host_placeholder')"
                         :error="mp.createErrors.value.host"
                         required
                     />
                     <AppInput
                         v-model="mp.createForm.value.port"
                         :label="t('backend.mount_points.port')"
-                        :placeholder="t('backend.mountPoints.port_placeholder')"
+                        :placeholder="t('backend.mount_points.port_placeholder')"
                         type="number"
                     />
                 </div>
@@ -153,7 +153,7 @@ onMounted(() => {
                     <AppInput
                         v-model="mp.createForm.value.username"
                         :label="t('backend.mount_points.username')"
-                        :placeholder="t('backend.mountPoints.username_placeholder')"
+                        :placeholder="t('backend.mount_points.username_placeholder')"
                         autocomplete="off"
                     />
                     <AppInput
@@ -166,19 +166,19 @@ onMounted(() => {
                 <AppInput
                     v-model="mp.createForm.value.database"
                     :label="t('backend.mount_points.database')"
-                    :placeholder="t('backend.mountPoints.database_placeholder')"
+                    :placeholder="t('backend.mount_points.database_placeholder')"
                 />
                 <AppInput
                     v-model="mp.createForm.value.sshPublicKey"
-                    :label="t('backend.mountPoints.ssh_public_key')"
-                    :placeholder="t('backend.mountPoints.ssh_public_key_placeholder')"
+                    :label="t('backend.mount_points.ssh_public_key')"
+                    :placeholder="t('backend.mount_points.ssh_public_key_placeholder')"
                 />
 
                 <div class="border-t border-line pt-4 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-primary">{{ t("backend.mountPoints.ssh_tunnel") }}</p>
-                            <p class="text-xs text-muted mt-0.5">{{ t("backend.mountPoints.ssh_tunnel_hint") }}</p>
+                            <p class="text-sm font-medium text-primary">{{ t("backend.mount_points.ssh_tunnel") }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ t("backend.mount_points.ssh_tunnel_hint") }}</p>
                         </div>
                         <AppToggle
                             :model-value="mp.createForm.value.config.sshTunnel"
@@ -189,26 +189,26 @@ onMounted(() => {
                         <div class="grid grid-cols-1 sm:grid-cols-[1fr_8rem] gap-4">
                             <AppInput
                                 v-model="mp.createForm.value.config.sshHost"
-                                :label="t('backend.mountPoints.ssh_host')"
-                                :placeholder="t('backend.mountPoints.ssh_host_placeholder')"
+                                :label="t('backend.mount_points.ssh_host')"
+                                :placeholder="t('backend.mount_points.ssh_host_placeholder')"
                             />
                             <AppInput
                                 v-model="mp.createForm.value.config.sshPort"
-                                :label="t('backend.mountPoints.ssh_port')"
+                                :label="t('backend.mount_points.ssh_port')"
                                 type="number"
                                 placeholder="22"
                             />
                         </div>
                         <AppInput
                             v-model="mp.createForm.value.config.sshUser"
-                            :label="t('backend.mountPoints.ssh_user')"
-                            :placeholder="t('backend.mountPoints.ssh_user_placeholder')"
+                            :label="t('backend.mount_points.ssh_user')"
+                            :placeholder="t('backend.mount_points.ssh_user_placeholder')"
                             autocomplete="off"
                         />
                         <AppTextarea
                             v-model="mp.createForm.value.sshPrivateKey"
-                            :label="t('backend.mountPoints.ssh_private_key')"
-                            :placeholder="t('backend.mountPoints.ssh_private_key_placeholder')"
+                            :label="t('backend.mount_points.ssh_private_key')"
+                            :placeholder="t('backend.mount_points.ssh_private_key_placeholder')"
                             :rows="5"
                             class="font-mono text-xs"
                         />
@@ -241,7 +241,7 @@ onMounted(() => {
                     <AppInput
                         v-model="mp.editForm.value.name"
                         :label="t('backend.mount_points.name')"
-                        :placeholder="t('backend.mountPoints.name_placeholder')"
+                        :placeholder="t('backend.mount_points.name_placeholder')"
                         :error="mp.editErrors.value.name"
                         required
                     />
@@ -253,14 +253,14 @@ onMounted(() => {
                     <AppInput
                         v-model="mp.editForm.value.host"
                         :label="t('backend.mount_points.host')"
-                        :placeholder="t('backend.mountPoints.host_placeholder')"
+                        :placeholder="t('backend.mount_points.host_placeholder')"
                         :error="mp.editErrors.value.host"
                         required
                     />
                     <AppInput
                         v-model="mp.editForm.value.port"
                         :label="t('backend.mount_points.port')"
-                        :placeholder="t('backend.mountPoints.port_placeholder')"
+                        :placeholder="t('backend.mount_points.port_placeholder')"
                         type="number"
                     />
                 </div>
@@ -268,13 +268,13 @@ onMounted(() => {
                     <AppInput
                         v-model="mp.editForm.value.username"
                         :label="t('backend.mount_points.username')"
-                        :placeholder="t('backend.mountPoints.username_placeholder')"
+                        :placeholder="t('backend.mount_points.username_placeholder')"
                         autocomplete="off"
                     />
                     <AppInput
                         v-model="mp.editForm.value.password"
                         :label="t('backend.mount_points.password')"
-                        :placeholder="t('backend.mountPoints.password_placeholder')"
+                        :placeholder="t('backend.mount_points.password_placeholder')"
                         toggleable
                         autocomplete="new-password"
                     />
@@ -282,19 +282,19 @@ onMounted(() => {
                 <AppInput
                     v-model="mp.editForm.value.database"
                     :label="t('backend.mount_points.database')"
-                    :placeholder="t('backend.mountPoints.database_placeholder')"
+                    :placeholder="t('backend.mount_points.database_placeholder')"
                 />
                 <AppInput
                     v-model="mp.editForm.value.sshPublicKey"
-                    :label="t('backend.mountPoints.ssh_public_key')"
-                    :placeholder="t('backend.mountPoints.ssh_public_key_placeholder')"
+                    :label="t('backend.mount_points.ssh_public_key')"
+                    :placeholder="t('backend.mount_points.ssh_public_key_placeholder')"
                 />
 
                 <div class="border-t border-line pt-4 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-primary">{{ t("backend.mountPoints.ssh_tunnel") }}</p>
-                            <p class="text-xs text-muted mt-0.5">{{ t("backend.mountPoints.ssh_tunnel_hint") }}</p>
+                            <p class="text-sm font-medium text-primary">{{ t("backend.mount_points.ssh_tunnel") }}</p>
+                            <p class="text-xs text-muted mt-0.5">{{ t("backend.mount_points.ssh_tunnel_hint") }}</p>
                         </div>
                         <AppToggle
                             :model-value="mp.editForm.value.config.sshTunnel"
@@ -305,26 +305,26 @@ onMounted(() => {
                         <div class="grid grid-cols-1 sm:grid-cols-[1fr_8rem] gap-4">
                             <AppInput
                                 v-model="mp.editForm.value.config.sshHost"
-                                :label="t('backend.mountPoints.ssh_host')"
-                                :placeholder="t('backend.mountPoints.ssh_host_placeholder')"
+                                :label="t('backend.mount_points.ssh_host')"
+                                :placeholder="t('backend.mount_points.ssh_host_placeholder')"
                             />
                             <AppInput
                                 v-model="mp.editForm.value.config.sshPort"
-                                :label="t('backend.mountPoints.ssh_port')"
+                                :label="t('backend.mount_points.ssh_port')"
                                 type="number"
                                 placeholder="22"
                             />
                         </div>
                         <AppInput
                             v-model="mp.editForm.value.config.sshUser"
-                            :label="t('backend.mountPoints.ssh_user')"
-                            :placeholder="t('backend.mountPoints.ssh_user_placeholder')"
+                            :label="t('backend.mount_points.ssh_user')"
+                            :placeholder="t('backend.mount_points.ssh_user_placeholder')"
                             autocomplete="off"
                         />
                         <AppTextarea
                             v-model="mp.editForm.value.sshPrivateKey"
-                            :label="t('backend.mountPoints.ssh_private_key')"
-                            :placeholder="mp.editingMountPoint.value?.hasSshPrivateKey ? t('backend.mountPoints.ssh_private_key_hint') : t('backend.mountPoints.ssh_private_key_placeholder')"
+                            :label="t('backend.mount_points.ssh_private_key')"
+                            :placeholder="mp.editingMountPoint.value?.hasSshPrivateKey ? t('backend.mount_points.ssh_private_key_hint') : t('backend.mount_points.ssh_private_key_placeholder')"
                             :rows="5"
                             class="font-mono text-xs"
                         />
@@ -346,7 +346,7 @@ onMounted(() => {
         <!-- Test connection modal -->
         <AppModal
             :show="mp.testModal.value.show"
-            :title="t('backend.mountPoints.test_title', { name: mp.testModal.value.mountPoint?.name ?? '' })"
+            :title="t('backend.mount_points.test_title', { name: mp.testModal.value.mountPoint?.name ?? '' })"
             :icon="Network"
             max-width="sm"
             :closeable="false"
@@ -361,7 +361,7 @@ onMounted(() => {
                     <CheckCircle v-if="mp.testModal.value.result.success" class="w-10 h-10 text-success" :stroke-width="1.5" />
                     <XCircle v-else class="w-10 h-10 text-danger" :stroke-width="1.5" />
                     <p class="text-sm font-medium" :class="mp.testModal.value.result.success ? 'text-success' : 'text-danger'">
-                        {{ mp.testModal.value.result.success ? t("backend.mountPoints.test_success") : t("backend.mountPoints.test_failure") }}
+                        {{ mp.testModal.value.result.success ? t("backend.mount_points.test_success") : t("backend.mount_points.test_failure") }}
                     </p>
                     <p v-if="mp.testModal.value.result.message" class="text-xs text-muted text-center font-mono bg-surface-2 rounded-lg px-3 py-2 w-full">
                         {{ mp.testModal.value.result.message }}
@@ -386,7 +386,7 @@ onMounted(() => {
         <!-- Delete confirm modal -->
         <AppModal :show="mp.showDeleteModal.value" max-width="sm" :closeable="false" v-on:close="mp.showDeleteModal.value = false">
             <p class="text-sm text-primary">
-                {{ t("backend.mountPoints.delete_confirm") }}
+                {{ t("backend.mount_points.delete_confirm") }}
                 <strong v-if="mp.pendingDelete.value"> « {{ mp.pendingDelete.value.name }} »</strong>
             </p>
             <template #footer>

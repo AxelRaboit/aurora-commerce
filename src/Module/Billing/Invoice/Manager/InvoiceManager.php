@@ -50,20 +50,20 @@ class InvoiceManager implements InvoiceManagerInterface
             'purchaseOrderRef' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setPurchaseOrderRef($this->stringOrNull($value)),
             'paymentMethod' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setPaymentMethod($this->stringOrNull($value)),
             'paymentTerms' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setPaymentTerms($this->stringOrNull($value)),
-            'issuedAt' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setIssuedAt($this->dateOrNull($value, 'backend.billing.invoices.update.invalidDate')),
-            'dueAt' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDueAt($this->dateOrNull($value, 'backend.billing.invoices.update.invalidDate')),
-            'subtotalCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setSubtotalCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'totalNetCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setTotalNetCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'totalVatCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setTotalVatCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'totalGrossCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setTotalGrossCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'discountCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDiscountCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'freightCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setFreightCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'insuranceCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setInsuranceCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'discountRateBp' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDiscountRateBp($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
+            'issuedAt' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setIssuedAt($this->dateOrNull($value, 'backend.billing.invoices.update.invalid_date')),
+            'dueAt' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDueAt($this->dateOrNull($value, 'backend.billing.invoices.update.invalid_date')),
+            'subtotalCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setSubtotalCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'totalNetCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setTotalNetCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'totalVatCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setTotalVatCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'totalGrossCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setTotalGrossCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'discountCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDiscountCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'freightCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setFreightCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'insuranceCents' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setInsuranceCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'discountRateBp' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDiscountRateBp($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
             'reference' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setReference($this->stringOrNull($value)),
             'project' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setProject($this->stringOrNull($value)),
             'incoterms' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setIncoterms($this->stringOrNull($value)),
-            'deliveryDate' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDeliveryDate($this->dateOrNull($value, 'backend.billing.invoices.update.invalidDate')),
+            'deliveryDate' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setDeliveryDate($this->dateOrNull($value, 'backend.billing.invoices.update.invalid_date')),
             'reverseCharge' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setReverseCharge(null !== $value ? (bool) $value : null),
             'bankDetails' => fn (InvoiceInterface $invoice, mixed $value): InvoiceInterface => $invoice->setBankDetails($this->stringOrNull($value)),
         ];
@@ -130,11 +130,11 @@ class InvoiceManager implements InvoiceManagerInterface
     public function createCreditNote(InvoiceInterface $invoice, ?string $reason = null): InvoiceInterface
     {
         if (!$invoice->getStatus()->canHaveCreditNote()) {
-            throw new InvalidArgumentException('backend.billing.invoices.creditNote.invalidStatus');
+            throw new InvalidArgumentException('backend.billing.invoices.credit_note.invalid_status');
         }
 
         if ($invoice->isCancelled()) {
-            throw new InvalidArgumentException('backend.billing.invoices.creditNote.alreadyCancelled');
+            throw new InvalidArgumentException('backend.billing.invoices.credit_note.already_cancelled');
         }
 
         $cn = $this->createInvoice();
@@ -202,7 +202,7 @@ class InvoiceManager implements InvoiceManagerInterface
 
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
-            throw new InvalidArgumentException('backend.billing.invoices.update.unknownField');
+            throw new InvalidArgumentException('backend.billing.invoices.update.unknown_field');
         }
 
         $setter($invoice, $value);

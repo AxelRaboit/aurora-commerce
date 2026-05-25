@@ -74,13 +74,13 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
 <template>
     <div class="flex flex-col md:flex-row gap-6">
         <nav v-if="kanbanRoutePath" class="hidden md:flex flex-col w-44 shrink-0 gap-0.5">
-            <AppTooltip :title="t('backend.crm.deals.list_view')" :description="t('backend.crm.deals.listView_description')" placement="right">
+            <AppTooltip :title="t('backend.crm.deals.list_view')" :description="t('backend.crm.deals.list_view_description')" placement="right">
                 <AppTab :active="view === 'list'" v-on:click="setView('list')">
                     <List class="w-4 h-4 shrink-0" :stroke-width="2" />
                     {{ t('backend.crm.deals.list_view') }}
                 </AppTab>
             </AppTooltip>
-            <AppTooltip :title="t('backend.crm.deals.kanban_view')" :description="t('backend.crm.deals.kanbanView_description')" placement="right">
+            <AppTooltip :title="t('backend.crm.deals.kanban_view')" :description="t('backend.crm.deals.kanban_view_description')" placement="right">
                 <AppTab :active="view === 'kanban'" v-on:click="setView('kanban')">
                     <Columns2 class="w-4 h-4 shrink-0" :stroke-width="2" />
                     {{ t('backend.crm.deals.kanban_view') }}
@@ -89,13 +89,13 @@ const { pendingDelete, deleteLoading, confirmDelete, doDelete } = useDealsDelete
         </nav>
 
         <div v-if="kanbanRoutePath" class="flex md:hidden gap-1 flex-wrap w-full">
-            <AppTooltip :title="t('backend.crm.deals.list_view')" :description="t('backend.crm.deals.listView_description')" placement="bottom">
+            <AppTooltip :title="t('backend.crm.deals.list_view')" :description="t('backend.crm.deals.list_view_description')" placement="bottom">
                 <AppTab :active="view === 'list'" size="sm" v-on:click="setView('list')">
                     <List class="w-4 h-4" :stroke-width="2" />
                     {{ t('backend.crm.deals.list_view') }}
                 </AppTab>
             </AppTooltip>
-            <AppTooltip :title="t('backend.crm.deals.kanban_view')" :description="t('backend.crm.deals.kanbanView_description')" placement="bottom">
+            <AppTooltip :title="t('backend.crm.deals.kanban_view')" :description="t('backend.crm.deals.kanban_view_description')" placement="bottom">
                 <AppTab :active="view === 'kanban'" size="sm" v-on:click="setView('kanban')">
                     <Columns2 class="w-4 h-4" :stroke-width="2" />
                     {{ t('backend.crm.deals.kanban_view') }}

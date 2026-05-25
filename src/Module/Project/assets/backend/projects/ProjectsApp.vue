@@ -1459,8 +1459,8 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
             <div class="space-y-4">
                 <AppInput
                     v-model="savedViews.newViewName.value"
-                    :label="t('backend.projects.savedViews.name_field')"
-                    :placeholder="t('backend.projects.savedViews.name_placeholder')"
+                    :label="t('backend.projects.saved_views.name_field')"
+                    :placeholder="t('backend.projects.saved_views.name_placeholder')"
                     :error="savedViews.viewErrors.value.name"
                 />
             </div>

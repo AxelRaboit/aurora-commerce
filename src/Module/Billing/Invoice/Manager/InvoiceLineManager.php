@@ -31,13 +31,13 @@ class InvoiceLineManager implements InvoiceLineManagerInterface
             'productCode' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setProductCode($this->stringOrNull($value)),
             'unit' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setUnit($this->stringOrNull($value)),
             'quantity' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setQuantity($this->stringOrNull($value) ?? '1.0000'),
-            'unitPriceCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setUnitPriceCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'vatRateBp' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setVatRateBp($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'totalNetCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setTotalNetCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
-            'totalGrossCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setTotalGrossCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
+            'unitPriceCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setUnitPriceCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'vatRateBp' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setVatRateBp($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'totalNetCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setTotalNetCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
+            'totalGrossCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setTotalGrossCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
             'reference' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setReference($this->stringOrNull($value)),
             'description' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setDescription($this->stringOrNull($value)),
-            'discountCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setDiscountCents($this->intOrNull($value, 'backend.billing.invoices.update.notNumeric')),
+            'discountCents' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setDiscountCents($this->intOrNull($value, 'backend.billing.invoices.update.not_numeric')),
             'origin' => fn (InvoiceLineInterface $line, mixed $value): InvoiceLineInterface => $line->setOrigin($this->stringOrNull($value)),
         ];
     }
@@ -70,7 +70,7 @@ class InvoiceLineManager implements InvoiceLineManagerInterface
 
         $setter = $this->fieldSetters[$field] ?? null;
         if (null === $setter) {
-            throw new InvalidArgumentException('backend.billing.invoices.update.unknownField');
+            throw new InvalidArgumentException('backend.billing.invoices.update.unknown_field');
         }
 
         $setter($line, $value);

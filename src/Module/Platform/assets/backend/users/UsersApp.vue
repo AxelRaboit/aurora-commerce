@@ -523,7 +523,7 @@ const { modulesModal, pendingDisabledModules, openModules, toggleModule, saveMod
 
         <AppModal :show="!!togglingUser" max-width="sm" :closeable="false" v-on:close="togglingUser = null">
             <p class="text-sm text-primary">
-                {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enableConfirm' : 'backend.users.disableConfirm', {name: togglingUser?.name ?? ''}) }}
+                {{ t(togglingUser?.status === UserStatus.Disabled ? 'backend.users.enable_confirm' : 'backend.users.disable_confirm', {name: togglingUser?.name ?? ''}) }}
             </p>
             <template #footer>
                 <AppModalFooter>

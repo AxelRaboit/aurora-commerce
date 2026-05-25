@@ -4,9 +4,9 @@ import { OcrJobStatus } from "@billing/backend/utils/ocrJobStatus.js";
 
 const FIELD_LABELS = {
     supplier_name: "backend.billing.suppliers.name",
-    supplier_vat_number: "backend.billing.suppliers.vatNumber",
+    supplier_vat_number: "backend.billing.suppliers.vat_number",
     supplier_registration_number:
-        "backend.billing.suppliers.registrationNumber",
+        "backend.billing.suppliers.registration_number",
     supplier_iban: "backend.billing.suppliers.iban",
     supplier_bic: "BIC",
     supplier_email: "backend.billing.suppliers.email",
@@ -14,36 +14,36 @@ const FIELD_LABELS = {
     supplier_address: "backend.billing.invoices.show.address",
     supplier_country_code: "backend.billing.suppliers.country",
     buyer_name: "backend.billing.suppliers.name",
-    buyer_vat_number: "backend.billing.suppliers.vatNumber",
+    buyer_vat_number: "backend.billing.suppliers.vat_number",
     buyer_address: "backend.billing.invoices.show.address",
     buyer_country_code: "backend.billing.suppliers.country",
     buyer_email: "backend.billing.suppliers.email",
     buyer_phone: "backend.billing.invoices.show.phone",
-    invoice_number: "backend.billing.invoices.show.fields.supplierNumber",
-    purchase_order_ref: "backend.billing.invoices.show.fields.purchaseOrder",
-    issued_at: "backend.billing.invoices.show.fields.issuedAt",
-    due_at: "backend.billing.invoices.show.fields.dueAt",
-    payment_method: "backend.billing.invoices.show.fields.paymentMethod",
-    payment_terms: "backend.billing.invoices.show.fields.paymentTerms",
+    invoice_number: "backend.billing.invoices.show.fields.supplier_number",
+    purchase_order_ref: "backend.billing.invoices.show.fields.purchase_order",
+    issued_at: "backend.billing.invoices.show.fields.issued_at",
+    due_at: "backend.billing.invoices.show.fields.due_at",
+    payment_method: "backend.billing.invoices.show.fields.payment_method",
+    payment_terms: "backend.billing.invoices.show.fields.payment_terms",
     currency: "backend.billing.invoices.show.fields.currency",
     subtotal_cents: "backend.billing.invoices.show.fields.subtotal",
-    total_net_cents: "backend.billing.invoices.show.fields.totalNet",
-    total_vat_cents: "backend.billing.invoices.show.fields.totalVat",
-    total_gross_cents: "backend.billing.invoices.show.fields.totalGross",
+    total_net_cents: "backend.billing.invoices.show.fields.total_net",
+    total_vat_cents: "backend.billing.invoices.show.fields.total_vat",
+    total_gross_cents: "backend.billing.invoices.show.fields.total_gross",
     discount_cents: "backend.billing.invoices.show.fields.discount",
     freight_cents: "backend.billing.invoices.show.fields.freight",
     insurance_cents: "backend.billing.invoices.show.fields.insurance",
-    discount_rate_bp: "backend.billing.invoices.show.fields.discountRate",
+    discount_rate_bp: "backend.billing.invoices.show.fields.discount_rate",
     reference: "backend.billing.invoices.show.fields.reference",
     project: "backend.billing.invoices.show.fields.project",
     incoterms: "backend.billing.invoices.show.fields.incoterms",
-    delivery_date: "backend.billing.invoices.show.fields.deliveryDate",
-    reverse_charge: "backend.billing.invoices.show.fields.reverseCharge",
-    bank_details: "backend.billing.invoices.show.fields.bankDetails",
-    line_reference: "backend.billing.invoices.show.lineCols.reference",
-    line_description: "backend.billing.invoices.show.lineCols.description",
-    line_discount_cents: "backend.billing.invoices.show.lineCols.discount",
-    line_origin: "backend.billing.invoices.show.lineCols.origin",
+    delivery_date: "backend.billing.invoices.show.fields.delivery_date",
+    reverse_charge: "backend.billing.invoices.show.fields.reverse_charge",
+    bank_details: "backend.billing.invoices.show.fields.bank_details",
+    line_reference: "backend.billing.invoices.show.line_cols.reference",
+    line_description: "backend.billing.invoices.show.line_cols.description",
+    line_discount_cents: "backend.billing.invoices.show.line_cols.discount",
+    line_origin: "backend.billing.invoices.show.line_cols.origin",
 };
 
 export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
@@ -63,7 +63,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
         if (job.confidence !== null && job.confidence < 0.85) {
             reasons.push({
                 text: t(
-                    "backend.billing.invoices.show.ocrAnomaly.low_confidence",
+                    "backend.billing.invoices.show.ocr_anomaly.low_confidence",
                     { pct: Math.round(job.confidence * 100), threshold: 85 },
                 ),
                 fields: (job.uncertainFields ?? []).map(fieldLabel),
@@ -79,7 +79,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
             if (diff > 200)
                 reasons.push({
                     text: t(
-                        "backend.billing.invoices.show.ocrAnomaly.totals_mismatch",
+                        "backend.billing.invoices.show.ocr_anomaly.totals_mismatch",
                         {
                             expected: ((net + vat) / 100).toFixed(2),
                             actual: (gross / 100).toFixed(2),
@@ -101,7 +101,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
         ) {
             reasons.push({
                 text: t(
-                    "backend.billing.invoices.show.ocrAnomaly.uncertain_fields",
+                    "backend.billing.invoices.show.ocr_anomaly.uncertain_fields",
                 ),
                 fields: job.uncertainFields.map(fieldLabel),
             });
@@ -114,7 +114,7 @@ export function useInvoiceOcr(invoice, ocrRetryPath, importPath, submit) {
         if (!ocrRetryPath || rescanLoading.value) return;
         rescanLoading.value = true;
         const data = await submit(ocrRetryPath, null, {
-            successMessage: "backend.billing.invoices.show.rescanQueued",
+            successMessage: "backend.billing.invoices.show.rescan_queued",
         });
         rescanLoading.value = false;
         if (data) window.location.href = importPath;

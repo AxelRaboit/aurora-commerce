@@ -65,7 +65,7 @@ final class TiersController extends AbstractController
     {
         $payload = json_decode($request->getContent(), true);
         if (!is_array($payload) || !isset($payload['field'])) {
-            return $this->jsonInvalidInput(['field' => 'backend.billing.tiers.update.fieldRequired']);
+            return $this->jsonInvalidInput(['field' => 'backend.billing.tiers.update.field_required']);
         }
 
         try {
@@ -84,7 +84,7 @@ final class TiersController extends AbstractController
         try {
             $this->tiersManager->delete($tiers);
         } catch (Throwable $throwable) {
-            return $this->jsonFailure('backend.billing.tiers.deleteError', extra: ['detail' => $throwable->getMessage()]);
+            return $this->jsonFailure('backend.billing.tiers.delete_error', extra: ['detail' => $throwable->getMessage()]);
         }
 
         return $this->jsonSuccess();

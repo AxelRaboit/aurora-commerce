@@ -303,8 +303,8 @@ file_transfer:
   new_transfer:
     title: "Nouveau transfert"
     dropzone: "Glissez vos fichiers ici"
-    addFile: "Ajouter un fichier"
-    addRecipient: "Ajouter un destinataire"
+    add_file: "Ajouter un fichier"
+    add_recipient: "Ajouter un destinataire"
     mode_email: "Envoyer par email"
     mode_public: "Lien public"
     submit: "Envoyer"
@@ -318,30 +318,30 @@ file_transfer:
 
   manage:
     title: "Gestion du transfert"
-    deleteConfirm: "Supprimer ce transfert ? Les fichiers seront définitivement effacés."
-    remindRecipient: "Relancer"
+    delete_confirm: "Supprimer ce transfert ? Les fichiers seront définitivement effacés."
+    remind_recipient: "Relancer"
 
   public:
     title: "Vous avez reçu un transfert"
-    downloadAll: "Tout télécharger"
-    expiresAt: "Disponible jusqu'au {date}"
-    passwordPrompt: "Ce transfert est protégé par mot de passe"
-    unlockButton: "Déverrouiller"
+    download_all: "Tout télécharger"
+    expires_at: "Disponible jusqu'au {date}"
+    password_prompt: "Ce transfert est protégé par mot de passe"
+    unlock_button: "Déverrouiller"
     unavailable:
       expired: "Ce transfert a expiré."
       deleted: "Ce transfert a été supprimé."
       pending: "Ce transfert n'est pas encore prêt."
 
   errors:
-    tooManyFiles: "Trop de fichiers ({count} > {max})"
-    fileTooLarge: "Fichier trop volumineux"
-    fileTypeNotAllowed: "Type de fichier non autorisé ({type})"
-    zipContentNotAllowed: "Contenu ZIP interdit ({path})"
-    zipBombDetected: "Archive suspecte détectée"
-    zipCorrupt: "Archive corrompue"
-    uploadNotFound: "Upload introuvable, recommencez"
-    wrongPassword: "Mot de passe incorrect"
-    tooManyAttempts: "Trop de tentatives, réessayez dans {minutes} min"
+    too_many_files: "Trop de fichiers ({count} > {max})"
+    file_too_large: "Fichier trop volumineux"
+    file_type_not_allowed: "Type de fichier non autorisé ({type})"
+    zip_content_not_allowed: "Contenu ZIP interdit ({path})"
+    zip_bomb_detected: "Archive suspecte détectée"
+    zip_corrupt: "Archive corrompue"
+    upload_not_found: "Upload introuvable, recommencez"
+    wrong_password: "Mot de passe incorrect"
+    too_many_attempts: "Trop de tentatives, réessayez dans {minutes} min"
 ```
 
 Reprendre les traductions Nimbus pour FR/EN/ES/DE → préfixer toutes les
