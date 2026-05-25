@@ -16,6 +16,7 @@ use Aurora\Module\Ged\Document\Manager\DocumentManagerInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\Document\Serializer\DocumentSerializerInterface;
 use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializerInterface;
+use Aurora\Module\Ged\Document\Service\DocumentUsageService;
 use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
@@ -45,6 +46,7 @@ final class DocumentsController extends AbstractController
         private readonly DocumentVersionRepository $versionRepository,
         private readonly DocumentVersionSerializerInterface $versionSerializer,
         private readonly GedDocumentUploader $uploader,
+        private readonly DocumentUsageService $usageService,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -89,6 +91,12 @@ final class DocumentsController extends AbstractController
             'success' => true,
             'versions' => array_map($this->versionSerializer->serialize(...), $versions),
         ]);
+    }
+
+    #[Route('/{id}/usage', name: '_usage', methods: [HttpMethodEnum::Get->value])]
+    public function usage(Document $document): JsonResponse
+    {
+        return $this->jsonSuccess($this->usageService->findUsages((int) $document->getId()));
     }
 
     #[Route('/create', name: '_create', methods: [HttpMethodEnum::Post->value])]

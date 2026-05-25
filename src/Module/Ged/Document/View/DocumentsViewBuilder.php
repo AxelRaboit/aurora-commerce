@@ -57,6 +57,7 @@ final readonly class DocumentsViewBuilder
             'createPath' => $this->urlGenerator->generate('backend_ged_documents_create'),
             'showPath' => $this->urlGenerator->generate('backend_ged_documents_show', ['id' => '__id__']),
             'versionsPath' => $this->urlGenerator->generate('backend_ged_documents_versions', ['id' => '__id__']),
+            'usagePath' => $this->urlGenerator->generate('backend_ged_documents_usage', ['id' => '__id__']),
             'updatePath' => $this->urlGenerator->generate('backend_ged_documents_update', ['id' => '__id__']),
             'deletePath' => $this->urlGenerator->generate('backend_ged_documents_delete', ['id' => '__id__']),
             'cropPath' => $this->urlGenerator->generate('backend_ged_documents_crop', ['id' => '__id__']),

@@ -96,6 +96,12 @@ backend:
       status_draft: Brouillon
       status_published: Publié
       status_archived: Archivé
+      usage_title: Utilisation
+      usage_none: Ce document n'est utilisé nulle part
+      usage:
+        billing_invoice: Facture
+        billing_ocr: Import OCR
+        project_task: Tâche projet
       errors:
         title_required: Le titre est obligatoire
         upload_required: Aucun fichier reçu

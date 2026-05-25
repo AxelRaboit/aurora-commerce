@@ -36,6 +36,8 @@ services:
             tags: [aurora.module]
         Aurora\Module\Media\Library\Contract\MediaUsageProviderInterface:
             tags: [aurora.media_usage_provider]
+        Aurora\Module\Ged\Document\Contract\DocumentUsageProviderInterface:
+            tags: [aurora.document_usage_provider]
         Aurora\Core\Frontend\Contract\FrontendInterface:
             tags: [aurora.front]
         Aurora\Module\Editorial\Menu\Contract\MenuLocationProviderInterface:
@@ -54,6 +56,10 @@ services:
     Aurora\Module\Media\Library\Service\MediaUsageService:
         arguments:
             $providers: !tagged_iterator aurora.media_usage_provider
+
+    Aurora\Module\Ged\Document\Service\DocumentUsageService:
+        arguments:
+            $providers: !tagged_iterator aurora.document_usage_provider
 
     Aurora\Core\Sequence\SequencePrefixConflictListener:
         arguments:

@@ -125,6 +125,17 @@ créer son propre stockage. Les `var/uploads/<module>/` self-owned sont
 réservés aux modules dont le fichier **est** l'entité (PdfDocument
 Welding, Document GED, MarkdownNote image, profile photo…).
 
+**Usage / traçabilité (2026-05-25)** : « où ce document est-il utilisé ? »
+est exposé via le registre `DocumentUsageProviderInterface` (tag
+`aurora.document_usage_provider`, agrégé par `DocumentUsageService`, endpoint
+`GET /backend/ged/documents/{id}/usage`, affiché dans le panneau détail).
+**Tout nouveau consommateur W3 doit fournir son provider** (un par module qui
+FK-référence un Document) — sinon ses usages n'apparaîtront pas. Core en a 3 :
+`BillingInvoiceDocumentUsageProvider`, `BillingOcrDocumentUsageProvider`,
+`ProjectDocumentUsageProvider` ; Welding ajoute le sien côté client. C'est le
+miroir exact de `MediaUsageProviderInterface`, mais en **query builder Doctrine**
+(FK typées, pas de scan de contenu — contrairement à Media qui scanne le JSONB).
+
 ## Re-traiter une image self-owned (crop/rotate/…) — toujours vers un NOUVEAU path
 
 **Piège** : `recordVersion()` ne duplique PAS le fichier sur disque — la

@@ -96,6 +96,12 @@ backend:
       status_draft: Draft
       status_published: Published
       status_archived: Archived
+      usage_title: Usage
+      usage_none: This document is not used anywhere
+      usage:
+        billing_invoice: Invoice
+        billing_ocr: OCR import
+        project_task: Project task
       errors:
         title_required: Title is required
         upload_required: No file received
