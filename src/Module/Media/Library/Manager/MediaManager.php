@@ -8,7 +8,7 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Core\Storage\Enum\StorageAreaEnum;
-use Aurora\Core\Support\Num;
+use Aurora\Core\Storage\Service\ImageCropper;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
@@ -24,7 +24,6 @@ use Aurora\Module\Media\Library\Service\ImageVariantGenerator;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use GdImage;
 use InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -44,6 +43,7 @@ class MediaManager implements MediaManagerInterface
         protected readonly MediaFolderRepository $folderRepository,
         protected readonly MediaRepository $mediaRepository,
         protected readonly ImageVariantGenerator $variantGenerator,
+        protected readonly ImageCropper $imageCropper,
         protected readonly TranslatorInterface $translator,
         protected readonly Security $security,
         protected readonly AuditLogger $auditLogger,
@@ -245,56 +245,23 @@ class MediaManager implements MediaManagerInterface
     public function crop(MediaInterface $media, int $x, int $y, int $width, int $height): void
     {
         $mime = MimeTypeEnum::tryFrom($media->getMimeType());
-        $sourceAbsolute = Path::join($this->uploadDir, $media->getPath());
-
-        if (!$mime?->isRasterImage() || !is_file($sourceAbsolute)) {
+        if (null === $mime) {
             return;
         }
 
-        $source = match (true) {
-            $mime->isJpeg() => @imagecreatefromjpeg($sourceAbsolute),
-            MimeTypeEnum::Png === $mime => @imagecreatefrompng($sourceAbsolute),
-            MimeTypeEnum::Gif === $mime => @imagecreatefromgif($sourceAbsolute),
-            MimeTypeEnum::Webp === $mime => @imagecreatefromwebp($sourceAbsolute),
-            default => false,
-        };
-
-        if (!$source instanceof GdImage) {
+        // In-place crop: source and destination are the same physical file.
+        $absolute = Path::join($this->uploadDir, $media->getPath());
+        $dimensions = $this->imageCropper->crop($absolute, $absolute, $mime->value, $x, $y, $width, $height);
+        if (null === $dimensions) {
             return;
         }
 
-        $sourceW = imagesx($source);
-        $sourceH = imagesy($source);
+        $media->setWidth($dimensions[0]);
+        $media->setHeight($dimensions[1]);
 
-        // Clamp to image bounds
-        $x = Num::clamp($x, 0, $sourceW - 1);
-        $y = Num::clamp($y, 0, $sourceH - 1);
-        $width = Num::clamp($width, 1, $sourceW - $x);
-        $height = Num::clamp($height, 1, $sourceH - $y);
-
-        $cropped = imagecreatetruecolor($width, $height);
-        imagecopy($cropped, $source, 0, 0, $x, $y, $width, $height);
-        imagedestroy($source);
-
-        match (true) {
-            $mime->isJpeg() => imagejpeg($cropped, $sourceAbsolute, 85),
-            MimeTypeEnum::Png === $mime => imagepng($cropped, $sourceAbsolute, 6),
-            MimeTypeEnum::Gif === $mime => imagegif($cropped, $sourceAbsolute),
-            MimeTypeEnum::Webp === $mime => imagewebp($cropped, $sourceAbsolute, 85),
-            default => null,
-        };
-
-        imagedestroy($cropped);
-
-        // Update dimensions and regenerate variants
-        [$newW, $newH] = @getimagesize($sourceAbsolute) ?: [$width, $height];
-        $media->setWidth($newW);
-        $media->setHeight($newH);
-
-        // Delete old variants and regenerate
+        // Delete old variants and regenerate from the freshly cropped source.
         $this->variantGenerator->deleteVariants($media->getVariants());
-        $newVariants = $this->variantGenerator->generate($media->getPath(), $mime->value);
-        $media->setVariants($newVariants);
+        $media->setVariants($this->variantGenerator->generate($media->getPath(), $mime->value));
 
         $this->entityManager->flush();
         $this->auditLogger->log('media', 'cropped', 'Media', $media->getId(), [
