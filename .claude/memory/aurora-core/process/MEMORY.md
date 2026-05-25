@@ -6,3 +6,4 @@
 - [process_audit_before_generalize.md](process_audit_before_generalize.md) — auditer avant de généraliser une convention sur N entités
 - [process_atomic_commits.md](process_atomic_commits.md) — un commit par entité lors des rollouts massifs
 - [process_release.md](process_release.md) — processus de release : CHANGELOG, tag, communication vers aurora-client et projets clients
+- [process_propagate_aurora_updates.md](process_propagate_aurora_updates.md) — après un changement core sur develop : push + `make aurora-update` sur les consommateurs (aurora-client = modèle, à bumper en premier)
