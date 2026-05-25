@@ -270,6 +270,20 @@ final class MediaActionsTest extends IntegrationTestCase
         self::assertCount(1, $deleteEntries);
     }
 
+    public function testUsageEndpointRunsEveryProviderWithoutError(): void
+    {
+        // Exercises all MediaUsageProviders' raw SQL against the real schema —
+        // guards against table/column name drift (e.g. unprefixed table names).
+        $media = $this->uploadAndPersist('usage-probe.png', 120, 90);
+
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_media_usage', ['id' => $media->getId()]));
+        $response = $this->client->getResponse();
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = json_decode((string) $response->getContent(), true);
+        self::assertArrayHasKey('total', $body);
+    }
+
     private function loginAsAdmin(): void
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
