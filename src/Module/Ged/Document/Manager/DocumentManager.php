@@ -205,8 +205,10 @@ class DocumentManager implements DocumentManagerInterface
             if ($version->getFilePath() !== $currentPath) {
                 $this->uploader->deleteFile($version->getFilePath());
             }
+
             $this->entityManager->remove($version);
         }
+
         $this->entityManager->flush();
     }
 

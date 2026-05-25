@@ -133,6 +133,7 @@ class MediaManager implements MediaManagerInterface
         foreach ($this->versionRepository->findByMedia($media) as $version) {
             $paths[] = Path::join($this->uploadDir, $version->getPath());
         }
+
         $this->filesystem->remove($paths);
 
         $this->variantGenerator->deleteVariants($media->getVariants());
@@ -269,7 +270,7 @@ class MediaManager implements MediaManagerInterface
         // version row. The current media then points at the new file.
         $directory = Path::getDirectory($oldPath);
         $extension = pathinfo($oldPath, PATHINFO_EXTENSION);
-        $base = $this->slugger->slug(pathinfo((string) $media->getOriginalName(), PATHINFO_FILENAME))->lower();
+        $base = $this->slugger->slug(pathinfo($media->getOriginalName(), PATHINFO_FILENAME))->lower();
         $newFilename = sprintf('%s-%s.%s', $base, uniqid(), $extension);
         $newPath = '' !== $directory ? sprintf('%s/%s', $directory, $newFilename) : $newFilename;
 
@@ -290,7 +291,7 @@ class MediaManager implements MediaManagerInterface
         $media->setFilename($newFilename);
         $media->setWidth($dimensions[0]);
         $media->setHeight($dimensions[1]);
-        $media->setSize((int) (@filesize(Path::join($this->uploadDir, $newPath)) ?: $media->getSize()));
+        $media->setSize(@filesize(Path::join($this->uploadDir, $newPath)) ?: $media->getSize());
         $media->setVariants($this->variantGenerator->generate($newPath, $mime->value));
 
         $this->entityManager->flush();
@@ -314,11 +315,11 @@ class MediaManager implements MediaManagerInterface
     {
         $version = $this->createMediaVersion();
         $version->setMedia($media)
-            ->setPath((string) $media->getPath())
-            ->setFilename((string) $media->getFilename())
-            ->setOriginalName((string) $media->getOriginalName())
-            ->setMimeType((string) $media->getMimeType())
-            ->setSize((int) $media->getSize())
+            ->setPath($media->getPath())
+            ->setFilename($media->getFilename())
+            ->setOriginalName($media->getOriginalName())
+            ->setMimeType($media->getMimeType())
+            ->setSize($media->getSize())
             ->setWidth($media->getWidth())
             ->setHeight($media->getHeight())
             ->setVersionNumber($this->versionRepository->getNextVersionNumber($media));
@@ -350,8 +351,10 @@ class MediaManager implements MediaManagerInterface
             if ($version->getPath() !== $currentPath) {
                 $this->filesystem->remove(Path::join($this->uploadDir, $version->getPath()));
             }
+
             $this->entityManager->remove($version);
         }
+
         $this->entityManager->flush();
     }
 

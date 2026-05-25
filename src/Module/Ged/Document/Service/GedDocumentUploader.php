@@ -118,7 +118,7 @@ final readonly class GedDocumentUploader
         return [
             'filePath' => $relativePath,
             'fileName' => $newFilename,
-            'size' => (int) (@filesize(Path::join($this->uploadDir, $relativePath)) ?: 0),
+            'size' => @filesize(Path::join($this->uploadDir, $relativePath)) ?: 0,
             'width' => $dimensions[0],
             'height' => $dimensions[1],
         ];
