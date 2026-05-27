@@ -7,7 +7,7 @@ namespace Aurora\Tests\Integration\Controller\Frontend;
 use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
-use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;

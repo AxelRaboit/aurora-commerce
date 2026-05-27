@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller;
 
 use Aurora\Core\Enum\HttpMethodEnum;
-use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;

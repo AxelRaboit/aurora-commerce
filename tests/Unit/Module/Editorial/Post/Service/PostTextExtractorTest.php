@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Editorial\Post\Service;
 
 use Aurora\Module\Editorial\Post\Entity\PostInterface;
 use Aurora\Module\Editorial\Post\Entity\PostTranslationInterface;
-use Aurora\Module\Editorial\Post\Entity\PostTypeFieldInterface;
-use Aurora\Module\Editorial\Post\Entity\PostTypeInterface;
 use Aurora\Module\Editorial\Post\Service\PostTextExtractor;
+use Aurora\Module\Editorial\PostType\Entity\PostTypeFieldInterface;
+use Aurora\Module\Editorial\PostType\Entity\PostTypeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;

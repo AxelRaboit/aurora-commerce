@@ -19,7 +19,7 @@ use Aurora\Module\Editorial\Comment\Repository\CommentRepository;
 use Aurora\Module\Editorial\Menu\Repository\MenuRepository;
 use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
-use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryItemRepository;

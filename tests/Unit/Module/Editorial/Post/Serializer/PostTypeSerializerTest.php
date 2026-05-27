@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Post\Serializer;
 
-use Aurora\Module\Editorial\Post\Entity\PostTypeFieldInterface;
-use Aurora\Module\Editorial\Post\Entity\PostTypeInterface;
-use Aurora\Module\Editorial\Post\Serializer\PostTypeSerializer;
+use Aurora\Module\Editorial\PostType\Entity\PostTypeFieldInterface;
+use Aurora\Module\Editorial\PostType\Entity\PostTypeInterface;
+use Aurora\Module\Editorial\PostType\Serializer\PostTypeSerializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 

@@ -9,7 +9,7 @@ use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
 use Aurora\Module\Editorial\Post\MessageHandler\PublishScheduledPostsHandler;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
-use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

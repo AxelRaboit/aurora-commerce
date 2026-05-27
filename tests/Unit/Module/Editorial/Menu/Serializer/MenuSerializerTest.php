@@ -12,7 +12,7 @@ use Aurora\Module\Editorial\Menu\Serializer\MenuItemSerializer;
 use Aurora\Module\Editorial\Menu\Serializer\MenuSerializer;
 use Aurora\Module\Editorial\Menu\Service\MenuLocationRegistry;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
-use Aurora\Module\Editorial\Post\Repository\PostTypeRepository;
+use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;

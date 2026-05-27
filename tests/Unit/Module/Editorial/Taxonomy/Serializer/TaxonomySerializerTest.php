@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Editorial\Taxonomy\Serializer;
 
-use Aurora\Module\Editorial\Post\Entity\PostType;
+use Aurora\Module\Editorial\PostType\Entity\PostType;
 use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTranslation;
