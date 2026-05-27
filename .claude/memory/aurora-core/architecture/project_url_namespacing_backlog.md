@@ -59,11 +59,15 @@ Méthode rodée sur Editorial (commit `17890cb2`) :
 - **PasswordGenerator = `/backend/password-generator`** : outil sans entité ;
   le segment EST déjà le module, pas de 2e segment (`/backend/<module>` suffit).
 
-## Dette connexe découverte (à traiter séparément)
+## Suites structurelles — ✅ FAIT (2026-05)
 
-`src/Module/Editorial/Menu/translations/messages.*.yaml` héberge **`backend.nav.*`**
-— les libellés de **navigation globale** (sections platform/media/configuration,
-items agencies/users/galleries/themes/settings…). Ce sont des trads **Core/site**,
-pas éditoriales : reliquat du déménagement `Core/Menu` → `Editorial/Menu`.
-À remonter vers les trads Core (ou vers chaque module propriétaire) — pas une
-simple fusion dans `Editorial/translations/`.
+- ✅ **Dette nav-trads** : `backend.nav.*` (sections + items Platform/General/
+  Configuration/Media + chrome sidemenu) déplacé de `Editorial/Menu/translations/`
+  vers `Core/translations/` (commit i18n). `galleries` non déplacé (Photo le
+  possède). `Editorial/Menu` ne garde que `backend.menus.*` + `frontend.menu.*`.
+  General/Platform/Media/Configuration/Dev sont des **modules Core** (cf.
+  [[pattern_core_submodules_split]]) → leurs libellés nav appartiennent bien à Core.
+- ✅ **Split PostType** : `PostType`/`PostTypeField` (22 classes) extraits de
+  `Editorial/Post/` vers `Editorial/PostType/` (namespace dédié). Convention
+  "1 entité CRUD = 1 sous-domaine" (cf. Crm/ContactTag). Réfs croisées
+  Post↔PostType explicitées par `use`. Mapping Doctrine auto-couvre le chemin.
