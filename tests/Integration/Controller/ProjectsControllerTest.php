@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Project\Dto\ProjectInput;
@@ -11,10 +12,12 @@ use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Manager\ProjectManager;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class ProjectsControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -23,6 +26,8 @@ final class ProjectsControllerTest extends IntegrationTestCase
         $admin = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'dev@aurora.app', 'type' => 'backend']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function jsonRequest(string $method, string $url, array $payload = []): array
@@ -42,7 +47,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
 
     public function testListReturnsPagination(): void
     {
-        [$status, $body] = $this->jsonRequest('GET', '/backend/projects/list');
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_projects_list'));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -53,7 +58,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
 
     public function testCreateValidatesAndPersists(): void
     {
-        [$status, $body] = $this->jsonRequest('POST', '/backend/projects/create', [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_projects_create'), [
             'title' => 'Test Project',
             'status' => ProjectStatusEnum::Draft->value,
         ]);
@@ -67,7 +72,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
 
     public function testCreateRejectsEmptyTitle(): void
     {
-        [$status, $body] = $this->jsonRequest('POST', '/backend/projects/create', [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_projects_create'), [
             'title' => '',
             'status' => ProjectStatusEnum::Draft->value,
         ]);
@@ -83,7 +88,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
         $manager = static::getContainer()->get(ProjectManager::class);
         $project = $manager->create(new ProjectInput(title: 'Show me', status: ProjectStatusEnum::Active->value));
 
-        [$status, $body] = $this->jsonRequest('GET', '/backend/projects/'.$project->getId());
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_projects_show', ['id' => $project->getId()]));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
