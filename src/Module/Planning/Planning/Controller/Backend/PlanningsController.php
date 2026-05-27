@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/plannings', name: 'backend_plannings')]
+#[Route('/backend/planning/plannings', name: 'backend_planning_plannings')]
 #[IsGranted('planning.plannings.view')]
 class PlanningsController extends AbstractController
 {

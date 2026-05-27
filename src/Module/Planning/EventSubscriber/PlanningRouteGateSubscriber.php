@@ -11,11 +11,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s every Planning admin route (`backend_plannings*`) when the PlanningEnabled setting is off.
+ * 404s every Planning admin route (`backend_planning_plannings*`) when the PlanningEnabled setting is off.
  */
 final readonly class PlanningRouteGateSubscriber implements EventSubscriberInterface
 {
-    private const string ADMIN_PREFIX = 'backend_plannings';
+    private const string ADMIN_PREFIX = 'backend_planning_plannings';
 
     public function __construct(private PlanningContext $planningContext) {}
 

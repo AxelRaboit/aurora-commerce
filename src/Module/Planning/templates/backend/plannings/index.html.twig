@@ -9,13 +9,13 @@
 {% block body %}
 <div {{ vue_component('planning/backend/plannings/PlanningsApp', {
     plannings: plannings,
-    createPath: path('backend_plannings_create'),
-    updatePath: path('backend_plannings_update', {id: '__id__'}),
-    deletePath: path('backend_plannings_delete', {id: '__id__'}),
-    eventsListPath: path('backend_plannings_events_list', {id: '__id__'}),
-    eventCreatePath: path('backend_plannings_events_create', {id: '__id__'}),
-    eventUpdatePath: path('backend_plannings_events_update', {eventId: '__eventId__'}),
-    eventDeletePath: path('backend_plannings_events_delete', {eventId: '__eventId__'}),
+    createPath: path('backend_planning_plannings_create'),
+    updatePath: path('backend_planning_plannings_update', {id: '__id__'}),
+    deletePath: path('backend_planning_plannings_delete', {id: '__id__'}),
+    eventsListPath: path('backend_planning_plannings_events_list', {id: '__id__'}),
+    eventCreatePath: path('backend_planning_plannings_events_create', {id: '__id__'}),
+    eventUpdatePath: path('backend_planning_plannings_events_update', {eventId: '__eventId__'}),
+    eventDeletePath: path('backend_planning_plannings_events_delete', {eventId: '__eventId__'}),
     usersSelectablePath: path('backend_users_selectable'),
     agenciesSelectablePath: path('backend_agencies_selectable'),
 }) }} class="flex-1 min-w-0"></div>

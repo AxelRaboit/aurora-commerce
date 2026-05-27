@@ -42,7 +42,7 @@ final readonly class PlanningModule implements ModuleInterface, ModuleToggleProv
         $items = [];
 
         if ($this->planningContext->isPlanningsEnabled()) {
-            $items[] = new NavItem('backend_plannings', 'backend.nav.plannings', 'calendar-days', requiredPrivilege: 'planning.plannings.view', descriptionKey: 'backend.nav.plannings_description');
+            $items[] = new NavItem('backend_planning_plannings', 'backend.nav.plannings', 'calendar-days', requiredPrivilege: 'planning.plannings.view', descriptionKey: 'backend.nav.plannings_description');
         }
 
         if ([] === $items) {
@@ -56,7 +56,7 @@ final readonly class PlanningModule implements ModuleInterface, ModuleToggleProv
     {
         return [
             new NavSection('planning', [
-                new NavItem('backend_plannings', 'backend.nav.plannings', 'calendar-days', requiredPrivilege: 'planning.plannings.view', descriptionKey: 'backend.nav.plannings_description'),
+                new NavItem('backend_planning_plannings', 'backend.nav.plannings', 'calendar-days', requiredPrivilege: 'planning.plannings.view', descriptionKey: 'backend.nav.plannings_description'),
             ], priority: 40),
         ];
     }

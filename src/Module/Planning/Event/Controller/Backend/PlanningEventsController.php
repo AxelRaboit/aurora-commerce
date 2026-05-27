@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
-#[Route('/backend/plannings', name: 'backend_plannings')]
+#[Route('/backend/planning/plannings', name: 'backend_planning_plannings')]
 #[IsGranted('planning.plannings.view')]
 class PlanningEventsController extends AbstractController
 {
