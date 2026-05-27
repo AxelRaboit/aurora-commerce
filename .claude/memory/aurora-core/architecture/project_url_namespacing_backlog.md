@@ -56,8 +56,24 @@ Méthode rodée sur Editorial (commit `17890cb2`) :
 
 - **`backend_dashboard` = `/backend`** : c'est le home backend ; le namespacer
   (`/backend/general/dashboard`) laisserait la racine sans page. Laissé tel quel.
-- **PasswordGenerator = `/backend/password-generator`** : outil sans entité ;
-  le segment EST déjà le module, pas de 2e segment (`/backend/<module>` suffit).
+
+### Module Tools (Outils) — Vault + PasswordGenerator
+
+"Outils" est un **module conteneur** (`src/Module/Tools/`, `Aurora\Module\Tools`)
+qui regroupe des outils utilitaires **indépendants**, exactement comme Notes
+regroupe Markdown/Block/Post-it. Pattern : `ToolsModule` + `ToolsContext`
+(isBackendEnabled / isVaultEnabled / isPasswordGeneratorEnabled), sous-features
+en dossiers `Tools/Vault/` + `Tools/PasswordGenerator/`, templates/assets/trads
+au niveau module, alias Vite `@tools`.
+- Toggles : `ToolsBackend` (+ sous-toggles `ToolsVault`, `ToolsPasswordGenerator`).
+- Permissions : `tools.vault.use`, `tools.password_generator.use`.
+- URLs : `/backend/tools/vault`, `/backend/tools/password-generator` (routes
+  `backend_tools_*`). Section nav `tools` (label "Outils"/"Tools").
+- Le **coffre-fort** (`Vault`, entités VaultEntry/VaultFolder/VaultUserConfig +
+  crypto) n'est qu'**un outil parmi d'autres** sous Tools, pas le conteneur.
+- Historique : tentative de découplage (2 modules + merge de sections nav +
+  group dashboard) annulée comme sur-ingénierie ; refait proprement à la Notes.
+  Cf. [[feedback_prefer_existing_pattern]].
 
 ## Suites structurelles — ✅ FAIT (2026-05)
 

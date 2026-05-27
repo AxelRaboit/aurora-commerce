@@ -4,15 +4,15 @@ description: Module Vault (gestionnaire mots de passe E2E) ajouté le 2026-05-09
 type: project
 ---
 
-Module `src/Module/Vault/` ajouté le 2026-05-09 avec 3 entités : VaultEntry, VaultFolder, VaultUserConfig.
+Coffre-fort ajouté le 2026-05-09 (3 entités : VaultEntry, VaultFolder, VaultUserConfig). **Depuis 2026-05 c'est un OUTIL du module Tools** : code sous `src/Module/Tools/Vault/` (`Aurora\Module\Tools\Vault\*`), pas un module à part. Voir [[project_url_namespacing_backlog]] §Module Tools.
 
 **Why:** Portage de l'app Warden (gestionnaire de mots de passe standalone) en module Aurora, chiffrement E2E côté client.
 
 **Particularités vs modules CRM/GED standard :**
-- Pas de permission granulaire view/create/edit/delete — une seule permission `vault.use` (vault = données personnelles de l'utilisateur, pas de gestion admin)
+- Pas de permission granulaire view/create/edit/delete — une seule permission `tools.vault.use` (vault = données personnelles de l'utilisateur, pas de gestion admin)
 - Les controllers utilisent `$this->getUser()` pour tout scoper (jamais de ParamConverter `VaultEntry` directement — ownership check manuel via repository avec `findOneByUserAndId`)
 - `VaultUserConfigManager` a un seul hook `setup()` (pas de create+update) — la config est immutable après initialisation
-- Route principale : `GET /backend/vault` → `VaultEntriesController::index()` (pas de separate entry point)
+- Route principale : `GET /backend/tools/vault` → `VaultEntriesController::index()` (pas de separate entry point)
 - `VaultEntriesViewBuilder` charge entries + folders + config en une seule passe (anti-N+1)
 
 **Chiffrement :**
