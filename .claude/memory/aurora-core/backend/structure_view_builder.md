@@ -42,9 +42,9 @@ final readonly class AgenciesViewBuilder
                 $this->agencySerializer->serialize(...),
                 $this->agencyRepository->findAllAlphabetical(),
             ),
-            'createPath' => '/backend/agencies',
-            'updatePath' => '/backend/agencies/__id__/edit',
-            'deletePath' => '/backend/agencies/__id__/delete',
+            'createPath' => '/backend/platform/agencies',
+            'updatePath' => '/backend/platform/agencies/__id__/edit',
+            'deletePath' => '/backend/platform/agencies/__id__/delete',
         ];
     }
 }
@@ -95,8 +95,8 @@ public function indexView(PaginationRequest $pagination): array
 {
     return [
         ...$this->buildListPayload($pagination),  // données initiales + paginées
-        'createPath' => $this->urlGenerator->generate('backend_agencies_create'),
-        'updatePath' => $this->urlGenerator->generate('backend_agencies_update', ['id' => '__id__']),
+        'createPath' => $this->urlGenerator->generate('backend_platform_agencies_create'),
+        'updatePath' => $this->urlGenerator->generate('backend_platform_agencies_update', ['id' => '__id__']),
         // … autres paths utilisés par le composable Vue
     ];
 }

@@ -67,7 +67,7 @@ Tout résultat non-trivial = trap potentiel. À vérifier au cas par cas
 ## Source
 
 Bug remonté le 2026-05-11 sur le Dashboard : "je désactive le dashboard
-pour un user, je devrais être redirigé vers /backend/profile, mais
+pour un user, je devrais être redirigé vers /backend/general/profile, mais
 j'atterris quand même sur /backend comme si c'était activé". Cause :
 GeneralRouteGateSubscriber priorité 16 → firewall n'avait pas encore
 authentifié → ModuleAccessChecker ne voyait pas l'user → seul le global

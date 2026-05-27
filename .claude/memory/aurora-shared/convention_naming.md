@@ -21,8 +21,8 @@ metadata:
 | JS composable / util | `camelCase.js` | `useNoteImageUpload.js` |
 | CSS class | `kebab-case` | `.note-image-wrap` |
 | Folder dans `assets/` ou `templates/` | `kebab-case` | `Module/Ecommerce/backend/listing-categories/` |
-| URL path | `kebab-case` | `/backend/access-request`, `/uploads/media/...` |
-| Symfony route name | `snake_case` | `backend_media_upload`, `uploads_serve` |
+| URL path | `kebab-case` | `/backend/platform/access-request`, `/uploads/media/...` |
+| Symfony route name | `snake_case` | `backend_media_media_upload`, `uploads_serve` |
 | Setting / i18n / DB key | `snake_case` | `notes_markdown_image_max_edge` |
 | Doctrine table / sequence | `snake_case` (`seq_core_<entity>_id`) | `seq_core_markdown_note_id` |
 | Doc folder | `kebab-case` | `getting-started/`, `entity-extensibility/` |

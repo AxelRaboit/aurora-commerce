@@ -228,7 +228,7 @@ Template : `<AppLoadMore :has-more="hasMore" :loading="loading" v-on:load="loadM
 
 ### Backend — `useImageUpload({ onSuccess, onError, endpoint? })`
 
-Upload image multipart (par défaut `/backend/media/upload`).
+Upload image multipart (par défaut `/backend/media/media/upload`).
 
 ```js
 const { uploading, inputRef, uploadFromEvent } = useImageUpload({
@@ -657,8 +657,8 @@ const { items, search, filters, reset } = useClientFilteredList(props.allItems, 
 Remplace les placeholders `__name__` (URI-encoded).
 
 ```js
-buildPath('/backend/users/__id__/edit', { id: 42 });
-// → '/backend/users/42/edit'
+buildPath('/backend/platform/users/__id__/edit', { id: 42 });
+// → '/backend/platform/users/42/edit'
 
 buildPath('/backend/parameters/__key__', { key: 'site/name' });
 // → '/backend/parameters/site%2Fname'

@@ -10,7 +10,7 @@ metadata:
 Aurora monte plusieurs apps Vue indépendantes sur une même page :
 - Le layout (`layout.html.twig`) monte `AppSidemenu` avec des props seedées
   depuis `app.user.<x>`
-- Une page interne (ex: `/backend/profile/sidemenu`) monte `PreferencesApp`
+- Une page interne (ex: `/backend/general/profile/sidemenu`) monte `PreferencesApp`
   avec ses propres props
 
 Quand la page interne sauvegarde un état partagé (ex: couleurs de

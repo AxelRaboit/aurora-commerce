@@ -95,4 +95,4 @@ là (tests Vitest, SSR shell, frontend sans bootstrap admin).
 ## Source
 
 Créé le 2026-05-14, suite à la feature "Appearance tab" sur
-`/backend/settings` (palette du AppColorPicker éditable).
+`/backend/configuration/settings` (palette du AppColorPicker éditable).

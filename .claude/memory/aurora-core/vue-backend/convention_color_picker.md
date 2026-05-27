@@ -57,7 +57,7 @@ Composant existant : preset grid 4×4 + input hex éditable + bouton clear.
 Utilisé pour les pickers riches (vraiment "choisir une couleur").
 
 **Presets configurables depuis l'admin** : les 16 couleurs par défaut
-peuvent être éditées via `/backend/settings` → tab "Apparence" → "Palette
+peuvent être éditées via `/backend/configuration/settings` → tab "Apparence" → "Palette
 du picker de couleurs". L'`ApplicationParameter` `color_picker_presets`
 (group `appearance`, type `json`) stocke la liste. Le composant lit
 `window.__auroraConfig.colorPickerPresets` (injecté par

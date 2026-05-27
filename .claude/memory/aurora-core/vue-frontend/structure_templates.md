@@ -117,7 +117,7 @@ php bin/console dbal:run-sql "UPDATE core_themes SET active = false"
 php bin/console dbal:run-sql "UPDATE core_themes SET active = true WHERE slug = 'mon-theme'"
 ```
 
-Aussi gérables depuis `/backend/themes`.
+Aussi gérables depuis `/backend/configuration/themes`.
 
 ### `resolveAll()`
 

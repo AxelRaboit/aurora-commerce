@@ -98,7 +98,7 @@ scaffold si tu veux autre chose, en piochant dans
 
 Si tu lances la commande sans `--no-interaction`, deux confirmations :
 - **Public-facing pages?** → équivalent à `--with-frontend`
-- **Own tab in /backend/settings?** → équivalent à `--with-settings`
+- **Own tab in /backend/configuration/settings?** → équivalent à `--with-settings`
 
 Puis trois inputs :
 - **Display label** (défaut = nom du module en PascalCase) — texte libre pour la nav

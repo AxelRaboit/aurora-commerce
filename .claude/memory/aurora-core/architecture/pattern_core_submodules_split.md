@@ -34,7 +34,7 @@ modules métier. Auto-discovery via tag `aurora.module` (services.yaml,
 
 Route gating est aussi split par module : `PlatformRouteGateSubscriber`
 gate Users/Agencies/Services, `MediaRouteGateSubscriber` gate
-`backend_media*`, `ConfigurationRouteGateSubscriber` gate Settings/Themes.
+`backend_media_media*`, `ConfigurationRouteGateSubscriber` gate Settings/Themes.
 
 ## Pourquoi
 

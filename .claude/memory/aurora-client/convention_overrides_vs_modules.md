@@ -41,7 +41,7 @@ src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue
             └───────┬──────┘ ▲ └──────────┬──────────┘
                     │        │            │
               PHP mirror     │       URL mirror
-        (Aurora\Module\…\Agency)        (/backend/agencies/…)
+        (Aurora\Module\…\Agency)        (/backend/platform/agencies/…)
                             │
                        séparateur
 ```
@@ -51,13 +51,13 @@ src/Module/Platform/Agency/assets/backend/agencies/AgenciesApp.vue
   convention PSR-4.
 - **`/assets/`** = séparateur conventionnel "ce qui suit est côté front".
 - **Après `/assets/`** → mirror de l'URL/route (HTTP layer).
-  `backend/agencies/AgenciesApp.vue` = route `/backend/agencies/` + composant
+  `backend/agencies/AgenciesApp.vue` = route `/backend/platform/agencies/` + composant
   SPA. kebab pluriel, convention REST/Symfony.
 
 `Agency/` et `agencies/` ne sont **pas un doublon** — ce sont deux
 abstractions distinctes du même domaine, exprimées chacune dans sa
 convention naturelle. Aurora-core utilise les deux partout (`AgencyManager`
-+ `AgenciesController` + route `/backend/agencies/`).
++ `AgenciesController` + route `/backend/platform/agencies/`).
 
 ## Pourquoi ce glob fonctionne
 

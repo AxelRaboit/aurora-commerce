@@ -8,7 +8,7 @@ metadata:
 ## Pattern
 
 Deux settings JSON dans `core_settings`, gérés via l'onglet *Navigation* de
-`/backend/settings` :
+`/backend/configuration/settings` :
 
 | Setting | Clé d'index | Affecte |
 |---|---|---|

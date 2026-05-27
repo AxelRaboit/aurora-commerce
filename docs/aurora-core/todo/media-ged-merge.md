@@ -1,6 +1,6 @@
 # TODO — Fusion Media → GED (un seul système de fichiers)
 
-> **Décision (2026-05-25)** : supprimer la médiathèque (`/backend/media`) et
+> **Décision (2026-05-25)** : supprimer la médiathèque (`/backend/media/media`) et
 > tout câbler sur la GED. `Document` (GED) devient **l'unique entité fichier**.
 > Choix assumé malgré le compromis (cf. « Risques » plus bas) : `Document`
 > portera à la fois des champs de *rendu* (variants/focal) et de *records*
@@ -88,7 +88,7 @@ lignes `core_media` utilisées vers `core_ged_documents`, remapper la FK).
 - [ ] `DocumentPickerModal` partout : `AppBlockEditor`, `AppImagePickerField`
       (form partagé), `PostFeaturedImagePanel`, `PostSeoPanel`, galerie.
 - [ ] `shared/utils/mediaPicker.js` → `documentPicker.js`.
-- [ ] Retirer le NavItem `/backend/media` (toggle module Media).
+- [ ] Retirer le NavItem `/backend/media/media` (toggle module Media).
 
 ## Phase 5 — Suppression de Media
 
@@ -96,7 +96,7 @@ Une fois TOUTES les données migrées et vérifiées :
 
 - [ ] Drop module `Media` : entités `Media`/`MediaFolder`/`MediaVersion`,
       `MediaManager`, `MediaUrlGenerator`, `MediaUsageProvider`, controllers,
-      Vue (`MediaApp`, etc.), route `/backend/media`.
+      Vue (`MediaApp`, etc.), route `/backend/media/media`.
 - [ ] Retirer de `resolve_target_entities` (AuroraBundle).
 - [ ] Migration : drop tables `core_media`, `core_media_folders`,
       `core_media_versions` + séquences.

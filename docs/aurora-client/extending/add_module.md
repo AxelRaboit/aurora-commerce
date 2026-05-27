@@ -128,7 +128,7 @@ php bin/console aurora:make:module Loyalty
 # Avec frontend public
 php bin/console aurora:make:module Loyalty --with-frontend
 
-# Avec onglet Settings dans /backend/settings
+# Avec onglet Settings dans /backend/configuration/settings
 php bin/console aurora:make:module Loyalty --with-settings
 
 # Tout combiné
@@ -177,7 +177,7 @@ auto-découvrir les modules client (son glob ne voit que
 
 Sans `--no-interaction`, deux confirms + deux inputs textuels :
 - **Public-facing pages?** → équivalent à `--with-frontend`
-- **Own tab in /backend/settings?** → équivalent à `--with-settings`
+- **Own tab in /backend/configuration/settings?** → équivalent à `--with-settings`
 - **Display label** (défaut = nom du module en PascalCase) — texte libre nav
 - **NavSection priority** (défaut = 60) — plus bas = plus haut dans le sidemenu
 

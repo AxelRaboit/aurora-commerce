@@ -45,7 +45,7 @@ Servis via `GET /backend/pdfform/documents/{id}/download` (auth requise).
 ## Pourquoi
 
 - Crash PHP avant `unlink()` → orphelins dans `/tmp` → nettoyage horaire automatique
-- Fichiers techniques dans MediaManager → polluent `/backend/media` (expérience utilisateur dégradée)
+- Fichiers techniques dans MediaManager → polluent `/backend/media/media` (expérience utilisateur dégradée)
 - Scheduler > cron système : versionné, testable, pas de dépendance infra
 
 ## Références

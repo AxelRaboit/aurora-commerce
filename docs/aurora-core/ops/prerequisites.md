@@ -98,7 +98,7 @@ ollama list  # Vérifie que les deux apparaissent
 `phi3:*` n'ont pas de support tools fiable → l'assistant ne pourra pas
 appeler `filesystem_read` / `image_read` / `aurora_search`.
 
-Tunables runtime via `/backend/settings` → onglet **Assistant** (modèle
+Tunables runtime via `/backend/configuration/settings` → onglet **Assistant** (modèle
 chat, modèle vision, timeout, num_ctx, prompt système) — pas besoin de
 redéployer pour changer.
 

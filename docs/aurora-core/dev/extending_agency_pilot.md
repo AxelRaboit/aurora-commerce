@@ -325,7 +325,7 @@ class AgencySerializer extends AuroraAgencySerializer
 }
 ```
 
-À ce stade, le payload JSON renvoyé par `/backend/agencies` contient `code`.
+À ce stade, le payload JSON renvoyé par `/backend/platform/agencies` contient `code`.
 
 ---
 
@@ -424,7 +424,7 @@ et c'est ton wrapper qui prend.
 Vérifier que l'override est bien pris :
 
 ```bash
-# Build + recharger la page admin /backend/agencies. Inspecter le DOM :
+# Build + recharger la page admin /backend/platform/agencies. Inspecter le DOM :
 # le composant Vue monté devrait avoir tes slots `extra-headers` /
 # `extra-cells` / `extra-form-fields`.
 npm run build
@@ -437,7 +437,7 @@ npm run build
 ```bash
 make demo                  # recharge fixtures + sync menus/privileges
 make start                 # PHP server + Vite dev server
-# → ouvrir /backend/agencies, créer une agence avec un code, recharger, éditer
+# → ouvrir /backend/platform/agencies, créer une agence avec un code, recharger, éditer
 ```
 
 ---

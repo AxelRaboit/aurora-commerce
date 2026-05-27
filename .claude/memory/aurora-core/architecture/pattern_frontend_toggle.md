@@ -72,10 +72,10 @@ final class TrackingFrontend implements FrontendInterface
 `RootDispatchController::root()` (route `frontend_root`, URL `/`) :
 - Cherche le premier front activé via `Registry::all()` (triés par priorité)
 - Aucun → `redirectToRoute('backend_dashboard')`
-- Et `GeneralRouteGateSubscriber` redirige `/backend` → `/backend/profile`
+- Et `GeneralRouteGateSubscriber` redirige `/backend` → `/backend/general/profile`
   si Dashboard masqué pour l'user
 
-Donc la chaîne `/ → /backend → /backend/profile` fonctionne
+Donc la chaîne `/ → /backend → /backend/general/profile` fonctionne
 automatiquement.
 
 ### Sidemenu "Voir le site"

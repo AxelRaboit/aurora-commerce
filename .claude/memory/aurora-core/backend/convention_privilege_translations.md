@@ -54,7 +54,7 @@ Symptôme : la modale d'admin affiche la **clé brute**
 
 ## Pourquoi
 
-L'UI d'attribution des privilèges (`/backend/users/{id}/privileges`)
+L'UI d'attribution des privilèges (`/backend/platform/users/{id}/privileges`)
 affiche chaque privilège via :
 
 ```vue

@@ -8,15 +8,15 @@ namespacing (cf. [[structure_controller]]).
 
 **Décision user (2026-05) : on namespace TOUT**, sans exception "core/transverse
 reste à plat". Donc aussi l'auth et les pages transverses :
-- `/backend/users` → `/backend/platform/users`
-- `/backend/settings`, `/backend/themes` → `/backend/configuration/…`
-- `/backend/login`, `/backend/register`, `/backend/forgot-password` → `/backend/platform/…`
-- `/backend/profile`, `/backend/search` → `/backend/general/…`
+- `/backend/platform/users` → `/backend/platform/users`
+- `/backend/configuration/settings`, `/backend/configuration/themes` → `/backend/configuration/…`
+- `/backend/platform/login`, `/backend/platform/register`, `/backend/platform/forgot-password` → `/backend/platform/…`
+- `/backend/general/profile`, `/backend/general/search` → `/backend/general/…`
 
 ## Pourquoi
 
 Editorial était le **premier module** du projet et avait gardé des URLs à plat
-(`/backend/posts`), comme plusieurs modules historiques. La majorité des modules
+(`/backend/editorial/posts`), comme plusieurs modules historiques. La majorité des modules
 récents (Crm, Ged, Ecommerce, Erp, Billing, Vault, PersonalFinance, Assistant,
 Notes) namespacent déjà. Le user veut l'uniformité totale plutôt que des
 exceptions au cas par cas.
@@ -36,20 +36,28 @@ Méthode rodée sur Editorial (commit `17890cb2`) :
 5. `cache:clear` + `debug:router` (0 ancien nom) + `npm run build` + `phpunit` +
    `make fix`. Commit atomique par module.
 
-## Backlog (état)
+## Backlog (état) — ✅ TERMINÉ (2026-05)
 
-- ✅ **Editorial** — fait (posts, post-types, forms, comments, taxonomies,
-  menus, sitemap).
-- ⏳ **Platform** : agencies, users, services + auth (login, register,
-  forgot-password, access-request).
-- ⏳ **Media** (médiathèque) : media.
-- ⏳ **General** : profile, search.
-- ⏳ **Outils / PasswordGenerator** : password-generator (vérifier si "Outils"
-  = section nav regroupant d'autres).
-- ⏳ **Photo** : galleries. **Project** : projects, plannings.
-  **Configuration** : settings, themes.
-- Déjà namespacés (rien à faire) : Crm, Ged, Ecommerce, Erp, Billing, Vault,
+- ✅ **Editorial** : posts, post-types, forms, comments, taxonomies, menus, sitemap.
+- ✅ **Photo** : galleries → `/backend/photo/galleries`.
+- ✅ **Project** : projects → `/backend/project/projects`.
+- ✅ **Planning** : plannings → `/backend/planning/plannings`.
+- ✅ **General** : profile, search → `/backend/general/*`.
+- ✅ **Configuration** : settings, themes → `/backend/configuration/*`.
+- ✅ **Media** : media → `/backend/media/media`.
+- ✅ **Platform** : agencies, users, services + **toute l'auth** (login, logout,
+  register, forgot/reset-password, verify-email, access-request, invitation,
+  resend-verification, impersonate) → `/backend/platform/*`. `security.yaml`
+  (firewall login_path/check_path/logout + access_control) mis à jour.
+- Déjà namespacés (n'ont pas bougé) : Crm, Ged, Ecommerce, Erp, Billing, Vault,
   PersonalFinance, Assistant, Notes.
+
+### Exceptions assumées (restent à plat)
+
+- **`backend_dashboard` = `/backend`** : c'est le home backend ; le namespacer
+  (`/backend/general/dashboard`) laisserait la racine sans page. Laissé tel quel.
+- **PasswordGenerator = `/backend/password-generator`** : outil sans entité ;
+  le segment EST déjà le module, pas de 2e segment (`/backend/<module>` suffit).
 
 ## Dette connexe découverte (à traiter séparément)
 

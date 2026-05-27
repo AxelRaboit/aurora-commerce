@@ -577,7 +577,7 @@ const canManage = computed(() =>
 | `ROLE_USER`  | Accès accordé seulement si la permission est dans `$user->getPrivileges()` |
 
 Les privilèges d'un `ROLE_USER` se gèrent depuis
-`/backend/users → Modifier → Privilèges`.
+`/backend/platform/users → Modifier → Privilèges`.
 
 ### 9.4 Plusieurs modules de permissions
 

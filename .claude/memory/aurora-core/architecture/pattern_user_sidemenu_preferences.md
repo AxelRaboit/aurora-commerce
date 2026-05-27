@@ -64,7 +64,7 @@ Sert exclusivement à la page de préférences (pour pouvoir un-hide).
 - Filtrage : `Aurora\Core\Module\Service\ModuleRegistry`
 - Manager hooks : `UserManager::updateSidemenuPreferences()` + `resetSidemenuPreferences()`
 - Audit : `AuditUserManagerDecorator` (event `user.sidemenu_preferences_updated`)
-- Endpoints : `GET/POST /backend/profile/sidemenu`, `POST /backend/profile/sidemenu/reset`
+- Endpoints : `GET/POST /backend/general/profile/sidemenu`, `POST /backend/general/profile/sidemenu/reset`
 - Vue : `preferences/PreferencesApp.vue` (shell à onglets) +
   `preferences/tabs/SidemenuTab.vue` (1er onglet) +
   `composables/useSidemenuPreferences.js`

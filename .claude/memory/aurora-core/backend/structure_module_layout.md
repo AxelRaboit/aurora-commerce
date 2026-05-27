@@ -68,7 +68,7 @@ Sinon `src/Core/<Entité>/`.
   `<Name>Serializer.php`, `<Name>Input.php`.
 - Pluriel pour les Controllers + ViewBuilders : `AgenciesController.php`,
   `AgenciesViewBuilder.php` (cohérent avec le pluriel des routes
-  `/backend/agencies`).
+  `/backend/platform/agencies`).
 
 ## Exemples
 

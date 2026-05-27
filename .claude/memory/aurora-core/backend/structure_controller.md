@@ -11,7 +11,7 @@
 ### Naming
 - `<Plural>Controller` (au pluriel) : `AgenciesController`,
   `PostsController`. Cohérent avec le pluriel de la route
-  `/backend/agencies`, `/backend/editorial/posts`.
+  `/backend/platform/agencies`, `/backend/editorial/posts`.
 - Exception : un singulier si le controller gère une seule ressource
   spécifique (ex: `ProfileController`, `DashboardController`).
 
@@ -59,7 +59,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/agencies', name: 'backend_agencies')]
+#[Route('/backend/platform/agencies', name: 'backend_platform_agencies')]
 #[IsGranted('ROLE_ADMIN')]
 class AgenciesController extends AbstractController
 {
@@ -120,16 +120,17 @@ class AgenciesController extends AbstractController
   **Décision 2026-05 (user) : on namespace TOUT**, y compris les pages
   transverses/auth (`/backend/platform/users`, `/backend/configuration/settings`,
   `/backend/platform/login`). Pas d'exception "core reste plat".
-  ⚠️ Migration en cours : Editorial ✅ fait ; Platform, Media, General,
-  Photo, Project, Configuration + auth restent à plat en attendant le refacto
-  (cf. mémoire projet [[project_url_namespacing_backlog]]).
+  ✅ Migration terminée (2026-05) : tous les modules namespacés. Seules
+  exceptions assumées : `backend_dashboard` reste à `/backend` (home), et
+  `/backend/password-generator` (outil sans entité). Détail + méthode :
+  [[project_url_namespacing_backlog]].
 - **Frontend public** : `{locale}` souvent en premier segment
   (`/{locale}/editorial/{postTypeSlug}/{slug}`).
 - **Action atomique** : suffixe POST `/_create`, `/_update`, `/_delete`
   pour éviter les méthodes PUT/PATCH (l'admin Aurora utilise POST partout
   pour simplifier les forms).
 - **Name de route** : `backend_<plural>_<action>` (ex:
-  `backend_agencies_create`).
+  `backend_platform_agencies_create`).
 
 ## Type-hints à respecter
 

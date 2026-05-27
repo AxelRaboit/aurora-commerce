@@ -120,7 +120,7 @@ make docker-up
 
 ⚠ Le modèle de chat **doit supporter le tool calling** : `qwen3:*`, `qwen2.5:*`, `llama3.1:*`, `mistral-nemo` OK ; `gemma`, `phi3` non.
 
-Tunables sans redéploiement via [`/backend/settings`](http://localhost:8000/backend/settings) → onglet **Assistant** : modèle chat, modèle vision, timeout, num_ctx, prompt système.
+Tunables sans redéploiement via [`/backend/configuration/settings`](http://localhost:8000/backend/configuration/settings) → onglet **Assistant** : modèle chat, modèle vision, timeout, num_ctx, prompt système.
 
 → Documentation complète OCR : [docs/aurora-client/deployment/ocr_setup.md](docs/aurora-client/deployment/ocr_setup.md)
 

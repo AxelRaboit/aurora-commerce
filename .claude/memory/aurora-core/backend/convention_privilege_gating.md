@@ -15,7 +15,7 @@ Au niveau **classe** pour le minimum requis (souvent `view`), au niveau
 **méthode** pour les actions plus restrictives.
 
 ```php
-#[Route('/backend/plannings', name: 'backend_plannings')]
+#[Route('/backend/planning/plannings', name: 'backend_planning_plannings')]
 #[IsGranted('planning.plannings.view')]                  // ← lecture
 class PlanningsController extends AbstractController
 {
