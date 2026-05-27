@@ -113,12 +113,16 @@ class AgenciesController extends AbstractController
 
 ## Conventions de routes
 
-- **Backend admin** : entité métier d'un module → préfixe
-  `/backend/<module>/` + nom au pluriel (`/backend/editorial/posts`,
+- **Backend admin** : **toute** route backend est préfixée par son module
+  → `/backend/<module>/` + nom au pluriel (`/backend/editorial/posts`,
   `/backend/crm/contacts`, `/backend/ged/documents`). Le **nom de route**
-  suit le même namespacing (`backend_editorial_posts`,
-  `backend_crm_contacts`). Les pages transverses core/platform restent à
-  plat (`/backend/users`, `/backend/settings`, `/backend/agencies`).
+  suit le même namespacing (`backend_editorial_posts`, `backend_crm_contacts`).
+  **Décision 2026-05 (user) : on namespace TOUT**, y compris les pages
+  transverses/auth (`/backend/platform/users`, `/backend/configuration/settings`,
+  `/backend/platform/login`). Pas d'exception "core reste plat".
+  ⚠️ Migration en cours : Editorial ✅ fait ; Platform, Media, General,
+  Photo, Project, Configuration + auth restent à plat en attendant le refacto
+  (cf. mémoire projet [[project_url_namespacing_backlog]]).
 - **Frontend public** : `{locale}` souvent en premier segment
   (`/{locale}/editorial/{postTypeSlug}/{slug}`).
 - **Action atomique** : suffixe POST `/_create`, `/_update`, `/_delete`
