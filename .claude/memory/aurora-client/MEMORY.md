@@ -59,6 +59,10 @@ client.
   override `create<X>()` sinon Doctrine perd les champs custom
 - [pitfall_call_parent_apply_input.md](pitfall_call_parent_apply_input.md)
   — toujours `parent::applyInput()` avant d'ajouter ses propres setters
+- [pitfall_symfony_version_drift.md](pitfall_symfony_version_drift.md) —
+  sans `extra.symfony.require` dans le composer.json racine, les composants
+  Symfony (http-kernel & co) dérivent vers le major suivant (toolbar affiche
+  8.0.x au lieu de 7.4) ; correctif + vérif
 - [pitfall_instanceof_scoping.md](pitfall_instanceof_scoping.md) —
   `_instanceof` est scopé par fichier YAML : le client doit dupliquer le
   bloc dans son `services.yaml` pour que ses modules soient auto-tagués
