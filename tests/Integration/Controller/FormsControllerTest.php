@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Integration\Controller;
 
+use Aurora\Core\Enum\HttpMethodEnum;
 use Aurora\Module\Editorial\Form\Entity\Form;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Tests\Integration\IntegrationTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class FormsControllerTest extends IntegrationTestCase
 {
     private KernelBrowser $client;
+    private UrlGeneratorInterface $urlGenerator;
 
     protected function setUp(): void
     {
@@ -23,6 +26,8 @@ final class FormsControllerTest extends IntegrationTestCase
         $admin = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'dev@aurora.app', 'type' => 'backend']);
         self::assertInstanceOf(User::class, $admin);
         $this->client->loginUser($admin, 'admin');
+
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
     }
 
     private function jsonRequest(string $method, string $url, array $payload = []): array
@@ -68,7 +73,7 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testListReturnsOk(): void
     {
-        [$status, $body] = $this->jsonRequest('GET', '/backend/forms/list');
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_editorial_forms_list'));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -77,7 +82,7 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testCreateForm(): void
     {
-        [$status, $body] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
 
         self::assertSame(201, $status);
         self::assertTrue($body['success']);
@@ -90,10 +95,10 @@ final class FormsControllerTest extends IntegrationTestCase
     public function testCreateFormWithDuplicateSlugFails(): void
     {
         $suffix = uniqid();
-        [, $first] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload($suffix));
+        [, $first] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload($suffix));
         self::assertTrue($first['success']);
 
-        [$status, $second] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload($suffix));
+        [$status, $second] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload($suffix));
         self::assertSame(422, $status);
         self::assertFalse($second['success']);
         self::assertNotEmpty($second['errors']);
@@ -109,7 +114,7 @@ final class FormsControllerTest extends IntegrationTestCase
             'translations' => ['fr' => ['title' => '', 'slug' => '', 'description' => null]],
         ];
 
-        [$status, $body] = $this->jsonRequest('POST', '/backend/forms', $payload);
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $payload);
 
         self::assertSame(422, $status);
         self::assertFalse($body['success']);
@@ -117,10 +122,10 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testGetForm(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $id = $created['form']['id'];
 
-        [$status, $body] = $this->jsonRequest('GET', "/backend/forms/{$id}");
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_editorial_forms_get', ['id' => $id]));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -132,14 +137,14 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testUpdateForm(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $id = $created['form']['id'];
 
         $suffix = uniqid();
         $updated = $this->createFormPayload($suffix);
         $updated['translations']['fr']['title'] = 'Formulaire Modifié';
 
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/update", $updated);
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_update', ['id' => $id]), $updated);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -150,10 +155,10 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testCreateField(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $id = $created['form']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/fields", $this->createFieldPayload());
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_create', ['id' => $id]), $this->createFieldPayload());
 
         self::assertSame(201, $status);
         self::assertTrue($body['success']);
@@ -167,11 +172,11 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testCreateFieldWithoutLabelFails(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $id = $created['form']['id'];
 
         $payload = ['type' => 'text', 'required' => false, 'translations' => []];
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/fields", $payload);
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_create', ['id' => $id]), $payload);
 
         self::assertSame(422, $status);
         self::assertFalse($body['success']);
@@ -181,14 +186,14 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testUpdateField(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $formId = $created['form']['id'];
 
-        [, $fieldCreated] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload());
+        [, $fieldCreated] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_create', ['id' => $formId]), $this->createFieldPayload());
         $fieldId = $fieldCreated['field']['id'];
 
         $updated = $this->createFieldPayload('Prénom');
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields/{$fieldId}/edit", $updated);
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_update', ['id' => $formId, 'fieldId' => $fieldId]), $updated);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -199,18 +204,18 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testDeleteField(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $formId = $created['form']['id'];
 
-        [, $fieldCreated] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload());
+        [, $fieldCreated] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_create', ['id' => $formId]), $this->createFieldPayload());
         $fieldId = $fieldCreated['field']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields/{$fieldId}/delete");
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_delete', ['id' => $formId, 'fieldId' => $fieldId]));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
 
-        [, $formBody] = $this->jsonRequest('GET', "/backend/forms/{$formId}");
+        [, $formBody] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_editorial_forms_get', ['id' => $formId]));
         self::assertCount(0, $formBody['form']['fields']);
 
         $this->cleanupForm($formId);
@@ -218,14 +223,14 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testReorderFields(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $formId = $created['form']['id'];
 
-        [, $f1] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload('Champ 1'));
-        [, $f2] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields", $this->createFieldPayload('Champ 2'));
+        [, $f1] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_create', ['id' => $formId]), $this->createFieldPayload('Champ 1'));
+        [, $f2] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_create', ['id' => $formId]), $this->createFieldPayload('Champ 2'));
 
         $orderedIds = [$f2['field']['id'], $f1['field']['id']];
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$formId}/fields/reorder", ['orderedIds' => $orderedIds]);
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_field_reorder', ['id' => $formId]), ['orderedIds' => $orderedIds]);
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -235,10 +240,10 @@ final class FormsControllerTest extends IntegrationTestCase
 
     public function testDeleteForm(): void
     {
-        [, $created] = $this->jsonRequest('POST', '/backend/forms', $this->createFormPayload());
+        [, $created] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_create'), $this->createFormPayload());
         $id = $created['form']['id'];
 
-        [$status, $body] = $this->jsonRequest('POST', "/backend/forms/{$id}/delete");
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_forms_delete', ['id' => $id]));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);

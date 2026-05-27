@@ -61,7 +61,7 @@ trait BuildsPostPayload
     {
         $this->client->request(
             HttpMethodEnum::Post->value,
-            $this->urlGenerator->generate('backend_posts_update', ['id' => $postId]),
+            $this->urlGenerator->generate('backend_editorial_posts_update', ['id' => $postId]),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

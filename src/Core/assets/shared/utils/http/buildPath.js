@@ -6,8 +6,8 @@
  *   buildPath("/backend/users/__id__/edit", { id: 42 })
  *     → "/backend/users/42/edit"
  *
- *   buildPath("/backend/posts/__id__/fields/__fieldId__", { id: 1, fieldId: 7 })
- *     → "/backend/posts/1/fields/7"
+ *   buildPath("/backend/editorial/posts/__id__/fields/__fieldId__", { id: 1, fieldId: 7 })
+ *     → "/backend/editorial/posts/1/fields/7"
  *
  *   buildPath("/backend/parameters/__key__", { key: "site/name" })
  *     → "/backend/parameters/site%2Fname"

@@ -55,7 +55,7 @@ final class TaxonomiesControllerTest extends IntegrationTestCase
 
     public function testCreateCustomTaxonomy(): void
     {
-        [$status, $body] = $this->postJson('backend_taxonomies_create', [], [
+        [$status, $body] = $this->postJson('backend_editorial_taxonomies_create', [], [
             'slug' => 'genre',
             'hierarchical' => false,
             'translations' => [
@@ -74,7 +74,7 @@ final class TaxonomiesControllerTest extends IntegrationTestCase
     public function testCannotDeleteBuiltInTaxonomy(): void
     {
         $taxonomyId = $this->categoryTaxonomyId();
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_taxonomies_delete', ['id' => $taxonomyId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_taxonomies_delete', ['id' => $taxonomyId]));
         self::assertSame(409, $this->client->getResponse()->getStatusCode());
     }
 
@@ -82,13 +82,13 @@ final class TaxonomiesControllerTest extends IntegrationTestCase
     {
         $taxonomyId = $this->categoryTaxonomyId();
 
-        [$status1, $body1] = $this->postJson('backend_taxonomies_term_create', ['id' => $taxonomyId], [
+        [$status1, $body1] = $this->postJson('backend_editorial_taxonomies_term_create', ['id' => $taxonomyId], [
             'translations' => ['fr' => ['name' => 'Parent', 'slug' => 'parent'], 'en' => ['name' => 'Parent', 'slug' => 'parent-en']],
         ]);
         self::assertTrue($body1['success']);
         $parentId = $body1['termId'];
 
-        [$status2, $body2] = $this->postJson('backend_taxonomies_term_create', ['id' => $taxonomyId], [
+        [$status2, $body2] = $this->postJson('backend_editorial_taxonomies_term_create', ['id' => $taxonomyId], [
             'parentId' => $parentId,
             'translations' => ['fr' => ['name' => 'Enfant', 'slug' => 'enfant'], 'en' => ['name' => 'Child', 'slug' => 'child']],
         ]);
@@ -96,7 +96,7 @@ final class TaxonomiesControllerTest extends IntegrationTestCase
         $childId = $body2['termId'];
 
         // Both terms pointing at each other creates a true cycle → must fail
-        [$statusCycle, $bodyCycle] = $this->postJson('backend_taxonomies_term_reorder', ['id' => $taxonomyId], [
+        [$statusCycle, $bodyCycle] = $this->postJson('backend_editorial_taxonomies_term_reorder', ['id' => $taxonomyId], [
             'entries' => [
                 ['id' => $parentId, 'parentId' => $childId, 'position' => 0],
                 ['id' => $childId, 'parentId' => $parentId, 'position' => 0],
@@ -106,7 +106,7 @@ final class TaxonomiesControllerTest extends IntegrationTestCase
         self::assertFalse($bodyCycle['success']);
 
         // Valid reorder at root level
-        [$statusOk, $bodyOk] = $this->postJson('backend_taxonomies_term_reorder', ['id' => $taxonomyId], [
+        [$statusOk, $bodyOk] = $this->postJson('backend_editorial_taxonomies_term_reorder', ['id' => $taxonomyId], [
             'entries' => [
                 ['id' => $parentId, 'parentId' => null, 'position' => 0],
                 ['id' => $childId, 'parentId' => $parentId, 'position' => 0],
@@ -120,24 +120,24 @@ final class TaxonomiesControllerTest extends IntegrationTestCase
     {
         $taxonomyId = $this->categoryTaxonomyId();
 
-        [, $grandparentBody] = $this->postJson('backend_taxonomies_term_create', ['id' => $taxonomyId], [
+        [, $grandparentBody] = $this->postJson('backend_editorial_taxonomies_term_create', ['id' => $taxonomyId], [
             'translations' => ['fr' => ['name' => 'Grand-parent', 'slug' => 'grand-parent'], 'en' => ['name' => 'Grandparent', 'slug' => 'grandparent']],
         ]);
         $grandparentId = $grandparentBody['termId'];
 
-        [, $parentBody] = $this->postJson('backend_taxonomies_term_create', ['id' => $taxonomyId], [
+        [, $parentBody] = $this->postJson('backend_editorial_taxonomies_term_create', ['id' => $taxonomyId], [
             'parentId' => $grandparentId,
             'translations' => ['fr' => ['name' => 'Parent', 'slug' => 'parent-d'], 'en' => ['name' => 'Parent', 'slug' => 'parent-d-en']],
         ]);
         $parentId = $parentBody['termId'];
 
-        [, $childBody] = $this->postJson('backend_taxonomies_term_create', ['id' => $taxonomyId], [
+        [, $childBody] = $this->postJson('backend_editorial_taxonomies_term_create', ['id' => $taxonomyId], [
             'parentId' => $parentId,
             'translations' => ['fr' => ['name' => 'Enfant', 'slug' => 'enfant-d'], 'en' => ['name' => 'Child', 'slug' => 'child-d']],
         ]);
         $childId = $childBody['termId'];
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_taxonomies_term_delete', ['id' => $taxonomyId, 'termId' => $parentId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_taxonomies_term_delete', ['id' => $taxonomyId, 'termId' => $parentId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $terms = static::getContainer()->get(TaxonomyTermRepository::class);

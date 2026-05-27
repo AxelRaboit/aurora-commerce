@@ -11,7 +11,7 @@
 ### Naming
 - `<Plural>Controller` (au pluriel) : `AgenciesController`,
   `PostsController`. Cohérent avec le pluriel de la route
-  `/backend/agencies`, `/backend/posts`.
+  `/backend/agencies`, `/backend/editorial/posts`.
 - Exception : un singulier si le controller gère une seule ressource
   spécifique (ex: `ProfileController`, `DashboardController`).
 
@@ -113,8 +113,12 @@ class AgenciesController extends AbstractController
 
 ## Conventions de routes
 
-- **Backend admin** : préfixe `/backend/` + nom au pluriel
-  (`/backend/agencies`, `/backend/posts`, `/backend/crm/contacts`).
+- **Backend admin** : entité métier d'un module → préfixe
+  `/backend/<module>/` + nom au pluriel (`/backend/editorial/posts`,
+  `/backend/crm/contacts`, `/backend/ged/documents`). Le **nom de route**
+  suit le même namespacing (`backend_editorial_posts`,
+  `backend_crm_contacts`). Les pages transverses core/platform restent à
+  plat (`/backend/users`, `/backend/settings`, `/backend/agencies`).
 - **Frontend public** : `{locale}` souvent en premier segment
   (`/{locale}/editorial/{postTypeSlug}/{slug}`).
 - **Action atomique** : suffixe POST `/_create`, `/_update`, `/_delete`

@@ -10,11 +10,11 @@ describe("buildPath", () => {
 
     it("replaces multiple placeholders", () => {
         expect(
-            buildPath("/backend/posts/__id__/fields/__fieldId__", {
+            buildPath("/backend/editorial/posts/__id__/fields/__fieldId__", {
                 id: 1,
                 fieldId: 7,
             }),
-        ).toBe("/backend/posts/1/fields/7");
+        ).toBe("/backend/editorial/posts/1/fields/7");
     });
 
     it("URI-encodes values with special characters", () => {

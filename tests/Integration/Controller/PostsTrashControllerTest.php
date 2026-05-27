@@ -55,7 +55,7 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     {
         $postId = $this->createPost()->getId();
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_delete', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_delete', ['id' => $postId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $repository = static::getContainer()->get(PostRepository::class);
@@ -69,8 +69,8 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     {
         $postId = $this->createPost()->getId();
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_delete', ['id' => $postId]));
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_restore', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_delete', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_restore', ['id' => $postId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $repository = static::getContainer()->get(PostRepository::class);
@@ -83,8 +83,8 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     {
         $postId = $this->createPost()->getId();
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_delete', ['id' => $postId]));
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_force_delete', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_delete', ['id' => $postId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_force_delete', ['id' => $postId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $repository = static::getContainer()->get(PostRepository::class);
@@ -94,7 +94,7 @@ final class PostsTrashControllerTest extends IntegrationTestCase
     public function testListingExcludesTrashedByDefault(): void
     {
         $trashedId = $this->createPost()->getId();
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_delete', ['id' => $trashedId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_delete', ['id' => $trashedId]));
 
         $repository = static::getContainer()->get(PostRepository::class);
 

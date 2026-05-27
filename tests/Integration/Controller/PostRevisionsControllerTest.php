@@ -53,7 +53,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         );
         self::assertSame(200, $statusCode);
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_posts_revisions', ['id' => $post->getId()]));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_editorial_posts_revisions', ['id' => $post->getId()]));
         $response = $this->client->getResponse();
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string) $response->getContent(), true);
@@ -73,7 +73,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         self::assertSame(200, $statusCode);
 
         // fetch the first revision (which was the state after v2)
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_posts_revisions', ['id' => $post->getId()]));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_editorial_posts_revisions', ['id' => $post->getId()]));
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         $revisionId = $body['revisions'][0]['id'];
 
@@ -86,7 +86,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
         self::assertSame(200, $statusCode);
 
         // restore the first revision
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_posts_revision_restore', ['id' => $post->getId(), 'revisionId' => $revisionId]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_editorial_posts_revision_restore', ['id' => $post->getId(), 'revisionId' => $revisionId]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $restored = static::getContainer()->get(PostRepository::class)->find($post->getId());
@@ -110,7 +110,7 @@ final class PostRevisionsControllerTest extends IntegrationTestCase
             self::assertSame(200, $statusCode);
         }
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_posts_revisions', ['id' => $post->getId()]));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_editorial_posts_revisions', ['id' => $post->getId()]));
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         self::assertCount(2, $body['revisions']);
     }
