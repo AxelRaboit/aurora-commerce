@@ -11,7 +11,7 @@
 
 {% block content %}
     <div {{ vue_component('platform/backend/auth/InvitationAcceptApp', {
-        submitPath: path('backend_invitation_accept', {selector: selector, token: token}),
+        submitPath: path('backend_platform_invitation_accept', {selector: selector, token: token}),
         userName: user.name,
         initialErrors: errors,
     }) }}></div>

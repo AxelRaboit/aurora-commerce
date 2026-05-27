@@ -12,11 +12,11 @@
 
 {% block content %}
     <div {{ vue_component('platform/backend/auth/LoginApp', {
-        checkPath: path('backend_login'),
+        checkPath: path('backend_platform_login'),
         csrfToken: csrf_token('authenticate'),
-        forgotPath: path('backend_forgot_password'),
-        registerPath: path('backend_register'),
-        accessRequestPath: path('backend_access_request'),
+        forgotPath: path('backend_platform_forgot_password'),
+        registerPath: path('backend_platform_register'),
+        accessRequestPath: path('backend_platform_access_request'),
         registrationEnabled: registrationEnabled,
         accessRequestEnabled: accessRequestEnabled,
         lastUsername: last_username,

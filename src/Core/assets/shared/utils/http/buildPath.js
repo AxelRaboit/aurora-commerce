@@ -3,8 +3,8 @@
  * URI-encoding each one so callers don't have to think about special chars.
  *
  * Examples:
- *   buildPath("/backend/users/__id__/edit", { id: 42 })
- *     → "/backend/users/42/edit"
+ *   buildPath("/backend/platform/users/__id__/edit", { id: 42 })
+ *     → "/backend/platform/users/42/edit"
  *
  *   buildPath("/backend/editorial/posts/__id__/fields/__fieldId__", { id: 1, fieldId: 7 })
  *     → "/backend/editorial/posts/1/fields/7"

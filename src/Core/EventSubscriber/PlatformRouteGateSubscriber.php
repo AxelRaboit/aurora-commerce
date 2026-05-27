@@ -27,9 +27,9 @@ final readonly class PlatformRouteGateSubscriber implements EventSubscriberInter
     public function __construct(private PlatformContext $platformContext)
     {
         $this->gates = [
-            'backend_users' => $this->platformContext->isUsersEnabled(...),
-            'backend_agencies' => $this->platformContext->isAgenciesEnabled(...),
-            'backend_services' => $this->platformContext->isServicesEnabled(...),
+            'backend_platform_users' => $this->platformContext->isUsersEnabled(...),
+            'backend_platform_agencies' => $this->platformContext->isAgenciesEnabled(...),
+            'backend_platform_services' => $this->platformContext->isServicesEnabled(...),
         ];
     }
 

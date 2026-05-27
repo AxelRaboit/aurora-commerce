@@ -44,7 +44,7 @@ final readonly class RedirectUnauthenticatedOnNotFoundListener
         }
 
         $event->setResponse(new RedirectResponse(
-            $this->urlGenerator->generate('backend_login'),
+            $this->urlGenerator->generate('backend_platform_login'),
         ));
     }
 

@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/users/{id}/impersonate-frontend', name: 'backend_users_impersonate_frontend', methods: [HttpMethodEnum::Get->value])]
+#[Route('/backend/platform/users/{id}/impersonate-frontend', name: 'backend_platform_users_impersonate_frontend', methods: [HttpMethodEnum::Get->value])]
 #[IsGranted('ROLE_DEV')]
 final class ImpersonateFrontendController extends AbstractController
 {

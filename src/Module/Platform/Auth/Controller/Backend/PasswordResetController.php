@@ -26,7 +26,7 @@ final class PasswordResetController extends AbstractController
         private readonly PasswordResetViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/backend/forgot-password', name: 'backend_forgot_password')]
+    #[Route('/backend/platform/forgot-password', name: 'backend_platform_forgot_password')]
     public function forgot(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
@@ -44,7 +44,7 @@ final class PasswordResetController extends AbstractController
         return $this->render('@Platform/backend/auth/forgot_password.html.twig', $this->viewBuilder->forgotView($status));
     }
 
-    #[Route('/backend/reset-password/{selector}/{token}', name: 'backend_reset_password')]
+    #[Route('/backend/platform/reset-password/{selector}/{token}', name: 'backend_platform_reset_password')]
     public function reset(string $selector, string $token, Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
@@ -56,7 +56,7 @@ final class PasswordResetController extends AbstractController
         if (!$resetRequest instanceof ResetPasswordRequest) {
             $this->addFlash('error', $this->translator->trans('backend.auth.reset_password.invalid_link'));
 
-            return $this->redirectToRoute('backend_forgot_password');
+            return $this->redirectToRoute('backend_platform_forgot_password');
         }
 
         $errors = [];
@@ -69,7 +69,7 @@ final class PasswordResetController extends AbstractController
                 $this->passwordResetManager->resetPassword($resetRequest, $input->password);
                 $this->addFlash('success', $this->translator->trans('backend.auth.reset_password.success'));
 
-                return $this->redirectToRoute('backend_login');
+                return $this->redirectToRoute('backend_platform_login');
             }
         }
 

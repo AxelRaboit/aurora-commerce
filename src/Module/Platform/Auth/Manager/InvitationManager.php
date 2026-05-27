@@ -31,12 +31,12 @@ class InvitationManager implements InvitationManagerInterface
             return;
         }
 
-        $invitationUrl = $this->urlGenerator->generate('backend_invitation_accept', [
+        $invitationUrl = $this->urlGenerator->generate('backend_platform_invitation_accept', [
             'selector' => $selector,
             'token' => $plainToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $loginUrl = $this->urlGenerator->generate('backend_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $loginUrl = $this->urlGenerator->generate('backend_platform_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $siteName = $this->settingRepository->getOrDefault(ApplicationParameterEnum::SiteName);
 
         $body = $this->twig->render('@Shared/email/invitation.html.twig', [

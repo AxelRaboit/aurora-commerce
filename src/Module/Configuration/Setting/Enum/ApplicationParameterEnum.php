@@ -26,7 +26,7 @@ enum ApplicationParameterEnum: string implements ApplicationParameterEnumInterfa
     case CommentModerationEnabled = 'comment_moderation_enabled';
     case MaintenanceMode = 'maintenance_mode';
     case AdminRegistrationEnabled = 'backend_registration_enabled';
-    case AdminAccessRequestEnabled = 'backend_access_request_enabled';
+    case AdminAccessRequestEnabled = 'backend_platform_access_request_enabled';
     case FrontRegistrationEnabled = 'frontend_registration_enabled';
     case PostRevisionsLimit = 'post_revisions_limit';
     case TrashAutoPurgeDays = 'trash_auto_purge_days';

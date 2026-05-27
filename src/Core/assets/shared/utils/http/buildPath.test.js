@@ -3,9 +3,9 @@ import { buildPath } from "@/shared/utils/http/buildPath.js";
 
 describe("buildPath", () => {
     it("replaces a single placeholder", () => {
-        expect(buildPath("/backend/users/__id__/edit", { id: 42 })).toBe(
-            "/backend/users/42/edit",
-        );
+        expect(
+            buildPath("/backend/platform/users/__id__/edit", { id: 42 }),
+        ).toBe("/backend/platform/users/42/edit");
     });
 
     it("replaces multiple placeholders", () => {
@@ -30,8 +30,12 @@ describe("buildPath", () => {
     });
 
     it("returns the template untouched when params is empty", () => {
-        expect(buildPath("/backend/users", {})).toBe("/backend/users");
-        expect(buildPath("/backend/users")).toBe("/backend/users");
+        expect(buildPath("/backend/platform/users", {})).toBe(
+            "/backend/platform/users",
+        );
+        expect(buildPath("/backend/platform/users")).toBe(
+            "/backend/platform/users",
+        );
     });
 
     it("leaves unknown placeholders intact", () => {

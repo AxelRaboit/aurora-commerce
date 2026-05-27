@@ -21,10 +21,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * User permissions sub-domain — privileges (per-action allowlist, dev
  * only) + disabled modules (per-user module gating). Split from
- * `UsersController`. Route names preserved (`backend_users_privileges`,
+ * `UsersController`. Route names preserved (`backend_platform_users_privileges`,
  * `_disabled_modules`).
  */
-#[Route('/backend/users', name: 'backend_users')]
+#[Route('/backend/platform/users', name: 'backend_platform_users')]
 #[IsGranted('platform.users.manage')]
 final class UserPermissionsController extends AbstractController
 {

@@ -28,7 +28,7 @@ final class AccessRequestController extends AbstractController
         private readonly AccessRequestViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/backend/access-request', name: 'backend_access_request')]
+    #[Route('/backend/platform/access-request', name: 'backend_platform_access_request')]
     public function __invoke(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
@@ -51,6 +51,6 @@ final class AccessRequestController extends AbstractController
         $this->accessRequestManager->create($input->email, $input->name, $input->message);
         $this->addFlash('success', $this->translator->trans('backend.auth.access_request.success_toast'));
 
-        return $this->redirectToRoute('backend_login');
+        return $this->redirectToRoute('backend_platform_login');
     }
 }

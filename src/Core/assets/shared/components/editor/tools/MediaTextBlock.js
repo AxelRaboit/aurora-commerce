@@ -194,9 +194,12 @@ export default class MediaTextBlock {
             if (!id || id < 1) return;
             error.style.display = "none";
             try {
-                const response = await fetch(`/backend/media/media/${id}/info`, {
-                    headers: { Accept: "application/json" },
-                });
+                const response = await fetch(
+                    `/backend/media/media/${id}/info`,
+                    {
+                        headers: { Accept: "application/json" },
+                    },
+                );
                 if (!response.ok) throw new Error();
                 const data = await response.json();
                 if (data?.media?.url) {

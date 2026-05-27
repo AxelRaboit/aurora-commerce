@@ -27,7 +27,7 @@ final class RegisterController extends AbstractController
         private readonly RegisterViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/backend/register', name: 'backend_register')]
+    #[Route('/backend/platform/register', name: 'backend_platform_register')]
     public function register(Request $request): Response
     {
         if ($this->getUser() instanceof UserInterface) {
@@ -50,10 +50,10 @@ final class RegisterController extends AbstractController
         $this->userManager->register($input->name, $input->email, $input->password);
         $request->getSession()->set('_admin_pending_email', $input->email);
 
-        return $this->redirectToRoute('backend_register_confirm');
+        return $this->redirectToRoute('backend_platform_register_confirm');
     }
 
-    #[Route('/backend/register/confirm', name: 'backend_register_confirm', methods: [HttpMethodEnum::Get->value])]
+    #[Route('/backend/platform/register/confirm', name: 'backend_platform_register_confirm', methods: [HttpMethodEnum::Get->value])]
     public function registerConfirm(Request $request): Response
     {
         $pendingEmail = $request->getSession()->get('_admin_pending_email');
@@ -65,7 +65,7 @@ final class RegisterController extends AbstractController
         ));
     }
 
-    #[Route('/backend/resend-verification', name: 'backend_resend_verification', methods: [HttpMethodEnum::Post->value])]
+    #[Route('/backend/platform/resend-verification', name: 'backend_platform_resend_verification', methods: [HttpMethodEnum::Post->value])]
     public function resendVerification(Request $request): Response
     {
         $email = $request->getSession()->get('_admin_pending_email', '');
@@ -73,10 +73,10 @@ final class RegisterController extends AbstractController
             $this->userManager->resendVerificationEmail($email);
         }
 
-        return $this->redirectToRoute('backend_register_confirm', ['resent' => 1]);
+        return $this->redirectToRoute('backend_platform_register_confirm', ['resent' => 1]);
     }
 
-    #[Route('/backend/verify-email/{token}', name: 'backend_verify_email', methods: [HttpMethodEnum::Get->value])]
+    #[Route('/backend/platform/verify-email/{token}', name: 'backend_platform_verify_email', methods: [HttpMethodEnum::Get->value])]
     public function verifyEmail(string $token): Response
     {
         $user = $this->userManager->verifyEmail($token);

@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/services', name: 'backend_services')]
+#[Route('/backend/platform/services', name: 'backend_platform_services')]
 #[IsGranted('platform.services.manage')]
 final class ServicesController extends AbstractController
 {

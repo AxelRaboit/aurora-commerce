@@ -28,14 +28,14 @@ final class InvitationController extends AbstractController
         private readonly InvitationViewBuilder $viewBuilder,
     ) {}
 
-    #[Route('/backend/invitation/{selector}/{token}', name: 'backend_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
+    #[Route('/backend/platform/invitation/{selector}/{token}', name: 'backend_platform_invitation_accept', methods: [HttpMethodEnum::Get->value, HttpMethodEnum::Post->value])]
     public function accept(Request $request, string $selector, string $token): Response
     {
         $user = $this->userManager->findValidInvitation($selector, $token);
         if (!$user instanceof User) {
             $this->addFlash('error', $this->translator->trans('backend.auth.invitation.expired'));
 
-            return $this->redirectToRoute('backend_login');
+            return $this->redirectToRoute('backend_platform_login');
         }
 
         if ($request->isMethod(HttpMethodEnum::Post->value)) {

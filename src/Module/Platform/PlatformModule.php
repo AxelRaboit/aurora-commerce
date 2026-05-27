@@ -47,15 +47,15 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
         $items = [];
 
         if ($this->platformContext->isUsersEnabled()) {
-            $items[] = new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'platform.users.manage', descriptionKey: 'backend.nav.users_description');
+            $items[] = new NavItem('backend_platform_users', 'backend.nav.users', 'users', requiredPrivilege: 'platform.users.manage', descriptionKey: 'backend.nav.users_description');
         }
 
         if ($this->platformContext->isAgenciesEnabled()) {
-            $items[] = new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'platform.agencies.manage', descriptionKey: 'backend.nav.agencies_description');
+            $items[] = new NavItem('backend_platform_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'platform.agencies.manage', descriptionKey: 'backend.nav.agencies_description');
         }
 
         if ($this->platformContext->isServicesEnabled()) {
-            $items[] = new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'platform.services.manage', descriptionKey: 'backend.nav.services_description');
+            $items[] = new NavItem('backend_platform_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'platform.services.manage', descriptionKey: 'backend.nav.services_description');
         }
 
         if ([] === $items) {
@@ -69,9 +69,9 @@ final readonly class PlatformModule implements ModuleInterface, ModuleToggleProv
     {
         return [
             new NavSection('platform', [
-                new NavItem('backend_users', 'backend.nav.users', 'users', requiredPrivilege: 'platform.users.manage', descriptionKey: 'backend.nav.users_description'),
-                new NavItem('backend_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'platform.agencies.manage', descriptionKey: 'backend.nav.agencies_description'),
-                new NavItem('backend_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'platform.services.manage', descriptionKey: 'backend.nav.services_description'),
+                new NavItem('backend_platform_users', 'backend.nav.users', 'users', requiredPrivilege: 'platform.users.manage', descriptionKey: 'backend.nav.users_description'),
+                new NavItem('backend_platform_agencies', 'backend.nav.agencies', 'building-2', requiredPrivilege: 'platform.agencies.manage', descriptionKey: 'backend.nav.agencies_description'),
+                new NavItem('backend_platform_services', 'backend.nav.services', 'briefcase', requiredPrivilege: 'platform.services.manage', descriptionKey: 'backend.nav.services_description'),
             ], priority: 20),
         ];
     }

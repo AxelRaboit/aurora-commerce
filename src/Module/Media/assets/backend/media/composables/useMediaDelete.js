@@ -16,10 +16,14 @@ export function useMediaDelete(props, media, editingMedia) {
         deletingMedia.value = item;
         deletingMediaUsage.value = null;
         deletingMediaUsageLoading.value = true;
-        const data = await request(`/backend/media/media/${item.id}/usage`, null, {
-            method: "GET",
-            noGuard: true,
-        });
+        const data = await request(
+            `/backend/media/media/${item.id}/usage`,
+            null,
+            {
+                method: "GET",
+                noGuard: true,
+            },
+        );
         if (data) deletingMediaUsage.value = data;
         deletingMediaUsageLoading.value = false;
     }

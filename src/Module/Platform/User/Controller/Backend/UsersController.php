@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/users', name: 'backend_users')]
+#[Route('/backend/platform/users', name: 'backend_platform_users')]
 #[IsGranted('platform.users.manage')]
 class UsersController extends AbstractController
 {

@@ -12,7 +12,8 @@ const PATHS = {
     commentDelete: "/backend/project/projects/comments/__commentId__/delete",
     itemsReplace: "/backend/project/projects/tasks/__taskId__/items",
     timeEntryCreate: "/backend/project/projects/tasks/__taskId__/time-entries",
-    timeEntryDelete: "/backend/project/projects/time-entries/__entryId__/delete",
+    timeEntryDelete:
+        "/backend/project/projects/time-entries/__entryId__/delete",
     attachmentsAttach: "/backend/project/projects/tasks/__taskId__/attachments",
     attachmentDetach:
         "/backend/project/projects/tasks/__taskId__/attachments/__documentId__",

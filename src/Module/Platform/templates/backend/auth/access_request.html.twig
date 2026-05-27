@@ -13,8 +13,8 @@
 
 {% block content %}
     <div {{ vue_component('platform/backend/auth/AccessRequestApp', {
-        submitPath: path('backend_access_request'),
-        loginPath: path('backend_login'),
+        submitPath: path('backend_platform_access_request'),
+        loginPath: path('backend_platform_login'),
         accessRequestEnabled: accessRequestEnabled,
         initialErrors: errors,
         values: {
