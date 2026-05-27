@@ -50,7 +50,7 @@ const { t } = useI18n();
 const props = defineProps({
     modelValue: { type: Array, default: () => [] },
     placeholder: { type: String, default: "" },
-    uploadUrl: { type: String, default: "/backend/media/upload" },
+    uploadUrl: { type: String, default: "/backend/media/media/upload" },
     /**
      * Module-specific tools dict, merged on top of the built-in set.
      * Shape matches Editor.js' native `tools` config:

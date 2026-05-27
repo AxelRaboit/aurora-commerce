@@ -13,7 +13,7 @@ use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
  *
  * When the Dashboard is masked (globally or per-user),
  * {@see GeneralRouteGateSubscriber}
- * redirects any hit on `backend_dashboard` to `backend_profile`
+ * redirects any hit on `backend_dashboard` to `backend_general_profile`
  * so the user always lands on something they can read instead of
  * seeing a 404.
  */

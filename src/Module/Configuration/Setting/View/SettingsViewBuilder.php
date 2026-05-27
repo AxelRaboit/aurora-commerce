@@ -87,7 +87,7 @@ final readonly class SettingsViewBuilder
         return [
             'groups' => $groups,
             'tabs' => $tabs,
-            'mediaPickerPath' => $this->urlGenerator->generate('backend_media'),
+            'mediaPickerPath' => $this->urlGenerator->generate('backend_media_media'),
             'postSearchPath' => $this->urlGenerator->generate('backend_editorial_posts_search'),
         ];
     }

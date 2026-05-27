@@ -56,7 +56,7 @@ export function useMediaNavigation(props, clearSelection) {
         history.pushState(
             { folderId, search, all: false },
             "",
-            mediaUrl("/backend/media", folderId, search),
+            mediaUrl("/backend/media/media", folderId, search),
         );
     }
 
@@ -65,7 +65,7 @@ export function useMediaNavigation(props, clearSelection) {
         history.pushState(
             { folderId: null, search, all: true },
             "",
-            mediaUrl("/backend/media", null, search, true),
+            mediaUrl("/backend/media/media", null, search, true),
         );
     }
 
@@ -80,7 +80,7 @@ export function useMediaNavigation(props, clearSelection) {
     async function focusMediaFromQuery(openEditMedia) {
         if (!initialFocusId) return;
         const data = await request(
-            `/backend/media/${initialFocusId}/info`,
+            `/backend/media/media/${initialFocusId}/info`,
             null,
             { method: "GET", noGuard: true },
         );
@@ -106,7 +106,7 @@ export function useMediaNavigation(props, clearSelection) {
             },
             "",
             mediaUrl(
-                "/backend/media",
+                "/backend/media/media",
                 currentFolderId.value,
                 searchQuery.value,
             ),

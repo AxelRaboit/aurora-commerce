@@ -5,7 +5,7 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'backend.nav.profile'|trans, href: path('backend_profile')},
+            {label: 'backend.nav.profile'|trans, href: path('backend_general_profile')},
             {label: 'backend.profile.preferences.title'|trans},
         ],
     }) }}
@@ -19,7 +19,7 @@
     hiddenNavSections: hiddenNavSections,
     hiddenNavItems: hiddenNavItems,
     navSectionColors: navSectionColors,
-    savePath: path('backend_profile_sidemenu_save'),
-    resetPath: path('backend_profile_sidemenu_reset'),
+    savePath: path('backend_general_profile_sidemenu_save'),
+    resetPath: path('backend_general_profile_sidemenu_reset'),
 }) }} class="flex-1"></div>
 {% endblock %}

@@ -43,11 +43,11 @@ final readonly class ConfigurationModule implements ModuleInterface, ModuleToggl
         $items = [];
 
         if ($this->configurationContext->isSettingsEnabled()) {
-            $items[] = new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'configuration.settings.manage', descriptionKey: 'backend.nav.settings_description');
+            $items[] = new NavItem('backend_configuration_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'configuration.settings.manage', descriptionKey: 'backend.nav.settings_description');
         }
 
         if ($this->configurationContext->isThemesEnabled()) {
-            $items[] = new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'configuration.themes.manage', descriptionKey: 'backend.nav.themes_description');
+            $items[] = new NavItem('backend_configuration_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'configuration.themes.manage', descriptionKey: 'backend.nav.themes_description');
         }
 
         if ([] === $items) {
@@ -61,8 +61,8 @@ final readonly class ConfigurationModule implements ModuleInterface, ModuleToggl
     {
         return [
             new NavSection('configuration', [
-                new NavItem('backend_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'configuration.settings.manage', descriptionKey: 'backend.nav.settings_description'),
-                new NavItem('backend_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'configuration.themes.manage', descriptionKey: 'backend.nav.themes_description'),
+                new NavItem('backend_configuration_settings', 'backend.nav.settings', 'settings', requiredPrivilege: 'configuration.settings.manage', descriptionKey: 'backend.nav.settings_description'),
+                new NavItem('backend_configuration_themes', 'backend.nav.themes', 'palette', requiredPrivilege: 'configuration.themes.manage', descriptionKey: 'backend.nav.themes_description'),
             ], priority: 25),
         ];
     }

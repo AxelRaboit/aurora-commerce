@@ -11,7 +11,7 @@ use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Surfaces the Markdown-notes module's settings as a dedicated tab on
- * the `/backend/settings` page. The registry merges tabs with the same
+ * the `/backend/configuration/settings` page. The registry merges tabs with the same
  * id from every provider, so adding another `case` to
  * {@see MarkdownNoteSettingEnum} immediately shows up in the same tab.
  *

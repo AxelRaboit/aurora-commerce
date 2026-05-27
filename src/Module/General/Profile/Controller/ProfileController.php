@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function in_array;
 
-#[Route('/backend/profile', name: 'backend_profile')]
+#[Route('/backend/general/profile', name: 'backend_general_profile')]
 #[IsGranted(UserRoleEnum::User->value)]
 final class ProfileController extends AbstractController
 {

@@ -7,7 +7,7 @@ namespace Aurora\Module\Assistant\Setting;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
- * Module-level settings surfaced on the `/backend/settings` page under
+ * Module-level settings surfaced on the `/backend/configuration/settings` page under
  * the "assistant" tab. The Ollama URL itself stays in the env (less
  * likely to need a runtime change, and keeping a remote URL out of the
  * DB avoids accidental leakage on a dump) — everything tunable at

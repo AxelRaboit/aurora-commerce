@@ -50,7 +50,7 @@ final class MediaControllerTest extends IntegrationTestCase
 
     private function createFolder(string $name, ?int $parentId = null): MediaFolder
     {
-        [, $body] = $this->postJson('backend_media_folder_create', [], ['name' => $name, 'parentId' => $parentId]);
+        [, $body] = $this->postJson('backend_media_media_folder_create', [], ['name' => $name, 'parentId' => $parentId]);
         self::assertTrue($body['success']);
         /** @var MediaFolder $folder */
         $folder = static::getContainer()->get(MediaFolderRepository::class)->find($body['folder']['id']);
@@ -77,7 +77,7 @@ final class MediaControllerTest extends IntegrationTestCase
     {
         $media = $this->createMedia();
 
-        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_media_update', ['id' => $media->getId()], [
             'alt' => '',
         ]);
 
@@ -90,7 +90,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $media = $this->createMedia();
         $folder = $this->createFolder('Banners');
 
-        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_media_update', ['id' => $media->getId()], [
             'alt' => 'A nice banner',
             'caption' => 'Marketing banner for homepage',
             'focalX' => 0.5,
@@ -110,7 +110,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $parent = $this->createFolder('Parent');
         $child = $this->createFolder('Child', $parent->getId());
 
-        [$status, $body] = $this->postJson('backend_media_folder_edit', ['id' => $parent->getId()], [
+        [$status, $body] = $this->postJson('backend_media_media_folder_edit', ['id' => $parent->getId()], [
             'name' => 'Parent',
             'parentId' => $child->getId(),
         ]);
@@ -124,7 +124,7 @@ final class MediaControllerTest extends IntegrationTestCase
     {
         $media = $this->createMedia();
 
-        [$status, $body] = $this->postJson('backend_media_update', ['id' => $media->getId()], [
+        [$status, $body] = $this->postJson('backend_media_media_update', ['id' => $media->getId()], [
             'alt' => 'x',
             'focalX' => 1.5,
             'focalY' => -0.2,
@@ -142,7 +142,7 @@ final class MediaControllerTest extends IntegrationTestCase
         $media->setFolder($folder);
         $entityManager->flush();
 
-        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_folder_delete', ['id' => $folder->getId()]));
+        $this->client->request(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_media_media_folder_delete', ['id' => $folder->getId()]));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
 
         $entityManager->clear();

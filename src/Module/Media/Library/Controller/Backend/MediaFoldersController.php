@@ -22,9 +22,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * Media folders sub-domain — create / edit / delete folders. Split from
  * `MediaController` to keep the two concerns isolated (media items vs
- * folder tree). Route names preserved (`backend_media_folder_*`).
+ * folder tree). Route names preserved (`backend_media_media_folder_*`).
  */
-#[Route('/backend/media', name: 'backend_media')]
+#[Route('/backend/media/media', name: 'backend_media_media')]
 final class MediaFoldersController extends AbstractController
 {
     use JsonRequestTrait;

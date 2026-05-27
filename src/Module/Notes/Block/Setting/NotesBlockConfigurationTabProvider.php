@@ -11,7 +11,7 @@ use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Contributes the block-notes settings to the same "notes" tab on
- * `/backend/settings`. The registry merges tabs with the same id from
+ * `/backend/configuration/settings`. The registry merges tabs with the same id from
  * every provider, so Markdown's and Block's fields appear side by side
  * under one header — no UI duplication.
  *

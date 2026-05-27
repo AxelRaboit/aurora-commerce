@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 use const JSON_THROW_ON_ERROR;
 
-#[Route('/backend/settings', name: 'backend_settings')]
+#[Route('/backend/configuration/settings', name: 'backend_configuration_settings')]
 #[IsGranted('configuration.settings.manage')]
 final class SettingsController extends AbstractController
 {

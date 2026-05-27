@@ -16,7 +16,7 @@ import { HttpMethod } from "@/shared/utils/http/httpMethod.js";
 export function useImageUpload({
     onSuccess,
     onError,
-    endpoint = "/backend/media/upload",
+    endpoint = "/backend/media/media/upload",
 } = {}) {
     const uploading = ref(false);
     const inputRef = ref(null);

@@ -11,7 +11,7 @@ use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Surfaces the Assistant module's settings as a dedicated tab on the
- * `/backend/settings` page.
+ * `/backend/configuration/settings` page.
  */
 final readonly class AssistantConfigurationTabProvider implements ConfigurationTabProviderInterface
 {

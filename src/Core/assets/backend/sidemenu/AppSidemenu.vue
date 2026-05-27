@@ -39,14 +39,14 @@ const props = defineProps({
     logoutCsrf: { type: String, default: "" },
     frontPath: { type: String, default: "/" },
     hasEnabledFronts: { type: Boolean, default: true },
-    profilePath: { type: String, default: "/backend/profile" },
-    sidemenuPreferencesPath: { type: String, default: "/backend/profile/sidemenu" },
+    profilePath: { type: String, default: "/backend/general/profile" },
+    sidemenuPreferencesPath: { type: String, default: "/backend/general/profile/sidemenu" },
     logoutPath: { type: String, default: "/logout" },
     mailpitUrl: { type: String, default: "" },
     siteName: { type: String, default: "Aurora" },
     siteLogoUrl: { type: String, default: "" },
     appVersion: { type: String, default: "" },
-    searchPath: { type: String, default: "/backend/search" },
+    searchPath: { type: String, default: "/backend/general/search" },
     notificationsListPath: { type: String, default: "" },
     notificationsMarkReadPath: { type: String, default: "" },
     notificationsMarkAllReadPath: { type: String, default: "" },
@@ -310,7 +310,7 @@ function openSearchFromMobile() {
 
             <AppNavLink
                 :href="profilePath"
-                :active="isActiveExact('backend_profile')"
+                :active="isActiveExact('backend_general_profile')"
                 :tooltip-title="t('backend.nav.profile')"
             >
                 <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
@@ -319,7 +319,7 @@ function openSearchFromMobile() {
 
             <AppNavLink
                 :href="sidemenuPreferencesPath"
-                :active="isActive('backend_profile_sidemenu')"
+                :active="isActive('backend_general_profile_sidemenu')"
                 :tooltip-title="t('backend.profile.preferences.title')"
             >
                 <SlidersHorizontal class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
@@ -483,7 +483,7 @@ function openSearchFromMobile() {
                 <a
                     :href="profilePath"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="isActiveExact('backend_profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="isActiveExact('backend_general_profile') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
                     <User class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("backend.nav.profile") }}
@@ -491,7 +491,7 @@ function openSearchFromMobile() {
                 <a
                     :href="sidemenuPreferencesPath"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="isActive('backend_profile_sidemenu') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="isActive('backend_general_profile_sidemenu') ? 'bg-accent-600/15 text-accent-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
                     <SlidersHorizontal class="w-5 h-5 shrink-0 text-muted" :stroke-width="2" />
                     {{ t("backend.profile.preferences.title") }}

@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/search', name: 'backend_search')]
+#[Route('/backend/general/search', name: 'backend_general_search')]
 #[IsGranted('general.search.view')]
 class SearchController extends AbstractController
 {

@@ -63,7 +63,7 @@ final class SearchControllerTest extends IntegrationTestCase
             ['type' => 'paragraph', 'data' => ['text' => 'Nothing interesting here.']],
         ]);
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_search', ['q' => 'constellation']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_general_search', ['q' => 'constellation']));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 
@@ -78,7 +78,7 @@ final class SearchControllerTest extends IntegrationTestCase
             ['type' => 'paragraph', 'data' => ['text' => 'Lorem ipsum dolor sit amet, constellation patterns continue beyond the sky.']],
         ]);
 
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_search', ['q' => 'constellation']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_general_search', ['q' => 'constellation']));
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
         $match = array_values(array_filter($body['posts'], static fn (array $result): bool => $result['id'] === $post->getId()))[0] ?? null;
         self::assertNotNull($match);
@@ -87,7 +87,7 @@ final class SearchControllerTest extends IntegrationTestCase
 
     public function testSearchIncludesTerms(): void
     {
-        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_search', ['q' => 'nouveaut']));
+        $this->client->request(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_general_search', ['q' => 'nouveaut']));
         self::assertSame(200, $this->client->getResponse()->getStatusCode());
         $body = json_decode((string) $this->client->getResponse()->getContent(), true);
 

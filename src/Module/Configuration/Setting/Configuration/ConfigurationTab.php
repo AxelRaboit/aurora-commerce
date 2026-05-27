@@ -51,7 +51,7 @@ class ConfigurationTab
          * When set, the tab is only rendered while the module toggle is
          * enabled (resolved through `ModuleAccessChecker::isEnabled()`).
          * Disabling the module via `/dev/dashboard/modules` immediately
-         * hides the tab from `/backend/settings` so the UI stays consistent
+         * hides the tab from `/backend/configuration/settings` so the UI stays consistent
          * with what's actually accessible. Pass a `ModuleParameterEnum`
          * case for core modules or a raw toggle key string for client
          * modules whose top-level toggle isn't part of aurora-core's enum

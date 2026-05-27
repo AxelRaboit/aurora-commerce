@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * 404s the Media admin routes (`backend_media*`) when the Media toggle
+ * 404s the Media admin routes (`backend_media_media*`) when the Media toggle
  * is OFF — globally or for the current user. Sibling of
  * {@see PlatformRouteGateSubscriber}; split out of it in Jalon 4.5 so
  * route gating mirrors the module split.
@@ -24,7 +24,7 @@ final readonly class MediaRouteGateSubscriber implements EventSubscriberInterfac
     public function __construct(private MediaContext $mediaContext)
     {
         $this->gates = [
-            'backend_media' => $this->mediaContext->isLibraryEnabled(...),
+            'backend_media_media' => $this->mediaContext->isLibraryEnabled(...),
         ];
     }
 

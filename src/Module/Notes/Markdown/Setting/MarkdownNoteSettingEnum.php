@@ -7,7 +7,7 @@ namespace Aurora\Module\Notes\Markdown\Setting;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
- * Module-level settings surfaced on the `/backend/settings` page under
+ * Module-level settings surfaced on the `/backend/configuration/settings` page under
  * the "notes" tab. Today only image-upload tunables; future cases (e.g.
  * a per-user upload quota, default tag color) plug in here too.
  *

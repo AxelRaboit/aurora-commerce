@@ -75,7 +75,7 @@ export function useMediaEdit(props, media) {
         versionsLoading.value = true;
         try {
             const data = await versionsRequest(
-                `/backend/media/${editingMedia.value.id}/versions`,
+                `/backend/media/media/${editingMedia.value.id}/versions`,
                 null,
                 { method: HttpMethod.Get, noGuard: true },
             );
@@ -88,7 +88,7 @@ export function useMediaEdit(props, media) {
     async function loadUsage() {
         if (!editingMedia.value) return;
         const data = await usageRequest(
-            `/backend/media/${editingMedia.value.id}/usage`,
+            `/backend/media/media/${editingMedia.value.id}/usage`,
             null,
             { method: HttpMethod.Get, noGuard: true },
         );

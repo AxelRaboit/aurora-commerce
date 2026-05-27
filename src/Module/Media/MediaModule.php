@@ -49,7 +49,7 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
         $items = [];
 
         if ($this->mediaContext->isLibraryEnabled()) {
-            $items[] = new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description');
+            $items[] = new NavItem('backend_media_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description');
         }
 
         if ([] === $items) {
@@ -63,7 +63,7 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
     {
         return [
             new NavSection('media', [
-                new NavItem('backend_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description'),
+                new NavItem('backend_media_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description'),
             ], priority: 22),
         ];
     }

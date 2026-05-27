@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/backend/media', name: 'backend_media')]
+#[Route('/backend/media/media', name: 'backend_media_media')]
 #[IsGranted('media.view')]
 class MediaController extends AbstractController
 {
