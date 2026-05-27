@@ -12,14 +12,14 @@ final class ModuleParameterEnumTest extends TestCase
     public function testGetKeyReturnsStringValue(): void
     {
         self::assertSame('modules_billing_backend', ModuleParameterEnum::BillingBackend->getKey());
-        self::assertSame('modules_vault_backend', ModuleParameterEnum::VaultBackend->getKey());
+        self::assertSame('modules_tools_backend', ModuleParameterEnum::ToolsBackend->getKey());
         self::assertSame('modules_crm_backend', ModuleParameterEnum::CrmBackend->getKey());
     }
 
     public function testGetLabelReturnsTranslationKey(): void
     {
         self::assertSame('backend.modules.billing_backend', ModuleParameterEnum::BillingBackend->getLabel());
-        self::assertSame('backend.modules.vault_backend', ModuleParameterEnum::VaultBackend->getLabel());
+        self::assertSame('backend.modules.tools_backend', ModuleParameterEnum::ToolsBackend->getLabel());
         self::assertSame('backend.nav.tiers', ModuleParameterEnum::BillingTiers->getLabel());
         self::assertSame('backend.nav.invoices', ModuleParameterEnum::BillingInvoices->getLabel());
     }
@@ -27,7 +27,7 @@ final class ModuleParameterEnumTest extends TestCase
     public function testGetDescriptionReturnsTranslationKey(): void
     {
         self::assertSame('backend.modules.billing_backend_description', ModuleParameterEnum::BillingBackend->getDescription());
-        self::assertSame('backend.modules.vault_backend_description', ModuleParameterEnum::VaultBackend->getDescription());
+        self::assertSame('backend.modules.tools_backend_description', ModuleParameterEnum::ToolsBackend->getDescription());
         self::assertSame('backend.nav.tiers_description', ModuleParameterEnum::BillingTiers->getDescription());
     }
 
@@ -68,7 +68,7 @@ final class ModuleParameterEnumTest extends TestCase
         self::assertSame(ModuleParameterEnum::EditorialPostTypes->value, ModuleParameterEnum::EditorialTaxonomies->getCascadeRequires());
         self::assertSame(ModuleParameterEnum::EditorialPosts->value, ModuleParameterEnum::EditorialComments->getCascadeRequires());
         self::assertSame(ModuleParameterEnum::EditorialPosts->value, ModuleParameterEnum::EditorialSitemap->getCascadeRequires());
-        self::assertSame(ModuleParameterEnum::VaultBackend->value, ModuleParameterEnum::VaultSafe->getCascadeRequires());
+        self::assertSame(ModuleParameterEnum::ToolsBackend->value, ModuleParameterEnum::ToolsVault->getCascadeRequires());
     }
 
     public function testGetCascadeRequiresNullForTopLevelWithoutDependency(): void
@@ -105,10 +105,10 @@ final class ModuleParameterEnumTest extends TestCase
 
     public function testGetCascadeDisableTargetsVaultEnabled(): void
     {
-        $targets = ModuleParameterEnum::VaultBackend->getCascadeDisableTargets();
+        $targets = ModuleParameterEnum::ToolsBackend->getCascadeDisableTargets();
 
-        self::assertContains(ModuleParameterEnum::VaultSafe->value, $targets);
-        self::assertContains(ModuleParameterEnum::VaultPasswordGenerator->value, $targets);
+        self::assertContains(ModuleParameterEnum::ToolsVault->value, $targets);
+        self::assertContains(ModuleParameterEnum::ToolsPasswordGenerator->value, $targets);
     }
 
     public function testGetCascadeDisableTargetsEditorialEnabled(): void
@@ -129,7 +129,7 @@ final class ModuleParameterEnumTest extends TestCase
         self::assertNull(ModuleParameterEnum::BillingBackend->getParentCase());
         self::assertNull(ModuleParameterEnum::CrmBackend->getParentCase());
         self::assertNull(ModuleParameterEnum::EditorialBackend->getParentCase());
-        self::assertNull(ModuleParameterEnum::VaultBackend->getParentCase());
+        self::assertNull(ModuleParameterEnum::ToolsBackend->getParentCase());
     }
 
     public function testGetParentCaseForSubModules(): void
@@ -137,13 +137,13 @@ final class ModuleParameterEnumTest extends TestCase
         self::assertSame(ModuleParameterEnum::BillingBackend, ModuleParameterEnum::BillingInvoices->getParentCase());
         self::assertSame(ModuleParameterEnum::CrmBackend, ModuleParameterEnum::CrmDeals->getParentCase());
         self::assertSame(ModuleParameterEnum::EditorialBackend, ModuleParameterEnum::EditorialTaxonomies->getParentCase());
-        self::assertSame(ModuleParameterEnum::VaultBackend, ModuleParameterEnum::VaultSafe->getParentCase());
-        self::assertSame(ModuleParameterEnum::VaultBackend, ModuleParameterEnum::VaultPasswordGenerator->getParentCase());
+        self::assertSame(ModuleParameterEnum::ToolsBackend, ModuleParameterEnum::ToolsVault->getParentCase());
+        self::assertSame(ModuleParameterEnum::ToolsBackend, ModuleParameterEnum::ToolsPasswordGenerator->getParentCase());
     }
 
     public function testGetModuleIdForTopLevelEnabledCases(): void
     {
-        self::assertSame('vault', ModuleParameterEnum::VaultBackend->getModuleId());
+        self::assertSame('tools', ModuleParameterEnum::ToolsBackend->getModuleId());
         self::assertSame('billing', ModuleParameterEnum::BillingBackend->getModuleId());
         self::assertSame('crm', ModuleParameterEnum::CrmBackend->getModuleId());
         self::assertSame('editorial', ModuleParameterEnum::EditorialBackend->getModuleId());
@@ -156,7 +156,7 @@ final class ModuleParameterEnumTest extends TestCase
     {
         self::assertNull(ModuleParameterEnum::BillingInvoices->getModuleId());
         self::assertNull(ModuleParameterEnum::CrmDeals->getModuleId());
-        self::assertNull(ModuleParameterEnum::VaultSafe->getModuleId());
+        self::assertNull(ModuleParameterEnum::ToolsVault->getModuleId());
         self::assertNull(ModuleParameterEnum::EditorialPosts->getModuleId());
         self::assertNull(ModuleParameterEnum::EcommerceFrontend->getModuleId());
         self::assertNull(ModuleParameterEnum::PhotoFrontend->getModuleId());

@@ -30,11 +30,11 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
 
         $this->userManager->updateDisabledModules($user, [
             ModuleParameterEnum::CrmBackend->value,
-            ModuleParameterEnum::VaultBackend->value,
+            ModuleParameterEnum::ToolsBackend->value,
         ]);
 
         self::assertEqualsCanonicalizing(
-            [ModuleParameterEnum::CrmBackend->value, ModuleParameterEnum::VaultBackend->value],
+            [ModuleParameterEnum::CrmBackend->value, ModuleParameterEnum::ToolsBackend->value],
             $user->getDisabledModules(),
         );
     }

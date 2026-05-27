@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
+use Aurora\Module\Tools\Vault\VaultFolder\Entity\VaultFolder;
 use PHPUnit\Framework\TestCase;
 
 final class VaultFolderTest extends TestCase

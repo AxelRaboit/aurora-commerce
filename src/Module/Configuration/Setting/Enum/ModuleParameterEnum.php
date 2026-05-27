@@ -25,7 +25,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case ProjectBackend = 'modules_project_backend';
     case PlanningBackend = 'modules_planning_backend';
     case HrBackend = 'modules_hr_backend';
-    case VaultBackend = 'modules_vault_backend';
+    case ToolsBackend = 'modules_tools_backend';
     case NotesBackend = 'modules_notes_backend';
     case PersonalFinanceBackend = 'modules_personal_finance_backend';
     case AssistantBackend = 'modules_assistant_backend';
@@ -95,9 +95,9 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     // Sub-modules — Project
     case ProjectProjects = 'modules_project_projects';
 
-    // Sub-modules — Vault
-    case VaultSafe = 'modules_vault_safe';
-    case VaultPasswordGenerator = 'modules_vault_password_generator';
+    // Sub-modules — Tools
+    case ToolsVault = 'modules_tools_vault';
+    case ToolsPasswordGenerator = 'modules_tools_password_generator';
 
     // Sub-modules — Notes
     case NotesMarkdown = 'modules_notes_markdown';
@@ -152,7 +152,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectBackend => 'backend.modules.project_backend',
             self::PlanningBackend => 'backend.modules.planning_backend',
             self::HrBackend => 'backend.modules.hr_backend',
-            self::VaultBackend => 'backend.modules.vault_backend',
+            self::ToolsBackend => 'backend.modules.tools_backend',
 
             self::BillingTiers => 'backend.nav.tiers',
             self::BillingInvoices => 'backend.nav.invoices',
@@ -180,8 +180,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PhotoGalleries => 'backend.nav.galleries',
             self::PlanningPlannings => 'backend.nav.plannings',
             self::ProjectProjects => 'backend.nav.projects',
-            self::VaultSafe => 'backend.nav.vault',
-            self::VaultPasswordGenerator => 'backend.nav.password_generator',
+            self::ToolsVault => 'backend.nav.vault',
+            self::ToolsPasswordGenerator => 'backend.nav.password_generator',
             self::NotesBackend => 'backend.modules.notes_backend',
             self::NotesMarkdown => 'backend.nav.notes_markdown',
             self::NotesBlock => 'backend.nav.notes_block',
@@ -230,7 +230,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectBackend => 'backend.modules.project_backend_description',
             self::PlanningBackend => 'backend.modules.planning_backend_description',
             self::HrBackend => 'backend.modules.hr_backend_description',
-            self::VaultBackend => 'backend.modules.vault_backend_description',
+            self::ToolsBackend => 'backend.modules.tools_backend_description',
 
             self::BillingTiers => 'backend.nav.tiers_description',
             self::BillingInvoices => 'backend.nav.invoices_description',
@@ -258,8 +258,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PhotoGalleries => 'backend.nav.galleries_description',
             self::PlanningPlannings => 'backend.nav.plannings_description',
             self::ProjectProjects => 'backend.nav.projects_description',
-            self::VaultSafe => 'backend.nav.vault_description',
-            self::VaultPasswordGenerator => 'backend.nav.password_generator_description',
+            self::ToolsVault => 'backend.nav.vault_description',
+            self::ToolsPasswordGenerator => 'backend.nav.password_generator_description',
             self::NotesBackend => 'backend.modules.notes_backend_description',
             self::NotesMarkdown => 'backend.nav.notes_markdown_description',
             self::NotesBlock => 'backend.nav.notes_block_description',
@@ -321,7 +321,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PhotoGalleries => self::PhotoBackend,
             self::PlanningPlannings => self::PlanningBackend,
             self::ProjectProjects => self::ProjectBackend,
-            self::VaultSafe, self::VaultPasswordGenerator => self::VaultBackend,
+            self::ToolsVault, self::ToolsPasswordGenerator => self::ToolsBackend,
             self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
             self::AssistantChat, self::AssistantMountPoints => self::AssistantBackend,
             self::PersonalFinanceWallets, self::PersonalFinanceCategories, self::PersonalFinanceTransactions, self::PersonalFinanceBudgets, self::PersonalFinanceGoals, self::PersonalFinanceRecurring, self::PersonalFinanceCategorization, self::PersonalFinanceOverview, self::PersonalFinanceStatistics, self::PersonalFinanceBudgetPresets, self::PersonalFinanceImport => self::PersonalFinanceBackend,
@@ -389,8 +389,8 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // Project sub-modules
             self::ProjectProjects => self::ProjectBackend->value,
             // Vault sub-modules
-            self::VaultSafe => self::VaultBackend->value,
-            self::VaultPasswordGenerator => self::VaultBackend->value,
+            self::ToolsVault => self::ToolsBackend->value,
+            self::ToolsPasswordGenerator => self::ToolsBackend->value,
             // Notes sub-modules
             self::NotesMarkdown => self::NotesBackend->value,
             self::NotesBlock => self::NotesBackend->value,
@@ -470,7 +470,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectBackend => 'project',
             self::PlanningBackend => 'planning',
             self::HrBackend => 'hr',
-            self::VaultBackend => 'vault',
+            self::ToolsBackend => 'tools',
             self::NotesBackend => 'notes',
             self::PersonalFinanceBackend => 'personal_finance',
             self::AssistantBackend => 'assistant',

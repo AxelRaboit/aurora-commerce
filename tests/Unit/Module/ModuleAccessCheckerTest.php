@@ -21,10 +21,10 @@ final class ModuleAccessCheckerTest extends TestCase
 {
     public function testGloballyDisabledReturnsFalseRegardlessOfUser(): void
     {
-        $checker = $this->makeChecker(global: [ModuleParameterEnum::VaultBackend->value => false]);
+        $checker = $this->makeChecker(global: [ModuleParameterEnum::ToolsBackend->value => false]);
         $user = $this->makeUser([]);
 
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::VaultBackend, $user));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::ToolsBackend, $user));
     }
 
     public function testGloballyEnabledAndNoUserOverrideReturnsTrue(): void
@@ -32,7 +32,7 @@ final class ModuleAccessCheckerTest extends TestCase
         $checker = $this->makeChecker(global: []); // missing = default true
         $user = $this->makeUser([]);
 
-        self::assertTrue($checker->isEnabled(ModuleParameterEnum::VaultBackend, $user));
+        self::assertTrue($checker->isEnabled(ModuleParameterEnum::ToolsBackend, $user));
     }
 
     public function testUserOverrideMasksGloballyEnabledModule(): void
@@ -41,7 +41,7 @@ final class ModuleAccessCheckerTest extends TestCase
         $user = $this->makeUser([ModuleParameterEnum::CrmBackend->value]);
 
         self::assertFalse($checker->isEnabled(ModuleParameterEnum::CrmBackend, $user));
-        self::assertTrue($checker->isEnabled(ModuleParameterEnum::VaultBackend, $user));
+        self::assertTrue($checker->isEnabled(ModuleParameterEnum::ToolsBackend, $user));
     }
 
     public function testUserOverrideOnParentCascadesToChildren(): void
@@ -70,23 +70,23 @@ final class ModuleAccessCheckerTest extends TestCase
     {
         $checker = $this->makeChecker(global: [], currentUser: null);
 
-        self::assertTrue($checker->isEnabled(ModuleParameterEnum::VaultBackend));
+        self::assertTrue($checker->isEnabled(ModuleParameterEnum::ToolsBackend));
     }
 
     public function testCurrentUserIsUsedWhenUserArgIsNull(): void
     {
-        $user = $this->makeUser([ModuleParameterEnum::VaultBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::ToolsBackend->value]);
         $checker = $this->makeChecker(global: [], currentUser: $user);
 
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::VaultBackend));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::ToolsBackend));
     }
 
     public function testIsGloballyEnabledIgnoresUserOverride(): void
     {
-        $user = $this->makeUser([ModuleParameterEnum::VaultBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::ToolsBackend->value]);
         $checker = $this->makeChecker(global: [], currentUser: $user);
 
-        self::assertTrue($checker->isGloballyEnabled(ModuleParameterEnum::VaultBackend));
+        self::assertTrue($checker->isGloballyEnabled(ModuleParameterEnum::ToolsBackend));
     }
 
     public function testIsMaskedForUserReturnsTrueOnlyWhenExplicitlyListed(): void

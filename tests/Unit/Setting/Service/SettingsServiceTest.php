@@ -61,12 +61,12 @@ final class SettingsServiceTest extends TestCase
             }));
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::VaultBackend->value, '0');
+        $service->set(ModuleParameterEnum::ToolsBackend->value, '0');
 
         $keys = array_column($capturedWrites, 0);
-        self::assertContains(ModuleParameterEnum::VaultBackend->value, $keys);
-        self::assertContains(ModuleParameterEnum::VaultSafe->value, $keys);
-        self::assertContains(ModuleParameterEnum::VaultPasswordGenerator->value, $keys);
+        self::assertContains(ModuleParameterEnum::ToolsBackend->value, $keys);
+        self::assertContains(ModuleParameterEnum::ToolsVault->value, $keys);
+        self::assertContains(ModuleParameterEnum::ToolsPasswordGenerator->value, $keys);
 
         foreach ($capturedWrites as [$key, $value]) {
             self::assertSame('0', $value);

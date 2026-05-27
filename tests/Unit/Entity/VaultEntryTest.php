@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Vault\Enum\VaultRecordTypeEnum;
-use Aurora\Module\Vault\VaultEntry\Entity\VaultEntry;
-use Aurora\Module\Vault\VaultFolder\Entity\VaultFolder;
+use Aurora\Module\Tools\Vault\Enum\VaultRecordTypeEnum;
+use Aurora\Module\Tools\Vault\VaultEntry\Entity\VaultEntry;
+use Aurora\Module\Tools\Vault\VaultFolder\Entity\VaultFolder;
 use PHPUnit\Framework\TestCase;
 
 final class VaultEntryTest extends TestCase
