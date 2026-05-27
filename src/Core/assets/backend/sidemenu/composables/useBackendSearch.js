@@ -194,10 +194,10 @@ export function useBackendSearch({ searchPath, navItems, currentRoute }) {
             const path = findNavPath("admin_media");
             if (path) window.location.href = path;
         } else if (kind === "project") {
-            const path = findNavPath("backend_projects");
+            const path = findNavPath("backend_project_projects");
             if (path) window.location.href = path;
         } else if (kind === "task") {
-            const path = findNavPath("backend_projects");
+            const path = findNavPath("backend_project_projects");
             if (path) window.location.href = path;
         }
     }

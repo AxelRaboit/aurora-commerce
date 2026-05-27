@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe("useProjectsListPage", () => {
     it("setStatusFilter updates ref and triggers a reload with status param", async () => {
-        const props = { listPath: "/backend/projects/list" };
+        const props = { listPath: "/backend/project/projects/list" };
         const api = mountWithComposable(() => useProjectsListPage(props));
         await nextTick();
         await nextTick();
@@ -62,7 +62,7 @@ describe("useProjectsListPage", () => {
     });
 
     it("setStatusFilter clears the filter when called with empty string", async () => {
-        const props = { listPath: "/backend/projects/list" };
+        const props = { listPath: "/backend/project/projects/list" };
         const api = mountWithComposable(() => useProjectsListPage(props));
         await nextTick();
         await nextTick();

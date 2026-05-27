@@ -22,9 +22,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Project sprints sub-domain — create / update / delete. Split from
- * `ProjectsController`. Route names preserved (`backend_projects_sprint_*`).
+ * `ProjectsController`. Route names preserved (`backend_project_projects_sprint_*`).
  */
-#[Route('/backend/projects', name: 'backend_projects')]
+#[Route('/backend/project/projects', name: 'backend_project_projects')]
 #[IsGranted('project.projects.view')]
 final class ProjectSprintsController extends AbstractController
 {

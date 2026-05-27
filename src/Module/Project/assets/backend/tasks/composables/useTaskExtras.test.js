@@ -8,14 +8,14 @@ import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import { useTaskExtras } from "@project/backend/tasks/composables/useTaskExtras.js";
 
 const PATHS = {
-    commentCreate: "/backend/projects/tasks/__taskId__/comments",
-    commentDelete: "/backend/projects/comments/__commentId__/delete",
-    itemsReplace: "/backend/projects/tasks/__taskId__/items",
-    timeEntryCreate: "/backend/projects/tasks/__taskId__/time-entries",
-    timeEntryDelete: "/backend/projects/time-entries/__entryId__/delete",
-    attachmentsAttach: "/backend/projects/tasks/__taskId__/attachments",
+    commentCreate: "/backend/project/projects/tasks/__taskId__/comments",
+    commentDelete: "/backend/project/projects/comments/__commentId__/delete",
+    itemsReplace: "/backend/project/projects/tasks/__taskId__/items",
+    timeEntryCreate: "/backend/project/projects/tasks/__taskId__/time-entries",
+    timeEntryDelete: "/backend/project/projects/time-entries/__entryId__/delete",
+    attachmentsAttach: "/backend/project/projects/tasks/__taskId__/attachments",
     attachmentDetach:
-        "/backend/projects/tasks/__taskId__/attachments/__documentId__",
+        "/backend/project/projects/tasks/__taskId__/attachments/__documentId__",
 };
 
 function mountWithComposable(setupFn) {
@@ -56,7 +56,7 @@ describe("useTaskExtras — comments", () => {
         await api.submitComment();
 
         const [url, options] = fetch.mock.calls[0];
-        expect(url).toBe("/backend/projects/tasks/42/comments");
+        expect(url).toBe("/backend/project/projects/tasks/42/comments");
         expect(JSON.parse(options.body)).toEqual({ content: "hello world" });
         expect(api.newCommentContent.value).toBe("");
         expect(reload).toHaveBeenCalled();
@@ -88,7 +88,7 @@ describe("useTaskExtras — checklist", () => {
         await nextTick();
 
         const [url, options] = fetch.mock.calls[0];
-        expect(url).toBe("/backend/projects/tasks/7/items");
+        expect(url).toBe("/backend/project/projects/tasks/7/items");
         const body = JSON.parse(options.body);
         expect(body.items).toEqual([{ label: "Buy milk", done: false }]);
         expect(api.newItemLabel.value).toBe("");
@@ -155,7 +155,7 @@ describe("useTaskExtras — attachments", () => {
         await api.attachDocument([3, 4, 5]);
 
         const [url, options] = fetch.mock.calls[0];
-        expect(url).toBe("/backend/projects/tasks/8/attachments");
+        expect(url).toBe("/backend/project/projects/tasks/8/attachments");
         expect(JSON.parse(options.body)).toEqual({ documentIds: [3, 4, 5] });
     });
 
@@ -178,6 +178,6 @@ describe("useTaskExtras — attachments", () => {
         await api.detachDocument({ id: 33 });
 
         const [url] = fetch.mock.calls[0];
-        expect(url).toBe("/backend/projects/tasks/9/attachments/33");
+        expect(url).toBe("/backend/project/projects/tasks/9/attachments/33");
     });
 });

@@ -47,7 +47,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
 
     public function testListReturnsPagination(): void
     {
-        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_projects_list'));
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_project_projects_list'));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);
@@ -58,7 +58,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
 
     public function testCreateValidatesAndPersists(): void
     {
-        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_projects_create'), [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_project_projects_create'), [
             'title' => 'Test Project',
             'status' => ProjectStatusEnum::Draft->value,
         ]);
@@ -72,7 +72,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
 
     public function testCreateRejectsEmptyTitle(): void
     {
-        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_projects_create'), [
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Post->value, $this->urlGenerator->generate('backend_project_projects_create'), [
             'title' => '',
             'status' => ProjectStatusEnum::Draft->value,
         ]);
@@ -88,7 +88,7 @@ final class ProjectsControllerTest extends IntegrationTestCase
         $manager = static::getContainer()->get(ProjectManager::class);
         $project = $manager->create(new ProjectInput(title: 'Show me', status: ProjectStatusEnum::Active->value));
 
-        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_projects_show', ['id' => $project->getId()]));
+        [$status, $body] = $this->jsonRequest(HttpMethodEnum::Get->value, $this->urlGenerator->generate('backend_project_projects_show', ['id' => $project->getId()]));
 
         self::assertSame(200, $status);
         self::assertTrue($body['success']);

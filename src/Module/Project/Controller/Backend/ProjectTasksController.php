@@ -40,10 +40,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * entries, comments and GED document attachments. Split from `ProjectsController`
  * to keep each controller focused on one sub-domain.
  *
- * All route names preserved (`backend_projects_task_*`,
- * `backend_projects_tasks_reorder`).
+ * All route names preserved (`backend_project_projects_task_*`,
+ * `backend_project_projects_tasks_reorder`).
  */
-#[Route('/backend/projects', name: 'backend_projects')]
+#[Route('/backend/project/projects', name: 'backend_project_projects')]
 #[IsGranted('project.projects.view')]
 final class ProjectTasksController extends AbstractController
 {

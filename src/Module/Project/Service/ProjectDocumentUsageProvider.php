@@ -37,7 +37,7 @@ final readonly class ProjectDocumentUsageProvider implements DocumentUsageProvid
                 'type' => 'project.task',
                 'label' => $task->getTitle(),
                 'detail' => $this->translator->trans('backend.ged.documents.usage.project_task'),
-                'href' => $this->safeUrl('backend_projects_show', ['id' => (int) $task->getProject()->getId()]),
+                'href' => $this->safeUrl('backend_project_projects_show', ['id' => (int) $task->getProject()->getId()]),
             ];
         }
 

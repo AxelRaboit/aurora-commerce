@@ -8,10 +8,10 @@ import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import { useColumnsManage } from "@project/backend/projects/composables/useColumnsManage.js";
 
 const PATHS = {
-    create: "/backend/projects/__id__/columns",
-    update: "/backend/projects/columns/__columnId__/update",
-    delete: "/backend/projects/columns/__columnId__/delete",
-    reorder: "/backend/projects/__id__/columns/reorder",
+    create: "/backend/project/projects/__id__/columns",
+    update: "/backend/project/projects/columns/__columnId__/update",
+    delete: "/backend/project/projects/columns/__columnId__/delete",
+    reorder: "/backend/project/projects/__id__/columns/reorder",
 };
 
 function mountWithComposable(setupFn) {
@@ -92,7 +92,7 @@ describe("useColumnsManage", () => {
 
         expect(fetch).toHaveBeenCalledTimes(1);
         const [url, options] = fetch.mock.calls[0];
-        expect(url).toBe("/backend/projects/7/columns/reorder");
+        expect(url).toBe("/backend/project/projects/7/columns/reorder");
         expect(JSON.parse(options.body)).toEqual({ orderedIds: [2, 1] });
     });
 
@@ -111,7 +111,7 @@ describe("useColumnsManage", () => {
         await api.doDeleteColumn();
 
         expect(fetch).toHaveBeenCalledWith(
-            "/backend/projects/columns/9/delete",
+            "/backend/project/projects/columns/9/delete",
             expect.objectContaining({ method: "POST" }),
         );
         expect(reload).toHaveBeenCalled();

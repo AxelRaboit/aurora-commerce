@@ -37,7 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * controllers — see `ProjectTasksController`, `ProjectColumnsController`,
  * `ProjectLabelsController`, `ProjectSprintsController`.
  */
-#[Route('/backend/projects', name: 'backend_projects')]
+#[Route('/backend/project/projects', name: 'backend_project_projects')]
 #[IsGranted('project.projects.view')]
 final class ProjectsController extends AbstractController
 {

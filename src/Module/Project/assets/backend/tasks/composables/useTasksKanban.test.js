@@ -7,7 +7,7 @@ import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import { useTasksKanban } from "@project/backend/tasks/composables/useTasksKanban.js";
 
-const REORDER_PATH = "/backend/projects/__id__/tasks/reorder";
+const REORDER_PATH = "/backend/project/projects/__id__/tasks/reorder";
 
 function mountWithComposable(setupFn) {
     let api;
@@ -46,7 +46,7 @@ describe("useTasksKanban", () => {
 
         expect(fetch).toHaveBeenCalledTimes(1);
         const [url, options] = fetch.mock.calls[0];
-        expect(url).toBe("/backend/projects/5/tasks/reorder");
+        expect(url).toBe("/backend/project/projects/5/tasks/reorder");
         expect(options.method).toBe("POST");
         const body = JSON.parse(options.body);
         expect(body.columnId).toBe(10);

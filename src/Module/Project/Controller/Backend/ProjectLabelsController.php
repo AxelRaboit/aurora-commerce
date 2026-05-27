@@ -21,9 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Project labels sub-domain — create / update / delete. Split from
- * `ProjectsController`. Route names preserved (`backend_projects_label_*`).
+ * `ProjectsController`. Route names preserved (`backend_project_projects_label_*`).
  */
-#[Route('/backend/projects', name: 'backend_projects')]
+#[Route('/backend/project/projects', name: 'backend_project_projects')]
 #[IsGranted('project.projects.view')]
 final class ProjectLabelsController extends AbstractController
 {

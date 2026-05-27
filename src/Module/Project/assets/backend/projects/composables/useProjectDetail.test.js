@@ -7,7 +7,7 @@ import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import { useProjectDetail } from "@project/backend/projects/composables/useProjectDetail.js";
 
-const SHOW_PATH = "/backend/projects/__id__";
+const SHOW_PATH = "/backend/project/projects/__id__";
 
 function mountWithComposable(setupFn) {
     let api;
@@ -72,7 +72,7 @@ describe("useProjectDetail", () => {
         await api.openProject({ id: 7 });
 
         expect(fetch).toHaveBeenCalledWith(
-            "/backend/projects/7",
+            "/backend/project/projects/7",
             expect.objectContaining({ headers: expect.any(Object) }),
         );
         expect(api.activeProject.value.id).toBe(7);

@@ -24,9 +24,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * Project columns (kanban board) sub-domain — create / update / delete /
  * reorder. Split from `ProjectsController`. All route names preserved
- * (`backend_projects_column_*`, `backend_projects_columns_reorder`).
+ * (`backend_project_projects_column_*`, `backend_project_projects_columns_reorder`).
  */
-#[Route('/backend/projects', name: 'backend_projects')]
+#[Route('/backend/project/projects', name: 'backend_project_projects')]
 #[IsGranted('project.projects.view')]
 final class ProjectColumnsController extends AbstractController
 {
