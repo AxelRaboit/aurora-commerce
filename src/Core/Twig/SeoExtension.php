@@ -7,9 +7,9 @@ namespace Aurora\Core\Twig;
 use Aurora\Core\Frontend\Service\Context;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Attribute\AsTwigFunction;
@@ -36,9 +36,9 @@ final readonly class SeoExtension
     public function __construct(
         private Context $context,
         private SettingRepository $settingRepository,
-        private MediaRepository $mediaRepository,
+        private DocumentRepository $documentRepository,
         private RequestStack $requestStack,
-        private MediaUrlGenerator $mediaUrlGenerator,
+        private DocumentUrlGenerator $documentUrlGenerator,
     ) {}
 
     /**
@@ -163,12 +163,15 @@ final readonly class SeoExtension
     }
 
     /**
-     * Accepts a MediaInterface entity, a serialized Media array (with `publicUrl` key) or a raw URL string.
+     * Accepts a DocumentInterface entity, a serialized document array (with
+     * `publicUrl` key — also recognises the historical Media array shape) or
+     * a raw URL string. The historical shape stayed compatible because the
+     * `publicUrl` key spans both serializers.
      */
     private function extractUrl(mixed $image): string
     {
-        if ($image instanceof MediaInterface) {
-            return $this->mediaUrlGenerator->publicUrl($image);
+        if ($image instanceof DocumentInterface) {
+            return (string) $this->documentUrlGenerator->publicUrl($image);
         }
 
         if (is_array($image) && isset($image['publicUrl']) && is_string($image['publicUrl'])) {
@@ -192,12 +195,12 @@ final readonly class SeoExtension
             return null;
         }
 
-        $mediaId = (int) $rawId;
-        if ($mediaId <= 0) {
+        $documentId = (int) $rawId;
+        if ($documentId <= 0) {
             return null;
         }
 
-        return $this->mediaUrlGenerator->publicUrl($this->mediaRepository->find($mediaId));
+        return $this->documentUrlGenerator->publicUrl($this->documentRepository->find($documentId));
     }
 
     private function absolutize(string $url, string $siteUrl): string

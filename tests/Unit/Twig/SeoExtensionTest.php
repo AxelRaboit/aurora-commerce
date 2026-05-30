@@ -11,8 +11,8 @@ use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Core\Twig\SeoExtension;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,8 +74,8 @@ final class SeoExtensionTest extends TestCase
 
     public function testExtractsImageUrlFromMediaEntity(): void
     {
-        $media = $this->createMock(MediaInterface::class);
-        $media->method('getPath')->willReturn('x.jpg');
+        $media = $this->createMock(DocumentInterface::class);
+        $media->method('getFilePath')->willReturn('x.jpg');
 
         $extension = $this->makeExtension(siteUrl: 'https://monsite.com');
         $seo = $extension->build(['image' => $media]);
@@ -164,8 +164,8 @@ final class SeoExtensionTest extends TestCase
 
         $context = new Context($localeRepo, $settings, $localeContext);
 
-        $mediaRepo = $this->createMock(MediaRepository::class);
+        $mediaRepo = $this->createMock(DocumentRepository::class);
 
-        return new SeoExtension($context, $settings, $mediaRepo, $stack, $this->makeMediaUrlGenerator());
+        return new SeoExtension($context, $settings, $mediaRepo, $stack, $this->makeDocumentUrlGenerator());
     }
 }

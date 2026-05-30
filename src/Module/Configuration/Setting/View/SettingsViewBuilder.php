@@ -8,8 +8,8 @@ use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Module\Configuration\Setting\Configuration\SettingDefinitionRegistry;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -28,11 +28,11 @@ final readonly class SettingsViewBuilder
 {
     public function __construct(
         private SettingRepository $settingRepository,
-        private MediaRepository $mediaRepository,
+        private DocumentRepository $documentRepository,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
         private SettingDefinitionRegistry $definitionRegistry,
-        private MediaUrlGenerator $mediaUrlGenerator,
+        private DocumentUrlGenerator $documentUrlGenerator,
         private ModuleAccessChecker $moduleAccessChecker,
     ) {}
 
@@ -131,11 +131,11 @@ final readonly class SettingsViewBuilder
             return null;
         }
 
-        $mediaId = (int) $rawId;
-        if ($mediaId <= 0) {
+        $documentId = (int) $rawId;
+        if ($documentId <= 0) {
             return null;
         }
 
-        return $this->mediaUrlGenerator->publicUrl($this->mediaRepository->find($mediaId));
+        return $this->documentUrlGenerator->publicUrl($this->documentRepository->find($documentId));
     }
 }

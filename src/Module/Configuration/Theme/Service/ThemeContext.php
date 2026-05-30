@@ -6,8 +6,8 @@ namespace Aurora\Module\Configuration\Theme\Service;
 
 use Aurora\Module\Configuration\Theme\Entity\ThemeInterface;
 use Aurora\Module\Configuration\Theme\Repository\ThemeRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 
 final class ThemeContext
 {
@@ -20,9 +20,9 @@ final class ThemeContext
 
     public function __construct(
         private readonly ThemeRepository $themeRepository,
-        private readonly MediaRepository $mediaRepository,
+        private readonly DocumentRepository $documentRepository,
         private readonly PrimaryColorPalette $primaryColorPalette,
-        private readonly MediaUrlGenerator $mediaUrlGenerator,
+        private readonly DocumentUrlGenerator $documentUrlGenerator,
     ) {}
 
     public function activeTheme(): ?ThemeInterface
@@ -47,9 +47,9 @@ final class ThemeContext
             return null;
         }
 
-        $media = $this->mediaRepository->find((int) $rawId);
+        $document = $this->documentRepository->find((int) $rawId);
 
-        return $this->mediaUrlGenerator->publicUrl($media);
+        return $this->documentUrlGenerator->publicUrl($document);
     }
 
     public function headerCustomText(): ?string

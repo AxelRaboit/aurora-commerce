@@ -6,8 +6,8 @@ namespace Aurora\Core\Twig;
 
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 
@@ -15,8 +15,8 @@ final class SiteBrandingExtension extends AbstractExtension implements GlobalsIn
 {
     public function __construct(
         private readonly SettingRepository $settingRepository,
-        private readonly MediaRepository $mediaRepository,
-        private readonly MediaUrlGenerator $mediaUrlGenerator,
+        private readonly DocumentRepository $documentRepository,
+        private readonly DocumentUrlGenerator $documentUrlGenerator,
     ) {}
 
     public function getGlobals(): array
@@ -39,13 +39,13 @@ final class SiteBrandingExtension extends AbstractExtension implements GlobalsIn
             return null;
         }
 
-        $mediaId = (int) $rawId;
-        if ($mediaId <= 0) {
+        $documentId = (int) $rawId;
+        if ($documentId <= 0) {
             return null;
         }
 
-        $media = $this->mediaRepository->find($mediaId);
+        $document = $this->documentRepository->find($documentId);
 
-        return $this->mediaUrlGenerator->publicUrl($media);
+        return $this->documentUrlGenerator->publicUrl($document);
     }
 }
