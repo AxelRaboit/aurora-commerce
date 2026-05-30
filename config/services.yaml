@@ -26,11 +26,17 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     Aurora\:
         resource: '../src/'
-        # Tools ships its own services (src/Module/Tools/config/services.php),
-        # loaded by AuroraToolsBundle — exclude it here to avoid double
-        # registration. (Monorepo-split POC; simulates Tools as a separate package.)
+        # Extracted module packages ship their own config/services.php (loaded by
+        # their bundle) — exclude them here to avoid double registration.
+        # (Monorepo-split: each behaves as a separate Composer package.)
         exclude:
             - '../src/Module/Tools/'
+            - '../src/Module/Crm/'
+            - '../src/Module/Hr/'
+            - '../src/Module/Notes/'
+            - '../src/Module/PersonalFinance/'
+            - '../src/Module/Planning/'
+            - '../src/Module/Project/'
 
     # Auto-tag every MediaUsageProvider so the aggregator service collects them.
     # Auto-tag every registered front so the Registry collects them.
