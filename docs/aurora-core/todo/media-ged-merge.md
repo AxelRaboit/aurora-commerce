@@ -4,9 +4,9 @@
 > `Document` (GED) est désormais **l'unique entité fichier** d'Aurora. Le
 > module Media a été supprimé en Phase 5, les tables `core_media*` droppées,
 > et tous les consommateurs migrés. Voir la mémoire
-> `.claude/memory/aurora-core/architecture/decision_media_ged_merge_phase_1.md`
-> pour la phase 1 et l'historique git (préfixes `feat(erp)|...|feat(media)`)
-> pour les phases 2-5.
+> `.claude/memory/aurora-core/architecture/decision_media_ged_merge_done.md`
+> (synthèse + pièges) et l'historique git (préfixes `feat(erp)|...|feat(media)`)
+> pour le détail par phase.
 >
 > **Décision (2026-05-25)** : supprimer la médiathèque (`/backend/media/media`) et
 > tout câbler sur la GED. `Document` (GED) devient **l'unique entité fichier**.

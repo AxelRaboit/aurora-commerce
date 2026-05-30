@@ -28,9 +28,9 @@ aujourd'hui est :
   thumbnails responsive WebP (déplacé en Phase 1).
 
 **Repères chronologiques** :
-- Phase 1 (2026-05-30) : parité de rendu — `DocumentUrlGenerator`,
-  focal point, variants JSON sur `AbstractDocument`. Voir
-  [[decision-media-ged-merge-phase-1]].
+- Phase 1 : parité de rendu — `DocumentUrlGenerator`, focal point,
+  variants JSON sur `AbstractDocument`. Migration `Version20260530064822`,
+  commit `0a0780a1`.
 - Phases 2.1 → 2.6 : migration FK par module (Erp Product, Ecommerce
   Listing/ListingCategory, Photo Gallery + Item, Editorial Post +
   PostTranslation.og_image, branding settings + theme logo).
