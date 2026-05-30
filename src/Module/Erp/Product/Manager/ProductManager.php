@@ -12,7 +12,7 @@ use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
 use Aurora\Module\Erp\Setting\ErpSettingEnum;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -28,7 +28,7 @@ class ProductManager implements ProductManagerInterface
         protected readonly SettingRepository $settingRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly TranslatorInterface $translator,
-        protected readonly MediaRepository $mediaRepository,
+        protected readonly DocumentRepository $documentRepository,
     ) {}
 
     public function create(ProductInputInterface $input): ProductInterface
@@ -88,7 +88,7 @@ class ProductManager implements ProductManagerInterface
         $product->setCurrency($input->getCurrency());
         $product->setStatus($input->getStatus());
         $product->setType($input->getType());
-        $product->setImage(null !== $input->getImageId() ? $this->mediaRepository->find($input->getImageId()) : null);
+        $product->setImage(null !== $input->getImageId() ? $this->documentRepository->find($input->getImageId()) : null);
         $product->setStockQuantity($input->getStockQuantity());
     }
 

@@ -8,15 +8,15 @@ use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 
 interface ProductInterface extends TimestampableInterface
 {
     public function getId(): ?int;
 
-    public function getImage(): ?MediaInterface;
+    public function getImage(): ?DocumentInterface;
 
-    public function setImage(?MediaInterface $image): static;
+    public function setImage(?DocumentInterface $image): static;
 
     public function getStockQuantity(): ?int;
 

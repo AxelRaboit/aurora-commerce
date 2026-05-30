@@ -8,7 +8,7 @@ use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -39,19 +39,19 @@ abstract class AbstractProduct implements ProductInterface
     #[ORM\Column(length: 16, enumType: ProductTypeEnum::class, options: ['default' => 'physical'])]
     protected ProductTypeEnum $type = ProductTypeEnum::Physical;
 
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
+    #[ORM\ManyToOne(targetEntity: DocumentInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?MediaInterface $image = null;
+    protected ?DocumentInterface $image = null;
 
     #[ORM\Column(nullable: true)]
     protected ?int $stockQuantity = null;
 
-    public function getImage(): ?MediaInterface
+    public function getImage(): ?DocumentInterface
     {
         return $this->image;
     }
 
-    public function setImage(?MediaInterface $image): static
+    public function setImage(?DocumentInterface $image): static
     {
         $this->image = $image;
 

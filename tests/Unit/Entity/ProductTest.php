@@ -8,7 +8,7 @@ use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use PHPUnit\Framework\TestCase;
 
 final class ProductTest extends TestCase
@@ -67,7 +67,7 @@ final class ProductTest extends TestCase
 
     public function testImageGetterAndSetter(): void
     {
-        $image = $this->createStub(MediaInterface::class);
+        $image = $this->createStub(DocumentInterface::class);
         $product = (new Product())->setImage($image);
 
         self::assertSame($image, $product->getImage());

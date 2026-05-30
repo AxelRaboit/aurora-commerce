@@ -7,8 +7,8 @@ namespace Aurora\Module\Erp\Product\Serializer;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -17,7 +17,7 @@ class ProductSerializer implements ProductSerializerInterface
 {
     public function __construct(
         protected readonly SettingRepository $settingRepository,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly DocumentUrlGenerator $documentUrlGenerator,
     ) {}
 
     public function serialize(ProductInterface $product): array
@@ -47,9 +47,9 @@ class ProductSerializer implements ProductSerializerInterface
             'status' => $product->getStatus()->value,
             'type' => $product->getType()->value,
             'requiresShipping' => $product->getType()->requiresShipping(),
-            'image' => $image instanceof MediaInterface ? [
+            'image' => $image instanceof DocumentInterface ? [
                 'id' => $image->getId(),
-                'url' => $this->mediaUrlGenerator->publicUrl($image),
+                'url' => $this->documentUrlGenerator->publicUrl($image),
                 'alt' => $image->getAlt(),
             ] : null,
             'stockQuantity' => $stockQuantity,

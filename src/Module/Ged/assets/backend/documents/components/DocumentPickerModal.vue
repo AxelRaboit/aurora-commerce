@@ -35,7 +35,11 @@ import { useFileSize } from "@/shared/composables/format/useFileSize.js";
 const props = defineProps({
     show: { type: Boolean, default: false },
     listPath: { type: String, required: true },
+    // Strict MIME equality, e.g. "application/pdf".
     mimeFilter: { type: String, default: null },
+    // Prefix-match, e.g. "image/" → every raster image MIME passes. Set by
+    // the document picker wrapper when the consumer only wants images.
+    mimePrefix: { type: String, default: null },
 });
 
 const emit = defineEmits(["close", "select"]);
@@ -51,8 +55,14 @@ const totalPages = ref(1);
 const selected = ref(null);
 
 const visibleItems = computed(() => {
-    if (!props.mimeFilter) return items.value;
-    return items.value.filter((doc) => doc.fileMime === props.mimeFilter);
+    let list = items.value;
+    if (props.mimeFilter) {
+        list = list.filter((doc) => doc.fileMime === props.mimeFilter);
+    }
+    if (props.mimePrefix) {
+        list = list.filter((doc) => (doc.fileMime ?? "").startsWith(props.mimePrefix));
+    }
+    return list;
 });
 
 async function load() {
