@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Hr;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Hr\HrContext;
 use Aurora\Module\Hr\HrModule;
+use Aurora\Module\Hr\Setting\HrModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class HrModuleTest extends TestCase
@@ -17,9 +17,9 @@ final class HrModuleTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::HrBackend => $backendEnabled,
-                ModuleParameterEnum::HrEmployees => $employeesEnabled,
+            static fn (string $param): bool => match ($param) {
+                HrModuleParameterEnum::Backend->value => $backendEnabled,
+                HrModuleParameterEnum::Employees->value => $employeesEnabled,
                 default => false,
             },
         );

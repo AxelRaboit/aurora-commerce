@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Billing\Setting\BillingModuleParameterEnum;
 
 final readonly class BillingContext
 {
@@ -13,21 +13,21 @@ final readonly class BillingContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingBackend);
+        return $this->moduleAccessChecker->isEnabled(BillingModuleParameterEnum::Backend->value);
     }
 
     public function isTiersEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingTiers);
+        return $this->moduleAccessChecker->isEnabled(BillingModuleParameterEnum::Tiers->value);
     }
 
     public function isInvoicesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingInvoices);
+        return $this->moduleAccessChecker->isEnabled(BillingModuleParameterEnum::Invoices->value);
     }
 
     public function isComplianceEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::BillingCompliance);
+        return $this->moduleAccessChecker->isEnabled(BillingModuleParameterEnum::Compliance->value);
     }
 }

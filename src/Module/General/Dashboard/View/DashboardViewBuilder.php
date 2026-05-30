@@ -5,19 +5,24 @@ declare(strict_types=1);
 namespace Aurora\Module\General\Dashboard\View;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\General\Dashboard\Service\StatsService;
 
 final readonly class DashboardViewBuilder
 {
-    /** @var array<string, ModuleParameterEnum> */
+    /**
+     * Module id → its backend toggle key. Plain strings (not a typed enum) so
+     * the General shell stays decoupled from every business module's own
+     * parameter enum. The keys are stable core_settings keys.
+     *
+     * @var array<string, string>
+     */
     private const array DASHBOARD_MODULES = [
-        'editorial' => ModuleParameterEnum::EditorialBackend,
-        'crm' => ModuleParameterEnum::CrmBackend,
-        'erp' => ModuleParameterEnum::ErpBackend,
-        'billing' => ModuleParameterEnum::BillingBackend,
-        'ecommerce' => ModuleParameterEnum::EcommerceBackend,
-        'photo' => ModuleParameterEnum::PhotoBackend,
+        'editorial' => 'modules_editorial_backend',
+        'crm' => 'modules_crm_backend',
+        'erp' => 'modules_erp_backend',
+        'billing' => 'modules_billing_backend',
+        'ecommerce' => 'modules_ecommerce_backend',
+        'photo' => 'modules_photo_backend',
     ];
 
     public function __construct(

@@ -29,12 +29,12 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
         $user = $this->createTestUser('alice', role: UserRoleEnum::User);
 
         $this->userManager->updateDisabledModules($user, [
-            ModuleParameterEnum::CrmBackend->value,
-            ModuleParameterEnum::ToolsBackend->value,
+            ModuleParameterEnum::GedBackend->value,
+            ModuleParameterEnum::PlatformBackend->value,
         ]);
 
         self::assertEqualsCanonicalizing(
-            [ModuleParameterEnum::CrmBackend->value, ModuleParameterEnum::ToolsBackend->value],
+            [ModuleParameterEnum::GedBackend->value, ModuleParameterEnum::PlatformBackend->value],
             $user->getDisabledModules(),
         );
     }
@@ -44,11 +44,11 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
         $user = $this->createTestUser('bob', role: UserRoleEnum::User);
 
         $this->userManager->updateDisabledModules($user, [
-            ModuleParameterEnum::CrmBackend->value,
+            ModuleParameterEnum::GedBackend->value,
             'not_a_real_module',
         ]);
 
-        self::assertSame([ModuleParameterEnum::CrmBackend->value], $user->getDisabledModules());
+        self::assertSame([ModuleParameterEnum::GedBackend->value], $user->getDisabledModules());
     }
 
     public function testDuplicatesAreDeduplicated(): void
@@ -56,11 +56,11 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
         $user = $this->createTestUser('carol', role: UserRoleEnum::User);
 
         $this->userManager->updateDisabledModules($user, [
-            ModuleParameterEnum::CrmBackend->value,
-            ModuleParameterEnum::CrmBackend->value,
+            ModuleParameterEnum::GedBackend->value,
+            ModuleParameterEnum::GedBackend->value,
         ]);
 
-        self::assertSame([ModuleParameterEnum::CrmBackend->value], $user->getDisabledModules());
+        self::assertSame([ModuleParameterEnum::GedBackend->value], $user->getDisabledModules());
     }
 
     public function testAdminCannotMaskModulesForDev(): void
@@ -73,7 +73,7 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
 
         $this->userManager->updateDisabledModules(
             $dev,
-            [ModuleParameterEnum::CrmBackend->value],
+            [ModuleParameterEnum::GedBackend->value],
             $admin,
         );
     }
@@ -85,11 +85,11 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
 
         $this->userManager->updateDisabledModules(
             $admin,
-            [ModuleParameterEnum::CrmBackend->value],
+            [ModuleParameterEnum::GedBackend->value],
             $dev,
         );
 
-        self::assertSame([ModuleParameterEnum::CrmBackend->value], $admin->getDisabledModules());
+        self::assertSame([ModuleParameterEnum::GedBackend->value], $admin->getDisabledModules());
     }
 
     public function testAdminCanMaskModulesForUserOfEqualOrLowerRank(): void
@@ -99,17 +99,17 @@ final class UserManagerDisabledModulesTest extends IntegrationTestCase
 
         $this->userManager->updateDisabledModules(
             $regular,
-            [ModuleParameterEnum::CrmBackend->value],
+            [ModuleParameterEnum::GedBackend->value],
             $admin,
         );
 
-        self::assertSame([ModuleParameterEnum::CrmBackend->value], $regular->getDisabledModules());
+        self::assertSame([ModuleParameterEnum::GedBackend->value], $regular->getDisabledModules());
     }
 
     public function testEmptyListClearsAllOverrides(): void
     {
         $user = $this->createTestUser('dave', role: UserRoleEnum::User);
-        $this->userManager->updateDisabledModules($user, [ModuleParameterEnum::CrmBackend->value]);
+        $this->userManager->updateDisabledModules($user, [ModuleParameterEnum::GedBackend->value]);
 
         $this->userManager->updateDisabledModules($user, []);
 

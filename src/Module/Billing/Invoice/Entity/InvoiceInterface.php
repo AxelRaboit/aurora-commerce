@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Entity;
 
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Billing\Invoice\Enum\InvoiceStatusEnum;
 use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;

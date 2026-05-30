@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce;
 
 use Aurora\Core\Frontend\Contract\FrontendInterface;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Ecommerce\Setting\EcommerceModuleParameterEnum;
 
 final class EcommerceFrontendDescriptor implements FrontendInterface
 {
@@ -31,7 +31,7 @@ final class EcommerceFrontendDescriptor implements FrontendInterface
 
     public function getModuleSettingKey(): string
     {
-        return ModuleParameterEnum::EcommerceFrontend->value;
+        return EcommerceModuleParameterEnum::Frontend->value;
     }
 
     public function getRoutePrefixes(): array

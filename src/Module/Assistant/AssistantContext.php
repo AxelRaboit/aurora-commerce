@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Assistant\Setting\AssistantModuleParameterEnum;
 
 final readonly class AssistantContext
 {
@@ -13,16 +13,16 @@ final readonly class AssistantContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::AssistantBackend);
+        return $this->moduleAccessChecker->isEnabled(AssistantModuleParameterEnum::Backend->value);
     }
 
     public function isChatEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::AssistantChat);
+        return $this->moduleAccessChecker->isEnabled(AssistantModuleParameterEnum::Chat->value);
     }
 
     public function isMountPointsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::AssistantMountPoints);
+        return $this->moduleAccessChecker->isEnabled(AssistantModuleParameterEnum::MountPoints->value);
     }
 }

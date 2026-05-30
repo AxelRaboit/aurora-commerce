@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Photo\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Photo\PhotoContext;
+use Aurora\Module\Photo\Setting\PhotoModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class PhotoContextTest extends TestCase
@@ -16,7 +16,7 @@ final class PhotoContextTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
+            static fn (string $module): bool => $values[$module] ?? true,
         );
 
         return new PhotoContext($checker);
@@ -24,19 +24,19 @@ final class PhotoContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoBackend->value => true])->isBackendEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoBackend->value => false])->isBackendEnabled());
+        self::assertTrue($this->makeContext([PhotoModuleParameterEnum::Backend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([PhotoModuleParameterEnum::Backend->value => false])->isBackendEnabled());
     }
 
     public function testIsFrontEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoFrontend->value => true])->isFrontEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoFrontend->value => false])->isFrontEnabled());
+        self::assertTrue($this->makeContext([PhotoModuleParameterEnum::Frontend->value => true])->isFrontEnabled());
+        self::assertFalse($this->makeContext([PhotoModuleParameterEnum::Frontend->value => false])->isFrontEnabled());
     }
 
     public function testIsGalleriesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::PhotoGalleries->value => true])->isGalleriesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::PhotoGalleries->value => false])->isGalleriesEnabled());
+        self::assertTrue($this->makeContext([PhotoModuleParameterEnum::Galleries->value => true])->isGalleriesEnabled());
+        self::assertFalse($this->makeContext([PhotoModuleParameterEnum::Galleries->value => false])->isGalleriesEnabled());
     }
 }

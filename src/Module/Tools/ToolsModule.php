@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Tools\Setting\ToolsModuleParameterEnum;
 
 final readonly class ToolsModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -64,9 +64,9 @@ final readonly class ToolsModule implements ModuleInterface, ModuleToggleProvide
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::ToolsBackend->toToggle(),
-            ModuleParameterEnum::ToolsVault->toToggle(),
-            ModuleParameterEnum::ToolsPasswordGenerator->toToggle(),
+            ToolsModuleParameterEnum::Backend->toToggle(),
+            ToolsModuleParameterEnum::Vault->toToggle(),
+            ToolsModuleParameterEnum::PasswordGenerator->toToggle(),
         ];
     }
 }

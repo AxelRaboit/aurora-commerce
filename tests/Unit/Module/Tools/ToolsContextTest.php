@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Tools;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Tools\Setting\ToolsModuleParameterEnum;
 use Aurora\Module\Tools\ToolsContext;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ final class ToolsContextTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
+            static fn (string $module): bool => $values[$module] ?? true,
         );
 
         return new ToolsContext($checker);
@@ -24,19 +24,19 @@ final class ToolsContextTest extends TestCase
 
     public function testIsBackendEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ToolsBackend->value => true])->isBackendEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ToolsBackend->value => false])->isBackendEnabled());
+        self::assertTrue($this->makeContext([ToolsModuleParameterEnum::Backend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ToolsModuleParameterEnum::Backend->value => false])->isBackendEnabled());
     }
 
     public function testIsVaultEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ToolsVault->value => true])->isVaultEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ToolsVault->value => false])->isVaultEnabled());
+        self::assertTrue($this->makeContext([ToolsModuleParameterEnum::Vault->value => true])->isVaultEnabled());
+        self::assertFalse($this->makeContext([ToolsModuleParameterEnum::Vault->value => false])->isVaultEnabled());
     }
 
     public function testIsPasswordGeneratorEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ToolsPasswordGenerator->value => true])->isPasswordGeneratorEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ToolsPasswordGenerator->value => false])->isPasswordGeneratorEnabled());
+        self::assertTrue($this->makeContext([ToolsModuleParameterEnum::PasswordGenerator->value => true])->isPasswordGeneratorEnabled());
+        self::assertFalse($this->makeContext([ToolsModuleParameterEnum::PasswordGenerator->value => false])->isPasswordGeneratorEnabled());
     }
 }

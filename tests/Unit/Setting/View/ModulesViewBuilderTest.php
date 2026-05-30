@@ -128,21 +128,23 @@ final class ModulesViewBuilderTest extends TestCase
         $builder = $this->makeBuilder($this->stubRepository(), $this->stubTranslator());
         $payload = $builder->modulesPayload();
 
-        $billingParam = null;
+        $gedParam = null;
         foreach ($payload['parameters'] as $parameter) {
-            if ($parameter['key'] === ModuleParameterEnum::BillingBackend->value) {
-                $billingParam = $parameter;
+            if ($parameter['key'] === ModuleParameterEnum::GedBackend->value) {
+                $gedParam = $parameter;
                 break;
             }
         }
 
-        self::assertNotNull($billingParam);
-        self::assertIsArray($billingParam['subModules']);
+        self::assertNotNull($gedParam);
+        self::assertIsArray($gedParam['subModules']);
 
-        $subKeys = array_column($billingParam['subModules'], 'key');
-        self::assertContains(ModuleParameterEnum::BillingTiers->value, $subKeys);
-        self::assertContains(ModuleParameterEnum::BillingInvoices->value, $subKeys);
-        self::assertContains(ModuleParameterEnum::BillingCompliance->value, $subKeys);
+        $subKeys = array_column($gedParam['subModules'], 'key');
+        self::assertContains(ModuleParameterEnum::GedDocuments->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::GedCategories->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::GedTags->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::GedFolders->value, $subKeys);
+        self::assertContains(ModuleParameterEnum::GedFrontend->value, $subKeys);
     }
 
     public function testEachSubModuleHasRequiredKeys(): void
@@ -166,26 +168,26 @@ final class ModulesViewBuilderTest extends TestCase
         $builder = $this->makeBuilder($this->stubRepository(), $this->stubTranslator());
         $payload = $builder->modulesPayload();
 
-        $billingParam = null;
+        $gedParam = null;
         foreach ($payload['parameters'] as $parameter) {
-            if ($parameter['key'] === ModuleParameterEnum::BillingBackend->value) {
-                $billingParam = $parameter;
+            if ($parameter['key'] === ModuleParameterEnum::GedBackend->value) {
+                $gedParam = $parameter;
                 break;
             }
         }
 
-        self::assertNotNull($billingParam);
+        self::assertNotNull($gedParam);
 
-        $invoicesSub = null;
-        foreach ($billingParam['subModules'] as $sub) {
-            if ($sub['key'] === ModuleParameterEnum::BillingInvoices->value) {
-                $invoicesSub = $sub;
+        $documentsSub = null;
+        foreach ($gedParam['subModules'] as $sub) {
+            if ($sub['key'] === ModuleParameterEnum::GedDocuments->value) {
+                $documentsSub = $sub;
                 break;
             }
         }
 
-        self::assertNotNull($invoicesSub);
-        self::assertSame(ModuleParameterEnum::BillingTiers->value, $invoicesSub['requires']);
+        self::assertNotNull($documentsSub);
+        self::assertSame(ModuleParameterEnum::GedBackend->value, $documentsSub['requires']);
     }
 
     public function testIndexViewReturnsTabbedStructure(): void

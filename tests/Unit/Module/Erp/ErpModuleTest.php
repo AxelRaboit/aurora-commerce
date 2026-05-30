@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Erp;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Erp\ErpContext;
 use Aurora\Module\Erp\ErpModule;
+use Aurora\Module\Erp\Setting\ErpModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class ErpModuleTest extends TestCase
@@ -17,9 +17,9 @@ final class ErpModuleTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::ErpBackend => $backendEnabled,
-                ModuleParameterEnum::ErpProducts => $productsEnabled,
+            static fn (string $param): bool => match ($param) {
+                ErpModuleParameterEnum::Backend->value => $backendEnabled,
+                ErpModuleParameterEnum::Products->value => $productsEnabled,
                 default => false,
             },
         );

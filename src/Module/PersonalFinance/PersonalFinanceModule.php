@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\PersonalFinance\Setting\PersonalFinanceModuleParameterEnum;
 
 final readonly class PersonalFinanceModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -250,18 +250,18 @@ final readonly class PersonalFinanceModule implements ModuleInterface, ModuleTog
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::PersonalFinanceBackend->toToggle(),
-            ModuleParameterEnum::PersonalFinanceWallets->toToggle(),
-            ModuleParameterEnum::PersonalFinanceCategories->toToggle(),
-            ModuleParameterEnum::PersonalFinanceTransactions->toToggle(),
-            ModuleParameterEnum::PersonalFinanceBudgets->toToggle(),
-            ModuleParameterEnum::PersonalFinanceGoals->toToggle(),
-            ModuleParameterEnum::PersonalFinanceRecurring->toToggle(),
-            ModuleParameterEnum::PersonalFinanceCategorization->toToggle(),
-            ModuleParameterEnum::PersonalFinanceOverview->toToggle(),
-            ModuleParameterEnum::PersonalFinanceStatistics->toToggle(),
-            ModuleParameterEnum::PersonalFinanceBudgetPresets->toToggle(),
-            ModuleParameterEnum::PersonalFinanceImport->toToggle(),
+            PersonalFinanceModuleParameterEnum::Backend->toToggle(),
+            PersonalFinanceModuleParameterEnum::Wallets->toToggle(),
+            PersonalFinanceModuleParameterEnum::Categories->toToggle(),
+            PersonalFinanceModuleParameterEnum::Transactions->toToggle(),
+            PersonalFinanceModuleParameterEnum::Budgets->toToggle(),
+            PersonalFinanceModuleParameterEnum::Goals->toToggle(),
+            PersonalFinanceModuleParameterEnum::Recurring->toToggle(),
+            PersonalFinanceModuleParameterEnum::Categorization->toToggle(),
+            PersonalFinanceModuleParameterEnum::Overview->toToggle(),
+            PersonalFinanceModuleParameterEnum::Statistics->toToggle(),
+            PersonalFinanceModuleParameterEnum::BudgetPresets->toToggle(),
+            PersonalFinanceModuleParameterEnum::Import->toToggle(),
         ];
     }
 }

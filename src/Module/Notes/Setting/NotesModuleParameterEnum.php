@@ -6,6 +6,7 @@ namespace Aurora\Module\Notes\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
+use Aurora\Module\Notes\NotesModule;
 
 /**
  * Notes module's own access toggles (one row each in core_settings, group
@@ -13,7 +14,7 @@ use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
  * the central `ModuleParameterEnum` — that core enum no longer knows about
  * Notes (monorepo-split: each module owns its toggle definitions).
  *
- * Exposed to the toggle machinery via {@see \Aurora\Module\Notes\NotesModule}
+ * Exposed to the toggle machinery via {@see NotesModule}
  * (getToggles) and to the settings sync via
  * {@see NotesModuleParameterProvider}. Stored keys are unchanged from the
  * legacy central enum (no migration / no settings wipe).

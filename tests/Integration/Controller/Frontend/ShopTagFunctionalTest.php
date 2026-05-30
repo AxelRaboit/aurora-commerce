@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Aurora\Tests\Integration\Controller\Frontend;
 
 use Aurora\Core\Enum\HttpMethodEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslation;
 use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Aurora\Tests\Integration\IntegrationTestCase;

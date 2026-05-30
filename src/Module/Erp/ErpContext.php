@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Erp;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Erp\Setting\ErpModuleParameterEnum;
 
 final readonly class ErpContext
 {
@@ -13,11 +13,11 @@ final readonly class ErpContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpBackend);
+        return $this->moduleAccessChecker->isEnabled(ErpModuleParameterEnum::Backend->value);
     }
 
     public function isProductsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ErpProducts);
+        return $this->moduleAccessChecker->isEnabled(ErpModuleParameterEnum::Products->value);
     }
 }

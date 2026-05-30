@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
@@ -45,7 +46,7 @@ abstract class AbstractProject implements ProjectInterface
      * Optional soft references to CRM entities (their ids), kept as plain
      * columns with no Doctrine relation so Project depends on no other module
      * and works without Crm installed. Resolve for display / pickers via the
-     * core {@see \Aurora\Core\Reference\EntityReferenceResolver}.
+     * core {@see EntityReferenceResolver}.
      *
      * @var list<int>
      */

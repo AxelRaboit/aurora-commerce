@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Hr\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Hr\HrContext;
+use Aurora\Module\Hr\Setting\HrModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class HrContextTest extends TestCase
@@ -16,7 +16,7 @@ final class HrContextTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
+            static fn (string $module): bool => $values[$module] ?? true,
         );
 
         return new HrContext($checker);
@@ -24,13 +24,13 @@ final class HrContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::HrBackend->value => true])->isBackendEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::HrBackend->value => false])->isBackendEnabled());
+        self::assertTrue($this->makeContext([HrModuleParameterEnum::Backend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([HrModuleParameterEnum::Backend->value => false])->isBackendEnabled());
     }
 
     public function testIsEmployeesEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::HrEmployees->value => true])->isEmployeesEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::HrEmployees->value => false])->isEmployeesEnabled());
+        self::assertTrue($this->makeContext([HrModuleParameterEnum::Employees->value => true])->isEmployeesEnabled());
+        self::assertFalse($this->makeContext([HrModuleParameterEnum::Employees->value => false])->isEmployeesEnabled());
     }
 }

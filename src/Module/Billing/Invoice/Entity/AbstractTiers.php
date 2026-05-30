@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Entity;
 
+use Aurora\Core\Reference\EntityReferenceResolverInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Doctrine\DBAL\Types\Types;
@@ -64,7 +65,7 @@ abstract class AbstractTiers implements TiersInterface
      * Optional soft reference to a CRM Company (its id), kept as a plain
      * column with no Doctrine relation so Billing depends on no other module
      * and works even when Crm is not installed. Resolve via the core
-     * {@see \Aurora\Core\Reference\EntityReferenceResolverInterface} when the
+     * {@see EntityReferenceResolverInterface} when the
      * Company entity is actually needed.
      */
     #[ORM\Column(name: 'company_id', type: Types::INTEGER, nullable: true)]

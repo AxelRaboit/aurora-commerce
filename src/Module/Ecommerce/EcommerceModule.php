@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Ecommerce\Setting\EcommerceModuleParameterEnum;
 
 final readonly class EcommerceModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -73,10 +73,10 @@ final readonly class EcommerceModule implements ModuleInterface, ModuleTogglePro
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::EcommerceBackend->toToggle(),
-            ModuleParameterEnum::EcommerceFrontend->toToggle(),
-            ModuleParameterEnum::EcommerceListings->toToggle(),
-            ModuleParameterEnum::EcommerceOrders->toToggle(),
+            EcommerceModuleParameterEnum::Backend->toToggle(),
+            EcommerceModuleParameterEnum::Frontend->toToggle(),
+            EcommerceModuleParameterEnum::Listings->toToggle(),
+            EcommerceModuleParameterEnum::Orders->toToggle(),
         ];
     }
 }

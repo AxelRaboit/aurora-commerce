@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use PHPUnit\Framework\TestCase;
 
 final class OrderLineTest extends TestCase

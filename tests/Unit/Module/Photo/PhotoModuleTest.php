@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Photo;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Photo\PhotoContext;
 use Aurora\Module\Photo\PhotoModule;
+use Aurora\Module\Photo\Setting\PhotoModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class PhotoModuleTest extends TestCase
@@ -19,9 +19,9 @@ final class PhotoModuleTest extends TestCase
     ): PhotoModule {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::PhotoBackend => $backendEnabled,
-                ModuleParameterEnum::PhotoGalleries => $galleriesEnabled,
+            static fn (string $param): bool => match ($param) {
+                PhotoModuleParameterEnum::Backend->value => $backendEnabled,
+                PhotoModuleParameterEnum::Galleries->value => $galleriesEnabled,
                 default => false,
             },
         );

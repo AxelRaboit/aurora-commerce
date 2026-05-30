@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Ecommerce\Cart\Entity\Cart;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use PHPUnit\Framework\TestCase;
 
 final class CartItemTest extends TestCase

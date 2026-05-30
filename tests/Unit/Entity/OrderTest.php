@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use PHPUnit\Framework\TestCase;
 
 final class OrderTest extends TestCase

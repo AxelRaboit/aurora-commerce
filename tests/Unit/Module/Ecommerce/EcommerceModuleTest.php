@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Ecommerce;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Ecommerce\EcommerceContext;
 use Aurora\Module\Ecommerce\EcommerceModule;
+use Aurora\Module\Ecommerce\Setting\EcommerceModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class EcommerceModuleTest extends TestCase
@@ -20,10 +20,10 @@ final class EcommerceModuleTest extends TestCase
     ): EcommerceModule {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::EcommerceBackend => $backendEnabled,
-                ModuleParameterEnum::EcommerceListings => $listingsEnabled,
-                ModuleParameterEnum::EcommerceOrders => $ordersEnabled,
+            static fn (string $param): bool => match ($param) {
+                EcommerceModuleParameterEnum::Backend->value => $backendEnabled,
+                EcommerceModuleParameterEnum::Listings->value => $listingsEnabled,
+                EcommerceModuleParameterEnum::Orders->value => $ordersEnabled,
                 default => false,
             },
         );

@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Crm\Setting\CrmModuleParameterEnum;
 
 final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -81,10 +81,10 @@ final readonly class CrmModule implements ModuleInterface, ModuleToggleProviderI
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::CrmBackend->toToggle(),
-            ModuleParameterEnum::CrmContacts->toToggle(),
-            ModuleParameterEnum::CrmCompanies->toToggle(),
-            ModuleParameterEnum::CrmDeals->toToggle(),
+            CrmModuleParameterEnum::Backend->toToggle(),
+            CrmModuleParameterEnum::Contacts->toToggle(),
+            CrmModuleParameterEnum::Companies->toToggle(),
+            CrmModuleParameterEnum::Deals->toToggle(),
         ];
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Entity;
 
-use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Core\Money\Enum\CurrencyEnum;
+use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 
 interface OrderLineInterface
 {

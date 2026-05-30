@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Assistant\Tool\Service;
 
-use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Core\Search\SearchProviderInterface;
+use Aurora\Module\Assistant\Tool\Contract\ToolInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Throwable;

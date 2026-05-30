@@ -188,5 +188,4 @@ final class ProjectsController extends AbstractController
 
         return $this->jsonSuccess();
     }
-
 }

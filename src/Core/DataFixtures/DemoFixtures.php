@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\DataFixtures;
 
 use Aurora\Core\Locale\Enum\LocaleEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
@@ -50,7 +51,6 @@ use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Aurora\Module\Ged\Document\Entity\Document;

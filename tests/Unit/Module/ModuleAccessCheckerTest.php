@@ -21,10 +21,10 @@ final class ModuleAccessCheckerTest extends TestCase
 {
     public function testGloballyDisabledReturnsFalseRegardlessOfUser(): void
     {
-        $checker = $this->makeChecker(global: [ModuleParameterEnum::ToolsBackend->value => false]);
+        $checker = $this->makeChecker(global: [ModuleParameterEnum::GedBackend->value => false]);
         $user = $this->makeUser([]);
 
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::ToolsBackend, $user));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedBackend, $user));
     }
 
     public function testGloballyEnabledAndNoUserOverrideReturnsTrue(): void
@@ -32,70 +32,70 @@ final class ModuleAccessCheckerTest extends TestCase
         $checker = $this->makeChecker(global: []); // missing = default true
         $user = $this->makeUser([]);
 
-        self::assertTrue($checker->isEnabled(ModuleParameterEnum::ToolsBackend, $user));
+        self::assertTrue($checker->isEnabled(ModuleParameterEnum::GedBackend, $user));
     }
 
     public function testUserOverrideMasksGloballyEnabledModule(): void
     {
         $checker = $this->makeChecker(global: []);
-        $user = $this->makeUser([ModuleParameterEnum::CrmBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::GedBackend->value]);
 
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::CrmBackend, $user));
-        self::assertTrue($checker->isEnabled(ModuleParameterEnum::ToolsBackend, $user));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedBackend, $user));
+        self::assertTrue($checker->isEnabled(ModuleParameterEnum::PlatformBackend, $user));
     }
 
     public function testUserOverrideOnParentCascadesToChildren(): void
     {
         $checker = $this->makeChecker(global: []);
-        $user = $this->makeUser([ModuleParameterEnum::CrmBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::GedBackend->value]);
 
-        // CrmContactsEnabled cascadeRequires CrmEnabled
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::CrmContacts, $user));
-        // CrmDealsEnabled cascadeRequires CrmContactsEnabled → CrmEnabled (transitive)
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::CrmDeals, $user));
+        // GedDocuments cascadeRequires GedBackend
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedDocuments, $user));
+        // GedFrontend cascadeRequires GedBackend
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedFrontend, $user));
     }
 
     public function testGlobalParentDisabledCascadesToChildren(): void
     {
         $checker = $this->makeChecker(global: [
-            ModuleParameterEnum::EditorialBackend->value => false,
+            ModuleParameterEnum::GedBackend->value => false,
         ]);
         $user = $this->makeUser([]);
 
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::EditorialPosts, $user));
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::EditorialSitemap, $user));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedDocuments, $user));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedFrontend, $user));
     }
 
     public function testNoAuthenticatedUserOnlyAppliesGlobalSetting(): void
     {
         $checker = $this->makeChecker(global: [], currentUser: null);
 
-        self::assertTrue($checker->isEnabled(ModuleParameterEnum::ToolsBackend));
+        self::assertTrue($checker->isEnabled(ModuleParameterEnum::GedBackend));
     }
 
     public function testCurrentUserIsUsedWhenUserArgIsNull(): void
     {
-        $user = $this->makeUser([ModuleParameterEnum::ToolsBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::GedBackend->value]);
         $checker = $this->makeChecker(global: [], currentUser: $user);
 
-        self::assertFalse($checker->isEnabled(ModuleParameterEnum::ToolsBackend));
+        self::assertFalse($checker->isEnabled(ModuleParameterEnum::GedBackend));
     }
 
     public function testIsGloballyEnabledIgnoresUserOverride(): void
     {
-        $user = $this->makeUser([ModuleParameterEnum::ToolsBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::GedBackend->value]);
         $checker = $this->makeChecker(global: [], currentUser: $user);
 
-        self::assertTrue($checker->isGloballyEnabled(ModuleParameterEnum::ToolsBackend));
+        self::assertTrue($checker->isGloballyEnabled(ModuleParameterEnum::GedBackend));
     }
 
     public function testIsMaskedForUserReturnsTrueOnlyWhenExplicitlyListed(): void
     {
         $checker = $this->makeChecker(global: []);
-        $user = $this->makeUser([ModuleParameterEnum::CrmBackend->value]);
+        $user = $this->makeUser([ModuleParameterEnum::GedBackend->value]);
 
-        self::assertTrue($checker->isMaskedForUser(ModuleParameterEnum::CrmBackend, $user));
-        self::assertFalse($checker->isMaskedForUser(ModuleParameterEnum::CrmContacts, $user));
+        self::assertTrue($checker->isMaskedForUser(ModuleParameterEnum::GedBackend, $user));
+        self::assertFalse($checker->isMaskedForUser(ModuleParameterEnum::GedDocuments, $user));
     }
 
     /**

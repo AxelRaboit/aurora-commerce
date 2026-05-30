@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Hr;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Hr\Setting\HrModuleParameterEnum;
 
 final readonly class HrContext
 {
@@ -13,11 +13,11 @@ final readonly class HrContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::HrBackend);
+        return $this->moduleAccessChecker->isEnabled(HrModuleParameterEnum::Backend->value);
     }
 
     public function isEmployeesEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::HrEmployees);
+        return $this->moduleAccessChecker->isEnabled(HrModuleParameterEnum::Employees->value);
     }
 }

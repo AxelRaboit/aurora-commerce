@@ -7,7 +7,6 @@ namespace Aurora\Module\Ecommerce\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Contributes to two tabs of the admin Settings page:
@@ -23,7 +22,7 @@ final readonly class EcommerceConfigurationTabProvider implements ConfigurationT
     ];
 
     private const array TAB_MODULE_TOGGLE = [
-        'ecommerce' => ModuleParameterEnum::EcommerceBackend,
+        'ecommerce' => EcommerceModuleParameterEnum::Backend->value,
     ];
 
     public function getTabs(): array

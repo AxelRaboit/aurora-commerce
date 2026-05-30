@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Erp\Product\Dto;
 
-use Aurora\Core\Support\Str;
 use Aurora\Core\Money\Enum\CurrencyEnum;
+use Aurora\Core\Support\Str;
 use Aurora\Module\Erp\Product\Enum\ProductStatusEnum;
 use Aurora\Module\Erp\Product\Enum\ProductTypeEnum;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;

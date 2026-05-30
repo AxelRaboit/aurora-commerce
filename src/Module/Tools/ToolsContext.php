@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Tools;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Tools\Setting\ToolsModuleParameterEnum;
 
 final readonly class ToolsContext
 {
@@ -13,16 +13,16 @@ final readonly class ToolsContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ToolsBackend);
+        return $this->moduleAccessChecker->isEnabled(ToolsModuleParameterEnum::Backend->value);
     }
 
     public function isVaultEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ToolsVault);
+        return $this->moduleAccessChecker->isEnabled(ToolsModuleParameterEnum::Vault->value);
     }
 
     public function isPasswordGeneratorEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ToolsPasswordGenerator);
+        return $this->moduleAccessChecker->isEnabled(ToolsModuleParameterEnum::PasswordGenerator->value);
     }
 }

@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Project\Setting\ProjectModuleParameterEnum;
 
 final readonly class ProjectModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -62,8 +62,8 @@ final readonly class ProjectModule implements ModuleInterface, ModuleToggleProvi
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::ProjectBackend->toToggle(),
-            ModuleParameterEnum::ProjectProjects->toToggle(),
+            ProjectModuleParameterEnum::Backend->toToggle(),
+            ProjectModuleParameterEnum::Projects->toToggle(),
         ];
     }
 }

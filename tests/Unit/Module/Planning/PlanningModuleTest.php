@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Planning;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Planning\PlanningContext;
 use Aurora\Module\Planning\PlanningModule;
+use Aurora\Module\Planning\Setting\PlanningModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class PlanningModuleTest extends TestCase
@@ -17,9 +17,9 @@ final class PlanningModuleTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::PlanningBackend => $backendEnabled,
-                ModuleParameterEnum::PlanningPlannings => $planningsEnabled,
+            static fn (string $param): bool => match ($param) {
+                PlanningModuleParameterEnum::Backend->value => $backendEnabled,
+                PlanningModuleParameterEnum::Plannings->value => $planningsEnabled,
                 default => false,
             },
         );

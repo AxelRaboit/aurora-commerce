@@ -62,7 +62,7 @@ final class SettingsServiceTest extends TestCase
         $repository->expects(self::once())->method('saveMany');
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::ErpBackend->value, '1');
+        $service->set(ModuleParameterEnum::GedDocuments->value, '1');
     }
 
     public function testSetModuleParameterWithParentDisabledThrowsCascadeViolation(): void
@@ -75,7 +75,7 @@ final class SettingsServiceTest extends TestCase
         $service = $this->makeService($repository, $auditLogger);
 
         $this->expectException(CascadeViolationException::class);
-        $service->set(ModuleParameterEnum::ErpBackend->value, '1');
+        $service->set(ModuleParameterEnum::GedDocuments->value, '1');
     }
 
     public function testSetModuleParameterToZeroCascadesChildren(): void
@@ -93,12 +93,15 @@ final class SettingsServiceTest extends TestCase
             }));
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::ToolsBackend->value, '0');
+        $service->set(ModuleParameterEnum::GedBackend->value, '0');
 
         $keys = array_column($capturedWrites, 0);
-        self::assertContains(ModuleParameterEnum::ToolsBackend->value, $keys);
-        self::assertContains(ModuleParameterEnum::ToolsVault->value, $keys);
-        self::assertContains(ModuleParameterEnum::ToolsPasswordGenerator->value, $keys);
+        self::assertContains(ModuleParameterEnum::GedBackend->value, $keys);
+        self::assertContains(ModuleParameterEnum::GedDocuments->value, $keys);
+        self::assertContains(ModuleParameterEnum::GedCategories->value, $keys);
+        self::assertContains(ModuleParameterEnum::GedTags->value, $keys);
+        self::assertContains(ModuleParameterEnum::GedFolders->value, $keys);
+        self::assertContains(ModuleParameterEnum::GedFrontend->value, $keys);
 
         foreach ($capturedWrites as [$key, $value]) {
             self::assertSame('0', $value);
@@ -132,11 +135,11 @@ final class SettingsServiceTest extends TestCase
                 'settings.updated',
                 null,
                 null,
-                ['key' => ModuleParameterEnum::CrmBackend->value, 'value' => '1'],
+                ['key' => ModuleParameterEnum::GedBackend->value, 'value' => '1'],
             );
 
         $service = $this->makeService($repository, $auditLogger);
-        $service->set(ModuleParameterEnum::CrmBackend->value, '1');
+        $service->set(ModuleParameterEnum::GedBackend->value, '1');
     }
 
     public function testSetUnknownKeyPersistsWithoutCascade(): void

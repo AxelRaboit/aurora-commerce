@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Manager;
 
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Core\Validation\Trait\ScalarCoercionTrait;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
@@ -19,7 +20,6 @@ use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Setting\BillingSettingEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Core\Money\Enum\CurrencyEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

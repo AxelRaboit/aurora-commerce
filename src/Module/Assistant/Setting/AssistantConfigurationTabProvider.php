@@ -7,7 +7,6 @@ namespace Aurora\Module\Assistant\Setting;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTab;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\SettingFieldDescriptor;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 
 /**
  * Surfaces the Assistant module's settings as a dedicated tab on the
@@ -42,7 +41,7 @@ final readonly class AssistantConfigurationTabProvider implements ConfigurationT
                 fields: $fields,
                 devOnly: true,
                 componentName: 'assistant-settings',
-                moduleToggle: ModuleParameterEnum::AssistantBackend,
+                moduleToggle: AssistantModuleParameterEnum::Backend->value,
             ),
         ];
     }

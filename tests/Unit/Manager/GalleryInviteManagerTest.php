@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Manager;
 
-use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Mail\Service\MailService;
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;

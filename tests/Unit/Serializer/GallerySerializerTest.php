@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Serializer;
 
 use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
+use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Reference\ContactReferenceProvider;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;

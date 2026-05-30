@@ -8,7 +8,7 @@ use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
 use Aurora\Module\Billing\BillingContext;
 use Aurora\Module\Billing\BillingModule;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Billing\Setting\BillingModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class BillingModuleTest extends TestCase
@@ -21,11 +21,11 @@ final class BillingModuleTest extends TestCase
     ): BillingModule {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::BillingBackend => $backendEnabled,
-                ModuleParameterEnum::BillingTiers => $tiersEnabled,
-                ModuleParameterEnum::BillingInvoices => $invoicesEnabled,
-                ModuleParameterEnum::BillingCompliance => $complianceEnabled,
+            static fn (string $param): bool => match ($param) {
+                BillingModuleParameterEnum::Backend->value => $backendEnabled,
+                BillingModuleParameterEnum::Tiers->value => $tiersEnabled,
+                BillingModuleParameterEnum::Invoices->value => $invoicesEnabled,
+                BillingModuleParameterEnum::Compliance->value => $complianceEnabled,
                 default => false,
             },
         );

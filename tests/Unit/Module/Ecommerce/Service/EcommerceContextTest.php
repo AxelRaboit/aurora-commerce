@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Ecommerce\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Ecommerce\EcommerceContext;
+use Aurora\Module\Ecommerce\Setting\EcommerceModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class EcommerceContextTest extends TestCase
@@ -16,7 +16,7 @@ final class EcommerceContextTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
+            static fn (string $module): bool => $values[$module] ?? true,
         );
 
         return new EcommerceContext($checker);
@@ -24,25 +24,25 @@ final class EcommerceContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceBackend->value => true])->isBackendEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceBackend->value => false])->isBackendEnabled());
+        self::assertTrue($this->makeContext([EcommerceModuleParameterEnum::Backend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([EcommerceModuleParameterEnum::Backend->value => false])->isBackendEnabled());
     }
 
     public function testIsFrontEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceFrontend->value => true])->isFrontEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceFrontend->value => false])->isFrontEnabled());
+        self::assertTrue($this->makeContext([EcommerceModuleParameterEnum::Frontend->value => true])->isFrontEnabled());
+        self::assertFalse($this->makeContext([EcommerceModuleParameterEnum::Frontend->value => false])->isFrontEnabled());
     }
 
     public function testIsListingsEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceListings->value => true])->isListingsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceListings->value => false])->isListingsEnabled());
+        self::assertTrue($this->makeContext([EcommerceModuleParameterEnum::Listings->value => true])->isListingsEnabled());
+        self::assertFalse($this->makeContext([EcommerceModuleParameterEnum::Listings->value => false])->isListingsEnabled());
     }
 
     public function testIsOrdersEnabledDelegatesToChecker(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::EcommerceOrders->value => true])->isOrdersEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::EcommerceOrders->value => false])->isOrdersEnabled());
+        self::assertTrue($this->makeContext([EcommerceModuleParameterEnum::Orders->value => true])->isOrdersEnabled());
+        self::assertFalse($this->makeContext([EcommerceModuleParameterEnum::Orders->value => false])->isOrdersEnabled());
     }
 }

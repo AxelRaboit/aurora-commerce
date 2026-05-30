@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Project\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Project\ProjectContext;
+use Aurora\Module\Project\Setting\ProjectModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class ProjectContextTest extends TestCase
@@ -16,7 +16,7 @@ final class ProjectContextTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
+            static fn (string $module): bool => $values[$module] ?? true,
         );
 
         return new ProjectContext($checker);
@@ -24,13 +24,13 @@ final class ProjectContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ProjectBackend->value => true])->isBackendEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ProjectBackend->value => false])->isBackendEnabled());
+        self::assertTrue($this->makeContext([ProjectModuleParameterEnum::Backend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ProjectModuleParameterEnum::Backend->value => false])->isBackendEnabled());
     }
 
     public function testIsProjectsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ProjectProjects->value => true])->isProjectsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ProjectProjects->value => false])->isProjectsEnabled());
+        self::assertTrue($this->makeContext([ProjectModuleParameterEnum::Projects->value => true])->isProjectsEnabled());
+        self::assertFalse($this->makeContext([ProjectModuleParameterEnum::Projects->value => false])->isProjectsEnabled());
     }
 }

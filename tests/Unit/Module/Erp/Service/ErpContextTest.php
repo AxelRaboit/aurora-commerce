@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Tests\Unit\Module\Erp\Service;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Erp\ErpContext;
+use Aurora\Module\Erp\Setting\ErpModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class ErpContextTest extends TestCase
@@ -16,7 +16,7 @@ final class ErpContextTest extends TestCase
     {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $module): bool => $values[$module->value] ?? true,
+            static fn (string $module): bool => $values[$module] ?? true,
         );
 
         return new ErpContext($checker);
@@ -24,13 +24,13 @@ final class ErpContextTest extends TestCase
 
     public function testIsAdminEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ErpBackend->value => true])->isBackendEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ErpBackend->value => false])->isBackendEnabled());
+        self::assertTrue($this->makeContext([ErpModuleParameterEnum::Backend->value => true])->isBackendEnabled());
+        self::assertFalse($this->makeContext([ErpModuleParameterEnum::Backend->value => false])->isBackendEnabled());
     }
 
     public function testIsProductsEnabled(): void
     {
-        self::assertTrue($this->makeContext([ModuleParameterEnum::ErpProducts->value => true])->isProductsEnabled());
-        self::assertFalse($this->makeContext([ModuleParameterEnum::ErpProducts->value => false])->isProductsEnabled());
+        self::assertTrue($this->makeContext([ErpModuleParameterEnum::Products->value => true])->isProductsEnabled());
+        self::assertFalse($this->makeContext([ErpModuleParameterEnum::Products->value => false])->isProductsEnabled());
     }
 }

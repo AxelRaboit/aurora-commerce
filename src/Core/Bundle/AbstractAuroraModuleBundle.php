@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Bundle;
 
+use Aurora\AuroraBundle;
 use Override;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
+use function dirname;
+
 /**
  * Base bundle for a single self-contained Aurora module package.
  *
  * In the monorepo every module lives under `src/Module/<Name>/` and is wired
- * centrally by {@see \Aurora\AuroraBundle} via globbing. The monorepo-split
+ * centrally by {@see AuroraBundle} via globbing. The monorepo-split
  * target instead ships each module as its own Composer package whose bundle
  * registers ONLY that module's Doctrine mappings, Twig namespace, translations
  * and `resolve_target_entities` — exactly what this base class does.
@@ -120,6 +123,6 @@ abstract class AbstractAuroraModuleBundle extends AbstractBundle
      */
     protected function moduleDir(): string
     {
-        return \dirname((string) (new ReflectionClass(static::class))->getFileName());
+        return dirname((string) (new ReflectionClass(static::class))->getFileName());
     }
 }

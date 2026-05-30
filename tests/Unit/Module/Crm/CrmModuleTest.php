@@ -6,9 +6,9 @@ namespace Aurora\Tests\Unit\Module\Crm;
 
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Crm\CrmContext;
 use Aurora\Module\Crm\CrmModule;
+use Aurora\Module\Crm\Setting\CrmModuleParameterEnum;
 use PHPUnit\Framework\TestCase;
 
 final class CrmModuleTest extends TestCase
@@ -21,11 +21,11 @@ final class CrmModuleTest extends TestCase
     ): CrmModule {
         $checker = $this->createStub(ModuleAccessChecker::class);
         $checker->method('isEnabled')->willReturnCallback(
-            static fn (ModuleParameterEnum $param): bool => match ($param) {
-                ModuleParameterEnum::CrmBackend => $backendEnabled,
-                ModuleParameterEnum::CrmContacts => $contactsEnabled,
-                ModuleParameterEnum::CrmCompanies => $companiesEnabled,
-                ModuleParameterEnum::CrmDeals => $dealsEnabled,
+            static fn (string $param): bool => match ($param) {
+                CrmModuleParameterEnum::Backend->value => $backendEnabled,
+                CrmModuleParameterEnum::Contacts->value => $contactsEnabled,
+                CrmModuleParameterEnum::Companies->value => $companiesEnabled,
+                CrmModuleParameterEnum::Deals->value => $dealsEnabled,
                 default => false,
             },
         );

@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Assistant\Setting\AssistantModuleParameterEnum;
 
 final readonly class AssistantModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -87,9 +87,9 @@ final readonly class AssistantModule implements ModuleInterface, ModuleTogglePro
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::AssistantBackend->toToggle(),
-            ModuleParameterEnum::AssistantChat->toToggle(),
-            ModuleParameterEnum::AssistantMountPoints->toToggle(),
+            AssistantModuleParameterEnum::Backend->toToggle(),
+            AssistantModuleParameterEnum::Chat->toToggle(),
+            AssistantModuleParameterEnum::MountPoints->toToggle(),
         ];
     }
 }

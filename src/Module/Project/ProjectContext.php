@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Project;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Project\Setting\ProjectModuleParameterEnum;
 
 final readonly class ProjectContext
 {
@@ -13,11 +13,11 @@ final readonly class ProjectContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectBackend);
+        return $this->moduleAccessChecker->isEnabled(ProjectModuleParameterEnum::Backend->value);
     }
 
     public function isProjectsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::ProjectProjects);
+        return $this->moduleAccessChecker->isEnabled(ProjectModuleParameterEnum::Projects->value);
     }
 }

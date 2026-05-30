@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Ecommerce\Setting\EcommerceModuleParameterEnum;
 
 final readonly class EcommerceContext
 {
@@ -13,21 +13,21 @@ final readonly class EcommerceContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceBackend);
+        return $this->moduleAccessChecker->isEnabled(EcommerceModuleParameterEnum::Backend->value);
     }
 
     public function isFrontEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceFrontend);
+        return $this->moduleAccessChecker->isEnabled(EcommerceModuleParameterEnum::Frontend->value);
     }
 
     public function isListingsEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceListings);
+        return $this->moduleAccessChecker->isEnabled(EcommerceModuleParameterEnum::Listings->value);
     }
 
     public function isOrdersEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::EcommerceOrders);
+        return $this->moduleAccessChecker->isEnabled(EcommerceModuleParameterEnum::Orders->value);
     }
 }

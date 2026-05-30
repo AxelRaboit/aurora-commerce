@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Billing\Setting\BillingModuleParameterEnum;
 
 final readonly class BillingModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -106,10 +106,10 @@ final readonly class BillingModule implements ModuleInterface, ModuleToggleProvi
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::BillingBackend->toToggle(),
-            ModuleParameterEnum::BillingTiers->toToggle(),
-            ModuleParameterEnum::BillingInvoices->toToggle(),
-            ModuleParameterEnum::BillingCompliance->toToggle(),
+            BillingModuleParameterEnum::Backend->toToggle(),
+            BillingModuleParameterEnum::Tiers->toToggle(),
+            BillingModuleParameterEnum::Invoices->toToggle(),
+            BillingModuleParameterEnum::Compliance->toToggle(),
         ];
     }
 }
