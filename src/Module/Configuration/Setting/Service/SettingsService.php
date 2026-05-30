@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\Service;
 
+use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Module\Configuration\Setting\Exception\CascadeViolationException;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
@@ -36,13 +37,13 @@ final readonly class SettingsService
     {
         $toggle = $this->moduleToggleRegistry->get($key);
 
-        if (null !== $toggle && '1' === $value) {
+        if ($toggle instanceof ModuleToggle && '1' === $value) {
             $this->assertParentEnabled($toggle->parentKey, $key);
         }
 
         $writes = [[$key, $value]];
 
-        if (null !== $toggle && '0' === $value) {
+        if ($toggle instanceof ModuleToggle && '0' === $value) {
             foreach ($this->moduleToggleRegistry->getDescendantKeys($key) as $childKey) {
                 $writes[] = [$childKey, '0'];
             }

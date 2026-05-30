@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Entity;
 
-use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
@@ -168,7 +167,7 @@ abstract class AbstractProject implements ProjectInterface
     /** @param list<int> $crmContactIds */
     public function setCrmContactIds(array $crmContactIds): static
     {
-        $this->crmContactIds = array_values(array_map(intval(...), $crmContactIds));
+        $this->crmContactIds = array_map(intval(...), $crmContactIds);
 
         return $this;
     }

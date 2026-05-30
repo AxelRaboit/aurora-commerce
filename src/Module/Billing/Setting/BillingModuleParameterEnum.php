@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Module\Billing\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
-use Aurora\Module\Billing\BillingModule;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**
@@ -80,11 +79,11 @@ enum BillingModuleParameterEnum: string implements ApplicationParameterEnumInter
     }
 
     /**
-     * Cascade dependency (parent that must be ON), null for the top-level.
-     * Backend requires the CRM module's backend — a cross-module dependency
-     * kept as a plain key string (no import on the central enum).
+     * Cascade dependency (parent that must be ON). Every case requires a
+     * parent: Backend requires the CRM module's backend — a cross-module
+     * dependency kept as a plain key string (no import on the central enum).
      */
-    private function getCascadeRequires(): ?string
+    private function getCascadeRequires(): string
     {
         return match ($this) {
             self::Backend => 'modules_crm_backend',

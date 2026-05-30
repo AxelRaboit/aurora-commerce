@@ -6,7 +6,6 @@ namespace Aurora\Module\Ecommerce\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
-use Aurora\Module\Ecommerce\EcommerceModule;
 
 /**
  * Ecommerce module's own access toggles (one row each in core_settings, group
@@ -94,7 +93,7 @@ enum EcommerceModuleParameterEnum: string implements ApplicationParameterEnumInt
      * one can be enabled). Backend and Frontend both require the ERP backend
      * (cross-module); the sub-modules chain Backend → Listings → Orders.
      */
-    private function getCascadeRequires(): ?string
+    private function getCascadeRequires(): string
     {
         return match ($this) {
             self::Backend, self::Frontend => 'modules_erp_backend',

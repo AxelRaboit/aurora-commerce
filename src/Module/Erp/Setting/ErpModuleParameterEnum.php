@@ -6,7 +6,6 @@ namespace Aurora\Module\Erp\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
-use Aurora\Module\Erp\ErpModule;
 
 /**
  * ERP module's own access toggles (one row each in core_settings, group
@@ -78,10 +77,10 @@ enum ErpModuleParameterEnum: string implements ApplicationParameterEnumInterface
     }
 
     /**
-     * Cascade dependency (parent that must be ON), null for the top-level.
-     * Backend depends on the CRM module (cross-module, plain string).
+     * Cascade dependency (parent that must be ON). Every case requires a
+     * parent: Backend depends on the CRM module (cross-module, plain string).
      */
-    private function getCascadeRequires(): ?string
+    private function getCascadeRequires(): string
     {
         return match ($this) {
             self::Backend => 'modules_crm_backend',

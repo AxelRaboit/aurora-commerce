@@ -6,7 +6,6 @@ namespace Aurora\Module\PersonalFinance\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
-use Aurora\Module\PersonalFinance\PersonalFinanceModule;
 
 /**
  * PersonalFinance module's own access toggles (one row each in core_settings,

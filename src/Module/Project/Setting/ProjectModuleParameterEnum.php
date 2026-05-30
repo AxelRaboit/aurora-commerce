@@ -6,7 +6,6 @@ namespace Aurora\Module\Project\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
-use Aurora\Module\Project\ProjectModule;
 
 /**
  * Project module's own access toggles (one row each in core_settings, group

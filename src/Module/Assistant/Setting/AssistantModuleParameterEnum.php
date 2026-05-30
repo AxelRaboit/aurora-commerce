@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Module\Assistant\Setting;
 
 use Aurora\Core\Module\Toggle\ModuleToggle;
-use Aurora\Module\Assistant\AssistantModule;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnumInterface;
 
 /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Billing\Invoice\Entity;
 
-use Aurora\Core\Reference\EntityReferenceResolverInterface;
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
 use Doctrine\DBAL\Types\Types;

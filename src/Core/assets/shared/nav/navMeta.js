@@ -195,7 +195,9 @@ const HEADER_CLASS = {
 
 /** Module id → its tinted header classes (background + left accent colour). */
 export function moduleHeaderClass(moduleId) {
-    return HEADER_CLASS[MODULE_COLOR[moduleId] ?? "accent"] ?? HEADER_CLASS.accent;
+    return (
+        HEADER_CLASS[MODULE_COLOR[moduleId] ?? "accent"] ?? HEADER_CLASS.accent
+    );
 }
 
 /** Derive the module id from a toggle key: 'modules_ecommerce_backend' → 'ecommerce'. */
