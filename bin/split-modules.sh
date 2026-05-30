@@ -6,9 +6,9 @@
 # Prerequisites (do these FIRST):
 #   1. Create the empty GitHub repos (no auto README/license) under the org:
 #        aurora-crm aurora-billing aurora-editorial aurora-photo aurora-project
-#        aurora-hr aurora-notes aurora-personal-finance aurora-planning
+#        aurora-tools aurora-hr aurora-notes aurora-personal-finance aurora-planning
 #        aurora-assistant aurora-commerce
-#      (aurora-tools already done; aurora-core IS this monorepo.)
+#      (aurora-core IS this monorepo.) Modules are pushed to the `master` branch.
 #   2. Be on a clean `develop` (or the branch you publish from) with every
 #      module's composer.json + config/services.php committed.
 #
@@ -22,10 +22,11 @@
 set -uo pipefail
 
 ORG="git@github.com:AxelRaboit"
-TARGET_BRANCH="main"
+TARGET_BRANCH="master"
 
 # repo-name => module dir (single-prefix modules)
 SINGLE=(
+    "aurora-tools:src/Module/Tools"
     "aurora-crm:src/Module/Crm"
     "aurora-billing:src/Module/Billing"
     "aurora-editorial:src/Module/Editorial"

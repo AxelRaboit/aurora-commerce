@@ -19,8 +19,8 @@ Dans le `composer.json` du client :
     "prefer-stable": true,
     "require": {
         "axelraboit/aurora": "dev-develop",
-        "axelraboit/aurora-tools": "dev-main",
-        "axelraboit/aurora-crm": "dev-main"
+        "axelraboit/aurora-tools": "dev-master",
+        "axelraboit/aurora-crm": "dev-master"
     },
     "repositories": [
         { "type": "vcs", "url": "git@github.com:AxelRaboit/aurora-core.git" },
