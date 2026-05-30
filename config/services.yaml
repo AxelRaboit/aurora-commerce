@@ -54,6 +54,8 @@ services:
             tags: [aurora.dashboard_stats_provider]
         Aurora\Core\Search\BackendSearchProviderInterface:
             tags: [aurora.backend_search_provider]
+        Aurora\Core\Content\BlockRendererInterface:
+            tags: [aurora.content_block_renderer]
 
     Aurora\Module\Ged\Document\Service\DocumentUsageService:
         arguments:
