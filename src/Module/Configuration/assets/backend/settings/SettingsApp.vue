@@ -217,7 +217,6 @@ const isDevOnly = (id) => tabMeta[id]?.devOnly ?? false;
                                 :hint="parameter.description ? parameter.description + ' — ' + t('backend.settings.media_square_hint') : t('backend.settings.media_square_hint')"
                                 :model-value="mediaState[parameter.key]"
                                 :size="96"
-                                source="document"
                                 v-on:update:model-value="onMediaChange(parameter, $event)"
                             />
                         </template>

@@ -3,9 +3,9 @@ import { mount } from "@vue/test-utils";
 import { createTestI18n } from "@/tests/helpers/createTestI18n.js";
 import AppImagePickerField from "./AppImagePickerField.vue";
 
-// Stub the media picker utility to avoid DOM-level modal interactions
-vi.mock("@/shared/utils/mediaPicker.js", () => ({
-    openMediaPicker: vi.fn().mockResolvedValue(null),
+// Stub the document picker utility to avoid DOM-level modal interactions
+vi.mock("@/shared/utils/documentPicker.js", () => ({
+    openDocumentPicker: vi.fn().mockResolvedValue(null),
 }));
 
 const i18n = createTestI18n({}, "en");

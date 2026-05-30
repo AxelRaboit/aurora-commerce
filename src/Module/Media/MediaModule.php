@@ -42,30 +42,17 @@ final readonly class MediaModule implements ModuleInterface, ModuleToggleProvide
 
     public function getNavSections(): array
     {
-        if (!$this->mediaContext->isBackendEnabled()) {
-            return [];
-        }
-
-        $items = [];
-
-        if ($this->mediaContext->isLibraryEnabled()) {
-            $items[] = new NavItem('backend_media_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description');
-        }
-
-        if ([] === $items) {
-            return [];
-        }
-
-        return [new NavSection('media', $items, priority: 22)];
+        // Hidden by Phase 4 of the Media → GED merge — the library is
+        // superseded by /backend/ged/documents and Phase 5 drops the
+        // module entirely. Routes still resolve so any deep link or
+        // pre-Phase-2 client extension keeps loading; only the menu
+        // entry is gone.
+        return [];
     }
 
     public function getCatalogNavSections(): array
     {
-        return [
-            new NavSection('media', [
-                new NavItem('backend_media_media', 'backend.nav.media', 'image', requiredPrivilege: 'media.view', descriptionKey: 'backend.nav.media_description'),
-            ], priority: 22),
-        ];
+        return [];
     }
 
     public function getToggles(): array

@@ -193,7 +193,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppTextarea v-model="newProduct.description" :rows="3" :placeholder="t('backend.erp.products.description_placeholder')" />
                 <AppImagePickerField
                     v-model="newProductImage"
-                    source="document"
                     :label="t('backend.erp.products.image')"
                 />
                 <AppInput
@@ -246,7 +245,6 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppTextarea v-model="editForm.description" :rows="3" />
                 <AppImagePickerField
                     v-model="editFormImage"
-                    source="document"
                     :label="t('backend.erp.products.image')"
                 />
                 <AppInput

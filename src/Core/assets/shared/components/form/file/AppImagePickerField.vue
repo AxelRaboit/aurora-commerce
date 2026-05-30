@@ -3,7 +3,6 @@ import { useI18n } from "vue-i18n";
 import { Image as ImageIcon, X } from "lucide-vue-next";
 import AppButton from "@/shared/components/action/AppButton.vue";
 import AppImage from "@/shared/components/display/AppImage.vue";
-import { openMediaPicker } from "@/shared/utils/mediaPicker.js";
 import { openDocumentPicker } from "@/shared/utils/documentPicker.js";
 
 const props = defineProps({
@@ -14,18 +13,6 @@ const props = defineProps({
     changeLabel: { type: String, default: "" },
     removeLabel: { type: String, default: "" },
     size: { type: Number, default: 128 },
-    /**
-     * Where the picker pulls assets from. `media` (default) keeps Aurora's
-     * historical Media library. `document` switches to the GED Document
-     * library — set during the Phase 2 migration of consumers whose
-     * underlying FK is now `document_id` instead of `media_id`. Once the
-     * full migration completes the default flips and `media` disappears.
-     */
-    source: {
-        type: String,
-        default: "media",
-        validator: (value) => ["media", "document"].includes(value),
-    },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -33,13 +20,12 @@ const emit = defineEmits(["update:modelValue"]);
 const { t } = useI18n();
 
 async function pick() {
-    const item = "document" === props.source
-        ? await openDocumentPicker({ imagesOnly: true })
-        : await openMediaPicker({ imagesOnly: true });
+    const item = await openDocumentPicker({ imagesOnly: true });
     if (!item) return;
-    // Documents serialize their public URL under `fileUrl`; Media uses `url`.
-    // The component normalizes them so consumers stay agnostic.
-    const url = item.url ?? item.fileUrl ?? null;
+    // Documents serialize their public URL under `fileUrl` (mirror of
+    // file_path); the optional `url` fallback covers any legacy serializer
+    // shape still in flight.
+    const url = item.fileUrl ?? item.url ?? null;
     emit("update:modelValue", { id: item.id, url });
 }
 

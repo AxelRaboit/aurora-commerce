@@ -170,7 +170,6 @@ const { showDelete, loading: deleteLoading, submit: doDelete } = useDetailDelete
                 <AppTextarea v-model="editForm.marketingDescription" :rows="4" />
                 <AppImagePickerField
                     v-model="featuredImageValue"
-                    source="document"
                     :label="t('backend.ecommerce.listings.featured_image')"
                     :hint="t('backend.ecommerce.listings.featured_image_override_hint')"
                 />
