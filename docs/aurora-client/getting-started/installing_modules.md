@@ -9,6 +9,13 @@ on passe par des dépôts VCS.
 > par `bin/split-modules.sh`. Côté client, l'install se résume à 4 points (dont
 > 2 sont auto-découverts).
 
+> 🧰 **Kit copier-coller** : un template prêt à l'emploi vit dans aurora-core à
+> `vendor/axelraboit/aurora/.claude/client_template/` —
+> `composer.json` (les **13 `repositories` déjà listés** + require à la carte),
+> `config/bundles.php`, `config/routes.yaml`, `config/packages/messenger.yaml`.
+> Copie-les, puis tu ne touches plus que la section `require` pour
+> ajouter/retirer un module (les repos sont déjà tous là).
+
 ## 1. Déclarer les dépôts VCS + requérir les packages
 
 Dans le `composer.json` du client :

@@ -1,0 +1,20 @@
+# Aurora core controllers.
+aurora:
+    resource: '../vendor/axelraboit/aurora/src/'
+    type: attribute
+
+# Auto-discover controllers of every installed aurora-* module package.
+# One entry, whatever the number of installed modules.
+aurora_modules:
+    resource: .
+    type: aurora_modules
+
+# Client controllers — flat, outside any module.
+client:
+    resource: '../src/Controller/'
+    type: attribute
+
+# Client feature modules — controllers under src/Module/<Name>/Controller/.
+modules:
+    resource: '../src/Module/'
+    type: attribute
