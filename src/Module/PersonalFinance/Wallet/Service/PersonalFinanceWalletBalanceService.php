@@ -26,6 +26,19 @@ class PersonalFinanceWalletBalanceService implements PersonalFinanceWalletBalanc
         return bcadd($wallet->getStartBalance(), $this->transactionRepository->netFlow($wallet), 2);
     }
 
+    public function currentBalances(array $wallets): array
+    {
+        $netFlowByWallet = $this->transactionRepository->netFlowGroupedByWallet($wallets);
+
+        $out = [];
+        foreach ($wallets as $wallet) {
+            $walletId = (int) $wallet->getId();
+            $out[$walletId] = bcadd($wallet->getStartBalance(), $netFlowByWallet[$walletId] ?? '0', 2);
+        }
+
+        return $out;
+    }
+
     public function monthlyBalance(PersonalFinanceWalletInterface $wallet, DateTimeImmutable $month): string
     {
         $start = $this->firstDayOf($month);

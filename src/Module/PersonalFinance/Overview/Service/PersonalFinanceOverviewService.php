@@ -10,7 +10,6 @@ use Aurora\Module\PersonalFinance\Budget\Repository\PersonalFinanceBudgetReposit
 use Aurora\Module\PersonalFinance\Goal\Repository\PersonalFinanceGoalRepository;
 use Aurora\Module\PersonalFinance\Recurring\Repository\PersonalFinanceRecurringTransactionRepository;
 use Aurora\Module\PersonalFinance\Recurring\Repository\PersonalFinanceScheduledTransactionRepository;
-use Aurora\Module\PersonalFinance\Transaction\Enum\PersonalFinanceTransactionTypeEnum;
 use Aurora\Module\PersonalFinance\Transaction\Repository\PersonalFinanceTransactionRepository;
 use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
 use Aurora\Module\PersonalFinance\Wallet\Repository\PersonalFinanceWalletRepository;
@@ -49,20 +48,35 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
 
         $monthStart = $today->modify('first day of this month')->setTime(0, 0);
         $monthEnd = $today->modify('first day of next month')->setTime(0, 0);
+        $prevMonthStart = $monthStart->modify('first day of last month');
+
+        // Pre-fetch every cross-wallet aggregate in one round-trip apiece.
+        // What used to be N × (totals + monthFlow + walletsBreakdown +
+        // walletBalance + sparkline + categoryBreakdown + budgetAlerts)
+        // SQL queries now collapses to ~10 regardless of wallet count.
+        $balancesByWallet = $this->balanceService->currentBalances($wallets);
+        $sumsThisMonth = $this->transactionRepository->sumByTypeForPeriodGroupedByWallet($wallets, $monthStart, $monthEnd);
+        $sumsPrevMonth = $this->transactionRepository->sumByTypeForPeriodGroupedByWallet($wallets, $prevMonthStart, $monthStart);
+        $sparklineFrom = $today->modify('-29 days')->setTime(0, 0);
+        $sparklineTo = $today->modify('+1 day')->setTime(0, 0);
+        $sparklineByWallet = $this->transactionRepository->dailyExpenseSeriesGroupedByWallet($wallets, $sparklineFrom, $sparklineTo);
+        $categoriesByWallet = $this->transactionRepository->topExpenseCategoriesGroupedByWallet($wallets, $monthStart, $monthEnd);
+        $budgetsByWallet = $this->budgetRepository->findByWalletsAndMonth($wallets, $monthStart);
+        $actualsByWallet = $this->transactionRepository->actualsByCategoryForMonthGroupedByWallet($wallets, $monthStart, $monthEnd);
 
         return [
             'today' => $today->format('Y-m-d'),
             'month' => $monthStart->format('Y-m'),
-            'totals' => $this->totals($wallets, $monthStart, $monthEnd),
-            'monthFlow' => $this->monthFlow($wallets, $today),
-            'sparkline' => $this->dailyExpenseSparkline($wallets, $today),
-            'walletsBreakdown' => $this->walletsBreakdown($wallets, $monthStart, $monthEnd),
-            'categoryBreakdown' => $this->categoryBreakdown($wallets, $monthStart, $monthEnd),
+            'totals' => $this->totals($wallets, $balancesByWallet, $sumsThisMonth),
+            'monthFlow' => $this->monthFlow($wallets, $sumsThisMonth, $sumsPrevMonth),
+            'sparkline' => $this->dailyExpenseSparkline($wallets, $today, $sparklineByWallet),
+            'walletsBreakdown' => $this->walletsBreakdown($wallets, $balancesByWallet, $sumsThisMonth),
+            'categoryBreakdown' => $this->categoryBreakdown($wallets, $categoriesByWallet),
             'recentTransactions' => $this->recentTransactions($wallets),
             'goals' => $this->goalsSnapshot($user),
             'upcomingRecurring' => $this->upcomingRecurring($user, $today),
             'upcomingScheduled' => $this->upcomingScheduled($user, $today),
-            'budgetAlerts' => $this->budgetAlerts($wallets, $today),
+            'budgetAlerts' => $this->budgetAlerts($wallets, $budgetsByWallet, $actualsByWallet),
         ];
     }
 
@@ -71,20 +85,23 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
      * expense / net. The delta-vs-previous-month is exposed
      * separately by `monthFlow()`.
      *
-     * @param list<PersonalFinanceWalletInterface> $wallets
+     * @param list<PersonalFinanceWalletInterface>               $wallets
+     * @param array<int, string>                                 $balancesByWallet map walletId → currentBalance
+     * @param array<int, array{income: string, expense: string}> $sumsThisMonth    map walletId → {income, expense}
      *
      * @return array<string, mixed>
      */
-    protected function totals(array $wallets, DateTimeImmutable $monthStart, DateTimeImmutable $monthEnd): array
+    protected function totals(array $wallets, array $balancesByWallet, array $sumsThisMonth): array
     {
         $totalBalance = '0.00';
         $monthIncome = '0.00';
         $monthExpense = '0.00';
 
         foreach ($wallets as $wallet) {
-            $totalBalance = bcadd($totalBalance, $this->balanceService->currentBalance($wallet), 2);
-            $monthIncome = bcadd($monthIncome, $this->transactionRepository->sumByTypeForPeriod($wallet, PersonalFinanceTransactionTypeEnum::Income->value, $monthStart, $monthEnd), 2);
-            $monthExpense = bcadd($monthExpense, $this->transactionRepository->sumByTypeForPeriod($wallet, PersonalFinanceTransactionTypeEnum::Expense->value, $monthStart, $monthEnd), 2);
+            $walletId = (int) $wallet->getId();
+            $totalBalance = bcadd($totalBalance, $balancesByWallet[$walletId] ?? '0.00', 2);
+            $monthIncome = bcadd($monthIncome, $sumsThisMonth[$walletId]['income'] ?? '0.00', 2);
+            $monthExpense = bcadd($monthExpense, $sumsThisMonth[$walletId]['expense'] ?? '0.00', 2);
         }
 
         return [
@@ -101,26 +118,25 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
      * current month with previous-month comparison + delta % so the
      * UI can render `+12 %` / `−4 %` chips next to each tile.
      *
-     * @param list<PersonalFinanceWalletInterface> $wallets
+     * @param list<PersonalFinanceWalletInterface>               $wallets
+     * @param array<int, array{income: string, expense: string}> $sumsThisMonth
+     * @param array<int, array{income: string, expense: string}> $sumsPrevMonth
      *
      * @return array<string, mixed>
      */
-    protected function monthFlow(array $wallets, DateTimeImmutable $today): array
+    protected function monthFlow(array $wallets, array $sumsThisMonth, array $sumsPrevMonth): array
     {
-        $startThis = $today->modify('first day of this month')->setTime(0, 0);
-        $startNext = $startThis->modify('first day of next month');
-        $startPrev = $startThis->modify('first day of last month');
-
         $thisIncome = '0.00';
         $thisExpense = '0.00';
         $prevIncome = '0.00';
         $prevExpense = '0.00';
 
         foreach ($wallets as $wallet) {
-            $thisIncome = bcadd($thisIncome, $this->transactionRepository->sumByTypeForPeriod($wallet, 'income', $startThis, $startNext), 2);
-            $thisExpense = bcadd($thisExpense, $this->transactionRepository->sumByTypeForPeriod($wallet, 'expense', $startThis, $startNext), 2);
-            $prevIncome = bcadd($prevIncome, $this->transactionRepository->sumByTypeForPeriod($wallet, 'income', $startPrev, $startThis), 2);
-            $prevExpense = bcadd($prevExpense, $this->transactionRepository->sumByTypeForPeriod($wallet, 'expense', $startPrev, $startThis), 2);
+            $walletId = (int) $wallet->getId();
+            $thisIncome = bcadd($thisIncome, $sumsThisMonth[$walletId]['income'] ?? '0.00', 2);
+            $thisExpense = bcadd($thisExpense, $sumsThisMonth[$walletId]['expense'] ?? '0.00', 2);
+            $prevIncome = bcadd($prevIncome, $sumsPrevMonth[$walletId]['income'] ?? '0.00', 2);
+            $prevExpense = bcadd($prevExpense, $sumsPrevMonth[$walletId]['expense'] ?? '0.00', 2);
         }
 
         return [
@@ -136,17 +152,18 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
      * cross-wallet expense total for that day.
      *
      * @param list<PersonalFinanceWalletInterface> $wallets
+     * @param array<int, array<string, string>>    $sparklineByWallet map walletId → {Y-m-d => expense}
      *
      * @return list<array{date: string, expense: string}>
      */
-    protected function dailyExpenseSparkline(array $wallets, DateTimeImmutable $today): array
+    protected function dailyExpenseSparkline(array $wallets, DateTimeImmutable $today, array $sparklineByWallet): array
     {
         $from = $today->modify('-29 days')->setTime(0, 0);
-        $to = $today->modify('+1 day')->setTime(0, 0);
 
         $merged = [];
         foreach ($wallets as $wallet) {
-            foreach ($this->transactionRepository->dailyExpenseSeries($wallet, $from, $to) as $date => $amount) {
+            $walletId = (int) $wallet->getId();
+            foreach ($sparklineByWallet[$walletId] ?? [] as $date => $amount) {
                 $merged[$date] = bcadd($merged[$date] ?? '0', $amount, 2);
             }
         }
@@ -164,23 +181,26 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
      * Per-wallet row : balance + month flow + share of the absolute
      * cumulative balance. Sorted by balance desc.
      *
-     * @param list<PersonalFinanceWalletInterface> $wallets
+     * @param list<PersonalFinanceWalletInterface>               $wallets
+     * @param array<int, string>                                 $balancesByWallet
+     * @param array<int, array{income: string, expense: string}> $sumsThisMonth
      *
      * @return list<array<string, mixed>>
      */
-    protected function walletsBreakdown(array $wallets, DateTimeImmutable $monthStart, DateTimeImmutable $monthEnd): array
+    protected function walletsBreakdown(array $wallets, array $balancesByWallet, array $sumsThisMonth): array
     {
         $rows = [];
         $absTotal = '0.00';
 
         foreach ($wallets as $wallet) {
-            $balance = $this->balanceService->currentBalance($wallet);
+            $walletId = (int) $wallet->getId();
+            $balance = $balancesByWallet[$walletId] ?? '0.00';
             $rows[] = [
                 'id' => $wallet->getId(),
                 'name' => $wallet->getName(),
                 'balance' => $balance,
-                'monthIncome' => $this->transactionRepository->sumByTypeForPeriod($wallet, PersonalFinanceTransactionTypeEnum::Income->value, $monthStart, $monthEnd),
-                'monthExpense' => $this->transactionRepository->sumByTypeForPeriod($wallet, PersonalFinanceTransactionTypeEnum::Expense->value, $monthStart, $monthEnd),
+                'monthIncome' => $sumsThisMonth[$walletId]['income'] ?? '0.00',
+                'monthExpense' => $sumsThisMonth[$walletId]['expense'] ?? '0.00',
             ];
             $absTotal = bcadd($absTotal, bcadd($balance, '0', 2) >= 0 ? $balance : bcmul($balance, '-1', 2), 2);
         }
@@ -201,16 +221,18 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
      * with their percentage of the total expense pot. Excludes
      * transfer legs (filtered by `topExpenseCategories`).
      *
-     * @param list<PersonalFinanceWalletInterface> $wallets
+     * @param list<PersonalFinanceWalletInterface>                                          $wallets
+     * @param array<int, list<array{categoryId: int, categoryName: string, total: string}>> $categoriesByWallet
      *
      * @return list<array<string, mixed>>
      */
-    protected function categoryBreakdown(array $wallets, DateTimeImmutable $monthStart, DateTimeImmutable $monthEnd): array
+    protected function categoryBreakdown(array $wallets, array $categoriesByWallet): array
     {
         $aggregated = [];
 
         foreach ($wallets as $wallet) {
-            foreach ($this->transactionRepository->topExpenseCategories($wallet, $monthStart, $monthEnd) as $row) {
+            $walletId = (int) $wallet->getId();
+            foreach ($categoriesByWallet[$walletId] ?? [] as $row) {
                 $key = $row['categoryName'];
                 if (!isset($aggregated[$key])) {
                     $aggregated[$key] = ['categoryName' => $key, 'total' => '0.00'];
@@ -369,24 +391,24 @@ class PersonalFinanceOverviewService implements PersonalFinanceOverviewServiceIn
      * current month — sorted by overshoot desc so the worst
      * offenders are reported first.
      *
-     * @param list<PersonalFinanceWalletInterface> $wallets
+     * @param list<PersonalFinanceWalletInterface>       $wallets
+     * @param array<int, PersonalFinanceBudgetInterface> $budgetsByWallet
+     * @param array<int, array<int, string>>             $actualsByWallet map walletId → {categoryId => total}
      *
      * @return list<array<string, mixed>>
      */
-    protected function budgetAlerts(array $wallets, DateTimeImmutable $today): array
+    protected function budgetAlerts(array $wallets, array $budgetsByWallet, array $actualsByWallet): array
     {
-        $month = $today->modify('first day of this month')->setTime(0, 0);
-        $end = $month->modify('first day of next month');
-
         $alerts = [];
         foreach ($wallets as $wallet) {
-            $budget = $this->budgetRepository->findByWalletAndMonth($wallet, $month);
+            $walletId = (int) $wallet->getId();
+            $budget = $budgetsByWallet[$walletId] ?? null;
             if (!$budget instanceof PersonalFinanceBudgetInterface) {
                 continue;
             }
 
             $items = $this->budgetItemRepository->findByBudget($budget);
-            $actuals = $this->transactionRepository->actualsByCategoryForMonth($wallet, $month, $end);
+            $actuals = $actualsByWallet[$walletId] ?? [];
 
             foreach ($items as $item) {
                 $categoryId = $item->getCategory()?->getId();

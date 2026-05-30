@@ -16,6 +16,17 @@ interface PersonalFinanceWalletBalanceServiceInterface
     public function currentBalance(PersonalFinanceWalletInterface $wallet): string;
 
     /**
+     * Bulk variant : returns `{walletId => currentBalance}` for every
+     * wallet in `$wallets`, using a single SQL aggregate. Wallets are
+     * always present in the result (`'0.00'` when no transactions).
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, string>
+     */
+    public function currentBalances(array $wallets): array;
+
+    /**
      * Balance at the end of the given month (sum of all transactions
      * with date in [first day, last day of month]). 2-decimal string.
      */

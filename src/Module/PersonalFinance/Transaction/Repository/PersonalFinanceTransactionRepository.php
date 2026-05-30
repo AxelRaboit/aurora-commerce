@@ -189,6 +189,109 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Bulk variant of {@see sumByTypeForPeriod} : one query returns
+     * `{walletId => {income: string, expense: string}}` for every wallet
+     * in `$wallets` over `[from, to)`. Used by the Overview service to
+     * collapse what was previously 2 × N (totals) + 4 × N (monthFlow)
+     * + 2 × N (walletsBreakdown) wallet-scoped SUMs into 2 SQL queries
+     * (current + previous month). Wallets with no rows in the period
+     * are returned with both totals at `'0.00'`.
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, array{income: string, expense: string}>
+     */
+    public function sumByTypeForPeriodGroupedByWallet(array $wallets, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $out = [];
+        foreach ($wallets as $wallet) {
+            $out[(int) $wallet->getId()] = ['income' => '0.00', 'expense' => '0.00'];
+        }
+
+        if ([] === $wallets) {
+            return $out;
+        }
+
+        $rows = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.wallet) AS walletId', 't.type AS type', 'SUM(t.amount) AS total')
+            ->where('t.wallet IN (:wallets)')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->andWhere('t.type IN (:types)')
+            ->setParameter('wallets', $wallets)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->setParameter('types', [
+                PersonalFinanceTransactionTypeEnum::Income->value,
+                PersonalFinanceTransactionTypeEnum::Expense->value,
+            ])
+            ->groupBy('t.wallet', 't.type')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($rows as $row) {
+            $walletId = (int) $row['walletId'];
+            $key = $row['type'] instanceof PersonalFinanceTransactionTypeEnum ? $row['type']->value : (string) $row['type'];
+            $out[$walletId][$key] = bcadd('0', (string) $row['total'], 2);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Bulk variant of {@see netFlow} : one query returns
+     * `{walletId => netFlow}` for every wallet in `$wallets`. Used by
+     * the WalletBalanceService to amortise the per-wallet
+     * `currentBalance()` calls (was N SUM-with-GROUP-BY-type queries
+     * driving the dashboard's wallet count).
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, string> map of walletId → net flow (bcmath string)
+     */
+    public function netFlowGroupedByWallet(array $wallets, ?DateTimeImmutable $from = null, ?DateTimeImmutable $to = null): array
+    {
+        $out = [];
+        foreach ($wallets as $wallet) {
+            $out[(int) $wallet->getId()] = '0';
+        }
+
+        if ([] === $wallets) {
+            return $out;
+        }
+
+        $qb = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.wallet) AS walletId', 't.type AS type', 'SUM(t.amount) AS total')
+            ->where('t.wallet IN (:wallets)')
+            ->setParameter('wallets', $wallets)
+            ->groupBy('t.wallet', 't.type');
+
+        if ($from instanceof DateTimeImmutable) {
+            $qb->andWhere('t.date >= :from')->setParameter('from', $from);
+        }
+
+        if ($to instanceof DateTimeImmutable) {
+            $qb->andWhere('t.date < :to')->setParameter('to', $to);
+        }
+
+        $sumsByWallet = [];
+        foreach ($qb->getQuery()->getResult() as $row) {
+            $walletId = (int) $row['walletId'];
+            $key = $row['type'] instanceof PersonalFinanceTransactionTypeEnum ? $row['type']->value : (string) $row['type'];
+            $sumsByWallet[$walletId][$key] = (string) $row['total'];
+        }
+
+        foreach (array_keys($out) as $walletId) {
+            $income = $sumsByWallet[$walletId]['income'] ?? '0';
+            $expense = $sumsByWallet[$walletId]['expense'] ?? '0';
+            $out[$walletId] = bcsub($income, $expense, 2);
+        }
+
+        return $out;
+    }
+
+    /**
      * Sum of `amount` for the given wallet, filtered by transaction
      * type, within [from, to). Transfer legs excluded so transfers
      * don't double-count in monthly flow KPIs.
@@ -210,6 +313,51 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
             ->getSingleScalarResult();
 
         return bcadd('0', (string) ($total ?? '0'), 2);
+    }
+
+    /**
+     * Bulk variant of {@see dailyExpenseSeries} : one query returns
+     * `{walletId => {Y-m-d => total}}` for every wallet in `$wallets`
+     * over `[from, to)`. Powers the cross-wallet sparkline without N
+     * round-trips.
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, array<string, string>>
+     */
+    public function dailyExpenseSeriesGroupedByWallet(array $wallets, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $out = [];
+        foreach ($wallets as $wallet) {
+            $out[(int) $wallet->getId()] = [];
+        }
+
+        if ([] === $wallets) {
+            return $out;
+        }
+
+        $rows = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.wallet) AS walletId', 't.date AS day', 'SUM(t.amount) AS total')
+            ->where('t.wallet IN (:wallets)')
+            ->andWhere('t.type = :type')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallets', $wallets)
+            ->setParameter('type', 'expense')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('t.wallet', 't.date')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($rows as $row) {
+            $walletId = (int) $row['walletId'];
+            $day = $row['day'] instanceof DateTimeImmutable ? $row['day']->format('Y-m-d') : (string) $row['day'];
+            $out[$walletId][$day] = bcadd('0', (string) $row['total'], 2);
+        }
+
+        return $out;
     }
 
     /**
@@ -240,6 +388,55 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
         foreach ($rows as $row) {
             $day = $row['day'] instanceof DateTimeImmutable ? $row['day']->format('Y-m-d') : (string) $row['day'];
             $out[$day] = bcadd('0', (string) $row['total'], 2);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Bulk variant of {@see topExpenseCategories} : one query returns
+     * `{walletId => [{categoryId, categoryName, total}, ...]}` for
+     * every wallet in `$wallets` over `[from, to)`.
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, list<array{categoryId: int, categoryName: string, total: string}>>
+     */
+    public function topExpenseCategoriesGroupedByWallet(array $wallets, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $out = [];
+        foreach ($wallets as $wallet) {
+            $out[(int) $wallet->getId()] = [];
+        }
+
+        if ([] === $wallets) {
+            return $out;
+        }
+
+        $rows = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.wallet) AS walletId', 'IDENTITY(t.category) AS categoryId', 'c.name AS categoryName', 'SUM(t.amount) AS total')
+            ->leftJoin('t.category', 'c')
+            ->where('t.wallet IN (:wallets)')
+            ->andWhere('t.type = :type')
+            ->andWhere('t.category IS NOT NULL')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallets', $wallets)
+            ->setParameter('type', 'expense')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('t.wallet', 't.category', 'c.name')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($rows as $row) {
+            $walletId = (int) $row['walletId'];
+            $out[$walletId][] = [
+                'categoryId' => (int) $row['categoryId'],
+                'categoryName' => (string) $row['categoryName'],
+                'total' => bcadd('0', (string) $row['total'], 2),
+            ];
         }
 
         return $out;
@@ -343,6 +540,49 @@ class PersonalFinanceTransactionRepository extends ResolveTargetEntityRepository
         $total = $qb->getQuery()->getSingleScalarResult();
 
         return bcadd('0', (string) ($total ?? '0'), 2);
+    }
+
+    /**
+     * Bulk variant of {@see actualsByCategoryForMonth} : one query
+     * returns `{walletId => {categoryId => total}}` for every wallet in
+     * `$wallets` over `[from, to)`. Categories with no activity are
+     * absent — fall back to `'0.00'` for missing keys.
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, array<int, string>>
+     */
+    public function actualsByCategoryForMonthGroupedByWallet(array $wallets, DateTimeImmutable $from, DateTimeImmutable $to): array
+    {
+        $out = [];
+        foreach ($wallets as $wallet) {
+            $out[(int) $wallet->getId()] = [];
+        }
+
+        if ([] === $wallets) {
+            return $out;
+        }
+
+        $rows = $this->createQueryBuilder('t')
+            ->select('IDENTITY(t.wallet) AS walletId', 'IDENTITY(t.category) AS categoryId', 'SUM(t.amount) AS total')
+            ->where('t.wallet IN (:wallets)')
+            ->andWhere('t.category IS NOT NULL')
+            ->andWhere('t.transferId IS NULL')
+            ->andWhere('t.date >= :from')
+            ->andWhere('t.date < :to')
+            ->setParameter('wallets', $wallets)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->groupBy('t.wallet', 't.category')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($rows as $row) {
+            $walletId = (int) $row['walletId'];
+            $out[$walletId][(int) $row['categoryId']] = bcadd('0', (string) $row['total'], 2);
+        }
+
+        return $out;
     }
 
     /**

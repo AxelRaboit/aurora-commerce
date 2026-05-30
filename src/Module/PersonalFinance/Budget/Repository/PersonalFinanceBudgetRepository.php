@@ -56,4 +56,39 @@ class PersonalFinanceBudgetRepository extends ResolveTargetEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * Bulk variant of {@see findByWalletAndMonth} : one query returns
+     * `{walletId => Budget}` for every wallet in `$wallets` that has a
+     * budget row for `$month`. Wallets without a budget are absent
+     * from the map. Powers the Overview budget-alerts panel without
+     * N round-trips.
+     *
+     * @param list<PersonalFinanceWalletInterface> $wallets
+     *
+     * @return array<int, PersonalFinanceBudgetInterface>
+     */
+    public function findByWalletsAndMonth(array $wallets, DateTimeImmutable $month): array
+    {
+        if ([] === $wallets) {
+            return [];
+        }
+
+        $firstDay = $month->modify('first day of this month')->setTime(0, 0);
+
+        $rows = $this->createQueryBuilder('b')
+            ->where('b.wallet IN (:wallets)')
+            ->andWhere('b.month = :month')
+            ->setParameter('wallets', $wallets)
+            ->setParameter('month', $firstDay)
+            ->getQuery()
+            ->getResult();
+
+        $out = [];
+        foreach ($rows as $budget) {
+            $out[(int) $budget->getWallet()->getId()] = $budget;
+        }
+
+        return $out;
+    }
 }
