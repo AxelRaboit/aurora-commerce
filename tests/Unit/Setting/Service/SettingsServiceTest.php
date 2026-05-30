@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Setting\Service;
 
+use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Configuration\Setting\Exception\CascadeViolationException;
@@ -18,7 +21,36 @@ final class SettingsServiceTest extends TestCase
 {
     private function makeService(SettingRepository $repository, AuditLogger $auditLogger): SettingsService
     {
-        return new SettingsService($repository, $auditLogger);
+        // Build a real registry from a fake module exposing every current
+        // ModuleParameterEnum toggle — the cascade graph the service relies on.
+        $module = new class implements ModuleInterface, ModuleToggleProviderInterface {
+            public function getId(): string
+            {
+                return 'test';
+            }
+
+            public function getNavSections(): array
+            {
+                return [];
+            }
+
+            public function getCatalogNavSections(): array
+            {
+                return [];
+            }
+
+            public function getPermissions(): array
+            {
+                return [];
+            }
+
+            public function getToggles(): array
+            {
+                return array_map(static fn (ModuleParameterEnum $case) => $case->toToggle(), ModuleParameterEnum::cases());
+            }
+        };
+
+        return new SettingsService($repository, $auditLogger, new ModuleToggleRegistry([$module]));
     }
 
     public function testSetModuleParameterWithParentActiveDoesNotThrow(): void

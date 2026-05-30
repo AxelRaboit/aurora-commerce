@@ -68,6 +68,27 @@ final class ModuleToggleRegistry
         ));
     }
 
+    /**
+     * All transitive descendant keys of a toggle (children, grandchildren, …)
+     * via the `parentKey` graph — i.e. the set to force OFF when this toggle is
+     * disabled. Replaces `ModuleParameterEnum::getCascadeDisableTargets()` so the
+     * cascade is computed from the aggregated toggles, not from a central enum.
+     *
+     * @return list<string>
+     */
+    public function getDescendantKeys(string $key): array
+    {
+        $out = [];
+        foreach ($this->getChildrenOf($key) as $child) {
+            $out[] = $child->key;
+            foreach ($this->getDescendantKeys($child->key) as $deeper) {
+                $out[] = $deeper;
+            }
+        }
+
+        return array_values(array_unique($out));
+    }
+
     /** @return array<string, ModuleToggle> */
     private function build(): array
     {

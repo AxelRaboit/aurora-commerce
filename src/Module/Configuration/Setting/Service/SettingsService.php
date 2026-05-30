@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Configuration\Setting\Service;
 
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
 use Aurora\Module\Configuration\Setting\Exception\CascadeViolationException;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 
 /**
  * Orchestrates writes to application parameters. Enforces the module
- * dependency graph (defined on ModuleParameterEnum) on top of the
- * pure-persistence concerns owned by SettingRepository.
+ * dependency graph (aggregated by {@see ModuleToggleRegistry} from every
+ * module's own toggles — no central enum) on top of the pure-persistence
+ * concerns owned by SettingRepository.
  *
  *  - Refuses enabling a parameter whose parent module is off
  *  - Cascades disable to all transitive children when a parent goes off
@@ -25,6 +26,7 @@ final readonly class SettingsService
     public function __construct(
         private SettingRepository $repository,
         private AuditLogger $auditLogger,
+        private ModuleToggleRegistry $moduleToggleRegistry,
     ) {}
 
     /**
@@ -32,16 +34,16 @@ final readonly class SettingsService
      */
     public function set(string $key, ?string $value): void
     {
-        $moduleParameter = ModuleParameterEnum::tryFrom($key);
+        $toggle = $this->moduleToggleRegistry->get($key);
 
-        if (null !== $moduleParameter && '1' === $value) {
-            $this->assertParentEnabled($moduleParameter->getCascadeRequires(), $key);
+        if (null !== $toggle && '1' === $value) {
+            $this->assertParentEnabled($toggle->parentKey, $key);
         }
 
         $writes = [[$key, $value]];
 
-        if (null !== $moduleParameter && '0' === $value) {
-            foreach ($moduleParameter->getCascadeDisableTargets() as $childKey) {
+        if (null !== $toggle && '0' === $value) {
+            foreach ($this->moduleToggleRegistry->getDescendantKeys($key) as $childKey) {
                 $writes[] = [$childKey, '0'];
             }
         }
