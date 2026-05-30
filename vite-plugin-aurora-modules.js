@@ -1,0 +1,116 @@
+import fs from "fs";
+import path from "path";
+
+// Gate 2 — option B (monorepo-split). When aurora-core is consumed as an
+// installed Composer package (vendor/axelraboit/aurora-core), the build runs
+// from inside vendor/ and app.js's static glob `../../Module/**` no longer sees
+// the module packages — each lives in a SIBLING package dir
+// (vendor/axelraboit/aurora-tools, …). This plugin discovers those sibling
+// packages at build time and exposes their Vue components through a virtual
+// module, so the client's single Vite build bundles them like first-party
+// modules (shared chunks + dedupe preserved).
+//
+// In the monorepo (dev), aurora-core is NOT under a vendor/ dir → the plugin is
+// a no-op and modules keep coming from src/Module/** via app.js's own glob.
+// This guard is deliberate: a naive relative glob (`../../../../aurora-*`) would
+// collide in dev because the monorepo's parent dir holds sibling `aurora-*`
+// checkouts (aurora-client, …).
+
+const VIRTUAL_ID = "virtual:aurora-vendor-modules";
+const RESOLVED_ID = "\0" + VIRTUAL_ID;
+
+// `aurora-personal-finance` → `personalfinance` (matches the lowercased
+// PascalCase module key used by the monorepo glob, e.g. Module/PersonalFinance
+// → `personalfinance`). Strip the `aurora-` prefix and all dashes.
+function moduleKeyFromPackage(pkgDir) {
+    return pkgDir
+        .replace(/^aurora-/, "")
+        .replace(/-/g, "")
+        .toLowerCase();
+}
+
+// Collect every assets/**/*.vue file under a package dir (any depth of feature
+// folders before `assets/`, mirroring the monorepo `**/assets/**` convention).
+function collectVueFiles(dir, acc = []) {
+    let entries;
+    try {
+        entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+        return acc;
+    }
+    for (const entry of entries) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            if (entry.name === "node_modules" || entry.name === ".git")
+                continue;
+            collectVueFiles(full, acc);
+        } else if (
+            entry.name.endsWith(".vue") &&
+            full.includes(`${path.sep}assets${path.sep}`)
+        ) {
+            acc.push(full);
+        }
+    }
+    return acc;
+}
+
+// Map an absolute file path to the exposed component key the rest of the app
+// uses (e.g. `./tools/backend/vault/VaultApp.vue`). `moduleKey` is the package
+// module name; everything after the LAST `assets/` segment is the rest.
+function exposedKey(moduleKey, file) {
+    const normalized = file.split(path.sep).join("/");
+    const rest = normalized.replace(/^.*\/assets\//, "");
+    return `./${moduleKey}/${rest}`;
+}
+
+export function auroraVendorModules({ packageDir }) {
+    return {
+        name: "aurora-vendor-modules",
+        resolveId(id) {
+            if (id === VIRTUAL_ID) return RESOLVED_ID;
+            return null;
+        },
+        load(id) {
+            if (id !== RESOLVED_ID) return null;
+
+            // Only active when aurora-core is itself installed under a vendor/
+            // dir (real client build). Monorepo dev → empty map (no-op).
+            const inVendor = packageDir.split(path.sep).includes("vendor");
+            if (!inVendor) return "export default {};";
+
+            // Sibling packages live next to aurora-core: vendor/axelraboit/aurora-*
+            const orgDir = path.resolve(packageDir, "..");
+            let siblings;
+            try {
+                siblings = fs
+                    .readdirSync(orgDir, { withFileTypes: true })
+                    .filter(
+                        (e) =>
+                            e.isDirectory() &&
+                            /^aurora-/.test(e.name) &&
+                            e.name !== "aurora-core",
+                    )
+                    .map((e) => e.name);
+            } catch {
+                siblings = [];
+            }
+
+            const lines = [];
+            for (const pkg of siblings) {
+                const moduleKey = moduleKeyFromPackage(pkg);
+                const files = collectVueFiles(path.join(orgDir, pkg));
+                for (const file of files) {
+                    const key = exposedKey(moduleKey, file);
+                    const importPath = file.split(path.sep).join("/");
+                    lines.push(
+                        `  ${JSON.stringify(key)}: () => import(${JSON.stringify(importPath)})`,
+                    );
+                }
+            }
+
+            return `export default {\n${lines.join(",\n")}\n};`;
+        },
+    };
+}
+
+export { VIRTUAL_ID as AURORA_VENDOR_MODULES_ID };

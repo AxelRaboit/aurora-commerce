@@ -4,6 +4,11 @@ import {
 } from "vite-plugin-symfony/stimulus/helpers";
 import { registerVueControllerComponents } from "@symfony/ux-vue";
 import { createAppI18n } from "@/i18n.js";
+// Gate 2 (option B): Vue components of sibling module packages
+// (vendor/axelraboit/aurora-*) when aurora-core runs as a vendored package.
+// Empty object in the monorepo (the plugin is a no-op there). See
+// vite-plugin-aurora-modules.js.
+import vendorModules from "virtual:aurora-vendor-modules";
 import "./shared/utils/loader.js";
 import "./css/app.css";
 
@@ -79,6 +84,11 @@ const vueContext = {
             return [`./${moduleName.toLowerCase()}/${rest}`, loader];
         }),
     ),
+    // Vendored module packages (vendor/axelraboit/aurora-*) — already keyed as
+    // ./<module>/<rest>. Spread AFTER auroraModules (in the monorepo this is
+    // empty; in a client install src/Module is empty and these provide the
+    // modules) and BEFORE clientModules so the client can still override them.
+    ...vendorModules,
     // Client modules: same mapping. Spread AFTER auroraModules so that a
     // client file at the same key wins (= shadow Aurora's own component).
     ...Object.fromEntries(

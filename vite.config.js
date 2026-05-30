@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import symfonyPlugin from 'vite-plugin-symfony';
 import path from 'path';
 import { aliases } from './aliases.js';
+import { auroraVendorModules } from './vite-plugin-aurora-modules.js';
 
 // AURORA_CLIENT_DIR points to a client project's extension dir (e.g.
 // aurora-client/assets/client). When set, aurora's Vite scans that dir for
@@ -24,6 +25,10 @@ export default defineConfig({
                 controllersDir: './src/Core/assets/stimulus',
             },
         }),
+        // Gate 2 (option B): discover Vue components of sibling module packages
+        // (vendor/axelraboit/aurora-*) when aurora-core is a vendored package.
+        // No-op in the monorepo. See vite-plugin-aurora-modules.js.
+        auroraVendorModules({ packageDir: __dirname }),
     ],
     resolve: {
         alias: {
@@ -38,7 +43,9 @@ export default defineConfig({
     },
     server: {
         fs: {
-            allow: [path.resolve(__dirname), CLIENT_DIR],
+            // `..` lets the dev server read sibling module packages
+            // (vendor/axelraboit/aurora-*) discovered by auroraVendorModules.
+            allow: [path.resolve(__dirname), path.resolve(__dirname, '..'), CLIENT_DIR],
         },
     },
     build: {
