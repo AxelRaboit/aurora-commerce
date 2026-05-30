@@ -14,7 +14,7 @@ use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\General\Search\Service\SearchResultSorter;
-use Aurora\Module\General\Search\Service\SearchSnippetBuilder;
+use Aurora\Core\Search\SearchSnippetBuilder;
 use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Repository\ProjectRepository;

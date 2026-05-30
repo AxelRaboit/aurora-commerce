@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\General\Search\Provider;
+namespace Aurora\Core\Search;
 
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 

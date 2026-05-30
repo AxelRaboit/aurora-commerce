@@ -48,7 +48,7 @@ services:
             tags: [aurora.application_parameter_provider]
         Aurora\Module\Assistant\Tool\Contract\ToolInterface:
             tags: [aurora.assistant.tool]
-        Aurora\Module\General\Search\Provider\SearchProviderInterface:
+        Aurora\Core\Search\SearchProviderInterface:
             tags: [aurora.search_provider]
         Aurora\Core\Dashboard\DashboardStatsProviderInterface:
             tags: [aurora.dashboard_stats_provider]
