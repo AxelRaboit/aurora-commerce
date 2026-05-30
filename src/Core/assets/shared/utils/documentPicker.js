@@ -18,6 +18,7 @@ import DocumentPickerModal from "@ged/backend/documents/components/DocumentPicke
 export function openDocumentPicker({
     imagesOnly = false,
     mimeFilter = null,
+    multiple = false,
     listPath = "/backend/ged/documents/list",
 } = {}) {
     return new Promise((resolve) => {
@@ -47,7 +48,8 @@ export function openDocumentPicker({
                     listPath,
                     mimeFilter,
                     mimePrefix: imagesOnly ? "image/" : null,
-                    onClose: () => finish(null),
+                    multiple,
+                    onClose: () => finish(multiple ? [] : null),
                     onSelect: (item) => finish(item),
                 });
             },

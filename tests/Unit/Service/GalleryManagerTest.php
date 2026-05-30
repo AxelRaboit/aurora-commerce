@@ -8,7 +8,7 @@ use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Photo\Gallery\Dto\GalleryInput;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInterface;
@@ -48,7 +48,7 @@ final class GalleryManagerTest extends TestCase
 
         $this->manager = new GalleryManager(
             $this->em,
-            $this->createStub(MediaRepository::class),
+            $this->createStub(DocumentRepository::class),
             $this->createStub(ContactRepository::class),
             new AuditLogger($this->em, $security, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class)),
             $this->watermark,

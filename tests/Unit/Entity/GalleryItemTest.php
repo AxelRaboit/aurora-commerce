@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use DateTimeImmutable;
@@ -96,7 +96,7 @@ final class GalleryItemTest extends TestCase
 
     public function testMediaGetterAndSetter(): void
     {
-        $media = $this->createStub(MediaInterface::class);
+        $media = $this->createStub(DocumentInterface::class);
         $item = (new GalleryItem())->setMedia($media);
 
         self::assertSame($media, $item->getMedia());
@@ -105,7 +105,7 @@ final class GalleryItemTest extends TestCase
     public function testSettersReturnSelf(): void
     {
         $item = new GalleryItem();
-        $media = $this->createStub(MediaInterface::class);
+        $media = $this->createStub(DocumentInterface::class);
 
         self::assertSame($item, $item->setReference('r'));
         self::assertSame($item, $item->setGallery(new Gallery()));

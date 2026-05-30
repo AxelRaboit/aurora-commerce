@@ -7,8 +7,8 @@ namespace Aurora\Tests\Unit\Service;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Entity\Document;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use Aurora\Module\Photo\Gallery\Manager\GalleryItemManager;
@@ -27,7 +27,7 @@ final class GalleryItemManagerTest extends TestCase
 {
     private EntityManagerInterface $em;
     private GalleryItemRepository $itemRepository;
-    private MediaRepository $mediaRepository;
+    private DocumentRepository $documentRepository;
     private ExifReader $exifReader;
     private GalleryItemManager $manager;
 
@@ -35,7 +35,7 @@ final class GalleryItemManagerTest extends TestCase
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->itemRepository = $this->createStub(GalleryItemRepository::class);
-        $this->mediaRepository = $this->createStub(MediaRepository::class);
+        $this->documentRepository = $this->createStub(DocumentRepository::class);
         // ExifReader is final readonly so we use a real instance pointed at a
         // non-existent directory — readDateTimeOriginal then returns null,
         // which is what most tests want.
@@ -48,7 +48,7 @@ final class GalleryItemManagerTest extends TestCase
         $this->manager = new GalleryItemManager(
             $this->em,
             $this->itemRepository,
-            $this->mediaRepository,
+            $this->documentRepository,
             $auditLogger,
             $this->exifReader,
             new SequenceGenerator($this->createStub(Connection::class)),
@@ -64,10 +64,10 @@ final class GalleryItemManagerTest extends TestCase
         return $gallery;
     }
 
-    private function makeMedia(int $id): Media
+    private function makeMedia(int $id): Document
     {
-        $media = (new Media())->setOriginalName('m.jpg')->setPath('m.jpg');
-        (new ReflectionProperty(Media::class, 'id'))->setValue($media, $id);
+        $media = (new Document())->setTitle('m.jpg')->setOriginalName('m.jpg')->setFilePath('m.jpg');
+        (new ReflectionProperty(Document::class, 'id'))->setValue($media, $id);
 
         return $media;
     }
@@ -98,7 +98,7 @@ final class GalleryItemManagerTest extends TestCase
     {
         $gallery = $this->makeGallery(42);
         $this->itemRepository->method('nextPositionForGallery')->willReturn(5);
-        $this->mediaRepository->method('findBy')->willReturnCallback(
+        $this->documentRepository->method('findBy')->willReturnCallback(
             fn (array $criteria): array => array_map($this->makeMedia(...), (array) ($criteria['id'] ?? [])),
         );
 
@@ -125,7 +125,7 @@ final class GalleryItemManagerTest extends TestCase
         $gallery->getItems()->add($existing);
 
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
-        $this->mediaRepository->method('findBy')->willReturnCallback(
+        $this->documentRepository->method('findBy')->willReturnCallback(
             fn (array $criteria): array => array_map($this->makeMedia(...), (array) ($criteria['id'] ?? [])),
         );
 
@@ -138,7 +138,7 @@ final class GalleryItemManagerTest extends TestCase
     {
         $gallery = $this->makeGallery();
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
-        $this->mediaRepository->method('findBy')->willReturn([]);
+        $this->documentRepository->method('findBy')->willReturn([]);
 
         self::assertSame(0, $this->manager->addItems($gallery, [99]));
     }
@@ -238,7 +238,7 @@ final class GalleryItemManagerTest extends TestCase
         $manager = new GalleryItemManager(
             $this->em,
             $this->itemRepository,
-            $this->mediaRepository,
+            $this->documentRepository,
             $auditLogger,
             $exifReader,
             new SequenceGenerator($this->createStub(Connection::class)),
@@ -248,9 +248,9 @@ final class GalleryItemManagerTest extends TestCase
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
         $this->itemRepository->method('nextNumberForGallery')->willReturn(1);
         // Media path resolves under fixtures/exif.jpg (relative to upload dir).
-        $media = (new Media())->setOriginalName('exif.jpg')->setPath('exif.jpg');
-        (new ReflectionProperty(Media::class, 'id'))->setValue($media, 42);
-        $this->mediaRepository->method('findBy')->willReturn([$media]);
+        $media = (new Document())->setTitle('exif.jpg')->setOriginalName('exif.jpg')->setFilePath('exif.jpg');
+        (new ReflectionProperty(Document::class, 'id'))->setValue($media, 42);
+        $this->documentRepository->method('findBy')->willReturn([$media]);
 
         $manager->addItems($gallery, [42]);
 
@@ -266,7 +266,7 @@ final class GalleryItemManagerTest extends TestCase
         $gallery = $this->makeGallery(8);
         $this->itemRepository->method('nextPositionForGallery')->willReturn(0);
         $this->itemRepository->method('nextNumberForGallery')->willReturn(10);
-        $this->mediaRepository->method('findBy')->willReturnCallback(
+        $this->documentRepository->method('findBy')->willReturnCallback(
             fn (array $criteria): array => array_map($this->makeMedia(...), (array) ($criteria['id'] ?? [])),
         );
 

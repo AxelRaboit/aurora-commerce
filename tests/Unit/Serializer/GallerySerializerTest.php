@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Serializer;
 
 use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
@@ -57,7 +57,7 @@ final class GallerySerializerTest extends TestCase
             $this->finalizationRepository,
             $this->inviteRepository,
             $this->galleryRepository,
-            $this->makeMediaUrlGenerator(),
+            $this->makeDocumentUrlGenerator(),
         );
     }
 
@@ -78,11 +78,11 @@ final class GallerySerializerTest extends TestCase
         return $gallery;
     }
 
-    private function makeMedia(int $id = 100, ?string $alt = null): Media
+    private function makeMedia(int $id = 100, ?string $alt = null): Document
     {
-        $media = (new Media())
+        $media = ((new Document())->setTitle('test'))
             ->setOriginalName('photo.jpg')
-            ->setPath('2026/04/photo.jpg')
+            ->setFilePath('2026/04/photo.jpg')
             ->setVariants(['medium' => '2026/04/photo-medium.jpg'])
             ->setAlt($alt);
         self::setId($media, $id);
@@ -145,7 +145,7 @@ final class GallerySerializerTest extends TestCase
     public function testSerializeFallsBackToPublicUrlWhenNoVariant(): void
     {
         $gallery = $this->makeGallery();
-        $cover = (new Media())->setOriginalName('p.jpg')->setPath('raw.jpg');
+        $cover = ((new Document())->setTitle('test'))->setOriginalName('p.jpg')->setFilePath('raw.jpg');
         self::setId($cover, 7);
         $gallery->setCoverMedia($cover);
 
@@ -216,10 +216,10 @@ final class GallerySerializerTest extends TestCase
     public function testSerializeItemsThumbFallsBackToLargeThenPublic(): void
     {
         $gallery = $this->makeGallery();
-        $largeOnly = (new Media())->setOriginalName('m.jpg')->setPath('m.jpg')
+        $largeOnly = ((new Document())->setTitle('test'))->setOriginalName('m.jpg')->setFilePath('m.jpg')
             ->setVariants(['large' => 'large/m.jpg']);
         self::setId($largeOnly, 11);
-        $rawOnly = (new Media())->setOriginalName('r.jpg')->setPath('r.jpg');
+        $rawOnly = ((new Document())->setTitle('test'))->setOriginalName('r.jpg')->setFilePath('r.jpg');
         self::setId($rawOnly, 12);
 
         $i1 = (new GalleryItem())->setGallery($gallery)->setMedia($largeOnly)->setPosition(0);
@@ -346,7 +346,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeMediaUrlGenerator());
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator());
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -387,7 +387,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([$invite]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeMediaUrlGenerator());
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator());
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -415,7 +415,7 @@ final class GallerySerializerTest extends TestCase
         $finalizations->method('findAllForGallery')->willReturn([$finalization]);
         $finalizations->method('countForGallery')->willReturn(1);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeMediaUrlGenerator());
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator());
 
         $rows = $serializer->serializeInvites($gallery);
 
@@ -481,7 +481,7 @@ final class GallerySerializerTest extends TestCase
             $this->finalizationRepository,
             $this->inviteRepository,
             $this->galleryRepository,
-            $this->makeMediaUrlGenerator(),
+            $this->makeDocumentUrlGenerator(),
         );
 
         $payload = $serializer->serializeComments($gallery);

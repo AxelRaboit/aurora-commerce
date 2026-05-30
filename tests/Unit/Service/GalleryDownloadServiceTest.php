@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Service;
 
-use Aurora\Module\Media\Library\Entity\Media;
+use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Photo\Gallery\Service\GalleryDownloadService;
 use Aurora\Module\Photo\Gallery\Service\GalleryWatermarkService;
 use PHPUnit\Framework\TestCase;
@@ -26,9 +26,9 @@ final class GalleryDownloadServiceTest extends TestCase
 
     public function testNiceNameSanitizesOriginalName(): void
     {
-        $media = (new Media())
+        $media = ((new Document())->setTitle('test'))
             ->setOriginalName('Couple at the beach.jpg')
-            ->setPath('2026/04/foo.jpg');
+            ->setFilePath('2026/04/foo.jpg');
 
         $name = $this->callPrivate('niceName', [$media, 'web']);
 
@@ -37,9 +37,9 @@ final class GalleryDownloadServiceTest extends TestCase
 
     public function testNiceNameOriginalVariantHasNoSuffix(): void
     {
-        $media = (new Media())
+        $media = ((new Document())->setTitle('test'))
             ->setOriginalName('IMG_001.jpg')
-            ->setPath('2026/04/abc.jpg');
+            ->setFilePath('2026/04/abc.jpg');
 
         $name = $this->callPrivate('niceName', [$media, 'original']);
 
@@ -48,9 +48,9 @@ final class GalleryDownloadServiceTest extends TestCase
 
     public function testNiceNameFallsBackToPathFilenameWhenOriginalEmpty(): void
     {
-        $media = (new Media())
+        $media = ((new Document())->setTitle('test'))
             ->setOriginalName('')
-            ->setPath('2026/04/abc-def.jpg');
+            ->setFilePath('2026/04/abc-def.jpg');
 
         $name = $this->callPrivate('niceName', [$media, 'original']);
 

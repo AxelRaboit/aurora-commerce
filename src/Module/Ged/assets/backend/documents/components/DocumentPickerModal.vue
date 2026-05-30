@@ -40,6 +40,10 @@ const props = defineProps({
     // Prefix-match, e.g. "image/" → every raster image MIME passes. Set by
     // the document picker wrapper when the consumer only wants images.
     mimePrefix: { type: String, default: null },
+    // Bulk-pick mode: confirm returns an array of docs, not a single one.
+    // Mirrors MediaPickerModal's `multiple` so callers like Gallery's
+    // addPhotos flow can keep their existing array-shaped contract.
+    multiple: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["close", "select"]);
@@ -89,7 +93,7 @@ watch(
     () => props.show,
     (next) => {
         if (next) {
-            selected.value = null;
+            selected.value = props.multiple ? [] : null;
             search.value = "";
             page.value = 1;
             load();
@@ -110,14 +114,30 @@ function goToPage(p) {
 }
 
 function pick(doc) {
-    selected.value = doc;
+    if (!props.multiple) {
+        selected.value = doc;
+        return;
+    }
+    const list = Array.isArray(selected.value) ? [...selected.value] : [];
+    const idx = list.findIndex((d) => d.id === doc.id);
+    if (idx === -1) list.push(doc);
+    else list.splice(idx, 1);
+    selected.value = list;
 }
 
 function confirm() {
-    if (selected.value) emit("select", selected.value);
+    if (!selected.value) return;
+    if (props.multiple) {
+        if (Array.isArray(selected.value) && selected.value.length > 0) emit("select", selected.value);
+        return;
+    }
+    emit("select", selected.value);
 }
 
 function isSelected(doc) {
+    if (props.multiple) {
+        return Array.isArray(selected.value) && selected.value.some((d) => d.id === doc.id);
+    }
     return selected.value?.id === doc.id;
 }
 </script>
@@ -185,7 +205,7 @@ function isSelected(doc) {
                 <AppButton
                     variant="primary"
                     size="md"
-                    :disabled="!selected"
+                    :disabled="multiple ? !(Array.isArray(selected) && selected.length > 0) : !selected"
                     v-on:click="confirm"
                 >
                     <Check class="w-3.5 h-3.5" :stroke-width="2" /> {{ t("backend.ged.documents.picker_confirm") }}
