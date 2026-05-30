@@ -8,6 +8,9 @@ return [
     // In the target topology each is a separate Composer package.
     Aurora\Module\Assistant\AuroraAssistantBundle::class => ['all' => true],
     Aurora\Module\Crm\AuroraCrmBundle::class => ['all' => true],
+    // Ecommerce + Erp ship together as the aurora-commerce package (cat. E).
+    Aurora\Module\Ecommerce\AuroraEcommerceBundle::class => ['all' => true],
+    Aurora\Module\Erp\AuroraErpBundle::class => ['all' => true],
     Aurora\Module\Editorial\AuroraEditorialBundle::class => ['all' => true],
     Aurora\Module\Hr\AuroraHrBundle::class => ['all' => true],
     Aurora\Module\Notes\AuroraNotesBundle::class => ['all' => true],

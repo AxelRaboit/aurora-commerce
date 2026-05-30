@@ -27,26 +27,6 @@ use Aurora\Module\Dev\Audit\Entity\AuditLog;
 use Aurora\Module\Dev\Audit\Entity\AuditLogInterface;
 use Aurora\Module\Dev\MountPoint\Entity\MountPoint;
 use Aurora\Module\Dev\MountPoint\Entity\MountPointInterface;
-use Aurora\Module\Ecommerce\Cart\Entity\Cart;
-use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
-use Aurora\Module\Ecommerce\Cart\Entity\CartItem;
-use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
-use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
-use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
-use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
-use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
-use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslationInterface;
-use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
-use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
-use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslation;
-use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslationInterface;
-use Aurora\Module\Ecommerce\Order\Entity\Order;
-use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
-use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
-use Aurora\Module\Ecommerce\Order\Entity\OrderLineInterface;
-use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentVersion;
@@ -140,7 +120,7 @@ class AuroraBundle extends AbstractBundle
         // resolve_target_entities. In the target topology these dirs live in a
         // separate Composer package and simply aren't present here; the list
         // simulates that absence inside the monorepo.
-        $extractedModules = ['Assistant', 'Crm', 'Editorial', 'Hr', 'Notes', 'PersonalFinance', 'Planning', 'Tools'];
+        $extractedModules = ['Assistant', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Planning', 'Tools'];
 
         $moduleDirs = array_values(array_filter(
             glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [],
@@ -191,16 +171,6 @@ class AuroraBundle extends AbstractBundle
                     ProjectTaskCommentInterface::class => ProjectTaskComment::class,
                     ProjectTaskItemInterface::class => ProjectTaskItem::class,
                     ProjectTaskTimeEntryInterface::class => ProjectTaskTimeEntry::class,
-                    CartInterface::class => Cart::class,
-                    CartItemInterface::class => CartItem::class,
-                    ListingInterface::class => Listing::class,
-                    ListingCategoryInterface::class => ListingCategory::class,
-                    ListingCategoryTranslationInterface::class => ListingCategoryTranslation::class,
-                    ListingTagInterface::class => ListingTag::class,
-                    ListingTagTranslationInterface::class => ListingTagTranslation::class,
-                    OrderInterface::class => Order::class,
-                    OrderLineInterface::class => OrderLine::class,
-                    ProductInterface::class => Product::class,
                     DocumentInterface::class => Document::class,
                     DocumentVersionInterface::class => DocumentVersion::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
