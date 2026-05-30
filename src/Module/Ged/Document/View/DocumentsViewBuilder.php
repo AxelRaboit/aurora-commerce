@@ -43,10 +43,7 @@ final readonly class DocumentsViewBuilder
             $this->tagRepository->findAllOrdered(),
         );
 
-        $folders = array_map(
-            $this->folderSerializer->serialize(...),
-            $this->folderRepository->findAllOrdered(),
-        );
+        $folders = $this->serializeFoldersWithCounts();
 
         return [
             'documents' => $this->buildListPayload($pagination),
@@ -63,6 +60,17 @@ final readonly class DocumentsViewBuilder
             'cropPath' => $this->urlGenerator->generate('backend_ged_documents_crop', ['id' => '__id__']),
             'bulkDeletePath' => $this->urlGenerator->generate('backend_ged_documents_bulk_delete'),
             'listPath' => $this->urlGenerator->generate('backend_ged_documents_list'),
+            // Media-style move endpoints (single + bulk) — power the sidebar
+            // drag&drop and the bulk-move modal. The dedicated /backend/ged/folders
+            // page remains untouched and continues to handle folder-tree management.
+            'movePath' => $this->urlGenerator->generate('backend_ged_documents_move', ['id' => '__id__']),
+            'bulkMovePath' => $this->urlGenerator->generate('backend_ged_documents_bulk_move'),
+            // Sidebar folder CRUD reuses the existing /backend/ged/folders endpoints,
+            // so create/edit/delete behave identically across both pages.
+            'folderCreatePath' => $this->urlGenerator->generate('backend_ged_folders_create'),
+            'folderEditPath' => $this->urlGenerator->generate('backend_ged_folders_update', ['id' => '__id__']),
+            'folderDeletePath' => $this->urlGenerator->generate('backend_ged_folders_delete', ['id' => '__id__']),
+            'folderMovePath' => $this->urlGenerator->generate('backend_ged_folders_move', ['id' => '__id__']),
             // GED-owned upload endpoint — no coupling to the Media library.
             // The form POSTs the file here, gets back the metadata, then
             // submits the regular JSON create/update with that metadata.
@@ -77,6 +85,7 @@ final readonly class DocumentsViewBuilder
         ?int $folderId = null,
         ?DocumentStatusEnum $status = null,
         ?MimeGroupEnum $mimeGroup = null,
+        bool $rootOnly = false,
     ): array {
         $result = $this->documentRepository->findPaginated(
             $pagination->page,
@@ -86,6 +95,7 @@ final readonly class DocumentsViewBuilder
             folderId: $folderId,
             status: $status,
             mimeGroup: $mimeGroup,
+            rootOnly: $rootOnly,
         );
 
         return [
@@ -94,6 +104,24 @@ final readonly class DocumentsViewBuilder
             'total' => $result['total'],
             'page' => $result['page'],
             'totalPages' => $result['totalPages'],
+            // Sidebar refreshes counts on every navigation so the badges next
+            // to folder names stay in sync after moves / deletes / uploads.
+            'folders' => $this->serializeFoldersWithCounts(),
         ];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function serializeFoldersWithCounts(): array
+    {
+        $serializer = $this->folderSerializer->withDocumentCounts(
+            $this->documentRepository->countGroupedByFolders(),
+        );
+
+        return array_map(
+            $serializer->serialize(...),
+            $this->folderRepository->findAllOrdered(),
+        );
     }
 }

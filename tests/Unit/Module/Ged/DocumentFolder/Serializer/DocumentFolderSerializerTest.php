@@ -49,6 +49,22 @@ final class DocumentFolderSerializerTest extends TestCase
     {
         $result = (new DocumentFolderSerializer())->serialize($this->makeFolder(1, 'Root', null, 0));
 
-        self::assertSame(['id', 'name', 'parentId', 'position'], array_keys($result));
+        self::assertSame(['id', 'name', 'parentId', 'position', 'documentCount'], array_keys($result));
+    }
+
+    public function testWithDocumentCountsAddsCount(): void
+    {
+        $serializer = (new DocumentFolderSerializer())->withDocumentCounts([5 => 12]);
+        $result = $serializer->serialize($this->makeFolder(5, 'Contracts', null, 0));
+
+        self::assertSame(12, $result['documentCount']);
+    }
+
+    public function testWithDocumentCountsDefaultsToZero(): void
+    {
+        $serializer = (new DocumentFolderSerializer())->withDocumentCounts([99 => 4]);
+        $result = $serializer->serialize($this->makeFolder(5, 'Contracts', null, 0));
+
+        self::assertSame(0, $result['documentCount']);
     }
 }

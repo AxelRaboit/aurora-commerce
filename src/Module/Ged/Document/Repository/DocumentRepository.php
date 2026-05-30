@@ -32,6 +32,7 @@ class DocumentRepository extends ResolveTargetEntityRepository
         ?int $folderId = null,
         ?DocumentStatusEnum $status = null,
         ?MimeGroupEnum $mimeGroup = null,
+        bool $rootOnly = false,
     ): array {
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.category', 'c')
@@ -59,6 +60,12 @@ class DocumentRepository extends ResolveTargetEntityRepository
         if (null !== $folderId) {
             $qb->andWhere('d.folder = :folder')->setParameter('folder', $folderId);
             $countQb->andWhere('d.folder = :folder')->setParameter('folder', $folderId);
+        } elseif ($rootOnly) {
+            // Sidebar "Root" navigation: only docs without a folder, mirroring
+            // Media's root-folder view. When neither folderId nor rootOnly is
+            // set, the listing falls back to cross-folder (existing behavior).
+            $qb->andWhere('d.folder IS NULL');
+            $countQb->andWhere('d.folder IS NULL');
         }
 
         if ($status instanceof DocumentStatusEnum) {
@@ -75,6 +82,26 @@ class DocumentRepository extends ResolveTargetEntityRepository
         $this->hydrateDocumentTags($result['items']);
 
         return $result;
+    }
+
+    /**
+     * @return array<int, int> map of folder_id => document count
+     */
+    public function countGroupedByFolders(): array
+    {
+        $rows = $this->createQueryBuilder('d')
+            ->select('IDENTITY(d.folder) AS folderId, COUNT(d.id) AS cnt')
+            ->where('d.folder IS NOT NULL')
+            ->groupBy('d.folder')
+            ->getQuery()
+            ->getArrayResult();
+
+        $map = [];
+        foreach ($rows as $row) {
+            $map[(int) $row['folderId']] = (int) $row['cnt'];
+        }
+
+        return $map;
     }
 
     /**

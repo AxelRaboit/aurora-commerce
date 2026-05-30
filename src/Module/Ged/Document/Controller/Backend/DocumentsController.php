@@ -19,6 +19,7 @@ use Aurora\Module\Ged\Document\Serializer\DocumentVersionSerializerInterface;
 use Aurora\Module\Ged\Document\Service\DocumentUsageService;
 use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Aurora\Module\Ged\Document\View\DocumentsViewBuilder;
+use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -47,6 +48,7 @@ final class DocumentsController extends AbstractController
         private readonly DocumentVersionSerializerInterface $versionSerializer,
         private readonly GedDocumentUploader $uploader,
         private readonly DocumentUsageService $usageService,
+        private readonly DocumentFolderRepository $folderRepository,
     ) {}
 
     #[Route('', name: '', methods: [HttpMethodEnum::Get->value])]
@@ -65,8 +67,12 @@ final class DocumentsController extends AbstractController
         $status = '' !== $statusValue ? DocumentStatusEnum::tryFrom($statusValue) : null;
         $mimeGroupValue = $request->query->getString('mimeGroup');
         $mimeGroup = '' !== $mimeGroupValue ? MimeGroupEnum::tryFrom($mimeGroupValue) : null;
+        // Media-style sidebar navigation: rootOnly=1 → docs with no folder.
+        // Without rootOnly and without folderId, the listing stays cross-folder
+        // (backwards-compatible with the filter-only callers).
+        $rootOnly = $request->query->getBoolean('rootOnly');
 
-        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId, $status, $mimeGroup));
+        return $this->json($this->viewBuilder->buildListPayload($pagination, $categoryId, $tagId, $folderId, $status, $mimeGroup, $rootOnly));
     }
 
     #[Route('/{id}', name: '_show', methods: [HttpMethodEnum::Get->value])]
@@ -163,6 +169,33 @@ final class DocumentsController extends AbstractController
         $count = $this->manager->bulkDelete($ids);
 
         return $this->jsonSuccess(['deleted' => $count]);
+    }
+
+    #[Route('/{id}/move', name: '_move', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.edit')]
+    public function move(Document $document, Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $folderId = isset($data['folderId']) && (int) $data['folderId'] > 0 ? (int) $data['folderId'] : null;
+        $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
+
+        $this->manager->move($document, $folder);
+
+        return $this->jsonSuccess(['document' => $this->serializer->serialize($document)]);
+    }
+
+    #[Route('/bulk-move', name: '_bulk_move', methods: [HttpMethodEnum::Post->value])]
+    #[IsGranted('ged.documents.edit')]
+    public function bulkMove(Request $request): JsonResponse
+    {
+        $data = $this->decodeJson($request);
+        $ids = array_values(array_filter(array_map(intval(...), (array) ($data['ids'] ?? []))));
+        $folderId = isset($data['folderId']) && (int) $data['folderId'] > 0 ? (int) $data['folderId'] : null;
+        $folder = null !== $folderId ? $this->folderRepository->find($folderId) : null;
+
+        $this->manager->bulkMove($ids, $folder);
+
+        return $this->jsonSuccess();
     }
 
     /**

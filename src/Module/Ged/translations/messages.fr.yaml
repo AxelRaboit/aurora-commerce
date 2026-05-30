@@ -102,6 +102,26 @@ backend:
         billing_invoice: Facture
         billing_ocr: Import OCR
         project_task: Tâche projet
+      moved: Document déplacé
+      bulk_moved: Documents déplacés
+      bulk_move: "Déplacer {count} documents"
+      all_documents: Tous les documents
+      root_folder: Racine
+      subfolders: Sous-dossiers
+      files: Fichiers
+      folders_section: Dossiers
+      favourites: Favoris
+      favourite: Ajouter aux favoris
+      unfavourite: Retirer des favoris
+      new_folder: Nouveau dossier
+      edit_folder: Modifier le dossier
+      delete_folder_confirm: "Supprimer le dossier « {name} » ?"
+      folder_name: Nom du dossier
+      folder_name_placeholder: Nom du dossier…
+      parent_folder: Dossier parent
+      expand: Déplier
+      collapse: Replier
+      move: Déplacer
       errors:
         title_required: Le titre est obligatoire
         upload_required: Aucun fichier reçu

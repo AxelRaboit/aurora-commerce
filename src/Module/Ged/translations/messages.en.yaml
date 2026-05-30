@@ -102,6 +102,26 @@ backend:
         billing_invoice: Invoice
         billing_ocr: OCR import
         project_task: Project task
+      moved: Document moved
+      bulk_moved: Documents moved
+      bulk_move: "Move {count} documents"
+      all_documents: All documents
+      root_folder: Root
+      subfolders: Subfolders
+      files: Files
+      folders_section: Folders
+      favourites: Favourites
+      favourite: Add to favourites
+      unfavourite: Remove from favourites
+      new_folder: New folder
+      edit_folder: Edit folder
+      delete_folder_confirm: "Delete folder « {name} »?"
+      folder_name: Folder name
+      folder_name_placeholder: Folder name…
+      parent_folder: Parent folder
+      expand: Expand
+      collapse: Collapse
+      move: Move
       errors:
         title_required: Title is required
         upload_required: No file received

@@ -240,7 +240,7 @@ onMounted(() => focusMediaFromQuery(openEditMedia));
                                 <span class="text-xs text-muted font-mono">{{ folder.mediaCount }}</span>
                             </template>
                         </AppNavListItem>
-                        <div class="opacity-0 group-hover:opacity-100 flex gap-0.5 transition-opacity">
+                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 flex gap-0.5 transition-opacity">
                             <AppIconButton
                                 size="sm"
                                 variant="ghost"

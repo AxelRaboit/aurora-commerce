@@ -18,6 +18,7 @@ use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Ged\Document\Repository\DocumentVersionRepository;
 use Aurora\Module\Ged\Document\Service\GedDocumentUploader;
 use Aurora\Module\Ged\DocumentCategory\Repository\DocumentCategoryRepository;
+use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentFolder\Repository\DocumentFolderRepository;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
 use Aurora\Module\Ged\DocumentTag\Repository\DocumentTagRepository;
@@ -85,6 +86,31 @@ class DocumentManager implements DocumentManagerInterface
 
         $this->entityManager->remove($document);
         $this->entityManager->flush();
+    }
+
+    public function move(DocumentInterface $document, ?DocumentFolderInterface $folder): void
+    {
+        $document->setFolder($folder);
+        $this->entityManager->flush();
+        $this->auditMoved($document, $folder);
+    }
+
+    public function bulkMove(array $ids, ?DocumentFolderInterface $folder): void
+    {
+        if ([] === $ids) {
+            return;
+        }
+
+        $documents = $this->documentRepository->findBy(['id' => $ids]);
+        foreach ($documents as $document) {
+            $document->setFolder($folder);
+        }
+
+        $this->entityManager->flush();
+
+        foreach ($documents as $document) {
+            $this->auditMoved($document, $folder);
+        }
     }
 
     /**
@@ -264,6 +290,14 @@ class DocumentManager implements DocumentManagerInterface
     protected function auditCropped(DocumentInterface $document): void
     {
         $this->auditLogger->log('ged', 'document.cropped', 'Document', $document->getId(), $this->auditPayload($document));
+    }
+
+    protected function auditMoved(DocumentInterface $document, ?DocumentFolderInterface $folder): void
+    {
+        $this->auditLogger->log('ged', 'document.moved', 'Document', $document->getId(), [
+            ...$this->auditPayload($document),
+            'folder' => $folder?->getName(),
+        ]);
     }
 
     protected function auditPayload(DocumentInterface $document): array

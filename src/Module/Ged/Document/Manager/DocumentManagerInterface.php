@@ -6,6 +6,7 @@ namespace Aurora\Module\Ged\Document\Manager;
 
 use Aurora\Module\Ged\Document\Dto\DocumentInputInterface;
 use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 
 interface DocumentManagerInterface
 {
@@ -14,6 +15,12 @@ interface DocumentManagerInterface
     public function update(DocumentInterface $document, DocumentInputInterface $input): void;
 
     public function delete(DocumentInterface $document): void;
+
+    /** Moves a document into a folder (or null = root). */
+    public function move(DocumentInterface $document, ?DocumentFolderInterface $folder): void;
+
+    /** @param list<int> $ids */
+    public function bulkMove(array $ids, ?DocumentFolderInterface $folder): void;
 
     /** @param list<int> $ids */
     public function bulkDelete(array $ids): int;
