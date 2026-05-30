@@ -29,6 +29,20 @@ function moduleKeyFromPackage(pkgDir) {
         .toLowerCase();
 }
 
+// Merge packages hold several modules under top-level subdirs (aurora-commerce
+// → Ecommerce/, Erp/). Their components must be keyed by the SUBDIR (ecommerce,
+// erp), not the package name (commerce), to match the monorepo glob keys.
+const MERGE_PACKAGES = new Set(["aurora-commerce"]);
+
+function moduleKeyForFile(pkg, pkgRoot, file) {
+    if (MERGE_PACKAGES.has(pkg)) {
+        const rel = file.slice(pkgRoot.length).split(path.sep).filter(Boolean);
+        return (rel[0] || "").toLowerCase();
+    }
+
+    return moduleKeyFromPackage(pkg);
+}
+
 // Collect every assets/**/*.vue file under a package dir (any depth of feature
 // folders before `assets/`, mirroring the monorepo `**/assets/**` convention).
 function collectVueFiles(dir, acc = []) {
@@ -97,9 +111,10 @@ export function auroraVendorModules({ packageDir }) {
 
             const lines = [];
             for (const pkg of siblings) {
-                const moduleKey = moduleKeyFromPackage(pkg);
-                const files = collectVueFiles(path.join(orgDir, pkg));
+                const pkgRoot = path.join(orgDir, pkg);
+                const files = collectVueFiles(pkgRoot);
                 for (const file of files) {
+                    const moduleKey = moduleKeyForFile(pkg, pkgRoot, file);
                     const key = exposedKey(moduleKey, file);
                     const importPath = file.split(path.sep).join("/");
                     lines.push(

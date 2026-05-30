@@ -11,13 +11,27 @@ function vendoredPackageDir(name) {
     return `aurora-${kebab}`;
 }
 
+// Merge package: Ecommerce + Erp ship inside aurora-commerce under subdirs.
+// name → [packageDir, subDir].
+const MERGED_MODULES = {
+    Ecommerce: ["aurora-commerce", "Ecommerce"],
+    Erp: ["aurora-commerce", "Erp"],
+};
+
 // In the monorepo a module's assets live at src/Module/<Name>/assets. When the
 // module ships as its own Composer package, that dir is absent from aurora-core
 // and the assets live in the sibling package vendor/axelraboit/aurora-<kebab>/
-// assets. Resolve to whichever exists so @<module> aliases work in both layouts.
+// assets (or, for a merge package, vendor/axelraboit/aurora-commerce/<Sub>/
+// assets). Resolve to whichever exists so @<module> aliases work in both layouts.
 export function moduleAlias(name) {
     const local = path.resolve(__dirname, `src/Module/${name}/assets`);
     if (fs.existsSync(local)) return local;
+
+    if (MERGED_MODULES[name]) {
+        const [pkg, sub] = MERGED_MODULES[name];
+        return path.resolve(__dirname, `../${pkg}/${sub}/assets`);
+    }
+
     return path.resolve(__dirname, `../${vendoredPackageDir(name)}/assets`);
 }
 
