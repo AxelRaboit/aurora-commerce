@@ -68,16 +68,40 @@ cette mémoire avec l'état.
 
 | Date | Jalon | État |
 |---|---|---|
-| 2026-05-30 | J0 — Préparation | À démarrer |
-| — | J1 — Cartographie commune | Bloqué (J0) |
-| — | Gate 1 — Décision groupings | Bloqué (J1) |
+| 2026-05-30 | J0 — Préparation | ✅ Fait (branche `feat/monorepo-audit`, tag `pre-monorepo-audit`, dossier `docs/aurora-core/dev/audit/`, baseline) |
+| 2026-05-30 | J1 — Cartographie commune | ✅ Fait (3 livrables posés, voir ci-dessous) |
+| — | Gate 1 — Décision groupings | **🚦 À TRANCHER par le user** (décision en attente) |
 | — | J2 — Audit technique parallélisé | Bloqué (Gate 1) |
 | — | Gate 2 — Décision stratégie assets | Bloqué (J2) |
-| — | J3 — POC end-to-end (Billing) | Bloqué (Gate 2) |
+| — | J3 — POC end-to-end | Bloqué (Gate 2) — **reco : POC sur un leaf (Tools/Notes), pas Billing** |
 | — | Gate 3 — Go / No-Go final | Bloqué (J3) |
 | — | J4 — Planification rollout | Bloqué (Gate 3) |
 | — | J5 — Exécution rollout | Bloqué (J4) |
 | — | J6 — Bascule officielle | Bloqué (J5) |
+
+### Livrables J1 (dans `docs/aurora-core/dev/audit/`)
+
+- `module_inventory.md` (1.1) — **18 modules** (pas 7). Core = Core/ +
+  **Platform** + Configuration + Dev + Ged. Leaves métier (core-deps only,
+  split trivial) : **Hr, Notes, PersonalFinance, Planning, Tools**, ~Assistant.
+- `dependency_graph.md` (1.2) — Mermaid + SCC. **Un seul vrai cycle :
+  Ecommerce↔Erp** (cassable trivialement, 1 ref = un enum). Couplages
+  cross-business = **intégrations optionnelles** (events, embed, lien
+  interface), pas deps dures. `General` = shell app, cas spécial.
+- `aurorabundle_coupling.md` (1.3) — `resolve_target_entities` (95 paires)
+  = seul couplage manuel ; reste auto-glob. Pré-requis core avant 1er
+  split : `AbstractAuroraModuleBundle` + `ModuleParameterEnum` extensible.
+- `baseline_metrics.md` (J0) — build Vue 9.9 Mo, 17 migrations mono-dossier.
+
+### Points chauds remontés au Gate 1
+
+1. Découpler `Erp→Ecommerce` (l'enum) casse le seul cycle.
+2. Vérifier `Editorial↔Crm` (3/3) = cycle potentiel n°2.
+3. Auditer les arêtes lourdes `Ecommerce→Erp` (15), `Project→Crm` (16),
+   `Project→Billing` (7) en J2 → décident fusion vs bridge.
+4. `General` (shell) : core-avec-widgets-gardés (reco) vs côté client.
+5. `migrations/` mono-dossier = concern Phase 5 (probable : migrations
+   côté client).
 
 **Convention de suivi** : mettre à jour cette table à chaque jalon
 franchi. Si un gate revient en No-Go, fermer le chantier proprement
