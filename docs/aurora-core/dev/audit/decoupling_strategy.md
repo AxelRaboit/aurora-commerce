@@ -94,7 +94,26 @@ sa contribution ; le consommateur injecte `iterable<…>` via `#[AutowireIterato
 Le risque d'inversion core→module (General dans core important des modules)
 est éliminé. 9/14 modules métier sont désormais des leaves purs.
 
-### Catégorie D — Lien entité vers Crm → soft reference (le point qui coûte)
+### Catégorie D — Lien entité vers Crm → soft reference ✅ FAIT (2026-05-30)
+
+Réalisé via un resolver core **`Aurora\Core\Reference\EntityReferenceResolver`**
+(+ `EntityReferenceProviderInterface`, tag `aurora.entity_reference_provider`) :
+`summarize(type, id)` → résumé d'affichage ou null ; `supports(type)` → module
+installé ? ; `options(type)` → liste pour picker. Crm fournit
+`Contact/Company/DealReferenceProvider`.
+
+| Arête | Avant | Après |
+|---|---|---|
+| Billing→Crm | `Tiers`→`Company` (ManyToOne) | `?int $companyId` ; migration drop FK |
+| Photo→Crm | `Gallery`→`Contact` + ViewBuilder `CrmContext` + Manager repo | `?int $clientContactId` ; serializer/notif via resolver ; ViewBuilder `supports()` ; migration drop FK |
+| Project→Crm | `crmCompany/crmDeal` (ManyToOne) + `crmContacts` (**ManyToMany**) + repos | `?int crmCompanyId/crmDealId` + `crm_contact_ids` **JSON** ; serializer/viewbuilder via resolver ; migration drop 2 FK + collapse join-table→JSON |
+| ~~Project→Billing~~ | `ProjectInvoiceManager` (« facturer un projet ») | **Relocalisé côté client** (retiré d'aurora-core : backend + Vue + i18n) |
+
+→ Billing, Photo, Project deviennent des leaves purs. Compromis assumé : perte
+de l'intégrité FK DB pour ces liens optionnels (cf. migrations). down() des
+migrations re-crée les FK → valide seulement si Crm installé (Phase 5).
+
+### ~~Catégorie D — Lien entité vers Crm → soft reference (le point qui coûte)~~ (description originale)
 
 Une entité d'un module a une **relation Doctrine via interface** vers une
 entité Crm, + injecte le **repository** Crm pour hydrater. Problème dur :
@@ -134,8 +153,20 @@ signe que c'est un seul domaine.
 |---|---|---|
 | **Ecommerce→Erp** (8 après retrait CurrencyEnum) | `Listing`/`Order`/`Cart` ↔ **`Product`** (entité concrète : `OrderManager`, `OrderRefundService`, `ListingManager`) | **FUSION** : `aurora-commerce` = **Ecommerce + Erp**. Un listing vend un produit = un domaine. |
 
-→ **Seule fusion nécessaire.** Crm, Billing, Project, Editorial, Photo
-restent **autonomes** (leurs couplages relèvent de A/B/C/D).
+→ **Seule fusion nécessaire** ✅ **FAIT** : Ecommerce + Erp restent 2 bundles
+mais shippent dans un seul package `aurora-commerce` (l'arête Ecommerce↔Erp est
+intra-package, donc tolérée). Crm, Billing, Project, Editorial, Photo restent
+**autonomes** (leurs couplages relèvent de A/B/C/D).
+
+## ✅ Invariant atteint (2026-05-30)
+
+Le grep de vérification est vide pour tous les modules métier (hors le couple
+intra-package Ecommerce↔Erp). **13 modules métier** shippent chacun via leur
+`Aurora<X>Bundle` (`AbstractAuroraModuleBundle`) ; `AuroraBundle` est devenu un
+bundle **purement core** (16 RTE : Platform/Configuration/Dev/Ged). Un client
+compose son install à la carte module par module. Reste pour des packages
+Composer publiables : `composer.json` + services/routes embarqués +
+`ModuleParameterEnum` extensible + `splitsh` (cf. `poc_tools_bundle.md`).
 
 ## Extension points à créer dans `aurora-core` (avant le pass)
 
