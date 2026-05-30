@@ -71,7 +71,7 @@ cette mémoire avec l'état.
 | 2026-05-30 | J0 — Préparation | ✅ Fait (branche `feat/monorepo-audit`, tag `pre-monorepo-audit`, dossier `docs/aurora-core/dev/audit/`, baseline) |
 | 2026-05-30 | J1 — Cartographie commune | ✅ Fait (3 livrables posés, voir ci-dessous) |
 | 2026-05-30 | Gate 1 — Décision groupings | ✅ **TRANCHÉ : graphe en étoile** (aucune dép. latérale ; 1 seule fusion Ecommerce+Erp). Voir `audit/decoupling_strategy.md` + `package_layout.md`. |
-| — | **J1.5 — Pass de découplage (PRÉREQUIS)** | **🔜 prochaine étape** — vrai code : 6 extension points core + 5 catégories d'arêtes. Bloque tout split. |
+| 2026-05-30 | **J1.5 — Pass de découplage (PRÉREQUIS)** | **🚧 EN COURS** — cat. A ✅ (CurrencyEnum→core, casse Billing→Erp), cat. B ✅ (ContactSignalEvent→core, **Crm devient leaf pur**). Reste : cat. C (registries General+Editorial), cat. D (soft-ref →Crm, **risque #1**), cat. E (merge Ecommerce+Erp). Commits `70a17e38`, `4384bf7b` sur develop. |
 | — | J2 — Audit technique parallélisé | Bloqué (J1.5) |
 | — | Gate 2 — Décision stratégie assets | Bloqué (J2) |
 | — | J3 — POC end-to-end | Bloqué (Gate 2) — **POC sur leaf pur (Tools/Hr)**, puis 2ᵉ POC cat. D (soft-ref) |
