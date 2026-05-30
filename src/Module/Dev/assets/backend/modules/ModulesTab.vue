@@ -10,7 +10,7 @@ import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import { Lock, ChevronDown } from "lucide-vue-next";
-import { resolveNavIcon, moduleIconColorClass, moduleIdFromToggleKey } from "@/shared/nav/navMeta.js";
+import { resolveNavIcon, moduleIconColorClass, moduleHeaderClass, moduleIdFromToggleKey } from "@/shared/nav/navMeta.js";
 import { useModules } from "./composables/useModules.js";
 import { useCollapsibleSections } from "./composables/useCollapsibleSections.js";
 
@@ -54,8 +54,8 @@ onMounted(() => {
         >
             <!-- Parent module header (clickable to collapse/expand) -->
             <div
-                class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2 transition-colors cursor-pointer select-none"
-                :class="{ 'opacity-60': modules.isLocked(parameter) }"
+                class="flex items-center gap-3 px-4 py-3 border-l-4 transition-colors cursor-pointer select-none"
+                :class="[moduleHeaderClass(moduleIdFromToggleKey(parameter.key)), { 'opacity-60': modules.isLocked(parameter) }]"
                 v-on:click="parameter.subModules?.length && sections.toggle(parameter.key)"
             >
                 <ChevronDown

@@ -164,6 +164,40 @@ export function moduleIconColorClass(moduleId) {
     return ICON_TEXT_CLASS[MODULE_COLOR[moduleId] ?? "accent"] ?? "text-accent";
 }
 
+/**
+ * Tinted-background + left-accent classes per colour family, mirroring the
+ * sidemenu section header (useSidemenuSectionTheme headerBg + headerBorder).
+ * Full literal strings so Tailwind keeps them (no dynamic construction).
+ * Pair with a `border-l-*` width class on the element.
+ */
+const HEADER_CLASS = {
+    slate: "bg-slate-500/10 border-l-slate-500",
+    indigo: "bg-indigo-500/10 border-l-indigo-500",
+    stone: "bg-stone-500/10 border-l-stone-500",
+    zinc: "bg-zinc-500/10 border-l-zinc-500",
+    yellow: "bg-yellow-500/10 border-l-yellow-500",
+    emerald: "bg-emerald-500/10 border-l-emerald-500",
+    rose: "bg-rose-500/10 border-l-rose-500",
+    lime: "bg-lime-500/10 border-l-lime-500",
+    pink: "bg-pink-500/10 border-l-pink-500",
+    cyan: "bg-cyan-500/10 border-l-cyan-500",
+    sky: "bg-sky-500/10 border-l-sky-500",
+    teal: "bg-teal-500/10 border-l-teal-500",
+    purple: "bg-purple-500/10 border-l-purple-500",
+    amber: "bg-amber-500/10 border-l-amber-500",
+    fuchsia: "bg-fuchsia-500/10 border-l-fuchsia-500",
+    blue: "bg-blue-500/10 border-l-blue-500",
+    green: "bg-green-500/10 border-l-green-500",
+    orange: "bg-orange-500/10 border-l-orange-500",
+    violet: "bg-violet-500/10 border-l-violet-500",
+    accent: "bg-accent/10 border-l-accent",
+};
+
+/** Module id → its tinted header classes (background + left accent colour). */
+export function moduleHeaderClass(moduleId) {
+    return HEADER_CLASS[MODULE_COLOR[moduleId] ?? "accent"] ?? HEADER_CLASS.accent;
+}
+
 /** Derive the module id from a toggle key: 'modules_ecommerce_backend' → 'ecommerce'. */
 export function moduleIdFromToggleKey(key) {
     return String(key)
