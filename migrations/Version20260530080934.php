@@ -66,60 +66,60 @@ final class Version20260530080934 extends AbstractMigration
     private function ensureContentMediaRowsAreInDocuments(): void
     {
         $this->addSql(<<<'SQL'
-            INSERT INTO core_ged_documents (
-                id,
-                title, description, status,
-                file_path, file_name, original_name, mime_type, size,
-                width, height, thumbnail_path,
-                alt, caption,
-                focal_x, focal_y, variants,
-                created_at, updated_at
-            )
-            SELECT
-                nextval('seq_core_ged_document_id'),
-                COALESCE(NULLIF(m.original_name, ''), 'Untitled') AS title,
-                NULL AS description,
-                'published' AS status,
-                m.path AS file_path,
-                m.filename AS file_name,
-                m.original_name,
-                m.mime_type,
-                m.size,
-                m.width,
-                m.height,
-                NULL AS thumbnail_path,
-                m.alt,
-                m.caption,
-                m.focal_x,
-                m.focal_y,
-                m.variants,
-                m.created_at,
-                m.updated_at
-            FROM core_media m
-            WHERE NOT EXISTS (SELECT 1 FROM core_ged_documents d WHERE d.file_path = m.path)
-              AND (
-                  EXISTS (
-                      SELECT 1 FROM core_post_translations t,
-                          jsonb_array_elements(t.blocks::jsonb) AS b
-                      WHERE COALESCE(NULLIF((b->'data'->>'mediaId'), '')::bigint, 0) = m.id
+                INSERT INTO core_ged_documents (
+                    id,
+                    title, description, status,
+                    file_path, file_name, original_name, mime_type, size,
+                    width, height, thumbnail_path,
+                    alt, caption,
+                    focal_x, focal_y, variants,
+                    created_at, updated_at
+                )
+                SELECT
+                    nextval('seq_core_ged_document_id'),
+                    COALESCE(NULLIF(m.original_name, ''), 'Untitled') AS title,
+                    NULL AS description,
+                    'published' AS status,
+                    m.path AS file_path,
+                    m.filename AS file_name,
+                    m.original_name,
+                    m.mime_type,
+                    m.size,
+                    m.width,
+                    m.height,
+                    NULL AS thumbnail_path,
+                    m.alt,
+                    m.caption,
+                    m.focal_x,
+                    m.focal_y,
+                    m.variants,
+                    m.created_at,
+                    m.updated_at
+                FROM core_media m
+                WHERE NOT EXISTS (SELECT 1 FROM core_ged_documents d WHERE d.file_path = m.path)
+                  AND (
+                      EXISTS (
+                          SELECT 1 FROM core_post_translations t,
+                              jsonb_array_elements(t.blocks::jsonb) AS b
+                          WHERE COALESCE(NULLIF((b->'data'->>'mediaId'), '')::bigint, 0) = m.id
+                      )
+                      OR EXISTS (
+                          SELECT 1 FROM core_block_notes n,
+                              jsonb_array_elements(n.blocks::jsonb) AS b
+                          WHERE COALESCE(NULLIF((b->'data'->>'mediaId'), '')::bigint, 0) = m.id
+                      )
                   )
-                  OR EXISTS (
-                      SELECT 1 FROM core_block_notes n,
-                          jsonb_array_elements(n.blocks::jsonb) AS b
-                      WHERE COALESCE(NULLIF((b->'data'->>'mediaId'), '')::bigint, 0) = m.id
-                  )
-              )
-        SQL);
+            SQL);
     }
 
     /** @return array<int, int> media_id → document_id */
     private function mediaToDocumentMapping(): array
     {
         $rows = $this->connection->fetchAllAssociative(<<<'SQL'
-            SELECT m.id AS media_id, d.id AS document_id
-            FROM core_media m
-            INNER JOIN core_ged_documents d ON d.file_path = m.path
-        SQL);
+                SELECT m.id AS media_id, d.id AS document_id
+                FROM core_media m
+                INNER JOIN core_ged_documents d ON d.file_path = m.path
+            SQL);
 
         $map = [];
         foreach ($rows as $row) {
@@ -162,7 +162,7 @@ final class Version20260530080934 extends AbstractMigration
 
     /**
      * @param array<int|string, mixed> $blocks
-     * @param array<int, int> $mapping
+     * @param array<int, int>          $mapping
      *
      * @return array{0: array<int|string, mixed>, 1: bool}
      */

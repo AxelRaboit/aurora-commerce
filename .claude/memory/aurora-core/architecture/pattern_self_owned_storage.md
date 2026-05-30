@@ -8,16 +8,21 @@ metadata:
 ## Règle
 
 Tout nouveau module aurora-core (ou client) qui doit stocker des fichiers
-propres à son domaine (PDFs métier, exports, attachements, etc.) **possède
-son propre stockage** sous `var/uploads/<module>/Y/m/<slug>-<uniq>.<ext>` —
-**jamais** une FK vers `MediaInterface`.
+**internes au domaine** (PDFs métier générés, exports, archives
+temporaires, OCR raw uploads…) **possède son propre stockage** sous
+`var/uploads/<module>/Y/m/<slug>-<uniq>.<ext>` — **jamais** une FK vers
+une entité partagée.
 
-**Why** : la Media library a un lifecycle, des thumbnails, des variants et
-une UX dédiés aux **assets contenu** (images/vidéos pour le frontend).
-Coupler un module métier à Media le force à hériter de ce lifecycle et crée
-une dépendance cross-module qu'on regrette ensuite (rétention, droits,
-chiffrement, versioning spécifiques au domaine ne peuvent plus évoluer
-indépendamment).
+**Why** : un module métier qui FK'ait une entité-fichier partagée se
+trouvait couplé à son lifecycle (rétention, droits, chiffrement,
+versioning), ce qui empêchait les politiques spécifiques d'évoluer
+indépendamment. Le risque historique venait du module `Media` (supprimé
+en 2026-05-30 lors de la fusion Media → GED) ; depuis, **les assets de
+contenu utilisateur (images, documents administratifs, etc.) FK'ent vers
+`Aurora\Module\Ged\Document\Entity\Document`** — c'est l'entité-fichier
+canonique d'Aurora, qui a *justement* été conçue pour porter ce lifecycle
+partagé. La règle de self-owned ne concerne donc que les fichiers
+*internes* dont aucun autre module ne doit avoir vue.
 
 **How to apply** : pour toute nouvelle entité-fichier, suivre le pattern
 documenté ci-dessous. Exemples vivants : `WeldingPdfDocument`,

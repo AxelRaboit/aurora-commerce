@@ -728,18 +728,25 @@ import { Locale, LOCALE_LABELS } from '@/shared/utils/lang.js';
 LOCALE_LABELS[Locale.Fr];   // 'Français'
 ```
 
-### `mediaPicker.js` — `openMediaPicker({ imagesOnly?, multiple? })`
+### `documentPicker.js` — `openDocumentPicker({ imagesOnly?, mimeFilter?, multiple?, listPath? })`
 
-Wrapper impératif autour du `MediaPickerModal`. Retourne une Promise
-résolue avec l'item sélectionné (ou `null` si annulé).
+Wrapper impératif autour du `DocumentPickerModal`. Retourne une Promise
+résolue avec le document sélectionné (ou `null` si annulé). `multiple: true`
+résout avec un tableau ; `imagesOnly` filtre côté client sur `image/*` ;
+`mimeFilter` impose un MIME strict (ex : `application/pdf`).
 
 ```js
-const item = await openMediaPicker({ imagesOnly: true });
-if (item) form.imageId = item.id;
+const doc = await openDocumentPicker({ imagesOnly: true });
+if (doc) {
+    form.imageId = doc.id;
+    form.imageUrl = doc.fileUrl; // chemin servi via /uploads/{path}
+}
 ```
 
 > Utilisé par `AppImagePickerField` — invocation directe utile dans des
 > contextes custom (blocks editor, attachments inline).
+> Remplace l'ancien `openMediaPicker` retiré en Phase 4 du merge
+> Media → GED (2026-05-30).
 
 ### `platform.js` — `isMac`, `modKeyLabel`
 

@@ -1,5 +1,13 @@
-# TODO — Fusion Media → GED (un seul système de fichiers)
+# DONE — Fusion Media → GED (un seul système de fichiers)
 
+> **Statut (2026-05-30) : ✅ terminée — toutes les phases livrées.**
+> `Document` (GED) est désormais **l'unique entité fichier** d'Aurora. Le
+> module Media a été supprimé en Phase 5, les tables `core_media*` droppées,
+> et tous les consommateurs migrés. Voir la mémoire
+> `.claude/memory/aurora-core/architecture/decision_media_ged_merge_phase_1.md`
+> pour la phase 1 et l'historique git (préfixes `feat(erp)|...|feat(media)`)
+> pour les phases 2-5.
+>
 > **Décision (2026-05-25)** : supprimer la médiathèque (`/backend/media/media`) et
 > tout câbler sur la GED. `Document` (GED) devient **l'unique entité fichier**.
 > Choix assumé malgré le compromis (cf. « Risques » plus bas) : `Document`
@@ -7,7 +15,9 @@
 > (statut/OCR/catégorie/versions).
 >
 > **Mode d'exécution : par phases, chacune verte et livrable.** Tant que la
-> Phase 5 n'est pas faite, Media reste en place → réversible.
+> Phase 5 n'est pas faite, Media reste en place → réversible. (✅ toutes
+> les phases sont passées le 2026-05-30 — historique conservé pour la
+> traçabilité.)
 
 ---
 
@@ -41,7 +51,7 @@ WebP, srcset), focal point, pipeline d'URL de variants. À bâtir en Phase 1.
 
 ---
 
-## Phase 1 — Parité de rendu sur `Document` (additif, ZÉRO régression)
+## Phase 1 — Parité de rendu sur `Document` (additif, ZÉRO régression) ✅ DONE 2026-05-30
 
 Socle obligatoire : `Document` doit savoir rendre des images frontend avant
 qu'un seul consommateur puisse migrer.
@@ -60,7 +70,7 @@ qu'un seul consommateur puisse migrer.
 - [ ] Tests : variants générés à l'upload/crop, URLs de variants.
 - **Risque : nul** (aucun consommateur touché, Media intact).
 
-## Phase 2 — Migrer les consommateurs FK (un module à la fois)
+## Phase 2 — Migrer les consommateurs FK (un module à la fois) ✅ DONE 2026-05-30
 
 Pour chaque module : `media_id → document_id`, serializer/renderer basculé sur
 `DocumentUrlGenerator`, picker basculé. **+ migration de données** (copier les
@@ -75,7 +85,7 @@ lignes `core_media` utilisées vers `core_ged_documents`, remapper la FK).
 - **Risque : élevé** (FK + données). Un module = un lot de commits + une
       migration testée. Garder Media lisible en parallèle pour comparer.
 
-## Phase 3 — Contenu embarqué (JSONB)
+## Phase 3 — Contenu embarqué (JSONB) ✅ DONE 2026-05-30
 
 - [ ] Remapper `{"type":"image","data":{"mediaId":N}}` →
       `{"documentId":M}` dans `core_post_translations.blocks` (et tout autre
@@ -83,14 +93,14 @@ lignes `core_media` utilisées vers `core_ged_documents`, remapper la FK).
       (`MediaTextBlock` → `DocumentTextBlock` ou param générique).
 - **Risque : élevé** (parsing JSONB, ne pas perdre de contenu).
 
-## Phase 4 — Picker unifié + nav
+## Phase 4 — Picker unifié + nav ✅ DONE 2026-05-30
 
 - [ ] `DocumentPickerModal` partout : `AppBlockEditor`, `AppImagePickerField`
       (form partagé), `PostFeaturedImagePanel`, `PostSeoPanel`, galerie.
 - [ ] `shared/utils/mediaPicker.js` → `documentPicker.js`.
 - [ ] Retirer le NavItem `/backend/media/media` (toggle module Media).
 
-## Phase 5 — Suppression de Media
+## Phase 5 — Suppression de Media ✅ DONE 2026-05-30
 
 Une fois TOUTES les données migrées et vérifiées :
 

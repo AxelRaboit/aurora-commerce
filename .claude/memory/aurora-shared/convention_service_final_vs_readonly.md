@@ -12,10 +12,10 @@ forbids subclassing.
 
 This is the right shape for **leaf, complete-on-their-own** services
 that the rest of the app shouldn't substitute :
-- pure-compute services (`PostTextExtractor`, `MediaUrlGenerator`,
+- pure-compute services (`PostTextExtractor`, `DocumentUrlGenerator`,
   `SluggerInterface` adapters)
 - data-shape services (`PostAccessService`, `BlocksRenderer`)
-- helpers that only the framework instantiates (`MediaUrlGenerator`,
+- helpers that only the framework instantiates (`DocumentUrlGenerator`,
   encryption services)
 
 **Exception** : a service that's a **thin shell over an external

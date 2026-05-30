@@ -38,9 +38,10 @@ Via `ref`, le composant expose :
 ## Why
 
 4 fichiers reproduisaient quasi-identiquement le pattern `<input hidden>` +
-`AppButton v-on:click="ref?.click()"` (PostSeoPanel, PostCustomField, MediaApp,
-+ variante dans PostFeaturedImagePanel). Le composant réduit la duplication et
-formalise le pattern dans le design system.
+`AppButton v-on:click="ref?.click()"` (PostSeoPanel, PostCustomField,
+DocumentsApp/MediaApp historique, + variante dans PostFeaturedImagePanel).
+Le composant réduit la duplication et formalise le pattern dans le design
+system.
 
 ## How to apply
 

@@ -26,7 +26,7 @@ final class GalleryDownloadServiceTest extends TestCase
 
     public function testNiceNameSanitizesOriginalName(): void
     {
-        $media = ((new Document())->setTitle('test'))
+        $media = (new Document())->setTitle('test')
             ->setOriginalName('Couple at the beach.jpg')
             ->setFilePath('2026/04/foo.jpg');
 
@@ -37,7 +37,7 @@ final class GalleryDownloadServiceTest extends TestCase
 
     public function testNiceNameOriginalVariantHasNoSuffix(): void
     {
-        $media = ((new Document())->setTitle('test'))
+        $media = (new Document())->setTitle('test')
             ->setOriginalName('IMG_001.jpg')
             ->setFilePath('2026/04/abc.jpg');
 
@@ -48,7 +48,7 @@ final class GalleryDownloadServiceTest extends TestCase
 
     public function testNiceNameFallsBackToPathFilenameWhenOriginalEmpty(): void
     {
-        $media = ((new Document())->setTitle('test'))
+        $media = (new Document())->setTitle('test')
             ->setOriginalName('')
             ->setFilePath('2026/04/abc-def.jpg');
 

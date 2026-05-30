@@ -32,7 +32,7 @@ vers `var/uploads/`.
    définissent leur propre route sous `/backend/<module>/files/...`
    qui prend précédence.
 4. **URL construction** : injecter `UrlGeneratorInterface` ou un URL
-   generator dédié (cf. `MediaUrlGenerator`, `UserProfilePhotoUrlGenerator`
+   generator dédié (cf. `DocumentUrlGenerator`, `UserProfilePhotoUrlGenerator`
    comme exemples canoniques côté core). **Jamais** concaténer
    `'/uploads/...'` dans une entité — l'URL est presentation, pas
    domaine.
@@ -49,8 +49,8 @@ ait fait l'auth check. Dev local sans le module → fallback PHP
 `readfile()`, transparent.
 
 **Anti-patterns** :
-- `$media->getPublicUrl()` ou similaire qui hardcode `/uploads/...`
-  → utiliser `MediaUrlGenerator::publicUrl()` à la place
+- `$document->getPublicUrl()` ou similaire qui hardcode `/uploads/...`
+  → utiliser `DocumentUrlGenerator::publicUrl()` à la place
 - Fichier dans `public/uploads/` → migration vers `var/uploads/<categorie>/`
 - nginx en prod → Aurora cible Apache + `mod_xsendfile`
 

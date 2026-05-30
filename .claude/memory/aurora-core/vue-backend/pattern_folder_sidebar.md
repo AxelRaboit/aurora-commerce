@@ -77,8 +77,9 @@ façon Media »).
 `opacity-0 group-hover:opacity-100` tout court. Raison : pas de hover sur
 tactile, donc en mobile/tablette les actions seraient inatteignables. Le
 breakpoint `lg:` matche celui qui fait passer la sidebar en colonne
-(`lg:flex-row` côté layout), donc cohérent. Corrigé rétroactivement dans
-`MediaApp.vue` (ligne ~243) en même temps que l'application au GED.
+(`lg:flex-row` côté layout), donc cohérent. La règle s'applique à toute
+sidebar arborescente future ; le précédent `MediaApp.vue` qui l'avait
+introduite a depuis été supprimé en Phase 5 du merge Media → GED.
 
 **Filtres en mobile** : les chips de filtre (catégorie, tag, status, type,
 bouton reset) doivent passer en `w-full sm:w-auto sm:min-w-44` dans un

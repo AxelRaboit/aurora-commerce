@@ -80,7 +80,7 @@ final class GallerySerializerTest extends TestCase
 
     private function makeMedia(int $id = 100, ?string $alt = null): Document
     {
-        $media = ((new Document())->setTitle('test'))
+        $media = (new Document())->setTitle('test')
             ->setOriginalName('photo.jpg')
             ->setFilePath('2026/04/photo.jpg')
             ->setVariants(['medium' => '2026/04/photo-medium.jpg'])
@@ -145,7 +145,7 @@ final class GallerySerializerTest extends TestCase
     public function testSerializeFallsBackToPublicUrlWhenNoVariant(): void
     {
         $gallery = $this->makeGallery();
-        $cover = ((new Document())->setTitle('test'))->setOriginalName('p.jpg')->setFilePath('raw.jpg');
+        $cover = (new Document())->setTitle('test')->setOriginalName('p.jpg')->setFilePath('raw.jpg');
         self::setId($cover, 7);
         $gallery->setCoverMedia($cover);
 
@@ -216,10 +216,10 @@ final class GallerySerializerTest extends TestCase
     public function testSerializeItemsThumbFallsBackToLargeThenPublic(): void
     {
         $gallery = $this->makeGallery();
-        $largeOnly = ((new Document())->setTitle('test'))->setOriginalName('m.jpg')->setFilePath('m.jpg')
+        $largeOnly = (new Document())->setTitle('test')->setOriginalName('m.jpg')->setFilePath('m.jpg')
             ->setVariants(['large' => 'large/m.jpg']);
         self::setId($largeOnly, 11);
-        $rawOnly = ((new Document())->setTitle('test'))->setOriginalName('r.jpg')->setFilePath('r.jpg');
+        $rawOnly = (new Document())->setTitle('test')->setOriginalName('r.jpg')->setFilePath('r.jpg');
         self::setId($rawOnly, 12);
 
         $i1 = (new GalleryItem())->setGallery($gallery)->setMedia($largeOnly)->setPosition(0);

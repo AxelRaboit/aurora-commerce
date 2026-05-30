@@ -193,7 +193,7 @@ async function submit() {
 
 ### Drop zone
 
-Composant réutilisable `AppFileDropZone.vue` (à voir s'il existe déjà dans Aurora — `MediaPickerModal.vue` en a peut-être un) qui :
+Composant réutilisable `AppFileDropZone.vue` (à voir s'il existe déjà dans Aurora — `DocumentsApp.vue` (GED) ou `MediaTextBlock` en a peut-être un) qui :
 - accepte fichiers ET dossiers (folder drop = walk les fichiers)
 - multiple
 - preview thumb pour images

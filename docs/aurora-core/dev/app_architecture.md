@@ -62,7 +62,6 @@ import anything from `App\Module\*`.
 | User       | Entity, Managers (UserManager, FrontUserManager), Repository, DTO, Serializer, Enum (UserRole, UserStatus, UserType), Command |
 | Auth       | Entities (AccessRequest, ResetPasswordRequest), Managers (AccessRequest, Invitation, PasswordReset, EmailVerification), Security (providers, checkers, authenticator, entry point), EventListeners, Validator, Controllers, DTO |
 | Setting    | Entity (Setting), Repository, Enum (ApplicationParameter — includes Sequences group), Command, Controller |
-| Media      | Entities (Media, MediaFolder), Manager, Repository, Service (ImageVariantGenerator, MediaPathResolver), DTO, Serializer, Command, Controller — files stored under `%app.upload_dir%/{area}/YYYY-MM/` |
 | Sequence   | `SequenceGenerator` (PostgreSQL NEXTVAL wrapper), `SequencePrefixEnum` (canonical prefix per entity), `ResyncSequencesCommand` (`aurora:sequences:resync`) — see §6.8 |
 | Theme      | Entity, Manager, Repository, Services (ThemeContext, ThemeResolver), DTO, Serializer, Controller |
 | Locale     | Entity, Repository, Enum (LocaleEnum), EventSubscriber |

@@ -44,8 +44,9 @@ que son code reste cohérent avec le bundle qu'il étend.
 - Spéculation pure ("et si plus tard…" sans pattern SOLID à invoquer)
 
 **Exemples concrets validés côté core** :
-- 22 callers de `Media::getPublicUrl()` → refactor vers
-  `MediaUrlGenerator` injecté (séparation domaine/HTTP) ✅
+- 22 callers de `Media::getPublicUrl()` → refactor vers `MediaUrlGenerator`
+  injecté (séparation domaine/HTTP) ✅ — puis fusion Media→GED en
+  2026-05-30, c'est maintenant `DocumentUrlGenerator` qui sert tout
 - `Num::clamp` extrait dès 10+ sites inline ✅
 - Convention extensibilité Sylius 5 couches partout ✅
 - Settings admin pour 2 réglages d'image notes-markdown (1 client) ✅

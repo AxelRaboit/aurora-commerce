@@ -89,7 +89,7 @@ class DocumentRepository extends ResolveTargetEntityRepository
      * `$limit` rows. Powers the global backend search controller's
      * "Documents" pane (formerly served by the Media library).
      *
-     * @return list<\Aurora\Module\Ged\Document\Entity\Document>
+     * @return list<Document>
      */
     public function searchByName(string $query, int $limit = 10): array
     {
