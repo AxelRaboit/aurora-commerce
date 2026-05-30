@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Serializer;
 
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
+use Aurora\Module\Crm\Contact\Reference\ContactReferenceProvider;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
@@ -37,6 +40,7 @@ final class GallerySerializerTest extends TestCase
     private GalleryFinalizationRepository $finalizationRepository;
     private GalleryInviteRepository $inviteRepository;
     private GalleryRepository $galleryRepository;
+    private ContactRepository $contactRepository;
     private GallerySerializer $serializer;
 
     protected function setUp(): void
@@ -51,6 +55,7 @@ final class GallerySerializerTest extends TestCase
         $this->inviteRepository->method('findAllForGallery')->willReturn([]);
         $this->galleryRepository = $this->createStub(GalleryRepository::class);
         $this->galleryRepository->method('countItemsByGalleries')->willReturn([]);
+        $this->contactRepository = $this->createStub(ContactRepository::class);
         $this->serializer = new GallerySerializer(
             $this->pickRepository,
             $this->commentRepository,
@@ -58,6 +63,7 @@ final class GallerySerializerTest extends TestCase
             $this->inviteRepository,
             $this->galleryRepository,
             $this->makeDocumentUrlGenerator(),
+            new EntityReferenceResolver([new ContactReferenceProvider($this->contactRepository)]),
         );
     }
 
@@ -160,7 +166,11 @@ final class GallerySerializerTest extends TestCase
         $contact = new Contact();
         $contact->setFirstName('Camille')->setLastName('Doe')->setEmail('c@x.com');
         self::setId($contact, 12);
-        $gallery->setClientContact($contact);
+        // Soft reference: the gallery stores only the contact id; the core
+        // resolver (here backed by a real ContactReferenceProvider over a stub
+        // repository) materializes the summary.
+        $this->contactRepository->method('find')->willReturn($contact);
+        $gallery->setClientContactId(12);
 
         $payload = $this->serializer->serialize($gallery);
 
@@ -346,7 +356,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator());
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator(), new EntityReferenceResolver([]));
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -387,7 +397,7 @@ final class GallerySerializerTest extends TestCase
         $invites = $this->createStub(GalleryInviteRepository::class);
         $invites->method('findAllForGallery')->willReturn([$invite]);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator());
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator(), new EntityReferenceResolver([]));
 
         $rows = $serializer->serializeFinalizations($gallery);
 
@@ -415,7 +425,7 @@ final class GallerySerializerTest extends TestCase
         $finalizations->method('findAllForGallery')->willReturn([$finalization]);
         $finalizations->method('countForGallery')->willReturn(1);
 
-        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator());
+        $serializer = new GallerySerializer($this->pickRepository, $this->commentRepository, $finalizations, $invites, $this->galleryRepository, $this->makeDocumentUrlGenerator(), new EntityReferenceResolver([]));
 
         $rows = $serializer->serializeInvites($gallery);
 
@@ -482,6 +492,7 @@ final class GallerySerializerTest extends TestCase
             $this->inviteRepository,
             $this->galleryRepository,
             $this->makeDocumentUrlGenerator(),
+            new EntityReferenceResolver([]),
         );
 
         $payload = $serializer->serializeComments($gallery);

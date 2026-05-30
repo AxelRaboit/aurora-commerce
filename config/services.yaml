@@ -56,6 +56,8 @@ services:
             tags: [aurora.backend_search_provider]
         Aurora\Core\Content\BlockRendererInterface:
             tags: [aurora.content_block_renderer]
+        Aurora\Core\Reference\EntityReferenceProviderInterface:
+            tags: [aurora.entity_reference_provider]
 
     Aurora\Module\Ged\Document\Service\DocumentUsageService:
         arguments:

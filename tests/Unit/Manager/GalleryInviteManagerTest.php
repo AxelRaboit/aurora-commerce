@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Manager;
 
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Mail\Service\MailService;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
@@ -78,7 +79,7 @@ final class GalleryInviteManagerTest extends TestCase
             'noreply@example.test',
         );
 
-        return new GalleryNotificationService($mail, $pickRepo, $url);
+        return new GalleryNotificationService($mail, $pickRepo, $url, new EntityReferenceResolver([]));
     }
 
     public function testCreatePersistsInviteWithLowercasedEmailAndDeterministicVisitorToken(): void

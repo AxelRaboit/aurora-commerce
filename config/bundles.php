@@ -16,6 +16,7 @@ return [
     Aurora\Module\Hr\AuroraHrBundle::class => ['all' => true],
     Aurora\Module\Notes\AuroraNotesBundle::class => ['all' => true],
     Aurora\Module\PersonalFinance\AuroraPersonalFinanceBundle::class => ['all' => true],
+    Aurora\Module\Photo\AuroraPhotoBundle::class => ['all' => true],
     Aurora\Module\Planning\AuroraPlanningBundle::class => ['all' => true],
     Aurora\Module\Tools\AuroraToolsBundle::class => ['all' => true],
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],

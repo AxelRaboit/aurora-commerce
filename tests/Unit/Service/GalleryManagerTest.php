@@ -6,7 +6,6 @@ namespace Aurora\Tests\Unit\Service;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
-use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Photo\Gallery\Dto\GalleryInput;
@@ -49,7 +48,6 @@ final class GalleryManagerTest extends TestCase
         $this->manager = new GalleryManager(
             $this->em,
             $this->createStub(DocumentRepository::class),
-            $this->createStub(ContactRepository::class),
             new AuditLogger($this->em, $security, new SequenceGenerator($this->createStub(Connection::class)), $this->createStub(SettingRepository::class)),
             $this->watermark,
             new SequenceGenerator($this->createStub(Connection::class)),

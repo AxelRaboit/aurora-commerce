@@ -29,18 +29,6 @@ use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
-use Aurora\Module\Photo\Gallery\Entity\Gallery;
-use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
-use Aurora\Module\Photo\Gallery\Entity\GalleryFinalizationInterface;
-use Aurora\Module\Photo\Gallery\Entity\GalleryInterface;
-use Aurora\Module\Photo\Gallery\Entity\GalleryInvite;
-use Aurora\Module\Photo\Gallery\Entity\GalleryInviteInterface;
-use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
-use Aurora\Module\Photo\Gallery\Entity\GalleryItemComment;
-use Aurora\Module\Photo\Gallery\Entity\GalleryItemCommentInterface;
-use Aurora\Module\Photo\Gallery\Entity\GalleryItemInterface;
-use Aurora\Module\Photo\Gallery\Entity\GalleryPick;
-use Aurora\Module\Photo\Gallery\Entity\GalleryPickInterface;
 use Aurora\Module\Platform\Agency\Entity\Agency;
 use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Platform\Auth\Entity\AccessRequest;
@@ -112,7 +100,7 @@ class AuroraBundle extends AbstractBundle
         // resolve_target_entities. In the target topology these dirs live in a
         // separate Composer package and simply aren't present here; the list
         // simulates that absence inside the monorepo.
-        $extractedModules = ['Assistant', 'Billing', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Planning', 'Tools'];
+        $extractedModules = ['Assistant', 'Billing', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Photo', 'Planning', 'Tools'];
 
         $moduleDirs = array_values(array_filter(
             glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [],
@@ -144,12 +132,6 @@ class AuroraBundle extends AbstractBundle
                     ServiceInterface::class => Service::class,
                     SettingInterface::class => Setting::class,
                     ThemeInterface::class => Theme::class,
-                    GalleryInterface::class => Gallery::class,
-                    GalleryFinalizationInterface::class => GalleryFinalization::class,
-                    GalleryInviteInterface::class => GalleryInvite::class,
-                    GalleryItemInterface::class => GalleryItem::class,
-                    GalleryItemCommentInterface::class => GalleryItemComment::class,
-                    GalleryPickInterface::class => GalleryPick::class,
                     ProjectInterface::class => Project::class,
                     ProjectColumnInterface::class => ProjectColumn::class,
                     ProjectLabelInterface::class => ProjectLabel::class,
