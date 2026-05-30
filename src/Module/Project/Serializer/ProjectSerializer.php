@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\Serializer;
 
-use Aurora\Module\Crm\Company\Entity\CompanyInterface;
-use Aurora\Module\Crm\Deal\Entity\DealInterface;
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectLabelInterface;
@@ -24,6 +23,7 @@ class ProjectSerializer implements ProjectSerializerInterface
         protected readonly ProjectLabelRepository $labelRepository,
         protected readonly ProjectSprintRepository $sprintRepository,
         protected readonly ProjectSprintSerializerInterface $sprintSerializer,
+        protected readonly EntityReferenceResolver $referenceResolver,
     ) {}
 
     /** @return list<ProjectLabelInterface> */
@@ -47,18 +47,12 @@ class ProjectSerializer implements ProjectSerializerInterface
                 'id' => $project->getResponsibleUser()->getId(),
                 'name' => $project->getResponsibleUser()->getName(),
             ] : null,
-            'crmContacts' => array_map(
-                static fn ($contact): array => ['id' => $contact->getId(), 'name' => $contact->getFullName()],
-                $project->getCrmContacts()->toArray(),
-            ),
-            'crmCompany' => $project->getCrmCompany() instanceof CompanyInterface ? [
-                'id' => $project->getCrmCompany()->getId(),
-                'name' => $project->getCrmCompany()->getName(),
-            ] : null,
-            'crmDeal' => $project->getCrmDeal() instanceof DealInterface ? [
-                'id' => $project->getCrmDeal()->getId(),
-                'name' => $project->getCrmDeal()->getName(),
-            ] : null,
+            'crmContacts' => array_values(array_filter(array_map(
+                fn (int $id): ?array => $this->referenceResolver->summarize('crm.contact', $id),
+                $project->getCrmContactIds(),
+            ))),
+            'crmCompany' => $this->referenceResolver->summarize('crm.company', $project->getCrmCompanyId()),
+            'crmDeal' => $this->referenceResolver->summarize('crm.deal', $project->getCrmDealId()),
             'columns' => array_map($this->columnSerializer->serialize(...), $project->getColumns()->toArray()),
             'labels' => array_map(static fn ($label): array => [
                 'id' => $label->getId(),

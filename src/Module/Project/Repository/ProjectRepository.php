@@ -26,9 +26,7 @@ class ProjectRepository extends ResolveTargetEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.responsibleUser', 'u')
-            ->leftJoin('p.crmContacts', 'c')
-            ->leftJoin('p.crmCompany', 'co')
-            ->addSelect('u', 'c', 'co')
+            ->addSelect('u')
             ->orderBy('p.createdAt', Order::Descending->value);
 
         $countQb = $this->createQueryBuilder('p')->select('COUNT(p.id)');

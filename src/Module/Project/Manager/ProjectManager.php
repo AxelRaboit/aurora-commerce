@@ -6,9 +6,6 @@ namespace Aurora\Module\Project\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
-use Aurora\Module\Crm\Company\Repository\CompanyRepository;
-use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
 use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Project\Dto\ProjectInputInterface;
@@ -24,9 +21,6 @@ class ProjectManager implements ProjectManagerInterface
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly UserRepository $userRepository,
-        protected readonly ContactRepository $contactRepository,
-        protected readonly CompanyRepository $companyRepository,
-        protected readonly DealRepository $dealRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly SequenceGenerator $sequenceGenerator,
         protected readonly ProjectColumnManagerInterface $columnManager,
@@ -87,26 +81,13 @@ class ProjectManager implements ProjectManagerInterface
         $project->setStartDate($input->getStartDate() ? new DateTimeImmutable($input->getStartDate()) : null);
         $project->setEndDate($input->getEndDate() ? new DateTimeImmutable($input->getEndDate()) : null);
         $project->setResponsibleUser(null !== $input->getResponsibleUserId() ? $this->userRepository->find($input->getResponsibleUserId()) : null);
-        $project->setCrmCompany(null !== $input->getCrmCompanyId() ? $this->companyRepository->find($input->getCrmCompanyId()) : null);
-        $project->setCrmDeal(null !== $input->getCrmDealId() ? $this->dealRepository->find($input->getCrmDealId()) : null);
 
-        // Sync crm contacts (many-to-many) in a single batch query.
-        $desiredContacts = [];
-        if ([] !== $input->getCrmContactIds()) {
-            foreach ($this->contactRepository->findBy(['id' => $input->getCrmContactIds()]) as $contact) {
-                $desiredContacts[(int) $contact->getId()] = $contact;
-            }
-        }
-
-        foreach ($project->getCrmContacts()->toArray() as $existing) {
-            if (!isset($desiredContacts[(int) $existing->getId()])) {
-                $project->removeCrmContact($existing);
-            }
-        }
-
-        foreach ($desiredContacts as $contact) {
-            $project->addCrmContact($contact);
-        }
+        // CRM links are soft references (ids only) — stored as-is so Project
+        // depends on no other module. They resolve via the core resolver when
+        // Crm is installed.
+        $project->setCrmCompanyId($input->getCrmCompanyId());
+        $project->setCrmDealId($input->getCrmDealId());
+        $project->setCrmContactIds($input->getCrmContactIds());
     }
 
     protected function auditCreated(ProjectInterface $project): void
@@ -127,7 +108,7 @@ class ProjectManager implements ProjectManagerInterface
     /** @return array<string, mixed> */
     private function snapshot(ProjectInterface $project): array
     {
-        $contactIds = array_map(static fn ($c): int => (int) $c->getId(), $project->getCrmContacts()->toArray());
+        $contactIds = $project->getCrmContactIds();
         sort($contactIds);
 
         return [
@@ -137,8 +118,8 @@ class ProjectManager implements ProjectManagerInterface
             'startDate' => $project->getStartDate()?->format('Y-m-d'),
             'endDate' => $project->getEndDate()?->format('Y-m-d'),
             'responsibleUserId' => $project->getResponsibleUser()?->getId(),
-            'crmCompanyId' => $project->getCrmCompany()?->getId(),
-            'crmDealId' => $project->getCrmDeal()?->getId(),
+            'crmCompanyId' => $project->getCrmCompanyId(),
+            'crmDealId' => $project->getCrmDealId(),
             'crmContactIds' => $contactIds,
         ];
     }

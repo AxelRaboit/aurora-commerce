@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
-use Aurora\Module\Crm\Company\Entity\CompanyInterface as CrmCompany;
-use Aurora\Module\Crm\Contact\Entity\ContactInterface as CrmContact;
-use Aurora\Module\Crm\Deal\Entity\DealInterface as CrmDeal;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use DateTimeImmutable;
@@ -45,20 +42,19 @@ interface ProjectInterface extends TimestampableInterface
 
     public function setResponsibleUser(?CoreUserInterface $responsibleUser): static;
 
-    /** @return Collection<int, CrmContact> */
-    public function getCrmContacts(): Collection;
+    /** @return list<int> */
+    public function getCrmContactIds(): array;
 
-    public function addCrmContact(CrmContact $contact): static;
+    /** @param list<int> $crmContactIds */
+    public function setCrmContactIds(array $crmContactIds): static;
 
-    public function removeCrmContact(CrmContact $contact): static;
+    public function getCrmCompanyId(): ?int;
 
-    public function getCrmCompany(): ?CrmCompany;
+    public function setCrmCompanyId(?int $crmCompanyId): static;
 
-    public function setCrmCompany(?CrmCompany $crmCompany): static;
+    public function getCrmDealId(): ?int;
 
-    public function getCrmDeal(): ?CrmDeal;
-
-    public function setCrmDeal(?CrmDeal $crmDeal): static;
+    public function setCrmDealId(?int $crmDealId): static;
 
     /** @return Collection<int, ProjectTaskInterface> */
     public function getTasks(): Collection;

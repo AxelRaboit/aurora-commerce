@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Project\View;
 
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Core\Validation\Dto\PaginationRequest;
-use Aurora\Module\Crm\Company\Repository\CompanyRepository;
-use Aurora\Module\Crm\Contact\Repository\ContactRepository;
-use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Platform\User\Repository\UserRepository;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use Aurora\Module\Project\Enum\ProjectTaskPriorityEnum;
@@ -20,9 +18,7 @@ final readonly class ProjectsViewBuilder
 {
     public function __construct(
         private UserRepository $userRepository,
-        private ContactRepository $contactRepository,
-        private CompanyRepository $companyRepository,
-        private DealRepository $dealRepository,
+        private EntityReferenceResolver $referenceResolver,
         private ProjectRepository $projectRepository,
         private ProjectSerializerInterface $projectSerializer,
         private TranslatorInterface $translator,
@@ -81,28 +77,14 @@ final readonly class ProjectsViewBuilder
             ProjectTaskPriorityEnum::cases(),
         );
 
-        $crmContacts = array_map(
-            static fn ($contact): array => ['id' => $contact->getId(), 'name' => $contact->getFullName()],
-            $this->contactRepository->findAllOrderedByName(),
-        );
-
-        $crmCompanies = array_map(
-            static fn ($company): array => ['id' => $company->getId(), 'name' => $company->getName()],
-            $this->companyRepository->findAllOrderedByName(),
-        );
-
-        $crmDeals = array_map(
-            static fn ($deal): array => ['id' => $deal->getId(), 'name' => $deal->getName()],
-            $this->dealRepository->findAllOrderedByName(),
-        );
-
+        // CRM picker options come from the core resolver (empty when Crm absent).
         return [
             'statusOptions' => $statusOptions,
             'priorityOptions' => $priorityOptions,
             'users' => $users,
-            'crmContacts' => $crmContacts,
-            'crmCompanies' => $crmCompanies,
-            'crmDeals' => $crmDeals,
+            'crmContacts' => $this->referenceResolver->options('crm.contact'),
+            'crmCompanies' => $this->referenceResolver->options('crm.company'),
+            'crmDeals' => $this->referenceResolver->options('crm.deal'),
         ];
     }
 }

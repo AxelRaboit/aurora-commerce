@@ -26,4 +26,11 @@ interface EntityReferenceProviderInterface
      * @return array<string, mixed>|null
      */
     public function summarize(int $id): ?array;
+
+    /**
+     * All selectable options of this type for a picker, ordered for display.
+     *
+     * @return list<array{id: int, name: string}>
+     */
+    public function options(): array;
 }

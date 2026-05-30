@@ -34,4 +34,12 @@ final readonly class ContactReferenceProvider implements EntityReferenceProvider
             'email' => $contact->getEmail(),
         ] : null;
     }
+
+    public function options(): array
+    {
+        return array_map(
+            static fn ($contact): array => ['id' => (int) $contact->getId(), 'name' => $contact->getFullName()],
+            $this->contactRepository->findAllOrderedByName(),
+        );
+    }
 }

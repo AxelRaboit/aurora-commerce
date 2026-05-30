@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Project\Serializer;
 
+use Aurora\Core\Reference\EntityReferenceResolver;
 use Aurora\Module\Crm\Company\Entity\Company;
+use Aurora\Module\Crm\Company\Reference\CompanyReferenceProvider;
+use Aurora\Module\Crm\Company\Repository\CompanyRepository;
 use Aurora\Module\Crm\Contact\Entity\Contact;
+use Aurora\Module\Crm\Contact\Reference\ContactReferenceProvider;
+use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\Deal\Entity\Deal;
+use Aurora\Module\Crm\Deal\Reference\DealReferenceProvider;
+use Aurora\Module\Crm\Deal\Repository\DealRepository;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\AbstractProject;
 use Aurora\Module\Project\Entity\Project;
@@ -31,6 +38,9 @@ final class ProjectSerializerTest extends TestCase
     private ProjectSerializer $serializer;
     private ProjectLabelRepository $labelRepository;
     private ProjectSprintRepository $sprintRepository;
+    private ContactRepository $contactRepository;
+    private CompanyRepository $companyRepository;
+    private DealRepository $dealRepository;
 
     protected function setUp(): void
     {
@@ -39,6 +49,17 @@ final class ProjectSerializerTest extends TestCase
 
         $this->labelRepository = $this->createMock(ProjectLabelRepository::class);
         $this->sprintRepository = $this->createMock(ProjectSprintRepository::class);
+        $this->contactRepository = $this->createStub(ContactRepository::class);
+        $this->companyRepository = $this->createStub(CompanyRepository::class);
+        $this->dealRepository = $this->createStub(DealRepository::class);
+
+        // Real resolver over real Crm providers backed by stub repositories —
+        // exercises the soft-reference resolution path end to end.
+        $resolver = new EntityReferenceResolver([
+            new ContactReferenceProvider($this->contactRepository),
+            new CompanyReferenceProvider($this->companyRepository),
+            new DealReferenceProvider($this->dealRepository),
+        ]);
 
         $this->serializer = new ProjectSerializer(
             $translator,
@@ -46,6 +67,7 @@ final class ProjectSerializerTest extends TestCase
             $this->labelRepository,
             $this->sprintRepository,
             new ProjectSprintSerializer(),
+            $resolver,
         );
     }
 
@@ -110,20 +132,25 @@ final class ProjectSerializerTest extends TestCase
         (new ReflectionProperty(User::class, 'id'))->setValue($user, 5);
         $project->setResponsibleUser($user);
 
+        // Soft references: the project stores only ids; the core resolver
+        // (backed here by real Crm providers over stub repos) materializes them.
         $company = new Company();
         $company->setName('Acme');
         (new ReflectionProperty(Company::class, 'id'))->setValue($company, 9);
-        $project->setCrmCompany($company);
+        $this->companyRepository->method('find')->willReturn($company);
+        $project->setCrmCompanyId(9);
 
         $deal = new Deal();
         $deal->setName('Big Deal');
         (new ReflectionProperty(Deal::class, 'id'))->setValue($deal, 7);
-        $project->setCrmDeal($deal);
+        $this->dealRepository->method('find')->willReturn($deal);
+        $project->setCrmDealId(7);
 
         $contact = new Contact();
-        $contact->setFirstName('Bob')->setLastName('Builder');
+        $contact->setFirstName('Bob')->setLastName('Builder')->setEmail('bob@x.com');
         (new ReflectionProperty(Contact::class, 'id'))->setValue($contact, 3);
-        $project->addCrmContact($contact);
+        $this->contactRepository->method('find')->willReturn($contact);
+        $project->setCrmContactIds([3]);
 
         $this->labelRepository->method('findByProject')->willReturn([]);
         $this->sprintRepository->method('findByProject')->willReturn([]);
@@ -133,7 +160,7 @@ final class ProjectSerializerTest extends TestCase
         self::assertSame(['id' => 5, 'name' => 'Alice'], $payload['responsibleUser']);
         self::assertSame(['id' => 9, 'name' => 'Acme'], $payload['crmCompany']);
         self::assertSame(['id' => 7, 'name' => 'Big Deal'], $payload['crmDeal']);
-        self::assertSame([['id' => 3, 'name' => 'Bob Builder']], $payload['crmContacts']);
+        self::assertSame([['id' => 3, 'name' => 'Bob Builder', 'email' => 'bob@x.com']], $payload['crmContacts']);
     }
 
     public function testSerializeIncludesColumnsAndLabels(): void

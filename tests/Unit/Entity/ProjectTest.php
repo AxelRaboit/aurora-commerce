@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Entity;
 
-use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
@@ -25,7 +22,7 @@ final class ProjectTest extends TestCase
     {
         $project = new Project();
 
-        self::assertCount(0, $project->getCrmContacts());
+        self::assertSame([], $project->getCrmContactIds());
         self::assertCount(0, $project->getTasks());
         self::assertCount(0, $project->getColumns());
     }
@@ -40,8 +37,8 @@ final class ProjectTest extends TestCase
         self::assertNull($project->getStartDate());
         self::assertNull($project->getEndDate());
         self::assertNull($project->getResponsibleUser());
-        self::assertNull($project->getCrmCompany());
-        self::assertNull($project->getCrmDeal());
+        self::assertNull($project->getCrmCompanyId());
+        self::assertNull($project->getCrmDealId());
     }
 
     public function testTitleGetterAndSetter(): void
@@ -87,29 +84,22 @@ final class ProjectTest extends TestCase
         self::assertSame($user, $project->getResponsibleUser());
     }
 
-    public function testCrmCompanyAndDealGettersAndSetters(): void
+    public function testCrmCompanyAndDealIdGettersAndSetters(): void
     {
-        $company = new Company();
-        $deal = new Deal();
-        $project = (new Project())->setCrmCompany($company)->setCrmDeal($deal);
+        $project = (new Project())->setCrmCompanyId(7)->setCrmDealId(9);
 
-        self::assertSame($company, $project->getCrmCompany());
-        self::assertSame($deal, $project->getCrmDeal());
+        self::assertSame(7, $project->getCrmCompanyId());
+        self::assertSame(9, $project->getCrmDealId());
     }
 
-    public function testAddAndRemoveCrmContact(): void
+    public function testCrmContactIdsGetterAndSetter(): void
     {
         $project = new Project();
-        $contact = new Contact();
 
-        $project->addCrmContact($contact);
-        self::assertCount(1, $project->getCrmContacts());
+        self::assertSame([], $project->getCrmContactIds());
 
-        $project->addCrmContact($contact);
-        self::assertCount(1, $project->getCrmContacts(), 'duplicate ignored');
-
-        $project->removeCrmContact($contact);
-        self::assertCount(0, $project->getCrmContacts());
+        $project->setCrmContactIds([3, 1, 2]);
+        self::assertSame([3, 1, 2], $project->getCrmContactIds());
     }
 
     public function testAddColumnIgnoresDuplicate(): void

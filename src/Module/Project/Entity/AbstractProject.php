@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Aurora\Module\Project\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Module\Crm\Company\Entity\CompanyInterface as CrmCompany;
-use Aurora\Module\Crm\Contact\Entity\ContactInterface;
-use Aurora\Module\Crm\Deal\Entity\DealInterface as CrmDeal;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Project\Enum\ProjectStatusEnum;
 use DateTimeImmutable;
@@ -44,16 +41,22 @@ abstract class AbstractProject implements ProjectInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?CoreUserInterface $responsibleUser = null;
 
-    /** @var Collection<int, ContactInterface> */
-    protected Collection $crmContacts;
+    /**
+     * Optional soft references to CRM entities (their ids), kept as plain
+     * columns with no Doctrine relation so Project depends on no other module
+     * and works without Crm installed. Resolve for display / pickers via the
+     * core {@see \Aurora\Core\Reference\EntityReferenceResolver}.
+     *
+     * @var list<int>
+     */
+    #[ORM\Column(name: 'crm_contact_ids', type: Types::JSON, options: ['default' => '[]'])]
+    protected array $crmContactIds = [];
 
-    #[ORM\ManyToOne(targetEntity: CrmCompany::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?CrmCompany $crmCompany = null;
+    #[ORM\Column(name: 'crm_company_id', type: Types::INTEGER, nullable: true)]
+    protected ?int $crmCompanyId = null;
 
-    #[ORM\ManyToOne(targetEntity: CrmDeal::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?CrmDeal $crmDeal = null;
+    #[ORM\Column(name: 'crm_deal_id', type: Types::INTEGER, nullable: true)]
+    protected ?int $crmDealId = null;
 
     /** @var Collection<int, ProjectTaskInterface> */
     #[ORM\OneToMany(targetEntity: ProjectTaskInterface::class, mappedBy: 'project', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -68,7 +71,6 @@ abstract class AbstractProject implements ProjectInterface
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
-        $this->crmContacts = new ArrayCollection();
         $this->columns = new ArrayCollection();
     }
 
@@ -156,47 +158,40 @@ abstract class AbstractProject implements ProjectInterface
         return $this;
     }
 
-    public function getCrmContacts(): Collection
+    /** @return list<int> */
+    public function getCrmContactIds(): array
     {
-        return $this->crmContacts;
+        return $this->crmContactIds;
     }
 
-    public function addCrmContact(ContactInterface $contact): static
+    /** @param list<int> $crmContactIds */
+    public function setCrmContactIds(array $crmContactIds): static
     {
-        if (!$this->crmContacts->contains($contact)) {
-            $this->crmContacts->add($contact);
-        }
+        $this->crmContactIds = array_values(array_map(intval(...), $crmContactIds));
 
         return $this;
     }
 
-    public function removeCrmContact(ContactInterface $contact): static
+    public function getCrmCompanyId(): ?int
     {
-        $this->crmContacts->removeElement($contact);
+        return $this->crmCompanyId;
+    }
+
+    public function setCrmCompanyId(?int $crmCompanyId): static
+    {
+        $this->crmCompanyId = $crmCompanyId;
 
         return $this;
     }
 
-    public function getCrmCompany(): ?CrmCompany
+    public function getCrmDealId(): ?int
     {
-        return $this->crmCompany;
+        return $this->crmDealId;
     }
 
-    public function setCrmCompany(?CrmCompany $crmCompany): static
+    public function setCrmDealId(?int $crmDealId): static
     {
-        $this->crmCompany = $crmCompany;
-
-        return $this;
-    }
-
-    public function getCrmDeal(): ?CrmDeal
-    {
-        return $this->crmDeal;
-    }
-
-    public function setCrmDeal(?CrmDeal $crmDeal): static
-    {
-        $this->crmDeal = $crmDeal;
+        $this->crmDealId = $crmDealId;
 
         return $this;
     }

@@ -2319,12 +2319,15 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
                 ->setStartDate(new DateTimeImmutable($def['startDate']))
                 ->setEndDate(new DateTimeImmutable($def['endDate']))
                 ->setResponsibleUser($users[$def['responsible']])
-                ->setCrmCompany($companies[$def['company']]);
+                ->setCrmCompanyId((int) $companies[$def['company']]->getId());
+            $projectContactIds = [];
             foreach ($def['contacts'] as $contactIndex) {
                 if (isset($contacts[$contactIndex])) {
-                    $project->addCrmContact($contacts[$contactIndex]);
+                    $projectContactIds[] = (int) $contacts[$contactIndex]->getId();
                 }
             }
+
+            $project->setCrmContactIds($projectContactIds);
 
             $em->persist($project);
             $createdProjects[] = $project;

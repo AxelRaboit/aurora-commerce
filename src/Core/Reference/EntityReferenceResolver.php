@@ -55,4 +55,21 @@ final readonly class EntityReferenceResolver
 
         return null;
     }
+
+    /**
+     * All selectable options of a reference type (for a picker), or [] when the
+     * owning module is absent.
+     *
+     * @return list<array{id: int, name: string}>
+     */
+    public function options(string $type): array
+    {
+        foreach ($this->providers as $provider) {
+            if ($provider->getType() === $type) {
+                return $provider->options();
+            }
+        }
+
+        return [];
+    }
 }

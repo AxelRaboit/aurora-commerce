@@ -39,24 +39,6 @@ use Aurora\Module\Platform\Service\Entity\Service;
 use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Module\Platform\User\Entity\CoreUserInterface;
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Project\Entity\Project;
-use Aurora\Module\Project\Entity\ProjectColumn;
-use Aurora\Module\Project\Entity\ProjectColumnInterface;
-use Aurora\Module\Project\Entity\ProjectInterface;
-use Aurora\Module\Project\Entity\ProjectLabel;
-use Aurora\Module\Project\Entity\ProjectLabelInterface;
-use Aurora\Module\Project\Entity\ProjectSavedView;
-use Aurora\Module\Project\Entity\ProjectSavedViewInterface;
-use Aurora\Module\Project\Entity\ProjectSprint;
-use Aurora\Module\Project\Entity\ProjectSprintInterface;
-use Aurora\Module\Project\Entity\ProjectTask;
-use Aurora\Module\Project\Entity\ProjectTaskComment;
-use Aurora\Module\Project\Entity\ProjectTaskCommentInterface;
-use Aurora\Module\Project\Entity\ProjectTaskInterface;
-use Aurora\Module\Project\Entity\ProjectTaskItem;
-use Aurora\Module\Project\Entity\ProjectTaskItemInterface;
-use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
-use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -100,7 +82,7 @@ class AuroraBundle extends AbstractBundle
         // resolve_target_entities. In the target topology these dirs live in a
         // separate Composer package and simply aren't present here; the list
         // simulates that absence inside the monorepo.
-        $extractedModules = ['Assistant', 'Billing', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Photo', 'Planning', 'Tools'];
+        $extractedModules = ['Assistant', 'Billing', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Photo', 'Planning', 'Project', 'Tools'];
 
         $moduleDirs = array_values(array_filter(
             glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [],
@@ -132,15 +114,6 @@ class AuroraBundle extends AbstractBundle
                     ServiceInterface::class => Service::class,
                     SettingInterface::class => Setting::class,
                     ThemeInterface::class => Theme::class,
-                    ProjectInterface::class => Project::class,
-                    ProjectColumnInterface::class => ProjectColumn::class,
-                    ProjectLabelInterface::class => ProjectLabel::class,
-                    ProjectSavedViewInterface::class => ProjectSavedView::class,
-                    ProjectSprintInterface::class => ProjectSprint::class,
-                    ProjectTaskInterface::class => ProjectTask::class,
-                    ProjectTaskCommentInterface::class => ProjectTaskComment::class,
-                    ProjectTaskItemInterface::class => ProjectTaskItem::class,
-                    ProjectTaskTimeEntryInterface::class => ProjectTaskTimeEntry::class,
                     DocumentInterface::class => Document::class,
                     DocumentVersionInterface::class => DocumentVersion::class,
                     DocumentCategoryInterface::class => DocumentCategory::class,
