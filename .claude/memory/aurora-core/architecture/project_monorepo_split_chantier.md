@@ -74,7 +74,7 @@ cette mémoire avec l'état.
 | 2026-05-30 | **J1.5 — Pass de découplage (PRÉREQUIS)** | **🚧 EN COURS** — cat. A ✅, B ✅, **C ✅** (C1 dashboard, C2 search, C3 blocks). **9/14 modules = leaves purs** (Assistant, Crm, Editorial, General, Hr, Notes, PersonalFinance, Planning, Tools). Reste : **cat. D** (soft-ref →Crm : Billing/Photo/Project + Project→Billing — **risque #1, migrations DB**) et **cat. E** (merge Ecommerce+Erp). 7 commits sur develop (`70a17e38`→`377c22df`). |
 | — | J2 — Audit technique parallélisé | Bloqué (J1.5) |
 | — | Gate 2 — Décision stratégie assets | Bloqué (J2) |
-| 2026-05-30 | **J3 — POC installabilité (bundle)** | ✅ **FAIT sur Tools** — `AbstractAuroraModuleBundle` (core, réutilisable) + `AuroraToolsBundle` ; AuroraBundle exclut Tools. Preuve : bundle off → 0 mapping/0 `@Tools`, on → 6. Suite verte. Voir `audit/poc_tools_bundle.md`. Reste pour package complet : composer.json + services/routes embarqués + ModuleParameterEnum extensible + splitsh. |
+| 2026-05-30 | **J3 — POC + rollout bundles (8 leaves)** | ✅ **FAIT** — `AbstractAuroraModuleBundle` (core) + **8 `Aurora<X>Bundle`** (Tools, Assistant, Crm, Editorial, Hr, Notes, PersonalFinance, Planning). AuroraBundle les exclut tous (RTE+use retirés) et ne pilote plus que Core + 5 modules couplés. Preuve toggle bundle = module on/off. 189 entités mappées, 2747 tests verts. Voir `audit/poc_tools_bundle.md`. Reste pour package Composer complet : composer.json + services/routes embarqués + `ModuleParameterEnum` extensible + splitsh. |
 | — | Gate 3 — Go / No-Go final | Bloqué (J3) |
 | — | J4 — Planification rollout | Bloqué (Gate 3) |
 | — | J5 — Exécution rollout | Bloqué (J4) |

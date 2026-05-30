@@ -2,9 +2,17 @@
 
 return [
     Aurora\AuroraBundle::class => ['all' => true],
-    // POC monorepo-split: Tools ships as its own self-registering module bundle
-    // (src/Module/Tools/AuroraToolsBundle.php). Removing this line removes the
-    // whole module — the "install only what you want" mechanism.
+    // Monorepo-split: each extractable leaf module ships as its own
+    // self-registering bundle (AbstractAuroraModuleBundle). Removing a line
+    // removes that whole module — the "install only what you want" mechanism.
+    // In the target topology each is a separate Composer package.
+    Aurora\Module\Assistant\AuroraAssistantBundle::class => ['all' => true],
+    Aurora\Module\Crm\AuroraCrmBundle::class => ['all' => true],
+    Aurora\Module\Editorial\AuroraEditorialBundle::class => ['all' => true],
+    Aurora\Module\Hr\AuroraHrBundle::class => ['all' => true],
+    Aurora\Module\Notes\AuroraNotesBundle::class => ['all' => true],
+    Aurora\Module\PersonalFinance\AuroraPersonalFinanceBundle::class => ['all' => true],
+    Aurora\Module\Planning\AuroraPlanningBundle::class => ['all' => true],
     Aurora\Module\Tools\AuroraToolsBundle::class => ['all' => true],
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],

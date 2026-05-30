@@ -11,12 +11,6 @@ use Aurora\Core\Locale\Entity\LocaleInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
-use Aurora\Module\Assistant\Conversation\Entity\Conversation;
-use Aurora\Module\Assistant\Conversation\Entity\ConversationInterface;
-use Aurora\Module\Assistant\Conversation\Entity\Message;
-use Aurora\Module\Assistant\Conversation\Entity\MessageInterface;
-use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPoint;
-use Aurora\Module\Assistant\MountPoint\Entity\AssistantMountPointInterface;
 use Aurora\Module\Billing\Invoice\Entity\Invoice;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
 use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
@@ -29,14 +23,6 @@ use Aurora\Module\Configuration\Setting\Entity\Setting;
 use Aurora\Module\Configuration\Setting\Entity\SettingInterface;
 use Aurora\Module\Configuration\Theme\Entity\Theme;
 use Aurora\Module\Configuration\Theme\Entity\ThemeInterface;
-use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\Company\Entity\CompanyInterface;
-use Aurora\Module\Crm\Contact\Entity\Contact;
-use Aurora\Module\Crm\Contact\Entity\ContactInterface;
-use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
-use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
-use Aurora\Module\Crm\Deal\Entity\Deal;
-use Aurora\Module\Crm\Deal\Entity\DealInterface;
 use Aurora\Module\Dev\Audit\Entity\AuditLog;
 use Aurora\Module\Dev\Audit\Entity\AuditLogInterface;
 use Aurora\Module\Dev\MountPoint\Entity\MountPoint;
@@ -59,46 +45,6 @@ use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderInterface;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLineInterface;
-use Aurora\Module\Editorial\Comment\Entity\Comment;
-use Aurora\Module\Editorial\Comment\Entity\CommentInterface;
-use Aurora\Module\Editorial\Comment\Entity\CommentReaction;
-use Aurora\Module\Editorial\Comment\Entity\CommentReactionInterface;
-use Aurora\Module\Editorial\Form\Entity\Form;
-use Aurora\Module\Editorial\Form\Entity\FormField;
-use Aurora\Module\Editorial\Form\Entity\FormFieldInterface;
-use Aurora\Module\Editorial\Form\Entity\FormFieldTranslation;
-use Aurora\Module\Editorial\Form\Entity\FormFieldTranslationInterface;
-use Aurora\Module\Editorial\Form\Entity\FormInterface;
-use Aurora\Module\Editorial\Form\Entity\FormSubmission;
-use Aurora\Module\Editorial\Form\Entity\FormSubmissionInterface;
-use Aurora\Module\Editorial\Form\Entity\FormTranslation;
-use Aurora\Module\Editorial\Form\Entity\FormTranslationInterface;
-use Aurora\Module\Editorial\Menu\Entity\Menu;
-use Aurora\Module\Editorial\Menu\Entity\MenuInterface;
-use Aurora\Module\Editorial\Menu\Entity\MenuItem;
-use Aurora\Module\Editorial\Menu\Entity\MenuItemInterface;
-use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslation;
-use Aurora\Module\Editorial\Menu\Entity\MenuItemTranslationInterface;
-use Aurora\Module\Editorial\Post\Entity\Post;
-use Aurora\Module\Editorial\Post\Entity\PostInterface;
-use Aurora\Module\Editorial\Post\Entity\PostRevision;
-use Aurora\Module\Editorial\Post\Entity\PostRevisionInterface;
-use Aurora\Module\Editorial\Post\Entity\PostSlugHistory;
-use Aurora\Module\Editorial\Post\Entity\PostSlugHistoryInterface;
-use Aurora\Module\Editorial\Post\Entity\PostTranslation;
-use Aurora\Module\Editorial\Post\Entity\PostTranslationInterface;
-use Aurora\Module\Editorial\PostType\Entity\PostType;
-use Aurora\Module\Editorial\PostType\Entity\PostTypeField;
-use Aurora\Module\Editorial\PostType\Entity\PostTypeFieldInterface;
-use Aurora\Module\Editorial\PostType\Entity\PostTypeInterface;
-use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyInterface;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermTranslation;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermTranslationInterface;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTranslation;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTranslationInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Ged\Document\Entity\Document;
@@ -111,40 +57,6 @@ use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolderInterface;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTagInterface;
-use Aurora\Module\Hr\Employee\Entity\Employee;
-use Aurora\Module\Hr\Employee\Entity\EmployeeInterface;
-use Aurora\Module\Notes\Block\Entity\BlockNote;
-use Aurora\Module\Notes\Block\Entity\BlockNoteInterface;
-use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
-use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
-use Aurora\Module\Notes\PostIt\Entity\PostItNote;
-use Aurora\Module\Notes\PostIt\Entity\PostItNoteInterface;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItemInterface;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPreset;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetInterface;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetItem;
-use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetPresetItemInterface;
-use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRule;
-use Aurora\Module\PersonalFinance\Categorization\Entity\PersonalFinanceCategorizationRuleInterface;
-use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategory;
-use Aurora\Module\PersonalFinance\Category\Entity\PersonalFinanceCategoryInterface;
-use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoal;
-use Aurora\Module\PersonalFinance\Goal\Entity\PersonalFinanceGoalInterface;
-use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceRecurringTransaction;
-use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceRecurringTransactionInterface;
-use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceScheduledTransaction;
-use Aurora\Module\PersonalFinance\Recurring\Entity\PersonalFinanceScheduledTransactionInterface;
-use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransaction;
-use Aurora\Module\PersonalFinance\Transaction\Entity\PersonalFinanceTransactionInterface;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWallet;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInterface;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitation;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletInvitationInterface;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMember;
-use Aurora\Module\PersonalFinance\Wallet\Entity\PersonalFinanceWalletMemberInterface;
 use Aurora\Module\Photo\Gallery\Entity\Gallery;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryFinalizationInterface;
@@ -157,10 +69,6 @@ use Aurora\Module\Photo\Gallery\Entity\GalleryItemCommentInterface;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItemInterface;
 use Aurora\Module\Photo\Gallery\Entity\GalleryPick;
 use Aurora\Module\Photo\Gallery\Entity\GalleryPickInterface;
-use Aurora\Module\Planning\Event\Entity\PlanningEvent;
-use Aurora\Module\Planning\Event\Entity\PlanningEventInterface;
-use Aurora\Module\Planning\Planning\Entity\Planning;
-use Aurora\Module\Planning\Planning\Entity\PlanningInterface;
 use Aurora\Module\Platform\Agency\Entity\Agency;
 use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Platform\Auth\Entity\AccessRequest;
@@ -232,7 +140,7 @@ class AuroraBundle extends AbstractBundle
         // resolve_target_entities. In the target topology these dirs live in a
         // separate Composer package and simply aren't present here; the list
         // simulates that absence inside the monorepo.
-        $extractedModules = ['Tools'];
+        $extractedModules = ['Assistant', 'Crm', 'Editorial', 'Hr', 'Notes', 'PersonalFinance', 'Planning', 'Tools'];
 
         $moduleDirs = array_values(array_filter(
             glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [],
@@ -260,9 +168,6 @@ class AuroraBundle extends AbstractBundle
                     AccessRequestInterface::class => AccessRequest::class,
                     ResetPasswordRequestInterface::class => ResetPasswordRequest::class,
                     LocaleInterface::class => Locale::class,
-                    MenuInterface::class => Menu::class,
-                    MenuItemInterface::class => MenuItem::class,
-                    MenuItemTranslationInterface::class => MenuItemTranslation::class,
                     NotificationInterface::class => Notification::class,
                     ServiceInterface::class => Service::class,
                     SettingInterface::class => Setting::class,
@@ -271,26 +176,6 @@ class AuroraBundle extends AbstractBundle
                     InvoiceLineInterface::class => InvoiceLine::class,
                     TiersInterface::class => Tiers::class,
                     OcrJobInterface::class => OcrJob::class,
-                    CompanyInterface::class => Company::class,
-                    ContactInterface::class => Contact::class,
-                    ContactTagInterface::class => ContactTag::class,
-                    CommentInterface::class => Comment::class,
-                    CommentReactionInterface::class => CommentReaction::class,
-                    FormInterface::class => Form::class,
-                    FormFieldInterface::class => FormField::class,
-                    FormFieldTranslationInterface::class => FormFieldTranslation::class,
-                    FormSubmissionInterface::class => FormSubmission::class,
-                    FormTranslationInterface::class => FormTranslation::class,
-                    PostInterface::class => Post::class,
-                    PostRevisionInterface::class => PostRevision::class,
-                    PostSlugHistoryInterface::class => PostSlugHistory::class,
-                    PostTranslationInterface::class => PostTranslation::class,
-                    PostTypeInterface::class => PostType::class,
-                    PostTypeFieldInterface::class => PostTypeField::class,
-                    TaxonomyInterface::class => Taxonomy::class,
-                    TaxonomyTermInterface::class => TaxonomyTerm::class,
-                    TaxonomyTermTranslationInterface::class => TaxonomyTermTranslation::class,
-                    TaxonomyTranslationInterface::class => TaxonomyTranslation::class,
                     GalleryInterface::class => Gallery::class,
                     GalleryFinalizationInterface::class => GalleryFinalization::class,
                     GalleryInviteInterface::class => GalleryInvite::class,
@@ -306,10 +191,6 @@ class AuroraBundle extends AbstractBundle
                     ProjectTaskCommentInterface::class => ProjectTaskComment::class,
                     ProjectTaskItemInterface::class => ProjectTaskItem::class,
                     ProjectTaskTimeEntryInterface::class => ProjectTaskTimeEntry::class,
-                    PlanningInterface::class => Planning::class,
-                    PlanningEventInterface::class => PlanningEvent::class,
-                    EmployeeInterface::class => Employee::class,
-                    DealInterface::class => Deal::class,
                     CartInterface::class => Cart::class,
                     CartItemInterface::class => CartItem::class,
                     ListingInterface::class => Listing::class,
@@ -326,25 +207,6 @@ class AuroraBundle extends AbstractBundle
                     DocumentTagInterface::class => DocumentTag::class,
                     DocumentFolderInterface::class => DocumentFolder::class,
                     MountPointInterface::class => MountPoint::class,
-                    MarkdownNoteInterface::class => MarkdownNote::class,
-                    BlockNoteInterface::class => BlockNote::class,
-                    PostItNoteInterface::class => PostItNote::class,
-                    ConversationInterface::class => Conversation::class,
-                    MessageInterface::class => Message::class,
-                    AssistantMountPointInterface::class => AssistantMountPoint::class,
-                    PersonalFinanceWalletInterface::class => PersonalFinanceWallet::class,
-                    PersonalFinanceWalletMemberInterface::class => PersonalFinanceWalletMember::class,
-                    PersonalFinanceWalletInvitationInterface::class => PersonalFinanceWalletInvitation::class,
-                    PersonalFinanceCategoryInterface::class => PersonalFinanceCategory::class,
-                    PersonalFinanceTransactionInterface::class => PersonalFinanceTransaction::class,
-                    PersonalFinanceBudgetInterface::class => PersonalFinanceBudget::class,
-                    PersonalFinanceBudgetItemInterface::class => PersonalFinanceBudgetItem::class,
-                    PersonalFinanceBudgetPresetInterface::class => PersonalFinanceBudgetPreset::class,
-                    PersonalFinanceBudgetPresetItemInterface::class => PersonalFinanceBudgetPresetItem::class,
-                    PersonalFinanceGoalInterface::class => PersonalFinanceGoal::class,
-                    PersonalFinanceRecurringTransactionInterface::class => PersonalFinanceRecurringTransaction::class,
-                    PersonalFinanceScheduledTransactionInterface::class => PersonalFinanceScheduledTransaction::class,
-                    PersonalFinanceCategorizationRuleInterface::class => PersonalFinanceCategorizationRule::class,
                 ],
                 'mappings' => array_merge(
                     [

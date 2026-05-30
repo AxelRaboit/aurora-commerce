@@ -79,3 +79,20 @@ quel pour les 8 autres leaves purs et, après cat. D/E, pour les 5 modules
 restants. Le « choisir ce qu'on installe » fonctionne au niveau bundle ;
 le reste (composer.json, services/routes embarqués, splitsh) est du
 packaging déterministe.
+
+## Généralisation aux 8 leaves (2026-05-30)
+
+Le mécanisme a été appliqué dans la foulée aux **8 modules extractibles**
+(les 9 leaves moins `General` qui reste shell core) : un
+`Aurora<Name>Bundle` chacun (15-50 lignes : `moduleName()` + `resolve
+TargetEntities()`), `AuroraBundle` les exclut tous
+(`$extractedModules = [Assistant, Crm, Editorial, Hr, Notes,
+PersonalFinance, Planning, Tools]`) et n'a **plus aucune** référence à
+eux (RTE + `use` retirés). `config/bundles.php` enregistre les 8 — une
+ligne = un module on/off.
+
+Vérifs : `doctrine:schema:validate` ✅, 189 entités mappées, namespaces
+Twig `@<Module>` résolus par leurs bundles, 245 routes module présentes,
+**suite complète verte (2747 tests)**. `AuroraBundle` ne pilote plus que
+Core + les 5 modules encore couplés (Billing, Ecommerce, Erp, Photo,
+Project) — qui passeront pareil après cat. D/E.
