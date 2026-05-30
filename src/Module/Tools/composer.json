@@ -1,0 +1,20 @@
+{
+    "name": "axelraboit/aurora-tools",
+    "description": "Tools module (Vault, PasswordGenerator) for the Aurora platform.",
+    "type": "symfony-bundle",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.4",
+        "axelraboit/aurora-core": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aurora\\Module\\Tools\\": ""
+        }
+    },
+    "extra": {
+        "symfony": {
+            "bundle": "Aurora\\Module\\Tools\\AuroraToolsBundle"
+        }
+    }
+}

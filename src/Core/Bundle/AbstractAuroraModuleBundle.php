@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Aurora\Core\Bundle;
 
-use Aurora\AuroraBundle;
 use Override;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -56,6 +55,19 @@ abstract class AbstractAuroraModuleBundle extends AbstractBundle
     public function getPath(): string
     {
         return $this->moduleDir();
+    }
+
+    /**
+     * Load the module's own `config/services.php` when it ships one (standalone
+     * Composer package). In the monorepo, modules without that file rely on the
+     * central `Aurora\: resource` glob — so this is a no-op for them.
+     */
+    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        $servicesFile = $this->moduleDir().'/config/services.php';
+        if (is_file($servicesFile)) {
+            $container->import($servicesFile);
+        }
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -123,6 +135,6 @@ abstract class AbstractAuroraModuleBundle extends AbstractBundle
      */
     protected function moduleDir(): string
     {
-        return dirname((string) (new ReflectionClass(static::class))->getFileName());
+        return dirname((string) new ReflectionClass(static::class)->getFileName());
     }
 }
