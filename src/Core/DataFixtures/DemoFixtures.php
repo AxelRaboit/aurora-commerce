@@ -57,10 +57,9 @@ use Aurora\Module\Ged\Document\Entity\Document;
 use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
 use Aurora\Module\Hr\Employee\Entity\Employee;
-use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Notes\Markdown\Entity\AbstractMarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
 use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
@@ -148,7 +147,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         private readonly string $uploadDir,
         private readonly PdfThumbnailGenerator $pdfThumbnailGenerator,
         private readonly Filesystem $fs = new Filesystem(),
-        protected readonly ?MediaUrlGenerator $mediaUrlGenerator = null,
+        protected readonly ?DocumentUrlGenerator $documentUrlGenerator = null,
         private readonly ?PersonalFinanceGoalManagerInterface $goalManager = null,
     ) {}
 
@@ -342,11 +341,11 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
     }
 
-    /** @return Media[] */
+    /** @return Document[] */
     private function createMedia(EntityManagerInterface $em): array
     {
         $month = new DateTimeImmutable()->format('Y/m');
-        $destDir = $this->uploadDir.'/media/'.$month;
+        $destDir = $this->uploadDir.'/ged/'.$month;
         $this->fs->mkdir($destDir);
 
         $sourceDir = dirname(__DIR__, 3).'/test_files';
@@ -369,20 +368,22 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
             $dest = $destDir.'/'.$def['name'];
             $this->fs->copy($src, $dest, true);
 
-            $m = new Media();
-            $m->setFilename($def['name'])
-              ->setOriginalName($def['original'])
-              ->setMimeType($def['mime'])
-              ->setSize((int) filesize($dest))
-              ->setPath('media/'.$month.'/'.$def['name'])
-              ->setVariants([]);
+            $document = new Document();
+            $document->setTitle($def['original'])
+                ->setFileName($def['name'])
+                ->setOriginalName($def['original'])
+                ->setMimeType($def['mime'])
+                ->setSize((int) filesize($dest))
+                ->setFilePath('ged/'.$month.'/'.$def['name'])
+                ->setStatus(DocumentStatusEnum::Published)
+                ->setVariants([]);
 
             if ($def['w'] > 0) {
-                $m->setWidth($def['w'])->setHeight($def['h']);
+                $document->setWidth($def['w'])->setHeight($def['h']);
             }
 
-            $em->persist($m);
-            $media[] = $m;
+            $em->persist($document);
+            $media[] = $document;
         }
 
         return $media;
@@ -416,10 +417,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
         $createdPosts = [];
 
-        $u0 = isset($media[0]) ? $this->mediaUrlGenerator->publicUrl($media[0]).'?v=0' : '';
-        $u1 = isset($media[1]) ? $this->mediaUrlGenerator->publicUrl($media[1]).'?v=0' : '';
-        $u2 = isset($media[2]) ? $this->mediaUrlGenerator->publicUrl($media[2]).'?v=0' : '';
-        $u3 = isset($media[3]) ? $this->mediaUrlGenerator->publicUrl($media[3]).'?v=0' : '';
+        $u0 = isset($media[0]) ? $this->documentUrlGenerator->publicUrl($media[0]).'?v=0' : '';
+        $u1 = isset($media[1]) ? $this->documentUrlGenerator->publicUrl($media[1]).'?v=0' : '';
+        $u2 = isset($media[2]) ? $this->documentUrlGenerator->publicUrl($media[2]).'?v=0' : '';
+        $u3 = isset($media[3]) ? $this->documentUrlGenerator->publicUrl($media[3]).'?v=0' : '';
 
         $tag = static function (Post $post, array $slugs, array $allTerms): void {
             foreach ($slugs as $slug) {
@@ -564,10 +565,10 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
 
         // French-only posts — richer variety to showcase taxonomy filtering
-        $img0 = isset($media[0]) ? $this->mediaUrlGenerator->publicUrl($media[0]) : '';
-        $img1 = isset($media[1]) ? $this->mediaUrlGenerator->publicUrl($media[1]) : '';
-        $img2 = isset($media[2]) ? $this->mediaUrlGenerator->publicUrl($media[2]) : '';
-        $img3 = isset($media[3]) ? $this->mediaUrlGenerator->publicUrl($media[3]) : '';
+        $img0 = isset($media[0]) ? $this->documentUrlGenerator->publicUrl($media[0]) : '';
+        $img1 = isset($media[1]) ? $this->documentUrlGenerator->publicUrl($media[1]) : '';
+        $img2 = isset($media[2]) ? $this->documentUrlGenerator->publicUrl($media[2]) : '';
+        $img3 = isset($media[3]) ? $this->documentUrlGenerator->publicUrl($media[3]) : '';
 
         $frDefs = [
             [

@@ -85,6 +85,38 @@ class DocumentRepository extends ResolveTargetEntityRepository
     }
 
     /**
+     * Cheap LIKE-based search over `title` + `original_name`, capped at
+     * `$limit` rows. Powers the global backend search controller's
+     * "Documents" pane (formerly served by the Media library).
+     *
+     * @return list<\Aurora\Module\Ged\Document\Entity\Document>
+     */
+    public function searchByName(string $query, int $limit = 10): array
+    {
+        $pattern = '%'.mb_strtolower($query).'%';
+
+        return $this->createQueryBuilder('d')
+            ->where('LOWER(d.title) LIKE :pattern OR LOWER(d.originalName) LIKE :pattern')
+            ->setParameter('pattern', $pattern)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Total bytes consumed by Documents on disk (sum of `size`). Used by
+     * the dashboard storage tile and any quota / cleanup tooling. Returns 0
+     * when no document has a non-null size (empty library).
+     */
+    public function getTotalStorageSize(): int
+    {
+        return (int) $this->createQueryBuilder('d')
+            ->select('COALESCE(SUM(d.size), 0)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * @return array<int, int> map of folder_id => document count
      */
     public function countGroupedByFolders(): array

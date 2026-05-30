@@ -34,8 +34,6 @@ services:
     _instanceof:
         Aurora\Core\Module\Contract\ModuleInterface:
             tags: [aurora.module]
-        Aurora\Module\Media\Library\Contract\MediaUsageProviderInterface:
-            tags: [aurora.media_usage_provider]
         Aurora\Module\Ged\Document\Contract\DocumentUsageProviderInterface:
             tags: [aurora.document_usage_provider]
         Aurora\Core\Frontend\Contract\FrontendInterface:
@@ -52,10 +50,6 @@ services:
             tags: [aurora.assistant.tool]
         Aurora\Module\General\Search\Provider\SearchProviderInterface:
             tags: [aurora.search_provider]
-
-    Aurora\Module\Media\Library\Service\MediaUsageService:
-        arguments:
-            $providers: !tagged_iterator aurora.media_usage_provider
 
     Aurora\Module\Ged\Document\Service\DocumentUsageService:
         arguments:

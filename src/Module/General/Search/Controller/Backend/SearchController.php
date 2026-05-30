@@ -13,8 +13,8 @@ use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
 use Aurora\Module\General\Search\Service\SearchResultSorter;
 use Aurora\Module\General\Search\Service\SearchSnippetBuilder;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Project\Entity\ProjectInterface;
 use Aurora\Module\Project\Entity\ProjectTaskInterface;
 use Aurora\Module\Project\Repository\ProjectRepository;
@@ -34,7 +34,7 @@ class SearchController extends AbstractController
     public function __construct(
         private readonly PostRepository $postRepository,
         private readonly TaxonomyTermRepository $termRepository,
-        private readonly MediaRepository $mediaRepository,
+        private readonly DocumentRepository $documentRepository,
         private readonly SearchSnippetBuilder $snippetBuilder,
         private readonly ProjectRepository $projectRepository,
         private readonly ProjectTaskRepository $taskRepository,
@@ -85,13 +85,13 @@ class SearchController extends AbstractController
 
         // ── Media ───────────────────────────────────────────────────────────
         $mediaSerialized = array_map(
-            static fn (MediaInterface $media): array => [
-                'id' => $media->getId(),
-                'name' => $media->getOriginalName(),
-                'mimeType' => $media->getMimeType(),
-                'alt' => $media->getAlt(),
+            static fn (DocumentInterface $document): array => [
+                'id' => $document->getId(),
+                'name' => $document->getOriginalName() ?? $document->getTitle(),
+                'mimeType' => $document->getMimeType(),
+                'alt' => $document->getAlt(),
             ],
-            $this->mediaRepository->searchByName($query, 10),
+            $this->documentRepository->searchByName($query, 10),
         );
 
         // ── Projects ────────────────────────────────────────────────────────

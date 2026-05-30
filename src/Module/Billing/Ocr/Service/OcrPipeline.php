@@ -12,7 +12,7 @@ use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Billing\Ocr\Enum\OcrJobStatusEnum;
 use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Ocr\Repository\OcrJobRepository;
-use Aurora\Module\Media\Library\Service\MediaPathResolver;
+use Aurora\Core\Storage\Service\UploadPathResolver;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
@@ -23,7 +23,7 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
  *
  * Persistence + status transitions are delegated to OcrJobManager;
  * Invoice creation goes through InvoiceManager. This class only:
- *   - resolves file paths (via MediaPathResolver + OcrDocumentRenderer)
+ *   - resolves file paths (via UploadPathResolver + OcrDocumentRenderer)
  *   - calls external HTTP services (docTR + Ollama via the extractor)
  *   - drives the state machine
  */
@@ -37,7 +37,7 @@ final readonly class OcrPipeline
         private InvoiceManagerInterface $invoiceManager,
         private InvoiceRepository $invoiceRepository,
         private OcrJobRepository $ocrJobRepository,
-        private MediaPathResolver $mediaPathResolver,
+        private UploadPathResolver $uploadPathResolver,
         private OcrDocumentRenderer $documentRenderer,
         private LoggerInterface $logger,
     ) {}
@@ -45,10 +45,10 @@ final readonly class OcrPipeline
     public function run(OcrJobInterface $job): void
     {
         $document = $job->getDocument();
-        // GED Document files live under var/uploads/<filePath>. The MediaPathResolver
+        // GED Document files live under var/uploads/<filePath>. The UploadPathResolver
         // helper is still used for legacy paths but we resolve directly here since
         // the GED Document carries the relative path verbatim.
-        $sourcePath = $this->mediaPathResolver->resolveByRelativePath((string) $document->getFilePath());
+        $sourcePath = $this->uploadPathResolver->resolveByRelativePath((string) $document->getFilePath());
         $this->logger->info('OCR pipeline starting', ['job_id' => $job->getId(), 'path' => $sourcePath]);
 
         $log = static function (string $level, string $message, array $ctx = []) use ($job): void {

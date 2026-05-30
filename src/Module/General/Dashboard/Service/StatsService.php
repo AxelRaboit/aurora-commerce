@@ -21,7 +21,7 @@ use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
 use Aurora\Module\Editorial\Post\Repository\PostRepository;
 use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryItemRepository;
 use Aurora\Module\Photo\Gallery\Repository\GalleryRepository;
 use Aurora\Module\Platform\User\Repository\UserRepository;
@@ -34,7 +34,7 @@ final readonly class StatsService
         private PostRepository $postRepository,
         private PostTypeRepository $postTypeRepository,
         private CommentRepository $commentRepository,
-        private MediaRepository $mediaRepository,
+        private DocumentRepository $documentRepository,
         private MenuRepository $menuRepository,
         private UserRepository $userRepository,
         private ContactRepository $contactRepository,
@@ -164,8 +164,8 @@ final readonly class StatsService
     private function getMediaStats(): array
     {
         return [
-            'total' => $this->mediaRepository->count([]),
-            'totalSize' => $this->mediaRepository->getTotalStorageSize(),
+            'total' => $this->documentRepository->count([]),
+            'totalSize' => $this->documentRepository->getTotalStorageSize(),
         ];
     }
 

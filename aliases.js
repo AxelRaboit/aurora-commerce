@@ -13,7 +13,6 @@ export const aliases = {
     "@shared": path.resolve(__dirname, "src/Core/assets/shared"),
     "@platform": moduleAlias("Platform"),
     "@configuration": moduleAlias("Configuration"),
-    "@media": moduleAlias("Media"),
     "@general": moduleAlias("General"),
     "@dev": moduleAlias("Dev"),
     "@editorial": moduleAlias("Editorial"),
