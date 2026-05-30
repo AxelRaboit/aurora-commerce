@@ -1,11 +1,10 @@
-# Playbook de packaging Composer (J4/J5)
+# Playbook de packaging Composer
 
-> Plan **actionnable** pour exécuter le vrai split : transformer le monorepo
-> (1 package `axelraboit/aurora`) en N packages publiables. Suppose le
-> découplage in-monorepo **terminé** (graphe en étoile, 13 bundles auto-
-> enregistrés, toggles distribués). Voir `package_layout.md` (cible),
-> `decoupling_strategy.md` (découplage) et `poc_tools_bundle.md` (bundle POC +
-> finding services/routes).
+> Comment le monorepo (`axelraboit/aurora`) est splitté en N packages. Le split
+> est **réalisé** (`bin/split-modules.sh` produit les 13 packages, branches
+> `master`) ; ce doc garde l'anatomie d'un package + les findings. Voir
+> `decoupling_strategy.md` (le découplage) et, côté client,
+> `../../../aurora-client/getting-started/installing_modules.md` (l'adoption).
 
 ## 0. Câblage services per-package : testable DANS le monorepo (corrigé 2026-05-30)
 
@@ -13,7 +12,7 @@
 qu'au split réel ». Issue de l'échec `#[AutoconfigureTag]` →
 `merge() does not support merging autoconfiguration`.
 
-**Correction (POC end-to-end, cf. `poc_tools_bundle.md`)** : ce conflit est
+**Correction (validé end-to-end)** : ce conflit est
 spécifique à l'autoconfiguration **globale** (`registerForAutoconfiguration`,
 ce que déclenche `#[AutoconfigureTag]`). Un `instanceof()` déclaré dans le
 **`config/services.php` d'un bundle** est *file-scoped* → **aucun conflit**,

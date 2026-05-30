@@ -2,18 +2,22 @@
 
 ## Règle
 
-**Chantier exploratoire en cours (2026-05-30)** : étudier la transformation
-d'`axelraboit/aurora` (mono-package actuel) en **monorepo Composer**
-publiant 1 package core (`aurora-core` = Core + User + Configuration +
-Administration + Auth + Dashboard + Ged) + N packages module
-(`aurora-billing`, `aurora-crm`, `aurora-ecommerce`, `aurora-editorial`,
-`aurora-erp`, `aurora-photo`, `aurora-project`).
-
+Transformation d'`axelraboit/aurora` (mono-package) en **monorepo Composer** :
+1 package core (`aurora-core`) + 12 packages module, distribués en étoile.
 Le développement reste mono-codebase ; seule la distribution Composer est
 splittée. Pattern Symfony / Doctrine / Sylius / Laravel.
 
-**Statut** : en phase d'audit. Aucun code touché. 3 documents d'audit et
-de planification posés, à consommer par des sessions Claude Code futures.
+**Statut (2026-05-30)** : ✅ **CHANTIER TERMINÉ et validé end-to-end**. 13
+packages sur GitHub (branches `master`, `dev-master`), install à la carte prouvée
+(client réel, 12 modules, build vert, symfony 7.4), adoption turnkey
+(auto-découverte bundles/routes/assets/boot + kit `.claude/client_template/`).
+Découplage complet (graphe étoile + cat-F). Détail dans la table « État » + les
+findings ci-dessous.
+
+> Les docs de **planning** du chantier (audits 9/11 phases, workplan J0-J6,
+> snapshots inventory/dependency_graph/baseline/coupling/package_layout,
+> compte-rendu POC) ont été **supprimés** une fois le chantier terminé (voir git
+> si besoin) — la rationale durable vit dans cette mémoire + les 3 docs vivants.
 
 ## Pourquoi
 
@@ -26,43 +30,20 @@ de planification posés, à consommer par des sessions Claude Code futures.
   divergence, double CI). Le monorepo + split automatique (`splitsh/lite`)
   donne le meilleur des deux mondes.
 
-## Comment l'appliquer
+## Docs vivants (la planning a été supprimée)
 
-**Trois documents structurent le chantier** (tous dans
-`docs/aurora-core/dev/`) :
+- **[`decoupling_strategy.md`](../../../../docs/aurora-core/dev/audit/decoupling_strategy.md)** —
+  le **pourquoi** : graphe en étoile, taxonomie cat A-E, fusion commerce.
+- **[`packaging_playbook.md`](../../../../docs/aurora-core/dev/audit/packaging_playbook.md)** —
+  le **comment** : anatomie d'un package + findings ; runbook = `bin/split-modules.sh`.
+- **[`installing_modules.md`](../../../../docs/aurora-client/getting-started/installing_modules.md)** —
+  l'**adoption client** à la carte + kit `.claude/client_template/`.
 
-1. **[`audit_monorepo_split.md`](../../../../docs/aurora-core/dev/audit_monorepo_split.md)** —
-   9 phases d'audit côté aurora-core (cartographie modules, auto-discovery
-   Doctrine/Twig/routes, assets Vue avec 3 options A/B/C, tests,
-   migrations, mémoires, outillage splitsh, impact skills, POC Billing).
-2. **[`audit_monorepo_split_client.md`](../../../../docs/aurora-core/dev/audit_monorepo_split_client.md)** —
-   11 phases d'audit côté aurora-client (composer.json, bundles.php,
-   resolve_target_entities, pipeline Vite, Module Toggle dashboard,
-   showcase modules, docs, skills, CI/CD, migration des clients
-   existants).
-3. **[`monorepo_split_workplan.md`](../../../../docs/aurora-core/dev/monorepo_split_workplan.md)** —
-   Plan de chantier qui orchestre les deux audits en 7 jalons (J0 → J6)
-   avec 3 gates de décision (groupings modules, stratégie assets, Go/No-Go
-   final). Effort total estimé : ~75 j-h, ~2-4 mois.
-
-**Pour une session Claude Code future** : ouvrir le workplan, identifier
-le jalon courant via `docs/aurora-core/dev/audit/` (livrables
-intermédiaires), exécuter le jalon, poser ses livrables, mettre à jour
-cette mémoire avec l'état.
-
-**Points critiques à garder en tête** :
-
-- **Gate 2 (assets Vue)** est le point d'incertitude maximale. Si aucune
-  des 3 options ne convainc (A pré-buildé / B plugin Vite custom / C
-  symlinks post-install), le chantier s'arrête là — on reste mono-package
-  et on améliore les Module Toggles.
-- **Dépendances inter-modules** (Phase 1.2, ✅ auditée) : un seul vrai
-  cycle (Ecommerce↔Erp, cassable). Pas de Billing↔CRM. La décision Gate 1
-  est **graphe en étoile** (zéro dép. latérale) — pas de groupings sauf la
-  fusion Ecommerce+Erp. Voir bloc « Décision Gate 1 » plus bas.
-- **Stratégie de migration clients existants** : option recommandée =
-  méta-package `axelraboit/aurora` deprecated pendant 1-2 versions, puis
-  hard cut v2.0 (pattern Symfony).
+**Migration clients existants** : pas de migration forcée. Un client monolithique
+reste sur `axelraboit/aurora: dev-develop` (le monorepo contient tous les
+modules) ; un client léger part en à la carte (`split/core` + modules choisis).
+Le méta-package de transition n'a de sens qu'avec Packagist (cf. décision « pas
+de Packagist » : install VCS, repos pré-listés dans le template).
 
 ## État du chantier
 
@@ -70,16 +51,16 @@ cette mémoire avec l'état.
 |---|---|---|
 | 2026-05-30 | J0 — Préparation | ✅ Fait (branche `feat/monorepo-audit`, tag `pre-monorepo-audit`, dossier `docs/aurora-core/dev/audit/`, baseline) |
 | 2026-05-30 | J1 — Cartographie commune | ✅ Fait (3 livrables posés, voir ci-dessous) |
-| 2026-05-30 | Gate 1 — Décision groupings | ✅ **TRANCHÉ : graphe en étoile** (aucune dép. latérale ; 1 seule fusion Ecommerce+Erp). Voir `audit/decoupling_strategy.md` + `package_layout.md`. |
+| 2026-05-30 | Gate 1 — Décision groupings | ✅ **TRANCHÉ : graphe en étoile** (aucune dép. latérale ; 1 seule fusion Ecommerce+Erp). Voir `audit/decoupling_strategy.md`. |
 | 2026-05-30 | **J1.5 — Pass de découplage (PRÉREQUIS)** | ✅ **TERMINÉ** — cat. A/B/C/D/E toutes faites. Invariant atteint : tous les modules métier ne dépendent que du core (sauf Ecommerce↔Erp = intra-package `aurora-commerce`). cat. D : soft-ref via `EntityReferenceResolver` core (Billing/Photo/Project→Crm + migrations DB) ; Project→Billing relocalisé client. |
 | 2026-05-30 | **J3 — Bundling tous modules** | ✅ **TERMINÉ** — **13 `Aurora<X>Bundle`** (tous les modules métier) via `AbstractAuroraModuleBundle`. `AuroraBundle` = bundle **core pur** (16 RTE Platform/Config/Dev/Ged). `bundles.php` : 1 ligne = 1 module on/off. Suite verte 2747 à chaque étape. |
 | 2026-05-30 | **ModuleParameterEnum extensible** | ✅ **TERMINÉ** (mécanisme + distribution). Consommateurs registry-driven (`SettingsService` cascade, `ModulesViewBuilder`, `UsersViewBuilder`) ; `ModuleToggle.displayParentKey` (structurel ≠ `parentKey` cascade) + `getDisplayTopLevel()`/`getDisplayChildrenOf()`. **Distribution** : les 13 modules métier ont chacun leur `<Module>ModuleParameterEnum` + `<Module>ModuleParameterProvider` (settings préservés, tous tagués) ; central `ModuleParameterEnum` = **17 cases core only** (General/Platform/Configuration/Media/Ged). Consommateurs cross-module (DashboardViewBuilder, MenuRenderer) → clés string. Tests migrés (per-module + 5 cross-cutting réécrits sur cases core). Fait via sous-agents parallèles (template Notes). Commits `3ba05725`, `ec930116`. Suite verte 2744. ⚠️ `<Module>Context::isEnabled` prend la string `->value` (ModuleAccessChecker accepte `ModuleParameterEnum|string`). |
 | — | J2 — Audit technique parallélisé | Bloqué (J1.5) |
 | 2026-05-30 | **Gate 2 — Stratégie assets Vue** | ✅ **TRANCHÉ : option B** (glob étendu au vendor). aurora-core ship un **plugin Vite** qui, en mode vendored, découvre les packages `vendor/axelraboit/aurora-*` (hors core) et expose leurs `assets/**/*.vue` via un module virtuel. **Finding** : un glob relatif naïf (`../../../../aurora-*`) **collisionne en dev** (le parent du monorepo contient `aurora-client`/`aurora-core`) → l'implémentation **doit** détecter le mode (`__dirname` contient `/vendor/`) et générer un module virtuel, pas un `import.meta.glob` statique relatif. `dedupe` (vue/vue-i18n/…) déjà en place gère le version-skew des deps partagées. |
-| 2026-05-30 | **J3 — POC + rollout bundles (8 leaves)** | ✅ **FAIT** — `AbstractAuroraModuleBundle` (core) + **8 `Aurora<X>Bundle`** (Tools, Assistant, Crm, Editorial, Hr, Notes, PersonalFinance, Planning). AuroraBundle les exclut tous (RTE+use retirés) et ne pilote plus que Core + 5 modules couplés. Preuve toggle bundle = module on/off. 189 entités mappées, 2747 tests verts. Voir `audit/poc_tools_bundle.md`. Reste pour package Composer complet : composer.json + services/routes embarqués + `ModuleParameterEnum` extensible + splitsh. |
+| 2026-05-30 | **J3 — POC + rollout bundles (8 leaves)** | ✅ **FAIT** — `AbstractAuroraModuleBundle` (core) + **8 `Aurora<X>Bundle`** (Tools, Assistant, Crm, Editorial, Hr, Notes, PersonalFinance, Planning). AuroraBundle les exclut tous (RTE+use retirés) et ne pilote plus que Core + 5 modules couplés. Preuve toggle bundle = module on/off. 189 entités mappées, 2747 tests verts. Reste pour package Composer complet : composer.json + services/routes embarqués + `ModuleParameterEnum` extensible + splitsh. |
 | — | Gate 3 — Go / No-Go final | de facto **Go** (chantier mené jusqu'au bout in-monorepo) |
 | 2026-05-30 | **J4 — Planification packaging** | ✅ **Playbook posé** (`audit/packaging_playbook.md`) : anatomie d'un package (composer.json + `config/services.php` dans le subtree ; routes.php INUTILE), templates, splitsh, ordre (Tools POC d'abord), validation Phase 9.3, migrations côté client, transition Option C. |
-| 2026-05-30 | **J5 — POC packaging `aurora-tools` end-to-end** | ✅ **FAIT (sauf install réelle, bloquée infra)**. **Finding clé** : `instanceof()` dans le `config/services.php` d'un bundle est *file-scoped* → **aucun** conflit de merge avec le `_instanceof` central (contrairement à `#[AutoconfigureTag]` global). Donc **le câblage services/tags par package se valide DANS le monorepo**, package par package — ça dé-risque tout le chantier (la conclusion J4 antérieure « seulement au split réel » était fausse). Monté : `Tools/composer.json` (PSR-4 `Aurora\Module\Tools\: ""`), `Tools/config/services.php` (load + 2 `instanceof` locaux), `AbstractAuroraModuleBundle::loadExtension()` importe le services.php si présent, exclusion de Tools du glob central. Vérifs : cache:clear test+dev, lint:container, tags présents, **2744 tests verts**. **Routes** : pas de routes.php (le loader `routing.controllers` découvre les contrôleurs via leur enregistrement service). **Split** : `git subtree split` (substitut splitsh-lite absent) → composer.json+bundle+config à la racine, PSR-4 `""` correct. Voir `audit/poc_tools_bundle.md`. |
+| 2026-05-30 | **J5 — POC packaging `aurora-tools` end-to-end** | ✅ **FAIT (sauf install réelle, bloquée infra)**. **Finding clé** : `instanceof()` dans le `config/services.php` d'un bundle est *file-scoped* → **aucun** conflit de merge avec le `_instanceof` central (contrairement à `#[AutoconfigureTag]` global). Donc **le câblage services/tags par package se valide DANS le monorepo**, package par package — ça dé-risque tout le chantier (la conclusion J4 antérieure « seulement au split réel » était fausse). Monté : `Tools/composer.json` (PSR-4 `Aurora\Module\Tools\: ""`), `Tools/config/services.php` (load + 2 `instanceof` locaux), `AbstractAuroraModuleBundle::loadExtension()` importe le services.php si présent, exclusion de Tools du glob central. Vérifs : cache:clear test+dev, lint:container, tags présents, **2744 tests verts**. **Routes** : pas de routes.php (le loader `routing.controllers` découvre les contrôleurs via leur enregistrement service). **Split** : `git subtree split` (substitut splitsh-lite absent) → composer.json+bundle+config à la racine, PSR-4 `""` correct. |
 | 2026-05-30 | **J5 — Install RÉELLE à la carte validée (aurora-tools)** | ✅ **FAIT end-to-end sur 2 vrais repos GitHub**. Repo `aurora-tools` (subtree split poussé) + branche `split/core-no-tools` sur le repo core (= develop moins `src/Module/Tools`, package toujours `axelraboit/aurora`). `aurora-client` câblé en VCS (`axelraboit/aurora: dev-split/core-no-tools` + `axelraboit/aurora-tools: dev-master`). **Résultat** : `composer install` OK, `cache:clear` OK, `make build` OK avec **VaultApp + 14 composants Vault bundlés DEPUIS `vendor/axelraboit/aurora-tools`** (le core n'a plus Tools → preuve Gate 2 B en vrai), `ToolsModule` tagué `aurora.module` (finding services.php confirmé en install réelle), entités Vault mappées, **routes `backend_tools_*` résolues**, `doctrine:schema:validate` OK. Findings ci-dessous. |
 | 2026-05-30 | **J5b — Template généralisé aux 13 modules (in-monorepo)** | ✅ **FAIT**. Les 13 modules ont chacun `composer.json` + `config/services.php` (load + `instanceof` file-scoped) et sont **exclus du glob central**. Defs d'args spéciales déplacées du central vers le services.php du module (Editorial MenuLocationRegistry, Billing OCR×2, Assistant LLM×4, Ecommerce Stripe, Photo GalleryAccess). **Merge `aurora-commerce`** : Ecommerce+Erp = 1 seul `Ecommerce/config/services.php` chargeant **les 2 namespaces** (les contrôleurs Ecommerce autowire le `ProductRepository` concret d'Erp). Validé : cache:clear + lint:container OK, tags intacts (module 18, param 15, dashboard 6, front 4, block 1), **2744 tests verts**. Reste hors-code : repos GitHub (11 autres) + Packagist. |
 
@@ -132,35 +113,14 @@ topologie. Remplace l'option bridges/require initiale.
 `grep -rhoE "use Aurora\\Module\\[A-Za-z]+" src/Module/<Y>/ | grep -vE
 "(<Y>|Platform|Configuration|Dev|Ged)"` retourne **vide** pour tout module Y.
 
-### Livrables J1 (dans `docs/aurora-core/dev/audit/`)
+### Topologie (rappel)
 
-- `module_inventory.md` (1.1) — **18 modules** (pas 7). Core = Core/ +
-  **Platform** + Configuration + Dev + Ged. Leaves métier (core-deps only,
-  split trivial) : **Hr, Notes, PersonalFinance, Planning, Tools**, ~Assistant.
-- `dependency_graph.md` (1.2) — Mermaid + SCC. **Un seul vrai cycle :
-  Ecommerce↔Erp** (cassable trivialement, 1 ref = un enum). Couplages
-  cross-business = **intégrations optionnelles** (events, embed, lien
-  interface), pas deps dures. `General` = shell app, cas spécial.
-- `aurorabundle_coupling.md` (1.3) — `resolve_target_entities` (95 paires)
-  = seul couplage manuel ; reste auto-glob. Pré-requis core avant 1er
-  split : `AbstractAuroraModuleBundle` + `ModuleParameterEnum` extensible.
-- `baseline_metrics.md` (J0) — build Vue 9.9 Mo, 17 migrations mono-dossier.
-
-### Points chauds remontés au Gate 1
-
-1. Découpler `Erp→Ecommerce` (l'enum) casse le seul cycle.
-2. Vérifier `Editorial↔Crm` (3/3) = cycle potentiel n°2.
-3. Auditer les arêtes lourdes `Ecommerce→Erp` (15), `Project→Crm` (16),
-   `Project→Billing` (7) en J2 → décident fusion vs bridge.
-4. `General` (shell) : core-avec-widgets-gardés (reco) vs côté client.
-5. `migrations/` mono-dossier = concern Phase 5 (probable : migrations
-   côté client).
-
-**Convention de suivi** : mettre à jour cette table à chaque jalon
-franchi. Si un gate revient en No-Go, fermer le chantier proprement
-(merger les apprentissages dans la doc, archiver l'audit) et tout l'effort
-ne sera pas perdu — l'audit lui-même produit de la connaissance utile sur
-la topologie modulaire d'Aurora.
+- Core = `Core/` + **Platform + Configuration + Dev + Ged + General**.
+- **13 modules métier** distribuables, dont **1 seul vrai cycle** : Ecommerce↔Erp
+  (couplage par classe concrète `ProductRepository`) → fusionnés dans
+  `aurora-commerce`. Les autres = leaves ou soft-ref (resolus via
+  `EntityReferenceResolver`), aucun couplage latéral.
+- Seul couplage manuel restant = `resolve_target_entities` (par bundle module).
 
 ## Liens
 

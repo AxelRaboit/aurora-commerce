@@ -1,12 +1,9 @@
-# Stratégie de découplage « graphe en étoile » (Gate 1 — DÉCIDÉ)
+# Stratégie de découplage « graphe en étoile »
 
-> **Décision d'architecture (2026-05-30)** prise au Gate 1, en remplacement
-> de l'option « bridges + require » initialement esquissée. Livrable
-> central du chantier monorepo : il définit **comment** on rend chaque
-> module distribuable autonome **avant** tout split.
->
-> Base de données : `dependency_graph.md` (arêtes auditées une à une) +
-> `module_inventory.md`.
+> **Décision d'architecture (2026-05-30)**, en remplacement de l'option
+> « bridges + require » initialement esquissée. Doc de référence du split
+> monorepo : **comment** chaque module distribuable est rendu autonome. Le
+> split est **réalisé** (13 packages sur GitHub) ; ce doc garde la rationale.
 
 ## Principe (invariant à tenir)
 
@@ -164,9 +161,9 @@ Le grep de vérification est vide pour tous les modules métier (hors le couple
 intra-package Ecommerce↔Erp). **13 modules métier** shippent chacun via leur
 `Aurora<X>Bundle` (`AbstractAuroraModuleBundle`) ; `AuroraBundle` est devenu un
 bundle **purement core** (16 RTE : Platform/Configuration/Dev/Ged). Un client
-compose son install à la carte module par module. Reste pour des packages
-Composer publiables : `composer.json` + services/routes embarqués +
-`ModuleParameterEnum` extensible + `splitsh` (cf. `poc_tools_bundle.md`).
+compose son install à la carte module par module. Le packaging Composer
+(composer.json + services.php + split) est **réalisé** — voir
+`packaging_playbook.md` et `bin/split-modules.sh`.
 
 ## Extension points à créer dans `aurora-core` (avant le pass)
 
