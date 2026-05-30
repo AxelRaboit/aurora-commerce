@@ -6,7 +6,6 @@ namespace Aurora\Module\Billing\Invoice\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
-use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -61,10 +60,15 @@ abstract class AbstractTiers implements TiersInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $notes = null;
 
-    /** Optional link to a CRM Company — kept loose so Billing stays independent. */
-    #[ORM\ManyToOne(targetEntity: CompanyInterface::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?CompanyInterface $company = null;
+    /**
+     * Optional soft reference to a CRM Company (its id), kept as a plain
+     * column with no Doctrine relation so Billing depends on no other module
+     * and works even when Crm is not installed. Resolve via the core
+     * {@see \Aurora\Core\Reference\EntityReferenceResolverInterface} when the
+     * Company entity is actually needed.
+     */
+    #[ORM\Column(name: 'company_id', type: Types::INTEGER, nullable: true)]
+    protected ?int $companyId = null;
 
     public function getType(): TiersTypeEnum
     {
@@ -234,14 +238,14 @@ abstract class AbstractTiers implements TiersInterface
         return $this;
     }
 
-    public function getCompany(): ?CompanyInterface
+    public function getCompanyId(): ?int
     {
-        return $this->company;
+        return $this->companyId;
     }
 
-    public function setCompany(?CompanyInterface $company): self
+    public function setCompanyId(?int $companyId): self
     {
-        $this->company = $company;
+        $this->companyId = $companyId;
 
         return $this;
     }

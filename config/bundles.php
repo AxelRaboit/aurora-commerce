@@ -7,6 +7,7 @@ return [
     // removes that whole module — the "install only what you want" mechanism.
     // In the target topology each is a separate Composer package.
     Aurora\Module\Assistant\AuroraAssistantBundle::class => ['all' => true],
+    Aurora\Module\Billing\AuroraBillingBundle::class => ['all' => true],
     Aurora\Module\Crm\AuroraCrmBundle::class => ['all' => true],
     // Ecommerce + Erp ship together as the aurora-commerce package (cat. E).
     Aurora\Module\Ecommerce\AuroraEcommerceBundle::class => ['all' => true],

@@ -6,7 +6,6 @@ namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Billing\Invoice\Entity\Tiers;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
-use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 use PHPUnit\Framework\TestCase;
 
 final class TiersTest extends TestCase
@@ -33,7 +32,7 @@ final class TiersTest extends TestCase
         self::assertNull($tiers->getLegalForm());
         self::assertNull($tiers->getBankName());
         self::assertNull($tiers->getNotes());
-        self::assertNull($tiers->getCompany());
+        self::assertNull($tiers->getCompanyId());
     }
 
     public function testTypeAndNameGettersAndSetters(): void
@@ -92,11 +91,10 @@ final class TiersTest extends TestCase
         self::assertSame('Important client', $tiers->getNotes());
     }
 
-    public function testCompanyGetterAndSetter(): void
+    public function testCompanyIdGetterAndSetter(): void
     {
-        $company = $this->createStub(CompanyInterface::class);
-        $tiers = (new Tiers())->setCompany($company);
+        $tiers = (new Tiers())->setCompanyId(42);
 
-        self::assertSame($company, $tiers->getCompany());
+        self::assertSame(42, $tiers->getCompanyId());
     }
 }

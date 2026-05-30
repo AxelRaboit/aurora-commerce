@@ -6,7 +6,6 @@ namespace Aurora\Module\Billing\Invoice\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Billing\Invoice\Enum\TiersTypeEnum;
-use Aurora\Module\Crm\Company\Entity\CompanyInterface;
 
 interface TiersInterface extends TimestampableInterface
 {
@@ -68,9 +67,9 @@ interface TiersInterface extends TimestampableInterface
 
     public function setNotes(?string $notes): self;
 
-    public function getCompany(): ?CompanyInterface;
+    public function getCompanyId(): ?int;
 
-    public function setCompany(?CompanyInterface $company): self;
+    public function setCompanyId(?int $companyId): self;
 
     public function getReference(): ?string;
 

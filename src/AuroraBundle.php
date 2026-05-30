@@ -11,14 +11,6 @@ use Aurora\Core\Locale\Entity\LocaleInterface;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Core\Notification\Entity\Notification;
 use Aurora\Core\Notification\Entity\NotificationInterface;
-use Aurora\Module\Billing\Invoice\Entity\Invoice;
-use Aurora\Module\Billing\Invoice\Entity\InvoiceInterface;
-use Aurora\Module\Billing\Invoice\Entity\InvoiceLine;
-use Aurora\Module\Billing\Invoice\Entity\InvoiceLineInterface;
-use Aurora\Module\Billing\Invoice\Entity\Tiers;
-use Aurora\Module\Billing\Invoice\Entity\TiersInterface;
-use Aurora\Module\Billing\Ocr\Entity\OcrJob;
-use Aurora\Module\Billing\Ocr\Entity\OcrJobInterface;
 use Aurora\Module\Configuration\Setting\Entity\Setting;
 use Aurora\Module\Configuration\Setting\Entity\SettingInterface;
 use Aurora\Module\Configuration\Theme\Entity\Theme;
@@ -120,7 +112,7 @@ class AuroraBundle extends AbstractBundle
         // resolve_target_entities. In the target topology these dirs live in a
         // separate Composer package and simply aren't present here; the list
         // simulates that absence inside the monorepo.
-        $extractedModules = ['Assistant', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Planning', 'Tools'];
+        $extractedModules = ['Assistant', 'Billing', 'Crm', 'Ecommerce', 'Editorial', 'Erp', 'Hr', 'Notes', 'PersonalFinance', 'Planning', 'Tools'];
 
         $moduleDirs = array_values(array_filter(
             glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [],
@@ -152,10 +144,6 @@ class AuroraBundle extends AbstractBundle
                     ServiceInterface::class => Service::class,
                     SettingInterface::class => Setting::class,
                     ThemeInterface::class => Theme::class,
-                    InvoiceInterface::class => Invoice::class,
-                    InvoiceLineInterface::class => InvoiceLine::class,
-                    TiersInterface::class => Tiers::class,
-                    OcrJobInterface::class => OcrJob::class,
                     GalleryInterface::class => Gallery::class,
                     GalleryFinalizationInterface::class => GalleryFinalization::class,
                     GalleryInviteInterface::class => GalleryInvite::class,
