@@ -8,7 +8,7 @@ use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use PHPUnit\Framework\TestCase;
 
 final class ListingTest extends TestCase
@@ -76,7 +76,7 @@ final class ListingTest extends TestCase
 
     public function testFeaturedImageGetterAndSetter(): void
     {
-        $image = $this->createStub(MediaInterface::class);
+        $image = $this->createStub(DocumentInterface::class);
         $listing = (new Listing())->setFeaturedImage($image);
 
         self::assertSame($image, $listing->getFeaturedImage());

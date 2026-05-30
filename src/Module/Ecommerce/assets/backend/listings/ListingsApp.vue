@@ -221,6 +221,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppTextarea v-model="newListing.marketingDescription" :rows="4" :placeholder="t('backend.ecommerce.listings.marketing_description_placeholder')" />
                 <AppImagePickerField
                     v-model="newListingImage"
+                    source="document"
                     :label="t('backend.ecommerce.listings.featured_image')"
                     :hint="t('backend.ecommerce.listings.featured_image_override_hint')"
                 />
@@ -276,6 +277,7 @@ const { pendingDelete, loading: deleteLoading, confirm: confirmDelete, submit: d
                 <AppTextarea v-model="editForm.marketingDescription" :rows="4" />
                 <AppImagePickerField
                     v-model="editFormImage"
+                    source="document"
                     :label="t('backend.ecommerce.listings.featured_image')"
                     :hint="t('backend.ecommerce.listings.featured_image_override_hint')"
                 />

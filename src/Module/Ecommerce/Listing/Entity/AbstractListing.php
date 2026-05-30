@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Listing\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,9 +32,9 @@ abstract class AbstractListing implements ListingInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $marketingDescription = null;
 
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
+    #[ORM\ManyToOne(targetEntity: DocumentInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?MediaInterface $featuredImage = null;
+    protected ?DocumentInterface $featuredImage = null;
 
     #[ORM\Column(options: ['default' => true])]
     protected bool $isVisibleOnShop = true;
@@ -98,12 +98,12 @@ abstract class AbstractListing implements ListingInterface
         return $this;
     }
 
-    public function getFeaturedImage(): ?MediaInterface
+    public function getFeaturedImage(): ?DocumentInterface
     {
         return $this->featuredImage;
     }
 
-    public function setFeaturedImage(?MediaInterface $featuredImage): static
+    public function setFeaturedImage(?DocumentInterface $featuredImage): static
     {
         $this->featuredImage = $featuredImage;
 

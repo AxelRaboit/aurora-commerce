@@ -8,8 +8,8 @@ use Aurora\Core\Locale\Service\LocaleContextInterface;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,7 @@ class ListingSerializer implements ListingSerializerInterface
         protected readonly SettingRepository $settingRepository,
         protected readonly RequestStack $requestStack,
         protected readonly LocaleContextInterface $localeContext,
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly DocumentUrlGenerator $documentUrlGenerator,
     ) {}
 
     public function serialize(ListingInterface $listing): array
@@ -47,14 +47,14 @@ class ListingSerializer implements ListingSerializerInterface
             'isVisibleOnShop' => $listing->isVisibleOnShop(),
             'seoTitle' => $listing->getSeoTitle(),
             'seoDescription' => $listing->getSeoDescription(),
-            'featuredImage' => $listing->getFeaturedImage() instanceof MediaInterface ? [
+            'featuredImage' => $listing->getFeaturedImage() instanceof DocumentInterface ? [
                 'id' => $listing->getFeaturedImage()->getId(),
-                'url' => $this->mediaUrlGenerator->publicUrl($listing->getFeaturedImage()),
+                'url' => $this->documentUrlGenerator->publicUrl($listing->getFeaturedImage()),
                 'alt' => $listing->getFeaturedImage()->getAlt(),
             ] : null,
-            'displayImage' => $displayImage instanceof MediaInterface ? [
+            'displayImage' => $displayImage instanceof DocumentInterface ? [
                 'id' => $displayImage->getId(),
-                'url' => $this->mediaUrlGenerator->publicUrl($displayImage),
+                'url' => $this->documentUrlGenerator->publicUrl($displayImage),
                 'alt' => $displayImage->getAlt(),
             ] : null,
             'product' => [

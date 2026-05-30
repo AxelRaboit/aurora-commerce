@@ -13,7 +13,7 @@ use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslationInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Repository\ListingCategoryRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -26,7 +26,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
     public function __construct(
         protected readonly EntityManagerInterface $entityManager,
         protected readonly ListingCategoryRepository $categoryRepository,
-        protected readonly MediaRepository $mediaRepository,
+        protected readonly DocumentRepository $documentRepository,
         protected readonly AuditLogger $auditLogger,
         protected readonly TranslatorInterface $translator,
         protected readonly SluggerInterface $slugger,
@@ -185,7 +185,7 @@ class ListingCategoryManager implements ListingCategoryManagerInterface
         $category->setPosition($input->getPosition());
         $category->setVisible($input->isVisible());
         $category->setImage(
-            null !== $input->getImageId() ? $this->mediaRepository->find($input->getImageId()) : null,
+            null !== $input->getImageId() ? $this->documentRepository->find($input->getImageId()) : null,
         );
 
         foreach ($this->translationSyncer->stale($category->getTranslations(), array_keys($input->getTranslations())) as $stale) {

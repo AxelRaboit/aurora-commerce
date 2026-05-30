@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\ListingCategory\Entity;
 
 use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ListingCategoryInterface extends TimestampableInterface
@@ -28,9 +28,9 @@ interface ListingCategoryInterface extends TimestampableInterface
 
     public function setPosition(int $position): static;
 
-    public function getImage(): ?MediaInterface;
+    public function getImage(): ?DocumentInterface;
 
-    public function setImage(?MediaInterface $image): static;
+    public function setImage(?DocumentInterface $image): static;
 
     public function isVisible(): bool;
 

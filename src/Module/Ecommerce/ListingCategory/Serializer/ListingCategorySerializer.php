@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\ListingCategory\Serializer;
 
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use DateTimeInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 class ListingCategorySerializer implements ListingCategorySerializerInterface
 {
     public function __construct(
-        protected readonly MediaUrlGenerator $mediaUrlGenerator,
+        protected readonly DocumentUrlGenerator $documentUrlGenerator,
     ) {}
 
     public function serialize(ListingCategoryInterface $category, ?string $locale = null): array
@@ -40,9 +40,9 @@ class ListingCategorySerializer implements ListingCategorySerializerInterface
             'isVisible' => $category->isVisible(),
             'depth' => $category->getDepth(),
             'hasChildren' => !$category->getChildren()->isEmpty(),
-            'image' => $image instanceof MediaInterface ? [
+            'image' => $image instanceof DocumentInterface ? [
                 'id' => $image->getId(),
-                'url' => $this->mediaUrlGenerator->publicUrl($image),
+                'url' => $this->documentUrlGenerator->publicUrl($image),
                 'alt' => $image->getAlt(),
             ] : null,
             'translations' => $translations,

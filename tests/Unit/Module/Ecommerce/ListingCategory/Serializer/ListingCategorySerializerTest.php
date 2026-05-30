@@ -8,7 +8,7 @@ use Aurora\Core\Testing\Concern\CreatesStorageUrlGenerators;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslationInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Serializer\ListingCategorySerializer;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +24,7 @@ final class ListingCategorySerializerTest extends TestCase
         bool $isVisible = true,
         int $depth = 0,
         bool $hasChildren = false,
-        ?MediaInterface $image = null,
+        ?DocumentInterface $image = null,
         array $translations = [],
         string $createdAt = '2026-01-01T10:00:00+00:00',
         string $updatedAt = '2026-01-02T10:00:00+00:00',
@@ -62,7 +62,7 @@ final class ListingCategorySerializerTest extends TestCase
 
     public function testSerializeReturnsExpectedShape(): void
     {
-        $result = (new ListingCategorySerializer($this->makeMediaUrlGenerator()))->serialize($this->makeCategory());
+        $result = (new ListingCategorySerializer($this->makeDocumentUrlGenerator()))->serialize($this->makeCategory());
 
         self::assertSame(1, $result['id']);
         self::assertNull($result['parentId']);
@@ -79,26 +79,26 @@ final class ListingCategorySerializerTest extends TestCase
     public function testSerializeWithParentReturnsParentId(): void
     {
         $parent = $this->makeCategory(id: 5);
-        $result = (new ListingCategorySerializer($this->makeMediaUrlGenerator()))->serialize($this->makeCategory(parent: $parent));
+        $result = (new ListingCategorySerializer($this->makeDocumentUrlGenerator()))->serialize($this->makeCategory(parent: $parent));
 
         self::assertSame(5, $result['parentId']);
     }
 
     public function testSerializeFlagsHasChildren(): void
     {
-        $result = (new ListingCategorySerializer($this->makeMediaUrlGenerator()))->serialize($this->makeCategory(hasChildren: true));
+        $result = (new ListingCategorySerializer($this->makeDocumentUrlGenerator()))->serialize($this->makeCategory(hasChildren: true));
 
         self::assertTrue($result['hasChildren']);
     }
 
     public function testSerializeIncludesImageWhenPresent(): void
     {
-        $image = $this->createStub(MediaInterface::class);
+        $image = $this->createStub(DocumentInterface::class);
         $image->method('getId')->willReturn(99);
-        $image->method('getPath')->willReturn('photo.jpg');
+        $image->method('getFilePath')->willReturn('photo.jpg');
         $image->method('getAlt')->willReturn('Cover photo');
 
-        $result = (new ListingCategorySerializer($this->makeMediaUrlGenerator()))->serialize($this->makeCategory(image: $image));
+        $result = (new ListingCategorySerializer($this->makeDocumentUrlGenerator()))->serialize($this->makeCategory(image: $image));
 
         self::assertSame(99, $result['image']['id']);
         self::assertSame('/uploads/photo.jpg', $result['image']['url']);
@@ -112,7 +112,7 @@ final class ListingCategorySerializerTest extends TestCase
             'en' => $this->makeTranslation('en', 'Jewelry', 'jewelry'),
         ];
 
-        $result = (new ListingCategorySerializer($this->makeMediaUrlGenerator()))->serialize($this->makeCategory(translations: $translations));
+        $result = (new ListingCategorySerializer($this->makeDocumentUrlGenerator()))->serialize($this->makeCategory(translations: $translations));
 
         self::assertArrayHasKey('fr', $result['translations']);
         self::assertArrayHasKey('en', $result['translations']);

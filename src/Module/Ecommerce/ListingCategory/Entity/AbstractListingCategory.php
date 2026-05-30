@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\ListingCategory\Entity;
 
 use Aurora\Core\Timestampable\TimestampableTrait;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\MappedSuperclass]
@@ -21,9 +21,9 @@ abstract class AbstractListingCategory implements ListingCategoryInterface
     #[ORM\Column(options: ['default' => 0])]
     protected int $position = 0;
 
-    #[ORM\ManyToOne(targetEntity: MediaInterface::class)]
+    #[ORM\ManyToOne(targetEntity: DocumentInterface::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    protected ?MediaInterface $image = null;
+    protected ?DocumentInterface $image = null;
 
     #[ORM\Column(options: ['default' => true])]
     protected bool $isVisible = true;
@@ -52,12 +52,12 @@ abstract class AbstractListingCategory implements ListingCategoryInterface
         return $this;
     }
 
-    public function getImage(): ?MediaInterface
+    public function getImage(): ?DocumentInterface
     {
         return $this->image;
     }
 
-    public function setImage(?MediaInterface $image): static
+    public function setImage(?DocumentInterface $image): static
     {
         $this->image = $image;
 

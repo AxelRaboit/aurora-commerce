@@ -16,7 +16,7 @@ use Aurora\Module\Ecommerce\ListingTag\Repository\ListingTagRepository;
 use Aurora\Module\Ecommerce\Setting\EcommerceSettingEnum;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
 use Aurora\Module\Erp\Product\Repository\ProductRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -29,7 +29,7 @@ class ListingManager implements ListingManagerInterface
         protected readonly EntityManagerInterface $entityManager,
         protected readonly ListingRepository $listingRepository,
         protected readonly ProductRepository $productRepository,
-        protected readonly MediaRepository $mediaRepository,
+        protected readonly DocumentRepository $documentRepository,
         protected readonly ListingCategoryRepository $listingCategoryRepository,
         protected readonly ListingTagRepository $listingTagRepository,
         protected readonly AuditLogger $auditLogger,
@@ -90,7 +90,7 @@ class ListingManager implements ListingManagerInterface
         $listing->setSeoTitle($input->getSeoTitle());
         $listing->setSeoDescription($input->getSeoDescription());
         $listing->setFeaturedImage(
-            null !== $input->getFeaturedImageId() ? $this->mediaRepository->find($input->getFeaturedImageId()) : null,
+            null !== $input->getFeaturedImageId() ? $this->documentRepository->find($input->getFeaturedImageId()) : null,
         );
         $this->applyCategories($listing, $input);
         $this->applyTags($listing, $input);

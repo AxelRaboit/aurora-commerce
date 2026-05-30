@@ -8,7 +8,7 @@ use Aurora\Core\Timestampable\TimestampableInterface;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryInterface;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagInterface;
 use Aurora\Module\Erp\Product\Entity\ProductInterface;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use Doctrine\Common\Collections\Collection;
 
 interface ListingInterface extends TimestampableInterface
@@ -33,9 +33,9 @@ interface ListingInterface extends TimestampableInterface
 
     public function setMarketingDescription(?string $marketingDescription): static;
 
-    public function getFeaturedImage(): ?MediaInterface;
+    public function getFeaturedImage(): ?DocumentInterface;
 
-    public function setFeaturedImage(?MediaInterface $featuredImage): static;
+    public function setFeaturedImage(?DocumentInterface $featuredImage): static;
 
     public function isVisibleOnShop(): bool;
 

@@ -229,6 +229,7 @@ function onDragEnd() {
 
                 <AppImagePickerField
                     v-model="formImage"
+                    source="document"
                     :label="t('backend.ecommerce.listing_categories.image')"
                 />
 
