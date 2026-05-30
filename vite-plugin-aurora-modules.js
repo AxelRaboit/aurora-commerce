@@ -19,6 +19,10 @@ import path from "path";
 const VIRTUAL_ID = "virtual:aurora-vendor-modules";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
 
+// Side-effect boot hooks (*.register.js) of vendored module packages, eager.
+const BOOT_ID = "virtual:aurora-vendor-boot";
+const RESOLVED_BOOT = "\0" + BOOT_ID;
+
 // `aurora-personal-finance` → `personalfinance` (matches the lowercased
 // PascalCase module key used by the monorepo glob, e.g. Module/PersonalFinance
 // → `personalfinance`). Strip the `aurora-` prefix and all dashes.
@@ -43,9 +47,9 @@ function moduleKeyForFile(pkg, pkgRoot, file) {
     return moduleKeyFromPackage(pkg);
 }
 
-// Collect every assets/**/*.vue file under a package dir (any depth of feature
-// folders before `assets/`, mirroring the monorepo `**/assets/**` convention).
-function collectVueFiles(dir, acc = []) {
+// Collect every assets/**/*<suffix> file under a package dir (any depth of
+// feature folders before `assets/`, mirroring the monorepo `**/assets/**`).
+function collectFiles(dir, suffix, acc = []) {
     let entries;
     try {
         entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -57,9 +61,9 @@ function collectVueFiles(dir, acc = []) {
         if (entry.isDirectory()) {
             if (entry.name === "node_modules" || entry.name === ".git")
                 continue;
-            collectVueFiles(full, acc);
+            collectFiles(full, suffix, acc);
         } else if (
-            entry.name.endsWith(".vue") &&
+            entry.name.endsWith(suffix) &&
             full.includes(`${path.sep}assets${path.sep}`)
         ) {
             acc.push(full);
@@ -77,43 +81,63 @@ function exposedKey(moduleKey, file) {
     return `./${moduleKey}/${rest}`;
 }
 
+// Sibling aurora-* package dirs next to aurora-core (vendor/axelraboit/aurora-*),
+// excluding aurora-core itself. Returns null in the monorepo (not under vendor/).
+function vendoredSiblings(packageDir) {
+    if (!packageDir.split(path.sep).includes("vendor")) return null;
+
+    const orgDir = path.resolve(packageDir, "..");
+    try {
+        return fs
+            .readdirSync(orgDir, { withFileTypes: true })
+            .filter(
+                (e) =>
+                    e.isDirectory() &&
+                    /^aurora-/.test(e.name) &&
+                    e.name !== "aurora-core",
+            )
+            .map((e) => path.join(orgDir, e.name));
+    } catch {
+        return [];
+    }
+}
+
 export function auroraVendorModules({ packageDir }) {
     return {
         name: "aurora-vendor-modules",
         resolveId(id) {
             if (id === VIRTUAL_ID) return RESOLVED_ID;
+            if (id === BOOT_ID) return RESOLVED_BOOT;
             return null;
         },
         load(id) {
-            if (id !== RESOLVED_ID) return null;
+            if (id !== RESOLVED_ID && id !== RESOLVED_BOOT) return null;
 
-            // Only active when aurora-core is itself installed under a vendor/
-            // dir (real client build). Monorepo dev → empty map (no-op).
-            const inVendor = packageDir.split(path.sep).includes("vendor");
-            if (!inVendor) return "export default {};";
+            const siblings = vendoredSiblings(packageDir);
 
-            // Sibling packages live next to aurora-core: vendor/axelraboit/aurora-*
-            const orgDir = path.resolve(packageDir, "..");
-            let siblings;
-            try {
-                siblings = fs
-                    .readdirSync(orgDir, { withFileTypes: true })
-                    .filter(
-                        (e) =>
-                            e.isDirectory() &&
-                            /^aurora-/.test(e.name) &&
-                            e.name !== "aurora-core",
-                    )
-                    .map((e) => e.name);
-            } catch {
-                siblings = [];
+            // Monorepo dev → no-op (modules come from src/Module via app.js globs).
+            if (siblings === null) {
+                return id === RESOLVED_BOOT ? "" : "export default {};";
             }
 
+            // Boot module: eager side-effect imports of every *.register.js.
+            if (id === RESOLVED_BOOT) {
+                const imports = [];
+                for (const pkgRoot of siblings) {
+                    for (const file of collectFiles(pkgRoot, ".register.js")) {
+                        imports.push(
+                            `import ${JSON.stringify(file.split(path.sep).join("/"))};`,
+                        );
+                    }
+                }
+                return imports.join("\n");
+            }
+
+            // Vue components: lazy map keyed ./<module>/<rest>.
             const lines = [];
-            for (const pkg of siblings) {
-                const pkgRoot = path.join(orgDir, pkg);
-                const files = collectVueFiles(pkgRoot);
-                for (const file of files) {
+            for (const pkgRoot of siblings) {
+                const pkg = path.basename(pkgRoot);
+                for (const file of collectFiles(pkgRoot, ".vue")) {
                     const moduleKey = moduleKeyForFile(pkg, pkgRoot, file);
                     const key = exposedKey(moduleKey, file);
                     const importPath = file.split(path.sep).join("/");

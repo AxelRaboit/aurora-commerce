@@ -12,6 +12,18 @@ import vendorModules from "virtual:aurora-vendor-modules";
 import "./shared/utils/loader.js";
 import "./css/app.css";
 
+// Module boot hooks: a module may ship `*.register.js` files (e.g. a settings
+// tab registration) that run side effects at boot — so aurora-core never imports
+// module components directly. Eager-loaded here, before any Vue app mounts.
+// Monorepo + client modules via glob; vendored module packages via the virtual
+// boot module (see vite-plugin-aurora-modules.js). Bare call expressions: the
+// returned maps are unused, only the side effects matter.
+import "virtual:aurora-vendor-boot";
+import.meta.glob("../../Module/**/assets/**/*.register.js", { eager: true });
+import.meta.glob("@client/src/Module/**/assets/**/*.register.js", {
+    eager: true,
+});
+
 document.addEventListener("vue:before-mount", (event) => {
     const locale = document.documentElement.lang || "fr";
     event.detail.app.use(createAppI18n(locale));

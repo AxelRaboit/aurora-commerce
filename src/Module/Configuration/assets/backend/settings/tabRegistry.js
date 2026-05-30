@@ -2,7 +2,6 @@ import { markRaw } from "vue";
 
 import NavigationTab from "@configuration/backend/settings/tabs/NavigationTab.vue";
 import AppearanceTab from "@configuration/backend/settings/tabs/AppearanceTab.vue";
-import AssistantSettingsTab from "@assistant/backend/settings/AssistantSettingsTab.vue";
 
 /**
  * Registry mapping a tab's `componentName` (declared by a
@@ -46,4 +45,5 @@ export function getSettingsTabComponent(name) {
 
 registerSettingsTabComponent("navigation", NavigationTab);
 registerSettingsTabComponent("appearance", AppearanceTab);
-registerSettingsTabComponent("assistant-settings", AssistantSettingsTab);
+// Module tabs (e.g. assistant-settings) self-register via their module's
+// *.register.js boot hook — aurora-core no longer imports module components.
