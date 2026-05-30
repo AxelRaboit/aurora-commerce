@@ -113,14 +113,26 @@ return static function (ContainerConfigurator $c): void {
 Le `AuroraToolsBundle::loadExtension()` importe ce fichier. **Côté `aurora-core`**,
 au split, retirer Tools du glob central (déjà simulé par `$extractedModules`).
 
-### 2.3 `config/routes.php` — **inutile** (validé POC)
+### 2.3 `config/routes.php` — dépend du routing de l'app cliente (nuance install réelle)
 
-Pas de `routes.php` dans le package. Le loader `routing.controllers`
-(`config/routes.yaml` de l'app cliente) découvre les contrôleurs **via leur
-enregistrement comme services** (faits par le `services.php` du module), pas par
-glob de répertoire. Vérifié : les routes `backend_tools_*` résolvent alors que
-Tools est exclu du glob central. Un package back-only n'embarque donc que
-`composer.json` + `config/services.php`.
+**Cas service-based** (`routing.controllers` dans `config/routes.yaml`) : pas de
+`routes.php` nécessaire — le loader découvre les contrôleurs via leur
+enregistrement comme services (faits par le `services.php` du module). Validé en
+monorepo.
+
+**Cas directory-scanning** (ce que fait `aurora-client` réel) : le client liste
+des `resource: '../vendor/axelraboit/aurora/src/'` `type: attribute`. Ce scan est
+**path-based** → il ne voit PAS un module dans un autre package. Il faut alors
+**une entrée par package extrait** dans le `config/routes.yaml` du client :
+
+```yaml
+aurora_tools:
+    resource: '../vendor/axelraboit/aurora-tools/'
+    type: attribute
+```
+
+(Validé : sans cette entrée, `debug:router` ne montre aucune route `backend_tools_*` ;
+avec, toutes résolvent.) C'est une étape de **migration côté client** à documenter.
 
 ## 3. Outillage split
 
