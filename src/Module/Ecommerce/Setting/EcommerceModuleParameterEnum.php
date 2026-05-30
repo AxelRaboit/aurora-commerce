@@ -105,14 +105,15 @@ enum EcommerceModuleParameterEnum: string implements ApplicationParameterEnumInt
 
     /**
      * Structural parent for dashboard grouping, null for top-level toggles.
-     * Both Listings and Orders are grouped under Backend (Orders' display
-     * parent is Backend, not its cascade parent Listings).
+     * Listings, Orders and the public-shop Frontend all nest under Backend
+     * (the module card) — even though Frontend's CASCADE parent is the ERP
+     * backend, its DISPLAY home is the Ecommerce module.
      */
     private function getDisplayParent(): ?string
     {
         return match ($this) {
-            self::Listings, self::Orders => self::Backend->value,
-            self::Backend, self::Frontend => null,
+            self::Listings, self::Orders, self::Frontend => self::Backend->value,
+            self::Backend => null,
         };
     }
 
