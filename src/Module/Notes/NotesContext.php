@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Notes;
 
 use Aurora\Core\Module\Service\ModuleAccessChecker;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Notes\Setting\NotesModuleParameterEnum;
 
 final readonly class NotesContext
 {
@@ -13,21 +13,21 @@ final readonly class NotesContext
 
     public function isBackendEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::NotesBackend);
+        return $this->moduleAccessChecker->isEnabled(NotesModuleParameterEnum::Backend->value);
     }
 
     public function isMarkdownEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::NotesMarkdown);
+        return $this->moduleAccessChecker->isEnabled(NotesModuleParameterEnum::Markdown->value);
     }
 
     public function isBlockEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::NotesBlock);
+        return $this->moduleAccessChecker->isEnabled(NotesModuleParameterEnum::Block->value);
     }
 
     public function isPostItEnabled(): bool
     {
-        return $this->moduleAccessChecker->isEnabled(ModuleParameterEnum::NotesPostIt);
+        return $this->moduleAccessChecker->isEnabled(NotesModuleParameterEnum::PostIt->value);
     }
 }

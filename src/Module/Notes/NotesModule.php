@@ -9,7 +9,7 @@ use Aurora\Core\Module\Contract\ModuleToggleProviderInterface;
 use Aurora\Core\Module\Nav\NavItem;
 use Aurora\Core\Module\Nav\NavPermission;
 use Aurora\Core\Module\Nav\NavSection;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
+use Aurora\Module\Notes\Setting\NotesModuleParameterEnum;
 
 final readonly class NotesModule implements ModuleInterface, ModuleToggleProviderInterface
 {
@@ -106,10 +106,10 @@ final readonly class NotesModule implements ModuleInterface, ModuleToggleProvide
     public function getToggles(): array
     {
         return [
-            ModuleParameterEnum::NotesBackend->toToggle(),
-            ModuleParameterEnum::NotesMarkdown->toToggle(),
-            ModuleParameterEnum::NotesBlock->toToggle(),
-            ModuleParameterEnum::NotesPostIt->toToggle(),
+            NotesModuleParameterEnum::Backend->toToggle(),
+            NotesModuleParameterEnum::Markdown->toToggle(),
+            NotesModuleParameterEnum::Block->toToggle(),
+            NotesModuleParameterEnum::PostIt->toToggle(),
         ];
     }
 }

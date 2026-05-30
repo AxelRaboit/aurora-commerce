@@ -26,7 +26,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case PlanningBackend = 'modules_planning_backend';
     case HrBackend = 'modules_hr_backend';
     case ToolsBackend = 'modules_tools_backend';
-    case NotesBackend = 'modules_notes_backend';
     case PersonalFinanceBackend = 'modules_personal_finance_backend';
     case AssistantBackend = 'modules_assistant_backend';
 
@@ -99,10 +98,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
     case ToolsVault = 'modules_tools_vault';
     case ToolsPasswordGenerator = 'modules_tools_password_generator';
 
-    // Sub-modules — Notes
-    case NotesMarkdown = 'modules_notes_markdown';
-    case NotesBlock = 'modules_notes_block';
-    case NotesPostIt = 'modules_notes_post_it';
 
     // Sub-modules — Assistant
     case AssistantChat = 'modules_assistant_chat';
@@ -182,10 +177,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectProjects => 'backend.nav.projects',
             self::ToolsVault => 'backend.nav.vault',
             self::ToolsPasswordGenerator => 'backend.nav.password_generator',
-            self::NotesBackend => 'backend.modules.notes_backend',
-            self::NotesMarkdown => 'backend.nav.notes_markdown',
-            self::NotesBlock => 'backend.nav.notes_block',
-            self::NotesPostIt => 'backend.nav.notes_post_it',
             self::AssistantBackend => 'backend.modules.assistant_backend',
             self::AssistantChat => 'backend.nav.assistant',
             self::AssistantMountPoints => 'backend.nav.assistant_mount_points',
@@ -260,10 +251,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::ProjectProjects => 'backend.nav.projects_description',
             self::ToolsVault => 'backend.nav.vault_description',
             self::ToolsPasswordGenerator => 'backend.nav.password_generator_description',
-            self::NotesBackend => 'backend.modules.notes_backend_description',
-            self::NotesMarkdown => 'backend.nav.notes_markdown_description',
-            self::NotesBlock => 'backend.nav.notes_block_description',
-            self::NotesPostIt => 'backend.nav.notes_post_it_description',
             self::AssistantBackend => 'backend.modules.assistant_backend_description',
             self::AssistantChat => 'backend.nav.assistant_description',
             self::AssistantMountPoints => 'backend.nav.assistant_mount_points_description',
@@ -322,7 +309,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningPlannings => self::PlanningBackend,
             self::ProjectProjects => self::ProjectBackend,
             self::ToolsVault, self::ToolsPasswordGenerator => self::ToolsBackend,
-            self::NotesMarkdown, self::NotesBlock, self::NotesPostIt => self::NotesBackend,
             self::AssistantChat, self::AssistantMountPoints => self::AssistantBackend,
             self::PersonalFinanceWallets, self::PersonalFinanceCategories, self::PersonalFinanceTransactions, self::PersonalFinanceBudgets, self::PersonalFinanceGoals, self::PersonalFinanceRecurring, self::PersonalFinanceCategorization, self::PersonalFinanceOverview, self::PersonalFinanceStatistics, self::PersonalFinanceBudgetPresets, self::PersonalFinanceImport => self::PersonalFinanceBackend,
             default => null,
@@ -391,10 +377,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             // Vault sub-modules
             self::ToolsVault => self::ToolsBackend->value,
             self::ToolsPasswordGenerator => self::ToolsBackend->value,
-            // Notes sub-modules
-            self::NotesMarkdown => self::NotesBackend->value,
-            self::NotesBlock => self::NotesBackend->value,
-            self::NotesPostIt => self::NotesBackend->value,
             self::AssistantChat => self::AssistantBackend->value,
             self::AssistantMountPoints => self::AssistantBackend->value,
             // PersonalFinance sub-modules
@@ -472,7 +454,6 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             self::PlanningBackend => 'planning',
             self::HrBackend => 'hr',
             self::ToolsBackend => 'tools',
-            self::NotesBackend => 'notes',
             self::PersonalFinanceBackend => 'personal_finance',
             self::AssistantBackend => 'assistant',
             default => null,
