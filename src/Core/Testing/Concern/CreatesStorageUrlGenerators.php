@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Core\Testing\Concern;
 
 use Aurora\Core\Storage\Service\UploadUrlGenerator;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
 use Aurora\Module\Platform\User\Service\UserProfilePhotoUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -37,6 +38,11 @@ trait CreatesStorageUrlGenerators
     private function makeUploadUrlGenerator(): UploadUrlGenerator
     {
         return new UploadUrlGenerator($this->makeStubbedUrlGenerator());
+    }
+
+    private function makeDocumentUrlGenerator(): DocumentUrlGenerator
+    {
+        return new DocumentUrlGenerator($this->makeStubbedUrlGenerator());
     }
 
     private function makeUserProfilePhotoUrlGenerator(): UserProfilePhotoUrlGenerator

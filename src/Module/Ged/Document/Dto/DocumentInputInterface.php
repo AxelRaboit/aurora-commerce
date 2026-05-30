@@ -40,4 +40,8 @@ interface DocumentInputInterface
     public function getTagIds(): array;
 
     public function getFolderId(): ?int;
+
+    public function getFocalX(): ?float;
+
+    public function getFocalY(): ?float;
 }

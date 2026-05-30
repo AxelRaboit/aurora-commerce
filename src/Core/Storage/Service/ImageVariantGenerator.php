@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Media\Library\Service;
+namespace Aurora\Core\Storage\Service;
 
 use Aurora\Core\Storage\Enum\MimeTypeEnum;
 use GdImage;

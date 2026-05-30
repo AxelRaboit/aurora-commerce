@@ -7,6 +7,7 @@ namespace Aurora\Tests\Unit\Module\Ged\Document\Manager;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Core\Storage\Service\ImageCropper;
+use Aurora\Core\Storage\Service\ImageVariantGenerator;
 use Aurora\Core\Storage\Service\PdfThumbnailGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
@@ -79,6 +80,7 @@ final class DocumentManagerTest extends TestCase
                 new ImageCropper(new Filesystem()),
                 $this->workDir,
             ),
+            new ImageVariantGenerator(new Filesystem(), $this->workDir),
         );
     }
 

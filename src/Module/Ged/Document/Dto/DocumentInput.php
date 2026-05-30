@@ -31,6 +31,11 @@ class DocumentInput implements DocumentInputInterface
         public readonly ?string $caption = null,
         public readonly array $tagIds = [],
         public readonly ?int $folderId = null,
+        // Focal point — normalized [0, 1] coordinates from the editor's
+        // click-on-image picker. `null` = center. Variants stay server-owned
+        // (regenerated on upload/crop), so they are NOT carried by the DTO.
+        public readonly ?float $focalX = null,
+        public readonly ?float $focalY = null,
     ) {}
 
     public function getTitle(): string
@@ -111,5 +116,15 @@ class DocumentInput implements DocumentInputInterface
     public function getFolderId(): ?int
     {
         return $this->folderId;
+    }
+
+    public function getFocalX(): ?float
+    {
+        return $this->focalX;
+    }
+
+    public function getFocalY(): ?float
+    {
+        return $this->focalY;
     }
 }

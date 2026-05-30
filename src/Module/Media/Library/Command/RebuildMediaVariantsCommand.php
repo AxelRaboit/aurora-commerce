@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Media\Library\Command;
 
+use Aurora\Core\Storage\Service\ImageVariantGenerator;
 use Aurora\Module\Media\Library\Repository\MediaRepository;
-use Aurora\Module\Media\Library\Service\ImageVariantGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

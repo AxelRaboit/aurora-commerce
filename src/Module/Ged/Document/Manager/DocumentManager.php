@@ -6,6 +6,7 @@ namespace Aurora\Module\Ged\Document\Manager;
 
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Storage\Enum\MimeTypeEnum;
+use Aurora\Core\Storage\Service\ImageVariantGenerator;
 use Aurora\Module\Configuration\Setting\Enum\ApplicationParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
@@ -40,6 +41,7 @@ class DocumentManager implements DocumentManagerInterface
         protected readonly DocumentVersionRepository $versionRepository,
         protected readonly DocumentRepository $documentRepository,
         protected readonly GedDocumentUploader $uploader,
+        protected readonly ImageVariantGenerator $variantGenerator,
     ) {}
 
     public function create(DocumentInputInterface $input): DocumentInterface
@@ -48,6 +50,7 @@ class DocumentManager implements DocumentManagerInterface
         $prefix = $this->settingRepository->getOrDefault(GedSettingEnum::DocumentPrefix);
         $document->setReference($this->sequenceGenerator->next($prefix));
         $this->applyInput($document, $input);
+        $this->regenerateVariantsIfImage($document);
         $this->entityManager->persist($document);
         $this->entityManager->flush();
 
@@ -69,8 +72,17 @@ class DocumentManager implements DocumentManagerInterface
         // relative path on a new upload (timestamped + unique slug), so a
         // string compare is enough to detect a swap.
         $fileChanged = null !== $newFilePath && $newFilePath !== $currentFilePath;
+        $previousVariants = $document->getVariants();
 
         $this->applyInput($document, $input);
+
+        if ($fileChanged) {
+            // Old variants are orphaned by the new file path — drop them on
+            // disk before re-encoding the new source.
+            $this->variantGenerator->deleteVariants($previousVariants);
+            $this->regenerateVariantsIfImage($document);
+        }
+
         $this->entityManager->flush();
 
         if ($fileChanged) {
@@ -83,6 +95,8 @@ class DocumentManager implements DocumentManagerInterface
     public function delete(DocumentInterface $document): void
     {
         $this->auditDeleted($document);
+
+        $this->variantGenerator->deleteVariants($document->getVariants());
 
         $this->entityManager->remove($document);
         $this->entityManager->flush();
@@ -128,6 +142,7 @@ class DocumentManager implements DocumentManagerInterface
         $documents = $this->documentRepository->findBy(['id' => $ids]);
         foreach ($documents as $document) {
             $this->auditDeleted($document);
+            $this->variantGenerator->deleteVariants($document->getVariants());
             $this->entityManager->remove($document);
         }
 
@@ -161,6 +176,8 @@ class DocumentManager implements DocumentManagerInterface
             return;
         }
 
+        $previousVariants = $document->getVariants();
+
         $document->setFilePath($result['filePath']);
         $document->setFileName($result['fileName']);
         $document->setSize($result['size']);
@@ -169,6 +186,11 @@ class DocumentManager implements DocumentManagerInterface
         // Native images carry no separate thumbnail — the serializer falls
         // back to the file itself, so a stale PDF-style thumbnail must clear.
         $document->setThumbnailPath(null);
+
+        // Old variants point at the pre-crop file path — drop them and
+        // regenerate so srcset/object-fit consumers stay in sync.
+        $this->variantGenerator->deleteVariants($previousVariants);
+        $this->regenerateVariantsIfImage($document);
 
         $this->entityManager->flush();
         $this->recordVersion($document);
@@ -270,6 +292,27 @@ class DocumentManager implements DocumentManagerInterface
         }
 
         $document->setFolder(null !== $input->getFolderId() ? $this->folderRepository->find($input->getFolderId()) : null);
+
+        $document->setFocalX($input->getFocalX());
+        $document->setFocalY($input->getFocalY());
+    }
+
+    /**
+     * Regenerates the responsive variants (thumbnail/medium/large in WebP)
+     * for raster image documents. No-op for non-images, PDFs and missing
+     * files. Called after every filePath swap (create / update / crop).
+     */
+    protected function regenerateVariantsIfImage(DocumentInterface $document): void
+    {
+        $filePath = $document->getFilePath();
+        if (null === $filePath) {
+            $document->setVariants([]);
+
+            return;
+        }
+
+        $variants = $this->variantGenerator->generate($filePath, (string) $document->getMimeType());
+        $document->setVariants($variants);
     }
 
     protected function auditCreated(DocumentInterface $document): void

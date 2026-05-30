@@ -25,3 +25,4 @@
 - [decision_personal_finance_transfer_legs_guard.md](decision_personal_finance_transfer_legs_guard.md) — les transactions avec `transferId` ne peuvent être éditées/supprimées que via `PersonalFinanceTransferService` ; le Manager CRUD lève `DomainException`
 - [reference_module_vocabulary.md](reference_module_vocabulary.md) — vocabulaire de référence : module / section / sous-module / NavItem / sous-domaine / entité (exemple Ecommerce ; sous-module ≠ NavItem)
 - [project_url_namespacing_backlog.md](project_url_namespacing_backlog.md) — décision "namespace TOUTES les routes backend par module" (path + nom, y compris auth/core) + backlog par module (Editorial ✅, reste à faire) + méthode rodée + dette nav-translations dans Editorial/Menu
+- [decision_media_ged_merge_phase_1.md](decision_media_ged_merge_phase_1.md) — Phase 1 du plan Media→GED livrée (2026-05-30) : variants + focal + `DocumentUrlGenerator`. Socle pour migrer les consommateurs Media.

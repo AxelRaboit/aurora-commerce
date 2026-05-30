@@ -33,6 +33,8 @@ class DocumentInputFactory implements DocumentInputFactoryInterface
             caption: Str::trimOrNullFromArray($data, 'caption'),
             tagIds: $tagIds,
             folderId: isset($data['folderId']) ? (int) $data['folderId'] : null,
+            focalX: isset($data['focalX']) ? (float) $data['focalX'] : null,
+            focalY: isset($data['focalY']) ? (float) $data['focalY'] : null,
         );
     }
 }

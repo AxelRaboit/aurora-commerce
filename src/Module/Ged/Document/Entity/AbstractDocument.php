@@ -85,6 +85,28 @@ abstract class AbstractDocument implements DocumentInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $caption = null;
 
+    /**
+     * Focal point — normalized [0, 1] coordinates anchoring the visually-important
+     * area of an image. Consumed by `DocumentUrlGenerator::focalPositionCss()` to
+     * drive `object-position` in the frontend renderer. `null` = center.
+     */
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
+    protected ?float $focalX = null;
+
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
+    protected ?float $focalY = null;
+
+    /**
+     * Map of variant name → relative path under var/uploads/ (e.g.
+     * `['thumbnail' => 'ged/.../variants/thumbnail/foo.webp', 'medium' => …]`).
+     * Generated server-side at upload / crop for raster images. Empty for
+     * non-image documents.
+     *
+     * @var array<string, string>
+     */
+    #[ORM\Column(type: Types::JSON, options: ['default' => '{}'])]
+    protected array $variants = [];
+
     /** @var Collection<int, DocumentTagInterface> */
     protected Collection $tags;
 
@@ -313,6 +335,44 @@ abstract class AbstractDocument implements DocumentInterface
     public function setFolder(?DocumentFolderInterface $folder): static
     {
         $this->folder = $folder;
+
+        return $this;
+    }
+
+    public function getFocalX(): ?float
+    {
+        return $this->focalX;
+    }
+
+    public function setFocalX(?float $focalX): static
+    {
+        $this->focalX = $focalX;
+
+        return $this;
+    }
+
+    public function getFocalY(): ?float
+    {
+        return $this->focalY;
+    }
+
+    public function setFocalY(?float $focalY): static
+    {
+        $this->focalY = $focalY;
+
+        return $this;
+    }
+
+    /** @return array<string, string> */
+    public function getVariants(): array
+    {
+        return $this->variants;
+    }
+
+    /** @param array<string, string> $variants */
+    public function setVariants(array $variants): static
+    {
+        $this->variants = $variants;
 
         return $this;
     }
