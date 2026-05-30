@@ -77,9 +77,9 @@ cette mémoire avec l'état.
 | — | J2 — Audit technique parallélisé | Bloqué (J1.5) |
 | — | Gate 2 — Décision stratégie assets | Bloqué (J2) |
 | 2026-05-30 | **J3 — POC + rollout bundles (8 leaves)** | ✅ **FAIT** — `AbstractAuroraModuleBundle` (core) + **8 `Aurora<X>Bundle`** (Tools, Assistant, Crm, Editorial, Hr, Notes, PersonalFinance, Planning). AuroraBundle les exclut tous (RTE+use retirés) et ne pilote plus que Core + 5 modules couplés. Preuve toggle bundle = module on/off. 189 entités mappées, 2747 tests verts. Voir `audit/poc_tools_bundle.md`. Reste pour package Composer complet : composer.json + services/routes embarqués + `ModuleParameterEnum` extensible + splitsh. |
-| — | Gate 3 — Go / No-Go final | Bloqué (J3) |
-| — | J4 — Planification rollout | Bloqué (Gate 3) |
-| — | J5 — Exécution rollout | Bloqué (J4) |
+| — | Gate 3 — Go / No-Go final | de facto **Go** (chantier mené jusqu'au bout in-monorepo) |
+| 2026-05-30 | **J4 — Planification packaging** | ✅ **Playbook posé** (`audit/packaging_playbook.md`) : anatomie d'un package (composer.json + `config/{services,routes}` dans le subtree), templates, splitsh, ordre (Tools POC d'abord), validation Phase 9.3, migrations côté client, transition Option C. **Le services/routes par package se câble au split réel, package par package en isolation** (le monorepo ne peut pas — finding autoconfigure-merge). |
+| — | J5 — Exécution rollout | 🔜 prérequis **infra** (hors-code) : `splitsh-lite` (absent) + repos GitHub enfants + **Gate 2 assets Vue** (toujours ouvert) pour les packages avec front. |
 | — | J6 — Bascule officielle | Bloqué (J5) |
 
 ### 🔑 Décision Gate 1 — graphe en étoile (2026-05-30)
