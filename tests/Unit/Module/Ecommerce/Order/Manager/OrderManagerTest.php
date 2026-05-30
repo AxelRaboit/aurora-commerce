@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Tests\Unit\Module\Ecommerce\Order\Manager;
 
+use Aurora\Core\Contact\Event\ContactSignalEvent;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
@@ -14,6 +15,7 @@ use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Order\Dto\CheckoutInputInterface;
 use Aurora\Module\Ecommerce\Order\Entity\AbstractOrder;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
+use Aurora\Module\Ecommerce\Order\Event\OrderCreatedEvent;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
 use Aurora\Module\Ecommerce\Order\Manager\OrderManager;
@@ -177,14 +179,35 @@ final class OrderManagerTest extends TestCase
         self::assertSame('fr', $order->getLocale());
     }
 
-    public function testCreateFromCartDispatchesOrderCreatedEvent(): void
+    public function testCreateFromCartDispatchesOrderCreatedAndContactSignalEvents(): void
     {
         $cart = $this->makeCart();
         $cart->addItem($this->makeCartItem($this->makeListing(product: $this->makeProduct()), quantity: 1));
 
-        $this->eventDispatcher->expects(self::once())->method('dispatch');
+        $dispatched = [];
+        $this->eventDispatcher->expects(self::exactly(2))
+            ->method('dispatch')
+            ->willReturnCallback(static function (object $event) use (&$dispatched): object {
+                $dispatched[] = $event;
 
-        $this->manager->createFromCart($cart, $this->makeCheckoutInput(), null, 'fr');
+                return $event;
+            });
+
+        $this->manager->createFromCart(
+            $cart,
+            $this->makeCheckoutInput(email: 'buyer@x.com', name: 'Alice'),
+            null,
+            'fr',
+        );
+
+        // Ecommerce's own event first, then the decoupled cross-module signal
+        // a CRM (if installed) listens to — carries the buyer's contact data.
+        self::assertInstanceOf(OrderCreatedEvent::class, $dispatched[0]);
+        self::assertInstanceOf(ContactSignalEvent::class, $dispatched[1]);
+        self::assertSame('buyer@x.com', $dispatched[1]->getEmail());
+        self::assertSame('Alice', $dispatched[1]->getFullName());
+        self::assertSame('order', $dispatched[1]->getSourceKey());
+        self::assertSame(['client'], $dispatched[1]->getTagSlugs());
     }
 
     public function testMarkPaidIsNoopWhenOrderNotPending(): void

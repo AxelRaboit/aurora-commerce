@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Crm\Listener;
 
+use Aurora\Core\Contact\Event\ContactSignalEvent;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Core\Sequence\SequencePrefixEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
@@ -14,25 +15,29 @@ use Aurora\Module\Crm\Contact\Repository\ContactRepository;
 use Aurora\Module\Crm\ContactTag\Entity\ContactTagInterface;
 use Aurora\Module\Crm\ContactTag\Repository\ContactTagRepository;
 use Aurora\Module\Crm\Setting\CrmSettingEnum;
-use Aurora\Module\Ecommerce\Order\Event\OrderCreatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 /**
- * Creates (or enriches) a CRM Contact when an order is created.
+ * Creates (or enriches) a CRM Contact from a cross-module
+ * {@see ContactSignalEvent} (ecommerce order, editorial form submission, …).
  *
- * Opt-in via `crm_sync_orders` application parameter — disable in pure B2C
- * setups where every buyer should not become a CRM contact.
+ * Decoupled by design: this listener depends only on the core event, never
+ * on the producing module — so Ecommerce/Editorial and Crm split into
+ * separate Composer packages without a sideways dependency.
  *
  * Match strategy: locate an existing contact by email; if found, enrich
- * missing fields only. Otherwise create one with `source = Order` and a
- * `client` tag.
+ * missing fields and add missing tags only; otherwise create one.
+ *
+ * Source-specific gating:
+ *  - `order` signals are opt-in via the `crm_sync_orders` setting (a pure
+ *    B2C shop may not want every buyer as a contact);
+ *  - other sources are assumed already gated by their producer (e.g. a
+ *    form's `crmSync` flag), so they always apply.
  */
 #[AsEventListener]
-final readonly class OrderCrmSyncListener
+final readonly class ContactSignalListener
 {
-    private const string CLIENT_TAG_SLUG = 'client';
-
     public function __construct(
         private ContactRepository $contactRepository,
         private ContactTagRepository $contactTagRepository,
@@ -41,23 +46,24 @@ final readonly class OrderCrmSyncListener
         private SettingRepository $settingRepository,
     ) {}
 
-    public function __invoke(OrderCreatedEvent $event): void
+    public function __invoke(ContactSignalEvent $event): void
     {
-        if ('1' !== $this->settingRepository->getOrDefault(CrmSettingEnum::SyncOrders)) {
+        if (ContactSourceEnum::Order->value === $event->getSourceKey()
+            && '1' !== $this->settingRepository->getOrDefault(CrmSettingEnum::SyncOrders)) {
             return;
         }
 
-        $order = $event->getOrder();
-        $email = $order->getEmail();
+        $email = $event->getEmail();
         if ('' === $email) {
             return;
         }
 
-        [$firstName, $lastName] = $this->splitName($order->getName());
+        $source = ContactSourceEnum::tryFrom($event->getSourceKey()) ?? ContactSourceEnum::Manual;
+        [$firstName, $lastName] = $this->splitName($event->getFullName());
+        $phone = $event->getPhone();
+        $tags = $this->resolveTags($event->getTagSlugs());
 
         $contact = $this->contactRepository->findOneBy(['email' => $email]);
-
-        $clientTag = $this->contactTagRepository->findOneBySlug(self::CLIENT_TAG_SLUG);
 
         if (!$contact instanceof ContactInterface) {
             $contact = new Contact();
@@ -65,9 +71,13 @@ final readonly class OrderCrmSyncListener
             $contact->setEmail($email);
             $contact->setFirstName($firstName);
             $contact->setLastName($lastName);
-            $contact->setSource(ContactSourceEnum::Order);
-            if ($clientTag instanceof ContactTagInterface) {
-                $contact->addContactTag($clientTag);
+            if (null !== $phone) {
+                $contact->setPhone($phone);
+            }
+
+            $contact->setSource($source);
+            foreach ($tags as $tag) {
+                $contact->addContactTag($tag);
             }
 
             $this->entityManager->persist($contact);
@@ -87,14 +97,39 @@ final readonly class OrderCrmSyncListener
             $dirty = true;
         }
 
-        if ($clientTag instanceof ContactTagInterface && !$this->hasTag($contact, $clientTag)) {
-            $contact->addContactTag($clientTag);
+        if (null !== $phone && null === $contact->getPhone()) {
+            $contact->setPhone($phone);
             $dirty = true;
+        }
+
+        foreach ($tags as $tag) {
+            if (!$this->hasTag($contact, $tag)) {
+                $contact->addContactTag($tag);
+                $dirty = true;
+            }
         }
 
         if ($dirty) {
             $this->entityManager->flush();
         }
+    }
+
+    /**
+     * @param list<string> $slugs
+     *
+     * @return list<ContactTagInterface>
+     */
+    private function resolveTags(array $slugs): array
+    {
+        $tags = [];
+        foreach ($slugs as $slug) {
+            $tag = $this->contactTagRepository->findOneBySlug($slug);
+            if ($tag instanceof ContactTagInterface) {
+                $tags[] = $tag;
+            }
+        }
+
+        return $tags;
     }
 
     private function hasTag(ContactInterface $contact, ContactTagInterface $tag): bool
@@ -108,7 +143,7 @@ final readonly class OrderCrmSyncListener
         return false;
     }
 
-    /** @return array{string, string} */
+    /** @return array{string, string} [firstName, lastName] */
     private function splitName(string $fullName): array
     {
         $trimmed = mb_trim($fullName);

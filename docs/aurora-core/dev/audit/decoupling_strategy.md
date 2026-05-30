@@ -55,18 +55,28 @@ Une `enum` de valeur (pas de logique module) importée ailleurs.
 → Élimine **11 refs** et le **cycle**. Risque faible (déplacement + maj des
 `use`). À faire **en premier**.
 
-### Catégorie B — Event cross-module → contrat d'event en core
+### Catégorie B — Event cross-module → contrat d'event en core ✅ FAIT (2026-05-30)
 
-Un module écoute un event émis par un autre. Aujourd'hui le Listener
-importe l'event de l'autre module.
+Un module écoutait un event émis par un autre via l'import direct de cet event.
 
-| Arête | Listener | Event écouté | Action |
-|---|---|---|---|
-| Crm→Ecommerce (1) | `OrderCrmSyncListener` | `Ecommerce\Order\Event\OrderCreatedEvent` | **Définir un contrat d'event en core** (`Core\Event\OrderPlacedEventInterface` ou event générique). Ecommerce émet l'event core ; Crm écoute le core. |
-| Crm→Editorial (3) | `FormSubmissionCrmSyncListener` | `Editorial\Form\Event\FormSubmissionCreatedEvent` + `FormInterface` + `FormFieldTypeEnum` | Idem : contrat d'event + interfaces de payload en core. |
+**Réalisé** : un **seul** event core unifie les deux cas (un producteur
+capture des coordonnées → un CRM optionnel les matérialise en contact) :
+`src/Core/Contact/Event/ContactSignalEvent.php` (email, fullName, phone,
+sourceKey, tagSlugs — que des scalaires).
 
-→ Élimine **4 refs**. Pattern Aurora-idiomatique (le projet utilise déjà
-events + providers). Risque faible-moyen.
+| Arête | Avant | Après |
+|---|---|---|
+| ~~Crm→Ecommerce (1)~~ | `OrderCrmSyncListener` ← `OrderCreatedEvent` | Ecommerce `OrderManager` dispatch **aussi** `ContactSignalEvent('order',['client'])` ; Crm écoute le core |
+| ~~Crm→Editorial (3)~~ | `FormSubmissionCrmSyncListener` ← `FormSubmissionCreatedEvent` + `FormInterface` + `FormFieldTypeEnum` | l'extraction (email/name/tel par type de champ) **remonte dans Editorial** `FormManager` (qui possède la taxonomie) ; il dispatch `ContactSignalEvent('form')` si `isCrmSync()` |
+
+Les 2 listeners Crm (`OrderCrmSyncListener`, `FormSubmissionCrmSyncListener`)
+sont **fusionnés** en un seul `ContactSignalListener` qui ne dépend que du
+core. Gating : 'order' reste opt-in via `crm_sync_orders` ; 'form' est gardé
+par le producteur (`isCrmSync`).
+
+→ **Résultat : Crm devient un leaf pur** (plus aucune arête cross-business ;
+grep d'invariant vide). Producteurs Ecommerce/Editorial dispatchent
+toujours ; sans CRM installé l'event est un no-op inoffensif.
 
 ### Catégorie C — Embed / agrégation de features → registry de providers en core
 
@@ -131,9 +141,10 @@ restent **autonomes** (leurs couplages relèvent de A/B/C/D).
 Le découplage suppose d'ajouter ces points d'extension au core. Tous
 suivent la convention Aurora (interface + `#[AsAlias]`/tagged services) :
 
-1. **`Core\Money\Enum\CurrencyEnum`** (déplacé depuis Erp) — cat. A.
-2. **`Core\Event\*`** : contrat(s) d'event générique(s) pour
-   order-placed / form-submitted — cat. B.
+1. **`Core\Money\Enum\CurrencyEnum`** (déplacé depuis Erp) — cat. A. ✅
+2. **`Core\Contact\Event\ContactSignalEvent`** : event générique
+   (email/name/phone/sourceKey/tagSlugs) émis par Ecommerce/Editorial,
+   écouté par Crm — cat. B. ✅
 3. **`Core\Block\BlockProviderInterface`** + registry tagué — cat. C.
 4. **`Core\Dashboard\WidgetProviderInterface`** + registry — cat. C.
 5. **`Core\Search\SearchProviderInterface`** + registry — cat. C.

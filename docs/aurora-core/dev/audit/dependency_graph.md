@@ -117,8 +117,9 @@ inspecté (à compléter en J2 pour les arêtes non vues) :
 | Arête | Refs | Nature | Dureté | Découplage |
 |---|---:|---|---|---|
 | **Erp → Ecommerce** | 1 | `ProductSerializer` lit `EcommerceSettingEnum` | **soft** | Trivial : déplacer l'enum vers Erp ou core → **casse le cycle** |
-| **Crm → Ecommerce** | 1 | `OrderCrmSyncListener` écoute `OrderCreatedEvent` | **soft (event)** | Intégration optionnelle : garder via bridge ou guard « si Ecommerce installé » |
-| **Editorial → Ecommerce** | 3 | `BlocksRenderer` embed un `ListingInterface` dans un post | **soft (feature opt)** | Bloc CMS optionnel ; un client CMS-only ne le charge pas |
+| ~~**Crm → Ecommerce**~~ | 1 | `OrderCrmSyncListener` écoute `OrderCreatedEvent` | **soft (event)** | ✅ **RÉSOLU cat. B** : event core `ContactSignalEvent`, listener fusionné |
+| **Editorial → Ecommerce** | 3 | `BlocksRenderer` embed un `ListingInterface` dans un post | **soft (feature opt)** | Bloc CMS optionnel ; un client CMS-only ne le charge pas (→ cat. C, à faire) |
+| ~~**Crm → Editorial**~~ | 3 | `FormSubmissionCrmSyncListener` ← `FormSubmissionCreatedEvent` | **soft (event)** | ✅ **RÉSOLU cat. B** : extraction remontée dans Editorial, event core `ContactSignalEvent` |
 | **Billing → Crm** | 2 | `Tiers` lié à `CompanyInterface` (relation entité) | **moyen (entité/interface)** | Lien via interface résolu par `resolve_target_entities` ; si Crm absent, relation nullable inutilisée — **à confirmer nullable en J2** |
 | **Ecommerce → Erp** | 15 | `Listing`/`Order` ↔ `Product` (entité) + `CurrencyEnum` (×7) + `ProductRepository` | **DURE (sémantique)** | `CurrencyEnum` → déplacer en **core** ; le reste (Product) est intrinsèque → Ecommerce **require** Erp |
 | **Project → Crm** | 16 | `Company/Contact/Deal Interface` sur `AbstractProject` (liens entité opt.) + repos hydratation | **MOYENNE** | Via interfaces (résolu par resolve_target_entities) ; nullable → soit `require`, soit bridge `aurora-project-crm` |

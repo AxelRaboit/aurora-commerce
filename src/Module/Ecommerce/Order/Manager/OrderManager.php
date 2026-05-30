@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aurora\Module\Ecommerce\Order\Manager;
 
+use Aurora\Core\Contact\Event\ContactSignalEvent;
 use Aurora\Core\Sequence\SequenceGenerator;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
@@ -108,6 +109,15 @@ class OrderManager implements OrderManagerInterface
         ]);
 
         $this->eventDispatcher->dispatch(new OrderCreatedEvent($order));
+
+        // Cross-module signal: a CRM (if installed) may turn the buyer into a
+        // contact. Decoupled via the core event — no Ecommerce→Crm dependency.
+        $this->eventDispatcher->dispatch(new ContactSignalEvent(
+            email: $order->getEmail(),
+            fullName: $order->getName(),
+            sourceKey: 'order',
+            tagSlugs: ['client'],
+        ));
 
         return $order;
     }
