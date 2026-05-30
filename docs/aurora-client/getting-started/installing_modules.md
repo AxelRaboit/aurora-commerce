@@ -80,6 +80,30 @@ sous `vendor/axelraboit/aurora-*`. `make build` côté client les bundle comme s
 étaient first-party. Voir Gate 2 (option B) dans
 `docs/aurora-core/dev/audit/packaging_playbook.md`.
 
+## Transport `async` (modules avec jobs longs)
+
+Certains modules routent des messages longs en async via leur bundle (ex.
+`aurora-billing` → `ProcessOcrJobMessage: async`). Le client doit **définir le
+transport `async`** dans son `config/packages/messenger.yaml`, sinon
+`cache:clear` échoue (« not a valid transport ») :
+
+```yaml
+framework:
+    messenger:
+        transports:
+            async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            sync: 'sync://'
+            scheduler_main: 'schedule://main'
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'
+```
+
+Le **routing** des messages modules est déclaré par chaque bundle module
+(prependExtension) — le client n'a que le transport à fournir.
+
 ## Désinstaller un module
 
 `composer remove axelraboit/aurora-<module>` + retirer son entrée
