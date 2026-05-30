@@ -56,10 +56,10 @@ cette mémoire avec l'état.
   des 3 options ne convainc (A pré-buildé / B plugin Vite custom / C
   symlinks post-install), le chantier s'arrête là — on reste mono-package
   et on améliore les Module Toggles.
-- **Dépendances inter-modules** (Phase 1.2 audit core) peuvent forcer
-  des **groupings** (ex: si Billing ↔ CRM en cycle, fusionner en
-  `aurora-commerce`). La cartographie conditionne la liste finale des
-  packages.
+- **Dépendances inter-modules** (Phase 1.2, ✅ auditée) : un seul vrai
+  cycle (Ecommerce↔Erp, cassable). Pas de Billing↔CRM. La décision Gate 1
+  est **graphe en étoile** (zéro dép. latérale) — pas de groupings sauf la
+  fusion Ecommerce+Erp. Voir bloc « Décision Gate 1 » plus bas.
 - **Stratégie de migration clients existants** : option recommandée =
   méta-package `axelraboit/aurora` deprecated pendant 1-2 versions, puis
   hard cut v2.0 (pattern Symfony).
@@ -70,14 +70,41 @@ cette mémoire avec l'état.
 |---|---|---|
 | 2026-05-30 | J0 — Préparation | ✅ Fait (branche `feat/monorepo-audit`, tag `pre-monorepo-audit`, dossier `docs/aurora-core/dev/audit/`, baseline) |
 | 2026-05-30 | J1 — Cartographie commune | ✅ Fait (3 livrables posés, voir ci-dessous) |
-| — | Gate 1 — Décision groupings | **🚦 À TRANCHER par le user** (décision en attente) |
-| — | J2 — Audit technique parallélisé | Bloqué (Gate 1) |
+| 2026-05-30 | Gate 1 — Décision groupings | ✅ **TRANCHÉ : graphe en étoile** (aucune dép. latérale ; 1 seule fusion Ecommerce+Erp). Voir `audit/decoupling_strategy.md` + `package_layout.md`. |
+| — | **J1.5 — Pass de découplage (PRÉREQUIS)** | **🔜 prochaine étape** — vrai code : 6 extension points core + 5 catégories d'arêtes. Bloque tout split. |
+| — | J2 — Audit technique parallélisé | Bloqué (J1.5) |
 | — | Gate 2 — Décision stratégie assets | Bloqué (J2) |
-| — | J3 — POC end-to-end | Bloqué (Gate 2) — **reco : POC sur un leaf (Tools/Notes), pas Billing** |
+| — | J3 — POC end-to-end | Bloqué (Gate 2) — **POC sur leaf pur (Tools/Hr)**, puis 2ᵉ POC cat. D (soft-ref) |
 | — | Gate 3 — Go / No-Go final | Bloqué (J3) |
 | — | J4 — Planification rollout | Bloqué (Gate 3) |
 | — | J5 — Exécution rollout | Bloqué (J4) |
 | — | J6 — Bascule officielle | Bloqué (J5) |
+
+### 🔑 Décision Gate 1 — graphe en étoile (2026-05-30)
+
+**Invariant** : un module distribuable n'importe JAMAIS un autre module
+distribuable (seulement `aurora-core` = Core+Platform+Configuration+Dev+Ged).
+Inséparable ⇒ **fusion**, pas de bridge ni `require` latéral. C'est le choix
+« penser long terme » (CLAUDE.md §3bis) : zéro dette de couplage dans la
+topologie. Remplace l'option bridges/require initiale.
+
+**Taxonomie des arêtes** (toutes auditées, cf. `decoupling_strategy.md`) :
+- **A** value enum partagé → remonter en core (`CurrencyEnum`,
+  `EcommerceSettingEnum`) — casse le seul cycle.
+- **B** event cross-module → contrat d'event core (2 listeners Crm).
+- **C** embed/agrégation → registry de providers core (Editorial blocks +
+  **General** dashboard/search — sinon core dépendrait des modules).
+- **D** lien entité→Crm → **soft reference** (id+type, pas de FK Doctrine) :
+  Billing/Project/Photo. **Risque #1 du chantier**, à valider en POC.
+- **E** mono-domaine réel → **fusion** : Ecommerce+Erp = `aurora-commerce`
+  (seule fusion ; `Product` est une entité concrète partagée).
+
+**Cible** : 13 packages en étoile (1 core + 12 modules). Leaves purs
+(Hr/Notes/PersonalFinance/Planning/Tools/Assistant) = split trivial.
+
+**Critère de sortie J1.5** (gate automatisable, futur test deptrac) :
+`grep -rhoE "use Aurora\\Module\\[A-Za-z]+" src/Module/<Y>/ | grep -vE
+"(<Y>|Platform|Configuration|Dev|Ged)"` retourne **vide** pour tout module Y.
 
 ### Livrables J1 (dans `docs/aurora-core/dev/audit/`)
 

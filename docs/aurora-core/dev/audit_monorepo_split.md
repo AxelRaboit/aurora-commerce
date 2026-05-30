@@ -1,5 +1,15 @@
 # Audit — Split aurora-core en monorepo + sous-packages Composer
 
+> **⚠️ MàJ post-J1 (2026-05-30)** : la cartographie réelle donne **18
+> modules** (pas 7), et User/Auth/Agency/Service vivent regroupés sous
+> **Platform**. Le **Gate 1 a tranché** pour un **graphe en étoile** (aucune
+> dépendance latérale ; cf. [`audit/decoupling_strategy.md`](./audit/decoupling_strategy.md)
+> + [`audit/package_layout.md`](./audit/package_layout.md)). Les mentions
+> « Billing POC » et « require entre sous-packages » ci-dessous sont
+> **caduques** : le POC vise un **leaf pur** (Tools/Hr) après le pass de
+> découplage, et il n'y a **aucun** require inter-module (sauf fusion
+> Ecommerce+Erp → `aurora-commerce`). Livrables J1 dans `audit/`.
+
 ## Contexte et objectif
 
 Transformer `axelraboit/aurora` (mono-package Composer actuel) en **monorepo**

@@ -28,10 +28,11 @@ entre les deux audits, les **gates de décision** Go/No-Go, et la
 |---|---|---|---|
 | J0 | Préparation | 1-2 j | Tout |
 | J1 | Cartographie commune | 5-10 j | Toute la suite |
-| **🚦 Gate 1** | **Décision groupings** | 1 j | Audit technique |
+| **🚦 Gate 1** | **Décision groupings → ✅ graphe en étoile** | 1 j | Découplage |
+| **J1.5** | **Pass de découplage (PRÉREQUIS)** | 10-20 j | Tout split |
 | J2 | Audit technique parallélisé | 10-15 j (parallel) | POC |
 | **🚦 Gate 2** | **Décision stratégie assets** | 2 j | POC |
-| J3 | POC end-to-end (Billing) | 10-15 j | Décision finale |
+| J3 | POC end-to-end (leaf, p.ex. Tools/Hr) | 5-10 j | Décision finale |
 | **🚦 Gate 3** | **Go / No-Go final** | 1 j | Rollout |
 | J4 | Planification rollout | 3 j | Exécution |
 | J5 | Exécution rollout | 4-8 sem | Bascule |
@@ -39,6 +40,13 @@ entre les deux audits, les **gates de décision** Go/No-Go, et la
 
 **Total estimé** : 3 à 4 mois calendaires, en sequential, avec quelques
 phases parallélisables.
+
+> **🔑 Pivot architectural (Gate 1, 2026-05-30)** : on n'autorise **aucune
+> dépendance latérale** entre modules (graphe en étoile). Avant tout split,
+> un **pass de découplage** (J1.5) rend chaque module autonome (cf.
+> [`audit/decoupling_strategy.md`](./audit/decoupling_strategy.md) +
+> [`audit/package_layout.md`](./audit/package_layout.md)). Ça remplace
+> l'option « bridges + require » et déplace le POC vers un **leaf pur**.
 
 ---
 
@@ -89,36 +97,49 @@ dans docs/aurora-core/dev/audit/. Ne touche pas aux Phases 2+."
 
 ---
 
-## 🚦 Gate 1 — Décision sur les groupings de modules
+## 🚦 Gate 1 — Décision sur les groupings → ✅ TRANCHÉ : graphe en étoile
 
-**Question à trancher** : à la lecture du graphe de dépendances, certains
-modules doivent-ils être **fusionnés** en un seul package au lieu d'être
-splittés individuellement ?
+**Question initiale** : faut-il fusionner ou bridger les modules couplés ?
 
-**Pattern de décision** (cf. réponse à la question « si modules dépendent
-d'autres ») :
+**Décision (2026-05-30)** : **aucune dépendance latérale**. On adopte le
+**graphe en étoile** — chaque module distribuable ne dépend que d'
+`aurora-core`. Inséparable sémantiquement ⇒ **fusion** (pas de bridge, pas
+de `require` inter-module). Une seule fusion s'avère nécessaire :
+**Ecommerce + Erp → `aurora-commerce`**.
 
-| Cas | Décision |
-|---|---|
-| Dépendance unilatérale légère (A → B) | Split, A déclare B en require |
-| Dépendance circulaire (A ↔ B) | **Fusionner** A+B dans un seul package, OU extraire un `aurora-X-shared` plus bas |
-| Dépendance bidirectionnelle de fait (sans cycle direct mais l'un n'a aucun sens sans l'autre) | **Fusionner** |
-| Module isolé (Photo, peut-être Billing) | Split sans problème |
+**Livrables figés** :
+- [`audit/decoupling_strategy.md`](./audit/decoupling_strategy.md) — le
+  **comment** : taxonomie des 5 catégories d'arêtes (enum→core, event→core,
+  registry, soft-ref, fusion) + 6 extension points core à créer + ordre.
+- [`audit/package_layout.md`](./audit/package_layout.md) — la liste cible
+  **13 packages** (1 core + 12 modules), tous en étoile.
 
-**Livrable** : `docs/aurora-core/dev/audit/package_layout.md` qui fige
-la liste définitive des packages cibles, p.ex. :
+**Conséquence sur le plan** : un **pass de découplage (J1.5)** devient le
+prérequis n°1, AVANT tout split. Le « léger » est gratuit pour les leaves,
+payé en refacto pour le cluster commerce/PM (surtout cat. D soft-ref).
 
-```
-- axelraboit/aurora-core            (Core + User + Configuration + Administration + Auth + Dashboard + Ged)
-- axelraboit/aurora-billing         (autonome)
-- axelraboit/aurora-commerce        (Ecommerce + Crm fusionnés, si cycle détecté)
-- axelraboit/aurora-editorial       (autonome)
-- axelraboit/aurora-erp             (autonome)
-- axelraboit/aurora-photo           (autonome)
-- axelraboit/aurora-project         (autonome)
-```
+---
 
-Cette liste sert de référence pour toute la suite.
+## J1.5 — Pass de découplage (PRÉREQUIS au split)
+
+**Goal** : atteindre le graphe en étoile. Exécuter
+[`audit/decoupling_strategy.md`](./audit/decoupling_strategy.md) §"Ordre
+d'exécution", étapes 1→7. Critère de sortie : le grep d'invariant est
+**vide** pour tous les modules métier.
+
+- [ ] Créer les **6 extension points core** (CurrencyEnum, events,
+  Block/Widget/Search registries, EntityReference resolver).
+- [ ] **Cat. A** (enums→core) — casse le cycle Ecommerce↔Erp.
+- [ ] **Cat. B** (events→core) — recâbler les 2 listeners Crm.
+- [ ] **Cat. C** (registries) — Editorial blocks + **General** dashboard/search.
+- [ ] **Cat. D** (soft-ref) — Billing/Project/Photo → Crm. ⚠️ risque #1.
+- [ ] **Cat. E** (fusion) — Ecommerce + Erp → `aurora-commerce`.
+- [ ] **Vérifier l'invariant** (grep vide) + tests verts + build OK.
+- [ ] (Optionnel mais reco) ajouter une **règle deptrac/PHPStan** figeant
+  l'invariant en non-régression.
+
+> Ce jalon est du **vrai code** (pas de l'audit). Commits atomiques par
+> catégorie/module (CLAUDE.md §6). C'est le gros du chantier côté core.
 
 ---
 
@@ -190,19 +211,23 @@ chantier monorepo s'arrête ici.
 
 ---
 
-## J3 — POC end-to-end (Billing)
+## J3 — POC end-to-end (leaf pur, p.ex. Tools/Hr)
 
-**Goal** : implémenter le split complet sur **un seul module** (Billing
-recommandé, ou autre selon Gate 1) et valider tous les critères de
-succès Phase 9.3 de `audit_monorepo_split.md`.
+**Goal** : implémenter le split complet sur **un leaf pur** (Tools ou Hr —
+zéro couplage cross-business après J1.5) et valider tous les critères de
+succès Phase 9.3 de `audit_monorepo_split.md`. **N.B.** : ne se lance
+qu'**après** le pass de découplage J1.5 (sinon on bute sur les couplages).
+Reco d'un **2ᵉ POC** ciblé sur la **cat. D** (soft-ref, p.ex. Photo→Crm)
+car c'est le risque #1.
 
 ### Tâches
 
 - [ ] Configurer **splitsh/lite** (ou outil retenu) pour produire
-  `axelraboit/aurora-billing` à partir de `src/Module/Billing/` + assets
+  `axelraboit/aurora-tools` à partir de `src/Module/Tools/` + assets
   + tests + traductions + docs + mémoires associés.
-- [ ] Créer le `AuroraBillingBundle.php` qui enregistre Doctrine
-  mappings, Twig, routes, traductions, ModuleToggle pour Billing seul.
+- [ ] Créer le `AuroraToolsBundle.php` (étend `AbstractAuroraModuleBundle`
+  factorisé en core) qui enregistre Doctrine mappings, Twig, routes,
+  traductions, ModuleToggle pour Tools seul.
 - [ ] Créer le `composer.json` du sous-package.
 - [ ] Premier split → créer le repo `aurora-billing` sur GitHub.
 - [ ] Côté aurora-client : appliquer le diff de `composer.json` +

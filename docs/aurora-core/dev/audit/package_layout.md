@@ -1,104 +1,72 @@
-# Gate 1 — Layout des packages cibles (DRAFT, décision en attente)
+# Gate 1 — Layout des packages cibles (DÉCIDÉ : graphe en étoile)
 
-> Livrable de **Gate 1**. Fige (à terme) la liste définitive des packages.
-> **Statut : DRAFT** — propose 3 options, attend l'arbitrage user.
-> Base : `module_inventory.md` + `dependency_graph.md` (arêtes lourdes
-> auditées).
+> Livrable de **Gate 1**. **Décision (2026-05-30)** : on adopte la
+> **stratégie de découplage en étoile** — chaque module distribuable ne
+> dépend que d'`aurora-core`, zéro dépendance latérale. Le « comment » est
+> dans **[`decoupling_strategy.md`](./decoupling_strategy.md)** (prérequis
+> à exécuter AVANT tout split). Ce document fige la **liste cible**.
 
-## Acquis (non débattus)
+## Invariant
 
-- **`axelraboit/aurora-core`** = `Core/` + **Platform** + **Configuration**
-  + **Dev** + **Ged**. Cluster socle mutuellement dépendant. Non négociable.
-- **Leaves métier** = **Hr, Notes, PersonalFinance, Planning, Tools**
-  (+ Assistant sous réserve lien General). **Aucune** arête cross-business
-  → packages autonomes triviaux : `aurora-hr`, `aurora-notes`,
-  `aurora-personal-finance`, `aurora-planning`, `aurora-tools`,
-  `aurora-assistant`. **Le gain « aurora léger » est gratuit ici.**
-- **Pré-requis core** (avant tout split) : `AbstractAuroraModuleBundle`
-  + `ModuleParameterEnum` extensible + déplacer `CurrencyEnum` (et autres
-  value-enums transverses) vers core.
+Un module métier n'importe que `aurora-core` (= `Core/` + Platform +
+Configuration + Dev + Ged). Inséparable sémantiquement ⇒ **fusion**, pas
+dépendance ni bridge. Cf. critère de vérification (grep) dans
+`decoupling_strategy.md`.
 
-## Le nœud : le cluster commerce/PM
+## Liste cible des packages
 
-7 modules entrelacés : Billing, Crm, Ecommerce, Editorial, Erp, Photo,
-Project. Chaîne de dépendance de fait :
+| Package | Contenu | Dépend de | Note |
+|---|---|---|---|
+| **`axelraboit/aurora-core`** | `Core/` + Platform + Configuration + Dev + Ged + **General (shell)** + extension points (enums/events/registries/reference) | — | socle ; General reste ici mais agrège via registries (cat. C) |
+| **`axelraboit/aurora-commerce`** | **Ecommerce + Erp** (fusionnés) | aurora-core | **seule fusion** (Product = mono-domaine, cat. E) |
+| `axelraboit/aurora-crm` | Crm | aurora-core | autonome après cat. B/D |
+| `axelraboit/aurora-billing` | Billing | aurora-core | soft-ref vers Crm (cat. D) |
+| `axelraboit/aurora-editorial` | Editorial | aurora-core | block registry (cat. C) |
+| `axelraboit/aurora-photo` | Photo | aurora-core | soft-ref vers Crm (cat. D) |
+| `axelraboit/aurora-project` | Project | aurora-core | soft-ref Crm + event Billing (cat. D) |
+| `axelraboit/aurora-hr` | Hr | aurora-core | **leaf pur** |
+| `axelraboit/aurora-notes` | Notes | aurora-core | **leaf pur** |
+| `axelraboit/aurora-personal-finance` | PersonalFinance | aurora-core | **leaf pur** |
+| `axelraboit/aurora-planning` | Planning | aurora-core | **leaf pur** |
+| `axelraboit/aurora-tools` | Tools | aurora-core | **leaf pur** |
+| `axelraboit/aurora-assistant` | Assistant | aurora-core | leaf (sous réserve lien General) |
 
-```
-Project → Crm → Ecommerce → Erp        (+ Project → Billing → {Crm, Erp})
-Photo  → Crm                            Editorial → Ecommerce / Crm
-```
+**13 packages** (1 core + 12 modules), tous en étoile. Aucun `require`
+inter-module.
 
-Avec des `require` purs, **installer Project tire Crm+Ecommerce+Erp+
-Billing+Editorial** → l'objectif « léger » s'effondre POUR CE CLUSTER.
-Mais la plupart des arêtes sont des **intégrations optionnelles** (1 classe,
-1 listener, 1 lien entité nullable) → extractibles en bridges.
+## Comparé aux options abandonnées
 
-## Trois options pour le cluster
+- ❌ **Bridges** (~12 packages dont 5 bridges) : abandonné — dette de
+  maintenance, granularité artificielle.
+- ❌ **Fusion large `aurora-commerce` = Ecommerce+Erp+Crm+Billing** :
+  abandonné — Crm/Billing sont découplables (cat. B/D), pas besoin de les
+  noyer. On ne fusionne QUE le vrai mono-domaine (Ecommerce+Erp).
 
-### Option A — Bridges (granularité max)
+## Sort de `General`
 
-Chaque module = 1 package autonome. Les intégrations cross-business
-partent dans des **bridges** dédiés que le client installe à la carte :
+**Décidé** : reste dans `aurora-core` comme shell applicatif, mais ses
+agrégations (Dashboard widgets, Search) sont **inversées via registries
+core** (cat. C de `decoupling_strategy.md`) pour ne plus importer aucun
+module métier — sinon core dépendrait des modules (inversion interdite).
 
-```
-aurora-billing, aurora-crm, aurora-ecommerce*, aurora-erp,
-aurora-editorial, aurora-photo, aurora-project
-+ aurora-project-billing   (ProjectInvoiceManager)
-+ aurora-billing-crm       (Tiers↔Company)
-+ aurora-crm-ecommerce     (OrderCrmSyncListener)
-+ aurora-editorial-ecommerce (BlocksRenderer listing embed)
-+ aurora-project-crm       (liens Company/Contact/Deal)  — ou require
-* aurora-ecommerce require aurora-erp (couplage dur Product, inévitable)
-```
+## Ordre d'extraction (rollout J5, après découplage)
 
-- ✅ « léger » maximal ; un client CMS-only = `aurora-editorial` seul.
-- ✅ chaque intégration opt-in explicite.
-- ❌ **~7 + 5 bridges = 12 packages** pour le cluster ; refactor des
-  interfaces pour tolérer la cible absente (le plus de travail).
+Du plus isolé au plus couplé :
 
-### Option B — Fusion pragmatique (`aurora-commerce`)
+1. **Leaves purs** : Tools, Hr, Planning, Notes, PersonalFinance, Assistant.
+2. **Soft-ref / registry** : Photo, Editorial, Billing, Crm, Project.
+3. **Fusion** : Commerce (Ecommerce+Erp) en dernier.
 
-Fusionner les 4 plus entrelacés en un package :
+## POC (J3)
 
-```
-aurora-commerce  = Ecommerce + Erp + Crm + Billing
-aurora-editorial (require commerce si bloc listing gardé soft)
-aurora-photo     (require crm → ou guard)
-aurora-project   (require commerce)
-```
+Cible : un **leaf pur** (`aurora-tools` ou `aurora-hr`) pour valider la
+mécanique splitsh + sous-bundle sans couplage. Puis un **second POC sur la
+cat. D** (soft-ref, p.ex. Photo→Crm) car c'est le risque #1.
 
-- ✅ **4 packages** au lieu de 12 ; zéro refactor des couplages internes.
-- ✅ cohérent métier (« suite commerce »).
-- ❌ grain grossier : un client qui veut juste la facturation tire tout
-  le commerce. Va à l'encontre du « léger » pour ces modules.
+## Décision
 
-### Option C — Hybride (reco) : leaves now, cluster defer
-
-- **Phase 1 (maintenant)** : splitter SEULEMENT le core + les leaves
-  (Hr, Notes, PersonalFinance, Planning, Tools, Photo si Crm-link gardable,
-  Assistant). C'est ~50 % des modules, gain « léger » immédiat, **zéro
-  découplage cross-business**.
-- **Phase 2 (plus tard)** : le cluster commerce reste **groupé dans core
-  OU dans un `aurora-commerce`** temporaire, et on tranche bridges-vs-fusion
-  une fois la mécanique de split rodée sur les leaves.
-
-- ✅ livre de la valeur vite, dérisque (POC sur un vrai leaf), repousse la
-  partie dure.
-- ✅ compatible avec l'esprit du workplan (rollout incrémental).
-- ❌ le cluster commerce reste lourd entre-temps.
-
-## Recommandation
-
-**Option C (hybride)** comme stratégie de rollout, avec **Option A
-(bridges)** comme cible finale pour le cluster commerce — Option B en
-repli si les bridges s'avèrent trop coûteux en J2.
-
-POC (J3) : un **leaf petit** (`aurora-tools` ou `aurora-hr`), PAS Billing,
-pour valider la mécanique d'extraction sans buter sur le découplage.
-
-## Décision (à remplir)
-
-- Layout retenu : _______
-- POC target : _______
-- Sort de `General` : _______
-- Date / arbitre : _______
+- Layout retenu : **graphe en étoile, 13 packages** ✅
+- Stratégie : **découplage-first** (cf. `decoupling_strategy.md`) ✅
+- POC target : **leaf pur** (Tools/Hr) puis **cat. D** ✅
+- Sort de `General` : **core + registries** ✅
+- Arbitre / date : Axel, 2026-05-30 ✅

@@ -1,5 +1,13 @@
 # Audit — Impact du split monorepo sur aurora-client
 
+> **⚠️ MàJ post-Gate 1 (2026-05-30)** : la topologie cible est un **graphe
+> en étoile** (13 packages, tous → `aurora-core` ; cf.
+> [`audit/package_layout.md`](./audit/package_layout.md)). Côté client,
+> conséquence importante : **aucun `require` inter-module** à gérer (sauf
+> `aurora-commerce` = Ecommerce+Erp fusionnés). Les exemples
+> `aurora-billing` ci-dessous restent valides comme illustration ; la liste
+> exacte des packages est dans `package_layout.md`.
+
 ## Contexte
 
 Cet audit est le **pendant côté consommateur** de
