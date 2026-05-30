@@ -5,7 +5,7 @@
     "license": "proprietary",
     "require": {
         "php": ">=8.4",
-        "axelraboit/aurora-core": "self.version"
+        "axelraboit/aurora": "@dev"
     },
     "autoload": {
         "psr-4": {
