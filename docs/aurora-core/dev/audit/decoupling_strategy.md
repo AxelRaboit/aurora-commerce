@@ -78,20 +78,21 @@ par le producteur (`isCrmSync`).
 grep d'invariant vide). Producteurs Ecommerce/Editorial dispatchent
 toujours ; sans CRM installé l'event est un no-op inoffensif.
 
-### Catégorie C — Embed / agrégation de features → registry de providers en core
+### Catégorie C — Embed / agrégation de features → registry de providers en core ✅ FAIT (2026-05-30)
 
-Un module **consomme** des features d'autres modules par découverte. Core
-définit un **registry** ; chaque module **enregistre** sa contribution ;
-le consommateur lit le registry. **Aucun import direct.**
+Un module **consommait** des features d'autres modules par import direct.
+Core définit un **registry** (tag `_instanceof`) ; chaque module **enregistre**
+sa contribution ; le consommateur injecte `iterable<…>` via `#[AutowireIterator]`.
 
-| Arête(s) | Consommateur | Action |
+| Arête(s) | Avant | Après |
 |---|---|---|
-| Editorial→Ecommerce (3) | `BlocksRenderer` embed un `ListingInterface` | **`Core\Block\BlockProviderInterface`** : Ecommerce enregistre un « bloc listing », Editorial itère le registry. |
-| **General→{Billing,Crm,Ecommerce,Editorial,Erp,Photo,Project}** (≈11) | Dashboard widgets + Search | ⚠️ **Critique** : General est dans **core** → ses imports métier sont des dépendances **core→module INTERDITES** (inversion de dépendance). **`Core\Dashboard\WidgetProviderInterface`** + **`Core\Search\SearchProviderInterface`** : chaque module enregistre son widget / sa source de recherche, General agrège le registry. |
+| **C1** General→{Billing,Crm,Ecommerce,Editorial,Erp,Photo} | `Dashboard/StatsService` importait 6 repos modules | `Core\Dashboard\DashboardStatsProviderInterface` ; 6 providers (un par module, EditorialStatsProvider couvre posts/media/users) ; StatsService = agrégateur |
+| **C2** General→{Editorial,Project} (+ →General de Editorial/Project/Assistant via le LLM `SearchProviderInterface`) | backend `SearchController` importait Editorial+Project ; `SearchProviderInterface` vivait dans General | `SearchProviderInterface` + `SearchSnippetBuilder` + `RelevanceSorter` → **core** ; nouveau `Core\Search\BackendSearchProviderInterface` ; providers Editorial/Project/Ged ; `RebuildSearchIndexCommand` → Editorial |
+| **C3** Editorial→Ecommerce (3) | `BlocksRenderer` embed un `ListingInterface` | `Core\Content\BlockRendererInterface` + `BlockHtmlSanitizer` ; Ecommerce ship `ProductGridBlockRenderer` ('productGrid') ; BlocksRenderer délègue le `default` au registry |
 
-→ Élimine **~14 refs** et le risque d'inversion core→module. Risque moyen
-(refacto du Dashboard + Search de General). **Indispensable**, sinon le
-shell empêche tout split propre.
+→ **Résultat : General, Editorial, Assistant deviennent des leaves purs.**
+Le risque d'inversion core→module (General dans core important des modules)
+est éliminé. 9/14 modules métier sont désormais des leaves purs.
 
 ### Catégorie D — Lien entité vers Crm → soft reference (le point qui coûte)
 
@@ -145,11 +146,12 @@ suivent la convention Aurora (interface + `#[AsAlias]`/tagged services) :
 2. **`Core\Contact\Event\ContactSignalEvent`** : event générique
    (email/name/phone/sourceKey/tagSlugs) émis par Ecommerce/Editorial,
    écouté par Crm — cat. B. ✅
-3. **`Core\Block\BlockProviderInterface`** + registry tagué — cat. C.
-4. **`Core\Dashboard\WidgetProviderInterface`** + registry — cat. C.
-5. **`Core\Search\SearchProviderInterface`** + registry — cat. C.
+3. **`Core\Content\BlockRendererInterface`** + `BlockHtmlSanitizer` — cat. C3. ✅
+4. **`Core\Dashboard\DashboardStatsProviderInterface`** — cat. C1. ✅
+5. **`Core\Search\{SearchProviderInterface, BackendSearchProviderInterface,
+   SearchSnippetBuilder, RelevanceSorter}`** — cat. C2. ✅
 6. **`Core\Reference\EntityReference` + `ReferenceResolverInterface`** —
-   cat. D.
+   cat. D. ⏳ à faire
 
 Chacun doit passer les **garde-fous** §3bis du CLAUDE.md (pas d'interface
 sans implémenteur multiple plausible) — ici tous en ont (≥2 modules
