@@ -111,6 +111,7 @@ backend:
       media: Médiathèque
       configuration: Configuration
       dev: Administration
+      tools: Outils
     administration: Accès développeur
     administration_description: "Outils techniques, audit, requêtes d'accès et configuration avancée"
     agencies: Agences

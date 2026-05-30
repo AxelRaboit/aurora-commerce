@@ -5,12 +5,12 @@
 {% block page_header_slot %}
     {{ include('@Shared/components/page_header.html.twig', {
         crumbs: [
-            {label: 'backend.nav.sections.vault'|trans},
+            {label: 'backend.nav.sections.tools'|trans},
             {label: 'backend.nav.password_generator'|trans},
         ],
     }) }}
 {% endblock %}
 
 {% block body %}
-<div {{ vue_component('passwordgenerator/backend/PasswordGeneratorApp', {}) }} class="flex-1 min-w-0"></div>
+<div {{ vue_component('tools/backend/password-generator/PasswordGeneratorApp', {}) }} class="flex-1 min-w-0"></div>
 {% endblock %}

@@ -110,6 +110,7 @@ backend:
       media: Media library
       configuration: Configuration
       dev: Administration
+      tools: Tools
     administration: Developer access
     administration_description: 'Technical tools, audit log, access requests and advanced configuration'
     agencies: Agencies
