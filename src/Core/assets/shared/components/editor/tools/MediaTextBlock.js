@@ -1,5 +1,5 @@
 import { handlePlainTextPaste } from "./handlePlainTextPaste.js";
-import { openMediaPicker } from "@shared/utils/mediaPicker.js";
+import { openDocumentPicker } from "@shared/utils/documentPicker.js";
 
 export default class MediaTextBlock {
     #wrapper = null;
@@ -152,8 +152,9 @@ export default class MediaTextBlock {
         wrapper.className = "mt-block__url-form";
 
         const browseBtn = this.#createButton(this.#config.browse, async () => {
-            const media = await openMediaPicker({ imagesOnly: true });
-            if (media?.url) onConfirm(media.url, media.id ?? null);
+            const doc = await openDocumentPicker({ imagesOnly: true });
+            const url = doc?.fileUrl ?? doc?.url;
+            if (url) onConfirm(url, doc.id ?? null);
         });
         browseBtn.classList.add("mt-block__url-browse");
 
