@@ -21,7 +21,7 @@ use Aurora\Module\Editorial\PostType\Entity\PostType;
 use Aurora\Module\Editorial\PostType\Repository\PostTypeRepository;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Repository\TaxonomyTermRepository;
-use Aurora\Module\Media\Library\Repository\MediaRepository;
+use Aurora\Module\Ged\Document\Repository\DocumentRepository;
 use Aurora\Module\Platform\User\Entity\User;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
@@ -42,7 +42,7 @@ final class PostManagerTest extends TestCase
     private EntityManagerInterface $entityManager;
     private PostTypeRepository $postTypeRepository;
     private TaxonomyTermRepository $termRepository;
-    private MediaRepository $mediaRepository;
+    private DocumentRepository $documentRepository;
     private PostRevisionRepository $revisionRepository;
     private PostSlugHistoryRepository $slugHistoryRepository;
     private SettingRepository $settingRepository;
@@ -57,7 +57,7 @@ final class PostManagerTest extends TestCase
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->postTypeRepository = $this->createMock(PostTypeRepository::class);
         $this->termRepository = $this->createMock(TaxonomyTermRepository::class);
-        $this->mediaRepository = $this->createMock(MediaRepository::class);
+        $this->documentRepository = $this->createMock(DocumentRepository::class);
         $this->revisionRepository = $this->createMock(PostRevisionRepository::class);
         $this->slugHistoryRepository = $this->createMock(PostSlugHistoryRepository::class);
         $this->settingRepository = $this->createMock(SettingRepository::class);
@@ -97,7 +97,7 @@ final class PostManagerTest extends TestCase
             $this->entityManager,
             $this->postTypeRepository,
             $this->termRepository,
-            $this->mediaRepository,
+            $this->documentRepository,
             $this->revisionRepository,
             $this->slugHistoryRepository,
             $this->settingRepository,

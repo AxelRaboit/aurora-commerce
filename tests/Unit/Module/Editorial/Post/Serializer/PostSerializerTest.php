@@ -14,8 +14,8 @@ use Aurora\Module\Editorial\Post\Serializer\PostSerializer;
 use Aurora\Module\Editorial\PostType\Entity\PostType;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTermInterface;
-use Aurora\Module\Media\Library\Entity\Media;
-use Aurora\Module\Media\Library\Service\MediaUrlGenerator;
+use Aurora\Module\Ged\Document\Entity\Document;
+use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use DateTimeImmutable;
 use DateTimeInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -28,14 +28,14 @@ final class PostSerializerTest extends TestCase
 {
     private PostSerializer $serializer;
     private LocaleContextInterface $localeContext;
-    private MediaUrlGenerator $mediaUrlGenerator;
+    private DocumentUrlGenerator $documentUrlGenerator;
 
     protected function setUp(): void
     {
         $this->localeContext = $this->createStub(LocaleContextInterface::class);
         $this->localeContext->method('getDefaultLocale')->willReturn('fr');
 
-        // MediaUrlGenerator is `final readonly` (can't be stubbed) so we
+        // DocumentUrlGenerator is `final readonly` (can't be stubbed) so we
         // build the real thing on top of a stubbed UrlGeneratorInterface
         // that echoes a predictable URL — covers both `publicUrl()` and
         // `variantUrl()` paths.
@@ -43,9 +43,9 @@ final class PostSerializerTest extends TestCase
         $urlGenerator->method('generate')->willReturnCallback(
             static fn (string $route, array $params = []): string => '/'.($params['path'] ?? ''),
         );
-        $this->mediaUrlGenerator = new MediaUrlGenerator($urlGenerator);
+        $this->documentUrlGenerator = new DocumentUrlGenerator($urlGenerator);
 
-        $this->serializer = new PostSerializer($this->localeContext, $this->mediaUrlGenerator);
+        $this->serializer = new PostSerializer($this->localeContext, $this->documentUrlGenerator);
     }
 
     public function testSerializeProjectsTopLevelFieldsAndDefaultLocaleTitle(): void
@@ -156,7 +156,10 @@ final class PostSerializerTest extends TestCase
 
         self::assertNull($payload['featuredMediaId']);
         self::assertNull($payload['featuredMediaUrl']);
-        self::assertNull($payload['featuredMediaFocalPosition']);
+        // DocumentUrlGenerator::focalPositionCss(null) returns the centered
+        // default so the front can drop it straight into a style attribute
+        // — Phase 1 made this a server-owned, non-nullable concern.
+        self::assertSame('50% 50%', $payload['featuredMediaFocalPosition']);
     }
 
     public function testSerializeFullProjectsRelatedPostsCompactly(): void
@@ -245,7 +248,7 @@ final class PostSerializerTest extends TestCase
         $payload = $this->serializer->serializeCard($post, 'fr');
 
         self::assertNull($payload['featuredMediaUrl']);
-        self::assertNull($payload['featuredMediaFocalPosition']);
+        self::assertSame('50% 50%', $payload['featuredMediaFocalPosition']);
     }
 
     // ── Fixture helpers ─────────────────────────────────────────────────
@@ -289,11 +292,11 @@ final class PostSerializerTest extends TestCase
     }
 
     /** @param array<string, string> $variantPath */
-    private function makeMedia(int $id, string $path = 'pic.jpg', array $variantPath = []): Media
+    private function makeMedia(int $id, string $path = 'pic.jpg', array $variantPath = []): Document
     {
-        $media = new Media();
-        (new ReflectionProperty(Media::class, 'id'))->setValue($media, $id);
-        $media->setPath($path);
+        $media = (new Document())->setTitle('test');
+        (new ReflectionProperty(Document::class, 'id'))->setValue($media, $id);
+        $media->setFilePath($path);
         $media->setVariants($variantPath);
 
         return $media;

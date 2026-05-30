@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Editorial\Post\Entity\Post;
 use Aurora\Module\Editorial\Post\Entity\PostTranslation;
-use Aurora\Module\Media\Library\Entity\MediaInterface;
+use Aurora\Module\Ged\Document\Entity\DocumentInterface;
 use PHPUnit\Framework\TestCase;
 
 final class PostTranslationTest extends TestCase
@@ -74,7 +74,7 @@ final class PostTranslationTest extends TestCase
 
     public function testOgImageGetterAndSetter(): void
     {
-        $image = $this->createStub(MediaInterface::class);
+        $image = $this->createStub(DocumentInterface::class);
         $translation = (new PostTranslation())->setOgImage($image);
 
         self::assertSame($image, $translation->getOgImage());
