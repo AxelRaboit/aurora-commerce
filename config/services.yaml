@@ -37,6 +37,14 @@ services:
             - '../src/Module/PersonalFinance/'
             - '../src/Module/Planning/'
             - '../src/Module/Project/'
+            - '../src/Module/Editorial/'
+            - '../src/Module/Billing/'
+            - '../src/Module/Assistant/'
+            - '../src/Module/Photo/'
+            # Merge case (aurora-commerce): Ecommerce + Erp ship together; one
+            # services.php (Ecommerce/config) loads both namespaces.
+            - '../src/Module/Ecommerce/'
+            - '../src/Module/Erp/'
 
     # Auto-tag every MediaUsageProvider so the aggregator service collects them.
     # Auto-tag every registered front so the Registry collects them.
@@ -81,10 +89,6 @@ services:
     Aurora\Core\Frontend\Service\Registry:
         arguments:
             $fronts: !tagged_iterator aurora.front
-
-    Aurora\Module\Editorial\Menu\Service\MenuLocationRegistry:
-        arguments:
-            $providers: !tagged_iterator aurora.menu_location_provider
 
     Aurora\Module\Platform\Auth\Service\ImpersonationTokenService:
         arguments:
@@ -143,50 +147,8 @@ services:
         arguments:
             $providers: !tagged_iterator aurora.configuration_tab_provider
 
-    Aurora\Module\Billing\Ocr\Service\DocTrClient:
-        arguments:
-            $baseUrl: '%env(OCR_DOCTR_URL)%'
-            $timeout: '%env(int:OCR_HTTP_TIMEOUT)%'
-
-    Aurora\Module\Billing\Ocr\Service\OllamaVisionClient:
-        arguments:
-            $baseUrl: '%env(OLLAMA_URL)%'
-            $model: '%env(OLLAMA_VISION_MODEL)%'
-            $timeout: '%env(int:OCR_HTTP_TIMEOUT)%'
-            $numCtx: '%env(int:OCR_NUM_CTX)%'
-            $numPredict: '%env(int:OCR_NUM_PREDICT)%'
-
-    Aurora\Module\Assistant\Setting\AssistantSettings:
-        arguments:
-            $envChatModel: '%env(ASSISTANT_CHAT_MODEL)%'
-            $envHttpTimeout: '%env(int:ASSISTANT_HTTP_TIMEOUT)%'
-            $envNumCtx: '%env(int:ASSISTANT_NUM_CTX)%'
-            $envVisionModel: '%env(ASSISTANT_VISION_MODEL)%'
-            $envProvider: '%env(ASSISTANT_PROVIDER)%'
-
-    Aurora\Module\Assistant\Llm\Service\OllamaChatClient:
-        arguments:
-            $baseUrl: '%env(ASSISTANT_OLLAMA_URL)%'
-
-    Aurora\Module\Assistant\Llm\Service\AnthropicChatClient:
-        arguments:
-            $apiKey: '%env(ANTHROPIC_API_KEY)%'
-
-    Aurora\Module\Assistant\Vision\Service\OllamaVisionDescriber:
-        arguments:
-            $baseUrl: '%env(ASSISTANT_OLLAMA_URL)%'
-
     Aurora\Core\Mail\Service\MailService:
         arguments:
             $mailerFrom: '%app.mailer_from%'
 
-    Aurora\Module\Ecommerce\Payment\StripeService:
-        arguments:
-            $secretKey: '%env(STRIPE_SECRET_KEY)%'
-            $publicKey: '%env(STRIPE_PUBLIC_KEY)%'
-            $webhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
-
-    Aurora\Module\Photo\Gallery\Service\GalleryAccessService:
-        arguments:
-            $appSecret: '%kernel.secret%'
 
