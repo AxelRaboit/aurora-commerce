@@ -9,7 +9,6 @@ use Aurora\Core\Module\Enum\ModuleToggleTypeEnum;
 use Aurora\Core\Module\Nav\NavSection;
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -31,74 +30,14 @@ final readonly class ModulesViewBuilder
         $catalogByModuleId = $this->buildCatalogByModuleId();
         $parameters = [];
 
-        // 1) Core toggles — enum-driven, preserving the (display parent =
-        // getParentCase) vs (cascade dependency = getCascadeRequires) split.
-        // Cross-module deps like Billing→Crm stay at top-level via getParentCase
-        // null, but `requires` still exposes the cascade key for the UI.
-        foreach (ModuleParameterEnum::cases() as $parameter) {
-            if ($parameter->getParentCase() instanceof ModuleParameterEnum) {
-                continue;
-            }
-
-            $moduleId = $parameter->getModuleId();
+        // Single registry-driven path: every module (core or aurora-client)
+        // contributes its toggles via ModuleToggleProviderInterface. Top-level
+        // toggles (moduleId set) become module cards; sub-toggles nest under
+        // them structurally via displayParentKey (falling back to the cascade
+        // parentKey for client toggles). No central enum iteration.
+        foreach ($this->moduleToggleRegistry->getDisplayTopLevel() as $toggle) {
             $navItems = [];
-
-            if (null !== $moduleId && isset($catalogByModuleId[$moduleId])) {
-                foreach ($catalogByModuleId[$moduleId] as $section) {
-                    foreach ($section->items as $item) {
-                        $navItems[] = ['labelKey' => $item->labelKey, 'icon' => $item->icon];
-                    }
-                }
-            }
-
-            $subModules = [];
-            foreach (ModuleParameterEnum::cases() as $subParameter) {
-                if ($subParameter->getParentCase() !== $parameter) {
-                    continue;
-                }
-
-                $subModules[] = [
-                    'key' => $subParameter->getKey(),
-                    'label' => $this->translator->trans($subParameter->getLabel()),
-                    'description' => $this->translator->trans($subParameter->getDescription()),
-                    'value' => $this->settingRepository->get($subParameter->getKey(), $subParameter->getDefaultValue()),
-                    'requires' => $subParameter->getCascadeRequires(),
-                    'type' => ModuleToggleTypeEnum::fromKey($subParameter->getKey())->value,
-                ];
-            }
-
-            $parameters[] = [
-                'key' => $parameter->getKey(),
-                'label' => $this->translator->trans($parameter->getLabel()),
-                'description' => $this->translator->trans($parameter->getDescription()),
-                'value' => $this->settingRepository->get($parameter->getKey(), $parameter->getDefaultValue()),
-                'requires' => $parameter->getCascadeRequires(),
-                'navItems' => $navItems,
-                'subModules' => $subModules,
-                'type' => ModuleToggleTypeEnum::fromKey($parameter->getKey())->value,
-            ];
-        }
-
-        // 2) Client toggles — toggles declared by aurora-client modules via
-        // ModuleToggleProviderInterface but absent from ModuleParameterEnum
-        // (e.g. `app_tracking_*`). They are grouped by top-level toggle with
-        // their direct children as sub-modules. Display order is appended
-        // after core toggles.
-        $coreKeys = array_map(static fn (ModuleParameterEnum $case): string => $case->value, ModuleParameterEnum::cases());
-        $allToggles = $this->moduleToggleRegistry->getAll();
-
-        $clientToggles = array_filter(
-            $allToggles,
-            static fn (ModuleToggle $toggle): bool => !in_array($toggle->key, $coreKeys, true),
-        );
-
-        foreach ($clientToggles as $toggle) {
-            if (!$toggle->isTopLevel()) {
-                continue;
-            }
-
             $moduleId = $toggle->moduleId;
-            $navItems = [];
 
             if (null !== $moduleId && isset($catalogByModuleId[$moduleId])) {
                 foreach ($catalogByModuleId[$moduleId] as $section) {
@@ -108,14 +47,10 @@ final readonly class ModulesViewBuilder
                 }
             }
 
-            $subModules = [];
-            foreach ($clientToggles as $child) {
-                if ($child->parentKey !== $toggle->key) {
-                    continue;
-                }
-
-                $subModules[] = $this->toggleToArray($child);
-            }
+            $subModules = array_map(
+                $this->toggleToArray(...),
+                $this->moduleToggleRegistry->getDisplayChildrenOf($toggle->key),
+            );
 
             $parameters[] = [...$this->toggleToArray($toggle), 'navItems' => $navItems, 'subModules' => $subModules];
         }

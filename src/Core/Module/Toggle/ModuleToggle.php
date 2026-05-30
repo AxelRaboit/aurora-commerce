@@ -37,6 +37,14 @@ final readonly class ModuleToggle
          * in the admin module-access picker without exposing every sub-toggle.
          */
         public ?string $moduleId = null,
+        /**
+         * Optional structural parent for DISPLAY grouping in the modules
+         * dashboard — the module's top-level toggle this sub-toggle nests under
+         * (vs {@see $parentKey} which is the cascade dependency, possibly a
+         * sibling). Null for top-level toggles. Matches
+         * `ModuleParameterEnum::getParentCase()` semantics.
+         */
+        public ?string $displayParentKey = null,
     ) {}
 
     public function isTopLevel(): bool

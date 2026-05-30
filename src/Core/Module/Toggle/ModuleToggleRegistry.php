@@ -69,6 +69,37 @@ final class ModuleToggleRegistry
     }
 
     /**
+     * Sub-toggles that nest under the given top-level toggle for DISPLAY in the
+     * modules dashboard (structural grouping via `displayParentKey`, vs the
+     * cascade grouping of {@see getChildrenOf()}).
+     *
+     * @return list<ModuleToggle>
+     */
+    public function getDisplayChildrenOf(string $parentKey): array
+    {
+        return array_values(array_filter(
+            $this->getAll(),
+            static fn (ModuleToggle $toggle): bool => $toggle->displayParentKey === $parentKey,
+        ));
+    }
+
+    /**
+     * Top-level toggles for the modules dashboard — those with no structural
+     * parent (`displayParentKey === null`). Distinct from {@see getTopLevel()}
+     * (moduleId-based): a few standalone toggles (e.g. an ecommerce/photo
+     * "frontend" switch) are top-level cards without being a module's root.
+     *
+     * @return list<ModuleToggle>
+     */
+    public function getDisplayTopLevel(): array
+    {
+        return array_values(array_filter(
+            $this->getAll(),
+            static fn (ModuleToggle $toggle): bool => null === $toggle->displayParentKey,
+        ));
+    }
+
+    /**
      * All transitive descendant keys of a toggle (children, grandchildren, …)
      * via the `parentKey` graph — i.e. the set to force OFF when this toggle is
      * disabled. Replaces `ModuleParameterEnum::getCascadeDisableTargets()` so the

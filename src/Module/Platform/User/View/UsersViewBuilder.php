@@ -7,7 +7,6 @@ namespace Aurora\Module\Platform\User\View;
 use Aurora\Core\Module\Service\PermissionRegistry;
 use Aurora\Core\Module\Toggle\ModuleToggle;
 use Aurora\Core\Module\Toggle\ModuleToggleRegistry;
-use Aurora\Module\Configuration\Setting\Enum\ModuleParameterEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
 use Aurora\Module\Platform\Agency\Repository\AgencyRepository;
@@ -46,8 +45,8 @@ final readonly class UsersViewBuilder
 
     private const int UNKNOWN_PRIORITY = 500;
 
-    /** @var array<string, ModuleParameterEnum> module ID → admin-enabled toggle, built from the enum */
-    private array $moduleToggles;
+    /** @var array<string, string> module ID → its top-level toggle key, from the registry */
+    private array $moduleToggleKeys;
 
     public function __construct(
         private PermissionRegistry $permissionRegistry,
@@ -57,15 +56,14 @@ final readonly class UsersViewBuilder
         private TranslatorInterface $translator,
         private ModuleToggleRegistry $moduleToggleRegistry,
     ) {
-        $toggles = [];
-        foreach (ModuleParameterEnum::cases() as $case) {
-            $moduleId = $case->getModuleId();
-            if (null !== $moduleId) {
-                $toggles[$moduleId] = $case;
+        $keys = [];
+        foreach ($this->moduleToggleRegistry->getTopLevel() as $toggle) {
+            if (null !== $toggle->moduleId) {
+                $keys[$toggle->moduleId] = $toggle->key;
             }
         }
 
-        $this->moduleToggles = $toggles;
+        $this->moduleToggleKeys = $keys;
     }
 
     /**
@@ -94,8 +92,8 @@ final readonly class UsersViewBuilder
                 continue;
             }
 
-            $toggle = $this->moduleToggles[$moduleId] ?? null;
-            if (null !== $toggle && !$this->settingRepository->getBoolean($toggle->value, true)) {
+            $toggleKey = $this->moduleToggleKeys[$moduleId] ?? null;
+            if (null !== $toggleKey && !$this->settingRepository->getBoolean($toggleKey, true)) {
                 continue;
             }
 

@@ -447,6 +447,7 @@ enum ModuleParameterEnum: string implements ApplicationParameterEnumInterface
             descriptionKey: $this->getDescription(),
             parentKey: $this->getCascadeRequires(),
             moduleId: $this->getModuleId(),
+            displayParentKey: $this->getParentCase()?->value,
         );
     }
 
