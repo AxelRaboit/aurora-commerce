@@ -149,8 +149,6 @@ backend:
       just_now: just now
       minutes_ago: '{n} min ago'
       hours_ago: '{n} h ago'
-    confirm_generate_invoice: Create a draft invoice from this project?
-    generate_invoice: Generate invoice
     labels:
       manage: Manage labels
       add: New label

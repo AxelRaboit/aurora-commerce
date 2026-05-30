@@ -19,7 +19,6 @@ import { useLabelsManage, LABEL_COLORS } from "./composables/useLabelsManage.js"
 import { useTaskExtras } from "../tasks/composables/useTaskExtras.js";
 import { useSprintsManage } from "./composables/useSprintsManage.js";
 import { useSavedViews } from "./composables/useSavedViews.js";
-import { useGenerateInvoice } from "./composables/useGenerateInvoice.js";
 import { useKanbanColumnWidth } from "./composables/useKanbanColumnWidth.js";
 import { PROJECT_STATUS_TONE } from "@project/backend/utils/enums/projectStatus.js";
 import { TASK_PRIORITY_TONE } from "@project/backend/utils/enums/projectTaskPriority.js";
@@ -41,7 +40,7 @@ import AppBadge from "@/shared/components/feedback/AppBadge.vue";
 import DocumentPickerModal from "@ged/backend/documents/components/DocumentPickerModal.vue";
 import AppNoData from "@/shared/components/feedback/AppNoData.vue";
 import AppTab from "@/shared/components/nav/AppTab.vue";
-import { Plus, Pencil, Trash2, Activity, X, MessageSquare, CheckSquare, Square, Clock, Paperclip, Tag, Calendar, Bookmark, FileText, Eye, Save, Send, ArrowLeft, FolderKanban } from "lucide-vue-next";
+import { Plus, Pencil, Trash2, Activity, X, MessageSquare, CheckSquare, Square, Clock, Paperclip, Tag, Calendar, Bookmark, Eye, Save, Send, ArrowLeft, FolderKanban } from "lucide-vue-next";
 
 const { t } = useI18n();
 const { can } = usePrivileges();
@@ -78,7 +77,6 @@ const props = defineProps({
     savedViewListPath: { type: String, default: "" },
     savedViewCreatePath: { type: String, default: "" },
     savedViewDeletePath: { type: String, default: "" },
-    generateInvoicePath: { type: String, default: "" },
     statusOptions: { type: Array, default: () => [] },
     priorityOptions: { type: Array, default: () => [] },
     users: { type: Array, default: () => [] },
@@ -253,8 +251,6 @@ const {
     formatRelativeDate,
 } = useProjectActivity(props.activityPath, activeProject);
 
-const { generateInvoice } = useGenerateInvoice(props.generateInvoicePath, activeProject);
-
 const { labelOptions, labelsById } = labelsManage;
 const { sprintOptions } = sprintsManage;
 
@@ -370,14 +366,6 @@ const { colWidth, setColWidth, COLUMN_WIDTHS } = useKanbanColumnWidth();
                     </AppIconButton>
                     <AppIconButton color="accent" :title="t('backend.projects.activity.title')" v-on:click="toggleActivity">
                         <Activity class="w-4 h-4" :stroke-width="2" />
-                    </AppIconButton>
-                    <AppIconButton
-                        v-if="activeProject.status === 'completed' && can('project.projects.edit') && generateInvoicePath"
-                        color="emerald"
-                        :title="t('backend.projects.generate_invoice')"
-                        v-on:click="generateInvoice"
-                    >
-                        <FileText class="w-4 h-4" :stroke-width="2" />
                     </AppIconButton>
                     <AppIconButton v-if="can('project.projects.edit')" color="accent" :title="t('shared.common.edit')" v-on:click="openEditProject(activeProject)">
                         <Pencil class="w-4 h-4" :stroke-width="2" />

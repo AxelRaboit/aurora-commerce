@@ -15,7 +15,6 @@ use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Project\Dto\ProjectInputFactoryInterface;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectSavedView;
-use Aurora\Module\Project\Manager\ProjectInvoiceManager;
 use Aurora\Module\Project\Manager\ProjectManager;
 use Aurora\Module\Project\Manager\ProjectSavedViewManager;
 use Aurora\Module\Project\Repository\ProjectSavedViewRepository;
@@ -32,7 +31,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * Project root CRUD + activity + saved views + invoice generation.
+ * Project root CRUD + activity + saved views.
  * Sub-domains (tasks, columns, labels, sprints) live in sibling
  * controllers — see `ProjectTasksController`, `ProjectColumnsController`,
  * `ProjectLabelsController`, `ProjectSprintsController`.
@@ -50,7 +49,6 @@ final class ProjectsController extends AbstractController
         private readonly ProjectManager $projectManager,
         private readonly ProjectSavedViewManager $savedViewManager,
         private readonly ProjectSavedViewRepository $savedViewRepository,
-        private readonly ProjectInvoiceManager $invoiceManager,
         private readonly PayloadValidator $payloadValidator,
         private readonly ProjectsViewBuilder $viewBuilder,
         private readonly AuditLogRepository $auditLogRepository,
@@ -191,14 +189,4 @@ final class ProjectsController extends AbstractController
         return $this->jsonSuccess();
     }
 
-    #[Route('/{id}/generate-invoice', name: '_generate_invoice', requirements: ['id' => '\d+|__id__'], methods: [HttpMethodEnum::Post->value])]
-    #[IsGranted('project.projects.edit')]
-    public function generateInvoice(Project $project): JsonResponse
-    {
-        $invoice = $this->invoiceManager->generate($project);
-
-        return $this->jsonSuccess([
-            'invoiceId' => $invoice->getId(),
-        ]);
-    }
 }
