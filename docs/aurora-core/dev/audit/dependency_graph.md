@@ -120,11 +120,11 @@ inspecté (à compléter en J2 pour les arêtes non vues) :
 | **Crm → Ecommerce** | 1 | `OrderCrmSyncListener` écoute `OrderCreatedEvent` | **soft (event)** | Intégration optionnelle : garder via bridge ou guard « si Ecommerce installé » |
 | **Editorial → Ecommerce** | 3 | `BlocksRenderer` embed un `ListingInterface` dans un post | **soft (feature opt)** | Bloc CMS optionnel ; un client CMS-only ne le charge pas |
 | **Billing → Crm** | 2 | `Tiers` lié à `CompanyInterface` (relation entité) | **moyen (entité/interface)** | Lien via interface résolu par `resolve_target_entities` ; si Crm absent, relation nullable inutilisée — **à confirmer nullable en J2** |
-| Ecommerce → Erp | 15 | (non inspecté) | ? | Probable dép. produit→catalogue ; **arête la plus lourde**, à auditer en priorité |
-| Project → Crm | 16 | (non inspecté) | ? | À auditer — l'arête la plus lourde du graphe |
-| Project → Billing | 7 | (non inspecté) | ? | À auditer |
-| Photo → Crm | 5 | (non inspecté) | ? | À auditer |
-| Editorial → Crm | 3 | (non inspecté) | ? | À auditer (cycle potentiel avec Crm→Editorial) |
+| **Ecommerce → Erp** | 15 | `Listing`/`Order` ↔ `Product` (entité) + `CurrencyEnum` (×7) + `ProductRepository` | **DURE (sémantique)** | `CurrencyEnum` → déplacer en **core** ; le reste (Product) est intrinsèque → Ecommerce **require** Erp |
+| **Project → Crm** | 16 | `Company/Contact/Deal Interface` sur `AbstractProject` (liens entité opt.) + repos hydratation | **MOYENNE** | Via interfaces (résolu par resolve_target_entities) ; nullable → soit `require`, soit bridge `aurora-project-crm` |
+| **Project → Billing** | 7 | **tout dans `ProjectInvoiceManager`** (feature « facturer un projet ») | **ISOLÉE (1 classe)** | **Bridge parfait** : extraire `ProjectInvoiceManager` en `aurora-project-billing` |
+| Photo → Crm | 5 | (non inspecté — probable lien galerie↔client) | ? | À auditer J2 |
+| Editorial → Crm | 3 | (non inspecté) | ? | À auditer J2 (cycle potentiel avec Crm→Editorial) |
 
 **Pattern dominant observé** : les couplages cross-business sont des
 **intégrations optionnelles** (event listeners, blocs d'embed, liens
