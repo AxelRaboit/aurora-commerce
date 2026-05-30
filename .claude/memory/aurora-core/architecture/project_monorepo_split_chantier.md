@@ -81,7 +81,19 @@ cette mémoire avec l'état.
 | 2026-05-30 | **J4 — Planification packaging** | ✅ **Playbook posé** (`audit/packaging_playbook.md`) : anatomie d'un package (composer.json + `config/services.php` dans le subtree ; routes.php INUTILE), templates, splitsh, ordre (Tools POC d'abord), validation Phase 9.3, migrations côté client, transition Option C. |
 | 2026-05-30 | **J5 — POC packaging `aurora-tools` end-to-end** | ✅ **FAIT (sauf install réelle, bloquée infra)**. **Finding clé** : `instanceof()` dans le `config/services.php` d'un bundle est *file-scoped* → **aucun** conflit de merge avec le `_instanceof` central (contrairement à `#[AutoconfigureTag]` global). Donc **le câblage services/tags par package se valide DANS le monorepo**, package par package — ça dé-risque tout le chantier (la conclusion J4 antérieure « seulement au split réel » était fausse). Monté : `Tools/composer.json` (PSR-4 `Aurora\Module\Tools\: ""`), `Tools/config/services.php` (load + 2 `instanceof` locaux), `AbstractAuroraModuleBundle::loadExtension()` importe le services.php si présent, exclusion de Tools du glob central. Vérifs : cache:clear test+dev, lint:container, tags présents, **2744 tests verts**. **Routes** : pas de routes.php (le loader `routing.controllers` découvre les contrôleurs via leur enregistrement service). **Split** : `git subtree split` (substitut splitsh-lite absent) → composer.json+bundle+config à la racine, PSR-4 `""` correct. Voir `audit/poc_tools_bundle.md`. |
 | 2026-05-30 | **J5 — Install RÉELLE à la carte validée (aurora-tools)** | ✅ **FAIT end-to-end sur 2 vrais repos GitHub**. Repo `aurora-tools` (subtree split poussé) + branche `split/core-no-tools` sur le repo core (= develop moins `src/Module/Tools`, package toujours `axelraboit/aurora`). `aurora-client` câblé en VCS (`axelraboit/aurora: dev-split/core-no-tools` + `axelraboit/aurora-tools: dev-main`). **Résultat** : `composer install` OK, `cache:clear` OK, `make build` OK avec **VaultApp + 14 composants Vault bundlés DEPUIS `vendor/axelraboit/aurora-tools`** (le core n'a plus Tools → preuve Gate 2 B en vrai), `ToolsModule` tagué `aurora.module` (finding services.php confirmé en install réelle), entités Vault mappées, **routes `backend_tools_*` résolues**, `doctrine:schema:validate` OK. Findings ci-dessous. |
-| — | J5b — Exécution rollout (12 autres packages) | 🔜 Mécanique 100% prouvée (cf. J5 réel). Reste : appliquer le template Tools (composer.json + services.php) aux 12 modules + repos GitHub + Packagist/privé. Pas de blocage code. |
+| 2026-05-30 | **J5b — Template généralisé aux 13 modules (in-monorepo)** | ✅ **FAIT**. Les 13 modules ont chacun `composer.json` + `config/services.php` (load + `instanceof` file-scoped) et sont **exclus du glob central**. Defs d'args spéciales déplacées du central vers le services.php du module (Editorial MenuLocationRegistry, Billing OCR×2, Assistant LLM×4, Ecommerce Stripe, Photo GalleryAccess). **Merge `aurora-commerce`** : Ecommerce+Erp = 1 seul `Ecommerce/config/services.php` chargeant **les 2 namespaces** (les contrôleurs Ecommerce autowire le `ProductRepository` concret d'Erp). Validé : cache:clear + lint:container OK, tags intacts (module 18, param 15, dashboard 6, front 4, block 1), **2744 tests verts**. Reste hors-code : repos GitHub (11 autres) + Packagist. |
+
+### 🔑 Finding merge / exclusion (2026-05-30)
+
+Exclure un module du glob central **alors qu'un service chargé centralement
+autowire sa classe concrète** → `Cannot autowire ... type has been excluded in
+config/services.yaml`. Cas réel : `Ecommerce\...\ListingsController`
+(central) → `Erp\Product\Repository\ProductRepository` (Erp exclu). **Fix** :
+ne jamais splitter séparément deux modules couplés par classe concrète → les
+**fusionner** (un `services.php` qui charge les 2 namespaces, autowiring
+intra-fichier). C'est exactement la justification du package `aurora-commerce`
+(seule fusion du graphe en étoile). Les 11 autres modules sont des leaves/soft-ref
+sans couplage concret → split séparé OK.
 
 ### 🔑 Findings install réelle (2026-05-30)
 

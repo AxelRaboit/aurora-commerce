@@ -45,9 +45,20 @@ central pour tout le code **non encore** muni de son `services.php`.
 | `axelraboit/aurora-tools` | Tools | `src/Module/Tools` |
 | `axelraboit/aurora-assistant` | Assistant | `src/Module/Assistant` |
 
-> `aurora-commerce` regroupe **2 sous-dossiers** (Ecommerce+Erp) → splitsh sait
-> splitter plusieurs prefixes vers un repo, ou on structure un sous-dossier
-> commun. Cas particulier, à valider au POC.
+> `aurora-commerce` regroupe **2 sous-dossiers** (Ecommerce+Erp) → splitsh
+> splitte les 2 prefixes vers des sous-dossiers `Ecommerce/` + `Erp/` du repo
+> enfant ; le `composer.json` racine mappe `Aurora\Module\Ecommerce\: Ecommerce/`
+> + `Aurora\Module\Erp\: Erp/`. **Validé in-monorepo** : un **seul**
+> `Ecommerce/config/services.php` charge les 2 namespaces (les contrôleurs
+> Ecommerce autowire le `ProductRepository` concret d'Erp → un services.php par
+> module casserait avec « type excluded »). `AuroraErpBundle` ne ship pas de
+> services.php. Ce `composer.json` racine est un artefact de split (il ne peut
+> pas vivre dans `src/Module/Ecommerce/` du monorepo).
+
+> **État (2026-05-30)** : les **13 modules** ont leur `composer.json` +
+> `config/services.php` in-monorepo et sont exclus du glob central. `aurora-tools`
+> est splitté + installé pour de vrai. Les 11 autres : repos GitHub + publish
+> restants (hors-code).
 
 ## 2. Anatomie d'un package module (ex. `aurora-tools`)
 
