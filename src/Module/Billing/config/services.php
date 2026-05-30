@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 use Aurora\Core\Dashboard\DashboardStatsProviderInterface;
 use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Scheduler\RecurringMessageProviderInterface;
 use Aurora\Module\Billing\Ocr\Service\DocTrClient;
 use Aurora\Module\Billing\Ocr\Service\OllamaVisionClient;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
@@ -27,6 +28,7 @@ return static function (ContainerConfigurator $container): void {
     $services->instanceof(ApplicationParameterProviderInterface::class)->tag('aurora.application_parameter_provider');
     $services->instanceof(DashboardStatsProviderInterface::class)->tag('aurora.dashboard_stats_provider');
     $services->instanceof(DocumentUsageProviderInterface::class)->tag('aurora.document_usage_provider');
+    $services->instanceof(RecurringMessageProviderInterface::class)->tag('aurora.recurring_message_provider');
 
     $services->load('Aurora\\Module\\Billing\\', $moduleDir.'/')
         ->exclude([

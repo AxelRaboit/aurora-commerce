@@ -5,42 +5,44 @@ declare(strict_types=1);
 namespace Aurora\Core\Scheduler;
 
 use Aurora\Core\Scheduler\Message\CleanTempFilesMessage;
-use Aurora\Module\Billing\Ocr\Message\RecoverStuckOcrJobsMessage;
-use Aurora\Module\Editorial\Post\Message\PublishScheduledPostsMessage;
-use Aurora\Module\Editorial\Post\Message\PurgeTrashedPostsMessage;
-use Aurora\Module\PersonalFinance\Recurring\Message\GeneratePersonalFinanceRecurringTransactionsMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * The 'main' schedule. Only core's own recurring jobs are declared here; every
+ * module contributes its cron messages through a
+ * {@see RecurringMessageProviderInterface}, aggregated below — so aurora-core
+ * has no dependency on module message classes.
+ */
 #[AsSchedule('main')]
 final readonly class MainSchedule implements ScheduleProviderInterface
 {
+    /**
+     * @param iterable<RecurringMessageProviderInterface> $providers
+     */
     public function __construct(
         private CacheInterface $cache,
+        private iterable $providers = [],
     ) {}
 
     public function getSchedule(): Schedule
     {
-        return new Schedule()
+        $schedule = new Schedule()
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->add(
-                RecurringMessage::cron('* * * * *', new PublishScheduledPostsMessage()),
-            )
-            ->add(
-                RecurringMessage::cron('0 3 * * *', new PurgeTrashedPostsMessage()),
-            )
-            ->add(
                 RecurringMessage::cron('0 * * * *', new CleanTempFilesMessage()),
-            )
-            ->add(
-                RecurringMessage::cron('30 * * * *', new RecoverStuckOcrJobsMessage()),
-            )
-            ->add(
-                RecurringMessage::cron('0 3 * * *', new GeneratePersonalFinanceRecurringTransactionsMessage()),
             );
+
+        foreach ($this->providers as $provider) {
+            foreach ($provider->getRecurringMessages() as $message) {
+                $schedule->add($message);
+            }
+        }
+
+        return $schedule;
     }
 }

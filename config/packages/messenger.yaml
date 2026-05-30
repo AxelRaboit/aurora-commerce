@@ -16,8 +16,9 @@ framework:
             failed: 'doctrine://default?queue_name=failed'
             scheduler_main: 'schedule://main'
 
-        routing:
-            Aurora\Module\Billing\Ocr\Message\ProcessOcrJobMessage: async
+        # Module message routing is declared by each module's bundle
+        # (prependExtension), e.g. AuroraBillingBundle routes ProcessOcrJobMessage
+        # → async — so aurora-core's messenger config stays module-agnostic.
 
 when@test:
     framework:

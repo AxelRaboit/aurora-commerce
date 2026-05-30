@@ -8,6 +8,7 @@ declare(strict_types=1);
  */
 
 use Aurora\Core\Module\Contract\ModuleInterface;
+use Aurora\Core\Scheduler\RecurringMessageProviderInterface;
 use Aurora\Module\Configuration\Setting\Configuration\ConfigurationTabProviderInterface;
 use Aurora\Module\Configuration\Setting\Provider\ApplicationParameterProviderInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -21,6 +22,7 @@ return static function (ContainerConfigurator $container): void {
     $services->instanceof(ModuleInterface::class)->tag('aurora.module');
     $services->instanceof(ConfigurationTabProviderInterface::class)->tag('aurora.configuration_tab_provider');
     $services->instanceof(ApplicationParameterProviderInterface::class)->tag('aurora.application_parameter_provider');
+    $services->instanceof(RecurringMessageProviderInterface::class)->tag('aurora.recurring_message_provider');
 
     $services->load('Aurora\\Module\\PersonalFinance\\', $moduleDir.'/')
         ->exclude([
