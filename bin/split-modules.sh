@@ -95,6 +95,12 @@ split_commerce() {
     "extra": {
         "symfony": {
             "bundle": "Aurora\\Module\\Ecommerce\\AuroraEcommerceBundle"
+        },
+        "aurora": {
+            "bundles": [
+                "Aurora\\Module\\Ecommerce\\AuroraEcommerceBundle",
+                "Aurora\\Module\\Erp\\AuroraErpBundle"
+            ]
         }
     }
 }

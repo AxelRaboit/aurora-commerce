@@ -78,6 +78,13 @@ services:
         Aurora\Core\Reference\EntityReferenceProviderInterface:
             tags: [aurora.entity_reference_provider]
 
+    # Route loader that auto-discovers controllers of installed aurora-* module
+    # packages. Client adds one `type: aurora_modules` routing entry.
+    Aurora\Core\Routing\AuroraModuleRouteLoader:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+        tags: [routing.loader]
+
     Aurora\Module\Ged\Document\Service\DocumentUsageService:
         arguments:
             $providers: !tagged_iterator aurora.document_usage_provider
