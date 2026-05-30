@@ -59,6 +59,22 @@ i18n disparaissent **ensemble**. Le POC prouve la partie risquée
 (Doctrine/Twig/i18n/RTE par bundle) ; services/routes sont du déplacement
 mécanique de config vers le package.
 
+## ⚠️ Apprentissage (2026-05-30) — services/routes per-bundle dans le monorepo
+
+Tentative de découpler le tagging du `services.yaml` central en migrant le bloc
+`_instanceof` vers des `#[AutoconfigureTag]` sur les interfaces (prérequis pour
+charger les services par bundle). **Échec dans le monorepo** : Symfony lève
+`merge() does not support merging autoconfiguration for the same class/interface`
+parce que l'app charge **les 13 bundles + attributs simultanément**.
+
+→ **Ce n'est PAS un blocker du split** : dans un vrai déploiement, un client
+n'installe que *certains* packages, chacun avec son propre `services.yaml`
+(+ `_instanceof` local) — le conflit de merge ne se produit pas. La migration
+services/routes par-package se fait donc **au moment du split réel**, package
+par package en isolation, pas en simulant les 13 bundles dans une seule app.
+Dans le monorepo on garde le `Aurora\: resource '../src/'` + `_instanceof`
+central (qui couvre tout) ; c'est correct tant que tout le code est présent.
+
 ## Reste pour un package Composer complet (J3+)
 
 - `composer.json` du package `axelraboit/aurora-tools` (autoload PSR-4
