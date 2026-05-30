@@ -189,12 +189,6 @@ use Aurora\Module\Project\Entity\ProjectTaskItem;
 use Aurora\Module\Project\Entity\ProjectTaskItemInterface;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntry;
 use Aurora\Module\Project\Entity\ProjectTaskTimeEntryInterface;
-use Aurora\Module\Tools\Vault\VaultEntry\Entity\VaultEntry;
-use Aurora\Module\Tools\Vault\VaultEntry\Entity\VaultEntryInterface;
-use Aurora\Module\Tools\Vault\VaultFolder\Entity\VaultFolder;
-use Aurora\Module\Tools\Vault\VaultFolder\Entity\VaultFolderInterface;
-use Aurora\Module\Tools\Vault\VaultUserConfig\Entity\VaultUserConfig;
-use Aurora\Module\Tools\Vault\VaultUserConfig\Entity\VaultUserConfigInterface;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -232,7 +226,18 @@ class AuroraBundle extends AbstractBundle
     {
         $dir = dirname(__DIR__);
 
-        $moduleDirs = glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [];
+        // Modules extracted into their own bundle (POC for the monorepo split):
+        // AuroraBundle ignores them entirely — their dedicated
+        // Aurora<Name>Bundle registers their Doctrine mapping / Twig / i18n /
+        // resolve_target_entities. In the target topology these dirs live in a
+        // separate Composer package and simply aren't present here; the list
+        // simulates that absence inside the monorepo.
+        $extractedModules = ['Tools'];
+
+        $moduleDirs = array_values(array_filter(
+            glob($dir.'/src/Module/*', GLOB_ONLYDIR) ?: [],
+            static fn (string $moduleDir): bool => !in_array(basename($moduleDir), $extractedModules, true),
+        ));
 
         $builder->prependExtensionConfig('doctrine', [
             'dbal' => [
@@ -320,9 +325,6 @@ class AuroraBundle extends AbstractBundle
                     DocumentCategoryInterface::class => DocumentCategory::class,
                     DocumentTagInterface::class => DocumentTag::class,
                     DocumentFolderInterface::class => DocumentFolder::class,
-                    VaultEntryInterface::class => VaultEntry::class,
-                    VaultFolderInterface::class => VaultFolder::class,
-                    VaultUserConfigInterface::class => VaultUserConfig::class,
                     MountPointInterface::class => MountPoint::class,
                     MarkdownNoteInterface::class => MarkdownNote::class,
                     BlockNoteInterface::class => BlockNote::class,

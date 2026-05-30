@@ -2,6 +2,10 @@
 
 return [
     Aurora\AuroraBundle::class => ['all' => true],
+    // POC monorepo-split: Tools ships as its own self-registering module bundle
+    // (src/Module/Tools/AuroraToolsBundle.php). Removing this line removes the
+    // whole module — the "install only what you want" mechanism.
+    Aurora\Module\Tools\AuroraToolsBundle::class => ['all' => true],
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
