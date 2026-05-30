@@ -41,60 +41,88 @@ ou le retirer = installer ou désinstaller le module**.
 `debug:twig` (`@Tools`) et `doctrine:schema:validate` ✅. **Suite complète
 verte : 2747 tests** avec Tools piloté par son seul bundle.
 
-## Limites honnêtes (propres au POC en monorepo)
+## POC packaging end-to-end (2026-05-30) — services + tags + split validés
 
-Deux briques restent **centralisées** parce que le code de Tools est
-physiquement présent dans le repo :
+Suite au finding ci-dessus, le câblage services-per-package a été monté ET
+validé **dans le monorepo** (et non reporté au split) :
 
-- **Services** : `config/services.yaml` fait `Aurora\: resource: '../src/'`
-  → autowire encore les classes Tools. Au vrai split, le package Tools
-  embarque **son** `services.yaml` (`Aurora\Module\Tools\: resource: …`).
-- **Routes** : `config/routes/` glob les contrôleurs de `src/`. Idem, le
-  package Tools embarquera **ses** routes.
+1. **`src/Module/Tools/config/services.php`** (shippé dans le package) :
+   `services()->load('Aurora\Module\Tools\', moduleDir)` + deux `instanceof()`
+   file-scoped (`ModuleInterface` → `aurora.module`,
+   `ApplicationParameterProviderInterface` → `aurora.application_parameter_provider`)
+   — les **seules** interfaces tagués que les services Tools implémentent
+   (vérifié par grep sur les 13 interfaces du `_instanceof` central).
+2. **`AbstractAuroraModuleBundle::loadExtension()`** importe
+   `<moduleDir>/config/services.php` **s'il existe** → no-op pour les modules
+   qui n'en ont pas (ils restent sur le glob central).
+3. **`config/services.yaml`** : `exclude: ['../src/Module/Tools/']` sur le
+   `Aurora\: resource` central — Tools n'est plus autowiré deux fois.
 
-Donc désactiver *seulement* le bundle dans le monorepo laisse services +
-routes Tools chargés (état incohérent volontaire). Au vrai split, le dir
-entier est **absent** du package core → services, routes, entités, Twig,
-i18n disparaissent **ensemble**. Le POC prouve la partie risquée
-(Doctrine/Twig/i18n/RTE par bundle) ; services/routes sont du déplacement
-mécanique de config vers le package.
+Vérifs : `cache:clear` (test + dev) ✅ **sans conflit de merge**,
+`lint:container` ✅, `ToolsModule`/`ToolsModuleParameterProvider` portent bien
+leurs tags (`debug:container`), compteurs `aurora.module`=18 /
+`aurora.application_parameter_provider`=15 intacts, **2744 tests verts**.
 
-## ⚠️ Apprentissage (2026-05-30) — services/routes per-bundle dans le monorepo
+**Routes — pas de `routes.php` nécessaire.** Le loader `routing.controllers`
+(celui du `config/routes.yaml` de l'app cliente) découvre les contrôleurs
+**via leur enregistrement comme services**, pas par glob de répertoire. Les
+routes `backend_tools_*` résolvent **alors même** que Tools est exclu du glob
+central (elles viennent du `services.php` du module). Un package back-only
+n'embarque donc **que** `composer.json` + `config/services.php`.
 
-Tentative de découpler le tagging du `services.yaml` central en migrant le bloc
-`_instanceof` vers des `#[AutoconfigureTag]` sur les interfaces (prérequis pour
-charger les services par bundle). **Échec dans le monorepo** : Symfony lève
-`merge() does not support merging autoconfiguration for the same class/interface`
-parce que l'app charge **les 13 bundles + attributs simultanément**.
+**Split mécanique validé (`git subtree split`, splitsh-lite absent).**
+`git subtree split --prefix=src/Module/Tools -b split-aurora-tools` produit un
+arbre où `composer.json`, `AuroraToolsBundle.php` et `config/services.php` sont
+**à la racine** → le mapping PSR-4 `"Aurora\\Module\\Tools\\": ""` (le point le
+plus à risque du playbook) est **correct** : `Aurora\Module\Tools\AuroraToolsBundle`
+↦ `AuroraToolsBundle.php`. Démontré via commit temporaire + soft-reset (aucun
+impact sur l'historique de `develop`).
 
-→ **Ce n'est PAS un blocker du split** : dans un vrai déploiement, un client
-n'installe que *certains* packages, chacun avec son propre `services.yaml`
-(+ `_instanceof` local) — le conflit de merge ne se produit pas. La migration
-services/routes par-package se fait donc **au moment du split réel**, package
-par package en isolation, pas en simulant les 13 bundles dans une seule app.
-Dans le monorepo on garde le `Aurora\: resource '../src/'` + `_instanceof`
-central (qui couvre tout) ; c'est correct tant que tout le code est présent.
+## ⚠️→✅ Apprentissage (2026-05-30) — tagging per-bundle : ce qui marche vraiment
+
+**Première tentative (échec).** Découpler le tagging en migrant le bloc
+`_instanceof` central vers des `#[AutoconfigureTag]` sur les interfaces. Symfony
+lève `merge() does not support merging autoconfiguration for the same
+class/interface` : `#[AutoconfigureTag]` passe par
+`registerForAutoconfiguration()`, un registre **global** que plusieurs
+extensions de bundle ne peuvent pas merger.
+
+**Finding correctif (validé end-to-end ci-dessous).** Le conflit est spécifique
+à l'autoconfiguration **globale**. Un `instanceof()` déclaré **dans le
+`services.php` d'un bundle** est *file-scoped* (il ne s'applique qu'aux services
+chargés par ce loader) — il **ne passe pas** par `registerForAutoconfiguration`
+et **ne crée donc aucun conflit de merge**, même dans le monorepo avec le
+`_instanceof` central encore en place. Conséquence : **le câblage
+services/tags per-package est testable dans le monorepo**, package par package,
+sans attendre le split réel. Ça **dé-risque** tout le chantier.
 
 ## Reste pour un package Composer complet (J3+)
 
-- `composer.json` du package `axelraboit/aurora-tools` (autoload PSR-4
-  `Aurora\Module\Tools\`, require `axelraboit/aurora-core`).
-- `services.yaml` + `routes` embarqués dans le package.
-- **`ModuleParameterEnum` extensible** : les toggles Tools
-  (`ToolsBackend/Vault/PasswordGenerator`) vivent encore dans l'enum central
-  de Configuration → à rendre extensible pour que le package déclare les
-  siens (blocker connu, cf. `module_inventory.md`).
-- Stratégie **migrations** (Phase 5 audit) : les tables Vault sont créées
-  par les migrations centrales ; à partitionner ou laisser côté client.
-- Outil de split (`splitsh/lite`) pour publier le sous-arbre en repo dédié.
+- ✅ `composer.json` du package `axelraboit/aurora-tools` (PSR-4
+  `Aurora\Module\Tools\: ""`, require `axelraboit/aurora-core`) — **fait**.
+- ✅ `config/services.php` embarqué (+ `instanceof` local) — **fait**. Routes :
+  inutile (cf. `routing.controllers`).
+- ✅ **`ModuleParameterEnum` extensible** — **fait** : `ToolsModuleParameterEnum`
+  + `ToolsModuleParameterProvider` déclarent les toggles Tools hors enum central
+  (le provider évite aussi le wipe `aurora:application-parameter`).
+- ☐ **Install réelle dans un `aurora-client` neuf** : nécessite un repo Composer
+  (path/VCS) servant le subtree split + `aurora-core` lui-même packagé. C'est la
+  dernière étape **bloquée par l'infra** (repos GitHub + Packagist/privé), pas
+  par le code.
+- ☐ Stratégie **migrations** (Phase 5 audit) : tables Vault créées par les
+  migrations centrales ; à partitionner ou laisser côté client.
+- ☐ Outil de split définitif : `splitsh/lite` **absent localement** ;
+  `git subtree split` utilisé comme substitut (valide la mécanique + PSR-4 root).
 
 ## Verdict
 
-✅ **Mécanisme validé.** `AbstractAuroraModuleBundle` est réutilisable tel
-quel pour les 8 autres leaves purs et, après cat. D/E, pour les 5 modules
-restants. Le « choisir ce qu'on installe » fonctionne au niveau bundle ;
-le reste (composer.json, services/routes embarqués, splitsh) est du
-packaging déterministe.
+✅ **Mécanisme validé end-to-end** (sauf l'install réelle, bloquée par
+l'infra repos/Packagist). `AbstractAuroraModuleBundle` + `config/services.php`
+per-module + `composer.json` PSR-4-root sont réutilisables tels quels pour les
+8 autres leaves et, après cat. D/E, pour les 5 modules restants. Le finding
+**`instanceof` file-scoped ≠ autoconfiguration globale** dé-risque tout le
+chantier : le câblage services/tags se valide **dans le monorepo**, package par
+package, avant même de créer les repos enfants.
 
 ## Généralisation aux 8 leaves (2026-05-30)
 

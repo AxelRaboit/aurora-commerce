@@ -7,16 +7,23 @@
 > `decoupling_strategy.md` (découplage) et `poc_tools_bundle.md` (bundle POC +
 > finding services/routes).
 
-## 0. Pourquoi ça se fait au split réel, pas dans le monorepo
+## 0. Câblage services per-package : testable DANS le monorepo (corrigé 2026-05-30)
 
-Un package consommé seul charge **uniquement** son `services.yaml` (+ celui de
-`aurora-core`). Le monorepo, lui, charge **les 13 bundles + leurs configs
-simultanément** → c'est ce qui a fait échouer la migration `_instanceof` →
-`#[AutoconfigureTag]` (`merge() does not support merging autoconfiguration`).
-**Conclusion** : `services.yaml`/routes/`_instanceof` par package se câblent et
-se testent **package par package, en isolation**, jamais en simulant les 13
-dans une seule app. Le monorepo reste sur `Aurora\: resource '../src/'` +
-`_instanceof` central tant que tout le code est présent.
+**Conclusion antérieure (erronée)** : « le services-per-package ne se teste
+qu'au split réel ». Issue de l'échec `#[AutoconfigureTag]` →
+`merge() does not support merging autoconfiguration`.
+
+**Correction (POC end-to-end, cf. `poc_tools_bundle.md`)** : ce conflit est
+spécifique à l'autoconfiguration **globale** (`registerForAutoconfiguration`,
+ce que déclenche `#[AutoconfigureTag]`). Un `instanceof()` déclaré dans le
+**`config/services.php` d'un bundle** est *file-scoped* → **aucun conflit**,
+même avec le `_instanceof` central encore présent. Donc chaque module embarque
+son `config/services.php` (load + `instanceof` local + son exclusion du glob
+central), et **on le valide dans le monorepo** (`cache:clear`, `lint:container`,
+tags présents, tests verts) **avant** de créer le moindre repo enfant. Seule
+l'**install composer réelle** dans un client neuf attend l'infra (repos +
+Packagist). Le monorepo garde `Aurora\: resource '../src/'` + `_instanceof`
+central pour tout le code **non encore** muni de son `services.php`.
 
 ## 1. Cible (rappel)
 
@@ -51,8 +58,7 @@ Le subtree `src/Module/Tools/` doit devenir un package autonome. Y ajouter
 src/Module/Tools/
 ├── composer.json            ← (nouveau) manifeste du package
 ├── config/
-│   ├── services.php         ← (nouveau) services du module (Aurora\Module\Tools\)
-│   └── routes.php           ← (nouveau) chargement des contrôleurs du module
+│   └── services.php         ← (nouveau) services + instanceof local (routes.php INUTILE)
 ├── AuroraToolsBundle.php     ← (existe) auto-enregistre Doctrine/Twig/i18n/RTE
 ├── Setting/
 │   ├── ToolsModuleParameterEnum.php       ← (existe) toggles du module
@@ -107,13 +113,14 @@ return static function (ContainerConfigurator $c): void {
 Le `AuroraToolsBundle::loadExtension()` importe ce fichier. **Côté `aurora-core`**,
 au split, retirer Tools du glob central (déjà simulé par `$extractedModules`).
 
-### 2.3 `config/routes.php`
+### 2.3 `config/routes.php` — **inutile** (validé POC)
 
-```php
-return static function (RoutingConfigurator $routes): void {
-    $routes->import('../', 'attribute'); // contrôleurs du module
-};
-```
+Pas de `routes.php` dans le package. Le loader `routing.controllers`
+(`config/routes.yaml` de l'app cliente) découvre les contrôleurs **via leur
+enregistrement comme services** (faits par le `services.php` du module), pas par
+glob de répertoire. Vérifié : les routes `backend_tools_*` résolvent alors que
+Tools est exclu du glob central. Un package back-only n'embarque donc que
+`composer.json` + `config/services.php`.
 
 ## 3. Outillage split
 
@@ -138,11 +145,18 @@ splitsh-lite --prefix=src/Module/Tools --target=heads/split-tools
 git push aurora-tools split-tools:main
 ```
 
+> **Substitut validé** (splitsh-lite absent localement) : `git subtree split
+> --prefix=src/Module/Tools -b split-aurora-tools` produit le même arbre racine
+> (composer.json + bundle + config à la racine → PSR-4 `""` correct). Plus lent
+> (rejoue l'historique) mais sans dépendance binaire. Suffisant pour le POC ;
+> `splitsh-lite` reste reco pour le rollout (vitesse + idempotence des hashes).
+
 ## 4. Ordre d'extraction (du plus simple au plus dur)
 
-1. **POC** : `aurora-tools` (leaf pur, petit) — valide TOUTE la mécanique
-   (composer.json, services.php, routes, PSR-4 root, install dans un
-   `aurora-client` neuf, tests verts).
+1. **POC** : `aurora-tools` (leaf pur, petit) — ✅ **fait** (2026-05-30) :
+   composer.json, services.php + tags, PSR-4 root, subtree split, tests verts —
+   tout validé **dans le monorepo**. Reste ☐ l'install réelle dans un
+   `aurora-client` neuf (bloquée par l'infra repos/Packagist, pas le code).
 2. Leaves : Hr, Planning, Notes, PersonalFinance, Assistant.
 3. Soft-ref : Photo, Editorial, Crm, Billing, Project.
 4. Fusion : Commerce (Ecommerce+Erp) en dernier.
@@ -180,12 +194,29 @@ Pattern Symfony.
 - [ ] Accès Packagist / repo Composer privé pour publier.
 - [ ] CI : pipeline par package (ou monorepo CI qui split + push à chaque tag).
 
-## 9. Stratégie assets Vue (Gate 2 — TOUJOURS OUVERT)
+## 9. Stratégie assets Vue (Gate 2 — ✅ TRANCHÉ : option B)
 
-Le seul gate non tranché. Le build Vite est aujourd'hui centralisé
-(`public/build` 9.9 Mo). Les 3 options (A pré-buildé / B plugin Vite custom /
-C symlinks post-install) restent à POC'er sur 1 module. **Bloquant** pour un
-package front-complet ; les packages back-only peuvent partir sans.
+**Décision (2026-05-30)** : option **B** (glob étendu au vendor). aurora-core
+ship `vite-plugin-aurora-modules.js` : en mode vendored (le `packageDir` est
+sous un dossier `vendor/`), il scanne les packages siblings
+`vendor/axelraboit/aurora-*` (hors `aurora-core`), collecte leurs
+`assets/**/*.vue` et les expose via le module virtuel
+`virtual:aurora-vendor-modules`, spread dans `app.js` entre les modules aurora
+et les modules client (le client garde la priorité d'override). `fs.allow`
+inclut le dossier parent ; `dedupe` (vue/vue-i18n/…) gère le version-skew.
+
+**Finding** : un `import.meta.glob` relatif statique (`../../../../aurora-*`)
+est inutilisable — il collisionne en dev (le parent du monorepo contient
+`aurora-client`/`aurora-core`). D'où le plugin qui **détecte le mode** et
+génère un module virtuel (no-op en monorepo).
+
+**Validé** : build monorepo vert (plugin no-op, VaultApp toujours bundlé via
+`src/Module`), découverte vendored unit-testée (clés `./tools/...`,
+`./personalfinance/...` tirets aplatis, `aurora-core` exclu, `node_modules`
+sauté), `lint-js` + 860 tests JS verts. Mapping **identique** à celui du
+monorepo → `vue_component('tools/backend/vault/VaultApp')` résout pareil en dev
+et en vendored. **Reste** : valider l'install réelle (client avec aurora-core +
+aurora-tools vendored séparément).
 
 ---
 
