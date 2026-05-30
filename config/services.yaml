@@ -52,6 +52,8 @@ services:
             tags: [aurora.search_provider]
         Aurora\Core\Dashboard\DashboardStatsProviderInterface:
             tags: [aurora.dashboard_stats_provider]
+        Aurora\Core\Search\BackendSearchProviderInterface:
+            tags: [aurora.backend_search_provider]
 
     Aurora\Module\Ged\Document\Service\DocumentUsageService:
         arguments:
