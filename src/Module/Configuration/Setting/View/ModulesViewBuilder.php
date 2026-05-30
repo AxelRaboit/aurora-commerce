@@ -30,12 +30,29 @@ final readonly class ModulesViewBuilder
         $catalogByModuleId = $this->buildCatalogByModuleId();
         $parameters = [];
 
+        // Order the module cards like the sidemenu: by each module's lowest
+        // NavSection priority (the same source the sidemenu sorts on), so both
+        // views list modules in the same order. Standalone toggles with no
+        // module (e.g. a *Frontend switch) sort last.
+        $priorityByModuleId = [];
+        foreach ($catalogByModuleId as $moduleId => $sections) {
+            $priorityByModuleId[$moduleId] = [] === $sections
+                ? PHP_INT_MAX
+                : min(array_map(static fn (NavSection $section): int => $section->priority, $sections));
+        }
+
+        $topLevel = $this->moduleToggleRegistry->getDisplayTopLevel();
+        usort(
+            $topLevel,
+            static fn (ModuleToggle $a, ModuleToggle $b): int => ($priorityByModuleId[$a->moduleId] ?? PHP_INT_MAX) <=> ($priorityByModuleId[$b->moduleId] ?? PHP_INT_MAX),
+        );
+
         // Single registry-driven path: every module (core or aurora-client)
         // contributes its toggles via ModuleToggleProviderInterface. Top-level
         // toggles (moduleId set) become module cards; sub-toggles nest under
         // them structurally via displayParentKey (falling back to the cascade
         // parentKey for client toggles). No central enum iteration.
-        foreach ($this->moduleToggleRegistry->getDisplayTopLevel() as $toggle) {
+        foreach ($topLevel as $toggle) {
             $navItems = [];
             $moduleId = $toggle->moduleId;
 
