@@ -9,7 +9,7 @@ import AppInput from "@/shared/components/form/input/AppInput.vue";
 import AppSearchInput from "@/shared/components/form/input/AppSearchInput.vue";
 import AppModalFooter from "@/shared/components/overlay/AppModalFooter.vue";
 import AppBadge from "@/shared/components/feedback/AppBadge.vue";
-import { Lock, ChevronDown } from "lucide-vue-next";
+import { Lock, ChevronDown, Globe } from "lucide-vue-next";
 import { resolveNavIcon, moduleIconColorClass, moduleHeaderClass, moduleIdFromToggleKey } from "@/shared/nav/navMeta.js";
 import { useModules } from "./composables/useModules.js";
 import { useCollapsibleSections } from "./composables/useCollapsibleSections.js";
@@ -76,7 +76,11 @@ onMounted(() => {
                     </p>
                     <p v-if="parameter.description" class="text-xs text-muted mt-0.5">{{ parameter.description }}</p>
                     <p v-if="modules.isLocked(parameter)" class="text-xs text-warning mt-0.5">{{ modules.lockReason(parameter) }}</p>
-                    <div v-if="parameter.navItems?.length" class="flex flex-wrap gap-1 mt-1.5">
+                    <div
+                        v-if="parameter.navItems?.length || (parameter.subModules ?? []).some((sub) => sub.type === 'frontend')"
+                        class="flex flex-wrap gap-1 mt-1.5"
+                    >
+                        <!-- Backend features (module-coloured icon) -->
                         <span
                             v-for="item in parameter.navItems"
                             :key="item.labelKey"
@@ -89,6 +93,15 @@ onMounted(() => {
                                 :stroke-width="2"
                             />
                             {{ t(item.labelKey) }}
+                        </span>
+                        <!-- Public/frontend toggles (differentiated: globe + emerald) -->
+                        <span
+                            v-for="sub in (parameter.subModules ?? []).filter((s) => s.type === 'frontend')"
+                            :key="sub.key"
+                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30"
+                        >
+                            <Globe class="w-3 h-3 shrink-0" :stroke-width="2" />
+                            {{ sub.label }}
                         </span>
                     </div>
                 </div>
