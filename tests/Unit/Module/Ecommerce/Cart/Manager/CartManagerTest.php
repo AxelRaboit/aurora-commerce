@@ -12,7 +12,7 @@ use Aurora\Module\Ecommerce\Cart\Manager\CartManager;
 use Aurora\Module\Ecommerce\Cart\Repository\CartRepository;
 use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Platform\User\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Result;

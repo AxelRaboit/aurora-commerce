@@ -21,7 +21,7 @@ use Aurora\Module\Ecommerce\Order\Repository\OrderRepository;
 use Aurora\Module\Ecommerce\Order\Service\OrderNotificationService;
 use Aurora\Module\Ecommerce\Order\Service\OrderRefundService;
 use Aurora\Module\Erp\Product\Entity\Product;
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\LockMode;

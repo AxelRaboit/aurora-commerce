@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Tests\Unit\Module\Erp\Product\Enum;
+namespace Aurora\Tests\Unit\Core\Money\Enum;
 
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use PHPUnit\Framework\TestCase;
 
 final class CurrencyEnumTest extends TestCase

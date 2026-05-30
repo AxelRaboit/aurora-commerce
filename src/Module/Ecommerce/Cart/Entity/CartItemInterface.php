@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Aurora\Module\Ecommerce\Cart\Entity;
 
 use Aurora\Module\Ecommerce\Listing\Entity\ListingInterface;
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 
 interface CartItemInterface
 {

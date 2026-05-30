@@ -6,7 +6,7 @@ namespace Aurora\Module\Ecommerce\Cart\Serializer;
 
 use Aurora\Module\Ecommerce\Cart\Entity\CartInterface;
 use Aurora\Module\Ecommerce\Cart\Entity\CartItemInterface;
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use Aurora\Module\Ged\Document\Service\DocumentUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 

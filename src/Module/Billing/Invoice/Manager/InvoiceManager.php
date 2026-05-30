@@ -19,7 +19,7 @@ use Aurora\Module\Billing\Ocr\Manager\OcrJobManagerInterface;
 use Aurora\Module\Billing\Setting\BillingSettingEnum;
 use Aurora\Module\Configuration\Setting\Repository\SettingRepository;
 use Aurora\Module\Dev\Audit\Service\AuditLogger;
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

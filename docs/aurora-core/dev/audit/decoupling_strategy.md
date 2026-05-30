@@ -48,9 +48,9 @@ Une `enum` de valeur (pas de logique module) importée ailleurs.
 
 | Arête | Symbole | Source actuelle | Action |
 |---|---|---|---|
-| Billing→Erp (3) | `CurrencyEnum` | `src/Module/Erp/Product/Enum/CurrencyEnum.php` | **Déplacer → `src/Core/<Money>/Enum/CurrencyEnum.php`** |
-| Ecommerce→Erp (7) | `CurrencyEnum` | idem | idem (même déplacement) |
-| Erp→Ecommerce (1) ⚠️cycle | `EcommerceSettingEnum` | `src/Module/Ecommerce/Setting/EcommerceSettingEnum.php` | Le `ProductSerializer` (Erp) lit un setting Ecommerce. **Sortir la clé du setting en core** (ou retirer ce besoin du serializer Erp). **Casse le seul cycle.** |
+| Billing→Erp (3) | `CurrencyEnum` | déplacé : `src/Core/Money/Enum/CurrencyEnum.php` (`Aurora\Core\Money\Enum`) | ✅ **FAIT** (2026-05-30) — Billing+Ecommerce/Erp sont des packages distincts qui en ont besoin |
+| Ecommerce→Erp (7) | `CurrencyEnum` | idem | ✅ **FAIT** (même déplacement) |
+| ~~Erp→Ecommerce (1)~~ | `EcommerceSettingEnum` | `ProductSerializer` (Erp) lit un setting Ecommerce | ⏭️ **Sans objet** : Erp+Ecommerce **fusionnent** (cat. E → `aurora-commerce`), donc cette arête devient **intra-package**. Le « cycle » est moot après merge. Pas de churn. |
 
 → Élimine **11 refs** et le **cycle**. Risque faible (déplacement + maj des
 `use`). À faire **en premier**.

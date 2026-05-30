@@ -6,7 +6,7 @@ namespace Aurora\Tests\Unit\Entity;
 
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;
-use Aurora\Module\Erp\Product\Enum\CurrencyEnum;
+use Aurora\Core\Money\Enum\CurrencyEnum;
 use PHPUnit\Framework\TestCase;
 
 final class OrderTest extends TestCase

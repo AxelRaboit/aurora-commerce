@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aurora\Module\Erp\Product\Enum;
+namespace Aurora\Core\Money\Enum;
 
 enum CurrencyEnum: string
 {
