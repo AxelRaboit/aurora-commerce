@@ -35,7 +35,9 @@ findings ci-dessous.
 - **[`decoupling_strategy.md`](../../../../docs/aurora-core/dev/audit/decoupling_strategy.md)** —
   le **pourquoi** : graphe en étoile, taxonomie cat A-E, fusion commerce.
 - **[`packaging_playbook.md`](../../../../docs/aurora-core/dev/audit/packaging_playbook.md)** —
-  le **comment** : anatomie d'un package + findings ; runbook = `bin/split-modules.sh`.
+  le **comment** : anatomie d'un package + findings ; runbook = `bin/split-modules.sh`
+  (wrappé : `make split-module REPO=aurora-crm` pour un module, `make split-modules`
+  pour tous).
 - **[`installing_modules.md`](../../../../docs/aurora-client/getting-started/installing_modules.md)** —
   l'**adoption client** à la carte + kit `.claude/client_template/`.
 
