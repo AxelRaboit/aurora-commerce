@@ -27,7 +27,7 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Aurora\\Module\\PersonalFinance\\', $moduleDir.'/')
         ->exclude([
             $moduleDir.'/AuroraPersonalFinanceBundle.php',
-            $moduleDir.'/{config,templates,translations,assets}',
+            $moduleDir.'/{config,templates,translations,assets,DataFixtures}',
             $moduleDir.'/**/Entity',
             $moduleDir.'/Setting/PersonalFinanceModuleParameterEnum.php',
         ]);

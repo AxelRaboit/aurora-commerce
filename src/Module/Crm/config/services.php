@@ -31,7 +31,7 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Aurora\\Module\\Crm\\', $moduleDir.'/')
         ->exclude([
             $moduleDir.'/AuroraCrmBundle.php',
-            $moduleDir.'/{config,templates,translations,assets}',
+            $moduleDir.'/{config,templates,translations,assets,DataFixtures}',
             $moduleDir.'/**/Entity',
             $moduleDir.'/Setting/CrmModuleParameterEnum.php',
         ]);

@@ -40,7 +40,7 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Aurora\\Module\\Ecommerce\\', $ecommerceDir.'/')
         ->exclude([
             $ecommerceDir.'/AuroraEcommerceBundle.php',
-            $ecommerceDir.'/{config,templates,translations,assets}',
+            $ecommerceDir.'/{config,templates,translations,assets,DataFixtures}',
             $ecommerceDir.'/**/Entity',
             $ecommerceDir.'/Setting/EcommerceModuleParameterEnum.php',
         ]);
@@ -48,7 +48,7 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Aurora\\Module\\Erp\\', $erpDir.'/')
         ->exclude([
             $erpDir.'/AuroraErpBundle.php',
-            $erpDir.'/{templates,translations,assets}',
+            $erpDir.'/{templates,translations,assets,DataFixtures}',
             $erpDir.'/**/Entity',
             $erpDir.'/Setting/ErpModuleParameterEnum.php',
         ]);

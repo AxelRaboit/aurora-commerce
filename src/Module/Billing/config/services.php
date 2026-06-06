@@ -33,7 +33,7 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Aurora\\Module\\Billing\\', $moduleDir.'/')
         ->exclude([
             $moduleDir.'/AuroraBillingBundle.php',
-            $moduleDir.'/{config,templates,translations,assets}',
+            $moduleDir.'/{config,templates,translations,assets,DataFixtures}',
             $moduleDir.'/**/Entity',
             $moduleDir.'/Setting/BillingModuleParameterEnum.php',
         ]);
