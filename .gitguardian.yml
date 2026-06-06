@@ -1,6 +1,0 @@
-version: 2
-
-ignore-known-secrets: true
-
-paths-ignore:
-  - "src/Core/Frontend/locales/**"
