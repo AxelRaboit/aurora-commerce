@@ -6,9 +6,9 @@ namespace Aurora\Module\Crm\DataFixtures;
 
 use Aurora\Core\DataFixtures\CoreDemoFixtures;
 use Aurora\Module\Crm\Company\Entity\Company;
-use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
 use Aurora\Module\Crm\Contact\Entity\Contact;
 use Aurora\Module\Crm\Contact\Enum\ContactSourceEnum;
+use Aurora\Module\Crm\ContactTag\Entity\ContactTag;
 use Aurora\Module\Crm\Deal\Entity\Deal;
 use Aurora\Module\Crm\Deal\Enum\DealStageEnum;
 use Aurora\Module\Dev\Audit\Entity\AbstractAuditLog;

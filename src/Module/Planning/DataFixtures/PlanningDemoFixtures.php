@@ -45,7 +45,7 @@ class PlanningDemoFixtures extends Fixture implements DependentFixtureInterface,
             $users[] = $this->getReference(CoreDemoFixtures::userRef($i), User::class);
         }
 
-        $admin = $users[0] ?? null;
+        $admin = $users[0];
         $now = new DateTimeImmutable();
 
         // Planning 1 — Équipe Développement (partagé agence)
@@ -85,7 +85,7 @@ class PlanningDemoFixtures extends Fixture implements DependentFixtureInterface,
            ->setColor('#f59e0b')
            ->setTimezone('Europe/Paris')
            ->setVisibility(PlanningVisibilityEnum::Agency)
-           ->setOwner($users[1] ?? $admin);
+           ->setOwner($users[1]);
         $manager->persist($p4);
 
         $addEvent = static function (EntityManagerInterface $em, Planning $planning, string $title, string $start, string $end, PlanningEventStatusEnum $status = PlanningEventStatusEnum::Confirmed, ?string $location = null, ?string $description = null, bool $allDay = false): void {

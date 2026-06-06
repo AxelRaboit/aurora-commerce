@@ -6,11 +6,11 @@ namespace Aurora\Module\Ecommerce\DataFixtures;
 
 use Aurora\Core\DataFixtures\CoreDemoFixtures;
 use Aurora\Core\Money\Enum\CurrencyEnum;
+use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategory;
 use Aurora\Module\Ecommerce\ListingCategory\Entity\ListingCategoryTranslation;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTag;
 use Aurora\Module\Ecommerce\ListingTag\Entity\ListingTagTranslation;
-use Aurora\Module\Ecommerce\Listing\Entity\Listing;
 use Aurora\Module\Ecommerce\Order\Entity\Order;
 use Aurora\Module\Ecommerce\Order\Entity\OrderLine;
 use Aurora\Module\Ecommerce\Order\Enum\OrderStatusEnum;

@@ -56,6 +56,7 @@ class PersonalFinanceDemoFixtures extends Fixture implements DependentFixtureInt
     public function __construct(
         private readonly ?PersonalFinanceGoalManagerInterface $goalManager = null,
     ) {}
+
     public static function getGroups(): array
     {
         return ['demo'];
