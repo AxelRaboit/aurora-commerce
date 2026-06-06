@@ -30,6 +30,10 @@ services:
         # their bundle) — exclude them here to avoid double registration.
         # (Monorepo-split: each behaves as a separate Composer package.)
         exclude:
+            # Fixtures extend doctrine/doctrine-fixtures-bundle's Fixture (a dev
+            # dependency, absent in prod). Loaded dev/test-only via when@dev
+            # below so a client's --no-dev build never compiles them.
+            - '../src/Core/DataFixtures/'
             - '../src/Module/Tools/'
             - '../src/Module/Crm/'
             - '../src/Module/Hr/'
@@ -163,5 +167,23 @@ services:
     Aurora\Core\Mail\Service\MailService:
         arguments:
             $mailerFrom: '%app.mailer_from%'
+
+# Core fixtures are dev/test-only (see exclude above). AuroraBundle imports this
+# file into every client, so this gating protects client prod builds too.
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+        Aurora\Core\DataFixtures\:
+            resource: '../src/Core/DataFixtures/'
+
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+        Aurora\Core\DataFixtures\:
+            resource: '../src/Core/DataFixtures/'
 
 

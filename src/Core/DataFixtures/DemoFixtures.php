@@ -59,10 +59,6 @@ use Aurora\Module\Ged\DocumentCategory\Entity\DocumentCategory;
 use Aurora\Module\Ged\DocumentFolder\Entity\DocumentFolder;
 use Aurora\Module\Ged\DocumentTag\Entity\DocumentTag;
 use Aurora\Module\Ged\Enum\DocumentStatusEnum;
-use Aurora\Module\Hr\Employee\Entity\Employee;
-use Aurora\Module\Notes\Markdown\Entity\AbstractMarkdownNote;
-use Aurora\Module\Notes\Markdown\Entity\MarkdownNote;
-use Aurora\Module\Notes\Markdown\Entity\MarkdownNoteInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudget;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetInterface;
 use Aurora\Module\PersonalFinance\Budget\Entity\PersonalFinanceBudgetItem;
@@ -99,16 +95,7 @@ use Aurora\Module\Photo\Gallery\Entity\GalleryFinalization;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItem;
 use Aurora\Module\Photo\Gallery\Entity\GalleryItemComment;
 use Aurora\Module\Photo\Gallery\Entity\GalleryPick;
-use Aurora\Module\Planning\Event\Entity\PlanningEvent;
-use Aurora\Module\Planning\Event\Enum\PlanningEventStatusEnum;
-use Aurora\Module\Planning\Planning\Entity\Planning;
-use Aurora\Module\Planning\Planning\Enum\PlanningVisibilityEnum;
-use Aurora\Module\Platform\Agency\Entity\Agency;
-use Aurora\Module\Platform\Agency\Entity\AgencyInterface;
-use Aurora\Module\Platform\Service\Entity\Service;
-use Aurora\Module\Platform\Service\Entity\ServiceInterface;
 use Aurora\Module\Platform\User\Entity\User;
-use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Platform\User\Enum\UserTypeEnum;
 use Aurora\Module\Project\Entity\Project;
 use Aurora\Module\Project\Entity\ProjectColumn;
@@ -126,7 +113,6 @@ use Doctrine\Persistence\ObjectManager;
 use ReflectionProperty;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 
@@ -141,7 +127,6 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     private const string LOREM = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
     public function __construct(
-        private readonly UserPasswordHasherInterface $hasher,
         private readonly SettingsService $settingsManager,
         #[Autowire('%app.upload_dir%')]
         private readonly string $uploadDir,
@@ -158,20 +143,29 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
 
     public function getDependencies(): array
     {
-        return [AppFixtures::class];
+        // Users/agencies and the per-module demo data (Hr, Planning, Notes…)
+        // are seeded by CoreDemoFixtures + each module's own DataFixtures. This
+        // monolith fixture only covers modules not yet carved out.
+        return [AppFixtures::class, CoreDemoFixtures::class];
     }
 
     public function load(ObjectManager $manager): void
     {
         assert($manager instanceof EntityManagerInterface);
 
-        $users = $this->createUsers($manager);
-        $this->createAgenciesAndServices($manager, $users);
-        $media = $this->createMedia($manager);
-        $postType = $manager->getRepository(PostType::class)->findOneBy(['slug' => 'article']);
+        // Demo users + agencies/services are created by CoreDemoFixtures; pull
+        // them by reference so this fixture stays consistent with the per-module
+        // fixtures that share the same users.
+        $users = [];
+        for ($i = 0; $i < CoreDemoFixtures::USER_COUNT; ++$i) {
+            $users[] = $this->getReference(CoreDemoFixtures::userRef($i), User::class);
+        }
 
-        $terms = $this->createTaxonomies($manager, $postType);
-        $posts = $this->createEditorial($manager, $postType, $media, $users, $terms);
+        $articleType = $this->createEditorialBootstrap($manager);
+        $media = $this->createMedia($manager);
+
+        $terms = $this->createTaxonomies($manager, $articleType);
+        $posts = $this->createEditorial($manager, $articleType, $media, $users, $terms);
         $this->createComments($manager, $posts);
         $this->createForms($manager);
         [$companies, $contacts] = $this->createCrm($manager, $users);
@@ -182,10 +176,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         $this->createBilling($manager, $media);
         $this->createPhoto($manager, $media, $users, $contacts);
         $this->createGed($manager, $media);
-        $this->createHr($manager, $users);
-        $this->createPlanning($manager, $users);
         $this->createProjects($manager, $users, $companies, $contacts);
-        $this->createMarkdownNotes($manager, $users);
         $this->createPersonalFinance($manager, $users);
         $this->createMenuItems($manager, $media);
 
@@ -200,145 +191,70 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
         }
     }
 
-    // ── Users ─────────────────────────────────────────────────────────────────
+    // ── Editorial bootstrap ─────────────────────────────────────────────────────
 
-    /** @return User[] */
-    private function createUsers(EntityManagerInterface $em): array
+    /**
+     * Built-in editorial post types + taxonomies. Previously seeded by
+     * AppFixtures; relocated here so the core's AppFixtures stays decoupled
+     * from the Editorial module. Returns the "article" post type used by the
+     * editorial demo below.
+     */
+    private function createEditorialBootstrap(EntityManagerInterface $em): PostType
     {
-        $users = [];
+        $pageType = new PostType()
+            ->setSlug('page')
+            ->setLabel('Pages')
+            ->setIcon('file')
+            ->setHasArchive(false)
+            ->setIsBuiltIn(true)
+            ->setSupports(['blocks', 'thumbnail', 'excerpt']);
 
-        $defs = [
-            [
-                'email' => 'marie.dupont@aurora.app',
-                'name' => 'Marie Dupont',
-                'role' => UserRoleEnum::Admin,
-                'privileges' => [],
-                'mood' => 'Responsable des opérations 🚀',
-            ],
-            [
-                'email' => 'jean.martin@aurora.app',
-                'name' => 'Jean Martin',
-                'role' => UserRoleEnum::User,
-                'privileges' => [
-                    'general.dashboard.view',
-                    // CRM — full sales access
-                    'crm.contacts.view', 'crm.contacts.create', 'crm.contacts.edit', 'crm.contacts.delete',
-                    'crm.companies.view', 'crm.companies.create', 'crm.companies.edit', 'crm.companies.delete',
-                    'crm.deals.view', 'crm.deals.create', 'crm.deals.edit', 'crm.deals.delete',
-                    // GED — full document management
-                    'ged.documents.view', 'ged.documents.create', 'ged.documents.edit', 'ged.documents.delete',
-                    'ged.categories.view', 'ged.categories.create', 'ged.categories.edit', 'ged.categories.delete',
-                    'ged.tags.manage', 'ged.folders.manage',
-                ],
-                'mood' => 'Commercial senior',
-            ],
-            [
-                'email' => 'sophie.bernard@aurora.app',
-                'name' => 'Sophie Bernard',
-                'role' => UserRoleEnum::User,
-                'privileges' => [
-                    'general.dashboard.view',
-                    // Editorial — full editorial workflow
-                    'editorial.posts.view', 'editorial.posts.create', 'editorial.posts.edit', 'editorial.posts.delete',
-                    'editorial.menus.view', 'editorial.menus.create', 'editorial.menus.edit', 'editorial.menus.delete',
-                    'editorial.taxonomies.view', 'editorial.taxonomies.create', 'editorial.taxonomies.edit',
-                    'editorial.post_types.view',
-                    'editorial.comments.view', 'editorial.comments.moderate', 'editorial.comments.delete',
-                    'editorial.forms.view', 'editorial.forms.create', 'editorial.forms.edit', 'editorial.forms.delete',
-                    'editorial.sitemap.view', 'editorial.sitemap.regenerate',
-                    // Media library (editors need full CRUD on items + folders)
-                    'media.view', 'media.create', 'media.edit', 'media.delete',
-                    'media.folders.create', 'media.folders.edit', 'media.folders.delete',
-                ],
-                'mood' => 'Rédactrice en chef ✍️',
-            ],
-            [
-                'email' => 'thomas.petit@aurora.app',
-                'name' => 'Thomas Petit',
-                'role' => UserRoleEnum::User,
-                'privileges' => [
-                    'general.dashboard.view',
-                    // Ecommerce — full sales access (refund stays admin-only)
-                    'ecommerce.listings.view', 'ecommerce.listings.create', 'ecommerce.listings.edit', 'ecommerce.listings.delete',
-                    'ecommerce.orders.view', 'ecommerce.orders.edit',
-                    // Billing — full accounting
-                    'billing.invoices.view', 'billing.invoices.create', 'billing.invoices.edit', 'billing.invoices.delete',
-                    'billing.tiers.view', 'billing.tiers.edit', 'billing.tiers.delete',
-                    'billing.ocr.import',
-                    // ERP products
-                    'erp.products.view', 'erp.products.create', 'erp.products.edit',
-                ],
-                'mood' => 'Responsable boutique & facturation',
-            ],
+        $articleType = new PostType()
+            ->setSlug('article')
+            ->setLabel('Articles')
+            ->setIcon('file-text')
+            ->setHasArchive(true)
+            ->setIsBuiltIn(true)
+            ->setSupports(['blocks', 'thumbnail', 'excerpt']);
+
+        $em->persist($pageType);
+        $em->persist($articleType);
+
+        $taxonomyLabels = [
+            'tag' => ['fr' => 'Étiquette', 'en' => 'Tag'],
+            'category' => ['fr' => 'Catégorie', 'en' => 'Category'],
         ];
 
-        foreach ($defs as $def) {
-            $user = new User();
-            $user->setEmail($def['email'])
-                 ->setName($def['name'])
-                 ->setRoles([$def['role']->value])
-                 ->setPrivileges($def['privileges'])
-                 ->setMoodMessage($def['mood'])
-                 ->setLocale(LocaleEnum::French)
-                 ->setPassword($this->hasher->hashPassword($user, 'password'));
-            $em->persist($user);
-            $users[] = $user;
-        }
+        foreach ($taxonomyLabels as $slug => $labels) {
+            $taxonomy = new Taxonomy()
+                ->setSlug($slug)
+                ->setHierarchical('category' === $slug)
+                ->setIsBuiltIn(true);
 
-        return $users;
-    }
+            foreach ($labels as $locale => $label) {
+                $taxonomy->translate($locale)->setLabel($label);
+            }
 
-    // ── Media ─────────────────────────────────────────────────────────────────
+            $pageType->addTaxonomy($taxonomy);
+            $articleType->addTaxonomy($taxonomy);
 
-    // ── Agencies & Services ───────────────────────────────────────────────────
+            $em->persist($taxonomy);
 
-    /** @param User[] $users */
-    private function createAgenciesAndServices(EntityManagerInterface $em, array $users): void
-    {
-        $agencyDefs = [
-            'Agence Nord',
-            'Agence Sud',
-            'Agence Est',
-            'Agence Ouest',
-            'Siège Social',
-        ];
+            if ('tag' === $slug) {
+                foreach (['Nouveauté' => 'nouveaute', 'Tutoriel' => 'tutoriel'] as $name => $termSlug) {
+                    $term = new TaxonomyTerm()->setTaxonomy($taxonomy);
+                    foreach (array_keys($labels) as $locale) {
+                        $term->translate($locale)->setName($name)->setSlug($termSlug);
+                    }
 
-        $serviceDefs = [
-            'Développement',
-            'Commercial',
-            'Ressources Humaines',
-            'Direction',
-            'Marketing',
-        ];
-
-        // Resolve concrete classes via Doctrine metadata so clients that
-        // substitute Agency/Service through resolve_target_entities still
-        // get the right class — `new Agency()` would bypass the mapping.
-        /** @var class-string<Agency> $agencyClass */
-        $agencyClass = $em->getClassMetadata(AgencyInterface::class)->getName();
-        /** @var class-string<Service> $serviceClass */
-        $serviceClass = $em->getClassMetadata(ServiceInterface::class)->getName();
-
-        $agencies = [];
-        foreach ($agencyDefs as $name) {
-            $agency = new $agencyClass()->setName($name);
-            $em->persist($agency);
-            $agencies[] = $agency;
-        }
-
-        $services = [];
-        foreach ($serviceDefs as $name) {
-            $service = new $serviceClass()->setName($name);
-            $em->persist($service);
-            $services[] = $service;
+                    $em->persist($term);
+                }
+            }
         }
 
         $em->flush();
 
-        foreach ($users as $index => $user) {
-            $user->setAgency($agencies[$index % count($agencies)]);
-            $user->setService($services[$index % count($services)]);
-        }
+        return $articleType;
     }
 
     /** @return Document[] */
@@ -2084,150 +2000,7 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     }
 
     // ── HR ────────────────────────────────────────────────────────────────────
-
-    /** @param User[] $users */
-    private function createHr(EntityManagerInterface $em, array $users): void
-    {
-        $agencies = $em->getRepository(Agency::class)->findAll();
-        $services = $em->getRepository(Service::class)->findAll();
-
-        $defs = [
-            ['firstName' => 'Sophie',    'lastName' => 'Martin',    'title' => 'Responsable RH',              'email' => 'sophie.martin@aurora-tech.fr',    'phone' => '+33 6 10 11 12 13', 'hired' => '2019-03-01', 'left' => null,         'svc' => 'Ressources Humaines', 'agc' => 'Siège Social'],
-            ['firstName' => 'Thomas',    'lastName' => 'Dubois',    'title' => 'Développeur Senior PHP',       'email' => 'thomas.dubois@aurora-tech.fr',    'phone' => '+33 6 20 21 22 23', 'hired' => '2020-06-15', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Nord'],
-            ['firstName' => 'Clara',     'lastName' => 'Lefèvre',   'title' => 'Chef de projet technique',     'email' => 'clara.lefevre@aurora-tech.fr',    'phone' => '+33 6 30 31 32 33', 'hired' => '2018-09-01', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Nord'],
-            ['firstName' => 'Julien',    'lastName' => 'Moreau',    'title' => 'Commercial Grands Comptes',    'email' => 'julien.moreau@aurora-tech.fr',    'phone' => '+33 6 40 41 42 43', 'hired' => '2021-01-10', 'left' => null,         'svc' => 'Commercial',          'agc' => 'Agence Sud'],
-            ['firstName' => 'Camille',   'lastName' => 'Bernard',   'title' => 'Chargée de communication',    'email' => 'camille.bernard@aurora-tech.fr',  'phone' => '+33 6 50 51 52 53', 'hired' => '2022-04-04', 'left' => null,         'svc' => 'Marketing',           'agc' => 'Siège Social'],
-            ['firstName' => 'Antoine',   'lastName' => 'Petit',     'title' => 'Développeur Full-Stack',       'email' => 'antoine.petit@aurora-tech.fr',    'phone' => '+33 6 60 61 62 63', 'hired' => '2021-09-20', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Est'],
-            ['firstName' => 'Lucie',     'lastName' => 'Girard',    'title' => 'Assistante de direction',      'email' => 'lucie.girard@aurora-tech.fr',     'phone' => '+33 6 70 71 72 73', 'hired' => '2017-11-15', 'left' => null,         'svc' => 'Direction',           'agc' => 'Siège Social'],
-            ['firstName' => 'Marc',      'lastName' => 'Rousseau',  'title' => 'Ingénieur DevOps',             'email' => 'marc.rousseau@aurora-tech.fr',    'phone' => '+33 6 80 81 82 83', 'hired' => '2020-02-01', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Ouest'],
-            ['firstName' => 'Emma',      'lastName' => 'Dupont',    'title' => 'Designer UX/UI',               'email' => 'emma.dupont@aurora-tech.fr',      'phone' => '+33 6 90 91 92 93', 'hired' => '2022-07-18', 'left' => null,         'svc' => 'Marketing',           'agc' => 'Siège Social'],
-            ['firstName' => 'Nicolas',   'lastName' => 'Lambert',   'title' => 'Responsable Commercial',       'email' => 'nicolas.lambert@aurora-tech.fr',  'phone' => '+33 7 00 01 02 03', 'hired' => '2016-05-09', 'left' => null,         'svc' => 'Commercial',          'agc' => 'Agence Sud'],
-            ['firstName' => 'Inès',      'lastName' => 'Fontaine',  'title' => 'Développeuse Backend',         'email' => 'ines.fontaine@aurora-tech.fr',    'phone' => '+33 7 10 11 12 13', 'hired' => '2023-01-09', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Nord'],
-            ['firstName' => 'Romain',    'lastName' => 'Garnier',   'title' => 'Consultant technique',         'email' => 'romain.garnier@aurora-tech.fr',   'phone' => '+33 7 20 21 22 23', 'hired' => '2019-08-26', 'left' => '2024-06-30', 'svc' => 'Développement',       'agc' => 'Agence Est'],
-            ['firstName' => 'Mathilde',  'lastName' => 'Chevalier', 'title' => 'Chargée de recrutement',       'email' => 'mathilde.chevalier@aurora-tech.fr', 'phone' => '+33 7 30 31 32 33', 'hired' => '2023-09-04', 'left' => null,         'svc' => 'Ressources Humaines', 'agc' => 'Siège Social'],
-            ['firstName' => 'Pierre',    'lastName' => 'Morel',     'title' => 'Directeur Technique',          'email' => 'pierre.morel@aurora-tech.fr',     'phone' => '+33 7 40 41 42 43', 'hired' => '2015-01-05', 'left' => null,         'svc' => 'Direction',           'agc' => 'Siège Social'],
-            ['firstName' => 'Laura',     'lastName' => 'Simon',     'title' => 'Développeuse Mobile',          'email' => 'laura.simon@aurora-tech.fr',      'phone' => '+33 7 50 51 52 53', 'hired' => '2024-03-11', 'left' => null,         'svc' => 'Développement',       'agc' => 'Agence Ouest'],
-        ];
-
-        $agencyMap = [];
-        foreach ($agencies as $a) {
-            $agencyMap[$a->getName()] = $a;
-        }
-
-        $serviceMap = [];
-        foreach ($services as $s) {
-            $serviceMap[$s->getName()] = $s;
-        }
-
-        foreach ($defs as $i => $def) {
-            $employee = new Employee();
-            $employee->setFirstName($def['firstName'])
-                     ->setLastName($def['lastName'])
-                     ->setJobTitle($def['title'])
-                     ->setWorkEmail($def['email'])
-                     ->setPhone($def['phone'])
-                     ->setHiredAt(new DateTimeImmutable($def['hired']))
-                     ->setLeftAt(null !== $def['left'] ? new DateTimeImmutable($def['left']) : null)
-                     ->setUser($users[$i] ?? null)
-                     ->setService($serviceMap[$def['svc']] ?? null)
-                     ->setAgency($agencyMap[$def['agc']] ?? null);
-            $em->persist($employee);
-        }
-
-        $em->flush();
-    }
-
     // ── Planning ──────────────────────────────────────────────────────────────
-
-    /** @param User[] $users */
-    private function createPlanning(EntityManagerInterface $em, array $users): void
-    {
-        $admin = $users[0] ?? null;
-        $now = new DateTimeImmutable();
-
-        // Planning 1 — Équipe Développement (partagé agence)
-        $p1 = new Planning();
-        $p1->setName('Équipe Développement')
-           ->setDescription('Planning de l\'équipe dev : sprints, revues, daily stand-ups.')
-           ->setColor('#3b82f6')
-           ->setTimezone('Europe/Paris')
-           ->setVisibility(PlanningVisibilityEnum::Agency)
-           ->setOwner($admin);
-        $em->persist($p1);
-
-        // Planning 2 — Direction (privé)
-        $p2 = new Planning();
-        $p2->setName('Comités de direction')
-           ->setDescription('Réunions CODIR, board et revues stratégiques.')
-           ->setColor('#8b5cf6')
-           ->setTimezone('Europe/Paris')
-           ->setVisibility(PlanningVisibilityEnum::Private_)
-           ->setOwner($admin);
-        $em->persist($p2);
-
-        // Planning 3 — Congés & absences (public)
-        $p3 = new Planning();
-        $p3->setName('Congés & absences')
-           ->setDescription('Suivi des congés payés, RTT et absences exceptionnelles.')
-           ->setColor('#10b981')
-           ->setTimezone('Europe/Paris')
-           ->setVisibility(PlanningVisibilityEnum::Public_)
-           ->setOwner($admin);
-        $em->persist($p3);
-
-        // Planning 4 — Commercial
-        $p4 = new Planning();
-        $p4->setName('Agenda Commercial')
-           ->setDescription('Rendez-vous clients, démos produit et appels de suivi.')
-           ->setColor('#f59e0b')
-           ->setTimezone('Europe/Paris')
-           ->setVisibility(PlanningVisibilityEnum::Agency)
-           ->setOwner($users[1] ?? $admin);
-        $em->persist($p4);
-
-        $addEvent = static function (EntityManagerInterface $em, Planning $planning, string $title, string $start, string $end, PlanningEventStatusEnum $status = PlanningEventStatusEnum::Confirmed, ?string $location = null, ?string $description = null, bool $allDay = false): void {
-            $event = new PlanningEvent();
-            $event->setPlanning($planning)
-                  ->setTitle($title)
-                  ->setStartAt(new DateTimeImmutable($start))
-                  ->setEndAt(new DateTimeImmutable($end))
-                  ->setStatus($status)
-                  ->setLocation($location)
-                  ->setDescription($description)
-                  ->setAllDay($allDay);
-            $em->persist($event);
-        };
-
-        // Événements — Développement
-        $addEvent($em, $p1, 'Daily stand-up', 'today 09:00', 'today 09:15', PlanningEventStatusEnum::Confirmed, 'Visio', 'Réunion quotidienne d\'avancement.');
-        $addEvent($em, $p1, 'Sprint review S24', 'this monday 14:00', 'this monday 16:00', PlanningEventStatusEnum::Confirmed, 'Salle Arctique', 'Démonstration des fonctionnalités livrées ce sprint.');
-        $addEvent($em, $p1, 'Sprint planning S25', 'next monday 10:00', 'next monday 12:00', PlanningEventStatusEnum::Confirmed, 'Salle Arctique', 'Planification et estimation du prochain sprint.');
-        $addEvent($em, $p1, 'Atelier architecture API', $now->modify('+3 days')->format('Y-m-d').' 09:30', $now->modify('+3 days')->format('Y-m-d').' 12:00', PlanningEventStatusEnum::Confirmed, 'Salle Boréale', 'Revue de la conception des nouveaux endpoints REST.');
-        $addEvent($em, $p1, 'Mise en production v2.4', $now->modify('+7 days')->format('Y-m-d').' 22:00', $now->modify('+8 days')->format('Y-m-d').' 01:00', PlanningEventStatusEnum::Tentative, null, 'Déploiement Aurora v2.4 en production. Fenêtre de maintenance.');
-        $addEvent($em, $p1, 'Formation Docker interne', $now->modify('-5 days')->format('Y-m-d').' 14:00', $now->modify('-5 days')->format('Y-m-d').' 17:00', PlanningEventStatusEnum::Confirmed, 'Salle Boréale', 'Formation containerisation pour l\'équipe dev.');
-        $addEvent($em, $p1, 'Rétrospective S23', $now->modify('-14 days')->format('Y-m-d').' 15:00', $now->modify('-14 days')->format('Y-m-d').' 16:30', PlanningEventStatusEnum::Confirmed, 'Visio', 'Bilan du sprint 23 — points positifs et axes d\'amélioration.');
-
-        // Événements — Direction
-        $addEvent($em, $p2, 'CODIR mensuel — '.date('F Y'), $now->modify('first day of this month')->format('Y-m-d').' 09:00', $now->modify('first day of this month')->format('Y-m-d').' 12:00', PlanningEventStatusEnum::Confirmed, 'Salle de direction', 'Revue des KPIs et décisions stratégiques du mois.');
-        $addEvent($em, $p2, 'Revue budgétaire T2 2025', $now->modify('+10 days')->format('Y-m-d').' 10:00', $now->modify('+10 days')->format('Y-m-d').' 12:00', PlanningEventStatusEnum::Confirmed, 'Salle de direction', 'Analyse des dépenses et ajustements budgétaires T2.');
-        $addEvent($em, $p2, 'Board Aurora — juin 2025', $now->modify('+21 days')->format('Y-m-d').' 09:00', $now->modify('+21 days')->format('Y-m-d').' 17:00', PlanningEventStatusEnum::Tentative, 'Paris — Siège', 'Réunion annuelle des actionnaires et présentation des résultats.');
-
-        // Événements — Congés
-        $addEvent($em, $p3, 'Congés Thomas Dubois', $now->modify('+14 days')->format('Y-m-d'), $now->modify('+21 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
-        $addEvent($em, $p3, 'Congés Clara Lefèvre', $now->modify('+28 days')->format('Y-m-d'), $now->modify('+35 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
-        $addEvent($em, $p3, 'RTT — Lucie Girard', $now->modify('+5 days')->format('Y-m-d'), $now->modify('+5 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
-        $addEvent($em, $p3, 'Arrêt maladie Marc Rousseau', $now->modify('-3 days')->format('Y-m-d'), $now->modify('+2 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, null, null, true);
-
-        // Événements — Commercial
-        $addEvent($em, $p4, 'Démo Aurora — BioMed France', $now->modify('+2 days')->format('Y-m-d').' 10:00', $now->modify('+2 days')->format('Y-m-d').' 11:30', PlanningEventStatusEnum::Confirmed, 'Visio Teams', 'Présentation des modules GED et Facturation à BioMed France.');
-        $addEvent($em, $p4, 'Déjeuner client — Retail Connect', $now->modify('+4 days')->format('Y-m-d').' 12:30', $now->modify('+4 days')->format('Y-m-d').' 14:00', PlanningEventStatusEnum::Confirmed, 'Restaurant Le Procope, Paris', 'Suivi commercial et renouvellement contrat 2025.');
-        $addEvent($em, $p4, 'Appel découverte — Novo Pharma', $now->modify('+6 days')->format('Y-m-d').' 15:00', $now->modify('+6 days')->format('Y-m-d').' 15:45', PlanningEventStatusEnum::Tentative, 'Téléphone', 'Premier contact — présentation Aurora et qualification du besoin.');
-        $addEvent($em, $p4, 'Salon Tech Paris 2025', $now->modify('+30 days')->format('Y-m-d'), $now->modify('+32 days')->format('Y-m-d'), PlanningEventStatusEnum::Confirmed, 'Paris Expo Porte de Versailles', 'Présence Aurora au salon — stand B42.', true);
-        $addEvent($em, $p4, 'Closing Tech Innovation SARL', $now->modify('-7 days')->format('Y-m-d').' 14:00', $now->modify('-7 days')->format('Y-m-d').' 15:00', PlanningEventStatusEnum::Confirmed, 'Visio', 'Signature finale du contrat de prestation 2025.');
-
-        $em->flush();
-    }
-
     // ── Projects ──────────────────────────────────────────────────────────────
 
     /**
@@ -2493,143 +2266,6 @@ class DemoFixtures extends Fixture implements DependentFixtureInterface, Fixture
     }
 
     // ── Notes / Markdown ──────────────────────────────────────────────────────
-
-    /**
-     * Seed a small wiki-style notebook on the admin demo user (index 0).
-     * Showcases hierarchy (Welcome → Getting Started), tags, wiki-links
-     * (`[[Welcome]]`, `[[Tasks]]`), and varied markdown features so the
-     * Markdown sub-module has something to render out of the box.
-     *
-     * @param User[] $users
-     */
-    private function createMarkdownNotes(EntityManagerInterface $em, array $users): void
-    {
-        if ([] === $users) {
-            return;
-        }
-
-        /** @var class-string<MarkdownNote> $noteClass */
-        $noteClass = $em->getClassMetadata(MarkdownNoteInterface::class)->getName();
-
-        $owner = $users[0];
-        $agency = $owner->getAgency();
-        $now = new DateTimeImmutable();
-
-        $defs = [
-            [
-                'title' => 'Welcome',
-                'tags' => ['demo', 'guide'],
-                'content' => <<<MD
-                    # Welcome
-
-                    This is your demo notebook — a small showcase of the **Markdown** notes
-                    sub-module ported from Onyx.
-
-                    Browse the tree on the left, or jump to:
-                    - [[Getting Started]] — markdown syntax reference
-                    - [[Tasks]] — a sample checklist
-                    - [[Random thoughts]] — quick capture
-
-                    > Try renaming this note: every `[[Welcome]]` link in your other notes
-                    > will update automatically.
-                    MD,
-                'parent' => null,
-            ],
-            [
-                'title' => 'Getting Started',
-                'tags' => ['demo', 'guide'],
-                'content' => <<<MD
-                    # Getting Started
-
-                    A quick taste of the supported syntax.
-
-                    ## Inline formatting
-
-                    **bold**, *italic*, ~~strikethrough~~, `inline code`, [external link](https://example.com).
-
-                    ## Lists
-
-                    - apples
-                    - oranges
-                      - clementines
-                    - bananas
-
-                    ## Checklist
-
-                    - [x] Read [[Welcome]]
-                    - [ ] Open [[Tasks]]
-                    - [ ] Doodle in [[Random thoughts]]
-
-                    ## Code block
-
-                    ```php
-                    function greet(string \$name): string
-                    {
-                        return "Hello, {\$name}!";
-                    }
-                    ```
-
-                    ## Quote
-
-                    > Wiki-links use `[[Title]]` and point to other notes by title (case-insensitive).
-                    MD,
-                'parent' => 'Welcome',
-            ],
-            [
-                'title' => 'Tasks',
-                'tags' => ['demo', 'todo'],
-                'content' => <<<MD
-                    # Tasks
-
-                    A sample checklist. Backlinks pane should show [[Welcome]] and
-                    [[Getting Started]] linking here.
-
-                    - [ ] Add a new note from the sidebar `+`
-                    - [ ] Move this note under [[Welcome]] (drag & drop)
-                    - [ ] Open the graph view to see the wiki-link web
-                    - [x] Read the intro
-                    MD,
-                'parent' => null,
-            ],
-            [
-                'title' => 'Random thoughts',
-                'tags' => ['demo'],
-                'content' => <<<MD
-                    # Random thoughts
-
-                    Whatever comes to mind. No structure required.
-
-                    Today's todo: revisit [[Tasks]] tonight.
-                    MD,
-                'parent' => null,
-            ],
-        ];
-
-        $byTitle = [];
-        foreach ($defs as $i => $def) {
-            $note = new $noteClass();
-            $note->setUser($owner);
-            $note->setAgency($agency);
-            $note->setTitle($def['title']);
-            $note->setContent($def['content']);
-            $note->setTags($def['tags']);
-            $note->setPosition($i);
-
-            if (null !== $def['parent'] && isset($byTitle[$def['parent']])) {
-                $note->setParent($byTitle[$def['parent']]);
-            }
-
-            // Lifecycle callbacks don't fire for direct persist + manual flush
-            // in the same operation reliably across all Doctrine versions when
-            // touching MappedSuperclass + trait properties — set explicitly.
-            new ReflectionProperty(AbstractMarkdownNote::class, 'createdAt')->setValue($note, $now);
-            new ReflectionProperty(AbstractMarkdownNote::class, 'updatedAt')->setValue($note, $now);
-
-            $em->persist($note);
-            $byTitle[$def['title']] = $note;
-        }
-    }
-
     // ── Menus ─────────────────────────────────────────────────────────────────
 
     // ── Personal Finance ──────────────────────────────────────────────────────

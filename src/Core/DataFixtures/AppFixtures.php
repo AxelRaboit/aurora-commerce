@@ -8,13 +8,6 @@ use Aurora\Core\Locale\Entity\Locale;
 use Aurora\Core\Locale\Enum\LocaleEnum;
 use Aurora\Module\Configuration\Setting\Entity\Setting;
 use Aurora\Module\Configuration\Theme\Entity\Theme;
-use Aurora\Module\Editorial\Post\Entity\Post;
-use Aurora\Module\Editorial\Post\Entity\PostTranslation;
-use Aurora\Module\Editorial\Post\Enum\PostStatusEnum;
-use Aurora\Module\Editorial\Post\Service\PostTextExtractor;
-use Aurora\Module\Editorial\PostType\Entity\PostType;
-use Aurora\Module\Editorial\Taxonomy\Entity\Taxonomy;
-use Aurora\Module\Editorial\Taxonomy\Entity\TaxonomyTerm;
 use Aurora\Module\Platform\User\Entity\User;
 use Aurora\Module\Platform\User\Enum\UserRoleEnum;
 use Aurora\Module\Platform\User\Enum\UserTypeEnum;
@@ -22,11 +15,17 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * Core bootstrap fixtures — only entities that live in the always-on core
+ * (Locale, Configuration's Setting/Theme, Platform's User). Module-specific
+ * seed data (editorial post types, taxonomies, sample pages, …) now lives in
+ * each module package's own DataFixtures so the core stays decoupled and a
+ * client without a given module never references its entities.
+ */
 class AppFixtures extends Fixture
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $hasher,
-        private readonly PostTextExtractor $textExtractor,
     ) {}
 
     public function load(ObjectManager $manager): void
@@ -36,59 +35,6 @@ class AppFixtures extends Fixture
         $englishLocale = new Locale()->setCode(LocaleEnum::English->value)->setName('English')->setPosition(1);
         $manager->persist($frenchLocale);
         $manager->persist($englishLocale);
-
-        // Built-in post types
-        $pageType = new PostType()
-            ->setSlug('page')
-            ->setLabel('Pages')
-            ->setIcon('file')
-            ->setHasArchive(false)
-            ->setIsBuiltIn(true)
-            ->setSupports(['blocks', 'thumbnail', 'excerpt']);
-
-        $articleType = new PostType()
-            ->setSlug('article')
-            ->setLabel('Articles')
-            ->setIcon('file-text')
-            ->setHasArchive(true)
-            ->setIsBuiltIn(true)
-            ->setSupports(['blocks', 'thumbnail', 'excerpt']);
-
-        $manager->persist($pageType);
-        $manager->persist($articleType);
-
-        // Built-in taxonomies
-        $taxonomyLabels = [
-            'tag' => ['fr' => 'Étiquette', 'en' => 'Tag'],
-            'category' => ['fr' => 'Catégorie', 'en' => 'Category'],
-        ];
-
-        foreach ($taxonomyLabels as $slug => $labels) {
-            $taxonomy = new Taxonomy()
-                ->setSlug($slug)
-                ->setHierarchical('category' === $slug)
-                ->setIsBuiltIn(true);
-
-            foreach ($labels as $locale => $label) {
-                $taxonomy->translate($locale)->setLabel($label);
-            }
-
-            $pageType->addTaxonomy($taxonomy);
-            $articleType->addTaxonomy($taxonomy);
-
-            $manager->persist($taxonomy);
-
-            if ('tag' === $slug) {
-                foreach (['Nouveauté' => 'nouveaute', 'Tutoriel' => 'tutoriel'] as $name => $termSlug) {
-                    $term = new TaxonomyTerm()->setTaxonomy($taxonomy);
-                    foreach (array_keys($labels) as $locale) {
-                        $term->translate($locale)->setName($name)->setSlug($termSlug);
-                    }
-
-                    $manager->persist($term);
-                }
-            }
-        }
 
         // Default theme
         $theme = new Theme()
@@ -127,33 +73,6 @@ class AppFixtures extends Fixture
              ->setRoles([UserRoleEnum::Dev->value])
              ->setPassword($this->hasher->hashPassword($frontUser, 'password'));
         $manager->persist($frontUser);
-
-        // Sample page
-        $homePage = new Post()->setPostType($pageType)->setStatus(PostStatusEnum::Published);
-        $homePageFrench = new PostTranslation()
-            ->setPost($homePage)
-            ->setLocale(LocaleEnum::French->value)
-            ->setTitle('Accueil')
-            ->setSlug('accueil')
-            ->setBlocks([
-                ['type' => 'heading', 'data' => ['text' => 'Bienvenue sur Aurora', 'level' => 1]],
-                ['type' => 'paragraph', 'data' => ['text' => 'Votre CMS moderne propulsé par Symfony et Vue 3.']],
-            ]);
-        $homePageEnglish = new PostTranslation()
-            ->setPost($homePage)
-            ->setLocale(LocaleEnum::English->value)
-            ->setTitle('Home')
-            ->setSlug('home')
-            ->setBlocks([
-                ['type' => 'heading', 'data' => ['text' => 'Welcome to Aurora', 'level' => 1]],
-                ['type' => 'paragraph', 'data' => ['text' => 'Your modern CMS powered by Symfony and Vue 3.']],
-            ]);
-        $homePageFrench->setSearchContent($this->textExtractor->extract($homePageFrench));
-        $homePageEnglish->setSearchContent($this->textExtractor->extract($homePageEnglish));
-
-        $manager->persist($homePage);
-        $manager->persist($homePageFrench);
-        $manager->persist($homePageEnglish);
 
         $manager->flush();
     }

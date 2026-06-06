@@ -23,7 +23,7 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Aurora\\Module\\Hr\\', $moduleDir.'/')
         ->exclude([
             $moduleDir.'/AuroraHrBundle.php',
-            $moduleDir.'/{config,templates,translations,assets}',
+            $moduleDir.'/{config,templates,translations,assets,DataFixtures}',
             $moduleDir.'/**/Entity',
             $moduleDir.'/Setting/HrModuleParameterEnum.php',
         ]);
